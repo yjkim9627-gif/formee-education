@@ -1,0 +1,164 @@
+:root {
+  /* ---------- Color / Neutral ---------- */
+  --color-neutral-0: #ffffff;
+  --color-neutral-25: #fafafa;
+  --color-neutral-50: #f8faff;
+  --color-neutral-75: #f7faff;
+  --color-neutral-100: #eef2fa;
+  --color-neutral-150: #e9edf6;
+  --color-neutral-175: #e5e5e5;
+  --color-neutral-200: #e3e8f2;
+  --color-neutral-250: #c3c3c3;
+  --color-neutral-300: #d6ddeb;
+  --color-neutral-350: #c5cee0;
+  --color-neutral-380: #aab2c3;
+  --color-neutral-400: #c8d1e1;
+  --color-neutral-450: #a2a5b2;
+  --color-neutral-500: #8a93a8;
+  --color-neutral-600: #687188;
+  --color-neutral-700: #475069;
+  --color-neutral-800: #0b2b55;
+  --color-neutral-900: #0f1729;
+  --color-neutral-950: #000000;
+  --color-neutral-icon: #8e97a8;
+
+  /* ---------- Color / Brand ---------- */
+  --color-brand-primary-pale: #cad4ff;
+  --color-brand-primary-light: #dce7fb;
+  --color-brand-primary-mid: #a8cbff;
+  --color-brand-primary: #4f6de6;
+  --color-brand-primary-dark: #1e5fd9;
+  --color-brand-accent: #ed7797;
+  --color-brand-link: #3182f6;
+  --color-brand-violet: #9747ff;
+
+  /* ---------- Color / Badge ---------- */
+  --color-badge-blue-text: #1e5fd9;
+  --color-badge-blue-bg: #dce7fb;
+  --color-badge-gray-text: #7c7f8d;
+  --color-badge-gray-bg: #efefef;
+  --color-badge-green-text: #0a7526;
+  --color-badge-green-bg: #c2ffc3;
+  --color-badge-orange-text: #9f4e02;
+  --color-badge-orange-bg: #ffcea0;
+  --color-badge-pink-text: #af00b8;
+  --color-badge-pink-bg: #fbddff;
+  --color-badge-purple-text: #5355a0;
+  --color-badge-purple-bg: #e3e3f6;
+  --color-badge-red-text: #b80000;
+  --color-badge-red-bg: #ffe0e2;
+  --color-badge-teal-text: #007484;
+  --color-badge-teal-bg: #dbfeff;
+  --color-badge-yellow-text: #787331;
+  --color-badge-yellow-bg: #ffeca8;
+
+  /* ---------- Color / Semantic ---------- */
+  --color-alert-text: #ffffff;
+  --color-alert-bg: #b80000;
+  --color-error-text: #b80000;
+  --color-warning-text: #d97706;
+
+  /* ---------- Spacing ---------- */
+  --spacing-1: 1px;
+  --spacing-2: 2px;
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 20px;
+  --spacing-2xl: 24px;
+  --spacing-3xl: 32px;
+  --spacing-4xl: 40px;
+  --spacing-5xl: 48px;
+  --spacing-6xl: 56px;
+  --spacing-7xl: 64px;
+
+  /* ---------- Radius ---------- */
+  --radius-none: 0px;
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-3xl: 24px;
+  --radius-full: 9999px;
+
+  /* ---------- Typography / Font family ---------- */
+  --font-family-display: 'DM Sans', sans-serif;
+  --font-family-text: 'DM Sans', sans-serif;
+  --font-family-badge: 'DM Sans', sans-serif;
+  --font-family-mono: 'JetBrains Mono', monospace;
+  --font-family-logo: 'Manrope', sans-serif;
+
+  /* ---------- Typography / Font weight ---------- */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* ---------- Typography / Display (fixed weight per size) ---------- */
+  --font-size-display-2xl: 48px;
+  --line-height-display-2xl: 56px;
+  --font-weight-display-2xl: var(--font-weight-semibold);
+  --font-size-display-xl: 40px;
+  --line-height-display-xl: 48px;
+  --font-weight-display-xl: var(--font-weight-bold);
+  --font-size-display-lg: 32px;
+  --line-height-display-lg: 40px;
+  --font-weight-display-lg: var(--font-weight-bold);
+  --font-size-display-md: 28px;
+  --line-height-display-md: 36px;
+  --font-weight-display-md: var(--font-weight-bold);
+  --font-size-display-sm: 22px;
+  --line-height-display-sm: 30px;
+  --font-weight-display-sm: var(--font-weight-bold);
+  --font-size-display-xs: 20px;
+  --line-height-display-xs: 28px;
+  --font-weight-display-xs: var(--font-weight-semibold);
+
+  /* ---------- Typography / Text (size only, pair with a --font-weight-* token) ---------- */
+  --font-size-text-2xl: 18px;
+  --line-height-text-2xl: 28px;
+  --font-size-text-xl: 16px;
+  --line-height-text-xl: 24px;
+  --font-size-text-lg: 15px;
+  --line-height-text-lg: 22px;
+  --font-size-text-md: 14px;
+  --line-height-text-md: 22px;
+  --font-size-text-sm: 13px;
+  --line-height-text-sm: 20px;
+  --font-size-text-xs: 12px;
+  --line-height-text-xs: 18px;
+  --font-size-text-2xs: 11px;
+  --line-height-text-2xs: 16px;
+  --font-size-text-3xs: 10px;
+  --line-height-text-3xs: 14px;
+
+  /* ---------- Typography / Badge (font-size only) ---------- */
+  --font-size-badge-md: 11px;
+  --font-size-badge-sm: 10px;
+  --font-size-badge-xs: 9px;
+
+  /* ---------- Typography / Mono (size only, pair with a --font-weight-* token) ---------- */
+  --font-size-mono-lg: 14px;
+  --line-height-mono-lg: 20px;
+  --font-size-mono-md: 12px;
+  --line-height-mono-md: 18px;
+  --font-size-mono-sm: 11px;
+  --line-height-mono-sm: 16px;
+  --font-size-mono-xs: 10px;
+  --line-height-mono-xs: 14px;
+
+  /* ---------- Typography / Logo (always bold) ---------- */
+  --font-size-logo-lg: 16px;
+  --line-height-logo-lg: 20px;
+  --font-size-logo-md: 14px;
+  --line-height-logo-md: 18px;
+  --font-size-logo-sm: 12px;
+  --line-height-logo-sm: 16px;
+
+  /* ---------- Typography / Overline (always bold, uses Text font family) ---------- */
+  --font-size-overline-xs: 9px;
+  --line-height-overline-xs: 12px;
+}
