@@ -1,0 +1,95 @@
+/* Button — shared component (components/shared/button.html 참고) */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  height: 40px;
+  padding: 0 var(--spacing-lg);
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  font-family: var(--font-family-text);
+  font-size: var(--font-size-text-md);
+  line-height: var(--line-height-text-md);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--color-brand-primary);
+  outline-offset: 2px;
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+}
+
+/* ---------- Button / Primary ---------- */
+.btn-primary {
+  background: var(--color-brand-primary);
+  color: var(--color-neutral-0);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--color-brand-primary-dark);
+}
+
+.btn-primary:active:not(:disabled) {
+  background: var(--color-brand-primary-dark);
+  filter: brightness(0.92);
+}
+
+.btn-primary:disabled {
+  background: var(--color-neutral-300);
+  color: var(--color-neutral-500);
+}
+
+/* ---------- Button / Secondary ---------- */
+.btn-secondary {
+  background: var(--color-neutral-0);
+  border-color: var(--color-neutral-300);
+  color: var(--color-neutral-800);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--color-neutral-75);
+  border-color: var(--color-neutral-380);
+}
+
+.btn-secondary:active:not(:disabled) {
+  background: var(--color-neutral-100);
+  border-color: var(--color-neutral-380);
+}
+
+.btn-secondary:disabled {
+  background: var(--color-neutral-50);
+  border-color: var(--color-neutral-200);
+  color: var(--color-neutral-450);
+}
+
+/* ---------- Button / Danger ---------- */
+.btn-danger {
+  background: var(--color-alert-bg);
+  color: var(--color-alert-text);
+}
+
+.btn-danger:hover:not(:disabled) {
+  filter: brightness(0.92);
+}
+
+.btn-danger:active:not(:disabled) {
+  filter: brightness(0.85);
+}
+
+.btn-danger:disabled {
+  background: var(--color-badge-red-bg);
+  color: var(--color-neutral-0);
+  opacity: 0.6;
+}
+
+/* ---------- Button / block (full width, modal CTA 등에서 사용) ---------- */
+.btn-block {
+  width: 100%;
+}

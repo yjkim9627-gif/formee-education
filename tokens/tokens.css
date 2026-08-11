@@ -13,7 +13,7 @@
   --color-neutral-350: #c5cee0;
   --color-neutral-380: #aab2c3;
   --color-neutral-400: #c8d1e1;
-  --color-neutral-450: #a2a5b2;
+  --color-neutral-450: #a9b2c5;
   --color-neutral-500: #8a93a8;
   --color-neutral-600: #687188;
   --color-neutral-700: #475069;
@@ -37,8 +37,8 @@
   --color-badge-blue-bg: #dce7fb;
   --color-badge-gray-text: #7c7f8d;
   --color-badge-gray-bg: #efefef;
-  --color-badge-green-text: #0a7526;
-  --color-badge-green-bg: #c2ffc3;
+  --color-badge-green-text: #027a48;
+  --color-badge-green-bg: #ecfdf3;
   --color-badge-orange-text: #9f4e02;
   --color-badge-orange-bg: #ffcea0;
   --color-badge-pink-text: #af00b8;
@@ -83,6 +83,20 @@
   --radius-2xl: 16px;
   --radius-3xl: 24px;
   --radius-full: 9999px;
+
+  /* ---------- Shadow ---------- */
+  /* Figma Effect Style: Elevation/Modal (node-id 880-6537) */
+  --shadow-modal: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  /* Figma: focus/card */
+  --shadow-focus-card: 0 0 6px var(--color-neutral-150);
+
+  /* ---------- Border width ---------- */
+  --border-width-1: 1px;
+
+  /* ---------- Icon / Stroke width ---------- */
+  --icon-stroke-width: 1.6px;
+  --icon-stroke-width-12: 1.2px;
+  --icon-stroke-width-16: 1.6px;
 
   /* ---------- Typography / Font family ---------- */
   --font-family-display: 'DM Sans', sans-serif;

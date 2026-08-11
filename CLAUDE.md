@@ -28,3 +28,7 @@
 - `prototypes/` — 실제 화면 시안
 
 공통으로 쓸 수 있는 컴포넌트는 `shared`에, 특정 제품에만 쓰이는 컴포넌트는 해당 제품 폴더에 둔다.
+
+## 제품별 스타일 레퍼런스
+
+- AI Social Media 제품 화면 작업 시 `components/ai-social-media/style-reference.md`를 항상 참고할 것.
