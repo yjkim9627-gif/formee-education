@@ -58,6 +58,102 @@
   --color-error-text: #b80000;
   --color-warning-text: #d97706;
 
+  /* ---------- Color / Action (AI/Primary dark button — Figma: Actions/Publish Button, Actions/Button Primary) ---------- */
+  --color-action-primary-dark-gradient-start: #323232;
+  --color-action-primary-dark-gradient-end: #222222;
+
+  /* ---------- Color / Scale (Colour Popover "Defaults" palette — no exact Figma spec given yet,
+     generated as a placeholder 7-step scale per family; swap for real values once designed) ---------- */
+  /* Gray scale (placeholder — no exact Figma spec given yet) */
+  --color-scale-gray-100: #f0f0f0;
+  --color-scale-gray-200: #d6d6d6;
+  --color-scale-gray-300: #b2b2b2;
+  --color-scale-gray-400: #8c8c8c;
+  --color-scale-gray-500: #6b6b6b;
+  --color-scale-gray-600: #4c4c4c;
+  --color-scale-gray-700: #2e2e2e;
+
+  /* Red scale (placeholder — no exact Figma spec given yet) */
+  --color-scale-red-100: #fbe5e5;
+  --color-scale-red-200: #f4b9b9;
+  --color-scale-red-300: #ea7b7b;
+  --color-scale-red-400: #df3a3a;
+  --color-scale-red-500: #b81e1e;
+  --color-scale-red-600: #841515;
+  --color-scale-red-700: #4f0d0d;
+
+  /* Rose scale (placeholder — no exact Figma spec given yet) */
+  --color-scale-rose-100: #fbe4ec;
+  --color-scale-rose-200: #f5b8cc;
+  --color-scale-rose-300: #ec799f;
+  --color-scale-rose-400: #e23670;
+  --color-scale-rose-500: #bb1b50;
+  --color-scale-rose-600: #861339;
+  --color-scale-rose-700: #500b22;
+
+  /* Purple scale (placeholder — no exact Figma spec given yet) */
+  --color-scale-purple-100: #ede7f9;
+  --color-scale-purple-200: #d0beef;
+  --color-scale-purple-300: #a685e0;
+  --color-scale-purple-400: #7a47d1;
+  --color-scale-purple-500: #5a2bab;
+  --color-scale-purple-600: #401f7a;
+  --color-scale-purple-700: #271249;
+
+  /* Blue scale (placeholder — no exact Figma spec given yet) */
+  --color-scale-blue-100: #e5ecfa;
+  --color-scale-blue-200: #baccf3;
+  --color-scale-blue-300: #7d9fe8;
+  --color-scale-blue-400: #3c6fdd;
+  --color-scale-blue-500: #2050b6;
+  --color-scale-blue-600: #173982;
+  --color-scale-blue-700: #0e224e;
+
+  /* Cyan scale (placeholder — no exact Figma spec given yet) */
+  --color-scale-cyan-100: #e6f6fa;
+  --color-scale-cyan-200: #bce8f1;
+  --color-scale-cyan-300: #81d4e4;
+  --color-scale-cyan-400: #42bed7;
+  --color-scale-cyan-500: #259ab1;
+  --color-scale-cyan-600: #1b6e7e;
+  --color-scale-cyan-700: #10424c;
+
+  /* Teal scale (placeholder — no exact Figma spec given yet) */
+  --color-scale-teal-100: #e7f8f5;
+  --color-scale-teal-200: #c0ede5;
+  --color-scale-teal-300: #88ddcf;
+  --color-scale-teal-400: #4dcbb6;
+  --color-scale-teal-500: #30a692;
+  --color-scale-teal-600: #227769;
+  --color-scale-teal-700: #15473f;
+
+  /* Yellow-Green scale (placeholder — no exact Figma spec given yet) */
+  --color-scale-yellow-green-100: #f3f8e7;
+  --color-scale-yellow-green-200: #deedc0;
+  --color-scale-yellow-green-300: #c1dd88;
+  --color-scale-yellow-green-400: #a1cb4d;
+  --color-scale-yellow-green-500: #7fa630;
+  --color-scale-yellow-green-600: #5b7722;
+  --color-scale-yellow-green-700: #364715;
+
+  /* Yellow scale (placeholder — no exact Figma spec given yet) */
+  --color-scale-yellow-100: #fcf6e3;
+  --color-scale-yellow-200: #f7e7b6;
+  --color-scale-yellow-300: #f0d175;
+  --color-scale-yellow-400: #e8ba30;
+  --color-scale-yellow-500: #c19615;
+  --color-scale-yellow-600: #8a6b0f;
+  --color-scale-yellow-700: #534009;
+
+  /* Orange scale (placeholder — no exact Figma spec given yet) */
+  --color-scale-orange-100: #fceee3;
+  --color-scale-orange-200: #f7d1b6;
+  --color-scale-orange-300: #f0a875;
+  --color-scale-orange-400: #e87d30;
+  --color-scale-orange-500: #c15d15;
+  --color-scale-orange-600: #8a420f;
+  --color-scale-orange-700: #532809;
+
   /* ---------- Spacing ---------- */
   --spacing-1: 1px;
   --spacing-2: 2px;
@@ -89,6 +185,20 @@
   --shadow-modal: 0px 4px 10px rgba(0, 0, 0, 0.1);
   /* Figma: focus/card */
   --shadow-focus-card: 0 0 6px var(--color-neutral-150);
+  /* Figma: Actions/Publish Button inset highlight */
+  --shadow-action-primary-dark-inset: inset 0px -1px 1.2px 0px #121212;
+  /* Figma: Editor canvas poster elevation (W:Canvas > Stage > poster) */
+  --shadow-canvas-poster: 0px 16px 48px 0px rgba(15, 23, 41, 0.35);
+  /* Figma: Editor ContextBar pb-mid toggle group elevation */
+  --shadow-toggle-pill: 0px 4px 14px 0px rgba(13, 23, 41, 0.1);
+  /* Figma: Actions/Segment Button (Poster CTA) elevation */
+  --shadow-poster-cta: 0px 8px 12px 0px rgba(0, 0, 0, 0.28);
+  /* Figma: Uploads / Folder Row / Action, Editor Cell Lg hover action button elevation */
+  --shadow-cell-action: 0px 1px 1.5px 0px rgba(15, 23, 41, 0.1), 0px 1px 0.5px 0px rgba(15, 23, 41, 0.04);
+  /* Figma Effect Style: shadow/lg — ContextBar Replace Menu and other floating popovers */
+  --shadow-popover: 0px 4px 8px 0px rgba(15, 23, 41, 0.05), 0px 12px 20px 0px rgba(15, 23, 41, 0.1);
+  /* Figma: ContextBar action popovers (Layer/Align/Flip/Opacity) elevation */
+  --shadow-context-popover: 0px 12px 10px 0px rgba(15, 23, 41, 0.1), 0px 4px 4px 0px rgba(15, 23, 41, 0.05);
 
   /* ---------- Border width ---------- */
   --border-width-1: 1px;

@@ -1,0 +1,14 @@
+# macOS
+.DS_Store
+._*
+
+# Node
+node_modules/
+
+# Editor
+.vscode/
+.idea/
+
+# Temp / scratch
+*.log
+*.tmp

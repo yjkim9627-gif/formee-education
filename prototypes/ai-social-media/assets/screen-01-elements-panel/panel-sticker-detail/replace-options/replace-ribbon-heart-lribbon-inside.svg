@@ -1,0 +1,17 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="5.49397" height="2.97265" viewBox="0 0 5.49397 2.97265" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="L-Ribbon Inside">
+<path d="M0 1.48331C0 0.236365 1.75215 -0.346045 2.88167 0.212887L5.49397 1.48632L2.88167 2.75976C1.75215 3.31869 0 2.73628 0 1.48934L3.86556e-06 1.48632L0 1.48331Z" fill="url(#paint0_radial_0_1043)"/>
+<path d="M0 1.48331C0 0.236365 1.75215 -0.346045 2.88167 0.212887L5.49397 1.48632L2.88167 2.75976C1.75215 3.31869 0 2.73628 0 1.48934L3.86556e-06 1.48632L0 1.48331Z" fill="url(#paint1_radial_0_1043)"/>
+</g>
+<defs>
+<radialGradient id="paint0_radial_0_1043" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1.19001 4.11774) rotate(-72.2065) scale(4.19275 10.9917)">
+<stop offset="0.0192045" stop-color="#FC8306"/>
+<stop offset="0.217544" stop-color="#F78E13"/>
+<stop offset="0.817108" stop-color="#B23A28"/>
+</radialGradient>
+<radialGradient id="paint1_radial_0_1043" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1.96709 1.01022) rotate(103.496) scale(1.06335 1.96525)">
+<stop stop-color="#B23A28"/>
+<stop offset="1" stop-color="#B23A28" stop-opacity="0"/>
+</radialGradient>
+</defs>
+</svg>
