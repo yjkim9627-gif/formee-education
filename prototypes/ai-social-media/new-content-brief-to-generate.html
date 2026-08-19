@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>New Content — Brief → Generate</title>
+<style>
+  :root{
+    --neutral-900:#0f1729; --neutral-700:#475069; --neutral-500:#8a93a8;
+    --neutral-450:#a9b2c5; --neutral-400:#c8d1e1; --neutral-300:#d6ddeb; --neutral-200:#e3e8f2;
+    --neutral-150:#eef1f6; --neutral-100:#eef2fa; --neutral-50:#f8faff;
+    --brand:#4f6de6; --brand-light:#dce7fb; --brand-mid:#a8cbff; --accent:#ed7797;
+    --amber:#a67c00; --amber-bg:#fdf6e3; --amber-border:#e8c877;
+    --green:#1a9e6d;
+    --radius-lg:8px; --radius-xl:12px;
+    --font:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; font-family:var(--font); background:#dfe4ee; display:flex; align-items:center; justify-content:center; min-height:100vh; padding:24px;}
+
+  .app{
+    width:100%; max-width:1340px; height:860px; background:#fff; border-radius:16px; overflow:hidden;
+    box-shadow:0 24px 70px rgba(15,23,41,0.18); display:flex; border:1px solid var(--neutral-300);
+  }
+
+  /* ============ NAV SIDEBAR ============ */
+  .nav{width:210px; flex-shrink:0; background:#fff; border-right:1px solid var(--neutral-300); padding:16px 12px; display:flex; flex-direction:column; gap:20px;}
+  .nav-brand{display:flex; align-items:center; gap:10px; padding:8px 4px;}
+  .nav-brand .mark{width:28px; height:28px; border-radius:7px; background:linear-gradient(135deg,var(--brand),var(--accent)); flex-shrink:0;}
+  .nav-brand .txt b{display:block; font-size:13px; font-weight:600; color:var(--neutral-900);}
+  .nav-brand .txt span{display:block; font-size:10.5px; color:var(--neutral-500);}
+  .nav-group{display:flex; flex-direction:column; gap:1px;}
+  .nav-label{font-size:10px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--neutral-500); padding:6px 8px;}
+  .nav-item{display:flex; align-items:center; gap:9px; padding:8px 8px; border-radius:7px; font-size:13px; color:var(--neutral-700); font-weight:500;}
+  .nav-item .ic{width:15px; height:15px; border-radius:4px; background:var(--neutral-300); flex-shrink:0;}
+  .nav-item.active{background:var(--brand-light); color:var(--neutral-900);}
+  .nav-item.active .ic{background:var(--brand);}
+
+  /* ============ MAIN ============ */
+  .main{flex:1; display:flex; flex-direction:column; min-width:0; position:relative; background:var(--neutral-50);}
+
+  .topbar{
+    height:56px; border-bottom:1px solid var(--neutral-300); background:#fff; display:flex; align-items:center;
+    gap:20px; padding:0 24px; flex-shrink:0;
+  }
+  .stepper{display:flex; align-items:center; gap:8px;}
+  .step{display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:var(--neutral-400); cursor:default;}
+  .step .num{width:20px; height:20px; border-radius:10px; border:1px solid var(--neutral-400); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; color:var(--neutral-400); background:#fff;}
+  .step.active{color:var(--brand);}
+  .step.active .num{background:var(--brand); border-color:var(--brand); color:#fff;}
+  .step.done{color:var(--neutral-700); cursor:pointer;}
+  .step.done .num{background:var(--green); border-color:var(--green); color:#fff;}
+  .step.done:hover{color:var(--brand);}
+  .connector{width:30px; height:2px; background:var(--neutral-200);}
+  .topbar-spacer{flex:1;}
+  .topbar-avatar{width:32px; height:32px; border-radius:999px; background:var(--brand-mid); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:#0b2b55;}
+
+  /* ---- shared view ---- */
+  .view{position:absolute; inset:56px 0 0 0; overflow-y:auto; opacity:1; transition:opacity .2s ease;}
+  .view.hidden{opacity:0; pointer-events:none; position:absolute;}
+
+  /* ---- VIEW: Brief & Style ---- */
+  .brief-content{max-width:960px; margin:0 auto; padding:32px 0 100px;}
+  .brief-heading h1{font-size:22px; font-weight:700; color:var(--neutral-900); margin:0 0 6px; letter-spacing:-0.2px;}
+  .brief-heading p{font-size:13px; color:var(--neutral-500); margin:0 0 28px;}
+  .seg-control{display:inline-flex; background:var(--neutral-100); border-radius:var(--radius-xl); padding:4px; gap:2px; margin-bottom:16px;}
+  .seg-chip{padding:8px 20px; border-radius:var(--radius-lg); font-size:14px; font-weight:500; color:var(--neutral-700);}
+  .seg-chip.active{background:#fff; color:var(--neutral-900); font-weight:600; box-shadow:0 1px 1.5px rgba(15,23,41,0.1),0 1px 0.5px rgba(15,23,41,0.04);}
+  .prompt-box{border:1.2px solid var(--neutral-400); border-radius:var(--radius-xl); padding:24px; display:flex; flex-direction:column; gap:32px;}
+  .prompt-top{display:flex; flex-direction:column; gap:20px;}
+  .prompt-cells{display:flex; gap:8px;}
+  .prompt-cell{background:var(--neutral-100); border-radius:var(--radius-lg); padding:20px 12px; display:flex; align-items:center; gap:6px; flex:1; justify-content:center;}
+  .prompt-cell .ic{width:20px; height:20px; border-radius:4px; background:var(--neutral-400);}
+  .prompt-cell span{font-size:13px; font-weight:500; color:var(--neutral-450);}
+  .prompt-summary{font-size:14px; color:var(--neutral-500); line-height:22px; margin:0;}
+  .prompt-bottom{display:flex; align-items:center; justify-content:space-between;}
+  .prompt-chips{display:flex; gap:8px;}
+  .prompt-chip{border:1px solid var(--neutral-400); border-radius:8px; padding:7px 12px 7px 10px; font-size:14px; font-weight:500; color:var(--neutral-700); display:flex; align-items:center; gap:5px;}
+  .prompt-chip .ic{width:16px; height:16px; border-radius:3px; background:var(--neutral-400);}
+  .refine-btn{width:36px; height:36px; border:1px solid var(--neutral-400); border-radius:var(--radius-lg); background:#fff; display:flex; align-items:center; justify-content:center; color:var(--neutral-700); font-size:14px;}
+
+  .action-bar{position:absolute; left:0; right:0; bottom:0; background:#fff; border-top:1px solid var(--neutral-200); padding:12px 64px; display:flex; align-items:center; justify-content:center; gap:32px;}
+  .readiness{width:300px;}
+  .readiness-top{display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;}
+  .readiness-top span:first-child{color:var(--neutral-700); font-weight:500;}
+  .readiness-top span:last-child{color:var(--neutral-700); font-weight:600;}
+  .readiness-bar{height:6px; border-radius:999px; background:var(--neutral-100); overflow:hidden;}
+  .readiness-fill{height:100%; background:var(--brand); border-radius:999px;}
+  .meta-text{font-size:12px; color:var(--neutral-500); flex-shrink:0;}
+  .bar-actions{display:flex; gap:12px; flex-shrink:0;}
+  .btn-secondary{border:1px solid var(--neutral-400); background:#fff; border-radius:var(--radius-lg); padding:9px 14px; font-size:14px; font-weight:600; color:var(--neutral-700); font-family:var(--font); cursor:pointer;}
+  .btn-dark{border:none; background:linear-gradient(#323232,#222); border-radius:var(--radius-lg); padding:9px 14px; font-size:14px; font-weight:600; color:#fff; font-family:var(--font); cursor:pointer; box-shadow:0 1px 2px rgba(13,13,13,0.1);}
+
+  /* ---- VIEW: Generate (shared shell: chat + stage area) ---- */
+  .gen-body{display:flex; height:100%;}
+  .chat{width:280px; flex-shrink:0; background:var(--neutral-50); border-right:1px solid var(--neutral-300); display:flex; flex-direction:column;}
+  .chat-header{padding:14px 16px; border-bottom:1px solid var(--neutral-300); display:flex; align-items:center; gap:8px;}
+  .chat-header .dot{width:6px; height:6px; border-radius:999px; background:var(--green);}
+  .chat-header .title{font-size:13px; font-weight:600;}
+  .chat-header .status{font-size:11px; color:var(--neutral-500); margin-left:auto;}
+  .chat-log{flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:10px;}
+  .msg{font-size:12.5px; line-height:1.5; padding:9px 11px; border-radius:10px; max-width:92%;}
+  .msg.user{align-self:flex-end; background:var(--brand); color:#fff; border-bottom-right-radius:3px;}
+  .msg.ai{align-self:flex-start; background:var(--neutral-150); color:var(--neutral-700); border-bottom-left-radius:3px;}
+  .msg.ai .tag{display:inline-block; font-size:10px; font-weight:600; color:var(--brand); margin-bottom:3px;}
+  .msg .note{display:block; font-size:10.5px; color:var(--neutral-500); margin-top:3px;}
+  .chat-quick{padding:0 16px 10px; display:flex; gap:6px; flex-wrap:wrap;}
+  .quick-chip{border:1px solid var(--neutral-400); border-radius:999px; padding:5px 10px; font-size:11px; color:var(--neutral-700); background:#fff; cursor:pointer;}
+  .chat-hint{font-size:10.5px; color:var(--neutral-500); padding:0 16px 10px;}
+  .chat-input-row{padding:12px; border-top:1px solid var(--neutral-300); display:flex; gap:8px;}
+  .chat-input{flex:1; border:1px solid var(--neutral-400); border-radius:8px; padding:9px 12px; font-size:12.5px; font-family:var(--font); outline:none;}
+  .chat-input:focus{border-color:var(--brand);}
+  .chat-send{width:34px; height:34px; border-radius:8px; background:var(--brand); border:none; color:#fff; cursor:pointer; flex-shrink:0;}
+
+  .stage-area{flex:1; display:flex; flex-direction:column; min-width:0;}
+  .stage-tabs{display:flex; gap:18px; padding:12px 24px 0; border-bottom:1px solid var(--neutral-300); flex-shrink:0;}
+  .stage-tab{font-size:12.5px; font-weight:600; color:var(--neutral-500); padding:0 2px 12px; border-bottom:2px solid transparent;}
+  .stage-tab.active{color:var(--neutral-900); border-bottom-color:var(--neutral-900);}
+  .stage-tab.locked{color:var(--neutral-400);}
+  .stage-tab .check{color:var(--green); font-weight:700;}
+
+  /* persistent settings bar */
+  .settings-bar{display:flex; gap:8px; padding:12px 24px; border-bottom:1px solid var(--neutral-200); background:#fff; flex-shrink:0; flex-wrap:wrap;}
+  .setting-chip{display:flex; align-items:center; gap:6px; border:1px solid var(--neutral-300); border-radius:999px; padding:5px 12px; font-size:11.5px; color:var(--neutral-700); background:var(--neutral-50);}
+  .setting-chip b{color:var(--neutral-900); font-weight:600;}
+  .setting-chip .avatar-mini{width:16px; height:16px; border-radius:999px; background:var(--brand-mid);}
+
+  .stage-body{flex:1; padding:20px 28px; overflow-y:auto;}
+  .stage-title{font-size:15px; font-weight:700; margin:0 0 4px;}
+  .stage-sub{font-size:12px; color:var(--neutral-500); margin:0 0 18px;}
+
+  /* ---- Script stage ---- */
+  .script-panel{border:1px solid var(--neutral-300); border-radius:12px; padding:20px; max-width:680px;}
+  .script-label{font-size:12px; font-weight:600; color:var(--neutral-700); margin-bottom:8px;}
+  .script-text{width:100%; border:1px solid var(--neutral-300); border-radius:8px; padding:14px; font-size:14px; font-family:var(--font); font-style:italic; color:var(--neutral-900); line-height:1.6; resize:vertical; min-height:80px;}
+  .avatar-row{display:flex; gap:14px; margin-top:20px; align-items:flex-end;}
+  .avatar-opt{display:flex; flex-direction:column; align-items:center; gap:6px;}
+  .avatar-opt .circle{width:52px; height:52px; border-radius:999px; background:linear-gradient(135deg,var(--neutral-300),var(--neutral-200)); border:2px solid transparent;}
+  .avatar-opt.selected .circle{border-color:var(--brand);}
+  .avatar-opt span{font-size:11px; color:var(--neutral-700);}
+  .avatar-more{width:52px; height:52px; border-radius:999px; border:1px dashed var(--neutral-400); display:flex; align-items:center; justify-content:center; font-size:10.5px; color:var(--neutral-500); text-align:center;}
+  .voice-row{margin-top:20px; display:flex; gap:10px; align-items:center;}
+  .voice-select{flex:1; max-width:280px; border:1px solid var(--neutral-400); border-radius:8px; padding:9px 12px; font-size:13px; color:var(--neutral-500);}
+  .play-sample{border:1px solid var(--neutral-400); border-radius:8px; padding:9px 14px; font-size:13px; color:var(--neutral-700); background:#fff; display:flex; align-items:center; gap:6px;}
+  .stage-cta-row{display:flex; justify-content:flex-end; margin-top:20px; max-width:680px;}
+
+  /* ---- Timeline stage ---- */
+  .timeline-bar{display:flex; gap:4px; margin-bottom:16px; max-width:680px;}
+  .timeline-seg{flex:1; height:28px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:600; color:#fff;}
+  .timeline-seg.t1{background:var(--amber); border:2px solid #8a6100;}
+  .timeline-seg.t2{background:var(--brand);}
+  .scene-card{border:1px solid var(--neutral-300); border-radius:10px; padding:16px; margin-bottom:14px; max-width:680px;}
+  .scene-card.current{border-color:var(--brand); box-shadow:0 0 0 3px rgba(79,109,230,0.12);}
+  .scene-time{font-size:11px; font-weight:600; color:var(--neutral-500); margin-bottom:8px; display:flex; align-items:center; gap:6px;}
+  .scene-time .dot{width:7px; height:7px; border-radius:999px; background:var(--amber);}
+  .scene-time.done .dot{background:var(--brand);}
+  .scene-script{width:100%; border:1px solid var(--neutral-300); border-radius:7px; padding:10px 12px; font-size:14px; font-family:var(--font); color:var(--neutral-900); margin-bottom:4px;}
+  .scene-guide{font-size:10.5px; color:var(--neutral-500); margin-bottom:12px;}
+  .scene-fields{display:flex; gap:10px; margin-bottom:10px;}
+  .scene-field{flex:1; display:flex; flex-direction:column; gap:4px;}
+  .scene-field label{font-size:10.5px; font-weight:600; color:var(--neutral-500); display:flex; align-items:center; gap:4px;}
+  .scene-field input{border:1px solid var(--neutral-300); border-radius:7px; padding:8px 10px; font-size:12.5px; font-family:var(--font); color:var(--neutral-900);}
+  .scene-note{font-size:10.5px; color:var(--neutral-500);}
+  .timeline-cta{display:flex; justify-content:flex-end; align-items:center; gap:12px; max-width:680px; margin-top:8px;}
+
+  /* ---- Keyframes stage (existing) ---- */
+  .no-version-note{display:flex; align-items:center; gap:6px; font-size:11.5px; color:var(--neutral-700); background:var(--neutral-100); border:1px solid var(--neutral-300); border-radius:8px; padding:8px 12px; margin-bottom:16px; max-width:680px;}
+  .no-version-note b{color:var(--neutral-900);}
+  .seg-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:16px; max-width:600px;}
+  .seg-card{border:1.5px solid var(--neutral-300); border-radius:10px; overflow:hidden; background:#fff;}
+  .seg-card.pending{border-color:var(--amber-border); background:var(--amber-bg);}
+  .seg-card .thumb{height:150px; background:linear-gradient(135deg,#e3e7ef,var(--neutral-150)); display:flex; align-items:center; justify-content:center; color:var(--neutral-500); font-size:12px;}
+  .seg-card.pending .thumb{background:linear-gradient(135deg,#f5e6c8,#fdf6e3);}
+  .spinner{width:22px; height:22px; border-radius:999px; border:2.5px solid rgba(166,124,0,0.25); border-top-color:var(--amber); animation:spin .8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .seg-meta{padding:10px 12px; display:flex; justify-content:space-between; align-items:center;}
+  .seg-label{font-size:12px; font-weight:600; display:block;}
+  .seg-time{font-size:10.5px; color:var(--neutral-500);}
+  .seg-status{font-size:11px; font-weight:600;}
+  .seg-status.ready{color:var(--green);}
+  .seg-status.pending{color:var(--amber);}
+  .regen-btn{width:26px; height:26px; border-radius:7px; border:1px solid var(--neutral-400); background:#fff; cursor:pointer; color:var(--neutral-700); font-size:13px;}
+
+  .stage2-panel{border:1px solid var(--neutral-300); border-radius:10px; padding:16px 18px; display:flex; align-items:center; justify-content:space-between; max-width:600px; transition:opacity .2s;}
+  .stage2-panel.locked{opacity:.45; pointer-events:none;}
+  .stage2-left b{display:block; font-size:13px; color:var(--neutral-900); margin-bottom:2px;}
+  .stage2-left{font-size:12.5px; color:var(--neutral-700);}
+  .btn-primary{background:var(--neutral-900); color:#fff; border:none; border-radius:8px; padding:10px 18px; font-size:12.5px; font-weight:600; font-family:var(--font); cursor:pointer;}
+  .btn-primary:disabled{background:var(--neutral-400); cursor:not-allowed;}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- NAV -->
+  <div class="nav">
+    <div class="nav-brand">
+      <div class="mark"></div>
+      <div class="txt"><b>Formee Education</b><span>AI Social Media</span></div>
+    </div>
+    <div class="nav-group"><div class="nav-item"><div class="ic"></div>Home</div></div>
+    <div class="nav-group">
+      <div class="nav-label">Create</div>
+      <div class="nav-item active"><div class="ic"></div>New Content</div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Content</div>
+      <div class="nav-item"><div class="ic"></div>Library</div>
+      <div class="nav-item"><div class="ic"></div>Schedule</div>
+      <div class="nav-item"><div class="ic"></div>Trends</div>
+      <div class="nav-item"><div class="ic"></div>Analytics</div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Asset</div>
+      <div class="nav-item"><div class="ic"></div>Brand Setup</div>
+      <div class="nav-item"><div class="ic"></div>Characters</div>
+      <div class="nav-item"><div class="ic"></div>Voices</div>
+      <div class="nav-item"><div class="ic"></div>Audio Library</div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="stepper">
+        <div class="step" id="stepBrief" onclick="goToBrief()"><div class="num">1</div>Brief & Style</div>
+        <div class="connector"></div>
+        <div class="step" id="stepGenerate"><div class="num">2</div>Generate</div>
+        <div class="connector"></div>
+        <div class="step" id="stepEdit"><div class="num">3</div>Edit & Publish</div>
+      </div>
+      <div class="topbar-spacer"></div>
+      <div class="topbar-avatar">DV</div>
+    </div>
+
+    <!-- VIEW 1: Brief & Style -->
+    <div class="view" id="briefView">
+      <div class="brief-content">
+        <div class="brief-heading">
+          <h1>New content</h1>
+          <p>Describe your idea — AI handles everything else</p>
+        </div>
+        <div class="seg-control">
+          <div class="seg-chip active">Reel / Short</div>
+          <div class="seg-chip">Story image</div>
+          <div class="seg-chip">Image post</div>
+          <div class="seg-chip">Carousel</div>
+        </div>
+        <div class="prompt-box">
+          <div class="prompt-top">
+            <div class="prompt-cells">
+              <div class="prompt-cell"><div class="ic"></div><span>Start frame</span></div>
+              <div class="prompt-cell"><div class="ic"></div><span>End frame</span></div>
+              <div class="prompt-cell"><div class="ic"></div><span>Reference</span></div>
+            </div>
+            <p class="prompt-summary" id="briefSummary">에너지 넘치는 신제품 세럼 홍보 영상, 밝은 톤, 세로형. 등장인물이 직접 말하는 형식으로.</p>
+          </div>
+          <div class="prompt-bottom">
+            <div class="prompt-chips">
+              <div class="prompt-chip"><div class="ic"></div>9:16</div>
+              <div class="prompt-chip"><div class="ic"></div>8s</div>
+            </div>
+            <div class="refine-btn">↑</div>
+          </div>
+        </div>
+      </div>
+      <div class="action-bar">
+        <div class="readiness">
+          <div class="readiness-top"><span>Brief readiness</span><span>79%</span></div>
+          <div class="readiness-bar"><div class="readiness-fill" style="width:79%"></div></div>
+        </div>
+        <div class="meta-text">Reel / Short · 9:16 · 8s · 2 destinations</div>
+        <div class="bar-actions">
+          <button class="btn-secondary">Save as draft</button>
+          <button class="btn-dark" id="continueBtn">Continue</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 2: Generate -->
+    <div class="view hidden" id="generateView">
+      <div class="gen-body">
+
+        <!-- CHAT (persistent across all generate sub-stages) -->
+        <div class="chat">
+          <div class="chat-header"><span class="dot"></span><span class="title">Copilot</span><span class="status" id="chatStatus">Waiting on you</span></div>
+          <div class="chat-log" id="chatLog">
+            <div class="msg user" id="chatUserMsg">에너지 넘치는 신제품 세럼 홍보 영상, 밝은 톤, 세로형. 등장인물이 직접 말하는 형식으로.</div>
+            <div class="msg ai"><span class="tag">AI</span>밝고 에너지 넘치는 8초 스크립트로 초안 잡았어요. 세로형(9:16), 직접 발화 형식 반영했습니다.
+              <span class="note">Script drafted</span>
+            </div>
+          </div>
+          <div class="chat-quick" id="chatQuick">
+            <div class="quick-chip" onclick="quickAction('looks-good')">Looks good → Timeline</div>
+            <div class="quick-chip" onclick="quickAction('regenerate')">Regenerate</div>
+          </div>
+          <div class="chat-hint">💬 "더 짧게", "Seg 2만 다시" 같은 요청도 여기서 바로</div>
+          <div class="chat-input-row">
+            <input class="chat-input" id="chatInput" placeholder="메시지 입력...">
+            <button class="chat-send" id="chatSend">↑</button>
+          </div>
+        </div>
+
+        <!-- STAGE AREA -->
+        <div class="stage-area">
+          <div class="stage-tabs">
+            <div class="stage-tab" id="tabScript" onclick="showSub('script')">Script</div>
+            <div class="stage-tab locked" id="tabTimeline" onclick="showSub('timeline')">Timeline</div>
+            <div class="stage-tab locked" id="tabKeyframes" onclick="showSub('keyframes')">Keyframes</div>
+            <div class="stage-tab locked" id="tabStudio">Voice + Video</div>
+          </div>
+
+          <!-- persistent settings bar -->
+          <div class="settings-bar">
+            <div class="setting-chip">⏱ <b>8s</b></div>
+            <div class="setting-chip">▭ <b>9:16</b></div>
+            <div class="setting-chip">🌐 <b>Korean</b></div>
+            <div class="setting-chip"><span class="avatar-mini"></span>Character: <b id="settingCharacter">미선택</b></div>
+          </div>
+
+          <!-- SUB-STAGE: Script -->
+          <div class="stage-sub" id="subScript">
+            <div class="stage-body">
+              <h2 class="stage-title">Script</h2>
+              <p class="stage-sub">전체 스크립트를 먼저 확정하세요. 이후 시간 구간별로 쪼개서 다듬게 됩니다.</p>
+
+              <div class="script-panel">
+                <div class="script-label">전체 스크립트 (8초 분량)</div>
+                <textarea class="script-text" id="fullScript">"이 세럼 하나로 피부가 달라져요! 지금 바로 확인해보세요."</textarea>
+
+                <div class="avatar-row">
+                  <div class="avatar-opt selected" onclick="selectAvatar(this,'민지')"><div class="circle"></div><span>민지</span></div>
+                  <div class="avatar-opt" onclick="selectAvatar(this,'현우')"><div class="circle"></div><span>현우</span></div>
+                  <div class="avatar-opt" onclick="selectAvatar(this,'소율')"><div class="circle"></div><span>소율</span></div>
+                  <div class="avatar-more">+68<br>more</div>
+                </div>
+
+                <div class="voice-row">
+                  <div class="voice-select">민지 — 밝고 경쾌한 톤</div>
+                  <div class="play-sample">▶ Play sample</div>
+                </div>
+
+                <div class="stage-cta-row">
+                  <button class="btn-primary" onclick="confirmScript()">Continue to Timeline →</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUB-STAGE: Timeline -->
+          <div class="stage-sub" id="subTimeline" style="display:none;">
+            <div class="stage-body">
+              <h2 class="stage-title">Timeline</h2>
+              <p class="stage-sub">8초 → 4초 단위 2개 구간. 구간별 대사·장면 설명을 확정하면 썸네일 제작으로 넘어갑니다.</p>
+
+              <div class="timeline-bar">
+                <div class="timeline-seg t1">0:00–0:04</div>
+                <div class="timeline-seg t2">0:04–0:08</div>
+              </div>
+
+              <div class="scene-card current">
+                <div class="scene-time"><span class="dot"></span>Segment 1 · 0:00–0:04</div>
+                <textarea class="scene-script">이 세럼 하나로 피부가 달라져요!</textarea>
+                <div class="scene-guide">💡 4초 분량 가이드 · 한국어 기준 약 8~10단어 (현재 9단어)</div>
+                <div class="scene-fields">
+                  <div class="scene-field"><label>📍 Location</label><input value="밝은 스튜디오, 클로즈업"></div>
+                  <div class="scene-field"><label>🎬 Activity</label><input value="제품을 들어보이며 활짝 웃는 표정"></div>
+                </div>
+                <div class="scene-note">Scene (designed) · AI가 이 대사에 맞는 장면을 자동으로 구성합니다</div>
+              </div>
+
+              <div class="scene-card">
+                <div class="scene-time"><span class="dot"></span>Segment 2 · 0:04–0:08</div>
+                <textarea class="scene-script">지금 바로 확인해보세요!</textarea>
+                <div class="scene-guide">💡 4초 분량 가이드 · 한국어 기준 약 8~10단어 (현재 7단어)</div>
+                <div class="scene-fields">
+                  <div class="scene-field"><label>📍 Location</label><input value="제품 패키지 클로즈업"></div>
+                  <div class="scene-field"><label>🎬 Activity</label><input value="제품을 카메라 쪽으로 내미는 동작"></div>
+                </div>
+                <div class="scene-note">Scene (designed) · AI가 이 대사에 맞는 장면을 자동으로 구성합니다</div>
+              </div>
+
+              <div class="timeline-cta">
+                <span class="meta-text">confirm 시 각 구간 썸네일 제작이 시작됩니다</span>
+                <button class="btn-primary" onclick="confirmTimeline()">Confirm timeline → Keyframes</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUB-STAGE: Keyframes -->
+          <div class="stage-sub" id="subKeyframes" style="display:none;">
+            <div class="stage-body">
+              <h2 class="stage-title">Keyframes</h2>
+              <p class="stage-sub">각 구간의 시작 프레임을 확정하세요.</p>
+
+              <div class="no-version-note"><span>⚠</span><span><b>버전 선택 없음</b> — 구간별로 개별 재생성만 가능</span></div>
+
+              <div class="seg-grid">
+                <div class="seg-card" id="seg1">
+                  <div class="thumb">Seg 1 preview</div>
+                  <div class="seg-meta">
+                    <div><span class="seg-label">Segment 1</span><span class="seg-time">0:00–0:04</span></div>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                      <span class="seg-status ready">✓ 승인됨</span>
+                      <button class="regen-btn" onclick="regenerate('seg1')">↻</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="seg-card pending" id="seg2">
+                  <div class="thumb"><div class="spinner"></div></div>
+                  <div class="seg-meta">
+                    <div><span class="seg-label">Segment 2</span><span class="seg-time">0:04–0:08</span></div>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                      <span class="seg-status pending" id="seg2status">⋯ 생성중</span>
+                      <button class="regen-btn" onclick="regenerate('seg2')">↻</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="stage2-panel locked" id="stage2panel">
+                <div class="stage2-left"><b>Voice + Video 생성</b>모든 구간의 키프레임이 승인되면 진행할 수 있어요 (<span id="readyCount">1</span>/2 준비됨)</div>
+                <button class="btn-primary" id="proceedBtn" disabled>Proceed →</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function setStep(active){
+  const b = document.getElementById('stepBrief');
+  b.className = active === 1 ? 'step active' : 'step done';
+  document.getElementById('stepGenerate').className = active === 2 ? 'step active' : (active > 2 ? 'step done' : 'step');
+}
+setStep(1);
+
+function goToBrief(){
+  document.getElementById('generateView').classList.add('hidden');
+  document.getElementById('briefView').classList.remove('hidden');
+  setStep(1);
+}
+
+document.getElementById('continueBtn').addEventListener('click', () => {
+  document.getElementById('briefView').classList.add('hidden');
+  document.getElementById('generateView').classList.remove('hidden');
+  setStep(2);
+  showSub('script');
+});
+
+// ---- sub-stage switching within Generate ----
+function showSub(name){
+  const tabs = {script:'tabScript', timeline:'tabTimeline', keyframes:'tabKeyframes'};
+  const subs = {script:'subScript', timeline:'subTimeline', keyframes:'subKeyframes'};
+  const tabEl = document.getElementById(tabs[name]);
+  if(tabEl.classList.contains('locked')) return;
+  Object.values(tabs).forEach(id => document.getElementById(id).classList.remove('active'));
+  tabEl.classList.add('active');
+  Object.values(subs).forEach(id => document.getElementById(id).style.display = 'none');
+  document.getElementById(subs[name]).style.display = 'block';
+}
+showSub('script');
+
+function selectAvatar(el, name){
+  document.querySelectorAll('.avatar-opt').forEach(a => a.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('settingCharacter').textContent = name;
+}
+selectAvatar(document.querySelector('.avatar-opt'), '민지');
+
+function confirmScript(){
+  document.getElementById('tabScript').innerHTML = '<span class="check">✓</span> Script';
+  document.getElementById('tabTimeline').classList.remove('locked');
+  showSub('timeline');
+  document.getElementById('chatLog').innerHTML += '<div class="msg ai"><span class="tag">AI</span>스크립트 확정했어요. 8초를 4초씩 2개 구간으로 나눠서 장면을 설계할게요.</div>';
+}
+
+function confirmTimeline(){
+  document.getElementById('tabTimeline').innerHTML = '<span class="check">✓</span> Timeline';
+  document.getElementById('tabKeyframes').classList.remove('locked');
+  showSub('keyframes');
+  document.getElementById('chatLog').innerHTML += '<div class="msg ai"><span class="tag">AI</span>타임라인 확정했어요. 각 구간의 대표 이미지를 생성할게요.</div>';
+}
+
+function quickAction(action){
+  if(action === 'looks-good') confirmScript();
+}
+
+// ---- keyframe regen logic ----
+function markReady(id){
+  const card = document.getElementById(id);
+  card.classList.remove('pending');
+  card.querySelector('.thumb').innerHTML = id.replace('seg','Seg ') + ' preview';
+  const statusEl = card.querySelector('.seg-status');
+  statusEl.className = 'seg-status ready';
+  statusEl.innerHTML = '✓ 승인됨';
+  checkAllReady();
+}
+function regenerate(id){
+  const card = document.getElementById(id);
+  card.classList.add('pending');
+  card.querySelector('.thumb').innerHTML = '<div class="spinner"></div>';
+  const statusEl = card.querySelector('.seg-status');
+  statusEl.className = 'seg-status pending';
+  statusEl.innerHTML = '⋯ 생성중';
+  checkAllReady();
+  setTimeout(() => markReady(id), 1400);
+}
+function checkAllReady(){
+  const cards = document.querySelectorAll('.seg-card');
+  const readyCards = document.querySelectorAll('.seg-card:not(.pending)');
+  document.getElementById('readyCount').textContent = readyCards.length;
+  const panel = document.getElementById('stage2panel');
+  const btn = document.getElementById('proceedBtn');
+  const tabStudio = document.getElementById('tabStudio');
+  if(readyCards.length === cards.length){
+    panel.classList.remove('locked'); btn.disabled = false; tabStudio.classList.remove('locked');
+  } else {
+    panel.classList.add('locked'); btn.disabled = true; tabStudio.classList.add('locked');
+  }
+}
+
+document.getElementById('chatSend').addEventListener('click', sendMsg);
+document.getElementById('chatInput').addEventListener('keydown', (e) => { if(e.key === 'Enter') sendMsg(); });
+function sendMsg(){
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if(!text) return;
+  const log = document.getElementById('chatLog');
+  const msg = document.createElement('div');
+  msg.className = 'msg user';
+  msg.textContent = text;
+  log.appendChild(msg);
+  log.scrollTop = log.scrollHeight;
+  input.value = '';
+}
+</script>
+
+</body>
+</html>
