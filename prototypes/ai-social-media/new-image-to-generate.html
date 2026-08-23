@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>New Image — Brief → Draft → Versions</title>
+<style>
+  :root{
+    --neutral-900:#0f1729; --neutral-700:#475069; --neutral-500:#8a93a8;
+    --neutral-450:#a9b2c5; --neutral-400:#c8d1e1; --neutral-300:#d6ddeb; --neutral-200:#e3e8f2;
+    --neutral-150:#eef1f6; --neutral-100:#eef2fa; --neutral-50:#f8faff;
+    --brand:#4f6de6; --brand-light:#dce7fb; --brand-mid:#a8cbff; --accent:#ed7797;
+    --amber:#a67c00; --amber-bg:#fdf6e3; --amber-border:#e8c877;
+    --green:#1a9e6d;
+    --radius-lg:8px; --radius-xl:12px;
+    --font:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; font-family:var(--font); background:#dfe4ee; display:flex; align-items:center; justify-content:center; min-height:100vh; padding:24px;}
+
+  .app{
+    width:100%; max-width:1920px; height:min(1162px, calc(100vh - 48px)); background:#fff; border-radius:16px; overflow:hidden;
+    box-shadow:0 24px 70px rgba(15,23,41,0.18); display:flex; border:1px solid var(--neutral-300);
+  }
+
+  /* ============ NAV SIDEBAR ============ */
+  .nav{width:262px; flex-shrink:0; background:#fff; border-right:1px solid var(--neutral-300); padding:16px 12px; display:flex; flex-direction:column; gap:20px; transition:width 0.2s ease, padding 0.2s ease; overflow:hidden;}
+  .nav-brand{display:flex; align-items:center; gap:10px; padding:8px 4px;}
+  .nav-brand .mark{width:28px; height:28px; border-radius:7px; background:linear-gradient(135deg,var(--brand),var(--accent)); flex-shrink:0;}
+  .nav-brand .txt b{display:block; font-size:13px; font-weight:600; color:var(--neutral-900); white-space:nowrap;}
+  .nav-brand .txt span{display:block; font-size:10.5px; color:var(--neutral-500); white-space:nowrap;}
+  .nav-group{display:flex; flex-direction:column; gap:1px;}
+  .nav-label{font-size:10px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--neutral-500); padding:6px 8px; white-space:nowrap;}
+  .nav-item{display:flex; align-items:center; gap:9px; padding:8px 8px; border-radius:7px; font-size:13px; color:var(--neutral-700); font-weight:500; white-space:nowrap;}
+  .nav-item .ic{position:relative; flex-shrink:0;}
+  .nav-item .ic.clip{overflow:hidden;}
+  .nav-item .ic .f{position:absolute;}
+  .nav-item .ic img{display:block; width:100%; height:100%; max-width:none;}
+  .nav-item.active{background:var(--brand-light); color:var(--neutral-900);}
+  .nav-workspace{display:flex; align-items:center; justify-content:space-between; gap:8px; height:36px; padding:0 12px; margin:0 4px 4px; border:1px solid var(--neutral-400); border-radius:8px; background:#fff; font-size:14px; color:var(--neutral-500); cursor:pointer;}
+  .nav-workspace .chevron{color:var(--neutral-500); font-size:10px; flex-shrink:0;}
+
+  .nav.collapsed{width:64px; padding:16px 8px;}
+  .nav.collapsed .nav-workspace{display:none;}
+  .nav.collapsed .nav-brand{justify-content:center; padding:8px 0;}
+  .nav.collapsed .nav-brand .txt, .nav.collapsed .nav-label, .nav.collapsed .nav-item .label{display:none;}
+  .nav.collapsed .nav-item{justify-content:center; padding:8px;}
+
+  /* ============ MAIN ============ */
+  .main{flex:1; display:flex; flex-direction:column; min-width:0; position:relative; background:var(--neutral-50);}
+
+  .topbar{
+    height:56px; border-bottom:1px solid var(--neutral-300); background:#fff; display:flex; align-items:center;
+    gap:20px; padding:0 24px; flex-shrink:0;
+  }
+  .stepper{display:flex; align-items:center; gap:8px;}
+  .step{display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:var(--neutral-400); cursor:pointer;}
+  .step .num{width:20px; height:20px; border-radius:10px; border:1px solid var(--neutral-400); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; color:var(--neutral-400); background:#fff;}
+  .step.active{color:var(--brand);}
+  .step.active .num{background:var(--brand); border-color:var(--brand); color:#fff;}
+  .step.done{color:var(--neutral-700); cursor:pointer;}
+  .step.done .num{background:var(--green); border-color:var(--green); color:#fff;}
+  .step.done:hover{color:var(--brand);}
+  .connector{width:30px; height:2px; background:var(--neutral-200);}
+  .topbar-spacer{flex:1;}
+  .topbar-actions{display:flex; align-items:center; gap:16px;}
+  .topbar-icon-btn{width:36px; height:36px; border-radius:8px; border:none; background:transparent; display:flex; align-items:center; justify-content:center; color:var(--neutral-700); position:relative; cursor:pointer; flex-shrink:0;}
+  .topbar-icon-btn:hover{background:var(--neutral-100);}
+  .topbar-icon-btn .dot{position:absolute; top:8px; right:9px; width:4px; height:4px; border-radius:2px; background:var(--accent);}
+  .topbar-avatar{width:32px; height:32px; border-radius:999px; background:var(--brand-mid); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:#0b2b55; flex-shrink:0;}
+
+  /* ---- shared view ---- */
+  .view{position:absolute; inset:56px 0 0 0; overflow-y:auto; opacity:1; transition:opacity .2s ease;}
+  .view.hidden{opacity:0; pointer-events:none; position:absolute;}
+
+  /* ---- role switch (demo control, previews brand-setup state) ---- */
+  .role-switch{position:fixed; right:16px; bottom:16px; z-index:9999; display:flex; gap:6px; align-items:center; background:rgba(15,23,41,.92); border-radius:9999px; padding:6px 8px 6px 14px; box-shadow:0 6px 20px rgba(0,0,0,.28); backdrop-filter:blur(6px);}
+  .role-cap{font-weight:600; font-size:11px; line-height:16px; letter-spacing:.4px; text-transform:uppercase; color:rgba(255,255,255,.55); white-space:nowrap; margin:0 2px 0 0;}
+  .role-btn{font-weight:600; font-size:12px; line-height:18px; color:rgba(255,255,255,.72); padding:5px 11px; border-radius:9999px; white-space:nowrap; border:none; background:transparent; cursor:pointer; font-family:var(--font);}
+  .role-btn:hover{color:#fff; background:rgba(255,255,255,.1);}
+  .role-btn.on{background:#fff; color:var(--neutral-900);}
+
+  .seg-control{display:inline-flex; background:var(--neutral-100); border-radius:var(--radius-xl); padding:4px; gap:2px;}
+  .seg-control.small{margin-bottom:0;}
+  .seg-chip{padding:8px 20px; border-radius:var(--radius-lg); font-size:14px; font-weight:500; color:var(--neutral-700); cursor:pointer;}
+  .seg-chip.active{background:#fff; color:var(--neutral-900); font-weight:600; box-shadow:0 1px 1.5px rgba(15,23,41,0.1),0 1px 0.5px rgba(15,23,41,0.04);}
+
+  .btn-primary{background:var(--neutral-900); color:#fff; border:none; border-radius:8px; padding:10px 18px; font-size:12.5px; font-weight:600; font-family:var(--font); cursor:pointer;}
+  .btn-primary:disabled{background:var(--neutral-400); cursor:not-allowed;}
+  .btn-secondary{border:1px solid var(--neutral-400); background:#fff; border-radius:var(--radius-lg); padding:9px 14px; font-size:14px; font-weight:600; color:var(--neutral-700); font-family:var(--font); cursor:pointer;}
+  .btn-dark{border:none; background:linear-gradient(#323232,#222); border-radius:var(--radius-lg); padding:9px 14px; font-size:14px; font-weight:600; color:#fff; font-family:var(--font); cursor:pointer; box-shadow:0 1px 2px rgba(13,13,13,0.1);}
+  .btn-dark:disabled{background:var(--neutral-400); cursor:not-allowed; box-shadow:none;}
+
+  .action-bar{position:absolute; left:0; right:0; bottom:0; background:#fff; border-top:1px solid var(--neutral-200); padding:12px 64px; display:flex; align-items:center; justify-content:center; gap:32px;}
+  .meta-text{font-size:12px; color:var(--neutral-500); flex-shrink:0;}
+  .bar-actions{display:flex; gap:12px; flex-shrink:0;}
+  .credit-est{display:flex; flex-direction:column; gap:2px;}
+  .credit-est .credit-label{font-size:11px; color:var(--neutral-500);}
+  .credit-est .credit-value{font-size:13px; font-weight:600; color:var(--neutral-900);}
+  .credit-est .credit-value .credit-sub{font-weight:400; color:var(--neutral-500);}
+
+  /* ---- VIEW: Generate (shared shell: chat + stage area) ---- */
+  .gen-body{display:flex; height:100%;}
+  .chat{width:324px; flex-shrink:0; background:var(--neutral-50); border-right:1px solid var(--neutral-300); display:flex; flex-direction:column;}
+  .chat-log{flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:10px;}
+  .msg{font-size:12.5px; line-height:1.5; padding:9px 11px; border-radius:10px; max-width:92%; white-space:pre-wrap;}
+  .msg.user{align-self:flex-end; background:var(--brand); color:#fff; border-bottom-right-radius:3px;}
+  .msg.ai{align-self:flex-start; background:var(--neutral-150); color:var(--neutral-700); border-bottom-left-radius:3px;}
+  .msg.ai .tag{display:inline-block; font-size:10px; font-weight:600; color:var(--brand); margin-bottom:3px;}
+  .msg.ai.loading{color:var(--neutral-500);}
+  .dots span{animation:blink 1.4s infinite; opacity:0;}
+  .dots span:nth-child(2){animation-delay:.2s;}
+  .dots span:nth-child(3){animation-delay:.4s;}
+  @keyframes blink{0%,80%,100%{opacity:0;}40%{opacity:1;}}
+  .chat-cta-row{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;}
+  .chat-cta-row .btn-primary, .chat-cta-row .btn-secondary{padding:8px 14px; font-size:12px;}
+  .chat-quick{padding:0 16px 10px; display:flex; gap:6px; flex-wrap:wrap;}
+  .quick-chip{border:1px solid var(--neutral-400); border-radius:999px; padding:5px 10px; font-size:11px; color:var(--neutral-700); background:#fff; cursor:pointer;}
+  .chat-hint{font-size:10.5px; color:var(--neutral-500); padding:0 16px 10px;}
+  .chat-input-row{padding:12px; border-top:1px solid var(--neutral-300); display:flex; gap:8px;}
+  .chat-input{flex:1; border:1px solid var(--neutral-400); border-radius:8px; padding:9px 12px; font-size:12.5px; font-family:var(--font); outline:none;}
+  .chat-input:focus{border-color:var(--brand);}
+  .chat-send{width:34px; height:34px; border-radius:8px; background:var(--brand); border:none; color:#fff; cursor:pointer; flex-shrink:0;}
+
+  .stage-area{flex:1; display:flex; flex-direction:column; min-width:0; position:relative;}
+  .stage-tabs{display:flex; justify-content:center; gap:18px; padding:12px 24px 0; border-bottom:1px solid var(--neutral-300); flex-shrink:0;}
+  .stage-tab{font-size:12.5px; font-weight:600; color:var(--neutral-500); padding:0 2px 12px; border-bottom:2px solid transparent; cursor:pointer;}
+  .stage-tab.active{color:var(--neutral-900); border-bottom-color:var(--neutral-900);}
+  .stage-tab.locked{color:var(--neutral-400); cursor:default;}
+  .stage-tab .check{color:var(--green); font-weight:700;}
+
+  .settings-bar{position:absolute; top:56px; left:28px; right:28px; z-index:15; display:flex; justify-content:center; gap:8px; flex-wrap:wrap; pointer-events:none;}
+  .settings-bar > *{pointer-events:auto;}
+  .setting-chip{display:flex; align-items:center; gap:6px; border:1px solid var(--neutral-300); border-radius:999px; padding:5px 12px; font-size:11.5px; color:var(--neutral-700); background:var(--neutral-50);}
+  .setting-chip b{color:var(--neutral-900); font-weight:600;}
+  .brand-chip-setting{background:var(--brand-light); border-color:var(--brand-mid);}
+
+  #subDraft, #subVersions{display:flex; flex-direction:column; flex:1; min-height:0;}
+  .stage-body{flex:1; min-height:0; padding:52px 28px 14px; overflow-y:auto; display:flex; flex-direction:column;}
+  #subDraft .stage-body{padding-bottom:150px;}
+  .stage-body-inner{max-width:720px; margin:0 auto; width:100%; flex:1; min-height:0; display:flex; flex-direction:column;}
+  .stage-title{font-size:15px; font-weight:700; margin:0 0 4px;}
+  .stage-sub-text{font-size:12px; color:var(--neutral-500); margin:0 0 28px;}
+
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  /* ---- VIEW: Brief (minimal — prompt input only) ---- */
+  .brief-content{max-width:720px; margin:0 auto; padding:48px 4px 140px;}
+  .brief-heading h1{font-size:22px; font-weight:700; color:var(--neutral-900); margin:0 0 6px; letter-spacing:-0.2px;}
+  .brief-heading p{font-size:13px; color:var(--neutral-500); margin:0 0 20px;}
+  .brief-prompt{width:100%; min-height:120px; border:1.2px solid var(--neutral-400); border-radius:var(--radius-xl); padding:16px; font-size:14px; font-family:var(--font); color:var(--neutral-900); line-height:1.6; resize:vertical; outline:none;}
+  .brief-prompt:focus{border-color:var(--brand);}
+
+  /* ---- Draft stage: Copy + Visual concept + Easy/Expert ---- */
+  .draft-section{margin-bottom:32px;}
+  .draft-section-label{font-size:13px; font-weight:700; color:var(--neutral-900); margin-bottom:12px;}
+  .draft-section-hint{font-size:11.5px; color:var(--neutral-500); margin:-8px 0 12px;}
+
+  .copy-field-list{border:1px solid var(--neutral-300); border-radius:12px; overflow:hidden; background:#fff;}
+  .copy-field{display:flex; align-items:flex-start; gap:12px; padding:14px 16px; border-bottom:1px solid var(--neutral-200); transition:opacity .15s;}
+  .copy-field:last-child{border-bottom:none;}
+  .copy-field.off{opacity:0.4;}
+  .copy-field-body{flex:1; min-width:0; display:flex; flex-direction:column; gap:4px; padding-top:1px;}
+  .copy-field-label{font-size:11px; font-weight:700; color:var(--neutral-500); text-transform:uppercase; letter-spacing:.04em;}
+  .copy-field-input{border:none; background:transparent; font-size:14px; color:var(--neutral-900); font-family:var(--font); padding:0; outline:none; width:100%;}
+  .copy-field.off .copy-field-input{pointer-events:none;}
+
+  /* switch — Figma [DS] Controls/Switch spec: 40x23, off=neutral-300, on=brand/primary */
+  .field-switch{width:40px; height:23px; border-radius:12px; border:none; background:var(--neutral-300); position:relative; cursor:pointer; flex-shrink:0; margin-top:2px; transition:background .15s;}
+  .field-switch .knob{position:absolute; top:2px; left:2px; width:19px; height:19px; border-radius:999px; background:#fff; box-shadow:0 1px 2px rgba(0,0,0,.2); transition:transform .15s;}
+  .field-switch.on{background:var(--brand);}
+  .field-switch.on .knob{transform:translateX(17px);}
+
+  .visual-concept-text{width:100%; min-height:96px; border:1px solid var(--neutral-300); border-radius:12px; padding:14px 16px; font-size:13.5px; font-family:var(--font); color:var(--neutral-900); line-height:1.6; resize:vertical; outline:none; background:#fff;}
+  .visual-concept-text:focus{border-color:var(--brand);}
+
+  .brand-kit-row{display:flex; align-items:center; gap:10px; margin-top:14px;}
+  .brand-kit-label{font-size:13px; font-weight:600; color:var(--neutral-900);}
+  .field-switch.disabled{background:var(--neutral-200); cursor:not-allowed;}
+  .field-switch.disabled .knob{background:var(--neutral-100);}
+  .brand-kit-summary{margin-top:8px; padding:10px 12px; background:var(--neutral-50); border:1px solid var(--neutral-200); border-radius:8px; font-size:12px; color:var(--neutral-700); display:flex; align-items:center; gap:6px; flex-wrap:wrap;}
+  .brand-kit-summary b{color:var(--neutral-900);}
+  .brand-kit-swatch{width:12px; height:12px; border-radius:999px; flex-shrink:0; display:inline-block;}
+  .brand-kit-empty{margin-top:8px; padding:10px 12px; background:var(--neutral-50); border:1px dashed var(--neutral-400); border-radius:8px; font-size:12px; color:var(--neutral-500);}
+  .brand-kit-empty a{color:var(--brand); font-weight:600; cursor:pointer; text-decoration:underline;}
+
+  .mode-toggle-row{display:flex; align-items:center; gap:10px; margin-bottom:14px;}
+  .mode-toggle-hint{font-size:11.5px; color:var(--neutral-500);}
+  .expert-panel{display:none; flex-direction:column; gap:10px; padding:14px 16px; border:1px solid var(--neutral-300); border-radius:10px; background:var(--neutral-50);}
+  .expert-panel.open{display:flex;}
+  .baked-in-option{display:flex; align-items:flex-start; gap:10px; font-size:13px; color:var(--neutral-900); cursor:pointer;}
+  .baked-in-option input{margin-top:2px; width:16px; height:16px; accent-color:var(--brand); cursor:pointer; flex-shrink:0;}
+  .baked-in-warning{display:none; align-items:flex-start; gap:8px; font-size:12px; color:var(--amber); background:var(--amber-bg); border:1px solid var(--amber-border); border-radius:8px; padding:10px 12px; line-height:1.5;}
+  .baked-in-warning.show{display:flex;}
+
+  /* ---- Versions stage: 4-grid parallel generation ---- */
+  .version-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px; align-content:start;}
+  .version-tile{border:1.5px solid var(--neutral-300); border-radius:12px; overflow:hidden; cursor:pointer; background:#fff; transition:border-color .15s, box-shadow .15s;}
+  .version-tile:hover{border-color:var(--neutral-450);}
+  .version-tile.ready:hover{border-color:var(--brand);}
+  .version-tile-preview{width:100%; aspect-ratio:1; background:linear-gradient(135deg,var(--neutral-200),var(--neutral-150)); position:relative; display:flex; align-items:flex-end; padding:10px;}
+  .version-tile.ready .version-tile-preview{background:linear-gradient(135deg,var(--brand-mid),var(--accent));}
+  .version-tile-badge{font-size:11px; font-weight:600; color:#fff; background:rgba(15,23,41,0.55); padding:4px 8px; border-radius:6px; backdrop-filter:blur(2px);}
+  .version-tile.generating .version-tile-badge{display:none;}
+  .version-tile-overlay-top{position:absolute; top:8px; left:8px; right:8px; display:flex; align-items:center; justify-content:space-between; gap:6px;}
+  .version-tile-ready-badge{display:none; align-items:center; gap:3px; font-size:10px; font-weight:700; color:var(--green); background:#fff; padding:3px 7px; border-radius:999px;}
+  .version-tile.ready .version-tile-ready-badge{display:inline-flex;}
+  .version-tile-regen-btn{display:none; width:24px; height:24px; border-radius:999px; border:none; background:rgba(255,255,255,0.92); align-items:center; justify-content:center; font-size:12px; color:var(--neutral-700); cursor:pointer; margin-left:auto;}
+  .version-tile-regen-btn:hover{background:#fff; color:var(--neutral-900);}
+  .version-tile.ready .version-tile-regen-btn{display:flex;}
+  .version-tile-spinner{display:none; width:26px; height:26px; border-radius:999px; border:2.5px solid rgba(255,255,255,0.35); border-top-color:#fff; animation:spin .8s linear infinite; position:absolute; top:50%; left:50%; margin:-13px 0 0 -13px;}
+  .version-tile.generating .version-tile-spinner{display:block;}
+  .version-tile-footer{padding:10px 12px; display:flex; align-items:center; justify-content:space-between; gap:8px; border-top:1px solid var(--neutral-200);}
+  .version-tile-label{font-size:12px; font-weight:600; color:var(--neutral-700);}
+  .version-tile-use-btn{display:none; border:none; background:var(--neutral-900); color:#fff; border-radius:999px; padding:5px 12px; font-size:11px; font-weight:600; font-family:var(--font); cursor:pointer;}
+  .version-tile.ready .version-tile-use-btn{display:inline-flex;}
+  .versions-status{font-size:12px; color:var(--neutral-500); text-align:center; margin-top:16px;}
+
+  /* ---- Develop (minimal step-3 landing) ---- */
+  .develop-body{display:flex; gap:32px; padding:48px; max-width:960px; margin:0 auto;}
+  .develop-preview{width:340px; flex-shrink:0; aspect-ratio:1; border-radius:14px; background:linear-gradient(135deg,var(--brand-mid),var(--accent)); position:relative; overflow:hidden; display:flex; flex-direction:column; justify-content:flex-end; padding:24px;}
+  .develop-preview-text{color:#fff; text-shadow:0 1px 4px rgba(0,0,0,.25);}
+  .develop-preview-headline{font-size:20px; font-weight:700; margin-bottom:4px;}
+  .develop-preview-subhead{font-size:13px; margin-bottom:12px; opacity:.92;}
+  .develop-preview-cta{display:inline-block; background:#fff; color:var(--neutral-900); font-size:12px; font-weight:700; padding:8px 16px; border-radius:999px; width:fit-content;}
+  .develop-side{flex:1; min-width:0;}
+  .develop-note{background:var(--neutral-50); border:1px solid var(--neutral-200); border-radius:10px; padding:14px 16px; font-size:12.5px; color:var(--neutral-600); line-height:1.6; margin-top:16px;}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- NAV -->
+  <div class="nav" id="sideNav">
+    <div class="nav-brand">
+      <div class="mark"></div>
+      <div class="txt"><b>Formee Education</b><span>AI Social Media</span></div>
+    </div>
+    <div class="nav-workspace"><span>Placeholder</span><span class="chevron">▾</span></div>
+    <div class="nav-group"><div class="nav-item"><div class="ic clip" style="width:20px;height:20px;"><div class="f" style="inset:50% 37.5% 12.5% 37.5%"><div class="f" style="inset:-10.67% -16%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjYuNiIgaGVpZ2h0PSI5LjEiIHZpZXdCb3g9IjAgMCA2LjYgOS4xIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNNS44IDguM1YxLjYzMzMzQzUuOCAxLjQxMjMyIDUuNzEyMiAxLjIwMDM2IDUuNTU1OTIgMS4wNDQwOEM1LjM5OTY0IDAuODg3Nzk4IDUuMTg3NjggMC44IDQuOTY2NjcgMC44SDEuNjMzMzNDMS40MTIzMiAwLjggMS4yMDAzNiAwLjg4Nzc5OCAxLjA0NDA4IDEuMDQ0MDhDMC44ODc3OTggMS4yMDAzNiAwLjggMS40MTIzMiAwLjggMS42MzMzM1Y4LjMiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div><div class="f" style="inset:8.33% 12.5% 12.5% 12.5%"><div class="f" style="inset:-5.05% -5.33%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2LjYiIGhlaWdodD0iMTcuNDMzNyIgdmlld0JveD0iMCAwIDE2LjYgMTcuNDMzNyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTAuOCA3LjQ2NzA3QzAuNzk5OTQyIDcuMjI0NjIgMC44NTI3NzggNi45ODUwOSAwLjk1NDgyMyA2Ljc2NTE2QzEuMDU2ODcgNi41NDUyNCAxLjIwNTY2IDYuMzUwMjMgMS4zOTA4MyA2LjE5MzczTDcuMjI0MTcgMS4xOTM3M0M3LjUyNDk5IDAuOTM5NDkgNy45MDYxMyAwLjggOC4zIDAuOEM4LjY5Mzg3IDAuOCA5LjA3NTAxIDAuOTM5NDkgOS4zNzU4MyAxLjE5MzczTDE1LjIwOTIgNi4xOTM3M0MxNS4zOTQzIDYuMzUwMjMgMTUuNTQzMSA2LjU0NTI0IDE1LjY0NTIgNi43NjUxNkMxNS43NDcyIDYuOTg1MDkgMTUuODAwMSA3LjIyNDYyIDE1LjggNy40NjcwN1YxNC45NjcxQzE1LjggMTUuNDA5MSAxNS42MjQ0IDE1LjgzMyAxNS4zMTE4IDE2LjE0NTZDMTQuOTk5MyAxNi40NTgxIDE0LjU3NTQgMTYuNjMzNyAxNC4xMzMzIDE2LjYzMzdIMi40NjY2N0MyLjAyNDY0IDE2LjYzMzcgMS42MDA3MiAxNi40NTgxIDEuMjg4MTYgMTYuMTQ1NkMwLjk3NTU5NSAxNS44MzMgMC44IDE1LjQwOTEgMC44IDE0Ljk2NzFWNy40NjcwN1oiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div></div><span class="label">Home</span></div></div>
+    <div class="nav-group">
+      <div class="nav-label">Create</div>
+      <div class="nav-item active"><div class="ic clip" style="width:20px;height:20px;"><div class="f" style="inset:8.33% 8.32% 8.33% 8.34%"><div class="f" style="inset:-4.8%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE4LjI2NzEiIGhlaWdodD0iMTguMjY3MSIgdmlld0JveD0iMCAwIDE4LjI2NzEgMTguMjY3MSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTcuNDEyOSAxMi4wNTAyQzcuMzM4NSAxMS43NjE4IDcuMTg4MTggMTEuNDk4NiA2Ljk3NzU4IDExLjI4OEM2Ljc2Njk4IDExLjA3NzQgNi41MDM3OSAxMC45MjcxIDYuMjE1NCAxMC44NTI3TDEuMTAyOSA5LjUzNDM3QzEuMDE1NjcgOS41MDk2MiAwLjkzODkwMyA5LjQ1NzA4IDAuODg0MjQgOS4zODQ3NUMwLjgyOTU3NiA5LjMxMjQxIDAuOCA5LjIyNDIxIDAuOCA5LjEzMzU0QzAuOCA5LjA0Mjg3IDAuODI5NTc2IDguOTU0NjggMC44ODQyNCA4Ljg4MjM0QzAuOTM4OTAzIDguODEgMS4wMTU2NyA4Ljc1NzQ3IDEuMTAyOSA4LjczMjcxTDYuMjE1NCA3LjQxMzU0QzYuNTAzNjkgNy4zMzkyMSA2Ljc2NjgxIDcuMTg5MDIgNi45Nzc0IDYuOTc4NTdDNy4xODc5OSA2Ljc2ODEzIDcuMzM4MzcgNi41MDUxMSA3LjQxMjkgNi4yMTY4N0w4LjczMTIzIDEuMTA0MzdDOC43NTU3NCAxLjAxNjgxIDguODA4MjIgMC45Mzk2NTkgOC44ODA2NiAwLjg4NDcwM0M4Ljk1MzExIDAuODI5NzQ3IDkuMDQxNTUgMC44IDkuMTMyNDggMC44QzkuMjIzNDEgMC44IDkuMzExODUgMC44Mjk3NDcgOS4zODQyOSAwLjg4NDcwM0M5LjQ1Njc0IDAuOTM5NjU5IDkuNTA5MjIgMS4wMTY4MSA5LjUzMzczIDEuMTA0MzdMMTAuODUxMiA2LjIxNjg3QzEwLjkyNTYgNi41MDUyNyAxMS4wNzU5IDYuNzY4NDYgMTEuMjg2NSA2Ljk3OTA2QzExLjQ5NzEgNy4xODk2NiAxMS43NjAzIDcuMzM5OTggMTIuMDQ4NyA3LjQxNDM4TDE3LjE2MTIgOC43MzE4N0MxNy4yNDkxIDguNzU2MTIgMTcuMzI2NyA4LjgwODU1IDE3LjM4MTkgOC44ODExMUMxNy40MzcyIDguOTUzNjYgMTcuNDY3MSA5LjA0MjM0IDE3LjQ2NzEgOS4xMzM1NEMxNy40NjcxIDkuMjI0NzQgMTcuNDM3MiA5LjMxMzQyIDE3LjM4MTkgOS4zODU5OEMxNy4zMjY3IDkuNDU4NTMgMTcuMjQ5MSA5LjUxMDk2IDE3LjE2MTIgOS41MzUyMUwxMi4wNDg3IDEwLjg1MjdDMTEuNzYwMyAxMC45MjcxIDExLjQ5NzEgMTEuMDc3NCAxMS4yODY1IDExLjI4OEMxMS4wNzU5IDExLjQ5ODYgMTAuOTI1NiAxMS43NjE4IDEwLjg1MTIgMTIuMDUwMkw5LjUzMjkgMTcuMTYyN0M5LjUwODM5IDE3LjI1MDMgOS40NTU5MSAxNy4zMjc0IDkuMzgzNDYgMTcuMzgyNEM5LjMxMTAxIDE3LjQzNzMgOS4yMjI1OCAxNy40NjcxIDkuMTMxNjUgMTcuNDY3MUM5LjA0MDcxIDE3LjQ2NzEgOC45NTIyOCAxNy40MzczIDguODc5ODMgMTcuMzgyNEM4LjgwNzM4IDE3LjMyNzQgOC43NTQ5IDE3LjI1MDMgOC43MzA0IDE3LjE2MjdMNy40MTI5IDEyLjA1MDJaIiBzdHJva2U9IiM4QTkzQTgiIHN0cm9rZS13aWR0aD0iMS42IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==" alt=""></div></div></div><span class="label">New Content</span></div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Content</div>
+      <div class="nav-item"><div class="ic clip" style="width:20px;height:20px;"><div class="f" style="inset:28.57% 16.67% 13.1% 66.67%"><div class="f" style="inset:-6.86% -24.01%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjQuOTMzNzUiIGhlaWdodD0iMTMuMjY3MSIgdmlld0JveD0iMCAwIDQuOTMzNzUgMTMuMjY3MSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTAuODAwMjA2IDAuODAwMjA2TDQuMTMzNTQgMTIuNDY2OSIgc3Ryb2tlPSIjOEE5M0E4IiBzdHJva2Utd2lkdGg9IjEuNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPgo=" alt=""></div></div><div class="f" style="inset:28.57% 50% 13.1% 50%"><div class="f" style="inset:-6.86% -0.8px"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjEuNiIgaGVpZ2h0PSIxMy4yNjY3IiB2aWV3Qm94PSIwIDAgMS42IDEzLjI2NjciIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik0wLjggMC44VjEyLjQ2NjciIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div><div class="f" style="inset:35.71% 66.67% 14.29% 33.33%"><div class="f" style="inset:-8% -0.8px"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjEuNiIgaGVpZ2h0PSIxMS42IiB2aWV3Qm94PSIwIDAgMS42IDExLjYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik0wLjggMC44VjEwLjgiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div><div class="f" style="inset:21.43% 83.33% 11.9% 16.67%"><div class="f" style="inset:-6% -0.8px"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjEuNiIgaGVpZ2h0PSIxNC45MzMzIiB2aWV3Qm94PSIwIDAgMS42IDE0LjkzMzMiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik0wLjggMC44VjE0LjEzMzMiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div></div><span class="label">Library</span></div>
+      <div class="nav-item"><div class="ic clip" style="width:20px;height:20px;"><div class="f" style="inset:8.33% 66.67% 75% 33.33%"><div class="f" style="inset:-24% -0.8px"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjEuNiIgaGVpZ2h0PSI0LjkzMzMzIiB2aWV3Qm94PSIwIDAgMS42IDQuOTMzMzMiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik0wLjggMC44VjQuMTMzMzMiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div><div class="f" style="inset:8.33% 33.33% 75% 66.67%"><div class="f" style="inset:-24% -0.8px"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjEuNiIgaGVpZ2h0PSI0LjkzMzMzIiB2aWV3Qm94PSIwIDAgMS42IDQuOTMzMzMiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik0wLjggMC44VjQuMTMzMzMiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div><div class="f" style="inset:16.67% 12.5% 8.33% 12.5%"><div class="f" style="inset:-5.33%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2LjYiIGhlaWdodD0iMTYuNiIgdmlld0JveD0iMCAwIDE2LjYgMTYuNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTE0LjEzMzMgMC44SDIuNDY2NjdDMS41NDYxOSAwLjggMC44IDEuNTQ2MTkgMC44IDIuNDY2NjdWMTQuMTMzM0MwLjggMTUuMDUzOCAxLjU0NjE5IDE1LjggMi40NjY2NyAxNS44SDE0LjEzMzNDMTUuMDUzOCAxNS44IDE1LjggMTUuMDUzOCAxNS44IDE0LjEzMzNWMi40NjY2N0MxNS44IDEuNTQ2MTkgMTUuMDUzOCAwLjggMTQuMTMzMyAwLjhaIiBzdHJva2U9IiM4QTkzQTgiIHN0cm9rZS13aWR0aD0iMS42IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==" alt=""></div></div><div class="f" style="inset:41.67% 12.5% 58.33% 12.5%"><div class="f" style="inset:-0.8px -5.33%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2LjYiIGhlaWdodD0iMS42IiB2aWV3Qm94PSIwIDAgMTYuNiAxLjYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik0wLjggMC44SDE1LjgiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div></div><span class="label">Schedule</span></div>
+      <div class="nav-item"><div class="ic clip" style="width:20px;height:20px;"><div class="f" style="inset:29.17% 8.33% 45.83% 66.67%"><div class="f" style="inset:-16%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjYuNiIgaGVpZ2h0PSI2LjYiIHZpZXdCb3g9IjAgMCA2LjYgNi42IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNMC44IDAuOEg1LjhWNS44IiBzdHJva2U9IiM4QTkzQTgiIHN0cm9rZS13aWR0aD0iMS42IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==" alt=""></div></div><div class="f" style="inset:29.17% 8.33%"><div class="f" style="inset:-9.6% -4.8%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE4LjI2NjciIGhlaWdodD0iOS45MzMzMyIgdmlld0JveD0iMCAwIDE4LjI2NjcgOS45MzMzMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTE3LjQ2NjcgMC44TDEwLjM4MzMgNy44ODMzM0w2LjIxNjY3IDMuNzE2NjdMMC44IDkuMTMzMzMiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div></div><span class="label">Trends</span></div>
+      <div class="nav-item"><div class="ic clip" style="width:20px;height:20px;"><div class="f" style="inset:12.5%"><div class="f" style="inset:-5.33%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2LjYiIGhlaWdodD0iMTYuNiIgdmlld0JveD0iMCAwIDE2LjYgMTYuNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTAuOCAwLjhWMTQuMTMzM0MwLjggMTQuNTc1NCAwLjk3NTU5NSAxNC45OTkzIDEuMjg4MTYgMTUuMzExOEMxLjYwMDcyIDE1LjYyNDQgMi4wMjQ2NCAxNS44IDIuNDY2NjcgMTUuOEgxNS44IiBzdHJva2U9IiM4QTkzQTgiIHN0cm9rZS13aWR0aD0iMS42IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==" alt=""></div></div><div class="f" style="inset:20.83% 20.83% 29.17% 62.5%"><div class="f" style="inset:-8% -24%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjQuOTMzMzMiIGhlaWdodD0iMTEuNiIgdmlld0JveD0iMCAwIDQuOTMzMzMgMTEuNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTMuMyAwLjhIMS42MzMzM0MxLjE3MzEgMC44IDAuOCAxLjE3MzEgMC44IDEuNjMzMzNWOS45NjY2N0MwLjggMTAuNDI2OSAxLjE3MzEgMTAuOCAxLjYzMzMzIDEwLjhIMy4zQzMuNzYwMjQgMTAuOCA0LjEzMzMzIDEwLjQyNjkgNC4xMzMzMyA5Ljk2NjY3VjEuNjMzMzNDNC4xMzMzMyAxLjE3MzEgMy43NjAyNCAwLjggMy4zIDAuOFoiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div><div class="f" style="inset:33.33% 54.17% 29.17% 29.17%"><div class="f" style="inset:-10.67% -24%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjQuOTMzMzMiIGhlaWdodD0iOS4xIiB2aWV3Qm94PSIwIDAgNC45MzMzMyA5LjEiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik0zLjMgMC44SDEuNjMzMzNDMS4xNzMxIDAuOCAwLjggMS4xNzMxIDAuOCAxLjYzMzMzVjcuNDY2NjdDMC44IDcuOTI2OSAxLjE3MzEgOC4zIDEuNjMzMzMgOC4zSDMuM0MzLjc2MDI0IDguMyA0LjEzMzMzIDcuOTI2OSA0LjEzMzMzIDcuNDY2NjdWMS42MzMzM0M0LjEzMzMzIDEuMTczMSAzLjc2MDI0IDAuOCAzLjMgMC44WiIgc3Ryb2tlPSIjOEE5M0E4IiBzdHJva2Utd2lkdGg9IjEuNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPgo=" alt=""></div></div></div><span class="label">Analytics</span></div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-label">Asset</div>
+      <div class="nav-item"><div class="ic clip" style="width:20px;height:20px;"><div class="f" style="inset:41.67% 50% 33.33% 50%"><div class="f" style="inset:-16% -0.8px"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjEuNiIgaGVpZ2h0PSI2LjYiIHZpZXdCb3g9IjAgMCAxLjYgNi42IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNMC44IDAuOFY1LjgiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div><div class="f" style="inset:54.17% 37.5% 45.83% 37.5%"><div class="f" style="inset:-0.8px -16%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjYuNiIgaGVpZ2h0PSIxLjYiIHZpZXdCb3g9IjAgMCA2LjYgMS42IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNMC44IDAuOEg1LjgiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div><div class="f" style="inset:12.5% 8.33% 16.67% 8.33%"><div class="f" style="inset:-5.65% -4.8%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE4LjI2NjciIGhlaWdodD0iMTUuNzY2NyIgdmlld0JveD0iMCAwIDE4LjI2NjcgMTUuNzY2NyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTE1LjggMTQuOTY2N0MxNi4yNDIgMTQuOTY2NyAxNi42NjU5IDE0Ljc5MTEgMTYuOTc4NSAxNC40Nzg1QzE3LjI5MTEgMTQuMTY2IDE3LjQ2NjcgMTMuNzQyIDE3LjQ2NjcgMTMuM1Y0Ljk2NjY3QzE3LjQ2NjcgNC41MjQ2NCAxNy4yOTExIDQuMTAwNzIgMTYuOTc4NSAzLjc4ODE2QzE2LjY2NTkgMy40NzU1OSAxNi4yNDIgMy4zIDE1LjggMy4zSDkuMjE2NjdDOC45Mzc5MyAzLjMwMjczIDguNjYyOTYgMy4yMzU1MSA4LjQxNjkyIDMuMTA0NDhDOC4xNzA4OCAyLjk3MzQ2IDcuOTYxNjMgMi43ODI4MSA3LjgwODMzIDIuNTVMNy4xMzMzMyAxLjU1QzYuOTgxNTggMS4zMTk1NiA2Ljc3NDk4IDEuMTMwNCA2LjUzMjA4IDAuOTk5NDk3QzYuMjg5MTkgMC44Njg1OTUgNi4wMTc1OSAwLjgwMDA0NSA1Ljc0MTY3IDAuOEgyLjQ2NjY3QzIuMDI0NjQgMC44IDEuNjAwNzIgMC45NzU1OTUgMS4yODgxNiAxLjI4ODE2QzAuOTc1NTk1IDEuNjAwNzIgMC44IDIuMDI0NjQgMC44IDIuNDY2NjdWMTMuM0MwLjggMTMuNzQyIDAuOTc1NTk1IDE0LjE2NiAxLjI4ODE2IDE0LjQ3ODVDMS42MDA3MiAxNC43OTExIDIuMDI0NjQgMTQuOTY2NyAyLjQ2NjY3IDE0Ljk2NjdIMTUuOFoiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div></div><span class="label">Brand Setup</span></div>
+      <div class="nav-item"><div class="ic clip" style="width:20px;height:20px;"><div class="f" style="inset:62.5% 33.33% 12.5% 8.33%"><div class="f" style="inset:-16% -6.86%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjEzLjI2NjciIGhlaWdodD0iNi42IiB2aWV3Qm94PSIwIDAgMTMuMjY2NyA2LjYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik0xMi40NjY3IDUuOFY0LjEzMzMzQzEyLjQ2NjcgMy4yNDkyOCAxMi4xMTU1IDIuNDAxNDMgMTEuNDkwNCAxLjc3NjMxQzEwLjg2NTIgMS4xNTExOSAxMC4wMTc0IDAuOCA5LjEzMzMzIDAuOEg0LjEzMzMzQzMuMjQ5MjggMC44IDIuNDAxNDMgMS4xNTExOSAxLjc3NjMxIDEuNzc2MzFDMS4xNTExOSAyLjQwMTQzIDAuOCAzLjI0OTI4IDAuOCA0LjEzMzMzVjUuOCIgc3Ryb2tlPSIjNDc1MDY5IiBzdHJva2Utd2lkdGg9IjEuNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPgo=" alt=""></div></div><div class="f" style="inset:13.03% 20.85% 54.7% 66.67%"><div class="f" style="inset:-12.4% -32.04% -12.4% -32.05%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjQuMDk3MDMiIGhlaWdodD0iOC4wNTM3MiIgdmlld0JveD0iMCAwIDQuMDk3MDMgOC4wNTM3MiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTAuODAwMTk0IDAuODAwMTk0QzEuNTE0OTkgMC45ODU1MDIgMi4xNDgwMiAxLjQwMjkxIDIuNTk5OTMgMS45ODY5MUMzLjA1MTgzIDIuNTcwOTEgMy4yOTcwMyAzLjI4ODQ0IDMuMjk3MDMgNC4wMjY4NkMzLjI5NzAzIDQuNzY1MjkgMy4wNTE4MyA1LjQ4MjgxIDIuNTk5OTMgNi4wNjY4MUMyLjE0ODAyIDYuNjUwODEgMS41MTQ5OSA3LjA2ODIyIDAuODAwMTk0IDcuMjUzNTMiIHN0cm9rZT0iIzQ3NTA2OSIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div><div class="f" style="inset:63.04% 8.33% 12.5% 79.17%"><div class="f" style="inset:-16.36% -32% -16.35% -32.01%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjQuMTAwMTkiIGhlaWdodD0iNi40OTE4NiIgdmlld0JveD0iMCAwIDQuMTAwMTkgNi40OTE4NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTMuMzAwMTkgNS42OTE4NlY0LjAyNTE5QzMuMjk5NjQgMy4yODY2MyAzLjA1MzgyIDIuNTY5MTcgMi42MDEzMyAxLjk4NTQ2QzIuMTQ4ODQgMS40MDE3NCAxLjUxNTMgMC45ODQ4MzQgMC44MDAxOTQgMC44MDAxOTQiIHN0cm9rZT0iIzQ3NTA2OSIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div><div class="f" style="inset:12.5% 45.83% 54.17% 20.83%"><div class="f" style="inset:-12%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjguMjY2NjciIGhlaWdodD0iOC4yNjY2NyIgdmlld0JveD0iMCAwIDguMjY2NjcgOC4yNjY2NyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTQuMTMzMzMgNy40NjY2N0M1Ljk3NDI4IDcuNDY2NjcgNy40NjY2NyA1Ljk3NDI4IDcuNDY2NjcgNC4xMzMzM0M3LjQ2NjY3IDIuMjkyMzggNS45NzQyOCAwLjggNC4xMzMzMyAwLjhDMi4yOTIzOCAwLjggMC44IDIuMjkyMzggMC44IDQuMTMzMzNDMC44IDUuOTc0MjggMi4yOTIzOCA3LjQ2NjY3IDQuMTMzMzMgNy40NjY2N1oiIHN0cm9rZT0iIzQ3NTA2OSIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div></div><span class="label">Characters</span></div>
+      <div class="nav-item"><div class="ic clip" style="width:20px;height:20px;"><div class="f" style="inset:79.17% 50% 8.33% 50%"><div class="f" style="inset:-32% -0.8px"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjEuNiIgaGVpZ2h0PSI0LjEiIHZpZXdCb3g9IjAgMCAxLjYgNC4xIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNMC44IDAuOFYzLjMiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div><div class="f" style="inset:41.67% 20.83% 20.83% 20.83%"><div class="f" style="inset:-10.67% -6.86%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjEzLjI2NjciIGhlaWdodD0iOS4xIiB2aWV3Qm94PSIwIDAgMTMuMjY2NyA5LjEiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik0xMi40NjY3IDAuOFYyLjQ2NjY3QzEyLjQ2NjcgNC4wMTM3NiAxMS44NTIxIDUuNDk3NDkgMTAuNzU4MSA2LjU5MTQ2QzkuNjY0MTYgNy42ODU0MiA4LjE4MDQzIDguMyA2LjYzMzMzIDguM0M1LjA4NjI0IDguMyAzLjYwMjUxIDcuNjg1NDIgMi41MDg1NCA2LjU5MTQ2QzEuNDE0NTggNS40OTc0OSAwLjggNC4wMTM3NiAwLjggMi40NjY2N1YwLjgiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div><div class="f" style="inset:8.33% 37.5% 37.5% 37.5%"><div class="f" style="inset:-7.38% -16%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjYuNiIgaGVpZ2h0PSIxMi40MzMzIiB2aWV3Qm94PSIwIDAgNi42IDEyLjQzMzMiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik01LjggMy4zQzUuOCAxLjkxOTI5IDQuNjgwNzEgMC44IDMuMyAwLjhDMS45MTkyOSAwLjggMC44IDEuOTE5MjkgMC44IDMuM1Y5LjEzMzMzQzAuOCAxMC41MTQgMS45MTkyOSAxMS42MzMzIDMuMyAxMS42MzMzQzQuNjgwNzEgMTEuNjMzMyA1LjggMTAuNTE0IDUuOCA5LjEzMzMzVjMuM1oiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div></div><span class="label">Voices</span></div>
+      <div class="nav-item"><div class="ic clip" style="width:20px;height:20px;"><div class="f" style="inset:12.5% 12.5% 25% 37.5%"><div class="f" style="inset:-6.4% -8%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjExLjYiIGhlaWdodD0iMTQuMSIgdmlld0JveD0iMCAwIDExLjYgMTQuMSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTAuOCAxMy4zVjIuNDY2NjdMMTAuOCAwLjgwMDAwNlYxMS42MzMzIiBzdHJva2U9IiM4QTkzQTgiIHN0cm9rZS13aWR0aD0iMS42IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==" alt=""></div></div><div class="f" style="inset:62.5% 62.5% 12.5% 12.5%"><div class="f" style="inset:-16%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjYuNiIgaGVpZ2h0PSI2LjYiIHZpZXdCb3g9IjAgMCA2LjYgNi42IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNMy4zIDUuOEM0LjY4MDcxIDUuOCA1LjggNC42ODA3MSA1LjggMy4zQzUuOCAxLjkxOTI5IDQuNjgwNzEgMC44IDMuMyAwLjhDMS45MTkyOSAwLjggMC44IDEuOTE5MjkgMC44IDMuM0MwLjggNC42ODA3MSAxLjkxOTI5IDUuOCAzLjMgNS44WiIgc3Ryb2tlPSIjOEE5M0E4IiBzdHJva2Utd2lkdGg9IjEuNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPgo=" alt=""></div></div><div class="f" style="inset:54.17% 12.5% 20.83% 62.5%"><div class="f" style="inset:-16%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjYuNiIgaGVpZ2h0PSI2LjYiIHZpZXdCb3g9IjAgMCA2LjYgNi42IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNMy4zIDUuOEM0LjY4MDcxIDUuOCA1LjggNC42ODA3MSA1LjggMy4zQzUuOCAxLjkxOTI5IDQuNjgwNzEgMC44IDMuMyAwLjhDMS45MTkyOSAwLjggMC44IDEuOTE5MjkgMC44IDMuM0MwLjggNC42ODA3MSAxLjkxOTI5IDUuOCAzLjMgNS44WiIgc3Ryb2tlPSIjOEE5M0E4IiBzdHJva2Utd2lkdGg9IjEuNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPgo=" alt=""></div></div></div><span class="label">Audio Library</span></div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main" id="mainArea">
+    <div class="topbar">
+      <div class="stepper">
+        <div class="step done" id="stepBrief" onclick="goToBrief()"><div class="num">✓</div>Brief & Style</div>
+        <div class="connector"></div>
+        <div class="step active" id="stepGenerate" onclick="goToGenerate()"><div class="num">2</div>Generate</div>
+        <div class="connector"></div>
+        <div class="step" id="stepEdit" onclick="goToDevelop()"><div class="num">3</div>Edit & Publish</div>
+      </div>
+      <div class="topbar-spacer"></div>
+      <div class="topbar-actions">
+        <button class="topbar-icon-btn" aria-label="Search">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="9" cy="9" r="6.2" stroke="#475069" stroke-width="1.6"/><path d="M17 17L13.5 13.5" stroke="#475069" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </button>
+        <button class="topbar-icon-btn" aria-label="Notifications">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.5 8.2C4.5 6.68 5.1 5.23 6.17 4.17C7.23 3.1 8.68 2.5 10.2 2.5C11.72 2.5 13.17 3.1 14.23 4.17C15.3 5.23 15.9 6.68 15.9 8.2V11.3C15.9 11.9 16.13 12.47 16.55 12.89L17.1 13.44C17.32 13.66 17.32 14.02 17.1 14.24C17 14.34 16.86 14.4 16.72 14.4H3.68C3.53 14.4 3.4 14.34 3.3 14.24C3.08 14.02 3.08 13.66 3.3 13.44L3.85 12.89C4.27 12.47 4.5 11.9 4.5 11.3V8.2Z" stroke="#475069" stroke-width="1.4" stroke-linejoin="round"/><path d="M8 16.5C8.3 17.2 9.1 17.7 10.2 17.7C11.3 17.7 12.1 17.2 12.4 16.5" stroke="#475069" stroke-width="1.4" stroke-linecap="round"/></svg>
+          <span class="dot"></span>
+        </button>
+        <div class="topbar-avatar">DV</div>
+      </div>
+    </div>
+
+    <!-- VIEW: Brief (minimal — prompt input, then Continue to Draft) -->
+    <div class="view hidden" id="briefView">
+      <div class="brief-content">
+        <div class="brief-heading">
+          <h1>New content</h1>
+          <p>Describe your idea — AI handles everything else</p>
+        </div>
+        <div class="seg-control" style="margin-bottom:16px;">
+          <div class="seg-chip">Reel / Short</div>
+          <div class="seg-chip">Story image</div>
+          <div class="seg-chip active">Image post</div>
+          <div class="seg-chip">Carousel</div>
+        </div>
+        <textarea class="brief-prompt" id="briefPrompt">A study-abroad promo image for the January UK intake — bright, aspirational, campus setting, diverse group of students.</textarea>
+        <div class="stage-cta-row" style="display:flex; justify-content:flex-end; margin-top:16px;">
+          <button class="btn-primary" onclick="goToGenerate()">Continue to Draft →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW: Generate (Draft / Versions) -->
+    <div class="view" id="generateView">
+      <div class="gen-body">
+
+        <!-- CHAT (persistent across Draft/Versions) -->
+        <div class="chat">
+          <div class="chat-log" id="chatLog"></div>
+          <div class="chat-quick" id="chatQuick">
+            <div class="quick-chip" onclick="quickAction('looks-good')">Looks good → generate</div>
+            <div class="quick-chip" onclick="quickAction('rework')">Rework</div>
+          </div>
+          <div class="chat-hint">💬 Requests like "make the headline shorter" or "try a warmer tone" work here too</div>
+          <div class="chat-input-row">
+            <input class="chat-input" id="chatInput" placeholder="Type a message...">
+            <button class="chat-send" id="chatSend" onclick="sendChatMessage()">↑</button>
+          </div>
+        </div>
+
+        <!-- STAGE AREA -->
+        <div class="stage-area">
+          <div class="stage-tabs">
+            <div class="stage-tab active" id="tabDraft" onclick="showSub('draft')">Draft</div>
+            <div class="stage-tab locked" id="tabVersions" onclick="showSub('versions')">Versions</div>
+          </div>
+
+          <div class="settings-bar" id="settingsBar">
+            <div class="setting-chip">▭ <b>Image post</b></div>
+            <div class="setting-chip">⬛ <b>1:1</b></div>
+            <div class="setting-chip">🌐 <b>English</b></div>
+            <div class="setting-chip brand-chip-setting" id="brandSettingChip" style="display:none;">🏷 Brand: <b>Formee Express</b></div>
+          </div>
+
+          <!-- SUB-STAGE: Draft -->
+          <div class="stage-sub" id="subDraft">
+            <div class="stage-body"><div class="stage-body-inner">
+              <h2 class="stage-title">Draft</h2>
+              <p class="stage-sub-text">Confirm the copy and visual concept — you can fine-tune everything before generating.</p>
+
+              <div class="draft-section">
+                <div class="draft-section-label">Copy</div>
+                <div class="copy-field-list" id="copyFieldList"></div>
+              </div>
+
+              <div class="draft-section">
+                <div class="draft-section-label">Visual concept</div>
+                <textarea class="visual-concept-text" id="visualConceptText" oninput="onVisualConceptEdited()"></textarea>
+
+                <div class="brand-kit-row">
+                  <button type="button" class="field-switch" id="brandKitSwitch" onclick="toggleBrandKit()"><span class="knob"></span></button>
+                  <span class="brand-kit-label">Use brand kit</span>
+                </div>
+                <div class="brand-kit-summary" id="brandKitSummary">
+                  <b>Formee Express</b> · Primary <span class="brand-kit-swatch" style="background:#4F6DE6;"></span> #4F6DE6 · Headline: DM Sans Bold
+                </div>
+                <div class="brand-kit-empty" id="brandKitEmpty" style="display:none;">
+                  Set up your brand kit to apply it here automatically → <a onclick="goToBrandSetup()">Brand Setup</a>
+                </div>
+              </div>
+
+              <div class="draft-section">
+                <div class="mode-toggle-row">
+                  <div class="seg-control small" id="draftModeToggle">
+                    <div class="seg-chip active" data-mode="easy" onclick="setDraftMode('easy')">Easy</div>
+                    <div class="seg-chip" data-mode="expert" onclick="setDraftMode('expert')">Expert</div>
+                  </div>
+                  <span class="mode-toggle-hint" id="modeToggleHint">Text stays on an editable layer over the image.</span>
+                </div>
+                <div class="expert-panel" id="expertPanel">
+                  <label class="baked-in-option">
+                    <input type="checkbox" id="bakedInCheckbox" onchange="toggleBakedIn(this.checked)">
+                    <span>Let AI render the copy directly into the image (baked-in)</span>
+                  </label>
+                  <div class="baked-in-warning" id="bakedInWarning">
+                    ⚠️ If you edit the copy later, the image will need to be regenerated — and your brand font may not be reproduced exactly.
+                  </div>
+                </div>
+              </div>
+            </div></div>
+          </div>
+
+          <!-- SUB-STAGE: Versions -->
+          <div class="stage-sub" id="subVersions" style="display:none;">
+            <div class="stage-body"><div class="stage-body-inner" style="max-width:640px;">
+              <h2 class="stage-title">Choose a version</h2>
+              <p class="stage-sub-text">All 4 are generating in parallel — pick one to continue, or regenerate any that miss the mark.</p>
+              <div class="version-grid" id="versionGrid"></div>
+              <div class="versions-status" id="versionsStatus">Generating 4 versions…</div>
+            </div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONFIRM bar (Draft sub-stage only) -->
+      <div class="action-bar" id="draftActionBar">
+        <div class="credit-est">
+          <span class="credit-label">Estimated cost</span>
+          <span class="credit-value">~12 credits <span class="credit-sub">(4 versions)</span></span>
+        </div>
+        <div class="meta-text">Image post · 1:1 · English</div>
+        <div class="bar-actions">
+          <button class="btn-secondary" onclick="quickAction('rework')">Rework</button>
+          <button class="btn-dark" id="confirmGenerateBtn" onclick="confirmAndGenerate()">Confirm & generate 4 versions →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW: Develop (minimal step-3 landing) -->
+    <div class="view hidden" id="developView">
+      <div class="develop-body">
+        <div class="develop-preview" id="developPreview">
+          <div class="develop-preview-text">
+            <div class="develop-preview-headline" id="developHeadline"></div>
+            <div class="develop-preview-subhead" id="developSubhead"></div>
+            <div class="develop-preview-cta" id="developCta"></div>
+          </div>
+        </div>
+        <div class="develop-side">
+          <h2 class="stage-title">Develop</h2>
+          <p class="stage-sub-text" style="margin-bottom:14px;">This version is ready to fine-tune.</p>
+          <button class="btn-dark" onclick="alert('Publish flow — TBD')">⬆ Publish →</button>
+          <div class="develop-note">Full Develop editing (Solid/Gradient background panels, layer controls, etc.) reuses the existing Edit &amp; Publish canvas from the video/carousel flow — wiring that up is the next piece of this prototype.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="role-switch" id="roleSwitch" role="group" aria-label="Brand setup state">
+  <p class="role-cap">Signed in as</p>
+  <button type="button" class="role-btn on" data-brand="none" onclick="setBrandMode('none')">No brand setup</button>
+  <button type="button" class="role-btn" data-brand="set" onclick="setBrandMode('set')">Brand set up</button>
+</div>
+
+<script>
+// ---- Copy fields (Draft > Copy) ----
+const copyFields = [
+  {key:'headline', label:'Headline', text:'Study in the UK — Applications open for 2026', on:true},
+  {key:'subhead', label:'Subhead', text:'Applications open for the January intake', on:true},
+  {key:'cta', label:'Call to action', text:'Apply Now', on:true}
+];
+
+function renderCopyFields(){
+  const list = document.getElementById('copyFieldList');
+  list.innerHTML = copyFields.map((f,i) => `
+    <div class="copy-field ${f.on ? '' : 'off'}" data-key="${f.key}">
+      <button type="button" class="field-switch ${f.on ? 'on' : ''}" onclick="toggleCopyField(${i})"><span class="knob"></span></button>
+      <div class="copy-field-body">
+        <span class="copy-field-label">${f.label}</span>
+        <input class="copy-field-input" value="${f.text.replace(/"/g,'&quot;')}" oninput="onCopyFieldInput(${i}, this.value)">
+      </div>
+    </div>`).join('');
+}
+function toggleCopyField(i){
+  copyFields[i].on = !copyFields[i].on;
+  renderCopyFields();
+  updateVisualConceptPrompt();
+}
+function onCopyFieldInput(i, value){
+  copyFields[i].text = value; // autosave — no explicit save step needed
+  updateDevelopPreview();
+}
+
+// ---- Brand kit (Visual concept > Use brand kit) ----
+// window.__brandMode ('none' | 'set') is set by setBrandMode(), reused from the video/carousel flow's
+// demo role-switch so this screen can preview both brand-setup states.
+let brandKitOn = false;
+function setBrandMode(mode){
+  window.__brandMode = mode;
+  document.querySelectorAll('#roleSwitch .role-btn').forEach(b => b.classList.toggle('on', b.dataset.brand === mode));
+  const brandSwitch = document.getElementById('brandKitSwitch');
+  const summary = document.getElementById('brandKitSummary');
+  const empty = document.getElementById('brandKitEmpty');
+  const chip = document.getElementById('brandSettingChip');
+  if(mode === 'set'){
+    brandSwitch.classList.remove('disabled');
+    brandKitOn = true;
+    brandSwitch.classList.add('on');
+    summary.style.display = 'flex';
+    empty.style.display = 'none';
+    chip.style.display = 'flex';
+  } else {
+    brandSwitch.classList.add('disabled');
+    brandKitOn = false;
+    brandSwitch.classList.remove('on');
+    summary.style.display = 'none';
+    empty.style.display = 'block';
+    chip.style.display = 'none';
+  }
+  updateVisualConceptPrompt();
+}
+function toggleBrandKit(){
+  if(window.__brandMode !== 'set') return; // disabled state — nothing to toggle until brand is set up
+  brandKitOn = !brandKitOn;
+  document.getElementById('brandKitSwitch').classList.toggle('on', brandKitOn);
+  updateVisualConceptPrompt();
+}
+function goToBrandSetup(){
+  alert('This would open Brand Setup — outside this prototype\'s scope.');
+}
+
+// ---- Easy / Expert mode ----
+let draftMode = 'easy';
+let bakedInOn = false;
+function setDraftMode(mode){
+  draftMode = mode;
+  document.querySelectorAll('#draftModeToggle .seg-chip').forEach(c => c.classList.toggle('active', c.dataset.mode === mode));
+  document.getElementById('expertPanel').classList.toggle('open', mode === 'expert');
+  document.getElementById('modeToggleHint').textContent = mode === 'easy'
+    ? 'Text stays on an editable layer over the image.'
+    : 'Advanced: optionally let AI bake the copy into the image itself.';
+  if(mode === 'easy'){
+    bakedInOn = false;
+    document.getElementById('bakedInCheckbox').checked = false;
+    document.getElementById('bakedInWarning').classList.remove('show');
+  }
+  updateVisualConceptPrompt();
+}
+function toggleBakedIn(checked){
+  bakedInOn = checked;
+  document.getElementById('bakedInWarning').classList.toggle('show', checked);
+  updateVisualConceptPrompt();
+}
+
+// ---- Visual concept prompt template ----
+// Auto-drafted prompt always includes negative-space placement and graphic-element direction
+// (not just a plain subject description), per the "avoid monotonous prompts" guide.
+let userEditedPrompt = false;
+function onVisualConceptEdited(){ userEditedPrompt = true; }
+function updateVisualConceptPrompt(){
+  if(userEditedPrompt) return; // don't clobber a manual edit
+  const activeLabels = copyFields.filter(f => f.on).map(f => f.key === 'cta' ? 'call-to-action button' : f.label.toLowerCase());
+  const base = 'A bright, aspirational photo of a diverse group of international students on a UK university campus, golden-hour lighting, candid and optimistic mood.';
+  const spaceLine = activeLabels.length
+    ? ` Leave generous negative space in the lower third of the frame for ${activeLabels.join(', ')} text overlay.`
+    : '';
+  const graphicLine = brandKitOn
+    ? ' Include abstract geometric shapes in the brand\'s primary blue (#4F6DE6), a subtle pattern overlay, and layered graphic elements for visual depth.'
+    : ' Include abstract geometric shapes, a subtle pattern overlay, and layered graphic elements for visual depth.';
+  const bakedLine = (draftMode === 'expert' && bakedInOn && activeLabels.length)
+    ? ` Render this text directly into the image: ${copyFields.filter(f=>f.on).map(f=>f.text).join(' / ')}.`
+    : '';
+  document.getElementById('visualConceptText').value = (base + spaceLine + graphicLine + bakedLine).trim();
+  updateDevelopPreview();
+}
+
+// ---- Chat ----
+function addChatMsg(role, html){
+  const log = document.getElementById('chatLog');
+  const wrap = document.createElement('div');
+  wrap.className = 'msg ' + role;
+  wrap.innerHTML = html;
+  log.appendChild(wrap);
+  log.scrollTop = log.scrollHeight;
+}
+function quickAction(action){
+  if(action === 'looks-good'){
+    addChatMsg('user', 'Looks good → generate');
+    confirmAndGenerate();
+  } else if(action === 'rework'){
+    addChatMsg('user', 'Rework');
+    addChatMsg('ai', '<span class="tag">AI</span>Sure — tell me what to change (e.g. "make the headline shorter" or "try a warmer tone"), or adjust the fields directly on the right.');
+  }
+}
+function sendChatMessage(){
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if(!text) return;
+  addChatMsg('user', text);
+  input.value = '';
+  setTimeout(() => addChatMsg('ai', '<span class="tag">AI</span>Got it — this is a prototype, so I won\'t actually rewrite the draft, but in the real flow this is where that request would land.'), 500);
+}
+
+// ---- Draft <-> Versions sub-stage tabs ----
+function showSub(name){
+  const tabs = {draft:'tabDraft', versions:'tabVersions'};
+  const subs = {draft:'subDraft', versions:'subVersions'};
+  const tabEl = document.getElementById(tabs[name]);
+  if(tabEl.classList.contains('locked')) return;
+  Object.values(tabs).forEach(id => document.getElementById(id).classList.remove('active'));
+  tabEl.classList.add('active');
+  Object.values(subs).forEach(id => document.getElementById(id).style.display = 'none');
+  document.getElementById(subs[name]).style.display = 'flex';
+  document.getElementById('draftActionBar').style.display = name === 'draft' ? 'flex' : 'none';
+}
+
+// ---- Confirm & generate 4 versions (parallel, individually regenerable) ----
+const VERSION_COUNT = 4;
+let versionState = [];
+function confirmAndGenerate(){
+  document.getElementById('tabVersions').classList.remove('locked');
+  showSub('versions');
+  versionState = Array.from({length: VERSION_COUNT}, (_, i) => ({id: i + 1, ready: false}));
+  renderVersionGrid();
+  document.getElementById('versionsStatus').textContent = 'Generating 4 versions…';
+  addChatMsg('ai', '<span class="tag">AI</span>Drafting 4 versions now — I\'ll let you know the moment they\'re all ready.<span class="note">Nothing advances automatically — pick one whenever you\'re ready.</span>');
+  versionState.forEach((v, i) => {
+    setTimeout(() => {
+      v.ready = true;
+      renderVersionGrid();
+      checkAllVersionsReady();
+    }, 1400 + i * 900);
+  });
+}
+function checkAllVersionsReady(){
+  if(versionState.every(v => v.ready)){
+    document.getElementById('versionsStatus').textContent = 'All 4 versions ready — pick one to continue.';
+    addChatMsg('ai', '<span class="tag">AI</span>All 4 versions are ready. Pick your favorite to move into Develop, or regenerate any one individually.');
+  }
+}
+function renderVersionGrid(){
+  const grid = document.getElementById('versionGrid');
+  grid.innerHTML = versionState.map(v => `
+    <div class="version-tile ${v.ready ? 'ready' : 'generating'}" onclick="${v.ready ? `selectVersion(${v.id})` : ''}">
+      <div class="version-tile-preview">
+        <div class="version-tile-overlay-top">
+          <span class="version-tile-badge">V${v.id}</span>
+          <span class="version-tile-ready-badge">✓ Ready</span>
+          <button type="button" class="version-tile-regen-btn" onclick="event.stopPropagation(); regenerateVersion(${v.id})" title="Regenerate this version only">↻</button>
+        </div>
+        <div class="version-tile-spinner"></div>
+      </div>
+      <div class="version-tile-footer">
+        <span class="version-tile-label">Version ${v.id}</span>
+        <button type="button" class="version-tile-use-btn" onclick="event.stopPropagation(); selectVersion(${v.id})">Use this →</button>
+      </div>
+    </div>`).join('');
+}
+function regenerateVersion(id){
+  const v = versionState.find(x => x.id === id);
+  v.ready = false;
+  renderVersionGrid();
+  document.getElementById('versionsStatus').textContent = `Regenerating version ${id}…`;
+  setTimeout(() => {
+    v.ready = true;
+    renderVersionGrid();
+    checkAllVersionsReady();
+  }, 1400);
+}
+function selectVersion(id){
+  addChatMsg('user', `Use version ${id}`);
+  goToDevelop();
+}
+
+// ---- Develop preview (reflects the current Copy fields) ----
+function updateDevelopPreview(){
+  const get = key => copyFields.find(f => f.key === key);
+  const h = get('headline'), s = get('subhead'), c = get('cta');
+  document.getElementById('developHeadline').textContent = h.on ? h.text : '';
+  document.getElementById('developHeadline').style.display = h.on ? 'block' : 'none';
+  document.getElementById('developSubhead').textContent = s.on ? s.text : '';
+  document.getElementById('developSubhead').style.display = s.on ? 'block' : 'none';
+  document.getElementById('developCta').textContent = c.on ? c.text : '';
+  document.getElementById('developCta').style.display = c.on ? 'inline-block' : 'none';
+}
+
+// ---- Top-level stepper navigation ----
+function showView(name){
+  ['briefView','generateView','developView'].forEach(id => document.getElementById(id).classList.add('hidden'));
+  document.getElementById(name).classList.remove('hidden');
+}
+function setStep(active){
+  const order = ['stepBrief','stepGenerate','stepEdit'];
+  const idx = order.indexOf(active);
+  order.forEach((id, i) => {
+    const el = document.getElementById(id);
+    el.classList.remove('active','done');
+    if(i < idx) el.classList.add('done');
+    else if(i === idx) el.classList.add('active');
+  });
+  document.getElementById('stepBrief').querySelector('.num').textContent = idx > 0 ? '✓' : '1';
+  document.getElementById('stepGenerate').querySelector('.num').textContent = idx > 1 ? '✓' : '2';
+}
+function goToBrief(){ showView('briefView'); setStep('stepBrief'); }
+function goToGenerate(){ showView('generateView'); setStep('stepGenerate'); showSub('draft'); }
+function goToDevelop(){
+  if(!versionState.some(v => v.ready)) return; // nothing to develop yet
+  updateDevelopPreview();
+  showView('developView');
+  setStep('stepEdit');
+}
+
+// ---- init ----
+renderCopyFields();
+setBrandMode('none');
+setDraftMode('easy');
+updateVisualConceptPrompt();
+addChatMsg('ai', '<span class="tag">AI</span>I\'ve drafted your copy and a visual concept based on your brief. Toggle any Copy field on/off, edit the Visual concept prompt, and confirm when it looks right.');
+</script>
+</body>
+</html>
