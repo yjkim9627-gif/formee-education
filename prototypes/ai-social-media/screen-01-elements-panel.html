@@ -15,6 +15,13 @@
   p { margin: 0; }
   button { all: unset; box-sizing: border-box; cursor: pointer; font-family: inherit; }
 
+  /* Fixed 1920x1080 to match the Figma frame exactly — scaled to fit whatever the actual
+     browser window size is via fitScreenToViewport() below (transform-origin: top left keeps
+     the scale math simple). Without this, any UI positioned toward the right/bottom half of
+     the 1920-wide layout (e.g. the layers-panel toggle chip) renders past the edge of any
+     window narrower than 1920px and is literally unreachable — confirmed with a real
+     headless-browser click test after two earlier attempts at scoped per-element fixes. */
+  html, body { overflow: hidden; }
   .screen {
     width: 1920px;
     height: 1080px;
@@ -22,6 +29,7 @@
     flex-direction: column;
     background: var(--color-neutral-0);
     overflow: hidden;
+    transform-origin: top left;
   }
 
   /* ---------- icon fragment helper (mirrors Figma vector layers 1:1) ---------- */
@@ -99,6 +107,7 @@
   .panel-header__subtitle { font-size: var(--font-size-text-xs); line-height: var(--line-height-text-xs); font-weight: var(--font-weight-regular); color: var(--color-neutral-500); }
 
   .panel-section { display: flex; flex-direction: column; gap: var(--spacing-sm); }
+  .panel-section[hidden] { display: none; }
   .section-header { display: flex; align-items: center; justify-content: space-between; }
   .section-header__title { font-size: var(--font-size-text-md); line-height: var(--line-height-text-md); font-weight: var(--font-weight-semibold); color: var(--color-neutral-800); }
   .section-header__seeall { font-size: var(--font-size-text-xs); line-height: var(--line-height-text-xs); font-weight: var(--font-weight-semibold); }
@@ -114,6 +123,12 @@
   .cell-row__fade--left { left: 0; right: auto; background: linear-gradient(to left, rgba(255,255,255,0), var(--color-neutral-0)); opacity: 0; }
   .cell-row__fade--left.is-visible { opacity: 1; }
   .cell { width: 68px; height: 68px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: var(--color-neutral-25); border: var(--border-width-1) solid var(--color-neutral-400); border-radius: var(--radius-md); }
+  /* Brand > Overview's Graphics/Photos preview cells only — same hover/menu/checkbox behaviour
+     as the dedicated tabs' .cell-lg image cells, scoped so Stickers/Lines/Shapes/Logos .cell
+     instances (which share this same base class) are left untouched. */
+  .cell[data-media-cell] { position: relative; cursor: pointer; transition: border-color 0.12s ease, background-color 0.12s ease; }
+  .cell[data-media-cell]:hover { border-color: var(--color-neutral-500); }
+  .cell[data-media-cell].cell-lg--focused { background: var(--color-neutral-150); border-color: var(--color-neutral-500); }
   .carousel-arrow { position: absolute; right: 0; left: auto; top: 18px; width: 32px; height: 32px; border-radius: var(--radius-full); background: var(--color-neutral-0); border: var(--border-width-1) solid var(--color-neutral-400); box-shadow: var(--shadow-focus-card); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.15s ease; cursor: pointer; z-index: 2; }
   .carousel-arrow--left { left: 0; right: auto; }
   .carousel-arrow--left .icon { transform: scaleX(-1); }
@@ -139,9 +154,10 @@
   .font-card__caption { font-size: var(--font-size-text-xs); line-height: var(--line-height-text-xs); font-weight: var(--font-weight-medium); color: var(--color-neutral-500); }
 
   /* ---------- W:ToolPanel — Brand ---------- */
-  .tab-bar { display: flex; align-items: center; width: 100%; }
-  .tab-bar__item { display: flex; align-items: center; justify-content: center; height: 40px; padding: var(--spacing-xs) var(--spacing-lg); border-bottom: var(--border-width-1) solid var(--color-neutral-300); font-size: var(--font-size-text-md); line-height: var(--line-height-text-md); font-weight: var(--font-weight-medium); color: var(--color-neutral-500); white-space: nowrap; }
-  .tab-bar__item--active { border-bottom: 2px solid var(--color-brand-primary); font-weight: var(--font-weight-bold); color: var(--color-brand-primary); }
+  .tab-bar { display: flex; align-items: center; width: 100%; overflow-x: auto; overflow-y: hidden; scroll-behavior: smooth; scrollbar-width: none; -ms-overflow-style: none; }
+  .tab-bar::-webkit-scrollbar { display: none; }
+  .tab-bar__item { display: flex; align-items: center; justify-content: center; height: 40px; padding: var(--spacing-xs) var(--spacing-lg); border-bottom: var(--border-width-1) solid var(--color-neutral-300); font-size: var(--font-size-text-md); line-height: var(--line-height-text-md); font-weight: var(--font-weight-medium); color: var(--color-neutral-500); white-space: nowrap; flex-shrink: 0; }
+  .tab-bar__item--active { border-bottom: 2px solid var(--color-neutral-800); font-weight: var(--font-weight-bold); color: var(--color-neutral-800); }
 
   .cell--photo { background: none; border-color: var(--color-neutral-300); overflow: hidden; padding: 0; }
   .cell--photo img { width: 100%; height: 100%; object-fit: cover; }
@@ -155,24 +171,65 @@
   .upload-dropzone__title { font-size: var(--font-size-text-md); line-height: var(--line-height-text-md); font-weight: var(--font-weight-semibold); color: var(--color-neutral-700); }
   .upload-dropzone__caption { font-size: var(--font-size-text-xs); line-height: var(--line-height-text-xs); font-weight: var(--font-weight-regular); color: var(--color-neutral-500); }
 
-  .uploads-toolrow { display: flex; align-items: flex-start; gap: var(--spacing-md); }
+  .uploads-toolrow { display: flex; align-items: flex-start; justify-content: flex-start; gap: var(--spacing-md); width: fit-content; align-self: flex-start; }
   .view-switcher { display: flex; align-items: center; gap: 0; height: 36px; padding: var(--spacing-xs); background: var(--color-neutral-100); border-radius: var(--radius-lg); flex-shrink: 0; }
   .view-switcher__option { display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: var(--radius-md); }
   .view-switcher__option--active { background: var(--color-neutral-0); border: 0.6px solid var(--color-neutral-400); box-shadow: var(--shadow-cell-action); }
 
-  .folder-row { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: var(--spacing-md); background: var(--color-neutral-0); border: var(--border-width-1) solid var(--color-neutral-400); border-radius: var(--radius-lg); }
-  .folder-row--rename { background: var(--color-neutral-150); border-color: var(--color-neutral-500); }
-  .folder-row__main { display: flex; align-items: center; gap: var(--spacing-md); height: 24px; }
+  .folder-row { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: var(--spacing-md); background: var(--color-neutral-0); border: var(--border-width-1) solid var(--color-neutral-400); border-radius: var(--radius-lg); cursor: pointer; transition: border-color 0.12s ease, background-color 0.12s ease; }
+  .folder-row:hover { border-color: var(--color-neutral-500); }
+  .folder-row--focused { background: var(--color-neutral-150); border-color: var(--color-neutral-500); }
+  .folder-row__main { display: flex; align-items: center; gap: var(--spacing-md); height: 24px; flex: 1; min-width: 0; }
   .folder-row__title { font-size: var(--font-size-text-md); line-height: var(--line-height-text-md); font-weight: var(--font-weight-semibold); color: var(--color-neutral-700); white-space: nowrap; }
-  .folder-row__title--rename { color: var(--color-neutral-900); background: var(--color-brand-primary-mid); padding: 0 var(--spacing-1); }
-  .folder-row__action { display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: var(--radius-md); flex-shrink: 0; }
+  .folder-row__title-input { flex: 1; min-width: 0; font-family: inherit; font-size: var(--font-size-text-md); line-height: var(--line-height-text-md); font-weight: var(--font-weight-semibold); color: var(--color-neutral-700); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border: none; outline: none; background: none; padding: 0; margin: 0; cursor: pointer; }
+  .folder-row__title-input:not([readonly]) { color: var(--color-neutral-900); background: var(--color-brand-primary-mid); padding: 0 var(--spacing-1); border-radius: var(--radius-xs); cursor: text; }
+  .folder-row__action { display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: var(--radius-md); flex-shrink: 0; border: var(--border-width-1) solid transparent; }
+  .folder-row__action:hover { background: var(--color-neutral-0); border-color: var(--color-neutral-400); box-shadow: var(--shadow-cell-action); }
+  .folder-row__action.is-focused { background: var(--color-neutral-150); border-color: var(--color-neutral-400); box-shadow: var(--shadow-cell-action); }
 
   .uploads-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--spacing-sm); width: 100%; }
-  .cell-lg { position: relative; aspect-ratio: 1 / 1; width: 100%; display: flex; align-items: center; justify-content: center; background: var(--color-neutral-25); border: var(--border-width-1) solid var(--color-neutral-400); border-radius: var(--radius-md); }
+  .uploads-grid[hidden] { display: none; }
+
+  /* ---------- Editor / View Switcher — List view (Figma node 4554:126187) ---------- */
+  .uploads-list-view { display: flex; flex-direction: column; gap: var(--spacing-md); width: 100%; }
+  .uploads-list-view[hidden] { display: none; }
+  .uploads-list-row { position: relative; display: flex; align-items: center; gap: var(--spacing-md); width: 100%; padding: var(--spacing-xs); border-radius: var(--radius-md); cursor: pointer; transition: background-color 0.12s ease; }
+  .uploads-list-row:hover { background: var(--color-neutral-25); }
+  .uploads-list-row.cell-lg--focused { background: var(--color-neutral-150); }
+  /* The row reuses .cell-lg__checkbox / .cell-lg__action for visual + behavioural consistency
+     with every other image cell; these two overrides turn them from absolute image overlays
+     into normal inline flex children (checkbox always visible on the left, "..." hover-revealed
+     on the right, matching Figma node 4554:126187's list-row hover state). */
+  .uploads-list-row .cell-lg__checkbox { position: static; opacity: 1; pointer-events: auto; }
+  .uploads-list-row .cell-lg__action { position: static; margin-left: auto; }
+  .uploads-list-row:hover .cell-lg__action, .uploads-list-row.cell-lg--focused .cell-lg__action { opacity: 1; pointer-events: auto; }
+  .uploads-list-row__thumb { width: 68px; height: 68px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: var(--color-neutral-25); border: var(--border-width-1) solid var(--color-neutral-400); border-radius: var(--radius-md); overflow: hidden; }
+  .uploads-list-row__thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .uploads-list-row__meta { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--spacing-2); justify-content: center; }
+  .uploads-list-row__name { font-size: var(--font-size-text-sm); line-height: var(--line-height-text-sm); font-weight: var(--font-weight-semibold); color: var(--color-neutral-700); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .uploads-list-row__submeta { display: flex; align-items: center; gap: var(--spacing-sm); }
+  .uploads-list-row__submeta span { font-size: var(--font-size-text-xs); line-height: var(--line-height-text-xs); font-weight: var(--font-weight-medium); color: var(--color-neutral-500); white-space: nowrap; }
+  .uploads-list-row__dot { width: 2px; height: 2px; border-radius: var(--radius-full); background: var(--color-neutral-400); flex-shrink: 0; }
+  .cell-lg { position: relative; aspect-ratio: 1 / 1; width: 100%; display: flex; align-items: center; justify-content: center; background: var(--color-neutral-25); border: var(--border-width-1) solid var(--color-neutral-400); border-radius: var(--radius-md); transition: border-color 0.12s ease, background-color 0.12s ease; }
+  .cell-lg:hover { border-color: var(--color-neutral-500); }
+  .cell-lg--focused { background: var(--color-neutral-150); border-color: var(--color-neutral-500); }
   .cell-lg--photo { background: none; border-color: var(--color-neutral-300); overflow: hidden; }
   .cell-lg--photo img { width: 100%; height: 100%; object-fit: cover; }
-  .cell-lg__action { position: absolute; top: 3px; right: 3px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; background: var(--color-neutral-0); border: var(--border-width-1) solid var(--color-neutral-400); border-radius: var(--radius-md); box-shadow: var(--shadow-cell-action); }
-  .cell-lg__checkbox { position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; background: var(--color-neutral-0); border: var(--border-width-1) solid var(--color-neutral-400); border-radius: var(--radius-sm); }
+  .cell-lg--photo.cell-lg--focused { border-color: var(--color-neutral-500); }
+  .cell-lg__action { position: absolute; top: 3px; right: 3px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; background: var(--color-neutral-0); border: var(--border-width-1) solid var(--color-neutral-400); border-radius: var(--radius-md); box-shadow: var(--shadow-cell-action); opacity: 0; pointer-events: none; transition: opacity 0.12s ease; cursor: pointer; }
+  .cell-lg__checkbox { position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; background: var(--color-neutral-0); border: var(--border-width-1) solid var(--color-neutral-400); border-radius: var(--radius-sm); opacity: 0; pointer-events: none; transition: opacity 0.12s ease; cursor: pointer; }
+  .cell-lg__checkbox-icon { width: 10px; height: 10px; opacity: 0; }
+  .cell-lg:hover .cell-lg__action, .cell-lg:hover .cell-lg__checkbox,
+  .cell-lg--focused .cell-lg__action, .cell-lg--focused .cell-lg__checkbox { opacity: 1; pointer-events: auto; }
+  .cell-lg__checkbox.is-checked { background: var(--color-brand-primary); border-color: var(--color-brand-primary); }
+  .cell-lg__checkbox.is-checked .cell-lg__checkbox-icon { opacity: 1; }
+
+  /* ---------- Uploads / Content Actions Menu (Figma node 5809:86596) ---------- */
+  .content-actions-menu { position: fixed; display: none; flex-direction: column; width: 168px; background: var(--color-neutral-0); border-radius: var(--radius-lg); box-shadow: var(--shadow-modal); overflow: hidden; z-index: 10; }
+  .content-actions-menu.is-visible { display: flex; }
+  .content-actions-menu__item { display: flex; align-items: center; gap: var(--spacing-sm); padding: 7px var(--spacing-lg); cursor: pointer; }
+  .content-actions-menu__item:hover { background: var(--color-neutral-75); }
+  .content-actions-menu__item p { font-size: var(--font-size-text-md); line-height: var(--line-height-text-md); font-weight: var(--font-weight-regular); color: var(--color-neutral-900); }
 
   /* ---------- W:ToolPanel — AI Improve ---------- */
   .ai-header-btn { width: 28px; height: 28px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: var(--color-neutral-0); border: var(--border-width-1) solid var(--color-neutral-200); border-radius: var(--radius-lg); font-size: var(--font-size-text-2xl); line-height: 1; color: var(--color-neutral-900); }
@@ -215,6 +272,31 @@
   .action-tile-row { display: flex; gap: var(--spacing-sm); width: 100%; }
   .action-tile { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--spacing-xs); padding: var(--spacing-md) 0; background: var(--color-neutral-0); border: var(--border-width-1) solid var(--color-neutral-400); border-radius: var(--radius-lg); cursor: pointer; }
   .action-tile__label { font-size: var(--font-size-text-sm); line-height: var(--line-height-text-sm); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); }
+
+  /* ---------- W:ToolPanel — Image detail (Figma node 4554:126423) ---------- */
+  .panel-action-row { display: flex; align-items: center; justify-content: center; gap: var(--spacing-sm); width: 100%; padding: var(--spacing-md) 0; background: var(--color-neutral-0); border: var(--border-width-1) solid var(--color-neutral-400); border-radius: var(--radius-lg); cursor: pointer; font-size: var(--font-size-text-sm); line-height: var(--line-height-text-sm); font-weight: var(--font-weight-semibold); color: var(--color-neutral-700); }
+  .panel-action-row--ai { background: linear-gradient(to right, var(--color-brand-primary), var(--color-brand-accent)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .panel-action-row.is-active { border-color: var(--color-brand-primary); background: var(--color-brand-primary-light); }
+  .crop-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--spacing-sm); width: 100%; }
+  .crop-option { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; min-width: 0; }
+  .crop-option__card { position: relative; width: 100%; aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; background: var(--color-neutral-25); border: var(--border-width-1) solid var(--color-neutral-400); border-radius: var(--radius-md); overflow: hidden; }
+  .crop-option.is-active .crop-option__card { border-color: var(--color-brand-primary); border-width: 1.5px; }
+  .crop-option__shape { position: relative; overflow: hidden; border: var(--border-width-1) solid var(--color-neutral-400); flex-shrink: 0; }
+  .crop-option__shape img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .crop-option__shape--freeform { width: 56px; height: 42px; border-radius: 8px; }
+  .crop-option__shape--circle { width: 52px; height: 52px; border-radius: var(--radius-full); }
+  .crop-option__shape--square { width: 52px; height: 52px; }
+  .crop-option__shape--rounded { width: 52px; height: 52px; border-radius: 8px; }
+  .crop-option__scan { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+  .crop-option__icon { width: 55px; height: 48px; object-fit: contain; display: block; }
+  .crop-option__label { font-size: var(--font-size-text-2xs); line-height: var(--line-height-text-2xs); font-weight: var(--font-weight-medium); color: var(--color-neutral-700); white-space: nowrap; }
+  .image-adjust-row { display: flex; flex-direction: column; align-items: flex-start; gap: var(--spacing-xs); width: 100%; }
+  .image-adjust-row__label { font-size: var(--font-size-text-sm); line-height: var(--line-height-text-sm); font-weight: var(--font-weight-medium); color: var(--color-neutral-700); }
+  .image-adjust-row .opacity-row { width: 100%; }
+  .canvas-image { z-index: 2; }
+  .canvas-image__img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; -webkit-user-drag: none; user-select: none; pointer-events: none; }
+  .canvas-image__checker { position: absolute; inset: 0; display: none; background-image: conic-gradient(var(--color-neutral-200) 90deg, transparent 90deg 180deg, var(--color-neutral-200) 180deg 270deg, transparent 270deg); background-size: 12px 12px; }
+  .canvas-image.is-bg-removed .canvas-image__checker { display: block; }
 
   /* ---------- Shape detail — Style / Border / Transform (Figma node 4554:122820) ---------- */
   .panel-divider { background: var(--color-neutral-100); height: 1px; width: 100%; flex-shrink: 0; }
@@ -338,6 +420,12 @@
   .canvas-selectable__handle--tr { left: calc(100% + 2px); top: -2px; cursor: nesw-resize; }
   .canvas-selectable__handle--bl { left: -2px; top: calc(100% + 2px); cursor: nesw-resize; }
   .canvas-selectable__handle--br { left: calc(100% + 2px); top: calc(100% + 2px); cursor: nwse-resize; }
+  /* Edge midpoint handles — sit on top of the (decorative) .canvas-selectable__pill markers.
+     Unlike the corner handles, these resize a single axis with no aspect-ratio lock. */
+  .canvas-selectable__handle--top { left: 50%; top: -2px; cursor: ns-resize; }
+  .canvas-selectable__handle--bottom { left: 50%; top: calc(100% + 2px); cursor: ns-resize; }
+  .canvas-selectable__handle--left { left: -2px; top: 50%; cursor: ew-resize; }
+  .canvas-selectable__handle--right { left: calc(100% + 2px); top: 50%; cursor: ew-resize; }
 
   /* ---------- Shapes — See all grid (Figma: Elements panel — Shapes, node 4554:122747) ---------- */
   .shape-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-sm); width: 100%; }
@@ -363,8 +451,13 @@
   .canvas { flex: 1; min-width: 0; display: flex; flex-direction: column; background: var(--color-neutral-50); }
 
   .context-bar { position: relative; z-index: 2; flex-shrink: 0; height: 62px; display: flex; align-items: center; justify-content: space-between; padding: var(--spacing-sm) var(--spacing-lg); }
-  .quick-add { display: flex; align-items: center; gap: var(--spacing-sm); height: 36px; padding: var(--spacing-sm) var(--spacing-md); background: var(--color-neutral-0); border: var(--border-width-1) solid var(--color-neutral-400); border-radius: var(--radius-lg); flex-shrink: 0; }
+  .quick-add { display: flex; align-items: center; gap: var(--spacing-sm); height: 36px; padding: var(--spacing-sm) var(--spacing-md); background: var(--color-neutral-0); border: var(--border-width-1) solid var(--color-neutral-400); border-radius: var(--radius-lg); flex-shrink: 0; cursor: pointer; }
   .quick-add span { font-size: var(--font-size-text-md); line-height: var(--line-height-text-md); font-weight: var(--font-weight-semibold); color: var(--color-brand-primary); }
+  .add-menu { position: absolute; display: none; flex-direction: column; gap: 2px; width: 220px; background: var(--color-neutral-0); border: var(--border-width-1) solid var(--color-neutral-200); border-radius: var(--radius-2xl); box-shadow: var(--shadow-modal); padding: var(--spacing-sm); z-index: 30; }
+  .add-menu.is-visible { display: flex; }
+  .add-menu__item { display: flex; align-items: center; gap: var(--spacing-md); height: 46px; padding: var(--spacing-md); border-radius: var(--radius-lg); cursor: pointer; font-size: var(--font-size-text-md); line-height: var(--line-height-text-md); font-weight: var(--font-weight-medium); color: var(--color-neutral-900); }
+  .add-menu__item:hover { background: var(--color-neutral-75); }
+  .add-menu__sep { height: 1px; background: var(--color-neutral-200); width: 100%; margin: var(--spacing-2) 0; flex-shrink: 0; }
 
   /* Hidden by default — shown later via .floating-toolbar--visible when a triggering action is defined. */
   .floating-toolbar { position: absolute; left: 50%; top: var(--spacing-sm); display: flex; align-items: center; gap: var(--spacing-xs); padding: var(--spacing-sm); background: var(--color-neutral-0); border: var(--border-width-1) solid var(--color-neutral-400); border-radius: var(--radius-xl); box-shadow: var(--shadow-modal); opacity: 0; pointer-events: none; transform: translateX(-50%) translateY(-12px); transition: opacity 0.2s ease, transform 0.2s ease; }
@@ -406,8 +499,18 @@
   .opacity-popover__input::-webkit-outer-spin-button, .opacity-popover__input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
   .toggle-pill { display: flex; align-items: center; gap: var(--spacing-2); height: 36px; padding: var(--spacing-sm); background: var(--color-neutral-0); border: var(--border-width-1) solid var(--color-neutral-200); border-radius: var(--radius-lg); box-shadow: var(--shadow-toggle-pill); flex-shrink: 0; }
-  .toggle-chip { display: flex; align-items: center; justify-content: center; gap: var(--spacing-sm); height: 30px; padding: var(--spacing-xs) var(--spacing-md); border-radius: var(--radius-lg); }
+  .toggle-chip { display: flex; align-items: center; justify-content: center; gap: var(--spacing-sm); height: 30px; padding: var(--spacing-xs) var(--spacing-md); border-radius: var(--radius-lg); cursor: pointer; position: relative; }
+  .toggle-chip.is-active { background: var(--color-neutral-150); }
   .toggle-divider { width: 1px; height: 18px; background: var(--color-neutral-200); flex-shrink: 0; }
+  .toggle-chip__tooltip { position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%); background: var(--color-neutral-900); color: var(--color-neutral-0); font-size: var(--font-size-text-2xs); line-height: var(--line-height-text-2xs); font-weight: var(--font-weight-medium); padding: var(--spacing-xs) var(--spacing-sm); border-radius: var(--radius-md); white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.12s ease; z-index: 10; }
+  .toggle-chip:hover .toggle-chip__tooltip { opacity: 1; }
+  /* Guides overlay (Figma node 4554:126884) — rule-of-thirds-style lines drawn over the
+     poster, toggled by the toolbar's grid icon. z-index keeps it above every placed
+     shape/image/sticker regardless of DOM order (they're appended into #posterEl over time). */
+  .poster__guides { position: absolute; inset: 0; pointer-events: none; display: none; z-index: 50; }
+  .poster__guides.is-visible { display: block; }
+  .poster__guide-v { position: absolute; top: 0; width: 1px; height: 100%; background: var(--color-brand-accent); opacity: 0.7; }
+  .poster__guide-h { position: absolute; left: 0; height: 1px; width: 100%; background: var(--color-brand-accent); opacity: 0.7; }
 
   .stage-canvas { flex: 1; min-height: 0; position: relative; overflow: hidden; }
   /* top offset by half of .context-bar's height (62px / 2 = 31px) so the poster centers on W:Canvas as a whole, not just the stage area below the context bar */
@@ -419,7 +522,36 @@
   .poster__cta { position: absolute; left: 103px; top: 514px; display: flex; align-items: center; justify-content: center; padding: var(--spacing-md) var(--spacing-xl); background: var(--color-neutral-0); border-radius: var(--radius-xl); box-shadow: var(--shadow-poster-cta); }
   .poster__cta span { font-size: var(--font-size-text-md); line-height: var(--line-height-text-md); font-weight: var(--font-weight-bold); color: var(--color-brand-primary-dark); white-space: nowrap; }
   .poster__brand { position: absolute; left: 408px; top: 33px; width: 32.94px; height: 32px; }
-  .layers-toggle { position: absolute; left: 1387px; top: 34px; display: flex; align-items: center; justify-content: center; gap: var(--spacing-sm); padding: var(--spacing-xs) var(--spacing-md); border-radius: var(--radius-lg); }
+  /* Layers panel (Figma node 4554:127075 "Canvas overlays · layers panel open") — the trigger
+     is the 3rd .toggle-chip (layer-stack icon) in the toolbar's .toggle-pill, not a separate
+     button — an earlier pass mistakenly built a standalone floating button that didn't match
+     Figma at all (confirmed against the actual screenshot). Lists layerOrder[] (shared with
+     the floating toolbar's layer-order popover) so reordering here and reordering there stay
+     in sync; both just call applyLayerAction()/applyLayerOrder(). */
+  /* position:fixed (not absolute) + left/top set inline by toggleLayersPanel() from the toggle
+     button's real viewport position — .stage-canvas has overflow:hidden, so an absolutely
+     positioned panel anchored to it risked being silently clipped/invisible if the computed
+     offset was ever off; fixed positioning is immune to any ancestor's overflow. */
+  .layers-panel { position: fixed; width: 290px; max-height: 460px; overflow-y: auto; display: none; flex-direction: column; gap: var(--spacing-md); background: var(--color-neutral-0); border: var(--border-width-1) solid var(--color-neutral-200); border-radius: var(--radius-2xl); box-shadow: var(--shadow-modal); padding: var(--spacing-lg); z-index: 1000; }
+  .layers-panel.is-visible { display: flex; }
+  .layers-panel__header { display: flex; align-items: center; gap: var(--spacing-sm); width: 100%; flex-shrink: 0; }
+  .layers-panel__title { flex: 1 0 0; font-size: var(--font-size-text-md); line-height: var(--line-height-text-md); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); }
+  .layers-panel__close { flex-shrink: 0; cursor: pointer; }
+  .layers-panel__list { display: flex; flex-direction: column; gap: var(--spacing-sm); width: 100%; }
+  .layer-row { display: flex; align-items: center; gap: var(--spacing-sm); width: 100%; padding: var(--spacing-sm) var(--spacing-md); background: var(--color-neutral-0); border: var(--border-width-1) solid var(--color-neutral-400); border-radius: var(--radius-xl); cursor: pointer; }
+  .layer-row.is-dragging { opacity: 0.4; }
+  .layer-row.is-active { background: var(--color-neutral-150); border-color: var(--color-neutral-500); }
+  .layer-row__grip { flex-shrink: 0; cursor: grab; touch-action: none; }
+  .layer-row__icon { flex-shrink: 0; opacity: 0.65; display: block; }
+  .layer-row__name { flex: 1 0 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--font-size-text-sm); line-height: var(--line-height-text-sm); font-weight: var(--font-weight-semibold); color: var(--color-neutral-700); }
+  .layer-row.is-active .layer-row__name { color: var(--color-neutral-900); }
+  .layer-row.is-hidden .layer-row__name, .layer-row.is-hidden .layer-row__icon { opacity: 0.4; }
+  .layer-row__reorder { display: none; flex-shrink: 0; cursor: pointer; }
+  .layer-row.is-active .layer-row__reorder { display: flex; }
+  .layer-row__reorder.is-disabled { opacity: 0.3; pointer-events: none; }
+  .layer-row__eye, .layer-row__lock { flex-shrink: 0; cursor: pointer; }
+  .layer-row__lock.is-locked { opacity: 1; }
+  .layer-row__lock:not(.is-locked) { opacity: 0.55; }
 
   /* ---------- W:ActionBar ---------- */
   .actionbar { height: 76px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 var(--spacing-2xl); background: var(--color-neutral-0); border-top: var(--border-width-1) solid var(--color-neutral-300); }
@@ -661,14 +793,14 @@
           </div>
           <div class="cell-row">
             <div class="cell-row__items">
-              <div class="cell">
+              <div class="cell" onclick="placeSticker('growing-heart')" style="cursor:pointer;">
                 <span class="icon" style="width:32px;height:32px">
                   <span class="icon__frag" style="inset:17.59% 6.46% 5.12% 5.19%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-heart-1.svg" alt="" /></span>
                   <span class="icon__frag" style="inset:26.37% 15.81% 12.7% 14.54%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-heart-2.svg" alt="" /></span>
                   <span class="icon__frag" style="inset:38.87% 28.67% 22.21% 26.85%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-heart-3.svg" alt="" /></span>
                 </span>
               </div>
-              <div class="cell">
+              <div class="cell" onclick="placeSticker('sticker-b')" style="cursor:pointer;">
                 <span class="icon" style="width:32px;height:32px">
                   <span class="icon__frag" style="inset:6.25% 6.26% 6.26% 6.25%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-b-circle.svg" alt="" /></span>
                   <span class="icon__frag" style="inset:42.19% 56.25% 46.89% 25%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-b-lbottom.svg" alt="" /></span>
@@ -680,7 +812,7 @@
                   <span class="icon__frag" style="inset:59.38% 28.13% 36.16% 28.12%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-b-teeth.svg" alt="" /></span>
                 </span>
               </div>
-              <div class="cell">
+              <div class="cell" onclick="placeSticker('sticker-c')" style="cursor:pointer;">
                 <span class="icon" style="width:32px;height:32px">
                   <span class="icon__frag" style="inset:6.25% 5.48% 6.26% 7.03%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-c-shape1.svg" alt="" /></span>
                   <span class="icon__frag" style="inset:3.91% 3.13% 3.91% 4.69%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-c-shape2.svg" alt="" /></span>
@@ -688,7 +820,7 @@
                   <span class="icon__frag" style="inset:31.25% 28.13% 56.25% 28.13%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-c-shape4.svg" alt="" /></span>
                 </span>
               </div>
-              <div class="cell">
+              <div class="cell" onclick="placeSticker('sticker-d')" style="cursor:pointer;">
                 <span class="icon" style="width:32px;height:32px">
                   <span class="icon__frag" style="inset:6.25% 6.26% 6.26% 6.25%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-d-circle.svg" alt="" /></span>
                   <span class="icon__frag" style="inset:31.25% 18.75% 40.63% 18.75%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-d-eyeballs.svg" alt="" /></span>
@@ -718,23 +850,23 @@
           </div>
           <div class="cell-row">
             <div class="cell-row__items">
-              <div class="cell">
+              <div class="cell" onclick="addShapeToCanvas('line')" style="cursor:pointer;">
                 <span class="icon" style="width:36px;height:36px">
                   <span class="icon__frag" style="inset:calc(50% - 0.8px) 20.83% calc(50% - 0.8px) 20.83%"><img src="assets/screen-01-elements-panel/toolpanel/lineminus.svg" alt="" /></span>
                 </span>
               </div>
-              <div class="cell">
+              <div class="cell" onclick="addShapeToCanvas('linearrow')" style="cursor:pointer;">
                 <span class="icon" style="width:36px;height:36px">
                   <span class="icon__frag" style="inset:33.33% 8.33% 33.33% 25%"><img src="assets/screen-01-elements-panel/toolpanel/linearrow-1.svg" alt="" /></span>
                   <span class="icon__frag" style="inset:calc(50% - 0.8px) 8.33% calc(50% - 0.8px) 8.33%"><img src="assets/screen-01-elements-panel/toolpanel/linearrow-2.svg" alt="" /></span>
                 </span>
               </div>
-              <div class="cell">
+              <div class="cell" onclick="addShapeToCanvas('line', 'dashed')" style="cursor:pointer;">
                 <span class="icon" style="width:36px;height:36px">
                   <span class="icon__frag" style="inset:calc(50% - 0.8px) 18.33% calc(50% - 0.8px) 15%"><img src="assets/screen-01-elements-panel/toolpanel/linedashed.svg" alt="" /></span>
                 </span>
               </div>
-              <div class="cell">
+              <div class="cell" onclick="addShapeToCanvas('line', 'dotted')" style="cursor:pointer;">
                 <span class="icon" style="width:36px;height:36px">
                   <span class="icon__frag" style="inset:calc(50% - 0.8px) 12% calc(50% - 0.8px) 12%"><img src="assets/screen-01-elements-panel/toolpanel/dotdashed.svg" alt="" /></span>
                 </span>
@@ -757,22 +889,22 @@
           </div>
           <div class="cell-row">
             <div class="cell-row__items">
-              <div class="cell">
+              <div class="cell" onclick="addShapeToCanvas('square')" style="cursor:pointer;">
                 <span class="icon" style="width:36px;height:36px">
                   <span class="icon__frag" style="inset:12.5%"><img src="assets/screen-01-elements-panel/toolpanel/square.svg" alt="" /></span>
                 </span>
               </div>
-              <div class="cell">
+              <div class="cell" onclick="addShapeToCanvas('circle')" style="cursor:pointer;">
                 <span class="icon" style="width:36px;height:36px">
                   <span class="icon__frag" style="inset:8.33%"><img src="assets/screen-01-elements-panel/toolpanel/circle.svg" alt="" /></span>
                 </span>
               </div>
-              <div class="cell">
+              <div class="cell" onclick="addShapeToCanvas('triangle')" style="cursor:pointer;">
                 <span class="icon" style="width:36px;height:36px">
                   <span class="icon__frag" style="inset:12.51% 8.34% 12.5% 8.34%"><img src="assets/screen-01-elements-panel/toolpanel/triangle.svg" alt="" /></span>
                 </span>
               </div>
-              <div class="cell">
+              <div class="cell" onclick="addShapeToCanvas('star')" style="cursor:pointer;">
                 <span class="icon" style="width:36px;height:36px">
                   <span class="icon__frag" style="inset:8.33% 8.33% 12.2% 8.33%"><img src="assets/screen-01-elements-panel/toolpanel/star.svg" alt="" /></span>
                 </span>
@@ -848,13 +980,16 @@
             </div>
           </div>
           <div class="tab-bar">
-            <div class="tab-bar__item tab-bar__item--active">Overview</div>
-            <div class="tab-bar__item">Logos</div>
-            <div class="tab-bar__item">Colours</div>
-            <div class="tab-bar__item">Fonts</div>
+            <div class="tab-bar__item tab-bar__item--active" data-brand-tab="overview" onclick="switchBrandTab('overview')" style="cursor:pointer;">Overview</div>
+            <div class="tab-bar__item" data-brand-tab="logos" onclick="switchBrandTab('logos')" style="cursor:pointer;">Logos</div>
+            <div class="tab-bar__item" data-brand-tab="colours" onclick="switchBrandTab('colours')" style="cursor:pointer;">Colours</div>
+            <div class="tab-bar__item" data-brand-tab="fonts" onclick="switchBrandTab('fonts')" style="cursor:pointer;">Fonts</div>
+            <div class="tab-bar__item" data-brand-tab="graphics" onclick="switchBrandTab('graphics')" style="cursor:pointer;">Graphics</div>
+            <div class="tab-bar__item" data-brand-tab="photos" onclick="switchBrandTab('photos')" style="cursor:pointer;">Photos</div>
           </div>
         </div>
 
+        <div data-brand-tab-content="overview">
         <div class="panel-section">
           <div class="section-header">
             <p class="section-header__title">Logos</p>
@@ -922,28 +1057,28 @@
           </div>
           <div class="cell-row">
             <div class="cell-row__items">
-              <div class="cell">
+              <div class="cell" data-media-cell onclick="placeMediaCellImage(this)">
                 <span class="icon" style="width:24px;height:24px; opacity:0.35;">
                   <span class="icon__frag" style="inset:12.5%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-1.svg" alt="" /></span>
                   <span class="icon__frag" style="inset:29.17% 54.17% 54.17% 29.17%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-2.svg" alt="" /></span>
                   <span class="icon__frag" style="inset:47.2% 12.5% 12.5% 25%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-3.svg" alt="" /></span>
                 </span>
               </div>
-              <div class="cell">
+              <div class="cell" data-media-cell onclick="placeMediaCellImage(this)">
                 <span class="icon" style="width:24px;height:24px; opacity:0.35;">
                   <span class="icon__frag" style="inset:12.5%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-1.svg" alt="" /></span>
                   <span class="icon__frag" style="inset:29.17% 54.17% 54.17% 29.17%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-2.svg" alt="" /></span>
                   <span class="icon__frag" style="inset:47.2% 12.5% 12.5% 25%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-3.svg" alt="" /></span>
                 </span>
               </div>
-              <div class="cell">
+              <div class="cell" data-media-cell onclick="placeMediaCellImage(this)">
                 <span class="icon" style="width:24px;height:24px; opacity:0.35;">
                   <span class="icon__frag" style="inset:12.5%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-1.svg" alt="" /></span>
                   <span class="icon__frag" style="inset:29.17% 54.17% 54.17% 29.17%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-2.svg" alt="" /></span>
                   <span class="icon__frag" style="inset:47.2% 12.5% 12.5% 25%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-3.svg" alt="" /></span>
                 </span>
               </div>
-              <div class="cell">
+              <div class="cell" data-media-cell onclick="placeMediaCellImage(this)">
                 <span class="icon" style="width:24px;height:24px; opacity:0.35;">
                   <span class="icon__frag" style="inset:12.5%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-1.svg" alt="" /></span>
                   <span class="icon__frag" style="inset:29.17% 54.17% 54.17% 29.17%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-2.svg" alt="" /></span>
@@ -967,16 +1102,16 @@
           </div>
           <div class="cell-row">
             <div class="cell-row__items">
-              <div class="cell cell--photo">
+              <div class="cell cell--photo" data-media-cell onclick="placeMediaCellImage(this)">
                 <img src="assets/screen-01-elements-panel/panel-brand/photo-1.png" alt="" />
               </div>
-              <div class="cell cell--photo">
+              <div class="cell cell--photo" data-media-cell onclick="placeMediaCellImage(this)">
                 <img src="assets/screen-01-elements-panel/panel-brand/photo-2.png" alt="" />
               </div>
-              <div class="cell cell--photo">
+              <div class="cell cell--photo" data-media-cell onclick="placeMediaCellImage(this)">
                 <img src="assets/screen-01-elements-panel/panel-brand/photo-3.png" alt="" />
               </div>
-              <div class="cell cell--photo">
+              <div class="cell cell--photo" data-media-cell onclick="placeMediaCellImage(this)">
                 <img src="assets/screen-01-elements-panel/panel-brand/photo-4.png" alt="" />
               </div>
               <div class="cell-row__fade"></div>
@@ -987,6 +1122,444 @@
               </span>
             </button>
           </div>
+        </div>
+        </div>
+
+        <!-- ---- Logos (dedicated tab, Figma node 4554:125968) ---- -->
+        <div class="panel-section" data-brand-tab-content="logos" hidden>
+          <div class="upload-dropzone">
+            <div class="upload-dropzone__row">
+              <span class="icon" style="width:20px;height:20px">
+                <span class="icon__frag" style="inset:0"><img src="assets/screen-01-elements-panel/panel-uploads/upload-frame.svg" alt="" /></span>
+              </span>
+              <p class="upload-dropzone__title">Upload Files</p>
+            </div>
+            <p class="upload-dropzone__caption">Drag and drop or click to browse</p>
+          </div>
+          <div class="section-header" style="margin-top:var(--spacing-lg);">
+            <p class="section-header__title">Logos</p>
+          </div>
+          <div class="uploads-grid" style="margin-top:var(--spacing-sm);">
+            <div class="cell-lg">
+              <span class="icon" style="width:52px;height:10px">
+                <span class="icon__frag" style="inset:20.86% 7.78% 44.17% 27.64%"><img src="assets/screen-01-elements-panel/panel-brand/logo-fmx-1.svg" alt="FMX logo" /></span>
+                <span class="icon__frag" style="inset:67.44% 7.94% 18.53% 27.14%"><img src="assets/screen-01-elements-panel/panel-brand/logo-fmx-2.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:25.03% 76.96% 1.25% 8.19%"><img src="assets/screen-01-elements-panel/panel-brand/logo-fmx-3.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:0.96% 89.98% 49.39% 0.02%"><img src="assets/screen-01-elements-panel/panel-brand/logo-fmx-4.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:0.96% 85.12% 74.97% 10.03%"><img src="assets/screen-01-elements-panel/panel-brand/logo-fmx-5.svg" alt="" /></span>
+              </span>
+            </div>
+            <div class="cell-lg">
+              <span class="icon" style="width:52px;height:10px">
+                <span class="icon__frag" style="inset:20.86% 7.78% 44.17% 27.64%"><img src="assets/screen-01-elements-panel/panel-brand/logo-fmx-mark-1.svg" alt="FMX logo mark" /></span>
+                <span class="icon__frag" style="inset:67.44% 7.94% 18.53% 27.14%"><img src="assets/screen-01-elements-panel/panel-brand/logo-fmx-mark-2.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:25.03% 76.96% 1.25% 8.19%"><img src="assets/screen-01-elements-panel/panel-brand/logo-fmx-3.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:0.96% 89.98% 49.39% 0.02%"><img src="assets/screen-01-elements-panel/panel-brand/logo-fmx-4.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:0.96% 85.12% 74.97% 10.03%"><img src="assets/screen-01-elements-panel/panel-brand/logo-fmx-5.svg" alt="" /></span>
+              </span>
+              <div class="cell-lg__action">
+                <span class="icon" style="width:16px;height:16px">
+                  <span class="icon__frag" style="inset:45.83%"><img src="assets/screen-01-elements-panel/panel-uploads/ellipsis-dot-hover.svg" alt="" /></span>
+                  <span class="icon__frag" style="inset:45.83% 16.67% 45.83% 75%"><img src="assets/screen-01-elements-panel/panel-uploads/ellipsis-dot-hover.svg" alt="" /></span>
+                  <span class="icon__frag" style="inset:45.83% 75% 45.83% 16.67%"><img src="assets/screen-01-elements-panel/panel-uploads/ellipsis-dot-hover.svg" alt="" /></span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ---- Colours (dedicated tab, Figma node 4554:125894) ---- -->
+        <div class="panel-section" data-brand-tab-content="colours" hidden>
+          <div class="section-header">
+            <p class="section-header__title">Colours</p>
+          </div>
+          <div class="palette-group-row" style="margin-bottom:0;">
+            <div style="display:flex; align-items:center; gap:var(--spacing-sm);">
+              <p class="palette-group-label">Formee Express</p>
+              <span class="icon" style="width:16px;height:16px; cursor:pointer;">
+                <span class="icon__frag" style="inset:8.33% 8.33% 8.34% 8.33%"><img src="assets/screen-01-elements-panel/topbar/pencil-1.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:20.83% 20.83% 62.5% 62.5%"><img src="assets/screen-01-elements-panel/topbar/pencil-2.svg" alt="" /></span>
+              </span>
+            </div>
+            <div class="folder-row__action" style="cursor:pointer;">
+              <span class="icon" style="width:16px;height:16px">
+                <span class="icon__frag" style="inset:45.83%"><img src="assets/screen-01-elements-panel/panel-uploads/ellipsis-dot.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:45.83% 16.67% 45.83% 75%"><img src="assets/screen-01-elements-panel/panel-uploads/ellipsis-dot.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:45.83% 75% 45.83% 16.67%"><img src="assets/screen-01-elements-panel/panel-uploads/ellipsis-dot.svg" alt="" /></span>
+              </span>
+            </div>
+          </div>
+          <div class="palette-row" style="flex-wrap:wrap; justify-content:flex-start; gap:var(--spacing-sm); margin-top:var(--spacing-sm);">
+            <div style="position:relative;">
+              <span class="palette-swatch" style="display:block; background:#2b6a6c; border-color:var(--color-neutral-500);"></span>
+              <span style="position:absolute; top:-5px; right:-5px; width:20px; height:20px; border-radius:var(--radius-full); background:var(--color-neutral-950); display:flex; align-items:center; justify-content:center; cursor:pointer;">
+                <span class="icon" style="width:16px;height:16px">
+                  <span class="icon__frag" style="inset:25%"><img src="assets/screen-01-elements-panel/panel-text/panel-close.svg" alt="" /></span>
+                </span>
+              </span>
+            </div>
+            <span class="palette-swatch" style="display:block; background:#b80d48;"></span>
+            <span class="palette-swatch" style="display:block; background:#f29724;"></span>
+            <span class="palette-swatch" style="display:block; background:#444;"></span>
+            <span class="palette-swatch" style="display:block; background:#6d9697;"></span>
+            <span class="palette-swatch" style="display:block; background:#aa5a77;"></span>
+            <span class="palette-swatch" style="display:block; background:#fff;"></span>
+            <span class="palette-swatch" style="display:flex; align-items:center; justify-content:center; border:none; background:conic-gradient(from 90deg, #ed4545, #f17136, #f59e26, #f2e540, #9fd953, #4dcc66, #4099f2, #8c59e5, #ed4545);">
+              <span style="width:20px; height:20px; border-radius:var(--radius-full); background:var(--color-neutral-0); display:flex; align-items:center; justify-content:center;">
+                <span class="icon" style="width:16px;height:16px">
+                  <span class="icon__frag" style="inset:calc(50% - 0.8px) 20.83% calc(50% - 0.8px) 20.83%"><img src="assets/screen-01-elements-panel/toolpanel/cta-plus-1.svg" alt="" /></span>
+                  <span class="icon__frag" style="inset:20.83% calc(50% - 0.8px) 20.83% calc(50% - 0.8px)"><img src="assets/screen-01-elements-panel/toolpanel/cta-plus-2.svg" alt="" /></span>
+                </span>
+              </span>
+            </span>
+          </div>
+          <button class="cta-btn" style="margin-top:var(--spacing-md);">
+            <span class="icon" style="width:16px;height:16px">
+              <span class="icon__frag" style="inset:calc(50% - 0.8px) 20.83% calc(50% - 0.8px) 20.83%"><img src="assets/screen-01-elements-panel/toolpanel/cta-plus-1.svg" alt="" /></span>
+              <span class="icon__frag" style="inset:20.83% calc(50% - 0.8px) 20.83% calc(50% - 0.8px)"><img src="assets/screen-01-elements-panel/toolpanel/cta-plus-2.svg" alt="" /></span>
+            </span>
+            Add New palette
+          </button>
+        </div>
+
+        <!-- ---- Fonts (dedicated tab, Figma node 4554:125839) ---- -->
+        <div class="panel-section" data-brand-tab-content="fonts" hidden>
+          <div class="section-header">
+            <p class="section-header__title">Fonts</p>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:var(--spacing-md); width:100%; margin-top:var(--spacing-sm);">
+            <div class="font-card">
+              <p class="font-card__label font-card__label--heading">Heading</p>
+              <p class="font-card__caption">Manrope Bold</p>
+            </div>
+            <div class="font-card">
+              <p class="font-card__label font-card__label--subheading">Subheading</p>
+              <p class="font-card__caption">Manrope Semibold</p>
+            </div>
+            <div class="font-card">
+              <p class="font-card__label font-card__label--body">Body</p>
+              <p class="font-card__caption">Manrope Regular</p>
+            </div>
+          </div>
+          <button class="cta-btn" style="margin-top:var(--spacing-md);">
+            <span class="icon" style="width:16px;height:16px">
+              <span class="icon__frag" style="inset:calc(50% - 0.8px) 20.83% calc(50% - 0.8px) 20.83%"><img src="assets/screen-01-elements-panel/toolpanel/cta-plus-1.svg" alt="" /></span>
+              <span class="icon__frag" style="inset:20.83% calc(50% - 0.8px) 20.83% calc(50% - 0.8px)"><img src="assets/screen-01-elements-panel/toolpanel/cta-plus-2.svg" alt="" /></span>
+            </span>
+            Add New Fonts
+          </button>
+        </div>
+
+        <!-- ---- Graphics (dedicated tab, Figma node 4554:125698) — same media-library layout as
+             W:ToolPanel (Uploads), reused verbatim per Figma (both tabs share the exact assets). ---- -->
+        <div class="panel-section" data-brand-tab-content="graphics" hidden>
+          <div class="upload-dropzone">
+            <div class="upload-dropzone__row">
+              <span class="icon" style="width:20px;height:20px">
+                <span class="icon__frag" style="inset:0"><img src="assets/screen-01-elements-panel/panel-uploads/upload-frame.svg" alt="" /></span>
+              </span>
+              <p class="upload-dropzone__title">Upload media</p>
+            </div>
+            <p class="upload-dropzone__caption">Drag and drop or click to browse</p>
+          </div>
+
+          <div class="uploads-toolrow" style="margin-top:var(--spacing-md);">
+            <button class="text-btn" onclick="addFolder('brandGraphicsFolderList')">
+              <span class="icon" style="width:16px;height:16px">
+                <span class="icon__frag" style="inset:41.67% calc(50% - 0.8px) 33.33% calc(50% - 0.8px)"><img src="assets/screen-01-elements-panel/panel-uploads/new-folder-1.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:calc(54.17% - 0.8px) 37.5% calc(45.83% - 0.8px) 37.5%"><img src="assets/screen-01-elements-panel/panel-uploads/new-folder-2.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:12.5% 8.33% 16.67% 8.33%"><img src="assets/screen-01-elements-panel/panel-uploads/new-folder-3.svg" alt="" /></span>
+              </span>
+              New Folder
+            </button>
+            <div class="view-switcher">
+            <div class="view-switcher__option view-switcher__option--active" onclick="setImageViewMode('grid', 'brandGraphicsRecentGrid', 'brandGraphicsListView', this)">
+              <span class="icon" style="width:16px;height:16px">
+                <span class="icon__frag" style="inset:12.5% calc(50% - 0.6px) 12.5% calc(50% - 0.6px)"><img src="assets/screen-01-elements-panel/panel-uploads/view-grid-1.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:calc(50% - 0.6px) 12.5% calc(50% - 0.6px) 12.5%"><img src="assets/screen-01-elements-panel/panel-uploads/view-grid-2.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:12.5%"><img src="assets/screen-01-elements-panel/panel-uploads/view-grid-3.svg" alt="" /></span>
+              </span>
+            </div>
+            <div class="view-switcher__option" onclick="setImageViewMode('list', 'brandGraphicsRecentGrid', 'brandGraphicsListView', this)">
+              <span class="icon" style="width:16px;height:16px">
+                <span class="icon__frag" style="inset:12.5% 58.33% 58.33% 12.5%"><img src="assets/screen-01-elements-panel/panel-uploads/view-list-1.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:58.33% 58.33% 12.5% 12.5%"><img src="assets/screen-01-elements-panel/panel-uploads/view-list-1.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:calc(16.67% - 0.6px) 12.5% calc(83.33% - 0.6px) 58.33%"><img src="assets/screen-01-elements-panel/panel-uploads/view-list-2.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:calc(37.5% - 0.6px) 12.5% calc(62.5% - 0.6px) 58.33%"><img src="assets/screen-01-elements-panel/panel-uploads/view-list-2.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:calc(62.5% - 0.6px) 12.5% calc(37.5% - 0.6px) 58.33%"><img src="assets/screen-01-elements-panel/panel-uploads/view-list-2.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:calc(83.33% - 0.6px) 12.5% calc(16.67% - 0.6px) 58.33%"><img src="assets/screen-01-elements-panel/panel-uploads/view-list-2.svg" alt="" /></span>
+              </span>
+            </div>
+            </div>
+          </div>
+
+          <div id="brandGraphicsFolderList" style="display:flex; flex-direction:column; gap:var(--spacing-md); width:100%; margin-top:var(--spacing-md);">
+            <div class="folder-row" onclick="selectFolderRow(event, this)">
+              <div class="folder-row__main">
+                <span class="icon" style="width:21px;height:21px">
+                  <span class="icon__frag" style="inset:12.5% 8.33% 16.67% 8.33%"><img src="assets/screen-01-elements-panel/panel-uploads/folder-closed-1.svg" alt="" /></span>
+                  <span class="icon__frag" style="inset:calc(41.67% - 0.8px) 8.33% calc(58.33% - 0.8px) 8.33%"><img src="assets/screen-01-elements-panel/panel-uploads/folder-closed-2.svg" alt="" /></span>
+                </span>
+                <input class="folder-row__title-input" value="Folder 01" readonly ondblclick="event.stopPropagation(); startFolderRename(this);" onblur="commitFolderRename(this);" onkeydown="handleFolderRenameKeydown(event, this);" />
+              </div>
+              <div class="folder-row__action" onclick="event.stopPropagation(); toggleFolderMenu(event, this);">
+                <span class="icon" style="width:16px;height:16px">
+                  <span class="icon__frag" style="inset:45.83%"><img src="assets/screen-01-elements-panel/panel-uploads/ellipsis-dot.svg" alt="" /></span>
+                  <span class="icon__frag" style="inset:45.83% 16.67% 45.83% 75%"><img src="assets/screen-01-elements-panel/panel-uploads/ellipsis-dot.svg" alt="" /></span>
+                  <span class="icon__frag" style="inset:45.83% 75% 45.83% 16.67%"><img src="assets/screen-01-elements-panel/panel-uploads/ellipsis-dot.svg" alt="" /></span>
+                </span>
+              </div>
+            </div>
+            <div class="folder-row" onclick="selectFolderRow(event, this)">
+              <div class="folder-row__main">
+                <span class="icon" style="width:21px;height:21px">
+                  <span class="icon__frag" style="inset:12.5% 8.33% 16.67% 8.33%"><img src="assets/screen-01-elements-panel/panel-uploads/folder-closed-1.svg" alt="" /></span>
+                  <span class="icon__frag" style="inset:calc(41.67% - 0.8px) 8.33% calc(58.33% - 0.8px) 8.33%"><img src="assets/screen-01-elements-panel/panel-uploads/folder-closed-2.svg" alt="" /></span>
+                </span>
+                <input class="folder-row__title-input" value="Folder 02" readonly ondblclick="event.stopPropagation(); startFolderRename(this);" onblur="commitFolderRename(this);" onkeydown="handleFolderRenameKeydown(event, this);" />
+              </div>
+              <div class="folder-row__action" onclick="event.stopPropagation(); toggleFolderMenu(event, this);">
+                <span class="icon" style="width:16px;height:16px">
+                  <span class="icon__frag" style="inset:45.83%"><img src="assets/screen-01-elements-panel/panel-uploads/ellipsis-dot.svg" alt="" /></span>
+                  <span class="icon__frag" style="inset:45.83% 16.67% 45.83% 75%"><img src="assets/screen-01-elements-panel/panel-uploads/ellipsis-dot.svg" alt="" /></span>
+                  <span class="icon__frag" style="inset:45.83% 75% 45.83% 16.67%"><img src="assets/screen-01-elements-panel/panel-uploads/ellipsis-dot.svg" alt="" /></span>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-header" style="margin-top:var(--spacing-lg);">
+            <p class="section-header__title">Recent Uploads</p>
+          </div>
+          <div class="uploads-grid" id="brandGraphicsRecentGrid" style="margin-top:var(--spacing-sm);">
+            <div class="cell-lg">
+              <span class="icon" style="width:36px;height:36px; opacity:0.35;">
+                <span class="icon__frag" style="inset:12.5%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-1.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:29.17% 54.17% 54.17% 29.17%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-2.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:47.2% 12.5% 12.5% 25%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-3.svg" alt="" /></span>
+              </span>
+            </div>
+            <div class="cell-lg">
+              <span class="icon" style="width:36px;height:36px; opacity:0.35;">
+                <span class="icon__frag" style="inset:12.5%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-1.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:29.17% 54.17% 54.17% 29.17%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-2.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:47.2% 12.5% 12.5% 25%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-3.svg" alt="" /></span>
+              </span>
+            </div>
+            <div class="cell-lg">
+              <span class="icon" style="width:36px;height:36px; opacity:0.35;">
+                <span class="icon__frag" style="inset:12.5%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-1.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:29.17% 54.17% 54.17% 29.17%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-2.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:47.2% 12.5% 12.5% 25%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-3.svg" alt="" /></span>
+              </span>
+            </div>
+            <div class="cell-lg">
+              <span class="icon" style="width:36px;height:36px; opacity:0.35;">
+                <span class="icon__frag" style="inset:12.5%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-1.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:29.17% 54.17% 54.17% 29.17%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-2.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:47.2% 12.5% 12.5% 25%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-3.svg" alt="" /></span>
+              </span>
+            </div>
+            <div class="cell-lg">
+              <span class="icon" style="width:36px;height:36px; opacity:0.35;">
+                <span class="icon__frag" style="inset:12.5%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-1.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:29.17% 54.17% 54.17% 29.17%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-2.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:47.2% 12.5% 12.5% 25%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-3.svg" alt="" /></span>
+              </span>
+            </div>
+            <div class="cell-lg">
+              <span class="icon" style="width:36px;height:36px; opacity:0.35;">
+                <span class="icon__frag" style="inset:12.5%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-1.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:29.17% 54.17% 54.17% 29.17%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-2.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:47.2% 12.5% 12.5% 25%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-3.svg" alt="" /></span>
+              </span>
+            </div>
+            <div class="cell-lg">
+              <span class="icon" style="width:36px;height:36px; opacity:0.35;">
+                <span class="icon__frag" style="inset:12.5%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-1.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:29.17% 54.17% 54.17% 29.17%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-2.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:47.2% 12.5% 12.5% 25%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-3.svg" alt="" /></span>
+              </span>
+            </div>
+            <div class="cell-lg">
+              <span class="icon" style="width:36px;height:36px; opacity:0.35;">
+                <span class="icon__frag" style="inset:12.5%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-1.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:29.17% 54.17% 54.17% 29.17%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-2.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:47.2% 12.5% 12.5% 25%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-3.svg" alt="" /></span>
+              </span>
+            </div>
+            <div class="cell-lg">
+              <span class="icon" style="width:36px;height:36px; opacity:0.35;">
+                <span class="icon__frag" style="inset:12.5%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-1.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:29.17% 54.17% 54.17% 29.17%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-2.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:47.2% 12.5% 12.5% 25%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-3.svg" alt="" /></span>
+              </span>
+            </div>
+            <div class="cell-lg">
+              <span class="icon" style="width:36px;height:36px; opacity:0.35;">
+                <span class="icon__frag" style="inset:12.5%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-1.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:29.17% 54.17% 54.17% 29.17%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-2.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:47.2% 12.5% 12.5% 25%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-3.svg" alt="" /></span>
+              </span>
+            </div>
+          </div>
+          <div class="uploads-list-view" id="brandGraphicsListView" style="margin-top:var(--spacing-sm);" hidden></div>
+        </div>
+
+        <!-- ---- Photos (dedicated tab, Figma node 4554:125769) — identical media-library layout
+             to Graphics per Figma (both nodes render the same placeholder-grid mock). ---- -->
+        <div class="panel-section" data-brand-tab-content="photos" hidden>
+          <div class="upload-dropzone">
+            <div class="upload-dropzone__row">
+              <span class="icon" style="width:20px;height:20px">
+                <span class="icon__frag" style="inset:0"><img src="assets/screen-01-elements-panel/panel-uploads/upload-frame.svg" alt="" /></span>
+              </span>
+              <p class="upload-dropzone__title">Upload media</p>
+            </div>
+            <p class="upload-dropzone__caption">Drag and drop or click to browse</p>
+          </div>
+
+          <div class="uploads-toolrow" style="margin-top:var(--spacing-md);">
+            <button class="text-btn" onclick="addFolder('brandPhotosFolderList')">
+              <span class="icon" style="width:16px;height:16px">
+                <span class="icon__frag" style="inset:41.67% calc(50% - 0.8px) 33.33% calc(50% - 0.8px)"><img src="assets/screen-01-elements-panel/panel-uploads/new-folder-1.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:calc(54.17% - 0.8px) 37.5% calc(45.83% - 0.8px) 37.5%"><img src="assets/screen-01-elements-panel/panel-uploads/new-folder-2.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:12.5% 8.33% 16.67% 8.33%"><img src="assets/screen-01-elements-panel/panel-uploads/new-folder-3.svg" alt="" /></span>
+              </span>
+              New Folder
+            </button>
+            <div class="view-switcher">
+            <div class="view-switcher__option view-switcher__option--active" onclick="setImageViewMode('grid', 'brandPhotosRecentGrid', 'brandPhotosListView', this)">
+              <span class="icon" style="width:16px;height:16px">
+                <span class="icon__frag" style="inset:12.5% calc(50% - 0.6px) 12.5% calc(50% - 0.6px)"><img src="assets/screen-01-elements-panel/panel-uploads/view-grid-1.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:calc(50% - 0.6px) 12.5% calc(50% - 0.6px) 12.5%"><img src="assets/screen-01-elements-panel/panel-uploads/view-grid-2.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:12.5%"><img src="assets/screen-01-elements-panel/panel-uploads/view-grid-3.svg" alt="" /></span>
+              </span>
+            </div>
+            <div class="view-switcher__option" onclick="setImageViewMode('list', 'brandPhotosRecentGrid', 'brandPhotosListView', this)">
+              <span class="icon" style="width:16px;height:16px">
+                <span class="icon__frag" style="inset:12.5% 58.33% 58.33% 12.5%"><img src="assets/screen-01-elements-panel/panel-uploads/view-list-1.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:58.33% 58.33% 12.5% 12.5%"><img src="assets/screen-01-elements-panel/panel-uploads/view-list-1.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:calc(16.67% - 0.6px) 12.5% calc(83.33% - 0.6px) 58.33%"><img src="assets/screen-01-elements-panel/panel-uploads/view-list-2.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:calc(37.5% - 0.6px) 12.5% calc(62.5% - 0.6px) 58.33%"><img src="assets/screen-01-elements-panel/panel-uploads/view-list-2.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:calc(62.5% - 0.6px) 12.5% calc(37.5% - 0.6px) 58.33%"><img src="assets/screen-01-elements-panel/panel-uploads/view-list-2.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:calc(83.33% - 0.6px) 12.5% calc(16.67% - 0.6px) 58.33%"><img src="assets/screen-01-elements-panel/panel-uploads/view-list-2.svg" alt="" /></span>
+              </span>
+            </div>
+            </div>
+          </div>
+
+          <div id="brandPhotosFolderList" style="display:flex; flex-direction:column; gap:var(--spacing-md); width:100%; margin-top:var(--spacing-md);">
+            <div class="folder-row" onclick="selectFolderRow(event, this)">
+              <div class="folder-row__main">
+                <span class="icon" style="width:21px;height:21px">
+                  <span class="icon__frag" style="inset:12.5% 8.33% 16.67% 8.33%"><img src="assets/screen-01-elements-panel/panel-uploads/folder-closed-1.svg" alt="" /></span>
+                  <span class="icon__frag" style="inset:calc(41.67% - 0.8px) 8.33% calc(58.33% - 0.8px) 8.33%"><img src="assets/screen-01-elements-panel/panel-uploads/folder-closed-2.svg" alt="" /></span>
+                </span>
+                <input class="folder-row__title-input" value="Folder 01" readonly ondblclick="event.stopPropagation(); startFolderRename(this);" onblur="commitFolderRename(this);" onkeydown="handleFolderRenameKeydown(event, this);" />
+              </div>
+              <div class="folder-row__action" onclick="event.stopPropagation(); toggleFolderMenu(event, this);">
+                <span class="icon" style="width:16px;height:16px">
+                  <span class="icon__frag" style="inset:45.83%"><img src="assets/screen-01-elements-panel/panel-uploads/ellipsis-dot.svg" alt="" /></span>
+                  <span class="icon__frag" style="inset:45.83% 16.67% 45.83% 75%"><img src="assets/screen-01-elements-panel/panel-uploads/ellipsis-dot.svg" alt="" /></span>
+                  <span class="icon__frag" style="inset:45.83% 75% 45.83% 16.67%"><img src="assets/screen-01-elements-panel/panel-uploads/ellipsis-dot.svg" alt="" /></span>
+                </span>
+              </div>
+            </div>
+            <div class="folder-row" onclick="selectFolderRow(event, this)">
+              <div class="folder-row__main">
+                <span class="icon" style="width:21px;height:21px">
+                  <span class="icon__frag" style="inset:12.5% 8.33% 16.67% 8.33%"><img src="assets/screen-01-elements-panel/panel-uploads/folder-closed-1.svg" alt="" /></span>
+                  <span class="icon__frag" style="inset:calc(41.67% - 0.8px) 8.33% calc(58.33% - 0.8px) 8.33%"><img src="assets/screen-01-elements-panel/panel-uploads/folder-closed-2.svg" alt="" /></span>
+                </span>
+                <input class="folder-row__title-input" value="Folder 02" readonly ondblclick="event.stopPropagation(); startFolderRename(this);" onblur="commitFolderRename(this);" onkeydown="handleFolderRenameKeydown(event, this);" />
+              </div>
+              <div class="folder-row__action" onclick="event.stopPropagation(); toggleFolderMenu(event, this);">
+                <span class="icon" style="width:16px;height:16px">
+                  <span class="icon__frag" style="inset:45.83%"><img src="assets/screen-01-elements-panel/panel-uploads/ellipsis-dot.svg" alt="" /></span>
+                  <span class="icon__frag" style="inset:45.83% 16.67% 45.83% 75%"><img src="assets/screen-01-elements-panel/panel-uploads/ellipsis-dot.svg" alt="" /></span>
+                  <span class="icon__frag" style="inset:45.83% 75% 45.83% 16.67%"><img src="assets/screen-01-elements-panel/panel-uploads/ellipsis-dot.svg" alt="" /></span>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-header" style="margin-top:var(--spacing-lg);">
+            <p class="section-header__title">Recent Uploads</p>
+          </div>
+          <div class="uploads-grid" id="brandPhotosRecentGrid" style="margin-top:var(--spacing-sm);">
+            <div class="cell-lg">
+              <span class="icon" style="width:36px;height:36px; opacity:0.35;">
+                <span class="icon__frag" style="inset:12.5%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-1.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:29.17% 54.17% 54.17% 29.17%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-2.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:47.2% 12.5% 12.5% 25%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-3.svg" alt="" /></span>
+              </span>
+            </div>
+            <div class="cell-lg">
+              <span class="icon" style="width:36px;height:36px; opacity:0.35;">
+                <span class="icon__frag" style="inset:12.5%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-1.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:29.17% 54.17% 54.17% 29.17%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-2.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:47.2% 12.5% 12.5% 25%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-3.svg" alt="" /></span>
+              </span>
+            </div>
+            <div class="cell-lg">
+              <span class="icon" style="width:36px;height:36px; opacity:0.35;">
+                <span class="icon__frag" style="inset:12.5%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-1.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:29.17% 54.17% 54.17% 29.17%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-2.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:47.2% 12.5% 12.5% 25%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-3.svg" alt="" /></span>
+              </span>
+            </div>
+            <div class="cell-lg">
+              <span class="icon" style="width:36px;height:36px; opacity:0.35;">
+                <span class="icon__frag" style="inset:12.5%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-1.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:29.17% 54.17% 54.17% 29.17%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-2.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:47.2% 12.5% 12.5% 25%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-3.svg" alt="" /></span>
+              </span>
+            </div>
+            <div class="cell-lg">
+              <span class="icon" style="width:36px;height:36px; opacity:0.35;">
+                <span class="icon__frag" style="inset:12.5%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-1.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:29.17% 54.17% 54.17% 29.17%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-2.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:47.2% 12.5% 12.5% 25%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-3.svg" alt="" /></span>
+              </span>
+            </div>
+            <div class="cell-lg">
+              <span class="icon" style="width:36px;height:36px; opacity:0.35;">
+                <span class="icon__frag" style="inset:12.5%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-1.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:29.17% 54.17% 54.17% 29.17%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-2.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:47.2% 12.5% 12.5% 25%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-3.svg" alt="" /></span>
+              </span>
+            </div>
+            <div class="cell-lg">
+              <span class="icon" style="width:36px;height:36px; opacity:0.35;">
+                <span class="icon__frag" style="inset:12.5%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-1.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:29.17% 54.17% 54.17% 29.17%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-2.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:47.2% 12.5% 12.5% 25%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-3.svg" alt="" /></span>
+              </span>
+            </div>
+            <div class="cell-lg">
+              <span class="icon" style="width:36px;height:36px; opacity:0.35;">
+                <span class="icon__frag" style="inset:12.5%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-1.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:29.17% 54.17% 54.17% 29.17%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-2.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:47.2% 12.5% 12.5% 25%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-3.svg" alt="" /></span>
+              </span>
+            </div>
+            <div class="cell-lg">
+              <span class="icon" style="width:36px;height:36px; opacity:0.35;">
+                <span class="icon__frag" style="inset:12.5%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-1.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:29.17% 54.17% 54.17% 29.17%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-2.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:47.2% 12.5% 12.5% 25%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-3.svg" alt="" /></span>
+              </span>
+            </div>
+            <div class="cell-lg">
+              <span class="icon" style="width:36px;height:36px; opacity:0.35;">
+                <span class="icon__frag" style="inset:12.5%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-1.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:29.17% 54.17% 54.17% 29.17%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-2.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:47.2% 12.5% 12.5% 25%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-3.svg" alt="" /></span>
+              </span>
+            </div>
+          </div>
+          <div class="uploads-list-view" id="brandPhotosListView" style="margin-top:var(--spacing-sm);" hidden></div>
         </div>
       </aside>
 
@@ -1015,7 +1588,7 @@
         </div>
 
         <div class="uploads-toolrow">
-          <button class="text-btn">
+          <button class="text-btn" onclick="addFolder('uploadsFolderList')">
             <span class="icon" style="width:16px;height:16px">
               <span class="icon__frag" style="inset:41.67% calc(50% - 0.8px) 33.33% calc(50% - 0.8px)"><img src="assets/screen-01-elements-panel/panel-uploads/new-folder-1.svg" alt="" /></span>
               <span class="icon__frag" style="inset:calc(54.17% - 0.8px) 37.5% calc(45.83% - 0.8px) 37.5%"><img src="assets/screen-01-elements-panel/panel-uploads/new-folder-2.svg" alt="" /></span>
@@ -1024,36 +1597,36 @@
             New Folder
           </button>
           <div class="view-switcher">
-            <div class="view-switcher__option">
-              <span class="icon" style="width:16px;height:16px">
-                <span class="icon__frag" style="inset:12.5% calc(50% - 0.6px) 12.5% calc(50% - 0.6px)"><img src="assets/screen-01-elements-panel/panel-uploads/view-grid-1.svg" alt="" /></span>
-                <span class="icon__frag" style="inset:calc(50% - 0.6px) 12.5% calc(50% - 0.6px) 12.5%"><img src="assets/screen-01-elements-panel/panel-uploads/view-grid-2.svg" alt="" /></span>
-                <span class="icon__frag" style="inset:12.5%"><img src="assets/screen-01-elements-panel/panel-uploads/view-grid-3.svg" alt="" /></span>
-              </span>
-            </div>
-            <div class="view-switcher__option view-switcher__option--active">
-              <span class="icon" style="width:16px;height:16px">
-                <span class="icon__frag" style="inset:12.5% 58.33% 58.33% 12.5%"><img src="assets/screen-01-elements-panel/panel-uploads/view-list-1.svg" alt="" /></span>
-                <span class="icon__frag" style="inset:58.33% 58.33% 12.5% 12.5%"><img src="assets/screen-01-elements-panel/panel-uploads/view-list-1.svg" alt="" /></span>
-                <span class="icon__frag" style="inset:calc(16.67% - 0.6px) 12.5% calc(83.33% - 0.6px) 58.33%"><img src="assets/screen-01-elements-panel/panel-uploads/view-list-2.svg" alt="" /></span>
-                <span class="icon__frag" style="inset:calc(37.5% - 0.6px) 12.5% calc(62.5% - 0.6px) 58.33%"><img src="assets/screen-01-elements-panel/panel-uploads/view-list-2.svg" alt="" /></span>
-                <span class="icon__frag" style="inset:calc(62.5% - 0.6px) 12.5% calc(37.5% - 0.6px) 58.33%"><img src="assets/screen-01-elements-panel/panel-uploads/view-list-2.svg" alt="" /></span>
-                <span class="icon__frag" style="inset:calc(83.33% - 0.6px) 12.5% calc(16.67% - 0.6px) 58.33%"><img src="assets/screen-01-elements-panel/panel-uploads/view-list-2.svg" alt="" /></span>
-              </span>
-            </div>
+          <div class="view-switcher__option view-switcher__option--active" onclick="setImageViewMode('grid', 'uploadsRecentGrid', 'uploadsListView', this)">
+            <span class="icon" style="width:16px;height:16px">
+              <span class="icon__frag" style="inset:12.5% calc(50% - 0.6px) 12.5% calc(50% - 0.6px)"><img src="assets/screen-01-elements-panel/panel-uploads/view-grid-1.svg" alt="" /></span>
+              <span class="icon__frag" style="inset:calc(50% - 0.6px) 12.5% calc(50% - 0.6px) 12.5%"><img src="assets/screen-01-elements-panel/panel-uploads/view-grid-2.svg" alt="" /></span>
+              <span class="icon__frag" style="inset:12.5%"><img src="assets/screen-01-elements-panel/panel-uploads/view-grid-3.svg" alt="" /></span>
+            </span>
+          </div>
+          <div class="view-switcher__option" onclick="setImageViewMode('list', 'uploadsRecentGrid', 'uploadsListView', this)">
+            <span class="icon" style="width:16px;height:16px">
+              <span class="icon__frag" style="inset:12.5% 58.33% 58.33% 12.5%"><img src="assets/screen-01-elements-panel/panel-uploads/view-list-1.svg" alt="" /></span>
+              <span class="icon__frag" style="inset:58.33% 58.33% 12.5% 12.5%"><img src="assets/screen-01-elements-panel/panel-uploads/view-list-1.svg" alt="" /></span>
+              <span class="icon__frag" style="inset:calc(16.67% - 0.6px) 12.5% calc(83.33% - 0.6px) 58.33%"><img src="assets/screen-01-elements-panel/panel-uploads/view-list-2.svg" alt="" /></span>
+              <span class="icon__frag" style="inset:calc(37.5% - 0.6px) 12.5% calc(62.5% - 0.6px) 58.33%"><img src="assets/screen-01-elements-panel/panel-uploads/view-list-2.svg" alt="" /></span>
+              <span class="icon__frag" style="inset:calc(62.5% - 0.6px) 12.5% calc(37.5% - 0.6px) 58.33%"><img src="assets/screen-01-elements-panel/panel-uploads/view-list-2.svg" alt="" /></span>
+              <span class="icon__frag" style="inset:calc(83.33% - 0.6px) 12.5% calc(16.67% - 0.6px) 58.33%"><img src="assets/screen-01-elements-panel/panel-uploads/view-list-2.svg" alt="" /></span>
+            </span>
+          </div>
           </div>
         </div>
 
-        <div class="panel-section" style="gap:var(--spacing-md);">
-          <div class="folder-row folder-row--rename">
+        <div class="panel-section" id="uploadsFolderList" style="gap:var(--spacing-md);">
+          <div class="folder-row" onclick="selectFolderRow(event, this)">
             <div class="folder-row__main">
               <span class="icon" style="width:21px;height:21px">
                 <span class="icon__frag" style="inset:12.5% 8.33% 16.67% 8.33%"><img src="assets/screen-01-elements-panel/panel-uploads/folder-closed-1.svg" alt="" /></span>
                 <span class="icon__frag" style="inset:calc(41.67% - 0.8px) 8.33% calc(58.33% - 0.8px) 8.33%"><img src="assets/screen-01-elements-panel/panel-uploads/folder-closed-2.svg" alt="" /></span>
               </span>
-              <p class="folder-row__title folder-row__title--rename">Folder 01</p>
+              <input class="folder-row__title-input" value="Folder 01" readonly ondblclick="event.stopPropagation(); startFolderRename(this);" onblur="commitFolderRename(this);" onkeydown="handleFolderRenameKeydown(event, this);" />
             </div>
-            <div class="folder-row__action">
+            <div class="folder-row__action" onclick="event.stopPropagation(); toggleFolderMenu(event, this);">
               <span class="icon" style="width:16px;height:16px">
                 <span class="icon__frag" style="inset:45.83%"><img src="assets/screen-01-elements-panel/panel-uploads/ellipsis-dot.svg" alt="" /></span>
                 <span class="icon__frag" style="inset:45.83% 16.67% 45.83% 75%"><img src="assets/screen-01-elements-panel/panel-uploads/ellipsis-dot.svg" alt="" /></span>
@@ -1061,15 +1634,15 @@
               </span>
             </div>
           </div>
-          <div class="folder-row">
+          <div class="folder-row" onclick="selectFolderRow(event, this)">
             <div class="folder-row__main">
               <span class="icon" style="width:21px;height:21px">
                 <span class="icon__frag" style="inset:12.5% 8.33% 16.67% 8.33%"><img src="assets/screen-01-elements-panel/panel-uploads/folder-closed-1.svg" alt="" /></span>
                 <span class="icon__frag" style="inset:calc(41.67% - 0.8px) 8.33% calc(58.33% - 0.8px) 8.33%"><img src="assets/screen-01-elements-panel/panel-uploads/folder-closed-2.svg" alt="" /></span>
               </span>
-              <p class="folder-row__title">Folder 02</p>
+              <input class="folder-row__title-input" value="Folder 02" readonly ondblclick="event.stopPropagation(); startFolderRename(this);" onblur="commitFolderRename(this);" onkeydown="handleFolderRenameKeydown(event, this);" />
             </div>
-            <div class="folder-row__action">
+            <div class="folder-row__action" onclick="event.stopPropagation(); toggleFolderMenu(event, this);">
               <span class="icon" style="width:16px;height:16px">
                 <span class="icon__frag" style="inset:45.83%"><img src="assets/screen-01-elements-panel/panel-uploads/ellipsis-dot.svg" alt="" /></span>
                 <span class="icon__frag" style="inset:45.83% 16.67% 45.83% 75%"><img src="assets/screen-01-elements-panel/panel-uploads/ellipsis-dot.svg" alt="" /></span>
@@ -1084,27 +1657,20 @@
             <p class="section-header__title">Recent Uploads</p>
             <p class="section-header__seeall section-header__seeall--muted">See all</p>
           </div>
-          <div class="uploads-grid">
-            <div class="cell-lg cell-lg--photo"><img src="assets/screen-01-elements-panel/panel-uploads/photo-1.png" alt="" /></div>
-            <div class="cell-lg cell-lg--photo"><img src="assets/screen-01-elements-panel/panel-uploads/photo-2.png" alt="" /></div>
-            <div class="cell-lg cell-lg--photo"><img src="assets/screen-01-elements-panel/panel-uploads/photo-3.png" alt="" /></div>
-            <div class="cell-lg cell-lg--photo"><img src="assets/screen-01-elements-panel/panel-uploads/photo-4.png" alt="" /></div>
-            <div class="cell-lg cell-lg--photo"><img src="assets/screen-01-elements-panel/panel-uploads/photo-5.png" alt="" /></div>
-            <div class="cell-lg cell-lg--photo"><img src="assets/screen-01-elements-panel/panel-uploads/photo-6.png" alt="" /></div>
+          <div class="uploads-grid" id="uploadsRecentGrid">
+            <div class="cell-lg cell-lg--photo" onclick="placeMediaCellImage(this)"><img src="assets/screen-01-elements-panel/panel-uploads/image-uploaded-first.png" alt="" /></div>
+            <div class="cell-lg cell-lg--photo" onclick="placeMediaCellImage(this)"><img src="assets/screen-01-elements-panel/panel-uploads/photo-1.png" alt="" /></div>
+            <div class="cell-lg cell-lg--photo" onclick="placeMediaCellImage(this)"><img src="assets/screen-01-elements-panel/panel-uploads/photo-2.png" alt="" /></div>
+            <div class="cell-lg cell-lg--photo" onclick="placeMediaCellImage(this)"><img src="assets/screen-01-elements-panel/panel-uploads/photo-3.png" alt="" /></div>
+            <div class="cell-lg cell-lg--photo" onclick="placeMediaCellImage(this)"><img src="assets/screen-01-elements-panel/panel-uploads/photo-4.png" alt="" /></div>
+            <div class="cell-lg cell-lg--photo" onclick="placeMediaCellImage(this)"><img src="assets/screen-01-elements-panel/panel-uploads/photo-5.png" alt="" /></div>
+            <div class="cell-lg cell-lg--photo" onclick="placeMediaCellImage(this)"><img src="assets/screen-01-elements-panel/panel-uploads/photo-6.png" alt="" /></div>
             <div class="cell-lg">
               <span class="icon" style="width:36px;height:36px; opacity:0.35;">
                 <span class="icon__frag" style="inset:12.5%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-1.svg" alt="" /></span>
                 <span class="icon__frag" style="inset:29.17% 54.17% 54.17% 29.17%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-2.svg" alt="" /></span>
                 <span class="icon__frag" style="inset:47.2% 12.5% 12.5% 25%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-3.svg" alt="" /></span>
               </span>
-              <div class="cell-lg__action">
-                <span class="icon" style="width:16px;height:16px">
-                  <span class="icon__frag" style="inset:45.83%"><img src="assets/screen-01-elements-panel/panel-uploads/ellipsis-dot-hover.svg" alt="" /></span>
-                  <span class="icon__frag" style="inset:45.83% 16.67% 45.83% 75%"><img src="assets/screen-01-elements-panel/panel-uploads/ellipsis-dot-hover.svg" alt="" /></span>
-                  <span class="icon__frag" style="inset:45.83% 75% 45.83% 16.67%"><img src="assets/screen-01-elements-panel/panel-uploads/ellipsis-dot-hover.svg" alt="" /></span>
-                </span>
-              </div>
-              <div class="cell-lg__checkbox"></div>
             </div>
             <div class="cell-lg">
               <span class="icon" style="width:36px;height:36px; opacity:0.35;">
@@ -1156,6 +1722,7 @@
               </span>
             </div>
           </div>
+          <div class="uploads-list-view" id="uploadsListView" hidden></div>
         </div>
       </aside>
 
@@ -1518,6 +2085,26 @@
               <span class="icon__frag sticker-frag" data-sticker-key="arrow-heart" style="inset:53.01% 15.56% 15.56% 53.01%"><img src="assets/screen-01-elements-panel/panel-sticker-detail/replace-options/replace-sparkle-heart-strokesmall.svg" alt="" /></span>
               <span class="icon__frag sticker-frag" data-sticker-key="heart-badge" style="inset:6.38% 6.25% 6.12% 6.25%"><img src="assets/screen-01-elements-panel/panel-sticker-detail/replace-options/replace-photo-sticker-rect.svg" alt="" /></span>
               <span class="icon__frag sticker-frag" data-sticker-key="heart-badge" style="inset:27.58% 20.97% 20.57% 21.02%"><img src="assets/screen-01-elements-panel/panel-sticker-detail/replace-options/replace-photo-sticker-vector.svg" alt="" /></span>
+              <span class="icon__frag sticker-frag" data-sticker-key="sticker-b" style="inset:6.25% 6.26% 6.26% 6.25%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-b-circle.svg" alt="" /></span>
+              <span class="icon__frag sticker-frag" data-sticker-key="sticker-b" style="inset:42.19% 56.25% 46.89% 25%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-b-lbottom.svg" alt="" /></span>
+              <span class="icon__frag sticker-frag" data-sticker-key="sticker-b" style="inset:34.38% 56.25% 56.26% 25%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-b-ltop.svg" alt="" /></span>
+              <span class="icon__frag sticker-frag" data-sticker-key="sticker-b" style="inset:42.19% 25.05% 46.89% 56.2%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-b-rbottom.svg" alt="" /></span>
+              <span class="icon__frag sticker-frag" data-sticker-key="sticker-b" style="inset:34.38% 25.05% 56.26% 56.2%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-b-rtop.svg" alt="" /></span>
+              <span class="icon__frag sticker-frag" data-sticker-key="sticker-b" style="inset:59.38% 28.13% 18.75% 28.12%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-b-mouth.svg" alt="" /></span>
+              <span class="icon__frag sticker-frag" data-sticker-key="sticker-b" style="inset:67.56% 34.28% 9.38% 34.37%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-b-vector.svg" alt="" /></span>
+              <span class="icon__frag sticker-frag" data-sticker-key="sticker-b" style="inset:59.38% 28.13% 36.16% 28.12%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-b-teeth.svg" alt="" /></span>
+              <span class="icon__frag sticker-frag" data-sticker-key="sticker-c" style="inset:6.25% 5.48% 6.26% 7.03%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-c-shape1.svg" alt="" /></span>
+              <span class="icon__frag sticker-frag" data-sticker-key="sticker-c" style="inset:3.91% 3.13% 3.91% 4.69%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-c-shape2.svg" alt="" /></span>
+              <span class="icon__frag sticker-frag" data-sticker-key="sticker-c" style="inset:24.22% 19.53% 49.22% 19.53%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-c-shape3.svg" alt="" /></span>
+              <span class="icon__frag sticker-frag" data-sticker-key="sticker-c" style="inset:31.25% 28.13% 56.25% 28.13%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-c-shape4.svg" alt="" /></span>
+              <span class="icon__frag sticker-frag" data-sticker-key="sticker-d" style="inset:6.25% 6.26% 6.26% 6.25%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-d-circle.svg" alt="" /></span>
+              <span class="icon__frag sticker-frag" data-sticker-key="sticker-d" style="inset:31.25% 18.75% 40.63% 18.75%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-d-eyeballs.svg" alt="" /></span>
+              <span class="icon__frag sticker-frag" data-sticker-key="sticker-d" style="inset:40.63% 31.25% 46.88% 31.25%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-d-pupils.svg" alt="" /></span>
+              <span class="icon__frag sticker-frag" data-sticker-key="sticker-d" style="inset:65.63% 40.63% 28.13% 40.63%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-d-line1.svg" alt="" /></span>
+              <span class="icon__frag sticker-frag" data-sticker-key="sticker-d" style="inset:56.25% 56.25% 18.75% 28.13%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-d-vec16.svg" alt="" /></span>
+              <span class="icon__frag sticker-frag" data-sticker-key="sticker-d" style="inset:56.25% 28.13% 18.75% 56.25%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-d-vec17.svg" alt="" /></span>
+              <span class="icon__frag sticker-frag" data-sticker-key="sticker-d" style="inset:15.23% 65.23% 71.48% 18.36%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-d-vec52.svg" alt="" /></span>
+              <span class="icon__frag sticker-frag" data-sticker-key="sticker-d" style="inset:15.23% 18.36% 71.48% 65.23%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-d-vec51.svg" alt="" /></span>
             </span>
           </div>
           <div class="sticker-preview-meta">
@@ -2011,6 +2598,165 @@
         </div>
       </aside>
 
+      <!-- ============ W:ToolPanel (Image detail — Figma node 4554:126423) ============
+           Reached by clicking a Photos/Graphics preview cell in Brand > Overview, which places
+           the image on the poster and opens this panel by default. "Back" returns to Brand,
+           since that's the only place this flow currently starts from. -->
+      <aside class="toolpanel" id="panel-image-detail" data-panel="image-detail" hidden>
+        <div class="panel-section">
+          <div class="panel-header">
+            <div class="panel-header__row">
+              <div style="display:flex; align-items:center; gap:var(--spacing-sm);">
+                <span class="icon panel-header__back" style="width:16px;height:16px" onclick="switchPanel('brand')" role="button" aria-label="뒤로">
+                  <span class="icon__frag" style="inset:20.83% 50% 20.83% 20.83%"><img src="assets/screen-01-elements-panel/topbar/back-1.svg" alt="" /></span>
+                  <span class="icon__frag" style="inset:calc(50% - 0.8px) 20.83% calc(50% - 0.8px) 20.83%"><img src="assets/screen-01-elements-panel/topbar/download-3-back-2.svg" alt="" /></span>
+                </span>
+                <p class="panel-header__title">Image</p>
+              </div>
+              <span class="icon panel-header__close" style="width:20px;height:20px" onclick="deselectImage()" role="button" aria-label="패널 닫기">
+                <span class="icon__frag" style="inset:25%"><img src="assets/screen-01-elements-panel/panel-text/panel-close.svg" alt="" /></span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <div class="section-header"><p class="section-header__title">Background</p></div>
+          <div class="panel-action-row" id="imageBgRemoveRow" onclick="toggleImageBgRemoved()">
+            <span class="icon" style="width:20px;height:20px"><span class="icon__frag" style="inset:0"><img src="assets/screen-01-elements-panel/actionbar/publish-sparkle.svg" alt="" /></span></span>
+            <span class="panel-action-row--ai" id="imageBgRemoveLabel">Remove background</span>
+          </div>
+          <div class="panel-action-row" onclick="triggerReplaceImage()">
+            <span class="icon" style="width:20px;height:20px">
+              <span class="icon__frag" style="inset:12.5%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-1.svg" alt="" /></span>
+              <span class="icon__frag" style="inset:29.17% 54.17% 54.17% 29.17%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-2.svg" alt="" /></span>
+              <span class="icon__frag" style="inset:47.2% 12.5% 12.5% 25%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-3.svg" alt="" /></span>
+            </span>
+            Replace image
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <div class="section-header"><p class="section-header__title">Crop</p></div>
+          <div class="crop-grid" id="imageCropGrid">
+            <div class="crop-option" data-crop-key="freeform" onclick="applyImageCrop('freeform')">
+              <div class="crop-option__card">
+                <div class="crop-option__shape crop-option__shape--freeform"><img src="assets/screen-01-elements-panel/panel-image-detail/crop-thumb-bg.jpg" alt="" /></div>
+                <span class="icon crop-option__scan" style="width:24px;height:24px">
+                  <span class="icon__frag" style="inset:12.5% 70.83% 70.83% 12.5%"><img src="assets/screen-01-elements-panel/panel-image-detail/scan-square-1.svg" alt="" /></span>
+                  <span class="icon__frag" style="inset:12.5% 12.5% 70.83% 70.83%"><img src="assets/screen-01-elements-panel/panel-image-detail/scan-square-2.svg" alt="" /></span>
+                  <span class="icon__frag" style="inset:70.83% 12.5% 12.5% 70.83%"><img src="assets/screen-01-elements-panel/panel-image-detail/scan-square-3.svg" alt="" /></span>
+                  <span class="icon__frag" style="inset:70.83% 70.83% 12.5% 12.5%"><img src="assets/screen-01-elements-panel/panel-image-detail/scan-square-4.svg" alt="" /></span>
+                  <span class="icon__frag" style="inset:33.33%"><img src="assets/screen-01-elements-panel/panel-image-detail/scan-square-5.svg" alt="" /></span>
+                </span>
+              </div>
+              <p class="crop-option__label">Freeform</p>
+            </div>
+            <div class="crop-option" data-crop-key="circle" onclick="applyImageCrop('circle')">
+              <div class="crop-option__card">
+                <div class="crop-option__shape crop-option__shape--circle"><img src="assets/screen-01-elements-panel/panel-image-detail/crop-thumb-bg.jpg" alt="" /></div>
+              </div>
+              <p class="crop-option__label">Circle</p>
+            </div>
+            <div class="crop-option" data-crop-key="square" onclick="applyImageCrop('square')">
+              <div class="crop-option__card">
+                <div class="crop-option__shape crop-option__shape--square"><img src="assets/screen-01-elements-panel/panel-image-detail/crop-thumb-bg.jpg" alt="" /></div>
+              </div>
+              <p class="crop-option__label">Square</p>
+            </div>
+            <div class="crop-option" data-crop-key="triangle" onclick="applyImageCrop('triangle')">
+              <div class="crop-option__card">
+                <img class="crop-option__icon" src="assets/screen-01-elements-panel/panel-image-detail/crop-triangle-icon.png" alt="" />
+              </div>
+              <p class="crop-option__label">Triangle</p>
+            </div>
+            <div class="crop-option" data-crop-key="rounded-square" onclick="applyImageCrop('rounded-square')">
+              <div class="crop-option__card">
+                <div class="crop-option__shape crop-option__shape--rounded"><img src="assets/screen-01-elements-panel/panel-image-detail/crop-thumb-bg.jpg" alt="" /></div>
+              </div>
+              <p class="crop-option__label">Rounded square</p>
+            </div>
+            <div class="crop-option" data-crop-key="heart" onclick="applyImageCrop('heart')">
+              <div class="crop-option__card">
+                <img class="crop-option__icon" src="assets/screen-01-elements-panel/panel-image-detail/crop-heart-icon.png" alt="" />
+              </div>
+              <p class="crop-option__label">Heart</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <div class="section-header"><p class="section-header__title">Adjust</p></div>
+          <div class="image-adjust-row">
+            <p class="image-adjust-row__label">Brightness</p>
+            <div class="opacity-row">
+              <input type="range" class="opacity-slider" id="imageBrightnessSlider" min="-100" max="100" step="1" value="0" oninput="applyImageAdjust('brightness', this.value)" aria-label="밝기" />
+              <div class="opacity-value-box"><span id="imageBrightnessVal">0</span></div>
+            </div>
+          </div>
+          <div class="image-adjust-row">
+            <p class="image-adjust-row__label">Contrast</p>
+            <div class="opacity-row">
+              <input type="range" class="opacity-slider" id="imageContrastSlider" min="-100" max="100" step="1" value="0" oninput="applyImageAdjust('contrast', this.value)" aria-label="대비" />
+              <div class="opacity-value-box"><span id="imageContrastVal">0</span></div>
+            </div>
+          </div>
+          <div class="image-adjust-row">
+            <p class="image-adjust-row__label">Saturation</p>
+            <div class="opacity-row">
+              <input type="range" class="opacity-slider" id="imageSaturationSlider" min="-100" max="100" step="1" value="0" oninput="applyImageAdjust('saturation', this.value)" aria-label="채도" />
+              <div class="opacity-value-box"><span id="imageSaturationVal">0</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <div class="section-header"><p class="section-header__title">Transform</p></div>
+          <div class="transform-row">
+            <p class="transform-row__label">Rotation</p>
+            <div class="prop-stepper">
+              <span class="prop-stepper__btn" onclick="stepImageRotation(-15)">
+                <span class="icon" style="width:16px;height:16px"><span class="icon__frag" style="inset:calc(50% - 0.6px) 20.83% calc(50% - 0.6px) 20.83%"><img src="assets/screen-01-elements-panel/panel-sticker-detail/stepper-minus.svg" alt="" /></span></span>
+              </span>
+              <span class="prop-stepper__val" id="imageRotationStepperVal">0</span>
+              <span class="prop-stepper__btn" onclick="stepImageRotation(15)">
+                <span class="icon" style="width:16px;height:16px">
+                  <span class="icon__frag" style="inset:calc(50% - 0.8px) 20.83% calc(50% - 0.8px) 20.83%"><img src="assets/screen-01-elements-panel/toolpanel/cta-plus-1.svg" alt="" /></span>
+                  <span class="icon__frag" style="inset:20.83% calc(50% - 0.8px) 20.83% calc(50% - 0.8px)"><img src="assets/screen-01-elements-panel/toolpanel/cta-plus-2.svg" alt="" /></span>
+                </span>
+              </span>
+            </div>
+          </div>
+          <div class="action-tile-row">
+            <div class="action-tile" onclick="applyFlip('horizontal')">
+              <span class="icon" style="width:20px;height:20px">
+                <span class="icon__frag" style="inset:30% 65% 30% 10%"><img src="assets/screen-01-elements-panel/panel-sticker-detail/flip-h-1.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:30% 10% 30% 65%"><img src="assets/screen-01-elements-panel/panel-sticker-detail/flip-h-2.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:10% calc(50% - 0.8px) 10% calc(50% - 0.8px)"><img src="assets/screen-01-elements-panel/panel-sticker-detail/flip-h-3.svg" alt="" /></span>
+              </span>
+              <p class="action-tile__label">Flip horizontal</p>
+            </div>
+            <div class="action-tile" onclick="applyFlip('vertical')">
+              <span class="icon" style="width:20px;height:20px">
+                <span class="icon__frag" style="inset:10% 30% 65% 30%"><img src="assets/screen-01-elements-panel/panel-sticker-detail/flip-v-1.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:65% 30% 10% 30%"><img src="assets/screen-01-elements-panel/panel-sticker-detail/flip-v-2.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:calc(50% - 0.8px) 10% calc(50% - 0.8px) 10%"><img src="assets/screen-01-elements-panel/panel-sticker-detail/flip-v-3.svg" alt="" /></span>
+              </span>
+              <p class="action-tile__label">Flip vertical</p>
+            </div>
+          </div>
+          <div class="transform-row">
+            <p class="transform-row__label">Opacity</p>
+            <div class="opacity-row">
+              <input type="range" class="opacity-slider" id="imageOpacitySlider" min="0" max="100" step="1" value="100" oninput="applyElementOpacity(this.value)" aria-label="투명도" />
+              <div class="opacity-value-box"><span id="imageOpacityVal">100</span>%</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <input type="file" id="imageReplaceInput" accept="image/*" style="display:none" onchange="handleImageReplaceFile(event)" />
+
       <!-- ============ W:ToolPanel (Fill / Border Colour full panel — Figma node 4554:122942 /
            4554:123185) ============
            Reached only from the ContextBar colour chips (openColorFullPanel). Reuses the exact
@@ -2058,13 +2804,45 @@
       <!-- ============ W:Canvas ============ -->
       <section class="canvas">
         <div class="context-bar">
-          <button class="quick-add">
+          <button class="quick-add" id="quickAddBtn" onclick="event.stopPropagation(); toggleAddMenu();">
             <span class="icon" style="width:16px;height:16px">
               <span class="icon__frag" style="inset:calc(50% - 0.8px) 20.83% calc(50% - 0.8px) 20.83%"><img src="assets/screen-01-elements-panel/canvas/quickadd-plus-1.svg" alt="" /></span>
               <span class="icon__frag" style="inset:20.83% calc(50% - 0.8px) 20.83% calc(50% - 0.8px)"><img src="assets/screen-01-elements-panel/canvas/quickadd-plus-2.svg" alt="" /></span>
             </span>
             <span>Add</span>
           </button>
+
+          <!-- Quick Add menu (Figma node 4554:127175 "Canvas overlays · add menu open") — a
+               shortcut into the same left-nav tools (Elements' Stickers/Shapes galleries, Text,
+               Uploads) plus a genuine local file upload straight onto the poster. -->
+          <div class="add-menu" id="addMenu" onclick="event.stopPropagation();">
+            <div class="add-menu__item" onclick="handleAddMenuAction('text')">
+              <span class="icon" style="width:20px;height:20px">
+                <span class="icon__frag" style="inset:16.67% 50% 16.67% 50%"><img src="assets/screen-01-elements-panel/panel-add-menu/text-1.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:16.67% 16.67% 70.83% 16.67%"><img src="assets/screen-01-elements-panel/panel-add-menu/text-2.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:83.33% 37.5% 16.67% 37.5%"><img src="assets/screen-01-elements-panel/panel-add-menu/text-3.svg" alt="" /></span>
+              </span>
+              <span>Text</span>
+            </div>
+            <div class="add-menu__item" onclick="handleAddMenuAction('image')">
+              <img src="assets/screen-01-elements-panel/panel-add-menu/image-glyph.svg" alt="" style="width:20px;height:20px;" />
+              <span>Image</span>
+            </div>
+            <div class="add-menu__item" onclick="handleAddMenuAction('sticker')">
+              <img src="assets/screen-01-elements-panel/panel-add-menu/sticker-glyph.svg" alt="" style="width:20px;height:20px;" />
+              <span>Sticker</span>
+            </div>
+            <div class="add-menu__item" onclick="handleAddMenuAction('shape')">
+              <img src="assets/screen-01-elements-panel/panel-add-menu/shape-glyph.svg" alt="" style="width:20px;height:20px;" />
+              <span>Shape</span>
+            </div>
+            <div class="add-menu__sep"></div>
+            <div class="add-menu__item" onclick="handleAddMenuAction('upload')">
+              <img src="assets/screen-01-elements-panel/panel-add-menu/upload-glyph.svg" alt="" style="width:20px;height:20px;" />
+              <span>Upload media…</span>
+            </div>
+          </div>
+          <input type="file" id="quickUploadInput" accept="image/*" style="display:none" onchange="handleQuickUploadFile(event)" />
 
           <div class="floating-toolbar">
             <div class="toolbar-item" style="cursor:pointer; padding:6px;" onclick="event.stopPropagation(); openColorFullPanel('fill');">
@@ -2372,20 +3150,22 @@
           </div>
 
           <div class="toggle-pill">
-            <div class="toggle-chip">
+            <div class="toggle-chip" id="guidesToggleChip" onclick="toggleGuides()">
               <img src="assets/screen-01-elements-panel/canvas/grid-glyph.svg" alt="" width="16" height="16" />
+              <span class="toggle-chip__tooltip">Guides</span>
             </div>
             <span class="toggle-divider"></span>
             <div class="toggle-chip">
               <img src="assets/screen-01-elements-panel/canvas/target-glyph.svg" alt="" width="16" height="16" />
             </div>
             <span class="toggle-divider"></span>
-            <div class="toggle-chip">
+            <div class="toggle-chip" id="layersToggleBtn" onclick="event.stopPropagation(); toggleLayersPanel();">
               <span class="icon" style="width:16px;height:16px">
                 <span class="icon__frag" style="inset:8.33% 8.26% 50% 8.35%"><img src="assets/screen-01-elements-panel/canvas/layertoggle-1.svg" alt="" /></span>
                 <span class="icon__frag" style="inset:50% 8.33% 29.17% 8.33%"><img src="assets/screen-01-elements-panel/canvas/layertoggle-2.svg" alt="" /></span>
                 <span class="icon__frag" style="inset:70.83% 8.33% 8.34% 8.33%"><img src="assets/screen-01-elements-panel/canvas/layertoggle-2.svg" alt="" /></span>
               </span>
+              <span class="toggle-chip__tooltip">Layers</span>
             </div>
           </div>
         </div>
@@ -2398,7 +3178,15 @@
             <p class="poster__subtitle">Card 3 of 3 — your complete journey, supported by experts.</p>
             <div class="poster__cta"><span>Get Started with Formee Express</span></div>
             <img class="poster__brand" src="assets/screen-01-elements-panel/canvas/poster-brand-mark.svg" alt="Formee" />
-            <div class="canvas-selectable" id="canvasSticker" style="left:324px; top:252px; width:52px; height:52px;" onpointerdown="startStickerMove(event)" onclick="event.stopPropagation(); selectHeartSticker();">
+            <div class="poster__guides" id="posterGuides">
+              <span class="poster__guide-v" style="left:29px;"></span>
+              <span class="poster__guide-v" style="left:50%;"></span>
+              <span class="poster__guide-v" style="left:448px;"></span>
+              <span class="poster__guide-h" style="top:72px;"></span>
+              <span class="poster__guide-h" style="top:50%;"></span>
+              <span class="poster__guide-h" style="top:514px;"></span>
+            </div>
+            <div class="canvas-selectable" id="canvasSticker" style="left:324px; top:252px; width:52px; height:52px;" onpointerdown="startStickerMove(event)" onclick="event.stopPropagation(); selectPlacedSticker();">
               <span class="icon" id="canvasStickerIcon" style="width:52px;height:52px; display:block;">
                 <span class="icon__frag sticker-frag is-active" data-sticker-key="growing-heart" style="inset:17.59% 6.46% 5.12% 5.19%; transform:translateY(-6.25%);"><img src="assets/screen-01-elements-panel/toolpanel/sticker-heart-1.svg" alt="" /></span>
                 <span class="icon__frag sticker-frag is-active" data-sticker-key="growing-heart" style="inset:26.37% 15.81% 12.7% 14.54%; transform:translateY(-6.25%);"><img src="assets/screen-01-elements-panel/toolpanel/sticker-heart-2.svg" alt="" /></span>
@@ -2427,6 +3215,26 @@
                 <span class="icon__frag sticker-frag" data-sticker-key="arrow-heart" style="inset:53.01% 15.56% 15.56% 53.01%"><img src="assets/screen-01-elements-panel/panel-sticker-detail/replace-options/replace-sparkle-heart-strokesmall.svg" alt="" /></span>
                 <span class="icon__frag sticker-frag" data-sticker-key="heart-badge" style="inset:6.38% 6.25% 6.12% 6.25%"><img src="assets/screen-01-elements-panel/panel-sticker-detail/replace-options/replace-photo-sticker-rect.svg" alt="" /></span>
                 <span class="icon__frag sticker-frag" data-sticker-key="heart-badge" style="inset:27.58% 20.97% 20.57% 21.02%"><img src="assets/screen-01-elements-panel/panel-sticker-detail/replace-options/replace-photo-sticker-vector.svg" alt="" /></span>
+                <span class="icon__frag sticker-frag" data-sticker-key="sticker-b" style="inset:6.25% 6.26% 6.26% 6.25%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-b-circle.svg" alt="" /></span>
+                <span class="icon__frag sticker-frag" data-sticker-key="sticker-b" style="inset:42.19% 56.25% 46.89% 25%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-b-lbottom.svg" alt="" /></span>
+                <span class="icon__frag sticker-frag" data-sticker-key="sticker-b" style="inset:34.38% 56.25% 56.26% 25%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-b-ltop.svg" alt="" /></span>
+                <span class="icon__frag sticker-frag" data-sticker-key="sticker-b" style="inset:42.19% 25.05% 46.89% 56.2%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-b-rbottom.svg" alt="" /></span>
+                <span class="icon__frag sticker-frag" data-sticker-key="sticker-b" style="inset:34.38% 25.05% 56.26% 56.2%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-b-rtop.svg" alt="" /></span>
+                <span class="icon__frag sticker-frag" data-sticker-key="sticker-b" style="inset:59.38% 28.13% 18.75% 28.12%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-b-mouth.svg" alt="" /></span>
+                <span class="icon__frag sticker-frag" data-sticker-key="sticker-b" style="inset:67.56% 34.28% 9.38% 34.37%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-b-vector.svg" alt="" /></span>
+                <span class="icon__frag sticker-frag" data-sticker-key="sticker-b" style="inset:59.38% 28.13% 36.16% 28.12%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-b-teeth.svg" alt="" /></span>
+                <span class="icon__frag sticker-frag" data-sticker-key="sticker-c" style="inset:6.25% 5.48% 6.26% 7.03%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-c-shape1.svg" alt="" /></span>
+                <span class="icon__frag sticker-frag" data-sticker-key="sticker-c" style="inset:3.91% 3.13% 3.91% 4.69%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-c-shape2.svg" alt="" /></span>
+                <span class="icon__frag sticker-frag" data-sticker-key="sticker-c" style="inset:24.22% 19.53% 49.22% 19.53%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-c-shape3.svg" alt="" /></span>
+                <span class="icon__frag sticker-frag" data-sticker-key="sticker-c" style="inset:31.25% 28.13% 56.25% 28.13%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-c-shape4.svg" alt="" /></span>
+                <span class="icon__frag sticker-frag" data-sticker-key="sticker-d" style="inset:6.25% 6.26% 6.26% 6.25%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-d-circle.svg" alt="" /></span>
+                <span class="icon__frag sticker-frag" data-sticker-key="sticker-d" style="inset:31.25% 18.75% 40.63% 18.75%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-d-eyeballs.svg" alt="" /></span>
+                <span class="icon__frag sticker-frag" data-sticker-key="sticker-d" style="inset:40.63% 31.25% 46.88% 31.25%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-d-pupils.svg" alt="" /></span>
+                <span class="icon__frag sticker-frag" data-sticker-key="sticker-d" style="inset:65.63% 40.63% 28.13% 40.63%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-d-line1.svg" alt="" /></span>
+                <span class="icon__frag sticker-frag" data-sticker-key="sticker-d" style="inset:56.25% 56.25% 18.75% 28.13%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-d-vec16.svg" alt="" /></span>
+                <span class="icon__frag sticker-frag" data-sticker-key="sticker-d" style="inset:56.25% 28.13% 18.75% 56.25%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-d-vec17.svg" alt="" /></span>
+                <span class="icon__frag sticker-frag" data-sticker-key="sticker-d" style="inset:15.23% 65.23% 71.48% 18.36%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-d-vec52.svg" alt="" /></span>
+                <span class="icon__frag sticker-frag" data-sticker-key="sticker-d" style="inset:15.23% 18.36% 71.48% 65.23%"><img src="assets/screen-01-elements-panel/toolpanel/sticker-d-vec51.svg" alt="" /></span>
               </span>
               <div class="canvas-selectable__selection">
                 <span class="canvas-selectable__dot canvas-selectable__dot--tl"></span>
@@ -2490,6 +3298,7 @@
               <svg class="shape-frag" data-shape-key="sparkle" preserveAspectRatio="none" viewBox="0 0 38.9647 38.9647" style="inset:0;"><path d="M23.5938 14.8652L23.7207 15.2441L24.0996 15.3711L36.4346 19.4824L24.0996 23.5938L23.7207 23.7207L23.5938 24.0996L19.4824 36.4346L15.3711 24.0996L15.2441 23.7207L14.8652 23.5938L2.5293 19.4824L14.8652 15.3711L15.2441 15.2441L15.3711 14.8652L19.4824 2.5293L23.5938 14.8652Z" style="fill:var(--shape-fill-color, var(--color-neutral-400)); stroke:var(--shape-border-color, transparent); stroke-width:var(--shape-border-width, 1.6); stroke-dasharray:var(--shape-border-dasharray, none); stroke-linecap:var(--shape-border-linecap, butt); stroke-linejoin:round;" /></svg>
               <svg class="shape-frag" data-shape-key="speech-rounded" preserveAspectRatio="none" viewBox="0 0 38.9647 36.5294" style="inset:0;"><path d="M8.10547 25.9883H7.30566C5.58028 25.9882 3.92512 25.303 2.70508 24.083C1.48505 22.8629 0.799822 21.2078 0.799805 19.4824V7.30566C0.799863 5.58028 1.48504 3.92512 2.70508 2.70508C3.92512 1.48504 5.58028 0.799863 7.30566 0.799805H31.6592C33.3843 0.799899 35.0388 1.48534 36.2588 2.70508C37.4788 3.92512 38.165 5.58028 38.165 7.30566V19.4824C38.165 21.2079 37.4789 22.8629 36.2588 24.083C35.0388 25.3028 33.3844 25.9882 31.6592 25.9883H16.7158L8.10547 34.5986V25.9883Z" style="fill:var(--shape-fill-color, var(--color-neutral-400)); stroke:var(--shape-border-color, transparent); stroke-width:var(--shape-border-width, 1.6); stroke-dasharray:var(--shape-border-dasharray, none); stroke-linecap:var(--shape-border-linecap, butt); stroke-linejoin:round;" /></svg>
               <svg class="shape-frag" data-shape-key="chat" preserveAspectRatio="none" viewBox="0 0 42.1883 42.1885" style="inset:0;"><path d="M3.00332 32.2735C3.17739 31.4827 3.11095 30.6579 2.81255 29.9052C0.735994 25.5967 0.247892 20.6932 1.43436 16.0598C2.62083 11.4265 5.40563 7.36107 9.29742 4.58086C13.1892 1.80065 17.9379 0.484323 22.7056 0.864111C27.4734 1.2439 31.9538 3.2954 35.3563 6.65666C38.7589 10.0179 40.865 14.4729 41.303 19.2357C41.741 23.9984 40.4827 28.7628 37.7503 32.6883C35.0178 36.6137 30.9867 39.448 26.3682 40.691C21.7497 41.9339 16.8406 41.5058 12.507 39.482C11.7958 39.212 11.023 39.1473 10.2767 39.2953L3.35034 41.3206C3.01622 41.4093 2.66499 41.4112 2.32996 41.326C1.99492 41.2409 1.68718 41.0716 1.43593 40.8341C1.18468 40.5967 0.998245 40.299 0.894301 39.9694C0.790357 39.6397 0.772351 39.2889 0.841992 38.9503L3.00332 32.2735Z" style="fill:none; stroke:var(--shape-border-color, var(--color-neutral-400)); stroke-width:var(--shape-border-width, 1.6); stroke-dasharray:var(--shape-border-dasharray, none); stroke-linecap:round; stroke-linejoin:round;" /></svg>
+              <svg class="shape-frag" data-shape-key="line" preserveAspectRatio="none" viewBox="0 0 42.1882 1.6" style="inset:calc(50% - 0.8px) 6.36% calc(50% - 0.8px) 6.36%;"><path d="M0.8 0.8H41.3882" style="fill:none; stroke:var(--shape-border-color, var(--color-neutral-400)); stroke-width:var(--shape-border-width, 1.6); stroke-dasharray:var(--shape-border-dasharray, none); stroke-linecap:round; stroke-linejoin:round;" /></svg>
               <svg class="shape-frag" data-shape-key="arrow" preserveAspectRatio="none" viewBox="0 0 30.0118 1.6" style="inset:calc(50% - 0.8px) 20.83% calc(50% - 0.8px) 20.83%;"><path d="M0.8 0.8H29.2118" style="fill:none; stroke:var(--shape-border-color, var(--color-neutral-400)); stroke-width:var(--shape-border-width, 1.6); stroke-dasharray:var(--shape-border-dasharray, none); stroke-linecap:round; stroke-linejoin:round;" /></svg>
               <svg class="shape-frag" data-shape-key="arrow" preserveAspectRatio="none" viewBox="0 0 15.8059 30.0118" style="inset:18.01% 15.2% 18.01% 44.37%;"><path d="M0.8 0.8L15.0059 15.0059L0.8 29.2118" style="fill:none; stroke:var(--shape-border-color, var(--color-neutral-400)); stroke-width:var(--shape-border-width, 1.6); stroke-dasharray:var(--shape-border-dasharray, none); stroke-linecap:round; stroke-linejoin:round;" /></svg>
               <svg class="shape-frag" data-shape-key="linearrow" preserveAspectRatio="none" viewBox="0 0 9.71765 17.8353" style="inset:28.4% -1.53% 28.4% 65.14%;"><path d="M0.8 0.8L8.91765 8.91765L0.8 17.0353" style="fill:none; stroke:var(--shape-border-color, var(--color-neutral-400)); stroke-width:var(--shape-border-width, 1.6); stroke-dasharray:var(--shape-border-dasharray, none); stroke-linecap:round; stroke-linejoin:round;" /></svg>
@@ -2518,9 +3327,54 @@
               </button>
             </div>
             </template>
+
+            <template id="imageTemplate">
+            <div class="canvas-selectable canvas-image" style="width:267px; height:229px;" onpointerdown="startImageMove(event)" onclick="event.stopPropagation(); selectImageEl(this);">
+              <div class="canvas-image__checker"></div>
+              <img class="canvas-image__img" src="" alt="" draggable="false" />
+              <div class="canvas-selectable__selection">
+                <span class="canvas-selectable__dot canvas-selectable__dot--tl"></span>
+                <span class="canvas-selectable__dot canvas-selectable__dot--tr"></span>
+                <span class="canvas-selectable__dot canvas-selectable__dot--bl"></span>
+                <span class="canvas-selectable__dot canvas-selectable__dot--br"></span>
+                <span class="canvas-selectable__pill canvas-selectable__pill--top"></span>
+                <span class="canvas-selectable__pill canvas-selectable__pill--bottom"></span>
+                <span class="canvas-selectable__pill canvas-selectable__pill--left"></span>
+                <span class="canvas-selectable__pill canvas-selectable__pill--right"></span>
+              </div>
+              <span class="canvas-selectable__handle canvas-selectable__handle--tl" onpointerdown="startImageResize(event)" onclick="event.stopPropagation();"></span>
+              <span class="canvas-selectable__handle canvas-selectable__handle--tr" onpointerdown="startImageResize(event)" onclick="event.stopPropagation();"></span>
+              <span class="canvas-selectable__handle canvas-selectable__handle--bl" onpointerdown="startImageResize(event)" onclick="event.stopPropagation();"></span>
+              <span class="canvas-selectable__handle canvas-selectable__handle--br" onpointerdown="startImageResize(event)" onclick="event.stopPropagation();"></span>
+              <span class="canvas-selectable__handle canvas-selectable__handle--top" onpointerdown="startImageResizeAxis(event, 'top')" onclick="event.stopPropagation();"></span>
+              <span class="canvas-selectable__handle canvas-selectable__handle--bottom" onpointerdown="startImageResizeAxis(event, 'bottom')" onclick="event.stopPropagation();"></span>
+              <span class="canvas-selectable__handle canvas-selectable__handle--left" onpointerdown="startImageResizeAxis(event, 'left')" onclick="event.stopPropagation();"></span>
+              <span class="canvas-selectable__handle canvas-selectable__handle--right" onpointerdown="startImageResizeAxis(event, 'right')" onclick="event.stopPropagation();"></span>
+              <button class="canvas-selectable__rotate" onpointerdown="startImageRotate(event)" onclick="event.stopPropagation();" aria-label="회전">
+                <span class="icon" style="width:14px;height:14px">
+                  <span class="icon__frag" style="inset:12.5% 12.83% 55% 12.5%"><img src="assets/screen-01-elements-panel/panel-sticker-detail/rotate-1.svg" alt="" /></span>
+                  <span class="icon__frag" style="inset:12.5% 66.67% 66.67% 12.5%"><img src="assets/screen-01-elements-panel/panel-sticker-detail/rotate-2.svg" alt="" /></span>
+                  <span class="icon__frag" style="inset:55% 12.5% 12.5% 12.83%"><img src="assets/screen-01-elements-panel/panel-sticker-detail/rotate-3.svg" alt="" /></span>
+                  <span class="icon__frag" style="inset:66.67% 12.5% 12.5% 66.67%"><img src="assets/screen-01-elements-panel/panel-sticker-detail/rotate-4.svg" alt="" /></span>
+                </span>
+              </button>
+            </div>
+            </template>
           </div>
-          <div class="layers-toggle">
-            <span class="icon" style="width:16px;height:16px"></span>
+
+          <div class="layers-panel" id="layersPanel">
+            <div class="layers-panel__header">
+              <span class="icon" style="width:20px;height:20px">
+                <span class="icon__frag" style="inset:8.33% 8.26% 50% 8.35%"><img src="assets/screen-01-elements-panel/canvas/layertoggle-1.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:50% 8.33% 29.17% 8.33%"><img src="assets/screen-01-elements-panel/canvas/layertoggle-2.svg" alt="" /></span>
+                <span class="icon__frag" style="inset:70.83% 8.33% 8.34% 8.33%"><img src="assets/screen-01-elements-panel/canvas/layertoggle-2.svg" alt="" /></span>
+              </span>
+              <p class="layers-panel__title">Layers</p>
+              <span class="icon panel-header__close layers-panel__close" style="width:18px;height:18px" onclick="toggleLayersPanel()" role="button" aria-label="레이어 패널 닫기">
+                <span class="icon__frag" style="inset:25%"><img src="assets/screen-01-elements-panel/toolpanel/panel-header-icon.svg" alt="" /></span>
+              </span>
+            </div>
+            <div class="layers-panel__list" id="layersPanelList" onclick="handleLayersPanelClick(event)"></div>
           </div>
         </div>
       </section>
@@ -2591,6 +3445,61 @@
 
   </div>
 
+  <template id="folderRowTemplate">
+    <div class="folder-row" onclick="selectFolderRow(event, this)">
+      <div class="folder-row__main">
+        <span class="icon" style="width:21px;height:21px">
+          <span class="icon__frag" style="inset:12.5% 8.33% 16.67% 8.33%"><img src="assets/screen-01-elements-panel/panel-uploads/folder-closed-1.svg" alt="" /></span>
+          <span class="icon__frag" style="inset:calc(41.67% - 0.8px) 8.33% calc(58.33% - 0.8px) 8.33%"><img src="assets/screen-01-elements-panel/panel-uploads/folder-closed-2.svg" alt="" /></span>
+        </span>
+        <input class="folder-row__title-input" value="Folder" readonly ondblclick="event.stopPropagation(); startFolderRename(this);" onblur="commitFolderRename(this);" onkeydown="handleFolderRenameKeydown(event, this);" />
+      </div>
+      <div class="folder-row__action" onclick="event.stopPropagation(); toggleFolderMenu(event, this);">
+        <span class="icon" style="width:16px;height:16px">
+          <span class="icon__frag" style="inset:45.83%"><img src="assets/screen-01-elements-panel/panel-uploads/ellipsis-dot.svg" alt="" /></span>
+          <span class="icon__frag" style="inset:45.83% 16.67% 45.83% 75%"><img src="assets/screen-01-elements-panel/panel-uploads/ellipsis-dot.svg" alt="" /></span>
+          <span class="icon__frag" style="inset:45.83% 75% 45.83% 16.67%"><img src="assets/screen-01-elements-panel/panel-uploads/ellipsis-dot.svg" alt="" /></span>
+        </span>
+      </div>
+    </div>
+  </template>
+
+  <div class="content-actions-menu" id="folderActionsMenu" onclick="event.stopPropagation();">
+    <div class="content-actions-menu__item" onclick="handleFolderMenuAction('rename')">
+      <span class="icon" style="width:16px;height:16px">
+        <span class="icon__frag" style="inset:8.33% 8.33% 8.34% 8.33%"><img src="assets/screen-01-elements-panel/topbar/pencil-1.svg" alt="" /></span>
+        <span class="icon__frag" style="inset:20.83% 20.83% 62.5% 62.5%"><img src="assets/screen-01-elements-panel/topbar/pencil-2.svg" alt="" /></span>
+      </span>
+      <p>Rename</p>
+    </div>
+    <div class="content-actions-menu__item" onclick="handleFolderMenuAction('move')">
+      <span class="icon" style="width:16px;height:16px">
+        <span class="icon__frag" style="inset:12.5% 8.33% 16.67% 8.33%"><img src="assets/screen-01-elements-panel/panel-uploads/folder-closed-1.svg" alt="" /></span>
+        <span class="icon__frag" style="inset:calc(41.67% - 0.8px) 8.33% calc(58.33% - 0.8px) 8.33%"><img src="assets/screen-01-elements-panel/panel-uploads/folder-closed-2.svg" alt="" /></span>
+      </span>
+      <p>Move</p>
+    </div>
+    <div class="content-actions-menu__item" onclick="handleFolderMenuAction('duplicate')">
+      <span class="icon" style="width:16px;height:16px">
+        <span class="icon__frag" style="inset:50% calc(37.5% - 0.8px) 25% calc(62.5% - 0.8px)"><img src="assets/screen-01-elements-panel/canvas/duplicate-1.svg" alt="" /></span>
+        <span class="icon__frag" style="inset:calc(62.5% - 0.8px) 25% calc(37.5% - 0.8px) 50%"><img src="assets/screen-01-elements-panel/canvas/duplicate-2.svg" alt="" /></span>
+        <span class="icon__frag" style="inset:33.33% 8.33% 8.33% 33.33%"><img src="assets/screen-01-elements-panel/canvas/duplicate-3.svg" alt="" /></span>
+        <span class="icon__frag" style="inset:8.33% 33.33% 33.33% 8.33%"><img src="assets/screen-01-elements-panel/canvas/duplicate-4.svg" alt="" /></span>
+      </span>
+      <p>Duplicate</p>
+    </div>
+    <div class="content-actions-menu__item" onclick="handleFolderMenuAction('delete')">
+      <span class="icon" style="width:16px;height:16px">
+        <span class="icon__frag" style="inset:45.83% 58.33% 29.17% 41.67%"><img src="assets/screen-01-elements-panel/panel-uploads/content-menu-trash-1.svg" alt="" /></span>
+        <span class="icon__frag" style="inset:45.83% 41.67% 29.17% 58.33%"><img src="assets/screen-01-elements-panel/panel-uploads/content-menu-trash-1.svg" alt="" /></span>
+        <span class="icon__frag" style="inset:25% 20.83% 8.33% 20.83%"><img src="assets/screen-01-elements-panel/panel-uploads/content-menu-trash-2.svg" alt="" /></span>
+        <span class="icon__frag" style="inset:25% 12.5% 75% 12.5%"><img src="assets/screen-01-elements-panel/panel-uploads/content-menu-trash-3.svg" alt="" /></span>
+        <span class="icon__frag" style="inset:8.33% 33.33% 75% 33.33%"><img src="assets/screen-01-elements-panel/panel-uploads/content-menu-trash-4.svg" alt="" /></span>
+      </span>
+      <p>Delete</p>
+    </div>
+  </div>
+
   <script>
     function switchPanel(target) {
       document.querySelectorAll('.toolpanel[data-panel]').forEach(function (panel) {
@@ -2611,7 +3520,277 @@
       switchPanel(null);
     }
 
-    function selectHeartSticker() {
+    // Brand panel sub-tabs (Overview/Logos/Colours/Fonts/Graphics/Photos) — independent of
+    // switchPanel(), which only toggles between the top-level ToolPanel/nav-rail destinations.
+    function switchBrandTab(tab) {
+      document.querySelectorAll('#panel-brand [data-brand-tab-content]').forEach(function (el) {
+        el.hidden = el.dataset.brandTabContent !== tab;
+      });
+      document.querySelectorAll('#panel-brand [data-brand-tab]').forEach(function (el) {
+        el.classList.toggle('tab-bar__item--active', el.dataset.brandTab === tab);
+      });
+      refreshCarousels();
+    }
+
+    // ---- Uploads / Folder Row (Figma node 4554:125698) — Default/Hover/Focused/Rename ----
+    // Hover/Default are pure CSS (:hover, base rule). Focused is a persistent single-selection
+    // per folder list, toggled by clicking a row. Rename swaps the title <input readonly> to
+    // editable — double-click the name, or "New Folder" (which starts a freshly-created row
+    // straight into rename mode, matching standard file-browser UX).
+    function selectFolderRow(event, row) {
+      var list = row.parentElement;
+      list.querySelectorAll(':scope > .folder-row').forEach(function (sibling) {
+        if (sibling !== row) { sibling.classList.remove('folder-row--focused'); }
+      });
+      row.classList.toggle('folder-row--focused');
+    }
+
+    function startFolderRename(input) {
+      if (input.dataset.prevValue === undefined) { input.dataset.prevValue = input.value; }
+      input.readOnly = false;
+      input.focus();
+      input.select();
+    }
+
+    function commitFolderRename(input) {
+      input.readOnly = true;
+      var trimmed = input.value.trim();
+      input.value = trimmed || input.dataset.prevValue || 'Untitled Folder';
+      input.dataset.prevValue = input.value;
+    }
+
+    function handleFolderRenameKeydown(event, input) {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        input.blur();
+      } else if (event.key === 'Escape') {
+        input.value = input.dataset.prevValue || input.value;
+        input.blur();
+      }
+    }
+
+    // New folders land in Default state (just marked Focused, since they're the row you just
+    // acted on) — NOT Rename. Rename is reached only by double-clicking the name text itself,
+    // exactly like every other folder row.
+    function addFolder(listId) {
+      var list = document.getElementById(listId);
+      var template = document.getElementById('folderRowTemplate');
+      var row = document.importNode(template.content, true).querySelector('.folder-row');
+      var count = list.querySelectorAll(':scope > .folder-row').length + 1;
+      var input = row.querySelector('.folder-row__title-input');
+      input.value = 'Folder ' + (count < 10 ? '0' + count : count);
+      input.dataset.prevValue = input.value;
+      list.querySelectorAll(':scope > .folder-row').forEach(function (sibling) {
+        sibling.classList.remove('folder-row--focused');
+      });
+      row.classList.add('folder-row--focused');
+      list.appendChild(row);
+    }
+
+    // ---- Uploads / Content Actions Menu (Figma nodes 5809:86596 & 4554:126032 — the same
+    // component) — one shared dropdown reused by every folder row's AND every image cell's
+    // "..." button, across Uploads / Brand > Graphics / Brand > Photos. Rename/Duplicate/Delete
+    // act on whatever opened it; Move has no destination picker in this prototype, so it's a
+    // no-op that just closes the menu (matching every other "..." here).
+    var contentMenuTarget = null;
+    var contentMenuButton = null;
+
+    function toggleFolderMenu(event, button) {
+      openContentMenu(button, button.closest('.folder-row'));
+    }
+
+    function toggleCellMenu(event, button) {
+      openContentMenu(button, button.closest('.cell-lg, [data-media-cell]'));
+    }
+
+    function openContentMenu(button, target) {
+      var menu = document.getElementById('folderActionsMenu');
+      var wasOpenForThisTarget = menu.classList.contains('is-visible') && contentMenuTarget === target;
+      closeFolderMenu();
+      if (wasOpenForThisTarget) { return; }
+      contentMenuTarget = target;
+      contentMenuButton = button;
+      // Uploads / Folder Row / Action — Focused state (Figma: bg neutral-150 while its menu is
+      // open), same convention as the floating toolbar's .toolbar-item.is-focused.
+      button.classList.add('is-focused');
+      menu.classList.add('is-visible');
+      var buttonRect = button.getBoundingClientRect();
+      var menuRect = menu.getBoundingClientRect();
+      var left = Math.min(buttonRect.right - menuRect.width, window.innerWidth - menuRect.width - 8);
+      var top = buttonRect.bottom + 4;
+      if (top + menuRect.height > window.innerHeight) { top = buttonRect.top - menuRect.height - 4; }
+      menu.style.left = Math.max(8, left) + 'px';
+      menu.style.top = Math.max(8, top) + 'px';
+    }
+
+    function closeFolderMenu() {
+      document.getElementById('folderActionsMenu').classList.remove('is-visible');
+      if (contentMenuButton) { contentMenuButton.classList.remove('is-focused'); }
+      contentMenuTarget = null;
+      contentMenuButton = null;
+    }
+
+    document.addEventListener('click', closeFolderMenu);
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') { closeFolderMenu(); }
+    });
+
+    function handleFolderMenuAction(action) {
+      var target = contentMenuTarget;
+      closeFolderMenu();
+      if (!target) { return; }
+      if (target.classList.contains('folder-row')) {
+        handleFolderRowMenuAction(action, target);
+      } else if (target.classList.contains('cell-lg') || target.hasAttribute('data-media-cell')) {
+        handleCellMenuAction(action, target);
+      }
+    }
+
+    function handleFolderRowMenuAction(action, row) {
+      if (action === 'rename') {
+        startFolderRename(row.querySelector('.folder-row__title-input'));
+      } else if (action === 'duplicate') {
+        var clone = row.cloneNode(true);
+        clone.classList.remove('folder-row--focused');
+        var input = clone.querySelector('.folder-row__title-input');
+        input.readOnly = true;
+        input.value = input.value + ' Copy';
+        input.dataset.prevValue = input.value;
+        row.insertAdjacentElement('afterend', clone);
+      } else if (action === 'delete') {
+        row.remove();
+      }
+      // 'move' — no folder tree/destination picker exists in this prototype yet.
+    }
+
+    function handleCellMenuAction(action, cell) {
+      var nameEl = cell.querySelector('.uploads-list-row__name');
+      if (action === 'rename') {
+        var current = nameEl ? nameEl.textContent : (cell.dataset.label || '');
+        var next = window.prompt('Rename', current);
+        if (next !== null) {
+          var trimmed = next.trim();
+          if (nameEl) { nameEl.textContent = trimmed; }
+          cell.dataset.label = trimmed;
+          cell.title = trimmed;
+        }
+      } else if (action === 'duplicate') {
+        var clone = cell.cloneNode(true);
+        clone.classList.remove('cell-lg--focused');
+        var clonedCheckbox = clone.querySelector('.cell-lg__checkbox');
+        if (clonedCheckbox) { clonedCheckbox.classList.remove('is-checked'); }
+        cell.insertAdjacentElement('afterend', clone);
+      } else if (action === 'delete') {
+        cell.remove();
+      }
+      // 'move' — no destination picker exists in this prototype yet.
+    }
+
+    // ---- Image cell Hover/Focused overlay (Figma node 4554:126112) — applied uniformly to
+    // every "Recent Uploads" grid (Uploads panel, Brand > Graphics, Brand > Photos). Hover just
+    // reveals the action/checkbox chrome; Focused (checkbox checked) persists the highlight.
+    // Shared by every image-cell gallery (Uploads / Brand > Graphics / Brand > Photos "Recent
+    // Uploads" grids, and the Brand > Overview Graphics/Photos preview rows) — appends the
+    // hover-revealed "..." menu button + selection checkbox, if the cell doesn't already have one.
+    function addCellOverlay(cell) {
+      if (cell.querySelector('.cell-lg__action')) { return; }
+      var action = document.createElement('div');
+      action.className = 'cell-lg__action';
+      action.setAttribute('onclick', 'event.stopPropagation(); toggleCellMenu(event, this);');
+      action.innerHTML = '<span class="icon" style="width:16px;height:16px">'
+        + '<span class="icon__frag" style="inset:45.83%"><img src="assets/screen-01-elements-panel/panel-uploads/ellipsis-dot-hover.svg" alt="" /></span>'
+        + '<span class="icon__frag" style="inset:45.83% 16.67% 45.83% 75%"><img src="assets/screen-01-elements-panel/panel-uploads/ellipsis-dot-hover.svg" alt="" /></span>'
+        + '<span class="icon__frag" style="inset:45.83% 75% 45.83% 16.67%"><img src="assets/screen-01-elements-panel/panel-uploads/ellipsis-dot-hover.svg" alt="" /></span>'
+        + '</span>';
+      var checkbox = document.createElement('div');
+      checkbox.className = 'cell-lg__checkbox';
+      checkbox.setAttribute('onclick', 'event.stopPropagation(); toggleCellSelected(this);');
+      checkbox.innerHTML = '<img class="cell-lg__checkbox-icon" src="assets/screen-01-elements-panel/topbar/check.svg" alt="" />';
+      cell.appendChild(action);
+      cell.appendChild(checkbox);
+    }
+
+    function initImageCellOverlays() {
+      var grids = ['uploadsRecentGrid', 'brandGraphicsRecentGrid', 'brandPhotosRecentGrid'];
+      grids.forEach(function (gridId) {
+        var grid = document.getElementById(gridId);
+        if (!grid) { return; }
+        grid.querySelectorAll(':scope > .cell-lg').forEach(addCellOverlay);
+      });
+      // Brand > Overview's Graphics/Photos preview rows use the smaller shared .cell component
+      // (also used by Stickers/Lines/Shapes/Logos, hence the [data-media-cell] scoping flag)
+      // rather than .cell-lg, but get the exact same hover/menu/checkbox treatment.
+      document.querySelectorAll('.cell[data-media-cell]').forEach(addCellOverlay);
+    }
+
+    function toggleCellSelected(checkbox) {
+      var cell = checkbox.closest('.cell-lg, [data-media-cell]');
+      var checked = checkbox.classList.toggle('is-checked');
+      cell.classList.toggle('cell-lg--focused', checked);
+    }
+
+    // ---- Editor / View Switcher (Figma node 4554:126187) — Grid vs List changes how the
+    // "Recent Uploads" gallery is displayed, for Uploads / Brand > Graphics / Brand > Photos.
+    function setImageViewMode(mode, gridId, listId, optionEl) {
+      var switcher = optionEl.parentElement;
+      switcher.querySelectorAll('.view-switcher__option').forEach(function (opt) {
+        opt.classList.remove('view-switcher__option--active');
+      });
+      optionEl.classList.add('view-switcher__option--active');
+      document.getElementById(gridId).hidden = mode !== 'grid';
+      document.getElementById(listId).hidden = mode !== 'list';
+    }
+
+    // List rows are generated from whatever's already in the matching grid (real photo src
+    // when the cell has one, otherwise the same dimmed placeholder icon), so both views always
+    // show the same set of items without hand-authoring the list markup twice.
+    function initListViews() {
+      var pairs = [
+        ['uploadsRecentGrid', 'uploadsListView'],
+        ['brandGraphicsRecentGrid', 'brandGraphicsListView'],
+        ['brandPhotosRecentGrid', 'brandPhotosListView']
+      ];
+      pairs.forEach(function (pair) {
+        var grid = document.getElementById(pair[0]);
+        var list = document.getElementById(pair[1]);
+        if (!grid || !list || list.children.length) { return; }
+        grid.querySelectorAll(':scope > .cell-lg').forEach(function (cell) {
+          var photoImg = cell.querySelector('img');
+          var isPhoto = cell.classList.contains('cell-lg--photo') && photoImg;
+          var row = document.createElement('div');
+          row.className = 'uploads-list-row';
+          row.setAttribute('data-media-cell', '');
+          var thumbHtml = isPhoto
+            ? '<img src="' + photoImg.getAttribute('src') + '" alt="" />'
+            : '<span class="icon" style="width:28px;height:28px; opacity:0.35;">'
+              + '<span class="icon__frag" style="inset:12.5%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-1.svg" alt="" /></span>'
+              + '<span class="icon__frag" style="inset:29.17% 54.17% 54.17% 29.17%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-2.svg" alt="" /></span>'
+              + '<span class="icon__frag" style="inset:47.2% 12.5% 12.5% 25%"><img src="assets/screen-01-elements-panel/panel-brand/icon-content-image-3.svg" alt="" /></span>'
+              + '</span>';
+          // Reuses the same .cell-lg__checkbox / .cell-lg__action pieces (and their
+          // toggleCellSelected / toggleCellMenu handlers) as every other image cell — CSS scoped
+          // under .uploads-list-row switches them from absolute overlay to inline flex children.
+          row.innerHTML = '<div class="cell-lg__checkbox" onclick="event.stopPropagation(); toggleCellSelected(this);"><img class="cell-lg__checkbox-icon" src="assets/screen-01-elements-panel/topbar/check.svg" alt="" /></div>'
+            + '<div class="uploads-list-row__thumb">' + thumbHtml + '</div>'
+            + '<div class="uploads-list-row__meta">'
+            + '<p class="uploads-list-row__name">Filename.png</p>'
+            + '<div class="uploads-list-row__submeta"><span>68x68px</span><span class="uploads-list-row__dot"></span><span>210.2 KB</span></div>'
+            + '</div>'
+            + '<div class="cell-lg__action" onclick="event.stopPropagation(); toggleCellMenu(event, this);">'
+            + '<span class="icon" style="width:16px;height:16px">'
+            + '<span class="icon__frag" style="inset:45.83%"><img src="assets/screen-01-elements-panel/panel-uploads/ellipsis-dot-hover.svg" alt="" /></span>'
+            + '<span class="icon__frag" style="inset:45.83% 16.67% 45.83% 75%"><img src="assets/screen-01-elements-panel/panel-uploads/ellipsis-dot-hover.svg" alt="" /></span>'
+            + '<span class="icon__frag" style="inset:45.83% 75% 45.83% 16.67%"><img src="assets/screen-01-elements-panel/panel-uploads/ellipsis-dot-hover.svg" alt="" /></span>'
+            + '</span>'
+            + '</div>';
+          list.appendChild(row);
+        });
+      });
+    }
+
+    // Selects whichever sticker design is already placed on the canvas, without changing which
+    // one it is — used when clicking the sticker that's already sitting on the poster.
+    function selectPlacedSticker() {
       var shapeEl = getSelectedShapeEl();
       if (shapeEl) { saveShapeState(shapeEl); shapeEl.classList.remove('is-selected'); }
       setFloatingToolbarMode('sticker');
@@ -2621,6 +3800,24 @@
       sticker.classList.add('is-selected');
       document.querySelector('.floating-toolbar').classList.add('floating-toolbar--visible');
     }
+
+    // Places a sticker design from the Elements panel onto the canvas. The canvas only ever
+    // shows one sticker at a time (matching the existing Replace mechanic below), so "adding" a
+    // sticker means swapping which fragment set is active and (re)selecting the single on-canvas
+    // sticker slot — same one-slot model #canvasSticker already used for Replace.
+    function placeSticker(key) {
+      if (!STICKER_NAMES[key]) { return; }
+      document.querySelectorAll('#canvasStickerIcon .sticker-frag').forEach(function (frag) {
+        frag.classList.toggle('is-active', frag.dataset.stickerKey === key);
+      });
+      document.querySelectorAll('#stickerDetailPreviewIcon .sticker-frag').forEach(function (frag) {
+        frag.classList.toggle('is-active', frag.dataset.stickerKey === key);
+      });
+      document.getElementById('stickerDetailName').textContent = STICKER_NAMES[key];
+      selectPlacedSticker();
+    }
+
+    function selectHeartSticker() { placeSticker('growing-heart'); }
 
     // Deselecting never un-places the sticker — it only hides the selection chrome (frame,
     // handles, rotate button) and leaves the sticker exactly where it was left on the poster.
@@ -2645,7 +3842,7 @@
       var startTop = parseFloat(el.style.top);
 
       function onMove(ev) {
-        var scale = ZOOM_BASE_SCALE * (parseInt(document.getElementById('zoomSlider').value, 10) / 100);
+        var scale = PAGE_FIT_SCALE * ZOOM_BASE_SCALE * (parseInt(document.getElementById('zoomSlider').value, 10) / 100);
         el.style.left = (startLeft + (ev.clientX - startX) / scale) + 'px';
         el.style.top = (startTop + (ev.clientY - startY) / scale) + 'px';
       }
@@ -2686,8 +3883,13 @@
       'speech-rounded': 'Speech Bubble',
       'arrow': 'Arrow',
       'linearrow': 'Line Arrow',
-      'chat': 'Chat Bubble'
+      'chat': 'Chat Bubble',
+      'line': 'Line'
     };
+    // Stroke-only silhouettes (fill:none in the template above) — their default border must be a
+    // visible colour, not the usual "no border" default every filled shape starts with, or a
+    // freshly added line/arrow/chat would render fully transparent (see makeShapeState below).
+    var LINE_TYPE_SHAPE_KEYS = ['line', 'arrow', 'linearrow', 'chat'];
     // Hex literal (not a CSS var() ref) — the colour picker's HSV math needs real RGB to seed
     // itself from. Fill defaults to --color-neutral-700 on a freshly added shape (matching
     // every fill colour chip per node 4554:122820); border defaults to "none" — the popover
@@ -2718,13 +3920,14 @@
       document.getElementById('replaceToolbarItem').classList.remove('is-focused');
     }
 
-    function makeShapeState(key) {
+    function makeShapeState(key, borderStyle) {
+      var isLineType = LINE_TYPE_SHAPE_KEYS.indexOf(key) !== -1;
       return {
         key: key,
         fill: makeSolidColor(SHAPE_DEFAULT_COLOR_HEX),
-        border: makeNoneColor(),
+        border: isLineType ? makeSolidColor(SHAPE_DEFAULT_BORDER_HEX) : makeNoneColor(),
         borderWidth: 3,
-        borderStyle: 'solid',
+        borderStyle: borderStyle || 'solid',
         cornerRadius: key === 'rounded-square' ? 10 : 0,
         rotationDeg: 0,
         flipX: 1,
@@ -2792,26 +3995,30 @@
       switchPanel('shape-detail');
     }
 
-    function addShapeToCanvas(key) {
+    function addShapeToCanvas(key, borderStyle) {
       if (!SHAPE_NAMES[key]) { return; }
       var template = document.getElementById('shapeTemplate');
       var shapeEl = document.importNode(template.content, true).firstElementChild;
       shapeInstanceCounter++;
       shapeEl.id = 'canvasShape-' + shapeInstanceCounter;
 
-      var size = 96;
+      // Line-type silhouettes (line/arrow/linearrow/chat) read as a thin horizontal stroke, so a
+      // 96x96 square box leaves them looking like a tiny stub — give those a wider default box.
+      var isLineType = LINE_TYPE_SHAPE_KEYS.indexOf(key) !== -1;
+      var size = isLineType ? 160 : 96;
+      var sizeH = isLineType ? 40 : size;
       // Poster is 477x596 logical px (node 4554:122776) — center the first shape on it, same
       // convention as the sticker's placement; cascade each subsequent one diagonally so newly
       // added shapes don't land invisibly stacked exactly on top of an existing one.
       var cascade = ((shapeInstanceCounter - 1) % 6) * 24;
       shapeEl.style.width = size + 'px';
-      shapeEl.style.height = size + 'px';
+      shapeEl.style.height = sizeH + 'px';
       shapeEl.style.left = (((POSTER_WIDTH - size) / 2) + cascade) + 'px';
-      shapeEl.style.top = (((POSTER_HEIGHT - size) / 2) + cascade) + 'px';
+      shapeEl.style.top = (((POSTER_HEIGHT - sizeH) / 2) + cascade) + 'px';
       shapeEl.style.opacity = 1;
       shapeEl.style.transform = 'rotate(0deg) scale(1,1)';
       shapeEl.classList.add('is-visible');
-      shapeEl.shapeState = makeShapeState(key);
+      shapeEl.shapeState = makeShapeState(key, borderStyle);
 
       shapeEl.querySelectorAll('.shape-frag').forEach(function (frag) {
         frag.classList.toggle('is-active', frag.dataset.shapeKey === key);
@@ -2824,6 +4031,354 @@
       selectShapeEl(shapeEl);
       // selectShapeEl() reads size off the element (already 96/96) and opacity via
       // renderOpacityPopoverForSelection() (already 1) — both are correct without extra syncing.
+    }
+
+    // ---- Image element (Figma node 4554:126423 "Image detail") — placed by clicking a
+    // Brand > Overview Photos/Graphics preview cell. Mirrors the shape system's architecture
+    // (multi-instance via cloning #imageTemplate, one selected at a time, per-instance state
+    // saved/loaded on the element itself via el.imageState) but simpler: no fill/border colour
+    // system, just Crop (clip-path) / Adjust (CSS filter) / Transform (rotate/flip/opacity).
+    var IMAGE_CROP_CLIP = {
+      'freeform': 'none',
+      'square': 'none',
+      'circle': 'ellipse(50% 50% at 50% 50%)',
+      'rounded-square': 'none',
+      'triangle': 'polygon(50% 0%, 0% 100%, 100% 100%)',
+      'heart': 'polygon(50% 15%, 61% 4%, 75% 0%, 85% 4%, 95% 15%, 100% 32%, 95% 50%, 85% 65%, 50% 100%, 15% 65%, 5% 50%, 0% 32%, 5% 15%, 15% 4%, 25% 0%, 39% 4%)'
+    };
+    var imageInstanceCounter = 0;
+    var imageRotationDeg = 0;
+    var imageFlipX = 1;
+    var imageFlipY = 1;
+    var imageBrightness = 0;
+    var imageContrast = 0;
+    var imageSaturation = 0;
+    var imageBgRemoved = false;
+    var currentImageCropKey = 'freeform';
+
+    function getSelectedImageEl() {
+      return document.querySelector('.canvas-image.is-selected');
+    }
+
+    function makeImageState() {
+      return { cropKey: 'freeform', brightness: 0, contrast: 0, saturation: 0, bgRemoved: false, rotationDeg: 0, flipX: 1, flipY: 1 };
+    }
+
+    function saveImageState(el) {
+      if (!el) { return; }
+      el.imageState = {
+        cropKey: currentImageCropKey,
+        brightness: imageBrightness,
+        contrast: imageContrast,
+        saturation: imageSaturation,
+        bgRemoved: imageBgRemoved,
+        rotationDeg: imageRotationDeg,
+        flipX: imageFlipX,
+        flipY: imageFlipY
+      };
+    }
+
+    function loadImageState(el) {
+      var s = el.imageState;
+      currentImageCropKey = s.cropKey;
+      imageBrightness = s.brightness;
+      imageContrast = s.contrast;
+      imageSaturation = s.saturation;
+      imageBgRemoved = s.bgRemoved;
+      imageRotationDeg = s.rotationDeg;
+      imageFlipX = s.flipX;
+      imageFlipY = s.flipY;
+    }
+
+    // Graphics cells have no real photo (just a dimmed placeholder icon), so they fall back to
+    // the same default image Figma's own "image selected" reference screen (4554:126423) uses.
+    function placeMediaCellImage(cell) {
+      var img = cell.querySelector('img');
+      var src = (img && img.getAttribute('src')) || 'assets/screen-01-elements-panel/panel-image-detail/placed-image-default.png';
+      addImageToCanvas(src);
+    }
+
+    function addImageToCanvas(src) {
+      var template = document.getElementById('imageTemplate');
+      var el = document.importNode(template.content, true).firstElementChild;
+      imageInstanceCounter++;
+      el.id = 'canvasImage-' + imageInstanceCounter;
+
+      var width = 160;
+      var height = Math.round(width * 229 / 267);
+      var cascade = ((imageInstanceCounter - 1) % 6) * 24;
+      el.style.width = width + 'px';
+      el.style.height = height + 'px';
+      el.style.left = (((POSTER_WIDTH - width) / 2) + cascade) + 'px';
+      el.style.top = (((POSTER_HEIGHT - height) / 2) + cascade) + 'px';
+      el.style.opacity = 1;
+      el.style.transform = 'rotate(0deg) scale(1,1)';
+      el.classList.add('is-visible');
+      el.querySelector('.canvas-image__img').src = src;
+      el.imageState = makeImageState();
+
+      document.getElementById('posterEl').appendChild(el);
+      layerOrder.push(el.id);
+      applyLayerOrder();
+
+      selectImageEl(el);
+    }
+
+    function selectImageEl(el) {
+      if (el.classList.contains('is-selected')) { return; }
+      var prevShape = getSelectedShapeEl();
+      if (prevShape) { saveShapeState(prevShape); prevShape.classList.remove('is-selected'); }
+      var prevImage = getSelectedImageEl();
+      if (prevImage && prevImage !== el) { saveImageState(prevImage); prevImage.classList.remove('is-selected'); }
+      document.getElementById('canvasSticker').classList.remove('is-selected');
+
+      el.classList.add('is-selected');
+      loadImageState(el);
+      renderImageCrop();
+      renderImageAdjust();
+      renderImageBgRemoved();
+      updateImageTransform();
+      document.getElementById('imageRotationStepperVal').textContent = Math.round(imageRotationDeg % 360);
+
+      document.querySelector('.floating-toolbar').classList.add('floating-toolbar--visible');
+      refreshCarousels();
+      switchPanel('image-detail');
+      renderOpacityPopoverForSelection();
+    }
+
+    function deselectImage() {
+      var el = getSelectedImageEl();
+      if (el) { saveImageState(el); el.classList.remove('is-selected'); }
+      document.querySelector('.floating-toolbar').classList.remove('floating-toolbar--visible');
+      closePanel();
+    }
+
+    // Clicking outside only clears the selection (frame/handles hide) — same rule as
+    // deselectStickerToStickersAll()/deselectShapeToShapesAll(): the tool panel stays open,
+    // switched back to Uploads (where images get picked/placed from), instead of collapsing.
+    function deselectImageToUploads() {
+      var el = getSelectedImageEl();
+      if (el) { saveImageState(el); el.classList.remove('is-selected'); }
+      document.querySelector('.floating-toolbar').classList.remove('floating-toolbar--visible');
+      switchPanel('uploads');
+    }
+
+    function startImageMove(e) {
+      e.preventDefault();
+      var el = e.currentTarget;
+      selectImageEl(el);
+      var startX = e.clientX;
+      var startY = e.clientY;
+      var startLeft = parseFloat(el.style.left);
+      var startTop = parseFloat(el.style.top);
+      function onMove(ev) {
+        var scale = PAGE_FIT_SCALE * ZOOM_BASE_SCALE * (parseInt(document.getElementById('zoomSlider').value, 10) / 100);
+        el.style.left = (startLeft + (ev.clientX - startX) / scale) + 'px';
+        el.style.top = (startTop + (ev.clientY - startY) / scale) + 'px';
+      }
+      function onUp() {
+        document.removeEventListener('pointermove', onMove);
+        document.removeEventListener('pointerup', onUp);
+      }
+      document.addEventListener('pointermove', onMove);
+      document.addEventListener('pointerup', onUp);
+    }
+
+    // Resize keeps the image's aspect ratio (unlike shapes, which are always square) — scaling
+    // both dimensions by the same factor each drag step preserves whatever ratio it started with.
+    function applyImageSize(newWidth) {
+      var el = getSelectedImageEl();
+      if (!el) { return; }
+      var curWidth = parseFloat(el.style.width);
+      var curHeight = parseFloat(el.style.height);
+      var aspect = curHeight / curWidth;
+      newWidth = Math.max(40, Math.min(800, newWidth));
+      var newHeight = newWidth * aspect;
+      var curLeft = parseFloat(el.style.left);
+      var curTop = parseFloat(el.style.top);
+      var centerX = curLeft + curWidth / 2;
+      var centerY = curTop + curHeight / 2;
+      el.style.width = newWidth + 'px';
+      el.style.height = newHeight + 'px';
+      el.style.left = (centerX - newWidth / 2) + 'px';
+      el.style.top = (centerY - newHeight / 2) + 'px';
+    }
+
+    function startImageResize(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      var el = e.currentTarget.closest('.canvas-selectable');
+      var rect = el.getBoundingClientRect();
+      var centerX = rect.left + rect.width / 2;
+      var centerY = rect.top + rect.height / 2;
+      var startDist = Math.hypot(e.clientX - centerX, e.clientY - centerY) || 1;
+      var startWidth = parseFloat(el.style.width);
+      function onMove(ev) {
+        var dist = Math.hypot(ev.clientX - centerX, ev.clientY - centerY);
+        applyImageSize(startWidth * (dist / startDist));
+      }
+      function onUp() {
+        document.removeEventListener('pointermove', onMove);
+        document.removeEventListener('pointerup', onUp);
+      }
+      document.addEventListener('pointermove', onMove);
+      document.addEventListener('pointerup', onUp);
+    }
+
+    // Edge midpoint handles — free single-axis resize (no aspect-ratio lock), unlike the
+    // corner handles above. Left/top also shift the opposite style property so the far edge
+    // stays put while the dragged edge follows the pointer.
+    function startImageResizeAxis(e, edge) {
+      e.stopPropagation();
+      e.preventDefault();
+      var el = e.currentTarget.closest('.canvas-selectable');
+      var startWidth = parseFloat(el.style.width);
+      var startHeight = parseFloat(el.style.height);
+      var startLeft = parseFloat(el.style.left);
+      var startTop = parseFloat(el.style.top);
+      var startX = e.clientX;
+      var startY = e.clientY;
+      function onMove(ev) {
+        var scale = PAGE_FIT_SCALE * ZOOM_BASE_SCALE * (parseInt(document.getElementById('zoomSlider').value, 10) / 100);
+        var dx = (ev.clientX - startX) / scale;
+        var dy = (ev.clientY - startY) / scale;
+        if (edge === 'right') {
+          el.style.width = Math.max(40, startWidth + dx) + 'px';
+        } else if (edge === 'left') {
+          var newWidth = Math.max(40, startWidth - dx);
+          el.style.width = newWidth + 'px';
+          el.style.left = (startLeft + (startWidth - newWidth)) + 'px';
+        } else if (edge === 'bottom') {
+          el.style.height = Math.max(40, startHeight + dy) + 'px';
+        } else if (edge === 'top') {
+          var newHeight = Math.max(40, startHeight - dy);
+          el.style.height = newHeight + 'px';
+          el.style.top = (startTop + (startHeight - newHeight)) + 'px';
+        }
+      }
+      function onUp() {
+        document.removeEventListener('pointermove', onMove);
+        document.removeEventListener('pointerup', onUp);
+      }
+      document.addEventListener('pointermove', onMove);
+      document.addEventListener('pointerup', onUp);
+    }
+
+    function updateImageTransform() {
+      var el = getSelectedImageEl();
+      if (!el) { return; }
+      el.style.transform = 'rotate(' + imageRotationDeg + 'deg) scale(' + imageFlipX + ',' + imageFlipY + ')';
+    }
+
+    function applyImageRotation(deg) {
+      imageRotationDeg = deg;
+      updateImageTransform();
+      var normalized = Math.round(((deg % 360) + 540) % 360 - 180);
+      document.getElementById('imageRotationStepperVal').textContent = normalized;
+    }
+
+    function stepImageRotation(delta) {
+      applyImageRotation(imageRotationDeg + delta);
+    }
+
+    function startImageRotate(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      var el = e.currentTarget.closest('.canvas-selectable');
+      var rect = el.getBoundingClientRect();
+      var centerX = rect.left + rect.width / 2;
+      var centerY = rect.top + rect.height / 2;
+      var startAngle = Math.atan2(e.clientY - centerY, e.clientX - centerX) * 180 / Math.PI;
+      var startRotation = imageRotationDeg;
+      function onMove(ev) {
+        var angle = Math.atan2(ev.clientY - centerY, ev.clientX - centerX) * 180 / Math.PI;
+        applyImageRotation(startRotation + (angle - startAngle));
+      }
+      function onUp() {
+        document.removeEventListener('pointermove', onMove);
+        document.removeEventListener('pointerup', onUp);
+      }
+      document.addEventListener('pointermove', onMove);
+      document.addEventListener('pointerup', onUp);
+    }
+
+    // Crop presets are CSS clip-path approximations (Circle/Triangle/Heart) plus border-radius
+    // for Rounded square — Freeform/Square stay an uncropped rectangle (this prototype doesn't
+    // implement aspect-ratio locking during resize, so "Square" is Freeform in practice).
+    function applyImageCrop(key) {
+      var el = getSelectedImageEl();
+      if (!el) { return; }
+      currentImageCropKey = key;
+      var img = el.querySelector('.canvas-image__img');
+      img.style.clipPath = IMAGE_CROP_CLIP[key] || 'none';
+      img.style.borderRadius = key === 'rounded-square' ? '16px' : '';
+      renderImageCrop();
+    }
+
+    function renderImageCrop() {
+      document.querySelectorAll('#imageCropGrid .crop-option').forEach(function (opt) {
+        opt.classList.toggle('is-active', opt.dataset.cropKey === currentImageCropKey);
+      });
+    }
+
+    // Adjust sliders are centred at 0 (-100..100) and drive a real CSS filter on the image.
+    function applyImageAdjust(type, val) {
+      if (!getSelectedImageEl()) { return; }
+      val = Math.max(-100, Math.min(100, Math.round(parseFloat(val) || 0)));
+      if (type === 'brightness') { imageBrightness = val; }
+      else if (type === 'contrast') { imageContrast = val; }
+      else if (type === 'saturation') { imageSaturation = val; }
+      renderImageAdjust();
+    }
+
+    function renderImageAdjust() {
+      var el = getSelectedImageEl();
+      if (!el) { return; }
+      var img = el.querySelector('.canvas-image__img');
+      img.style.filter = 'brightness(' + (1 + imageBrightness / 100) + ') contrast(' + (1 + imageContrast / 100) + ') saturate(' + (1 + imageSaturation / 100) + ')';
+
+      [['imageBrightnessSlider', 'imageBrightnessVal', imageBrightness],
+       ['imageContrastSlider', 'imageContrastVal', imageContrast],
+       ['imageSaturationSlider', 'imageSaturationVal', imageSaturation]].forEach(function (row) {
+        var slider = document.getElementById(row[0]);
+        slider.value = row[2];
+        slider.style.setProperty('--fill-end', ((row[2] + 100) / 2) + '%');
+        document.getElementById(row[1]).textContent = row[2];
+      });
+    }
+
+    // No real background-removal model exists in a static prototype — this schematically shows
+    // "transparent" the same way every image editor does, with a checkerboard behind the image,
+    // which only becomes visible once a non-rectangular Crop reveals the corners around it.
+    function toggleImageBgRemoved() {
+      var el = getSelectedImageEl();
+      if (!el) { return; }
+      imageBgRemoved = !imageBgRemoved;
+      renderImageBgRemoved();
+    }
+
+    function renderImageBgRemoved() {
+      var el = getSelectedImageEl();
+      if (!el) { return; }
+      el.classList.toggle('is-bg-removed', imageBgRemoved);
+      document.getElementById('imageBgRemoveRow').classList.toggle('is-active', imageBgRemoved);
+      document.getElementById('imageBgRemoveLabel').textContent = imageBgRemoved ? 'Background removed' : 'Remove background';
+    }
+
+    // Replace image — a real local file picker (not wired to any asset library), since that's
+    // the one "Background" action a static prototype can genuinely implement.
+    function triggerReplaceImage() {
+      if (!getSelectedImageEl()) { return; }
+      document.getElementById('imageReplaceInput').click();
+    }
+
+    function handleImageReplaceFile(event) {
+      var file = event.target.files[0];
+      var el = getSelectedImageEl();
+      if (file && el) {
+        el.querySelector('.canvas-image__img').src = URL.createObjectURL(file);
+      }
+      event.target.value = '';
     }
 
     // Replace Shape (Figma: node 4554:122820 "Replace Shape" section) — swaps which fragment is
@@ -3631,7 +5186,7 @@
       var startTop = parseFloat(el.style.top);
 
       function onMove(ev) {
-        var scale = ZOOM_BASE_SCALE * (parseInt(document.getElementById('zoomSlider').value, 10) / 100);
+        var scale = PAGE_FIT_SCALE * ZOOM_BASE_SCALE * (parseInt(document.getElementById('zoomSlider').value, 10) / 100);
         el.style.left = (startLeft + (ev.clientX - startX) / scale) + 'px';
         el.style.top = (startTop + (ev.clientY - startY) / scale) + 'px';
       }
@@ -3743,7 +5298,10 @@
       'star-heart': 'Sparkling Heart',
       'ribbon-heart': 'Heart with Ribbon',
       'arrow-heart': 'Heart with Arrow',
-      'heart-badge': 'Heart Badge'
+      'heart-badge': 'Heart Badge',
+      'sticker-b': 'Smiling Face',
+      'sticker-c': 'Sparkle Cluster',
+      'sticker-d': 'Googly Eyes'
     };
 
     function replaceSticker(key) {
@@ -3787,12 +5345,56 @@
       }
     }
 
-    // Element-type-agnostic: works on whichever of #canvasSticker / any .canvas-shape instance is
-    // currently selected, so Align/Flip/Opacity/Layer all share this one lookup.
+    // Element-type-agnostic: works on whichever of #canvasSticker / any .canvas-shape / any
+    // .canvas-image instance is currently selected, so Align/Flip/Opacity/Layer all share this
+    // one lookup.
     function currentlySelectedLayerId() {
       if (document.getElementById('canvasSticker').classList.contains('is-selected')) { return 'canvasSticker'; }
       var shapeEl = getSelectedShapeEl();
-      return shapeEl ? shapeEl.id : null;
+      if (shapeEl) { return shapeEl.id; }
+      var imageEl = getSelectedImageEl();
+      return imageEl ? imageEl.id : null;
+    }
+
+    // Quick Add menu (Figma node 4554:127175) — a shortcut into the same tools the left nav
+    // rail already exposes, plus a real local file upload straight onto the poster.
+    function toggleAddMenu() {
+      var menu = document.getElementById('addMenu');
+      var willShow = !menu.classList.contains('is-visible');
+      closeAddMenu();
+      if (!willShow) { return; }
+      var btn = document.getElementById('quickAddBtn');
+      menu.style.left = btn.offsetLeft + 'px';
+      menu.style.top = (btn.offsetTop + btn.offsetHeight + 8) + 'px';
+      menu.classList.add('is-visible');
+    }
+
+    function closeAddMenu() {
+      document.getElementById('addMenu').classList.remove('is-visible');
+    }
+
+    document.addEventListener('click', closeAddMenu);
+
+    function handleAddMenuAction(kind) {
+      closeAddMenu();
+      if (kind === 'text') { switchPanel('text'); }
+      else if (kind === 'image') { switchPanel('uploads'); }
+      else if (kind === 'sticker') { switchPanel('stickers-all'); }
+      else if (kind === 'shape') { switchPanel('shapes-all'); }
+      else if (kind === 'upload') { document.getElementById('quickUploadInput').click(); }
+    }
+
+    function handleQuickUploadFile(event) {
+      var file = event.target.files[0];
+      if (file) { addImageToCanvas(URL.createObjectURL(file)); }
+      event.target.value = '';
+    }
+
+    // Guides toggle (Figma node 4554:126884) — the toolbar's grid icon chip. Purely a
+    // visual aid over the poster; toggling just flips two classes, no selection/state to save.
+    function toggleGuides() {
+      document.getElementById('guidesToggleChip').classList.toggle('is-active');
+      document.getElementById('posterGuides').classList.toggle('is-visible');
     }
 
     // Replace works for whichever element type is selected — "Replace Sticker" (with the AI
@@ -3843,8 +5445,7 @@
     function applyLayerAction(action) {
       hideLayerMenu();
       if (action === 'show') {
-        // No standalone layer-tree panel exists yet in this prototype — placeholder for now.
-        alert('Show layers — 별도 레이어 패널은 아직 준비 중입니다.');
+        toggleLayersPanel();
         return;
       }
       var id = currentlySelectedLayerId();
@@ -3864,6 +5465,191 @@
         layerOrder[idx - 1] = id;
       }
       applyLayerOrder();
+      if (document.getElementById('layersPanel').classList.contains('is-visible')) { renderLayersPanel(); }
+    }
+
+    // ---- Layers panel (Figma node 4554:127075 "Canvas overlays · layers panel open") — the
+    // real UI for layerOrder[]/applyLayerOrder() above. Clicking a row selects that element on
+    // canvas (reusing selectShapeEl/selectImageEl/selectPlacedSticker); the up/down chevrons only
+    // ever show on the row matching the current selection, same as Figma, and just call
+    // applyLayerAction() so both this panel and the floating toolbar's layer popover stay in sync.
+    var layerHidden = {};
+    var layerLocked = {};
+    var LAYER_GRIP_INSETS = [
+      '45.83% 58.33% 45.83% 33.33%',
+      '16.67% 58.33% 75% 33.33%',
+      '75% 58.33% 16.67% 33.33%',
+      '45.83% 33.33% 45.83% 58.33%',
+      '16.67% 33.33% 75% 58.33%',
+      '75% 33.33% 16.67% 58.33%'
+    ];
+
+    function layerDisplayName(id) {
+      if (id === 'canvasSticker') { return 'Sticker'; }
+      var m = id.match(/^canvasShape-(\d+)$/);
+      if (m) { return 'Shape ' + m[1]; }
+      m = id.match(/^canvasImage-(\d+)$/);
+      if (m) { return 'Image ' + m[1]; }
+      return id;
+    }
+
+    function toggleLayersPanel() {
+      var panel = document.getElementById('layersPanel');
+      var willShow = !panel.classList.contains('is-visible');
+      panel.classList.toggle('is-visible', willShow);
+      var toggleBtn = document.getElementById('layersToggleBtn');
+      toggleBtn.classList.toggle('is-active', willShow);
+      if (willShow) {
+        renderLayersPanel();
+        // Anchored to the toggle button's actual viewport position (not a hardcoded Figma
+        // pixel offset), using position:fixed so it can't be clipped by .stage-canvas's
+        // overflow:hidden — this stays correct at any browser window size.
+        var btnRect = toggleBtn.getBoundingClientRect();
+        var left = Math.min(btnRect.right - panel.offsetWidth, window.innerWidth - panel.offsetWidth - 8);
+        panel.style.left = Math.max(8, left) + 'px';
+        panel.style.top = (btnRect.bottom + 8) + 'px';
+      }
+    }
+
+    function gripIconHtml() {
+      var html = '<span class="icon" style="width:16px;height:16px">';
+      for (var i = 0; i < LAYER_GRIP_INSETS.length; i++) {
+        html += '<span class="icon__frag" style="inset:' + LAYER_GRIP_INSETS[i] + '"><img src="assets/screen-01-elements-panel/panel-layers/grip.svg" alt="" /></span>';
+      }
+      return html + '</span>';
+    }
+
+    function renderLayersPanel() {
+      var list = document.getElementById('layersPanelList');
+      list.innerHTML = '';
+      var activeId = currentlySelectedLayerId();
+      var displayOrder = layerOrder.slice().reverse();
+      displayOrder.forEach(function (id) {
+        var el = document.getElementById(id);
+        // canvasSticker sits in layerOrder from page load even before anything's ever been
+        // placed (it's a static, reused slot) — skip anything not actually on the poster yet.
+        if (!el || !el.classList.contains('is-visible')) { return; }
+        var isActive = id === activeId;
+        var idx = layerOrder.indexOf(id);
+        var row = document.createElement('div');
+        row.className = 'layer-row' + (isActive ? ' is-active' : '') + (layerHidden[id] ? ' is-hidden' : '');
+        row.dataset.layerId = id;
+        row.innerHTML =
+          '<span class="layer-row__grip" onpointerdown="startLayerDrag(event)">' + gripIconHtml() + '</span>'
+          + '<img class="layer-row__icon" src="assets/screen-01-elements-panel/panel-layers/layer-image-glyph.svg" alt="" style="width:16px;height:16px;" />'
+          + '<p class="layer-row__name">' + layerDisplayName(id) + '</p>'
+          + '<span class="layer-row__reorder' + (idx >= layerOrder.length - 1 ? ' is-disabled' : '') + '" data-layer-action="forward">'
+          + '<span class="icon" style="width:16px;height:16px">'
+          + '<span class="icon__frag" style="inset:20.83% 20.83% 50% 20.83%"><img src="assets/screen-01-elements-panel/panel-layers/arrow-1.svg" alt="" /></span>'
+          + '<span class="icon__frag" style="inset:20.83% 50% 20.83% 50%"><img src="assets/screen-01-elements-panel/panel-layers/arrow-2.svg" alt="" /></span>'
+          + '</span></span>'
+          + '<span class="layer-row__reorder' + (idx <= 0 ? ' is-disabled' : '') + '" style="transform:rotate(180deg);" data-layer-action="backward">'
+          + '<span class="icon" style="width:16px;height:16px">'
+          + '<span class="icon__frag" style="inset:20.83% 20.83% 50% 20.83%"><img src="assets/screen-01-elements-panel/panel-layers/arrow-1.svg" alt="" /></span>'
+          + '<span class="icon__frag" style="inset:20.83% 50% 20.83% 50%"><img src="assets/screen-01-elements-panel/panel-layers/arrow-2.svg" alt="" /></span>'
+          + '</span></span>'
+          + '<span class="layer-row__eye" data-layer-action="eye">'
+          + '<span class="icon" style="width:16px;height:16px">'
+          + '<span class="icon__frag" style="inset:20.84% 8.33%"><img src="assets/screen-01-elements-panel/panel-layers/eye-1.svg" alt="" /></span>'
+          + '<span class="icon__frag" style="inset:37.5%"><img src="assets/screen-01-elements-panel/panel-layers/eye-2.svg" alt="" /></span>'
+          + '</span></span>'
+          + '<span class="layer-row__lock' + (layerLocked[id] ? ' is-locked' : '') + '" data-layer-action="lock">'
+          + '<span class="icon" style="width:16px;height:16px">'
+          + '<span class="icon__frag" style="inset:45.83% 12.5% 8.33% 12.5%"><img src="assets/screen-01-elements-panel/panel-layers/lock-1.svg" alt="" /></span>'
+          + '<span class="icon__frag" style="inset:8.33% 29.17% 54.17% 29.17%"><img src="assets/screen-01-elements-panel/panel-layers/lock-2.svg" alt="" /></span>'
+          + '</span></span>';
+        list.appendChild(row);
+      });
+      if (!list.children.length) {
+        list.innerHTML = '<p style="font-size:var(--font-size-text-sm); line-height:var(--line-height-text-sm); color:var(--color-neutral-500); padding:var(--spacing-sm) 0;">No layers yet — add a sticker, shape, or image to the poster.</p>';
+      }
+    }
+
+    function handleLayersPanelClick(event) {
+      var row = event.target.closest('.layer-row');
+      if (!row) { return; }
+      var id = row.dataset.layerId;
+      var actionEl = event.target.closest('[data-layer-action]');
+      if (actionEl) {
+        var action = actionEl.dataset.layerAction;
+        if ((action === 'forward' || action === 'backward') && !actionEl.classList.contains('is-disabled')) {
+          applyLayerAction(action);
+        } else if (action === 'eye') {
+          toggleLayerHidden(id);
+        } else if (action === 'lock') {
+          toggleLayerLocked(id);
+        }
+        return;
+      }
+      selectLayerFromPanel(id);
+    }
+
+    function selectLayerFromPanel(id) {
+      if (layerLocked[id]) { return; }
+      var el = document.getElementById(id);
+      if (!el) { return; }
+      if (id === 'canvasSticker') { selectPlacedSticker(); }
+      else if (el.classList.contains('canvas-shape')) { selectShapeEl(el); }
+      else if (el.classList.contains('canvas-image')) { selectImageEl(el); }
+      renderLayersPanel();
+    }
+
+    // Hiding the active layer also deselects it, so the floating toolbar doesn't stay open
+    // for an element that's no longer visible on the poster.
+    function toggleLayerHidden(id) {
+      var el = document.getElementById(id);
+      if (!el) { return; }
+      layerHidden[id] = !layerHidden[id];
+      el.style.visibility = layerHidden[id] ? 'hidden' : '';
+      if (layerHidden[id] && currentlySelectedLayerId() === id) {
+        if (id === 'canvasSticker') { deselectSticker(); }
+        else if (el.classList.contains('canvas-shape')) { deselectShape(); }
+        else if (el.classList.contains('canvas-image')) { deselectImage(); }
+      }
+      renderLayersPanel();
+    }
+
+    // Locking sets pointer-events:none directly on the canvas element — that alone blocks
+    // every existing interaction (select/move/resize/rotate) with no changes needed elsewhere.
+    function toggleLayerLocked(id) {
+      var el = document.getElementById(id);
+      if (!el) { return; }
+      layerLocked[id] = !layerLocked[id];
+      el.style.pointerEvents = layerLocked[id] ? 'none' : '';
+      renderLayersPanel();
+    }
+
+    // Drag-to-reorder via the grip handle — reorders the row's DOM position live as the
+    // pointer moves, then rebuilds layerOrder[] from the final row order once on release.
+    function startLayerDrag(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      var list = document.getElementById('layersPanelList');
+      var row = e.currentTarget.closest('.layer-row');
+      row.classList.add('is-dragging');
+      function onMove(ev) {
+        var rows = list.querySelectorAll('.layer-row');
+        var after = null;
+        for (var i = 0; i < rows.length; i++) {
+          if (rows[i] === row) { continue; }
+          var rect = rows[i].getBoundingClientRect();
+          if (ev.clientY < rect.top + rect.height / 2) { after = rows[i]; break; }
+        }
+        if (after) { list.insertBefore(row, after); } else { list.appendChild(row); }
+      }
+      function onUp() {
+        document.removeEventListener('pointermove', onMove);
+        document.removeEventListener('pointerup', onUp);
+        row.classList.remove('is-dragging');
+        var rows = list.querySelectorAll('.layer-row');
+        var newDisplayOrder = [];
+        for (var i = 0; i < rows.length; i++) { newDisplayOrder.push(rows[i].dataset.layerId); }
+        layerOrder = newDisplayOrder.slice().reverse();
+        applyLayerOrder();
+        renderLayersPanel();
+      }
+      document.addEventListener('pointermove', onMove);
+      document.addEventListener('pointerup', onUp);
     }
 
     // ---- Align popover (Figma node 4554:124696) — applies immediately, popover stays open so
@@ -3888,12 +5674,16 @@
     function applyFlip(axis) {
       var id = currentlySelectedLayerId();
       if (!id) { return; }
-      if (id !== 'canvasSticker') {
-        if (axis === 'horizontal') { shapeFlipX *= -1; } else { shapeFlipY *= -1; }
-        updateShapeTransform();
-      } else {
+      var imageEl = getSelectedImageEl();
+      if (id === 'canvasSticker') {
         if (axis === 'horizontal') { stickerFlipX *= -1; } else { stickerFlipY *= -1; }
         updateStickerTransform();
+      } else if (imageEl && imageEl.id === id) {
+        if (axis === 'horizontal') { imageFlipX *= -1; } else { imageFlipY *= -1; }
+        updateImageTransform();
+      } else {
+        if (axis === 'horizontal') { shapeFlipX *= -1; } else { shapeFlipY *= -1; }
+        updateShapeTransform();
       }
       closeAllToolbarPopovers();
     }
@@ -3913,6 +5703,11 @@
       panelSlider.value = val;
       panelSlider.style.setProperty('--fill-end', val + '%');
       document.getElementById('shapeOpacityVal').textContent = val;
+
+      var imageSlider = document.getElementById('imageOpacitySlider');
+      imageSlider.value = val;
+      imageSlider.style.setProperty('--fill-end', val + '%');
+      document.getElementById('imageOpacityVal').textContent = val;
     }
 
     function applyElementOpacity(val) {
@@ -3949,6 +5744,7 @@
 
       var sticker = document.getElementById('canvasSticker');
       var shape = getSelectedShapeEl();
+      var image = getSelectedImageEl();
       var stage = document.querySelector('.stage-canvas');
       if (sticker.classList.contains('is-selected') && stage.contains(e.target) && !sticker.contains(e.target)) {
         deselectStickerToStickersAll();
@@ -3956,7 +5752,28 @@
       if (shape && stage.contains(e.target) && !shape.contains(e.target)) {
         deselectShapeToShapesAll();
       }
+      if (image && stage.contains(e.target) && !image.contains(e.target)) {
+        deselectImageToUploads();
+      }
     });
+
+    // Scales the whole 1920x1080 .screen down (or up) to exactly fit the real browser window,
+    // like Figma's own prototype "fit to window" preview — otherwise anything positioned in
+    // the right/bottom portion of the fixed 1920-wide layout is off-screen on any window
+    // narrower than that. Folded into every drag scale calc below (search PAGE_FIT_SCALE)
+    // since those already convert screen-space mouse deltas into the poster's logical
+    // (unscaled) pixel space and now need to divide out this factor too.
+    var PAGE_FIT_SCALE = 1;
+
+    function fitScreenToViewport() {
+      PAGE_FIT_SCALE = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+      var screenEl = document.querySelector('.screen');
+      screenEl.style.transform = 'scale(' + PAGE_FIT_SCALE + ')';
+      document.body.style.width = (1920 * PAGE_FIT_SCALE) + 'px';
+      document.body.style.height = (1080 * PAGE_FIT_SCALE) + 'px';
+    }
+    window.addEventListener('resize', fitScreenToViewport);
+    fitScreenToViewport();
 
     var ZOOM_MIN = 50;
     var ZOOM_MAX = 150;
@@ -4053,6 +5870,8 @@
     }
 
     initCarousels();
+    initImageCellOverlays();
+    initListViews();
   </script>
 </body>
 </html>

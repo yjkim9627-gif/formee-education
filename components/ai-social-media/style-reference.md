@@ -4,6 +4,8 @@ Figma `FME_AI-Social-Media` 파일의 컴포넌트 라이브러리(node-id 1213-
 
 조사 방법: Figma MCP `get_screenshot`으로 각 섹션 전체를 훑고, 카테고리당 대표 컴포넌트 2~4개를 `get_design_context`/`get_variable_defs`로 확인해 실제 바인딩된 Figma Variable과 raw hex/px를 구분했다. Editor·AI Assistant처럼 컴포넌트 수가 많은 카테고리는 전수조사가 아니라 샘플링임을 표시해 둔다.
 
+**2026-08 재조사**: 컴포넌트 라이브러리가 재구성됐다(node-id 1121-9 페이지 기준). "05 Feedback" 최상위 섹션이 사라지고 개별 컴포넌트가 다른 섹션으로 재배치됐고(§4 참고), Audio·Login·Brand Kit 3개 섹션이 새로 생겨 §11~13으로 추가했다. "00 Brand" 섹션은 로고 마크 심볼 3개뿐이라 스킵.
+
 **변수 체계 일치 확인**: 이 파일은 `FME_Design-System` 자매 파일과 동일한 Variable 이름(`neutral/400`, `brand/primary`, `radius/lg`, `spacing/sm` 등)을 쓰고, 값도 `tokens.css`와 정확히 일치한다 (예: `neutral/400` = `#c8d1e1` = `--color-neutral-400`). 즉 이 문서에서 다루는 컴포넌트는 대부분 "같은 시스템 위에" 있다. 단, 아래에서 ⚠️로 표시한 지점은 raw hex/px가 그대로 박혀 있거나 tokens.css에 대응 토큰이 없는 곳이다.
 
 ---
@@ -22,6 +24,8 @@ Figma `FME_AI-Social-Media` 파일의 컴포넌트 라이브러리(node-id 1213-
 - **크기**: 텍스트/드롭다운 인풋은 두 개 높이 티어로 명시돼 있다 — `Size=SM·36`과 `Size=MD·40`. 아이콘 액션류(Icon Action, Carousel Arrow 등)는 28px 히트 영역을 반복 사용. 체크박스/스위치 핸들은 각각 16px, 40×23px로 고정.
 - **색상/계층**: 필드 기본 상태는 `neutral-0` 배경 + `neutral-400` 보더 + `neutral-900` 텍스트로 통일. 라벨은 `neutral-400`(회색, uppercase). **선택된 값 강조가 필요한 곳(체크박스 선택, 스위치 on, Segmented Toggle item selected)만 `brand/primary`로 채워지고**, 나머지 대부분의 "선택" 표현(세그먼트 칩 active, 필터 토글 selected)은 흰 배경 pill + 그림자(`shadow/sm`) + 텍스트 굵기/색 변화로 처리되어 브랜드 컬러를 쓰지 않는다.
 - **state**: `[DS] Controls / Checkbox`, `[DS] Controls / Switch`는 Figma 컴포넌트 설명이 별도로 달려 있을 만큼 스펙이 명확하다(예: Switch = off일 때 `neutral-300` 트랙, on일 때 `brand/primary` 트랙, 40×23, radius 12). 반면 일반 `Controls/*` 컴포넌트는 설명 없이 네이밍과 variant만으로 구분된다 — `[DS]` 접두사가 붙은 것이 더 공식 스펙임을 시사한다.
+- **[신규, 2026-08] Radio**: 체크박스·스위치 외에 라디오 버튼이 새로 추가됐다. 지름 20px 원형(`radius-full`과 동일). Unselected는 `neutral-0` 배경 + 옅은 회색 링뿐이고, **selected는 속 빈 링+점이 아니라 `brand/primary` 채움 원 + 흰 체크 아이콘**으로 표현된다 — 체크박스와 시각적으로 통일된 방식. "바이너리 on 상태 = brand/primary" 규칙(문서 하단 "색상 계층 총정리" 1번)의 연장이라 기존 규칙과 충돌 없음. §11 Audio의 트랙 선택 UI가 이 컴포넌트를 재사용한다.
+- **[이동, 2026-08] Badge (구 Feedback / Badge)**: 원래 4번 Feedback 섹션에 있던 배지가 이 섹션으로 옮겨오면서 컴포넌트명도 `Feedback`(variant: color)으로 통합됐다. 기존 Green/Blue 외에 **Primary(`neutral-950` 검정 배경 + 흰 텍스트)**, **Secondary(`neutral-150` 배경 + `neutral-900` 텍스트)** 두 variant가 새로 생겼다 — 상태 배지 전용에서 범용 라벨/태그 pill로 역할이 확장된 듯하다. radius/크기(`radius-lg`, `spacing-2` 세로 패딩)는 기존과 동일, 신규 색 2종 모두 Variable 바인딩 확인(raw hex 아님).
 
 ## 3. Navigation
 
@@ -37,6 +41,11 @@ Figma `FME_AI-Social-Media` 파일의 컴포넌트 라이브러리(node-id 1213-
 - **색상/계층**: Badge는 `--color-badge-*` 세트(green/blue/gray 등)를 그대로 text/bg 페어로 사용 — 이미 tokens.css에 정의된 배지 색상 규칙과 정확히 일치한다. Progress Bar는 fill에 `brand/primary`, 퍼센트 텍스트도 `brand/primary`, 캡션은 `neutral-500`.
 - **state**: Figma 컴포넌트 설명에 "Fill width = track width × percent, 정적 mock이니 코드에서 값으로 구동하라"는 지침이 명시돼 있다 — 프로토타입에서 반드시 percent 값을 prop으로 받아 width를 계산해야 한다.
   - ⚠️ Progress Bar의 두 자식 사이 gap이 `spacing/10`(10px)으로 돼 있는데, tokens.css spacing 스케일에는 8px(`spacing-sm`)과 12px(`spacing-md`) 사이 값이 없다. 10px은 어느 토큰에도 매핑되지 않는 이탈 값이다.
+- **⚠️ 업데이트(2026-08)**: 최상위 "05 Feedback" 섹션이 사라지고 개별 컴포넌트가 재배치됐다 — 이 문서의 §4는 재배치된 컴포넌트들을 계속 한곳에 모아두기 위한 것이지, 더 이상 Figma상의 실제 섹션 위치와 일치하지 않는다.
+  - **Progress Bar, Action Bar / Brief readiness** → `04 Navigation`으로 이동. 시각 규칙(트랙/fill 색상)은 변화 없음.
+  - **Badge** → `03 Inputs & Controls`로 이동 + Primary/Secondary variant 추가(위 §2 참고).
+  - **Notice** → 별도 섹션 없이 Login 화면 등 개별 화면에 인스턴스로만 남아있음.
+  - **Dialog, Dialog · Schedule** → "unused" 그레이브야드 섹션으로 이동(Layer Row 구버전, Effect Tile, `[deprecated] Brand / logo` 등과 함께) — **사실상 폐기(deprecated) 취급**으로 보인다. 새 화면에 Dialog가 필요하면 대체 컴포넌트가 있는지 먼저 확인할 것.
 
 ## 5. Data Display
 
@@ -62,7 +71,7 @@ Figma `FME_AI-Social-Media` 파일의 컴포넌트 라이브러리(node-id 1213-
 
 ## 8. Product Selectors
 
-- **radius**: 소셜 버튼/카드류는 `radius-lg`, 캐릭터 카드 썸네일은 `radius-xl`.
+- **radius**: 소셜 버튼/카드류는 `radius-lg`, 캐릭터 카드 썸네일은 `radius-xl`. ⚠️ 이건 **계정 연결용** 소셜 버튼 한정 규칙이다 — §12 Login의 OAuth 로그인용 Social Login Button(Google/Apple)은 이름이 비슷해도 `radius-xl`을 쓴다. 같은 "소셜 버튼"이라도 문맥(계정 연결 vs 로그인)에 따라 radius가 다르니 혼동 주의.
 - **크기**: 소셜 버튼 높이 36px 고정(Inputs의 SM 티어와 동일). 캐릭터 카드는 246px 폭에 썸네일 295px 높이로 큰 그리드 카드.
 - **색상/계층**: 소셜 버튼(Instagram/TikTok/YouTube/LinkedIn/Meta ads)은 브랜드 로고 자체 색(그라디언트, 빨강, 파랑 등)을 아이콘에 그대로 쓰지만 **버튼 껍데기(배경/보더/텍스트)는 뉴트럴 팔레트로 통일** — 로고 색이 곧 "제품 브랜드 primary"와 섞이지 않도록 분리돼 있다. 선택 상태는 Data Display와 동일하게 `neutral-100` 배경 + `neutral-500` 보더.
 - **state**: "Add Account"처럼 아직 없는 항목은 파선(dashed) 보더 + `neutral-500` 텍스트로 placeholder 취급. 캐릭터 카드의 "New character" 카드도 동일하게 dashed 보더 + 중앙 정렬 plus 아이콘 — **빈 슬롯/추가 액션은 항상 dashed 보더로 구분**하는 규칙이 Upload Dropzone, Character Card, Social Button에서 공통으로 나타난다.
@@ -82,6 +91,29 @@ Figma `FME_AI-Social-Media` 파일의 컴포넌트 라이브러리(node-id 1213-
 - **사이즈 스케일**: 대부분의 UI 아이콘은 16 / 20 / 24px 세 가지로, 자매 파일의 `icon/size/sm|md|lg`(16/20/24) Variable 스케일과 일치한다. 단, `icon / social / *`(Instagram, TikTok 등 플랫폼 로고)만 32px로 그 스케일 밖에 있다 — 이는 "UI 아이콘"이 아니라 "브랜드 로고 마크"로 별도 취급되는 것으로 보이며, sm/md/lg 스케일에 억지로 맞추려 하지 않는 게 맞다.
 - **색상**: 기본 아이콘은 고정 `currentColor` 방식이 아니라 **`neutral/500` Variable에 직접 바인딩**돼 색이 결정된다(선택/hover 시 상위 컴포넌트가 다른 색 아이콘 인스턴스로 스왑하는 방식 — 예: Nav Tool Tab selected는 별도 색의 아이콘 인스턴스를 사용). AI 관련 아이콘(sparkle 등)만 `brand/primary-dark`처럼 브랜드 컬러에 바인딩된 경우가 있다.
   - ⚠️ tokens.css에는 아이콘 전용 토큰 `--color-neutral-icon`(#8e97a8)이 정의돼 있지만, 실제 Figma 아이콘은 이 값이 아니라 `neutral/500`(`--color-neutral-500`, #8a93a8)에 바인딩돼 있다. 두 값이 매우 비슷하지만 동일하지 않다 — `--color-neutral-icon`이 실제로 쓰이는 곳인지, 아니면 이 아이콘 세트 기준으로는 `--color-neutral-500`을 써야 하는지 확인이 필요한 불일치다.
+
+## 11. Audio (Editor — 배경음악 선택, node-id 2086:63836) [신규, 2026-08]
+
+컴포넌트 트리 최상위에 옛 "05 Feedback" 자리를 대체하듯 새로 생긴 언넘버드 섹션. 트랙 리스트 하나로 구성 — type(default/pause/no music) × state(normal/hover/focused) 9종 + 별도 favorite(별 아이콘 토글) 컴포넌트.
+
+- **radius**: 행 자체는 `radius-lg`. 우측 선택 인디케이터는 §2의 신규 Radio 컴포넌트를 그대로 재사용한다.
+- **크기**: 행 높이 54px, 좌측 재생 아이콘 24px, 우측 favorite·radio 각 20px.
+- **색상/계층**: 기본 `neutral-0` 배경 + `neutral-400` 보더, hover는 보더만 `neutral-500`로 진해지고, **focused(현재 선택된 트랙)만 `neutral-75` 배경 틴트**로 바뀐다 — Upload Dropzone과 동일한 "옅은 블루 틴트 = 활성 상태" 관례가 리스트 행에도 반복된다. 제목 텍스트도 focused일 때만 `neutral-700`→`neutral-900`+semibold로 진해진다(Actions 섹션의 selected 텍스트 규칙과 동일).
+- **state**: 트랙 선택(라디오 on) 시 `brand/primary` 채움 + 흰 체크 — "바이너리 on = brand/primary" 규칙과 정확히 일치.
+
+## 12. Login / Auth [신규, 2026-08]
+
+- **radius**: Auth Button은 `radius-lg`, **Social Login Button(Google/Apple)만 예외적으로 `radius-xl`**(§8 Product Selectors의 계정 연결용 소셜 버튼과 다름, 위 참고). Checkbox·Badge 계열은 기존 규칙 재사용.
+- **크기**: Auth Button, Social Login Button 모두 360×48px — Inputs 섹션의 SM/MD 티어(36/40px)보다 큰 별도 사이즈다.
+- **색상/계층**: Auth Button Primary는 Actions 섹션에 이미 문서화된 다크 그라디언트(`#323232`→`#222`, hover `#4a4a4a`→`#383838`)를 그대로 재사용한다. ⚠️ hover 색까지 포함해 raw hex이고 Variable 미바인딩. Secondary는 `neutral-0`+`neutral-400` 보더의 표준 뉴트럴 패턴.
+- **state**: **Loading state가 새로 생겼다** — 스피너(`icon/ui/spinner`, 1s linear 360도 회전 애니메이션이 Figma 컴포넌트 설명에 명시됨) + 라벨 유지. Disabled는 `neutral-450` 텍스트(토큰 존재, raw hex 아님) + `neutral-300` 배경.
+
+## 13. Brand Kit [신규, 2026-08]
+
+Palette Row, Type Scale Row, Post Mockup, Colour Popover 등으로 구성. Palette Row 위주로 확인, 나머지는 크기만 메타데이터로 확인.
+
+- **radius**: Palette Row 스와치는 전부 `radius-full` 원. 행 자체는 미선택 8px, 선택 시 12px로 살짝 커진다 — 다른 카테고리에는 없던 "선택 시 radius 자체가 커지는" 디테일.
+- **색상/계층**: 선택된 팔레트 행 = `neutral-150` 배경 틴트(기존 "카드 선택 = 뉴트럴 틴트" 규칙과 일치). **Fill 타입 스와치는 꽉 찬 원, Line 타입은 테두리만 있는 링**으로 구분 — 팔레트가 "채우기용"과 "선/보더용" 두 세트로 관리됨을 시사한다.
 
 ---
 
