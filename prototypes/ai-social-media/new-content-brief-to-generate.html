@@ -738,11 +738,11 @@
           <p>Describe your idea — AI handles everything else</p>
         </div>
 
-        <div class="seg-control">
-          <div class="seg-chip active">Reel / Short</div>
-          <div class="seg-chip">Story image</div>
-          <div class="seg-chip">Image post</div>
-          <div class="seg-chip">Carousel</div>
+        <div class="seg-control" id="contentTypeToggle">
+          <div class="seg-chip active" data-type="reel" onclick="selectContentType(this)">Reel / Short</div>
+          <div class="seg-chip" data-type="story" onclick="selectContentType(this)">Story image</div>
+          <div class="seg-chip" data-type="image" onclick="selectContentType(this)">Image post</div>
+          <div class="seg-chip" data-type="carousel" onclick="selectContentType(this)">Carousel</div>
         </div>
         <div class="prompt-box">
           <div class="prompt-top">
@@ -1696,6 +1696,12 @@ function reviseScript(requestText){
     log.appendChild(wrap.firstElementChild);
     log.scrollTop = log.scrollHeight;
   }, 1200);
+}
+
+// ---- Content type (Brief & Style) ----
+function selectContentType(el){
+  document.querySelectorAll('#contentTypeToggle .seg-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
 }
 
 // ---- Character section (Brief & Style) ----
