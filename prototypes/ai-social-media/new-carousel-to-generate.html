@@ -261,6 +261,10 @@
   .storyboard-tile-char-badge{font-size:10px; font-weight:600; color:#fff; background:rgba(15,23,41,0.55); padding:4px 7px; border-radius:6px; backdrop-filter:blur(2px); white-space:nowrap;}
   .storyboard-tile-char-badge.off{background:rgba(15,23,41,0.28); color:rgba(255,255,255,0.8);}
   .storyboard-tile-overlay-top{position:absolute; top:8px; left:8px; right:8px; display:flex; align-items:center; justify-content:space-between; gap:6px;}
+  .storyboard-tile-copy{position:absolute; left:10px; right:10px; top:36px; bottom:32px; display:flex; flex-direction:column; justify-content:center; gap:5px; overflow:hidden; pointer-events:none;}
+  .storyboard-tile-copy-headline{font-size:12.5px; font-weight:800; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,.45); line-height:1.25; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;}
+  .storyboard-tile-copy-subhead{font-size:10.5px; font-weight:600; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,.4); line-height:1.3; opacity:.92; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;}
+  .storyboard-tile-copy-cta{align-self:flex-start; margin-top:2px; font-size:10px; font-weight:700; color:var(--neutral-900); background:#fff; padding:4px 10px; border-radius:999px; white-space:nowrap;}
   .storyboard-tile-ready-badge{display:none; align-items:center; gap:3px; font-size:10px; font-weight:700; color:var(--green); background:#fff; padding:3px 7px; border-radius:999px;}
   .storyboard-tile.ready .storyboard-tile-ready-badge{display:inline-flex;}
   .storyboard-tile-regen-btn{display:none; width:24px; height:24px; border-radius:999px; border:none; background:rgba(255,255,255,0.92); align-items:center; justify-content:center; font-size:12px; color:var(--neutral-700); cursor:pointer; margin-left:auto;}
@@ -297,24 +301,25 @@
   .story-desc-input:focus{border-color:var(--brand);}
 
   /* ---- Size variation panel (Generate stage, once all cards ready) ---- */
-  .size-variation-panel{border:1px solid var(--neutral-300); border-radius:12px; padding:20px; margin-bottom:8px;}
-  .size-var-title{font-size:13px; font-weight:700; color:var(--neutral-900); margin-bottom:2px;}
-  .size-var-sub{font-size:12px; color:var(--neutral-500); margin-bottom:14px;}
-  .size-var-mode-toggle{margin-bottom:16px;}
-  .size-var-row{display:flex; flex-wrap:wrap; align-items:flex-end; gap:16px;}
+  /* ---- Size variations: lives in the 320px Storyboard sidebar, stacked to fit ---- */
+  .size-variation-panel{border:1px solid var(--neutral-300); border-radius:12px; padding:16px; margin-top:14px;}
+  .size-var-title{font-size:12.5px; font-weight:700; color:var(--neutral-900); margin-bottom:2px;}
+  .size-var-sub{font-size:11.5px; color:var(--neutral-500); margin-bottom:12px; line-height:1.4;}
+  .size-var-mode-toggle{margin-bottom:12px;}
+  .size-var-row{display:flex; flex-direction:column; align-items:stretch; gap:10px; margin-top:12px;}
   .size-var-field{display:flex; flex-direction:column; gap:6px;}
-  .size-var-field label{font-size:11px; font-weight:700; color:var(--neutral-500); text-transform:uppercase; letter-spacing:.04em;}
-  .size-var-select{border:1px solid var(--neutral-300); border-radius:8px; padding:9px 12px; font-size:13px; font-family:var(--font); color:var(--neutral-900); background:#fff; min-width:110px;}
-  .size-var-cost{font-size:12.5px; color:var(--neutral-700); flex:1; min-width:200px;}
+  .size-var-field label{font-size:10.5px; font-weight:700; color:var(--neutral-500); text-transform:uppercase; letter-spacing:.04em;}
+  .size-var-select{border:1px solid var(--neutral-300); border-radius:8px; padding:8px 10px; font-size:12.5px; font-family:var(--font); color:var(--neutral-900); background:#fff; width:100%;}
+  .size-var-cost{font-size:12px; color:var(--neutral-700);}
   .size-var-cost b{color:var(--neutral-900); font-weight:700;}
-  .size-var-card-picker{display:flex; gap:8px; flex-wrap:wrap;}
-  .size-var-card-chip{border:1.5px solid var(--neutral-300); border-radius:999px; padding:6px 13px; font-size:12px; font-weight:600; color:var(--neutral-700); cursor:pointer; background:#fff;}
+  .size-var-card-picker{display:flex; gap:6px; flex-wrap:wrap;}
+  .size-var-card-chip{border:1.5px solid var(--neutral-300); border-radius:999px; padding:5px 11px; font-size:11.5px; font-weight:600; color:var(--neutral-700); cursor:pointer; background:#fff;}
   .size-var-card-chip.selected{border-color:var(--brand); background:var(--brand-light); color:var(--neutral-900);}
-  .size-var-sets{display:flex; flex-direction:column; gap:10px; margin-top:16px;}
-  .size-var-set{border:1px solid var(--neutral-200); border-radius:10px; padding:12px 14px; display:flex; align-items:center; gap:12px;}
-  .size-var-set-label{font-size:12.5px; font-weight:700; color:var(--neutral-900); flex-shrink:0;}
-  .size-var-set-thumbs{display:flex; gap:6px; flex:1; overflow-x:auto;}
-  .size-var-set-thumb{width:44px; aspect-ratio:1; border-radius:6px; background:linear-gradient(135deg,var(--brand-mid),var(--accent)); flex-shrink:0;}
+  .size-var-sets{display:flex; flex-direction:column; gap:8px; margin-top:14px;}
+  .size-var-set{border:1px solid var(--neutral-200); border-radius:10px; padding:10px 12px; display:flex; flex-direction:column; align-items:flex-start; gap:8px;}
+  .size-var-set-label{font-size:12px; font-weight:700; color:var(--neutral-900);}
+  .size-var-set-thumbs{display:flex; gap:6px; flex-wrap:wrap; width:100%;}
+  .size-var-set-thumb{width:40px; aspect-ratio:1; border-radius:6px; background:linear-gradient(135deg,var(--brand-mid),var(--accent)); flex-shrink:0;}
 
   /* ---- Develop (minimal step-3 landing) ---- */
   .develop-body{display:flex; gap:32px; padding:48px; max-width:960px; margin:0 auto;}
@@ -557,31 +562,31 @@
                     <button class="btn-primary" id="storyboardGenerateBtn" onclick="startCardGeneration()">Generate images</button>
                     <span class="meta-text" id="storyboardGenerateMeta">Regenerating an image once it is made will use credits</span>
                   </div>
-                </div>
-              </div>
-              <div class="size-variation-panel" id="sizeVariationPanel" style="display:none;">
-                <div class="size-var-title">📐 Size variations</div>
-                <div class="size-var-sub">Regenerate this carousel at a different ratio for another platform — originals are kept as-is.</div>
-                <div class="seg-control size-var-mode-toggle" id="sizeVarModeToggle">
-                  <div class="seg-chip active" data-mode="single" onclick="setSizeVarMode('single')">Selected card only</div>
-                  <div class="seg-chip" data-mode="batch" onclick="setSizeVarMode('batch')">Entire set at once</div>
-                </div>
-                <div id="sizeVarSingleControls">
-                  <div class="size-var-card-picker" id="sizeVarCardPicker"></div>
-                </div>
-                <div class="size-var-row" style="margin-top:16px;">
-                  <div class="size-var-field">
-                    <label>New ratio</label>
-                    <select class="size-var-select" id="sizeVarRatio" onchange="updateSizeVarCost()">
-                      <option value="9:16">9:16</option>
-                      <option value="1:1">1:1</option>
-                      <option value="4:5">4:5</option>
-                    </select>
+                  <div class="size-variation-panel" id="sizeVariationPanel" style="display:none;">
+                    <div class="size-var-title">📐 Size variations</div>
+                    <div class="size-var-sub">Regenerate this carousel at a different ratio for another platform — originals are kept as-is.</div>
+                    <div class="seg-control size-var-mode-toggle" id="sizeVarModeToggle">
+                      <div class="seg-chip active" data-mode="single" onclick="setSizeVarMode('single')">Selected card only</div>
+                      <div class="seg-chip" data-mode="batch" onclick="setSizeVarMode('batch')">Entire set at once</div>
+                    </div>
+                    <div id="sizeVarSingleControls">
+                      <div class="size-var-card-picker" id="sizeVarCardPicker"></div>
+                    </div>
+                    <div class="size-var-row">
+                      <div class="size-var-field">
+                        <label>New ratio</label>
+                        <select class="size-var-select" id="sizeVarRatio" onchange="updateSizeVarCost()">
+                          <option value="9:16">9:16</option>
+                          <option value="1:1">1:1</option>
+                          <option value="4:5">4:5</option>
+                        </select>
+                      </div>
+                      <div class="size-var-cost" id="sizeVarCost"></div>
+                      <button class="btn-primary" id="sizeVarGenerateBtn" onclick="generateSizeVariationSet()">Generate</button>
+                    </div>
+                    <div class="size-var-sets" id="sizeVarSets"></div>
                   </div>
-                  <div class="size-var-cost" id="sizeVarCost"></div>
-                  <button class="btn-primary" id="sizeVarGenerateBtn" onclick="generateSizeVariationSet()">Generate</button>
                 </div>
-                <div class="size-var-sets" id="sizeVarSets"></div>
               </div>
               <div class="stage-cta-row">
                 <span class="meta-text" id="generateCtaMeta" style="display:none;">Waiting for all cards to finish generating</span>
@@ -599,6 +604,7 @@
       <div class="develop-body">
         <div class="develop-preview"></div>
         <div class="develop-side">
+          <button class="btn-secondary" onclick="backToStoryboard()" style="margin-bottom:16px;">← Back to Storyboard</button>
           <h2 class="stage-title">Develop</h2>
           <p class="stage-sub-text" style="margin-bottom:14px;">Your carousel is ready to fine-tune.</p>
           <button class="btn-dark" onclick="alert('Publish flow — TBD')">⬆ Publish →</button>
@@ -800,6 +806,11 @@ function goToDevelop(){
   showView('developView');
   setStep('stepEdit');
 }
+function backToStoryboard(){
+  showView('generateView');
+  setStep('stepGenerate');
+  showSub('storyboard');
+}
 
 // =====================================================================
 // SCRIPT STAGE — AI drafts one text block per card, inline-editable
@@ -973,21 +984,30 @@ function renderStoryboardTile(n){
           <span class="storyboard-tile-ready-badge">✓ Ready</span>
           <button type="button" class="storyboard-tile-regen-btn" onclick="event.stopPropagation(); regenerateCard(${n})" title="Regenerate this card only · ⚡${CARD_REGEN_CREDIT}">↻</button>
         </div>
+        <div class="storyboard-tile-copy" id="storyboardTileCopy${n}">${storyboardTileCopyHtml(n)}</div>
         <div class="spinner-mini"></div>
         <span class="storyboard-tile-badge">Card ${n}</span>
         ${window.__charMode === 'with' ? `<span class="storyboard-tile-char-badge ${window.__cardCharacterOn[n] ? '' : 'off'}">${window.__cardCharacterOn[n] ? '🧑 Character' : 'No character'}</span>` : ''}
       </div>
-      <div class="storyboard-tile-line" id="storyboardTileLine${n}">${escapeHtml(storyboardTileText(n))}</div>
       ${pagerHtml}
     </div>`;
 }
-function storyboardTileText(n){
-  const headline = ensureCardCopyFields(n).find(f => f.key === 'headline');
-  return (headline && headline.text) ? headline.text : 'No headline yet';
+// Since the tile image is a placeholder anyway, preview the on-card copy
+// directly over it instead of a plain caption below the tile.
+function storyboardTileCopyHtml(n){
+  const fields = ensureCardCopyFields(n);
+  const headline = fields.find(f => f.key === 'headline');
+  const subhead = fields.find(f => f.key === 'subhead');
+  const cta = fields.find(f => f.key === 'cta');
+  const parts = [];
+  if(headline && headline.on && headline.text) parts.push(`<div class="storyboard-tile-copy-headline">${escapeHtml(headline.text)}</div>`);
+  if(subhead && subhead.on && subhead.text) parts.push(`<div class="storyboard-tile-copy-subhead">${escapeHtml(subhead.text)}</div>`);
+  if(cta && cta.on && cta.text) parts.push(`<div class="storyboard-tile-copy-cta">${escapeHtml(cta.text)}</div>`);
+  return parts.join('');
 }
-function updateStoryboardTileLine(n){
-  const line = document.getElementById('storyboardTileLine' + n);
-  if(line) line.textContent = storyboardTileText(n);
+function updateStoryboardTileCopyOverlay(n){
+  const el = document.getElementById('storyboardTileCopy' + n);
+  if(el) el.innerHTML = storyboardTileCopyHtml(n);
 }
 function buildStoryboardCardNav(){
   const n = window.__cardCount;
@@ -1027,12 +1047,12 @@ function toggleCardCopyField(n, i){
   const fields = ensureCardCopyFields(n);
   fields[i].on = !fields[i].on;
   renderCardCopyFields(n);
-  if(fields[i].key === 'headline') updateStoryboardTileLine(n);
+  updateStoryboardTileCopyOverlay(n);
 }
 function onCardCopyFieldInput(n, i, value){
   const fields = ensureCardCopyFields(n);
   fields[i].text = value;
-  if(fields[i].key === 'headline') updateStoryboardTileLine(n);
+  updateStoryboardTileCopyOverlay(n);
 }
 function toggleCardCharacter(n){
   window.__cardCharacterOn[n] = !window.__cardCharacterOn[n];
