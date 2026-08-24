@@ -653,7 +653,35 @@
   .pub-radio-row{display:flex; align-items:center; gap:10px; font-size:13px; font-weight:500; color:var(--neutral-900); cursor:pointer;}
   .pub-radio-row input{width:16px; height:16px; accent-color:var(--brand); cursor:pointer;}
   .pub-schedule-fields{margin-left:26px;}
-  .pub-schedule-fields input{max-width:220px;}
+
+  /* ---- Date & time picker (Figma: FME_Design-System · Date Picker, node 726:1969) ---- */
+  .dt-picker-wrap{position:relative; display:inline-block;}
+  .dt-trigger{display:flex; align-items:center; justify-content:space-between; gap:10px; width:240px; border:1px solid var(--neutral-300); border-radius:8px; padding:9px 12px; font-size:13px; color:var(--neutral-900); background:#fff; cursor:pointer; font-family:var(--font);}
+  .dt-trigger:hover{border-color:var(--neutral-450);}
+  .dt-trigger.placeholder{color:var(--neutral-500);}
+  .dt-trigger .ic{color:var(--neutral-500); flex-shrink:0; display:flex;}
+  .dt-picker-popover{position:absolute; top:calc(100% + 8px); left:0; z-index:50; width:328px; background:#fff; border-radius:var(--radius-xl); box-shadow:0 20px 50px rgba(15,23,41,0.18); border:1px solid var(--neutral-200); padding:20px; display:flex; flex-direction:column; gap:16px;}
+  .dt-picker-header{display:flex; align-items:center; justify-content:space-between;}
+  .dt-picker-nav-btn{width:28px; height:28px; border:none; background:none; border-radius:999px; display:flex; align-items:center; justify-content:center; color:var(--neutral-700); cursor:pointer; font-family:var(--font); font-size:14px;}
+  .dt-picker-nav-btn:hover{background:var(--neutral-100);}
+  .dt-picker-month-label{font-size:16px; font-weight:600; color:var(--neutral-900);}
+  .dt-picker-weekdays, .dt-picker-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:4px;}
+  .dt-picker-weekday{font-size:12px; font-weight:500; color:var(--neutral-600); text-align:center; padding:6px 0;}
+  .dt-day-cell{aspect-ratio:1; display:flex; align-items:center; justify-content:center; border-radius:var(--radius-lg); font-size:13px; font-weight:500; color:var(--neutral-900); cursor:pointer; border:1px solid transparent; background:none; font-family:var(--font);}
+  .dt-day-cell:hover:not(.muted):not(.selected){background:var(--neutral-100);}
+  .dt-day-cell.muted{color:var(--neutral-400); cursor:default; pointer-events:none;}
+  .dt-day-cell.today{border-color:var(--brand);}
+  .dt-day-cell.selected{background:var(--brand); color:#fff;}
+  .dt-time-row{display:flex; align-items:center; gap:8px; padding-top:14px; border-top:1px solid var(--neutral-200);}
+  .dt-time-label{font-size:12px; font-weight:600; color:var(--neutral-700); margin-right:2px; flex-shrink:0;}
+  .dt-time-select{border:1px solid var(--neutral-300); border-radius:8px; padding:7px 8px; font-size:13px; color:var(--neutral-900); font-family:var(--font); background:#fff; cursor:pointer; flex:1; min-width:0;}
+  .dt-time-sep{color:var(--neutral-500); font-weight:600;}
+  .dt-picker-actions{display:flex; gap:12px;}
+  .dt-picker-actions button{flex:1; padding:9px 14px; border-radius:var(--radius-lg); font-size:13px; font-weight:600; font-family:var(--font); cursor:pointer;}
+  .dt-cancel-btn{border:1px solid var(--brand); background:#fff; color:var(--brand);}
+  .dt-cancel-btn:hover{background:var(--brand-light);}
+  .dt-choose-btn{border:none; background:var(--brand); color:#fff;}
+  .dt-choose-btn:hover{background:var(--brand-dark, #1e5fd9);}
   .pub-warning-note{display:none; align-items:flex-start; gap:8px; margin-top:4px; padding:10px 12px; background:#fdf2f2; border:1px solid #f3c6c6; border-radius:8px; font-size:12px; color:#b23b3b; line-height:1.5;}
   .pub-warning-note.visible{display:flex;}
   .pub-divider{height:1px; background:var(--neutral-200); margin:24px 0;}
@@ -1319,7 +1347,38 @@
             <span>Schedule</span>
           </label>
           <div class="pub-schedule-fields" id="pubScheduleFields" style="display:none;">
-            <input type="text" class="detail-input" id="pubScheduleDate" placeholder="20/08/2026, 03:00 PM" oninput="clearPublishWarning()">
+            <div class="dt-picker-wrap">
+              <button type="button" class="dt-trigger placeholder" id="dtTrigger" onclick="toggleDatePicker(event)">
+                <span id="dtTriggerText">Choose date &amp; time</span>
+                <span class="ic">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="3" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M2 6.5H14" stroke="currentColor" stroke-width="1.3"/><path d="M5 1.5V4M11 1.5V4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+                </span>
+              </button>
+              <div class="dt-picker-popover" id="dtPopover" style="display:none;">
+                <div class="dt-picker-header">
+                  <button type="button" class="dt-picker-nav-btn" onclick="dtChangeMonth(-1)">‹</button>
+                  <span class="dt-picker-month-label" id="dtMonthLabel"></span>
+                  <button type="button" class="dt-picker-nav-btn" onclick="dtChangeMonth(1)">›</button>
+                </div>
+                <div>
+                  <div class="dt-picker-weekdays">
+                    <span class="dt-picker-weekday">Mo</span><span class="dt-picker-weekday">Tu</span><span class="dt-picker-weekday">We</span><span class="dt-picker-weekday">Th</span><span class="dt-picker-weekday">Fr</span><span class="dt-picker-weekday">Sa</span><span class="dt-picker-weekday">Su</span>
+                  </div>
+                  <div class="dt-picker-grid" id="dtGrid"></div>
+                </div>
+                <div class="dt-time-row">
+                  <span class="dt-time-label">Time</span>
+                  <select class="dt-time-select" id="dtHour"></select>
+                  <span class="dt-time-sep">:</span>
+                  <select class="dt-time-select" id="dtMinute"></select>
+                  <select class="dt-time-select" id="dtPeriod"><option>AM</option><option>PM</option></select>
+                </div>
+                <div class="dt-picker-actions">
+                  <button type="button" class="dt-cancel-btn" onclick="closeDatePicker()">Cancel</button>
+                  <button type="button" class="dt-choose-btn" onclick="confirmDatePicker()">Choose Date</button>
+                </div>
+              </div>
+            </div>
           </div>
           <label class="pub-radio-row">
             <input type="radio" name="pubWhen" value="draft" onchange="updateWhenSelection()">
@@ -2864,6 +2923,7 @@ function generateCaptionDraft(){
 function updateWhenSelection(){
   const selected = document.querySelector('input[name="pubWhen"]:checked')?.value || 'now';
   document.getElementById('pubScheduleFields').style.display = selected === 'schedule' ? 'block' : 'none';
+  if(selected !== 'schedule') closeDatePicker();
   clearPublishWarning();
   const btn = document.getElementById('pubMainBtn');
   if(selected === 'now') btn.innerHTML = '⬆ Publish →';
@@ -2881,6 +2941,111 @@ function showPublishWarning(message){
   const note = document.getElementById('pubWarningNote');
   note.textContent = `⚠ ${message}`;
   note.classList.add('visible');
+}
+
+// ---- Date & time picker (Publish · Schedule) ----
+// Calendar layout follows the Figma Date Picker component; time is picked in the same
+// popover (hour/minute/AM-PM) rather than as a separate step, then both are confirmed together.
+const DT_MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+window.__dtViewDate = new Date();
+window.__dtSelectedDate = null; // Date | null — the day picked in the calendar
+window.__dtHour = 3; window.__dtMinute = 0; window.__dtPeriod = 'PM'; // sensible default
+window.__dtConfirmedValue = null; // formatted "DD/MM/YYYY, hh:mm AM/PM" once "Choose Date" is clicked
+window.__dtSelectsPopulated = false;
+
+function toggleDatePicker(e){
+  e.stopPropagation();
+  const pop = document.getElementById('dtPopover');
+  const willOpen = pop.style.display !== 'block';
+  if(willOpen){
+    if(!window.__dtSelectsPopulated) populateDtTimeSelects();
+    window.__dtViewDate = window.__dtSelectedDate ? new Date(window.__dtSelectedDate) : new Date();
+    renderDtGrid();
+    pop.style.display = 'block';
+  } else {
+    pop.style.display = 'none';
+  }
+}
+function closeDatePicker(){
+  document.getElementById('dtPopover').style.display = 'none';
+}
+document.addEventListener('click', (e) => {
+  const pop = document.getElementById('dtPopover');
+  if(pop && pop.style.display === 'block' && !e.target.closest('.dt-picker-wrap')) pop.style.display = 'none';
+});
+
+function populateDtTimeSelects(){
+  const hourSel = document.getElementById('dtHour');
+  const minuteSel = document.getElementById('dtMinute');
+  hourSel.innerHTML = Array.from({length: 12}, (_, i) => i + 1).map(h => `<option value="${h}">${String(h).padStart(2,'0')}</option>`).join('');
+  minuteSel.innerHTML = ['00','15','30','45'].map(m => `<option value="${m}">${m}</option>`).join('');
+  hourSel.value = window.__dtHour;
+  minuteSel.value = String(window.__dtMinute).padStart(2,'0');
+  document.getElementById('dtPeriod').value = window.__dtPeriod;
+  hourSel.onchange = () => window.__dtHour = Number(hourSel.value);
+  minuteSel.onchange = () => window.__dtMinute = Number(minuteSel.value);
+  document.getElementById('dtPeriod').onchange = (e) => window.__dtPeriod = e.target.value;
+  window.__dtSelectsPopulated = true;
+}
+
+function dtChangeMonth(delta){
+  window.__dtViewDate = new Date(window.__dtViewDate.getFullYear(), window.__dtViewDate.getMonth() + delta, 1);
+  renderDtGrid();
+}
+function dtSelectDay(e, y, m, d){
+  e.stopPropagation();
+  window.__dtSelectedDate = new Date(y, m, d);
+  renderDtGrid();
+}
+function renderDtGrid(){
+  const view = window.__dtViewDate;
+  const y = view.getFullYear(), m = view.getMonth();
+  document.getElementById('dtMonthLabel').textContent = `${DT_MONTH_NAMES[m]} ${y}`;
+
+  const firstOfMonth = new Date(y, m, 1);
+  const startOffset = (firstOfMonth.getDay() + 6) % 7; // Monday-start week, matching the Figma spec
+  const daysInMonth = new Date(y, m + 1, 0).getDate();
+  const daysInPrevMonth = new Date(y, m, 0).getDate();
+  const today = new Date();
+
+  const cells = [];
+  for(let i = 0; i < startOffset; i++){
+    const d = daysInPrevMonth - startOffset + 1 + i;
+    cells.push({ day: d, muted: true });
+  }
+  for(let d = 1; d <= daysInMonth; d++){
+    cells.push({ day: d, muted: false, y, m });
+  }
+  while(cells.length % 7 !== 0){
+    cells.push({ day: cells.length - startOffset - daysInMonth + 1, muted: true });
+  }
+
+  document.getElementById('dtGrid').innerHTML = cells.map(c => {
+    if(c.muted) return `<span class="dt-day-cell muted">${c.day}</span>`;
+    const isToday = c.y === today.getFullYear() && c.m === today.getMonth() && c.day === today.getDate();
+    const sel = window.__dtSelectedDate;
+    const isSelected = sel && sel.getFullYear() === c.y && sel.getMonth() === c.m && sel.getDate() === c.day;
+    const cls = ['dt-day-cell', isToday ? 'today' : '', isSelected ? 'selected' : ''].filter(Boolean).join(' ');
+    return `<button type="button" class="${cls}" onclick="dtSelectDay(event,${c.y},${c.m},${c.day})">${c.day}</button>`;
+  }).join('');
+}
+function confirmDatePicker(){
+  if(!window.__dtSelectedDate){
+    showPublishWarning('Pick a date on the calendar first.');
+    return;
+  }
+  const d = window.__dtSelectedDate;
+  const dd = String(d.getDate()).padStart(2,'0');
+  const mm = String(d.getMonth() + 1).padStart(2,'0');
+  const yyyy = d.getFullYear();
+  const hh = String(window.__dtHour).padStart(2,'0');
+  const min = String(window.__dtMinute).padStart(2,'0');
+  window.__dtConfirmedValue = `${dd}/${mm}/${yyyy}, ${hh}:${min} ${window.__dtPeriod}`;
+  const trigger = document.getElementById('dtTrigger');
+  document.getElementById('dtTriggerText').textContent = window.__dtConfirmedValue;
+  trigger.classList.remove('placeholder');
+  clearPublishWarning();
+  closeDatePicker();
 }
 
 function quickSaveDraft(){
@@ -2909,13 +3074,12 @@ function handlePublishMainAction(){
     return;
   }
   if(selected === 'schedule'){
-    const dateVal = document.getElementById('pubScheduleDate').value.trim();
-    if(!dateVal){
+    if(!window.__dtConfirmedValue){
       showPublishWarning('Choose a publish date and time before scheduling.');
       return;
     }
     clearPublishWarning();
-    alert(`Scheduled for ${dateVal} on ${describeDestinations(destinations)}.`);
+    alert(`Scheduled for ${window.__dtConfirmedValue} on ${describeDestinations(destinations)}.`);
     return;
   }
   clearPublishWarning();
