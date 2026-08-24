@@ -240,7 +240,7 @@
 
   /* ---- VIEW: Generate (shared shell: chat + stage area) ---- */
   .gen-body{display:flex; height:100%;}
-  .chat{width:324px; flex-shrink:0; background:var(--neutral-50); border-right:1px solid var(--neutral-300); display:flex; flex-direction:column;}
+  .chat{width:324px; flex-shrink:0; min-height:0; background:var(--neutral-50); border-right:1px solid var(--neutral-300); display:flex; flex-direction:column;}
   .chat-attachments{padding:16px 16px 12px; border-bottom:1px solid var(--neutral-300); display:flex; flex-direction:column; gap:8px;}
   .chat-attachments-label{font-size:10.5px; font-weight:600; color:var(--neutral-500);}
   .chat-attachments-row{display:flex; gap:8px; flex-wrap:wrap;}
@@ -281,7 +281,7 @@
   .chat-input:focus{border-color:var(--brand);}
   .chat-send{width:34px; height:34px; border-radius:8px; background:var(--brand); border:none; color:#fff; cursor:pointer; flex-shrink:0;}
 
-  .stage-area{flex:1; display:flex; flex-direction:column; min-width:0; position:relative;}
+  .stage-area{flex:1; display:flex; flex-direction:column; min-width:0; min-height:0; position:relative;}
   .stage-tabs{display:flex; justify-content:center; gap:18px; padding:12px 24px 0; border-bottom:1px solid var(--neutral-300); flex-shrink:0;}
   .stage-tab{font-size:12.5px; font-weight:600; color:var(--neutral-500); padding:0 2px 12px; border-bottom:2px solid transparent;}
   .stage-tab.active{color:var(--neutral-900); border-bottom-color:var(--neutral-900);}

@@ -100,20 +100,18 @@
 
   /* ---- VIEW: Generate (shared shell: chat + stage area) ---- */
   .gen-body{display:flex; height:100%;}
-  .chat{width:324px; flex-shrink:0; background:var(--neutral-50); border-right:1px solid var(--neutral-300); display:flex; flex-direction:column;}
+  .chat{width:324px; flex-shrink:0; min-height:0; background:var(--neutral-50); border-right:1px solid var(--neutral-300); display:flex; flex-direction:column;}
   .chat-log{flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:10px;}
   .msg{font-size:12.5px; line-height:1.5; padding:9px 11px; border-radius:10px; max-width:92%; white-space:pre-wrap;}
   .msg.user{align-self:flex-end; background:var(--brand); color:#fff; border-bottom-right-radius:3px;}
   .msg.ai{align-self:flex-start; background:var(--neutral-150); color:var(--neutral-700); border-bottom-left-radius:3px;}
   .msg.ai .tag{display:inline-block; font-size:10px; font-weight:600; color:var(--brand); margin-bottom:3px;}
   .msg.ai.loading{color:var(--neutral-500);}
-  .copy-proposal-box, .visual-proposal-box{margin-top:8px; background:#fff; border:1px solid var(--neutral-300); border-radius:8px; padding:10px 11px; display:flex; flex-direction:column; gap:8px;}
-  .copy-proposal-row{font-size:12.5px; color:var(--neutral-900); line-height:1.5;}
-  .copy-proposal-row b{display:block; font-size:10px; font-weight:700; color:var(--neutral-500); text-transform:uppercase; letter-spacing:.04em; margin-bottom:1px;}
+  .visual-proposal-box{margin-top:8px; background:#fff; border:1px solid var(--neutral-300); border-radius:8px; padding:10px 11px; display:flex; flex-direction:column; gap:8px;}
   .visual-proposal-text{font-size:12.5px; font-style:italic; color:var(--neutral-900); line-height:1.5;}
   .copy-applied-note{display:none; font-size:10.5px; font-weight:600; color:var(--green);}
-  .copy-proposal-box.applied .copy-applied-note, .visual-proposal-box.applied .copy-applied-note{display:block;}
-  .copy-proposal-box.applied, .visual-proposal-box.applied{border-color:var(--brand-mid);}
+  .visual-proposal-box.applied .copy-applied-note{display:block;}
+  .visual-proposal-box.applied{border-color:var(--brand-mid);}
   .chat-edit-hint{display:block; font-size:10.5px; color:var(--neutral-500); margin-top:3px;}
   .dots span{animation:blink 1.4s infinite; opacity:0;}
   .dots span:nth-child(2){animation-delay:.2s;}
@@ -127,7 +125,7 @@
   .chat-input:focus{border-color:var(--brand);}
   .chat-send{width:34px; height:34px; border-radius:8px; background:var(--brand); border:none; color:#fff; cursor:pointer; flex-shrink:0;}
 
-  .stage-area{flex:1; display:flex; flex-direction:column; min-width:0; position:relative;}
+  .stage-area{flex:1; display:flex; flex-direction:column; min-width:0; min-height:0; position:relative;}
   .stage-tabs{display:flex; justify-content:center; gap:18px; padding:12px 24px 0; border-bottom:1px solid var(--neutral-300); flex-shrink:0;}
   .stage-tab{font-size:12.5px; font-weight:600; color:var(--neutral-500); padding:0 2px 12px; border-bottom:2px solid transparent; cursor:pointer;}
   .stage-tab.active{color:var(--neutral-900); border-bottom-color:var(--neutral-900);}
@@ -531,52 +529,8 @@ function escapeHtmlLocal(str){
   return div.innerHTML;
 }
 
-let copyDraftCounter = 0;
-window.__copyDrafts = {};
-function renderCopyProposalMessage(draft, introText){
-  copyDraftCounter++;
-  const id = copyDraftCounter;
-  window.__copyDrafts[id] = draft;
-  return `
-    <div class="msg ai">
-      <span class="tag">AI</span>${escapeHtmlLocal(introText)}
-      <div class="copy-proposal-box" id="copyProposal${id}">
-        <div class="copy-proposal-row"><b>Headline</b>${escapeHtmlLocal(draft.headline)}</div>
-        <div class="copy-proposal-row"><b>Subhead</b>${escapeHtmlLocal(draft.subhead)}</div>
-        <div class="copy-proposal-row"><b>Call to action</b>${escapeHtmlLocal(draft.cta)}</div>
-        <span class="copy-applied-note">✓ Applied to Copy fields</span>
-        <button class="btn-primary" data-draft-id="${id}" onclick="handleCopyProposalClick(this)">Apply to draft →</button>
-      </div>
-      <span class="chat-edit-hint">Want more changes? Type them below and I'll revise again.</span>
-    </div>
-  `;
-}
-function handleCopyProposalClick(btn){
-  applyCopyDraft(Number(btn.dataset.draftId), btn);
-}
-function applyCopyDraft(id, btn){
-  const draft = window.__copyDrafts[id];
-  if(!draft) return;
-  copyFields.find(f => f.key === 'headline').text = draft.headline;
-  copyFields.find(f => f.key === 'subhead').text = draft.subhead;
-  copyFields.find(f => f.key === 'cta').text = draft.cta;
-  renderCopyFields();
-  updateVisualConceptPrompt();
-  document.querySelectorAll('.copy-proposal-box').forEach(box => {
-    box.classList.remove('applied');
-    const b = box.querySelector('.btn-primary');
-    if(b){ b.textContent = 'Apply to draft →'; b.disabled = false; }
-  });
-  const box = document.getElementById('copyProposal' + id);
-  box.classList.add('applied');
-  btn.textContent = '✓ Applied';
-  btn.disabled = true;
-  if(!visualConceptDraftStarted){
-    visualConceptDraftStarted = true;
-    draftVisualConcept();
-  }
-}
-
+// Copy fills in directly (no propose/apply step) — the chat just narrates what changed.
+// Visual concept, drafted right after, keeps the propose -> apply pattern (see draftVisualConcept below).
 function buildRevisedCopy(requestText){
   const req = requestText.toLowerCase();
   const cur = {};
@@ -599,7 +553,7 @@ function buildRevisedCopy(requestText){
   return { headline, subhead, cta };
 }
 
-// First-draft copy proposal — shown automatically on load, mirrors the video flow's runBriefToScript.
+// First-draft copy — fills in directly once drafted, then auto-chains into the visual concept draft.
 function draftCopy(){
   const log = document.getElementById('chatLog');
   const loadingEl = document.createElement('div');
@@ -609,34 +563,36 @@ function draftCopy(){
   log.scrollTop = log.scrollHeight;
 
   setTimeout(() => {
-    const draft = {
-      headline: 'Study in the UK — Applications open for 2026',
-      subhead: 'Applications open for the January intake',
-      cta: 'Apply Now'
-    };
+    copyFields.find(f => f.key === 'headline').text = 'Study in the UK — Applications open for 2026';
+    copyFields.find(f => f.key === 'subhead').text = 'Applications open for the January intake';
+    copyFields.find(f => f.key === 'cta').text = 'Apply Now';
+    renderCopyFields();
     loadingEl.remove();
-    const wrap = document.createElement('div');
-    wrap.innerHTML = renderCopyProposalMessage(draft, 'I\'ve drafted a headline, subhead, and call to action based on your brief. Should I apply this?').trim();
-    log.appendChild(wrap.firstElementChild);
-    log.scrollTop = log.scrollHeight;
+    addChatMsg('ai', '<span class="tag">AI</span>I\'ve refined it and filled in the Headline, Subhead, and Call to action on the right. Want something different? Just tell me here anytime.');
+    if(!visualConceptDraftStarted){
+      visualConceptDraftStarted = true;
+      draftVisualConcept();
+    }
   }, 1400);
 }
 
+// Requesting a copy change in chat updates the fields directly too — no separate apply step.
 function reviseCopy(requestText){
   const log = document.getElementById('chatLog');
   const loadingEl = document.createElement('div');
   loadingEl.className = 'msg ai loading';
-  loadingEl.innerHTML = `<span class="tag">AI</span>Let me refine the draft<span class="dots"><span>.</span><span>.</span><span>.</span></span>`;
+  loadingEl.innerHTML = `<span class="tag">AI</span>Let me refine that<span class="dots"><span>.</span><span>.</span><span>.</span></span>`;
   log.appendChild(loadingEl);
   log.scrollTop = log.scrollHeight;
 
   setTimeout(() => {
     const draft = buildRevisedCopy(requestText);
+    copyFields.find(f => f.key === 'headline').text = draft.headline;
+    copyFields.find(f => f.key === 'subhead').text = draft.subhead;
+    copyFields.find(f => f.key === 'cta').text = draft.cta;
+    renderCopyFields();
     loadingEl.remove();
-    const wrap = document.createElement('div');
-    wrap.innerHTML = renderCopyProposalMessage(draft, 'I\'ve refined the headline, subhead, and call to action below. Should I apply this?').trim();
-    log.appendChild(wrap.firstElementChild);
-    log.scrollTop = log.scrollHeight;
+    addChatMsg('ai', '<span class="tag">AI</span>Updated the Headline, Subhead, and Call to action based on your note.');
   }, 1100);
 }
 
@@ -697,6 +653,33 @@ function draftVisualConcept(){
     log.appendChild(wrap.firstElementChild);
     log.scrollTop = log.scrollHeight;
   }, 1200);
+}
+
+// Once the visual concept has been drafted, chat requests redraft it (still propose -> apply,
+// so a new direction can be reviewed before it overwrites the current concept).
+function buildRevisedVisualConcept(requestText){
+  const base = buildVisualConceptPrompt();
+  const req = requestText.toLowerCase();
+  if(req.includes('warm') || req.includes('따뜻')) return base.replace('golden-hour lighting', 'warm golden-hour lighting with soft amber tones');
+  if(req.includes('dark') || req.includes('moody') || req.includes('어둡') || req.includes('무드')) return base.replace('bright, aspirational', 'moody, cinematic');
+  if(req.includes('minimal') || req.includes('심플') || req.includes('깔끔')) return base + ' Keep the composition minimal and uncluttered.';
+  return base + ` Adjust the concept to reflect: ${requestText}.`;
+}
+function reviseVisualConcept(requestText){
+  const log = document.getElementById('chatLog');
+  const loadingEl = document.createElement('div');
+  loadingEl.className = 'msg ai loading';
+  loadingEl.innerHTML = `<span class="tag">AI</span>Reworking the visual concept<span class="dots"><span>.</span><span>.</span><span>.</span></span>`;
+  log.appendChild(loadingEl);
+  log.scrollTop = log.scrollHeight;
+  setTimeout(() => {
+    const prompt = buildRevisedVisualConcept(requestText);
+    loadingEl.remove();
+    const wrap = document.createElement('div');
+    wrap.innerHTML = renderVisualProposalMessage(prompt, 'Here\'s a new direction based on your note. Should I apply this?').trim();
+    log.appendChild(wrap.firstElementChild);
+    log.scrollTop = log.scrollHeight;
+  }, 1100);
 }
 
 // Mirrors the video flow's stage-progress CTA row appended inline in chat messages.
@@ -814,7 +797,10 @@ function sendChatMessage(){
 
   const versionsTab = document.getElementById('tabVersions');
   if(versionsTab && versionsTab.classList.contains('locked')){
-    reviseCopy(text);
+    // Copy is filled in first — while that's still the active topic, chat requests revise it directly.
+    // Once the visual concept has been drafted, chat requests redraft that instead (propose -> apply).
+    if(visualConceptDraftStarted) reviseVisualConcept(text);
+    else reviseCopy(text);
   } else {
     setTimeout(() => addChatMsg('ai', '<span class="tag">AI</span>Got it — this is a prototype, so I won\'t actually rewrite the draft, but in the real flow this is where that request would land.'), 500);
   }
