@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>New Image — Brief → Draft → Versions</title>
+<title>New Carousel — Brief → Script → Storyboard → Generate</title>
 <style>
   :root{
     --neutral-900:#0f1729; --neutral-700:#475069; --neutral-500:#8a93a8;
@@ -80,8 +80,7 @@
   .role-btn.on{background:#fff; color:var(--neutral-900);}
 
   .seg-control{display:inline-flex; background:var(--neutral-100); border-radius:var(--radius-xl); padding:4px; gap:2px;}
-  .seg-control.small{margin-bottom:0;}
-  .seg-chip{padding:8px 20px; border-radius:var(--radius-lg); font-size:14px; font-weight:500; color:var(--neutral-700); cursor:pointer;}
+  .seg-chip{padding:8px 20px; border-radius:var(--radius-lg); font-size:14px; font-weight:500; color:var(--neutral-700); cursor:pointer; border:none; background:none; font-family:var(--font);}
   .seg-chip.active{background:#fff; color:var(--neutral-900); font-weight:600; box-shadow:0 1px 1.5px rgba(15,23,41,0.1),0 1px 0.5px rgba(15,23,41,0.04);}
 
   .btn-primary{background:var(--neutral-900); color:#fff; border:none; border-radius:8px; padding:10px 18px; font-size:12.5px; font-weight:600; font-family:var(--font); cursor:pointer;}
@@ -93,6 +92,12 @@
   .action-bar{position:absolute; left:0; right:0; bottom:0; background:#fff; border-top:1px solid var(--neutral-200); padding:12px 64px; display:flex; align-items:center; justify-content:center; gap:32px;}
   .meta-text{font-size:12px; color:var(--neutral-500); flex-shrink:0;}
   .bar-actions{display:flex; gap:12px; flex-shrink:0;}
+  .readiness{width:300px;}
+  .readiness-top{display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;}
+  .readiness-top span:first-child{color:var(--neutral-700); font-weight:500;}
+  .readiness-top span:last-child{color:var(--neutral-700); font-weight:600;}
+  .readiness-bar{height:6px; border-radius:999px; background:var(--neutral-100); overflow:hidden;}
+  .readiness-fill{height:100%; background:var(--brand); border-radius:999px;}
   .credit-est{display:flex; flex-direction:column; gap:2px;}
   .credit-est .credit-label{font-size:11px; color:var(--neutral-500);}
   .credit-est .credit-value{font-size:13px; font-weight:600; color:var(--neutral-900);}
@@ -106,19 +111,12 @@
   .msg.user{align-self:flex-end; background:var(--brand); color:#fff; border-bottom-right-radius:3px;}
   .msg.ai{align-self:flex-start; background:var(--neutral-150); color:var(--neutral-700); border-bottom-left-radius:3px;}
   .msg.ai .tag{display:inline-block; font-size:10px; font-weight:600; color:var(--brand); margin-bottom:3px;}
+  .msg.ai .note{display:block; font-size:10.5px; color:var(--neutral-500); margin-top:3px;}
   .msg.ai.loading{color:var(--neutral-500);}
-  .visual-proposal-box{margin-top:8px; background:#fff; border:1px solid var(--neutral-300); border-radius:8px; padding:10px 11px; display:flex; flex-direction:column; gap:8px;}
-  .visual-proposal-text{font-size:12.5px; font-style:italic; color:var(--neutral-900); line-height:1.5;}
-  .copy-applied-note{display:none; font-size:10.5px; font-weight:600; color:var(--green);}
-  .visual-proposal-box.applied .copy-applied-note{display:block;}
-  .visual-proposal-box.applied{border-color:var(--brand-mid);}
-  .chat-edit-hint{display:block; font-size:10.5px; color:var(--neutral-500); margin-top:3px;}
   .dots span{animation:blink 1.4s infinite; opacity:0;}
   .dots span:nth-child(2){animation-delay:.2s;}
   .dots span:nth-child(3){animation-delay:.4s;}
   @keyframes blink{0%,80%,100%{opacity:0;}40%{opacity:1;}}
-  .chat-cta-row{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;}
-  .chat-cta-row .btn-primary, .chat-cta-row .btn-secondary{padding:8px 14px; font-size:12px;}
   .chat-hint{font-size:10.5px; color:var(--neutral-500); padding:0 16px 10px;}
   .chat-input-row{padding:12px; border-top:1px solid var(--neutral-300); display:flex; gap:8px;}
   .chat-input{flex:1; border:1px solid var(--neutral-400); border-radius:8px; padding:9px 12px; font-size:12.5px; font-family:var(--font); outline:none;}
@@ -138,24 +136,21 @@
   .setting-chip b{color:var(--neutral-900); font-weight:600;}
   .brand-chip-setting{background:var(--brand-light); border-color:var(--brand-mid);}
 
-  #subDraft, #subVersions{display:flex; flex-direction:column; flex:1; min-height:0;}
   .stage-body{flex:1; min-height:0; padding:52px 28px 14px; overflow-y:auto; display:flex; flex-direction:column;}
-  #subDraft .stage-body{padding-bottom:90px;}
-  #subDraft .stage-body-inner{display:block; flex:none;}
-  .stage-body-inner{max-width:720px; margin:0 auto; width:100%; flex:1; min-height:0; display:flex; flex-direction:column;}
+  .stage-body-inner{max-width:960px; margin:0 auto; width:100%; flex:1; min-height:0; display:flex; flex-direction:column;}
   .stage-title{font-size:15px; font-weight:700; margin:0 0 4px;}
-  .stage-sub-text{font-size:12px; color:var(--neutral-500); margin:0 0 28px;}
+  .stage-sub-text{font-size:12px; color:var(--neutral-500); margin:0 0 24px;}
+  .stage-cta-row{display:flex; justify-content:flex-end; align-items:center; gap:12px; margin-top:24px;}
 
   @keyframes spin{to{transform:rotate(360deg);}}
+  .mini-spinner{width:9px; height:9px; border-radius:999px; border:2px solid var(--neutral-300); border-top-color:var(--brand); display:inline-block; animation:spin .7s linear infinite;}
+  .spinner-mini{width:22px; height:22px; border-radius:999px; border:2.5px solid rgba(255,255,255,.4); border-top-color:#fff; animation:spin .8s linear infinite; display:none;}
 
-  /* ---- VIEW: Brief (minimal — prompt input only) ---- */
+  /* ---- VIEW: Brief ---- */
   .brief-content{max-width:960px; margin:0 auto; padding:48px 4px 140px;}
   .brief-heading h1{font-size:22px; font-weight:700; color:var(--neutral-900); margin:0 0 6px; letter-spacing:-0.2px;}
   .brief-heading p{font-size:13px; color:var(--neutral-500); margin:0 0 16px;}
-  .brief-prompt{width:100%; min-height:120px; border:1.2px solid var(--neutral-400); border-radius:var(--radius-xl); padding:16px; font-size:14px; font-family:var(--font); color:var(--neutral-900); line-height:1.6; resize:vertical; outline:none;}
-  .brief-prompt:focus{border-color:var(--brand);}
 
-  /* -- shared prompt-box card + bottom action bar, matching the video/carousel flow's Brief screen -- */
   .prompt-box{background:#fff; border:1.2px solid var(--neutral-400); border-radius:var(--radius-xl); padding:24px; display:flex; flex-direction:column; gap:32px;}
   .prompt-top{display:flex; flex-direction:column; gap:20px;}
   .prompt-summary{display:block; width:100%; font-size:14px; color:var(--neutral-900); line-height:22px; margin:0; border:none; background:transparent; font-family:var(--font); resize:vertical; outline:none; min-height:66px;}
@@ -174,12 +169,6 @@
   .chip-option .check{display:none; color:var(--brand); font-size:13px;}
   .chip-option.selected .check{display:inline;}
   .refine-btn{width:36px; height:36px; border:1px solid var(--neutral-400); border-radius:var(--radius-lg); background:#fff; display:flex; align-items:center; justify-content:center; color:var(--neutral-700); font-size:14px; cursor:pointer;}
-  .readiness{width:300px;}
-  .readiness-top{display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;}
-  .readiness-top span:first-child{color:var(--neutral-700); font-weight:500;}
-  .readiness-top span:last-child{color:var(--neutral-700); font-weight:600;}
-  .readiness-bar{height:6px; border-radius:999px; background:var(--neutral-100); overflow:hidden;}
-  .readiness-fill{height:100%; background:var(--brand); border-radius:999px;}
 
   /* -- Reference image chips (Brief prompt box) -- */
   .reference-images-row{display:flex; gap:8px; flex-wrap:wrap;}
@@ -193,7 +182,7 @@
   .ref-image-add:hover{background:var(--neutral-150);}
   .ref-image-add .ic{width:20px; height:20px; border-radius:4px; background:var(--neutral-400);}
 
-  /* -- Character section (Brief & Style) — heading sits above the card, matching Reel/Short -- */
+  /* -- Character section (Brief & Style) -- */
   .char-section{margin-top:24px;}
   .char-section-label{font-size:16px; font-weight:700; color:var(--neutral-900); margin-bottom:2px;}
   .char-section-sub{font-size:13px; color:var(--neutral-500); margin:0 0 16px;}
@@ -225,12 +214,53 @@
   .advanced-field input{border:1px solid var(--neutral-300); border-radius:8px; padding:10px 12px; font-size:13px; font-family:var(--font); color:var(--neutral-900); outline:none;}
   .advanced-field input:focus{border-color:var(--brand);}
 
-  /* ---- Draft stage: Copy + Visual concept + Easy/Expert ---- */
-  .draft-section{margin-bottom:32px;}
-  .draft-section-label{font-size:13px; font-weight:700; color:var(--neutral-900); margin-bottom:12px;}
-  .draft-section-hint{font-size:11.5px; color:var(--neutral-500); margin:-8px 0 12px;}
+  /* switch — [DS] Controls/Switch: 40x23, off=neutral-300, on=brand/primary */
+  .field-switch{width:40px; height:23px; border-radius:12px; border:none; background:var(--neutral-300); position:relative; cursor:pointer; flex-shrink:0; margin-top:2px; transition:background .15s;}
+  .field-switch .knob{position:absolute; top:2px; left:2px; width:19px; height:19px; border-radius:999px; background:#fff; box-shadow:0 1px 2px rgba(0,0,0,.2); transition:transform .15s;}
+  .field-switch.on{background:var(--brand);}
+  .field-switch.on .knob{transform:translateX(17px);}
+  .field-switch.disabled{background:var(--neutral-200); cursor:not-allowed;}
+  .field-switch.disabled .knob{background:var(--neutral-100);}
 
-  .copy-field-list{border:1px solid var(--neutral-300); border-radius:12px; overflow:hidden; background:#fff;}
+  .brand-kit-row{display:flex; align-items:center; gap:10px; margin-top:12px;}
+  .brand-kit-label{font-size:13px; font-weight:600; color:var(--neutral-900);}
+  .brand-kit-summary{margin-top:8px; padding:12px; background:var(--neutral-50); border:1px solid var(--neutral-200); border-radius:8px; display:flex; align-items:center; gap:10px;}
+  .brand-kit-summary-label{font-size:12.5px; font-weight:700; color:var(--neutral-900); flex-shrink:0;}
+  .brand-kit-swatch-row{display:flex; height:22px; width:120px; border:1px solid var(--neutral-300); border-radius:6px; overflow:hidden; flex-shrink:0;}
+  .brand-kit-swatch-row span{flex:1;}
+  .brand-kit-empty{margin-top:8px; padding:10px 12px; background:var(--neutral-50); border:1px dashed var(--neutral-400); border-radius:8px; font-size:12px; color:var(--neutral-500);}
+  .brand-kit-empty a{color:var(--brand); font-weight:600; cursor:pointer; text-decoration:underline;}
+
+  /* ---- Script stage: per-card text drafting ---- */
+  .script-card-row{display:grid; grid-template-columns:repeat(auto-fill, minmax(170px, 1fr)); gap:12px; margin-bottom:8px;}
+  .script-card{border:1px solid var(--neutral-300); border-radius:10px; padding:12px; display:flex; flex-direction:column; gap:8px; background:#fff; transition:border-color .15s;}
+  .script-card:focus-within{border-color:var(--brand);}
+  .script-card-num{font-size:10.5px; font-weight:700; color:var(--neutral-500); text-transform:uppercase; letter-spacing:.04em;}
+  .script-card-text{flex:1; min-height:110px; border:none; resize:vertical; font-size:13px; font-family:var(--font); outline:none; background:transparent; color:var(--neutral-900); line-height:1.5; padding:0;}
+
+  /* ---- Storyboard stage: two-column layout (canvas grid + card editor sidebar) ---- */
+  #subStoryboard{display:flex; flex-direction:column; flex:1; min-height:0;}
+  .storyboard-stage{display:flex; gap:20px; flex:1; min-height:0;}
+  .storyboard-canvas{flex:1; min-width:0; min-height:0; display:flex; flex-direction:column;}
+  .storyboard-grid{display:grid; grid-template-columns:1fr 1fr; grid-auto-rows:min-content; gap:14px; align-content:start; flex:1; min-height:0; overflow-y:auto;}
+  .storyboard-tile{border:1.5px solid var(--neutral-300); border-radius:12px; overflow:hidden; cursor:pointer; background:#fff; transition:border-color 0.15s, box-shadow 0.15s;}
+  .storyboard-tile:hover{border-color:var(--neutral-450);}
+  .storyboard-tile.active{border-color:var(--brand); box-shadow:0 0 0 3px rgba(79,109,230,0.12);}
+  .storyboard-tile-preview{width:100%; aspect-ratio:4/5; background:linear-gradient(135deg,var(--neutral-200),var(--neutral-150)); position:relative; display:flex; align-items:flex-end; padding:10px;}
+  .storyboard-tile-badge{font-size:11px; font-weight:600; color:#fff; background:rgba(15,23,41,0.55); padding:4px 8px; border-radius:6px; backdrop-filter:blur(2px);}
+  .storyboard-tile-line{padding:10px 12px; font-size:12.5px; color:var(--neutral-700); line-height:1.4; border-top:1px solid var(--neutral-200); min-height:18px;}
+
+  .storyboard-editor-col{width:320px; flex-shrink:0; display:flex; flex-direction:column;}
+  .storyboard-global-brand{border:1px solid var(--neutral-300); border-radius:10px; padding:14px 16px; margin-bottom:14px;}
+  .storyboard-nav{display:flex; align-items:center; gap:6px; flex-shrink:0; margin-bottom:10px; flex-wrap:wrap;}
+  .storyboard-nav-label{font-size:11px; font-weight:600; color:var(--neutral-500); margin-right:2px;}
+  .card-nav-btn{width:24px; height:24px; border-radius:6px; border:1px solid var(--neutral-300); background:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; color:var(--neutral-700); cursor:pointer;}
+  .card-nav-btn:hover{border-color:var(--neutral-450);}
+  .card-nav-btn.active{background:var(--brand-light); border-color:var(--brand); color:var(--neutral-900);}
+  .storyboard-editor-panel{width:100%;}
+  .storyboard-card-editor{border:1px solid var(--neutral-300); border-radius:10px; padding:16px;}
+
+  .copy-field-list{border:1px solid var(--neutral-300); border-radius:12px; overflow:hidden; background:#fff; margin-bottom:16px;}
   .copy-field{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 16px; border-bottom:1px solid var(--neutral-200); transition:opacity .15s;}
   .copy-field:last-child{border-bottom:none;}
   .copy-field.off{opacity:0.4;}
@@ -239,106 +269,53 @@
   .copy-field-input{border:none; background:transparent; font-size:14px; color:var(--neutral-900); font-family:var(--font); padding:0; outline:none; width:100%;}
   .copy-field.off .copy-field-input{pointer-events:none;}
 
-  /* switch — Figma [DS] Controls/Switch spec: 40x23, off=neutral-300, on=brand/primary */
-  .field-switch{width:40px; height:23px; border-radius:12px; border:none; background:var(--neutral-300); position:relative; cursor:pointer; flex-shrink:0; margin-top:2px; transition:background .15s;}
-  .field-switch .knob{position:absolute; top:2px; left:2px; width:19px; height:19px; border-radius:999px; background:#fff; box-shadow:0 1px 2px rgba(0,0,0,.2); transition:transform .15s;}
-  .field-switch.on{background:var(--brand);}
-  .field-switch.on .knob{transform:translateX(17px);}
+  .scene-desc-label{font-size:11px; font-weight:700; color:var(--neutral-500); text-transform:uppercase; letter-spacing:.04em; display:block; margin-bottom:6px;}
+  .story-desc-input{width:100%; min-height:70px; border:1px solid var(--neutral-300); border-radius:8px; padding:10px 12px; font-size:13px; font-family:var(--font); color:var(--neutral-900); line-height:1.5; resize:vertical; outline:none;}
+  .story-desc-input:focus{border-color:var(--brand);}
 
-  .visual-concept-text{width:100%; min-height:96px; border:1px solid var(--neutral-300); border-radius:12px; padding:14px 16px; font-size:13.5px; font-family:var(--font); color:var(--neutral-900); line-height:1.6; resize:vertical; outline:none; background:#fff;}
-  .visual-concept-text:focus{border-color:var(--brand);}
+  /* ---- Generate stage: per-card image tiles + local version pager ---- */
+  .carousel-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:14px; margin-bottom:24px;}
+  .carousel-tile{border:1.5px solid var(--neutral-300); border-radius:12px; overflow:hidden; background:#fff; transition:border-color .15s;}
+  .carousel-tile.ready{border-color:var(--neutral-300);}
+  .carousel-tile-preview{position:relative; width:100%; aspect-ratio:4/5; background:linear-gradient(135deg,var(--neutral-200),var(--neutral-150)); display:flex; align-items:center; justify-content:center;}
+  .carousel-tile.ready .carousel-tile-preview{background:linear-gradient(135deg,var(--brand-mid),var(--accent));}
+  .carousel-tile.generating .spinner-mini{display:block;}
+  .carousel-tile-overlay-top{position:absolute; top:8px; left:8px; right:8px; display:flex; align-items:center; justify-content:space-between; gap:6px;}
+  .carousel-tile-badge{font-size:11px; font-weight:600; color:#fff; background:rgba(15,23,41,0.55); padding:4px 8px; border-radius:6px; backdrop-filter:blur(2px); position:absolute; bottom:8px; left:8px;}
+  .carousel-tile-ready-badge{display:none; align-items:center; gap:3px; font-size:10px; font-weight:700; color:var(--green); background:#fff; padding:3px 7px; border-radius:999px;}
+  .carousel-tile.ready .carousel-tile-ready-badge{display:inline-flex;}
+  .carousel-tile-regen-btn{display:none; width:24px; height:24px; border-radius:999px; border:none; background:rgba(255,255,255,0.92); align-items:center; justify-content:center; font-size:12px; color:var(--neutral-700); cursor:pointer; margin-left:auto;}
+  .carousel-tile-regen-btn:hover{background:#fff; color:var(--neutral-900);}
+  .carousel-tile.ready .carousel-tile-regen-btn{display:flex;}
+  .carousel-tile-pager{display:none; align-items:center; justify-content:center; gap:6px; padding:6px 8px; border-top:1px solid var(--neutral-200); font-size:11px; font-weight:600; color:var(--neutral-700);}
+  .carousel-tile.has-history .carousel-tile-pager{display:flex;}
+  .carousel-tile-pager button{width:18px; height:18px; border-radius:999px; border:1px solid var(--neutral-300); background:#fff; color:var(--neutral-700); font-size:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;}
+  .carousel-tile-pager button:hover{border-color:var(--neutral-450);}
+  .carousel-tile-pager button:disabled{opacity:.35; cursor:default;}
 
-  .brand-kit-row{display:flex; align-items:center; gap:10px; margin-top:14px;}
-  .brand-kit-label{font-size:13px; font-weight:600; color:var(--neutral-900);}
-  .field-switch.disabled{background:var(--neutral-200); cursor:not-allowed;}
-  .field-switch.disabled .knob{background:var(--neutral-100);}
-  .brand-kit-summary{margin-top:8px; padding:12px; background:var(--neutral-50); border:1px solid var(--neutral-200); border-radius:8px; display:flex; flex-direction:column; gap:10px;}
-  .brand-kit-summary-label{font-size:12.5px; font-weight:700; color:var(--neutral-900);}
-  .brand-kit-swatch-row{display:flex; height:28px; border:1px solid var(--neutral-300); border-radius:8px; overflow:hidden;}
-  .brand-kit-swatch-row span{flex:1;}
-  .brand-kit-fonts{display:flex; flex-direction:column; gap:4px;}
-  .brand-kit-font-row{display:flex; align-items:baseline; justify-content:space-between; font-size:12px;}
-  .brand-kit-font-role{font-weight:600; color:var(--neutral-900);}
-  .brand-kit-font-name{color:var(--neutral-500);}
-  .brand-kit-empty{margin-top:8px; padding:10px 12px; background:var(--neutral-50); border:1px dashed var(--neutral-400); border-radius:8px; font-size:12px; color:var(--neutral-500);}
-  .brand-kit-empty a{color:var(--brand); font-weight:600; cursor:pointer; text-decoration:underline;}
-
-  .baked-in-warning{display:none; align-items:flex-start; gap:8px; font-size:12px; color:var(--amber); background:var(--amber-bg); border:1px solid var(--amber-border); border-radius:8px; padding:10px 12px; margin-top:12px; line-height:1.5;}
-  .baked-in-warning.show{display:flex;}
-
-  /* ---- Versions stage: 4-grid parallel generation ---- */
-  .version-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px; align-content:start;}
-  .version-tile{border:1.5px solid var(--neutral-300); border-radius:12px; overflow:hidden; cursor:pointer; background:#fff; transition:border-color .15s, box-shadow .15s;}
-  .version-tile:hover{border-color:var(--neutral-450);}
-  .version-tile.ready:hover{border-color:var(--brand);}
-  .version-tile-preview{width:100%; aspect-ratio:1; background:linear-gradient(135deg,var(--neutral-200),var(--neutral-150)); position:relative; display:flex; align-items:flex-end; padding:10px;}
-  .version-tile.ready .version-tile-preview{background:linear-gradient(135deg,var(--brand-mid),var(--accent));}
-  .version-tile-badge{font-size:11px; font-weight:600; color:#fff; background:rgba(15,23,41,0.55); padding:4px 8px; border-radius:6px; backdrop-filter:blur(2px);}
-  .version-tile.generating .version-tile-badge{display:none;}
-  .version-tile-overlay-top{position:absolute; top:8px; left:8px; right:8px; display:flex; align-items:center; justify-content:space-between; gap:6px;}
-  .version-tile-ready-badge{display:none; align-items:center; gap:3px; font-size:10px; font-weight:700; color:var(--green); background:#fff; padding:3px 7px; border-radius:999px;}
-  .version-tile.ready .version-tile-ready-badge{display:inline-flex;}
-  .version-tile-regen-btn{display:none; width:24px; height:24px; border-radius:999px; border:none; background:rgba(255,255,255,0.92); align-items:center; justify-content:center; font-size:12px; color:var(--neutral-700); cursor:pointer; margin-left:auto;}
-  .version-tile-regen-btn:hover{background:#fff; color:var(--neutral-900);}
-  .version-tile.ready .version-tile-regen-btn{display:flex;}
-  .version-tile-spinner{display:none; width:26px; height:26px; border-radius:999px; border:2.5px solid rgba(255,255,255,0.35); border-top-color:#fff; animation:spin .8s linear infinite; position:absolute; top:50%; left:50%; margin:-13px 0 0 -13px;}
-  .version-tile.generating .version-tile-spinner{display:block;}
-  .version-tile-footer{padding:10px 12px; display:flex; align-items:center; justify-content:space-between; gap:8px; border-top:1px solid var(--neutral-200);}
-  .version-tile-label{font-size:12px; font-weight:600; color:var(--neutral-700);}
-  .version-tile-use-btn{display:none; border:none; background:var(--neutral-900); color:#fff; border-radius:999px; padding:5px 12px; font-size:11px; font-weight:600; font-family:var(--font); cursor:pointer;}
-  .version-tile.ready .version-tile-use-btn{display:inline-flex;}
-  .versions-status{font-size:12px; color:var(--neutral-500); text-align:center; margin-top:16px;}
-
-  /* -- selected-version result, shown in place of the grid while keeping Draft/Versions tabs visible -- */
-  .version-result-view{display:flex; gap:24px; align-items:flex-start;}
-  .refine-preview-col{flex-shrink:0; width:312px; display:flex; flex-direction:column; gap:12px;}
-  .refine-controls-col{flex:1; min-width:0;}
-  .version-result-preview{position:relative; width:312px; aspect-ratio:4/5; border-radius:12px; background:linear-gradient(135deg,var(--brand-mid),var(--accent)); display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:opacity .15s;}
-  .version-result-preview.generating{opacity:.5;}
-  .version-result-badge{font-size:20px; font-weight:700; color:#fff;}
-  .image-download-btn{position:absolute; top:8px; right:8px; width:30px; height:30px; border-radius:999px; border:none; background:rgba(255,255,255,0.92); display:flex; align-items:center; justify-content:center; font-size:13px; color:var(--neutral-900); cursor:pointer;}
-  .image-download-btn:hover{background:#fff;}
-  .version-result-title{font-size:16px; font-weight:700; color:var(--neutral-900); margin:0 0 4px;}
-  .version-result-sub{font-size:13px; color:var(--neutral-500); margin:0 0 16px;}
-  .version-result-actions{display:flex; gap:10px;}
-  .version-result-back{display:block; margin-top:12px; font-size:12.5px; color:var(--neutral-500); cursor:pointer; background:none; border:none; font-family:var(--font); padding:0;}
-  .version-result-back:hover{color:var(--brand);}
-
-  .mini-spinner{width:9px; height:9px; border-radius:999px; border:2px solid var(--neutral-300); border-top-color:var(--brand); display:inline-block; animation:spin .7s linear infinite;}
-
-  .refine-history-row{display:flex; gap:6px; flex-wrap:wrap;}
-  .refine-history-pill{border:1.5px solid var(--neutral-300); border-radius:999px; padding:5px 11px; font-size:11.5px; font-weight:600; color:var(--neutral-700); cursor:pointer; background:#fff; display:inline-flex; align-items:center; gap:5px;}
-  .refine-history-pill:hover{border-color:var(--neutral-450);}
-  .refine-history-pill.active{background:var(--neutral-900); border-color:var(--neutral-900); color:#fff;}
-
-  .refine-label{display:block; font-size:12px; font-weight:600; color:var(--neutral-700); margin-bottom:8px;}
-  .refine-edit-box{border:1px solid var(--neutral-300); border-radius:10px; padding:14px; margin-bottom:16px;}
-  .refine-edit-input{width:100%; min-height:56px; border:1px solid var(--neutral-300); border-radius:8px; padding:9px 11px; font-size:13px; font-family:var(--font); color:var(--neutral-900); resize:vertical; outline:none; margin-bottom:10px; box-sizing:border-box;}
-  .refine-edit-input:focus{border-color:var(--brand);}
-  .refine-regen-btn{width:100%; justify-content:center; display:flex; align-items:center; gap:6px;}
-  .refine-regen-btn .cost{color:var(--neutral-500); font-weight:700;}
-  .refine-regen-btn:disabled{opacity:.55; cursor:default;}
-
-  .refine-size-box{border:1px solid var(--neutral-300); border-radius:10px; padding:14px; margin-bottom:20px;}
-  .refine-size-row{display:flex; gap:12px; flex-wrap:wrap; align-items:flex-start;}
-  .size-variant-card{display:flex; flex-direction:column; align-items:center; gap:5px; width:96px;}
-  .size-variant-thumb{position:relative; width:96px; border-radius:8px; background:linear-gradient(135deg,var(--brand-mid),var(--accent)); transition:opacity .15s;}
-  .size-variant-thumb.generating{opacity:.5;}
-  .size-variant-thumb .image-download-btn{width:24px; height:24px; font-size:11px; top:5px; right:5px;}
-  .size-variant-label{font-size:11px; font-weight:600; color:var(--neutral-700);}
-  .size-variant-label.original{color:var(--neutral-500); font-weight:500;}
-  .size-variant-placeholder{width:96px; border:1.5px dashed var(--neutral-300); border-radius:8px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; cursor:pointer; color:var(--neutral-500); font-size:11px; font-weight:600; background:none; font-family:var(--font);}
-  .size-variant-placeholder:hover{border-color:var(--neutral-450); color:var(--neutral-700);}
-  .size-variant-placeholder .cost{font-weight:700; color:var(--neutral-500);}
-  .size-variant-placeholder .mini-spinner{width:12px; height:12px; border-width:2px;}
+  /* ---- Size variation panel (Generate stage, once all cards ready) ---- */
+  .size-variation-panel{border:1px solid var(--neutral-300); border-radius:12px; padding:20px; margin-bottom:8px;}
+  .size-var-title{font-size:13px; font-weight:700; color:var(--neutral-900); margin-bottom:2px;}
+  .size-var-sub{font-size:12px; color:var(--neutral-500); margin-bottom:14px;}
+  .size-var-mode-toggle{margin-bottom:16px;}
+  .size-var-row{display:flex; flex-wrap:wrap; align-items:flex-end; gap:16px;}
+  .size-var-field{display:flex; flex-direction:column; gap:6px;}
+  .size-var-field label{font-size:11px; font-weight:700; color:var(--neutral-500); text-transform:uppercase; letter-spacing:.04em;}
+  .size-var-select{border:1px solid var(--neutral-300); border-radius:8px; padding:9px 12px; font-size:13px; font-family:var(--font); color:var(--neutral-900); background:#fff; min-width:110px;}
+  .size-var-cost{font-size:12.5px; color:var(--neutral-700); flex:1; min-width:200px;}
+  .size-var-cost b{color:var(--neutral-900); font-weight:700;}
+  .size-var-card-picker{display:flex; gap:8px; flex-wrap:wrap;}
+  .size-var-card-chip{border:1.5px solid var(--neutral-300); border-radius:999px; padding:6px 13px; font-size:12px; font-weight:600; color:var(--neutral-700); cursor:pointer; background:#fff;}
+  .size-var-card-chip.selected{border-color:var(--brand); background:var(--brand-light); color:var(--neutral-900);}
+  .size-var-sets{display:flex; flex-direction:column; gap:10px; margin-top:16px;}
+  .size-var-set{border:1px solid var(--neutral-200); border-radius:10px; padding:12px 14px; display:flex; align-items:center; gap:12px;}
+  .size-var-set-label{font-size:12.5px; font-weight:700; color:var(--neutral-900); flex-shrink:0;}
+  .size-var-set-thumbs{display:flex; gap:6px; flex:1; overflow-x:auto;}
+  .size-var-set-thumb{width:44px; aspect-ratio:1; border-radius:6px; background:linear-gradient(135deg,var(--brand-mid),var(--accent)); flex-shrink:0;}
 
   /* ---- Develop (minimal step-3 landing) ---- */
   .develop-body{display:flex; gap:32px; padding:48px; max-width:960px; margin:0 auto;}
-  .develop-preview{width:340px; flex-shrink:0; aspect-ratio:1; border-radius:14px; background:linear-gradient(135deg,var(--brand-mid),var(--accent)); position:relative; overflow:hidden; display:flex; flex-direction:column; justify-content:flex-end; padding:24px;}
-  .develop-preview-text{color:#fff; text-shadow:0 1px 4px rgba(0,0,0,.25);}
-  .develop-preview-headline{font-size:20px; font-weight:700; margin-bottom:4px;}
-  .develop-preview-subhead{font-size:13px; margin-bottom:12px; opacity:.92;}
-  .develop-preview-cta{display:inline-block; background:#fff; color:var(--neutral-900); font-size:12px; font-weight:700; padding:8px 16px; border-radius:999px; width:fit-content;}
+  .develop-preview{width:340px; flex-shrink:0; aspect-ratio:4/5; border-radius:14px; background:linear-gradient(135deg,var(--brand-mid),var(--accent));}
   .develop-side{flex:1; min-width:0;}
   .develop-note{background:var(--neutral-50); border:1px solid var(--neutral-200); border-radius:10px; padding:14px 16px; font-size:12.5px; color:var(--neutral-600); line-height:1.6; margin-top:16px;}
 </style>
@@ -347,7 +324,6 @@
 
 <div class="app">
 
-  <!-- NAV -->
   <div class="nav" id="sideNav">
     <div class="nav-brand">
       <div class="mark"></div>
@@ -379,9 +355,9 @@
   <div class="main" id="mainArea">
     <div class="topbar">
       <div class="stepper">
-        <div class="step done" id="stepBrief" onclick="goToBrief()"><div class="num">✓</div>Brief & Style</div>
+        <div class="step active" id="stepBrief" onclick="goToBrief()"><div class="num">1</div>Brief & Style</div>
         <div class="connector"></div>
-        <div class="step active" id="stepGenerate" onclick="goToGenerate()"><div class="num">2</div>Generate</div>
+        <div class="step" id="stepGenerate" onclick="goToGenerate()"><div class="num">2</div>Generate</div>
         <div class="connector"></div>
         <div class="step" id="stepEdit" onclick="goToDevelop()"><div class="num">3</div>Edit & Publish</div>
       </div>
@@ -398,8 +374,8 @@
       </div>
     </div>
 
-    <!-- VIEW: Brief (minimal — prompt input, then Continue to Draft) -->
-    <div class="view hidden" id="briefView">
+    <!-- VIEW: Brief -->
+    <div class="view" id="briefView">
       <div class="brief-content">
         <div class="brief-heading">
           <h1>New content</h1>
@@ -407,14 +383,14 @@
         </div>
         <div class="seg-control" id="contentTypeToggle" style="margin-bottom:16px;">
           <div class="seg-chip" data-type="reel" onclick="selectContentType(this)">Reel / Short</div>
-          <div class="seg-chip active" data-type="image" onclick="selectContentType(this)">Image post</div>
+          <div class="seg-chip" data-type="image" onclick="selectContentType(this)">Image post</div>
           <div class="seg-chip" data-type="story" onclick="selectContentType(this)">Story image</div>
-          <div class="seg-chip" data-type="carousel" onclick="selectContentType(this)">Carousel</div>
+          <div class="seg-chip active" data-type="carousel" onclick="selectContentType(this)">Carousel</div>
         </div>
         <div class="prompt-box">
           <div class="prompt-top">
             <div class="reference-images-row" id="referenceImagesRow"></div>
-            <textarea class="prompt-summary" id="briefPrompt">A study-abroad promo image for the January UK intake — bright, aspirational, campus setting, diverse group of students.</textarea>
+            <textarea class="prompt-summary" id="briefPrompt">A 5-card carousel walking prospective students through why they should study abroad with us — one clear idea per card, ending on a call to action to apply.</textarea>
           </div>
           <div class="prompt-bottom">
             <div class="prompt-chips">
@@ -429,16 +405,17 @@
                   <div class="chip-option selected" data-ratio="4:5" onclick="selectRatio('4:5')"><span>4:5</span><span class="check">✓</span></div>
                 </div>
               </div>
-              <div class="prompt-chip-wrap" id="versionsChipWrap">
-                <div class="prompt-chip clickable" onclick="toggleVersionsPopover(event)">
-                  <div class="ic"></div><span id="versionsChipText">2 Versions</span><span class="chevron">▾</span>
+              <div class="prompt-chip-wrap" id="cardsChipWrap">
+                <div class="prompt-chip clickable" onclick="toggleCardsPopover(event)">
+                  <div class="ic"></div><span id="cardsChipText">5 Cards</span><span class="chevron">▾</span>
                 </div>
-                <div class="chip-popover" id="versionsPopover" style="display:none;">
-                  <div class="chip-popover-label">Versions</div>
-                  <div class="chip-option" data-versions="1" onclick="selectVersions(1)"><span>1</span><span class="check">✓</span></div>
-                  <div class="chip-option selected" data-versions="2" onclick="selectVersions(2)"><span>2</span><span class="check">✓</span></div>
-                  <div class="chip-option" data-versions="3" onclick="selectVersions(3)"><span>3</span><span class="check">✓</span></div>
-                  <div class="chip-option" data-versions="4" onclick="selectVersions(4)"><span>4</span><span class="check">✓</span></div>
+                <div class="chip-popover" id="cardsPopover" style="display:none;">
+                  <div class="chip-popover-label">Number of cards</div>
+                  <div class="chip-option" data-cards="2" onclick="selectCardCount(2)"><span>2</span><span class="check">✓</span></div>
+                  <div class="chip-option" data-cards="3" onclick="selectCardCount(3)"><span>3</span><span class="check">✓</span></div>
+                  <div class="chip-option" data-cards="4" onclick="selectCardCount(4)"><span>4</span><span class="check">✓</span></div>
+                  <div class="chip-option selected" data-cards="5" onclick="selectCardCount(5)"><span>5</span><span class="check">✓</span></div>
+                  <div class="chip-option" data-cards="6" onclick="selectCardCount(6)"><span>6</span><span class="check">✓</span></div>
                 </div>
               </div>
             </div>
@@ -494,24 +471,24 @@
     </div>
     <div class="action-bar" id="briefActionBar">
       <div class="readiness">
-        <div class="readiness-top"><span>Brief readiness</span><span>92%</span></div>
-        <div class="readiness-bar"><div class="readiness-fill" style="width:92%"></div></div>
+        <div class="readiness-top"><span>Brief readiness</span><span>84%</span></div>
+        <div class="readiness-bar"><div class="readiness-fill" style="width:84%"></div></div>
       </div>
-      <div class="meta-text" id="briefMetaText">Image post · 4:5 · 2 versions</div>
+      <div class="meta-text" id="briefMetaText">Carousel · 4:5 · 5 cards</div>
       <div class="bar-actions">
         <button class="btn-secondary">Save as draft</button>
         <button class="btn-dark" id="continueBtn" onclick="goToGenerate()">Continue</button>
       </div>
     </div>
 
-    <!-- VIEW: Generate (Draft / Versions) -->
-    <div class="view" id="generateView">
+    <!-- VIEW: Generate (Script / Storyboard / Generate) -->
+    <div class="view hidden" id="generateView">
       <div class="gen-body">
 
-        <!-- CHAT (persistent across Draft/Versions) -->
+        <!-- CHAT -->
         <div class="chat">
           <div class="chat-log" id="chatLog"></div>
-          <div class="chat-hint">💬 Requests like "make the headline shorter" or "try a warmer tone" work here too</div>
+          <div class="chat-hint">💬 Requests like "make card 2 shorter" or "try a warmer tone" work here too</div>
           <div class="chat-input-row">
             <input class="chat-input" id="chatInput" placeholder="Type a message...">
             <button class="chat-send" id="chatSend" onclick="sendChatMessage()">↑</button>
@@ -521,128 +498,103 @@
         <!-- STAGE AREA -->
         <div class="stage-area">
           <div class="stage-tabs">
-            <div class="stage-tab active" id="tabDraft" onclick="showSub('draft')">Draft</div>
-            <div class="stage-tab locked" id="tabVersions" onclick="showSub('versions')">Versions</div>
+            <div class="stage-tab active" id="tabScript" onclick="showSub('script')">Script</div>
+            <div class="stage-tab locked" id="tabStoryboard" onclick="showSub('storyboard')">Storyboard</div>
+            <div class="stage-tab locked" id="tabGenerate" onclick="showSub('generate')">Generate</div>
           </div>
 
           <div class="settings-bar" id="settingsBar">
-            <div class="setting-chip">▭ <b>Image post</b></div>
+            <div class="setting-chip">▭ <b>Carousel</b></div>
             <div class="setting-chip">⬛ <b id="genSettingRatio">4:5</b></div>
+            <div class="setting-chip">🔢 <b id="genSettingCards">5 cards</b></div>
             <div class="setting-chip">🌐 <b>English</b></div>
             <div class="setting-chip brand-chip-setting" id="brandSettingChip" style="display:none;">🏷 Brand: <b>Formee Express</b></div>
           </div>
 
-          <!-- SUB-STAGE: Draft -->
-          <div class="stage-sub" id="subDraft">
+          <!-- SUB-STAGE: Script -->
+          <div class="stage-sub" id="subScript">
             <div class="stage-body"><div class="stage-body-inner">
-              <h2 class="stage-title">Draft</h2>
-              <p class="stage-sub-text">Confirm the copy and visual concept — you can fine-tune everything before generating.</p>
-
-              <div class="draft-section">
-                <div class="draft-section-label">Copy</div>
-                <div class="copy-field-list" id="copyFieldList"></div>
-              </div>
-
-              <div class="draft-section">
-                <div class="draft-section-label">Visual concept</div>
-                <textarea class="visual-concept-text" id="visualConceptText" placeholder="Not drafted yet — I'll work this out once the copy is confirmed." oninput="onVisualConceptEdited()"></textarea>
-
-                <div class="brand-kit-row">
-                  <button type="button" class="field-switch" id="brandKitSwitch" onclick="toggleBrandKit()"><span class="knob"></span></button>
-                  <span class="brand-kit-label">Use brand kit</span>
-                </div>
-                <div class="brand-kit-summary" id="brandKitSummary">
-                  <div class="brand-kit-summary-label">Formee Express</div>
-                  <div class="brand-kit-swatch-row">
-                    <span style="background:#2b6a6c"></span>
-                    <span style="background:#b80d48"></span>
-                    <span style="background:#f29724"></span>
-                    <span style="background:#444444"></span>
-                    <span style="background:#6d9697"></span>
-                    <span style="background:#aa5a77"></span>
-                    <span style="background:#ffffff"></span>
-                  </div>
-                  <div class="brand-kit-fonts">
-                    <div class="brand-kit-font-row"><span class="brand-kit-font-role">Heading</span><span class="brand-kit-font-name">Manrope Bold</span></div>
-                    <div class="brand-kit-font-row"><span class="brand-kit-font-role">Subhead</span><span class="brand-kit-font-name">Manrope Semibold</span></div>
-                    <div class="brand-kit-font-row"><span class="brand-kit-font-role">Body</span><span class="brand-kit-font-name">Manrope Regular</span></div>
-                  </div>
-                </div>
-                <div class="brand-kit-empty" id="brandKitEmpty" style="display:none;">
-                  Set up your brand kit to apply it here automatically → <a onclick="goToBrandSetup()">Brand Setup</a>
-                </div>
-              </div>
-
-              <div class="draft-section">
-                <div class="draft-section-label">Text placement</div>
-                <p class="draft-section-hint">How the headline, subhead, and call to action should appear on the image.</p>
-                <div class="seg-control" id="textPlacementToggle">
-                  <div class="seg-chip active" data-mode="overlay" onclick="setDraftMode('overlay')">Editable overlay</div>
-                  <div class="seg-chip" data-mode="baked" onclick="setDraftMode('baked')">Baked into image</div>
-                </div>
-                <div class="baked-in-warning" id="bakedInWarning">
-                  ⚠️ If you edit the copy later, the image will need to be regenerated — and your brand font may not be reproduced exactly.
-                </div>
+              <h2 class="stage-title">Script</h2>
+              <p class="stage-sub-text">AI drafted text for each card based on your brief — edit any card directly, then confirm to move on.</p>
+              <div class="script-card-row" id="scriptCardRow"></div>
+              <div class="stage-cta-row">
+                <button class="btn-primary" id="confirmScriptBtn" onclick="confirmScript()">Confirm & continue to Storyboard →</button>
               </div>
             </div></div>
           </div>
 
-          <!-- SUB-STAGE: Versions -->
-          <div class="stage-sub" id="subVersions" style="display:none;">
-            <div class="stage-body"><div class="stage-body-inner" style="max-width:640px;">
-              <div id="versionsChooser">
-                <h2 class="stage-title">Choose a version</h2>
-                <p class="stage-sub-text" id="versionsStageSub">All 2 are generating in parallel — pick one to continue, or regenerate any that miss the mark.</p>
-                <div class="version-grid" id="versionGrid"></div>
-                <div class="versions-status" id="versionsStatus">Generating 4 versions…</div>
+          <!-- SUB-STAGE: Storyboard -->
+          <div class="stage-sub" id="subStoryboard" style="display:none;">
+            <div class="stage-body"><div class="stage-body-inner">
+              <h2 class="stage-title">Storyboard</h2>
+              <p class="stage-sub-text">Confirm the background, action, and on-card copy for each card, then move on to image generation.</p>
+              <div class="storyboard-stage">
+                <div class="storyboard-canvas">
+                  <div class="storyboard-grid" id="storyboardGrid"></div>
+                </div>
+                <div class="storyboard-editor-col">
+                  <div class="storyboard-global-brand" id="storyboardGlobalBrand">
+                    <div class="brand-kit-row" style="margin-top:0;">
+                      <button type="button" class="field-switch" id="globalBrandKitSwitch" onclick="toggleGlobalBrandKit()"><span class="knob"></span></button>
+                      <span class="brand-kit-label">Use brand kit for all cards</span>
+                    </div>
+                    <div class="brand-kit-summary" id="globalBrandKitSummary" style="display:none;">
+                      <span class="brand-kit-summary-label">Formee Express</span>
+                      <div class="brand-kit-swatch-row">
+                        <span style="background:#2b6a6c"></span><span style="background:#b80d48"></span><span style="background:#f29724"></span><span style="background:#444444"></span>
+                      </div>
+                    </div>
+                    <div class="brand-kit-empty" id="globalBrandKitEmpty" style="display:none;">
+                      Set up your brand kit to apply it here automatically → <a onclick="goToBrandSetup()">Brand Setup</a>
+                    </div>
+                  </div>
+                  <div class="storyboard-nav" id="storyboardCardNav"></div>
+                  <div class="storyboard-editor-panel" id="storyboardEditorPanel"></div>
+                </div>
               </div>
-
-              <!-- Shown after "Use this" — Draft/Versions tabs above stay visible so you can navigate back -->
-              <div class="version-result-view" id="versionResultView" style="display:none;">
-                <div class="refine-preview-col">
-                  <div class="version-result-preview" id="versionResultPreview">
-                    <button type="button" class="image-download-btn" onclick="event.stopPropagation(); downloadImage('main')" title="Download image">⬇</button>
-                    <span class="version-result-badge" id="versionResultBadge">V1</span>
-                  </div>
-                  <div class="refine-history-row" id="refineHistoryRow"></div>
-                </div>
-                <div class="refine-controls-col">
-                  <div class="version-result-title">Your image is ready</div>
-                  <p class="version-result-sub" id="versionResultSub">Image post · 4:5 · English</p>
-
-                  <div class="refine-edit-box">
-                    <label class="refine-label">✏️ Edit with a prompt</label>
-                    <textarea class="refine-edit-input" id="refineEditInput" placeholder="e.g. Make the lighting warmer, add more students in the background..."></textarea>
-                    <button type="button" class="btn-secondary refine-regen-btn" id="refineRegenBtn" onclick="regenerateWithPrompt()">↻ Regenerate <span class="cost">⚡8</span></button>
-                  </div>
-
-                  <div class="refine-size-box">
-                    <label class="refine-label">📐 Size variations</label>
-                    <div class="refine-size-row" id="refineSizeRow"></div>
-                  </div>
-
-                  <div class="version-result-actions">
-                    <button class="btn-primary" onclick="goToDevelop()">Continue to editing →</button>
-                    <button class="btn-secondary" onclick="skipToPublish()">Skip to publish</button>
-                  </div>
-                  <button type="button" class="version-result-back" onclick="backToVersions()">← Back to versions</button>
-                </div>
+              <div class="stage-cta-row">
+                <button class="btn-primary" onclick="confirmStoryboard()">Confirm storyboard → Generate images</button>
               </div>
             </div></div>
           </div>
-        </div>
-      </div>
 
-      <!-- CONFIRM bar (Draft sub-stage only) -->
-      <div class="action-bar" id="draftActionBar">
-        <div class="credit-est">
-          <span class="credit-label">Estimated cost</span>
-          <span class="credit-value" id="creditEstValue">~6 credits <span class="credit-sub">(2 versions)</span></span>
-        </div>
-        <div class="meta-text" id="draftMetaText">Image post · 4:5 · English</div>
-        <div class="bar-actions">
-          <button class="btn-secondary" onclick="quickAction('rework')">Rework</button>
-          <button class="btn-dark" id="confirmGenerateBtn" onclick="confirmAndGenerate()">Confirm & generate 2 versions →</button>
+          <!-- SUB-STAGE: Generate -->
+          <div class="stage-sub" id="subGenerate" style="display:none;">
+            <div class="stage-body"><div class="stage-body-inner">
+              <h2 class="stage-title">Generate</h2>
+              <p class="stage-sub-text" id="generateStageSub">Each card is generating its image — regenerate any one individually if it misses the mark.</p>
+              <div class="carousel-grid" id="carouselGrid"></div>
+              <div class="size-variation-panel" id="sizeVariationPanel" style="display:none;">
+                <div class="size-var-title">📐 Size variations</div>
+                <div class="size-var-sub">Regenerate this carousel at a different ratio for another platform — originals are kept as-is.</div>
+                <div class="seg-control size-var-mode-toggle" id="sizeVarModeToggle">
+                  <div class="seg-chip active" data-mode="single" onclick="setSizeVarMode('single')">Selected card only</div>
+                  <div class="seg-chip" data-mode="batch" onclick="setSizeVarMode('batch')">Entire set at once</div>
+                </div>
+                <div id="sizeVarSingleControls">
+                  <div class="size-var-card-picker" id="sizeVarCardPicker"></div>
+                </div>
+                <div class="size-var-row" style="margin-top:16px;">
+                  <div class="size-var-field">
+                    <label>New ratio</label>
+                    <select class="size-var-select" id="sizeVarRatio" onchange="updateSizeVarCost()">
+                      <option value="9:16">9:16</option>
+                      <option value="1:1">1:1</option>
+                      <option value="4:5">4:5</option>
+                    </select>
+                  </div>
+                  <div class="size-var-cost" id="sizeVarCost"></div>
+                  <button class="btn-primary" id="sizeVarGenerateBtn" onclick="generateSizeVariationSet()">Generate</button>
+                </div>
+                <div class="size-var-sets" id="sizeVarSets"></div>
+              </div>
+              <div class="stage-cta-row">
+                <span class="meta-text" id="generateCtaMeta">Waiting for all cards to finish generating</span>
+                <button class="btn-primary" id="generateCtaBtn" disabled onclick="goToDevelop()">Proceed to Edit & Publish →</button>
+              </div>
+            </div></div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -650,21 +602,16 @@
     <!-- VIEW: Develop (minimal step-3 landing) -->
     <div class="view hidden" id="developView">
       <div class="develop-body">
-        <div class="develop-preview" id="developPreview">
-          <div class="develop-preview-text">
-            <div class="develop-preview-headline" id="developHeadline"></div>
-            <div class="develop-preview-subhead" id="developSubhead"></div>
-            <div class="develop-preview-cta" id="developCta"></div>
-          </div>
-        </div>
+        <div class="develop-preview"></div>
         <div class="develop-side">
           <h2 class="stage-title">Develop</h2>
-          <p class="stage-sub-text" style="margin-bottom:14px;">This version is ready to fine-tune.</p>
+          <p class="stage-sub-text" style="margin-bottom:14px;">Your carousel is ready to fine-tune.</p>
           <button class="btn-dark" onclick="alert('Publish flow — TBD')">⬆ Publish →</button>
-          <div class="develop-note">Full Develop editing (Solid/Gradient background panels, layer controls, etc.) reuses the existing Edit &amp; Publish canvas from the video/carousel flow — wiring that up is the next piece of this prototype.</div>
+          <div class="develop-note">Full Develop editing (per-card layer controls, text overlay, etc.) reuses the existing Edit &amp; Publish canvas from the video/image flow — wiring that up is the next piece of this prototype.</div>
         </div>
       </div>
     </div>
+
   </div>
 </div>
 
@@ -675,533 +622,13 @@
 </div>
 
 <script>
-// ---- Copy fields (Draft > Copy) ----
-// Starts empty — AI drafts these via chat first; fields only fill in once that draft is applied.
-const copyFields = [
-  {key:'headline', label:'Headline', text:'', on:true},
-  {key:'subhead', label:'Subhead', text:'', on:true},
-  {key:'cta', label:'Call to action', text:'', on:true}
-];
-
-function renderCopyFields(){
-  const list = document.getElementById('copyFieldList');
-  list.innerHTML = copyFields.map((f,i) => `
-    <div class="copy-field ${f.on ? '' : 'off'}" data-key="${f.key}">
-      <div class="copy-field-body">
-        <span class="copy-field-label">${f.label}</span>
-        <input class="copy-field-input" value="${f.text.replace(/"/g,'&quot;')}" placeholder="Not drafted yet — see the chat →" oninput="onCopyFieldInput(${i}, this.value)">
-      </div>
-      <button type="button" class="field-switch ${f.on ? 'on' : ''}" onclick="toggleCopyField(${i})"><span class="knob"></span></button>
-    </div>`).join('');
-}
-
-// ---- Chat-driven copy revision (mirrors the video flow's script-revision pattern) ----
-function escapeHtmlLocal(str){
+function escapeHtml(str){
   const div = document.createElement('div');
   div.textContent = str;
   return div.innerHTML;
 }
 
-// Copy fills in directly (no propose/apply step) — the chat just narrates what changed.
-// Visual concept, drafted right after, keeps the propose -> apply pattern (see draftVisualConcept below).
-function buildRevisedCopy(requestText){
-  const req = requestText.toLowerCase();
-  const cur = {};
-  copyFields.forEach(f => cur[f.key] = f.text);
-  let { headline, subhead, cta } = cur;
-  if(req.includes('short') || req.includes('짧') || req.includes('줄여')){
-    const words = headline.split(' ');
-    headline = words.slice(0, Math.max(2, Math.ceil(words.length / 2))).join(' ');
-  } else if(req.includes('formal') || req.includes('격식') || req.includes('정중')){
-    headline = headline.replace(/—/g, ',');
-    cta = cta.replace(/!$/, '.');
-  } else if(req.includes('fun') || req.includes('energetic') || req.includes('신나') || req.includes('발랄') || req.includes('punch')){
-    headline = headline.replace(/\.$/, '') + '!';
-    cta = cta.replace(/\.$/, '') + ' →';
-  } else if(req.includes('urgent') || req.includes('급하') || req.includes('마감') || req.includes('deadline')){
-    subhead = subhead.replace(/\.$/, '') + ' — limited seats';
-  } else {
-    headline = headline.replace(/\.$/, '') + ` (${requestText})`;
-  }
-  return { headline, subhead, cta };
-}
-
-// First-draft copy — fills in directly once drafted, then auto-chains into the visual concept draft.
-function draftCopy(){
-  const log = document.getElementById('chatLog');
-  const loadingEl = document.createElement('div');
-  loadingEl.className = 'msg ai loading';
-  loadingEl.innerHTML = `<span class="tag">AI</span>Drafting your copy based on your brief<span class="dots"><span>.</span><span>.</span><span>.</span></span>`;
-  log.appendChild(loadingEl);
-  log.scrollTop = log.scrollHeight;
-
-  setTimeout(() => {
-    copyFields.find(f => f.key === 'headline').text = 'Study in the UK — Applications open for 2026';
-    copyFields.find(f => f.key === 'subhead').text = 'Applications open for the January intake';
-    copyFields.find(f => f.key === 'cta').text = 'Apply Now';
-    renderCopyFields();
-    loadingEl.remove();
-    addChatMsg('ai', '<span class="tag">AI</span>I\'ve refined it and filled in the Headline, Subhead, and Call to action on the right. Want something different? Just tell me here anytime.');
-    if(!visualConceptDraftStarted){
-      visualConceptDraftStarted = true;
-      draftVisualConcept();
-    }
-  }, 1400);
-}
-
-// Requesting a copy change in chat updates the fields directly too — no separate apply step.
-function reviseCopy(requestText){
-  const log = document.getElementById('chatLog');
-  const loadingEl = document.createElement('div');
-  loadingEl.className = 'msg ai loading';
-  loadingEl.innerHTML = `<span class="tag">AI</span>Let me refine that<span class="dots"><span>.</span><span>.</span><span>.</span></span>`;
-  log.appendChild(loadingEl);
-  log.scrollTop = log.scrollHeight;
-
-  setTimeout(() => {
-    const draft = buildRevisedCopy(requestText);
-    copyFields.find(f => f.key === 'headline').text = draft.headline;
-    copyFields.find(f => f.key === 'subhead').text = draft.subhead;
-    copyFields.find(f => f.key === 'cta').text = draft.cta;
-    renderCopyFields();
-    loadingEl.remove();
-    addChatMsg('ai', '<span class="tag">AI</span>Updated the Headline, Subhead, and Call to action based on your note.');
-  }, 1100);
-}
-
-// ---- Chat-driven visual concept drafting ----
-let visualDraftCounter = 0;
-window.__visualDrafts = {};
-function renderVisualProposalMessage(promptText, introText){
-  visualDraftCounter++;
-  const id = visualDraftCounter;
-  window.__visualDrafts[id] = promptText;
-  return `
-    <div class="msg ai">
-      <span class="tag">AI</span>${escapeHtmlLocal(introText)}
-      <div class="visual-proposal-box" id="visualProposal${id}">
-        <div class="visual-proposal-text">"${escapeHtmlLocal(promptText)}"</div>
-        <span class="copy-applied-note">✓ Applied to Visual concept</span>
-        <button class="btn-primary" data-draft-id="${id}" onclick="handleVisualProposalClick(this)">Apply to draft →</button>
-      </div>
-      <span class="chat-edit-hint">Want a different direction? Type it below and I'll redraft.</span>
-    </div>
-  `;
-}
-function handleVisualProposalClick(btn){
-  applyVisualDraft(Number(btn.dataset.draftId), btn);
-}
-function applyVisualDraft(id, btn){
-  const text = window.__visualDrafts[id];
-  if(text === undefined) return;
-  document.getElementById('visualConceptText').value = text;
-  userEditedPrompt = true;
-  visualConceptDrafted = true;
-  updateDevelopPreview();
-  document.querySelectorAll('.visual-proposal-box').forEach(box => {
-    box.classList.remove('applied');
-    const b = box.querySelector('.btn-primary');
-    if(b){ b.textContent = 'Apply to draft →'; b.disabled = false; }
-  });
-  const box = document.getElementById('visualProposal' + id);
-  box.classList.add('applied');
-  btn.textContent = '✓ Applied';
-  btn.disabled = true;
-  const vn = window.__versionCount || 2;
-  appendChatCta('Ready when you are.', `<button class="btn-primary" onclick="confirmAndGenerate()">Confirm & generate ${vn} version${vn > 1 ? 's' : ''} →</button>`);
-}
-
-function draftVisualConcept(){
-  addChatMsg('ai', '<span class="tag">AI</span>Great — I\'ll work out the visual concept based on this now.');
-  const log = document.getElementById('chatLog');
-  const loadingEl = document.createElement('div');
-  loadingEl.className = 'msg ai loading';
-  loadingEl.innerHTML = `<span class="tag">AI</span>Drafting the visual concept<span class="dots"><span>.</span><span>.</span><span>.</span></span>`;
-  log.appendChild(loadingEl);
-  log.scrollTop = log.scrollHeight;
-  setTimeout(() => {
-    const prompt = buildVisualConceptPrompt();
-    loadingEl.remove();
-    const wrap = document.createElement('div');
-    wrap.innerHTML = renderVisualProposalMessage(prompt, 'Here\'s a visual concept based on your finalized copy. Should I apply this?').trim();
-    log.appendChild(wrap.firstElementChild);
-    log.scrollTop = log.scrollHeight;
-  }, 1200);
-}
-
-// Once the visual concept has been drafted, chat requests redraft it (still propose -> apply,
-// so a new direction can be reviewed before it overwrites the current concept).
-function buildRevisedVisualConcept(requestText){
-  const base = buildVisualConceptPrompt();
-  const req = requestText.toLowerCase();
-  if(req.includes('warm') || req.includes('따뜻')) return base.replace('golden-hour lighting', 'warm golden-hour lighting with soft amber tones');
-  if(req.includes('dark') || req.includes('moody') || req.includes('어둡') || req.includes('무드')) return base.replace('bright, aspirational', 'moody, cinematic');
-  if(req.includes('minimal') || req.includes('심플') || req.includes('깔끔')) return base + ' Keep the composition minimal and uncluttered.';
-  return base + ` Adjust the concept to reflect: ${requestText}.`;
-}
-function reviseVisualConcept(requestText){
-  const log = document.getElementById('chatLog');
-  const loadingEl = document.createElement('div');
-  loadingEl.className = 'msg ai loading';
-  loadingEl.innerHTML = `<span class="tag">AI</span>Reworking the visual concept<span class="dots"><span>.</span><span>.</span><span>.</span></span>`;
-  log.appendChild(loadingEl);
-  log.scrollTop = log.scrollHeight;
-  setTimeout(() => {
-    const prompt = buildRevisedVisualConcept(requestText);
-    loadingEl.remove();
-    const wrap = document.createElement('div');
-    wrap.innerHTML = renderVisualProposalMessage(prompt, 'Here\'s a new direction based on your note. Should I apply this?').trim();
-    log.appendChild(wrap.firstElementChild);
-    log.scrollTop = log.scrollHeight;
-  }, 1100);
-}
-
-// Mirrors the video flow's stage-progress CTA row appended inline in chat messages.
-function appendChatCta(text, buttonsHtml){
-  const log = document.getElementById('chatLog');
-  log.innerHTML += `<div class="msg ai"><span class="tag">AI</span>${text}<div class="chat-cta-row">${buttonsHtml}</div></div>`;
-  log.scrollTop = log.scrollHeight;
-}
-
-function toggleCopyField(i){
-  copyFields[i].on = !copyFields[i].on;
-  renderCopyFields();
-  updateVisualConceptPrompt();
-}
-function onCopyFieldInput(i, value){
-  copyFields[i].text = value; // autosave — no explicit save step needed
-  updateDevelopPreview();
-}
-
-// ---- Brand kit (Visual concept > Use brand kit) ----
-// window.__brandMode ('none' | 'set') is set by setBrandMode(), reused from the video/carousel flow's
-// demo role-switch so this screen can preview both brand-setup states.
-let brandKitOn = false;
-function setBrandMode(mode){
-  window.__brandMode = mode;
-  document.querySelectorAll('#roleSwitch .role-btn').forEach(b => b.classList.toggle('on', b.dataset.brand === mode));
-  const brandSwitch = document.getElementById('brandKitSwitch');
-  const summary = document.getElementById('brandKitSummary');
-  const empty = document.getElementById('brandKitEmpty');
-  const chip = document.getElementById('brandSettingChip');
-  if(mode === 'set'){
-    brandSwitch.classList.remove('disabled');
-    brandKitOn = true;
-    brandSwitch.classList.add('on');
-    summary.style.display = 'flex';
-    empty.style.display = 'none';
-    chip.style.display = 'flex';
-  } else {
-    brandSwitch.classList.add('disabled');
-    brandKitOn = false;
-    brandSwitch.classList.remove('on');
-    summary.style.display = 'none';
-    empty.style.display = 'block';
-    chip.style.display = 'none';
-  }
-  updateVisualConceptPrompt();
-}
-function toggleBrandKit(){
-  if(window.__brandMode !== 'set') return; // disabled state — nothing to toggle until brand is set up
-  brandKitOn = !brandKitOn;
-  document.getElementById('brandKitSwitch').classList.toggle('on', brandKitOn);
-  updateVisualConceptPrompt();
-}
-function goToBrandSetup(){
-  alert('This would open Brand Setup — outside this prototype\'s scope.');
-}
-
-// ---- Easy / Expert mode ----
-let draftMode = 'overlay'; // 'overlay' (editable text layer) | 'baked' (rendered into the image pixels)
-function setDraftMode(mode){
-  draftMode = mode;
-  document.querySelectorAll('#textPlacementToggle .seg-chip').forEach(c => c.classList.toggle('active', c.dataset.mode === mode));
-  document.getElementById('bakedInWarning').classList.toggle('show', mode === 'baked');
-  updateVisualConceptPrompt();
-}
-
-// ---- Visual concept prompt template ----
-// Auto-drafted prompt always includes negative-space placement and graphic-element direction
-// (not just a plain subject description), per the "avoid monotonous prompts" guide.
-let userEditedPrompt = false;
-let visualConceptDrafted = false; // becomes true once the AI's chat-drafted concept has been applied
-let visualConceptDraftStarted = false; // guards against re-triggering the auto-chained draft on later copy edits
-function onVisualConceptEdited(){ userEditedPrompt = true; }
-function buildVisualConceptPrompt(){
-  const activeLabels = copyFields.filter(f => f.on).map(f => f.key === 'cta' ? 'call-to-action button' : f.label.toLowerCase());
-  const base = 'A bright, aspirational photo of a diverse group of international students on a UK university campus, golden-hour lighting, candid and optimistic mood.';
-  const spaceLine = activeLabels.length
-    ? ` Leave generous negative space in the lower third of the frame for ${activeLabels.join(', ')} text overlay.`
-    : '';
-  const graphicLine = brandKitOn
-    ? ' Include abstract geometric shapes in the brand\'s primary teal (#2B6A6C), a subtle pattern overlay, and layered graphic elements for visual depth.'
-    : ' Include abstract geometric shapes, a subtle pattern overlay, and layered graphic elements for visual depth.';
-  const bakedLine = (draftMode === 'baked' && activeLabels.length)
-    ? ` Render this text directly into the image: ${copyFields.filter(f=>f.on).map(f=>f.text).join(' / ')}.`
-    : '';
-  return (base + spaceLine + graphicLine + bakedLine).trim();
-}
-function updateVisualConceptPrompt(){
-  if(userEditedPrompt || !visualConceptDrafted) return; // don't clobber a manual edit, and don't fill it in before the chat has drafted it
-  document.getElementById('visualConceptText').value = buildVisualConceptPrompt();
-  updateDevelopPreview();
-}
-
-// ---- Chat ----
-function addChatMsg(role, html){
-  const log = document.getElementById('chatLog');
-  const wrap = document.createElement('div');
-  wrap.className = 'msg ' + role;
-  wrap.innerHTML = html;
-  log.appendChild(wrap);
-  log.scrollTop = log.scrollHeight;
-}
-function quickAction(action){
-  if(action === 'rework'){
-    addChatMsg('user', 'Rework');
-    addChatMsg('ai', '<span class="tag">AI</span>Sure — tell me what to change (e.g. "make the headline shorter" or "try a warmer tone"), or adjust the fields directly on the right.');
-  }
-}
-function sendChatMessage(){
-  const input = document.getElementById('chatInput');
-  const text = input.value.trim();
-  if(!text) return;
-  addChatMsg('user', text);
-  input.value = '';
-
-  const versionsTab = document.getElementById('tabVersions');
-  if(versionsTab && versionsTab.classList.contains('locked')){
-    // Copy is filled in first — while that's still the active topic, chat requests revise it directly.
-    // Once the visual concept has been drafted, chat requests redraft that instead (propose -> apply).
-    if(visualConceptDraftStarted) reviseVisualConcept(text);
-    else reviseCopy(text);
-  } else {
-    setTimeout(() => addChatMsg('ai', '<span class="tag">AI</span>Got it — this is a prototype, so I won\'t actually rewrite the draft, but in the real flow this is where that request would land.'), 500);
-  }
-}
-
-// ---- Draft <-> Versions sub-stage tabs ----
-function showSub(name){
-  const tabs = {draft:'tabDraft', versions:'tabVersions'};
-  const subs = {draft:'subDraft', versions:'subVersions'};
-  const tabEl = document.getElementById(tabs[name]);
-  if(tabEl.classList.contains('locked')) return;
-  Object.values(tabs).forEach(id => document.getElementById(id).classList.remove('active'));
-  tabEl.classList.add('active');
-  Object.values(subs).forEach(id => document.getElementById(id).style.display = 'none');
-  document.getElementById(subs[name]).style.display = 'flex';
-  document.getElementById('draftActionBar').style.display = name === 'draft' ? 'flex' : 'none';
-}
-
-// ---- Confirm & generate N versions (parallel, individually regenerable) ----
-let versionState = [];
-function confirmAndGenerate(){
-  const n = window.__versionCount || 2;
-  document.getElementById('tabVersions').classList.remove('locked');
-  showSub('versions');
-  versionState = Array.from({length: n}, (_, i) => ({id: i + 1, ready: false}));
-  renderVersionGrid();
-  const label = `${n} version${n > 1 ? 's' : ''}`;
-  document.getElementById('versionsStageSub').textContent = `All ${n} ${n > 1 ? 'are' : 'is'} generating in parallel — pick one to continue, or regenerate any that miss the mark.`;
-  document.getElementById('versionsStatus').textContent = `Generating ${label}…`;
-  addChatMsg('ai', `<span class="tag">AI</span>Drafting ${label} now — I'll let you know the moment ${n > 1 ? "they're" : "it's"} all ready.<span class="note">Nothing advances automatically — pick one whenever you're ready.</span>`);
-  versionState.forEach((v, i) => {
-    setTimeout(() => {
-      v.ready = true;
-      renderVersionGrid();
-      checkAllVersionsReady();
-    }, 1400 + i * 900);
-  });
-}
-function checkAllVersionsReady(){
-  if(versionState.every(v => v.ready)){
-    const n = versionState.length;
-    const label = `${n} version${n > 1 ? 's' : ''}`;
-    document.getElementById('versionsStatus').textContent = `All ${label} ready — pick one to continue.`;
-    addChatMsg('ai', `<span class="tag">AI</span>All ${label} are ready. Pick your favorite to move into Develop, or regenerate any one individually.`);
-  }
-}
-function renderVersionGrid(){
-  const grid = document.getElementById('versionGrid');
-  grid.innerHTML = versionState.map(v => `
-    <div class="version-tile ${v.ready ? 'ready' : 'generating'}" onclick="${v.ready ? `selectVersion(${v.id})` : ''}">
-      <div class="version-tile-preview">
-        <div class="version-tile-overlay-top">
-          <span class="version-tile-badge">V${v.id}</span>
-          <span class="version-tile-ready-badge">✓ Ready</span>
-          <button type="button" class="version-tile-regen-btn" onclick="event.stopPropagation(); regenerateVersion(${v.id})" title="Regenerate this version only">↻</button>
-        </div>
-        <div class="version-tile-spinner"></div>
-      </div>
-      <div class="version-tile-footer">
-        <span class="version-tile-label">Version ${v.id}</span>
-        <button type="button" class="version-tile-use-btn" onclick="event.stopPropagation(); selectVersion(${v.id})">Use this →</button>
-      </div>
-    </div>`).join('');
-}
-function regenerateVersion(id){
-  const v = versionState.find(x => x.id === id);
-  v.ready = false;
-  renderVersionGrid();
-  document.getElementById('versionsStatus').textContent = `Regenerating version ${id}…`;
-  setTimeout(() => {
-    v.ready = true;
-    renderVersionGrid();
-    checkAllVersionsReady();
-  }, 1400);
-}
-function selectVersion(id){
-  addChatMsg('user', `Use version ${id}`);
-  window.__selectedVersionId = id;
-  document.getElementById('tabVersions').innerHTML = '<span class="check">✓</span> Versions';
-  window.__editHistory = [{ label: 'V' + id, ready: true }];
-  window.__activeEditIndex = 0;
-  window.__sizeVariants = {};
-  showVersionResult(id);
-}
-
-function showVersionResult(id){
-  document.getElementById('versionsChooser').style.display = 'none';
-  document.getElementById('versionResultView').style.display = 'flex';
-  document.getElementById('draftActionBar').style.display = 'none';
-  applyPreviewAspect(window.__imageRatio);
-  renderRefineHistory();
-  renderSizeVariants();
-}
-
-function backToVersions(){
-  document.getElementById('versionResultView').style.display = 'none';
-  document.getElementById('versionsChooser').style.display = '';
-}
-
-// ---- Refine the picked version: prompt-edit history + size variations ----
-const REGEN_EDIT_CREDIT = 8;
-const SIZE_VARIANT_CREDIT = 4;
-const ALL_IMAGE_RATIOS = ['9:16', '1:1', '4:5'];
-
-window.__editHistory = [];
-window.__activeEditIndex = 0;
-window.__sizeVariants = {};
-
-function currentEditEntry(){
-  return window.__editHistory[window.__activeEditIndex];
-}
-
-function applyPreviewAspect(ratio){
-  const [w, h] = ratio.split(':').map(Number);
-  document.getElementById('versionResultPreview').style.aspectRatio = `${w} / ${h}`;
-}
-
-function renderRefineHistory(){
-  const entry = currentEditEntry();
-  const previewEl = document.getElementById('versionResultPreview');
-  document.getElementById('versionResultBadge').textContent = entry.label;
-  previewEl.classList.toggle('generating', !entry.ready);
-  document.getElementById('refineHistoryRow').innerHTML = window.__editHistory.map((h, i) => `
-    <div class="refine-history-pill${i === window.__activeEditIndex ? ' active' : ''}" onclick="selectHistoryEntry(${i})">
-      ${h.ready ? '' : '<span class="mini-spinner"></span>'}${h.label}
-    </div>
-  `).join('');
-  const regenBtn = document.getElementById('refineRegenBtn');
-  const input = document.getElementById('refineEditInput');
-  regenBtn.disabled = !entry.ready;
-  input.disabled = !entry.ready;
-}
-
-function selectHistoryEntry(i){
-  if(!window.__editHistory[i].ready) return;
-  window.__activeEditIndex = i;
-  window.__sizeVariants = {};
-  renderRefineHistory();
-  applyPreviewAspect(window.__imageRatio);
-  renderSizeVariants();
-}
-
-function regenerateWithPrompt(){
-  const input = document.getElementById('refineEditInput');
-  const promptText = input.value.trim();
-  if(!promptText) return;
-  const rootLabel = window.__editHistory[0].label;
-  const newLabel = `${rootLabel}.${window.__editHistory.length}`;
-  window.__editHistory.push({ label: newLabel, ready: false, promptEdit: promptText });
-  window.__activeEditIndex = window.__editHistory.length - 1;
-  window.__sizeVariants = {};
-  input.value = '';
-  renderRefineHistory();
-  renderSizeVariants();
-  setTimeout(() => {
-    currentEditEntry().ready = true;
-    renderRefineHistory();
-  }, 1400);
-}
-
-function updateResultSub(){
-  document.getElementById('versionResultSub').textContent = `Image post · ${window.__imageRatio} · English`;
-}
-
-// Size variations are additive: the original image stays put in the main preview,
-// and each generated variation shows up as its own thumbnail alongside it — nothing gets replaced.
-function renderSizeVariants(){
-  const originalRatio = window.__imageRatio;
-  updateResultSub();
-  document.getElementById('refineSizeRow').innerHTML = ALL_IMAGE_RATIOS.map(r => {
-    if(r === originalRatio){
-      return `
-        <div class="size-variant-card">
-          <div class="size-variant-thumb" style="aspect-ratio:${r.replace(':', '/')};"></div>
-          <span class="size-variant-label original">${r} · original</span>
-        </div>`;
-    }
-    const v = window.__sizeVariants[r];
-    if(v && v.ready){
-      return `
-        <div class="size-variant-card">
-          <div class="size-variant-thumb" style="aspect-ratio:${r.replace(':', '/')};">
-            <button type="button" class="image-download-btn" onclick="event.stopPropagation(); downloadImage('${r}')" title="Download image">⬇</button>
-          </div>
-          <span class="size-variant-label">${r}</span>
-        </div>`;
-    }
-    if(v && v.generating){
-      return `
-        <div class="size-variant-card">
-          <div class="size-variant-thumb generating" style="aspect-ratio:${r.replace(':', '/')}; display:flex; align-items:center; justify-content:center;"><span class="mini-spinner"></span></div>
-          <span class="size-variant-label">${r}</span>
-        </div>`;
-    }
-    return `
-      <button type="button" class="size-variant-placeholder" style="aspect-ratio:${r.replace(':', '/')};" onclick="generateSizeVariant('${r}')">
-        <span>+ ${r}</span><span class="cost">⚡${SIZE_VARIANT_CREDIT}</span>
-      </button>`;
-  }).join('');
-}
-
-function generateSizeVariant(ratio){
-  window.__sizeVariants[ratio] = { generating: true };
-  renderSizeVariants();
-  setTimeout(() => {
-    window.__sizeVariants[ratio] = { ready: true };
-    renderSizeVariants();
-  }, 1300);
-}
-
-function downloadImage(which){
-  alert(which === 'main' ? 'Download image — TBD' : `Download ${which} image — TBD`);
-}
-
-// ---- Develop preview (reflects the current Copy fields) ----
-function updateDevelopPreview(){
-  const get = key => copyFields.find(f => f.key === key);
-  const h = get('headline'), s = get('subhead'), c = get('cta');
-  document.getElementById('developHeadline').textContent = h.on ? h.text : '';
-  document.getElementById('developHeadline').style.display = h.on ? 'block' : 'none';
-  document.getElementById('developSubhead').textContent = s.on ? s.text : '';
-  document.getElementById('developSubhead').style.display = s.on ? 'block' : 'none';
-  document.getElementById('developCta').textContent = c.on ? c.text : '';
-  document.getElementById('developCta').style.display = c.on ? 'inline-block' : 'none';
-}
-
-// ---- Top-level stepper navigation ----
+// ---- Top-level stepper / view navigation ----
 function showView(name){
   ['briefView','generateView','developView'].forEach(id => document.getElementById(id).classList.add('hidden'));
   document.getElementById(name).classList.remove('hidden');
@@ -1222,11 +649,12 @@ function setStep(active){
 function selectContentType(el){
   document.querySelectorAll('#contentTypeToggle .seg-chip').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
-  // Reel/Short and Story image live in the video flow file; Carousel has its own file too —
-  // Image post is the only type with its own Brief/Draft/Versions flow here, so switching away leaves this file entirely.
-  if(el.dataset.type === 'carousel'){
-    window.location.href = 'new-carousel-to-generate.html';
-  } else if(el.dataset.type !== 'image'){
+  // Reel/Short and Story image live in the video flow file; Image post has its own file.
+  // Carousel is this file, so switching to anything else navigates away.
+  const type = el.dataset.type;
+  if(type === 'image'){
+    window.location.href = 'new-image-to-generate.html';
+  } else if(type !== 'carousel'){
     window.location.href = 'new-content-brief-to-generate.html';
   }
 }
@@ -1258,51 +686,46 @@ function renderReferenceImages(){
 }
 renderReferenceImages();
 
-// ---- Aspect ratio + versions popovers (Brief prompt box) ----
-window.__imageRatio = '4:5';
-window.__versionCount = 2;
-const CREDIT_PER_VERSION = 3;
+// ---- Aspect ratio + number-of-cards popovers (Brief prompt box) ----
+window.__carouselRatio = '4:5';
+window.__cardCount = 5;
 
 function toggleRatioPopover(e){
   e.stopPropagation();
-  document.getElementById('versionsPopover').style.display = 'none';
+  document.getElementById('cardsPopover').style.display = 'none';
   const pop = document.getElementById('ratioPopover');
   pop.style.display = pop.style.display === 'block' ? 'none' : 'block';
 }
-function toggleVersionsPopover(e){
+function toggleCardsPopover(e){
   e.stopPropagation();
   document.getElementById('ratioPopover').style.display = 'none';
-  const pop = document.getElementById('versionsPopover');
+  const pop = document.getElementById('cardsPopover');
   pop.style.display = pop.style.display === 'block' ? 'none' : 'block';
 }
 document.addEventListener('click', (e) => {
   if(!e.target.closest('#ratioChipWrap')) document.getElementById('ratioPopover').style.display = 'none';
-  if(!e.target.closest('#versionsChipWrap')) document.getElementById('versionsPopover').style.display = 'none';
+  if(!e.target.closest('#cardsChipWrap')) document.getElementById('cardsPopover').style.display = 'none';
 });
 function selectRatio(value){
-  window.__imageRatio = value;
+  window.__carouselRatio = value;
   document.getElementById('ratioChipText').textContent = value;
   document.querySelectorAll('#ratioPopover .chip-option').forEach(o => o.classList.toggle('selected', o.dataset.ratio === value));
   document.getElementById('ratioPopover').style.display = 'none';
   updateBriefMeta();
 }
-function selectVersions(n){
-  window.__versionCount = n;
-  document.getElementById('versionsChipText').textContent = `${n} Version${n > 1 ? 's' : ''}`;
-  document.querySelectorAll('#versionsPopover .chip-option').forEach(o => o.classList.toggle('selected', Number(o.dataset.versions) === n));
-  document.getElementById('versionsPopover').style.display = 'none';
+function selectCardCount(n){
+  window.__cardCount = n;
+  document.getElementById('cardsChipText').textContent = `${n} Cards`;
+  document.querySelectorAll('#cardsPopover .chip-option').forEach(o => o.classList.toggle('selected', Number(o.dataset.cards) === n));
+  document.getElementById('cardsPopover').style.display = 'none';
   updateBriefMeta();
 }
 function updateBriefMeta(){
-  const ratio = window.__imageRatio;
-  const n = window.__versionCount;
-  const credits = n * CREDIT_PER_VERSION;
-  document.getElementById('briefMetaText').textContent = `Image post · ${ratio} · ${n} version${n > 1 ? 's' : ''}`;
+  const ratio = window.__carouselRatio;
+  const n = window.__cardCount;
+  document.getElementById('briefMetaText').textContent = `Carousel · ${ratio} · ${n} cards`;
   document.getElementById('genSettingRatio').textContent = ratio;
-  document.getElementById('draftMetaText').textContent = `Image post · ${ratio} · English`;
-  document.getElementById('versionResultSub').textContent = `Image post · ${ratio} · English`;
-  document.getElementById('creditEstValue').innerHTML = `~${credits} credits <span class="credit-sub">(${n} version${n > 1 ? 's' : ''})</span>`;
-  document.getElementById('confirmGenerateBtn').textContent = `Confirm & generate ${n} version${n > 1 ? 's' : ''} →`;
+  document.getElementById('genSettingCards').textContent = `${n} cards`;
 }
 
 // ---- Character section (Brief & Style) ----
@@ -1319,35 +742,432 @@ function selectChar(el){
 function toggleAdvancedSettings(){
   document.getElementById('advancedSection').classList.toggle('open');
 }
-updateBriefMeta();
-let copyDraftStarted = false;
+
+// ---- Brand mode (demo role-switch, bottom-right) ----
+function setBrandMode(mode){
+  window.__brandMode = mode;
+  document.querySelectorAll('#roleSwitch .role-btn').forEach(b => b.classList.toggle('on', b.dataset.brand === mode));
+  document.getElementById('brandSettingChip').style.display = mode === 'set' ? 'flex' : 'none';
+  updateGlobalBrandKitUI();
+}
+function goToBrandSetup(){
+  alert('This would open Brand Setup — outside this prototype\'s scope.');
+}
+
+// ---- Chat ----
+function addChatMsg(role, html){
+  const log = document.getElementById('chatLog');
+  const wrap = document.createElement('div');
+  wrap.className = 'msg ' + role;
+  wrap.innerHTML = html;
+  log.appendChild(wrap);
+  log.scrollTop = log.scrollHeight;
+}
+function sendChatMessage(){
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if(!text) return;
+  addChatMsg('user', text);
+  input.value = '';
+  setTimeout(() => addChatMsg('ai', '<span class="tag">AI</span>Got it — this is a prototype, so I won\'t actually rewrite anything, but in the real flow this request would land on whichever card or stage you\'re currently working on.'), 500);
+}
+
+// ---- Script / Storyboard / Generate tab switching ----
+function showSub(name){
+  const tabs = {script:'tabScript', storyboard:'tabStoryboard', generate:'tabGenerate'};
+  const subs = {script:'subScript', storyboard:'subStoryboard', generate:'subGenerate'};
+  const tabEl = document.getElementById(tabs[name]);
+  if(tabEl.classList.contains('locked')) return;
+  Object.values(tabs).forEach(id => document.getElementById(id).classList.remove('active'));
+  tabEl.classList.add('active');
+  Object.values(subs).forEach(id => document.getElementById(id).style.display = 'none');
+  document.getElementById(subs[name]).style.display = name === 'storyboard' ? 'flex' : 'block';
+}
+
+let scriptDraftStarted = false;
 function goToGenerate(){
-  showView('generateView'); setStep('stepGenerate'); showSub('draft');
+  showView('generateView'); setStep('stepGenerate'); showSub('script');
   document.getElementById('briefActionBar').style.display = 'none';
-  if(!copyDraftStarted){
-    copyDraftStarted = true;
-    draftCopy();
+  if(!scriptDraftStarted){
+    scriptDraftStarted = true;
+    draftScript();
   }
 }
 function goToDevelop(){
-  if(!versionState.some(v => v.ready)) return; // nothing to develop yet
-  updateDevelopPreview();
   showView('developView');
   setStep('stepEdit');
-  document.getElementById('briefActionBar').style.display = 'none';
 }
 
-// Publish is shared with the video/carousel flow — hand off to that file's Publish screen directly.
-function skipToPublish(){
-  if(!versionState.some(v => v.ready)) return; // nothing to publish yet
-  window.location.href = 'new-content-brief-to-generate.html?goto=publish';
+// =====================================================================
+// SCRIPT STAGE — AI drafts one text block per card, inline-editable
+// =====================================================================
+window.__cardScripts = {};
+const SCRIPT_TEMPLATES = [
+  'Ever wondered what it\'s really like to study abroad?',
+  'Meet students who took the leap — and never looked back.',
+  'From lecture halls to landmarks, your classroom is the world.',
+  'Scholarships, visas, housing — we walk you through every step.',
+  'Your journey starts with one application.',
+  'Ready to see the world while you learn?'
+];
+
+function draftScript(){
+  const n = window.__cardCount;
+  const log = document.getElementById('chatLog');
+  log.innerHTML = `<div class="msg ai loading" id="scriptLoadingMsg"><span class="tag">AI</span>Writing text for ${n} cards based on your brief<span class="dots"><span>.</span><span>.</span><span>.</span></span></div>`;
+  document.getElementById('confirmScriptBtn').disabled = true;
+
+  setTimeout(() => {
+    for(let i = 1; i <= n; i++) window.__cardScripts[i] = SCRIPT_TEMPLATES[i - 1] || `Card ${i} — key message goes here.`;
+    log.innerHTML = `<div class="msg ai"><span class="tag">AI</span>Here's a first draft for all ${n} cards — edit any of them directly, or tell me what to change.</div>`;
+    renderScriptCards();
+    document.getElementById('confirmScriptBtn').disabled = false;
+  }, 1500);
+}
+
+function renderScriptCards(){
+  const n = window.__cardCount;
+  document.getElementById('scriptCardRow').innerHTML = Array.from({length: n}, (_, i) => {
+    const num = i + 1;
+    return `
+      <div class="script-card">
+        <span class="script-card-num">Card ${num}</span>
+        <textarea class="script-card-text" data-card="${num}" oninput="updateCardScript(${num}, this.value)">${escapeHtml(window.__cardScripts[num] || '')}</textarea>
+      </div>`;
+  }).join('');
+}
+function updateCardScript(n, value){
+  window.__cardScripts[n] = value;
+}
+function confirmScript(){
+  document.getElementById('tabScript').innerHTML = '<span class="check">✓</span> Script';
+  document.getElementById('tabStoryboard').classList.remove('locked');
+  showSub('storyboard');
+  addChatMsg('ai', '<span class="tag">AI</span>Script confirmed. Now let\'s set the background and action for each card.');
+  renderStoryboard();
+}
+
+// =====================================================================
+// STORYBOARD STAGE — left: per-card image grid; right: card selector +
+// headline/subhead/CTA copy fields + scene description. Brand kit is a
+// single toggle applied to every card, not a per-card setting.
+// =====================================================================
+window.__cardDescriptions = {};
+window.__cardCopyFields = {};
+window.__globalBrandKitOn = undefined; // unset until first computed from __brandMode
+window.__storyboardSelectedCard = 1;
+const STORYBOARD_TEMPLATES = [
+  'Close-up of a student looking out of an airplane window, golden-hour light, hopeful expression.',
+  'Candid shot of friends laughing together on a university campus lawn.',
+  'Wide shot of a historic lecture hall filled with international students.',
+  'Flat-lay of a passport, acceptance letter, and packed suitcase on a desk.',
+  'Student smiling directly at camera, campus landmark softly blurred behind them.',
+  'Close-up of hands submitting an application on a laptop, warm desk lighting.'
+];
+const CTA_DEFAULT_TEXT = 'Learn more';
+
+function ensureCardCopyFields(n){
+  if(!window.__cardCopyFields[n]){
+    const isLast = n === window.__cardCount;
+    window.__cardCopyFields[n] = [
+      { key:'headline', label:'Headline', text: window.__cardScripts[n] || '', on:true },
+      { key:'subhead', label:'Subhead', text:'', on:false },
+      { key:'cta', label:'Call to action', text: isLast ? CTA_DEFAULT_TEXT : '', on:isLast }
+    ];
+  }
+  return window.__cardCopyFields[n];
+}
+
+function renderStoryboard(){
+  const n = window.__cardCount;
+  if(window.__globalBrandKitOn === undefined) window.__globalBrandKitOn = window.__brandMode === 'set';
+  for(let i = 1; i <= n; i++){
+    if(window.__cardDescriptions[i] === undefined) window.__cardDescriptions[i] = STORYBOARD_TEMPLATES[i - 1] || `Card ${i} — describe the scene and action.`;
+    ensureCardCopyFields(i);
+  }
+  window.__storyboardSelectedCard = 1;
+  renderStoryboardGrid();
+  buildStoryboardCardNav();
+  renderStoryboardEditorPanels();
+  selectStoryboardCard(1);
+  updateGlobalBrandKitUI();
+}
+function renderStoryboardGrid(){
+  const n = window.__cardCount;
+  document.getElementById('storyboardGrid').innerHTML = Array.from({length: n}, (_, i) => {
+    const num = i + 1;
+    return `
+      <div class="storyboard-tile${num === window.__storyboardSelectedCard ? ' active' : ''}" data-card="${num}" id="storyboardTile${num}" onclick="selectStoryboardCard(${num})">
+        <div class="storyboard-tile-preview">
+          <span class="storyboard-tile-badge">Card ${num}</span>
+        </div>
+        <div class="storyboard-tile-line" id="storyboardTileLine${num}">${escapeHtml(storyboardTileText(num))}</div>
+      </div>`;
+  }).join('');
+}
+function storyboardTileText(n){
+  const headline = ensureCardCopyFields(n).find(f => f.key === 'headline');
+  return (headline && headline.text) ? headline.text : 'No headline yet';
+}
+function buildStoryboardCardNav(){
+  const n = window.__cardCount;
+  const buttons = Array.from({length: n}, (_, i) => {
+    const num = i + 1;
+    return `<div class="card-nav-btn${num === window.__storyboardSelectedCard ? ' active' : ''}" data-target="${num}" onclick="selectStoryboardCard(${num})">${num}</div>`;
+  }).join('');
+  document.getElementById('storyboardCardNav').innerHTML = `<span class="storyboard-nav-label">Card</span>${buttons}`;
+}
+function renderStoryboardEditorPanels(){
+  const n = window.__cardCount;
+  document.getElementById('storyboardEditorPanel').innerHTML = Array.from({length: n}, (_, i) => {
+    const num = i + 1;
+    return `
+      <div class="storyboard-card-editor" id="storyboardCardEditor${num}" style="${num === 1 ? '' : 'display:none;'}">
+        <div class="copy-field-list" id="copyFieldList${num}"></div>
+        <label class="scene-desc-label">Scene &amp; background description</label>
+        <textarea class="story-desc-input" data-card="${num}" oninput="updateCardDescription(${num}, this.value)">${escapeHtml(window.__cardDescriptions[num] || '')}</textarea>
+      </div>`;
+  }).join('');
+  for(let i = 1; i <= n; i++) renderCardCopyFields(i);
+}
+function renderCardCopyFields(n){
+  const list = document.getElementById('copyFieldList' + n);
+  if(!list) return;
+  const fields = ensureCardCopyFields(n);
+  list.innerHTML = fields.map((f, i) => `
+    <div class="copy-field ${f.on ? '' : 'off'}" data-key="${f.key}">
+      <div class="copy-field-body">
+        <span class="copy-field-label">${f.label}</span>
+        <input class="copy-field-input" value="${f.text.replace(/"/g,'&quot;')}" placeholder="Not set" oninput="onCardCopyFieldInput(${n}, ${i}, this.value)">
+      </div>
+      <button type="button" class="field-switch ${f.on ? 'on' : ''}" onclick="toggleCardCopyField(${n}, ${i})"><span class="knob"></span></button>
+    </div>`).join('');
+}
+function toggleCardCopyField(n, i){
+  const fields = ensureCardCopyFields(n);
+  fields[i].on = !fields[i].on;
+  renderCardCopyFields(n);
+  if(fields[i].key === 'headline') updateStoryboardTileLine(n);
+}
+function onCardCopyFieldInput(n, i, value){
+  const fields = ensureCardCopyFields(n);
+  fields[i].text = value;
+  if(fields[i].key === 'headline') updateStoryboardTileLine(n);
+}
+function updateStoryboardTileLine(n){
+  const line = document.getElementById('storyboardTileLine' + n);
+  if(line) line.textContent = storyboardTileText(n);
+}
+function selectStoryboardCard(n){
+  n = Number(n);
+  window.__storyboardSelectedCard = n;
+  document.querySelectorAll('#storyboardGrid .storyboard-tile').forEach(t => t.classList.toggle('active', Number(t.dataset.card) === n));
+  document.querySelectorAll('.card-nav-btn').forEach(b => b.classList.toggle('active', Number(b.dataset.target) === n));
+  document.querySelectorAll('.storyboard-card-editor').forEach(e => e.style.display = 'none');
+  const editor = document.getElementById('storyboardCardEditor' + n);
+  if(editor) editor.style.display = 'block';
+  const tile = document.getElementById('storyboardTile' + n);
+  if(tile) tile.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+}
+function updateCardDescription(n, value){
+  window.__cardDescriptions[n] = value;
+}
+function toggleGlobalBrandKit(){
+  if(window.__brandMode !== 'set') return; // disabled until brand is set up
+  window.__globalBrandKitOn = !window.__globalBrandKitOn;
+  updateGlobalBrandKitUI();
+}
+function updateGlobalBrandKitUI(){
+  const sw = document.getElementById('globalBrandKitSwitch');
+  const summary = document.getElementById('globalBrandKitSummary');
+  const empty = document.getElementById('globalBrandKitEmpty');
+  if(!sw) return;
+  if(window.__brandMode === 'set'){
+    sw.classList.remove('disabled');
+    sw.classList.toggle('on', !!window.__globalBrandKitOn);
+    summary.style.display = window.__globalBrandKitOn ? 'flex' : 'none';
+    empty.style.display = 'none';
+  } else {
+    sw.classList.add('disabled');
+    sw.classList.remove('on');
+    summary.style.display = 'none';
+    empty.style.display = 'block';
+  }
+}
+function confirmStoryboard(){
+  document.getElementById('tabStoryboard').innerHTML = '<span class="check">✓</span> Storyboard';
+  document.getElementById('tabGenerate').classList.remove('locked');
+  showSub('generate');
+  addChatMsg('ai', '<span class="tag">AI</span>Storyboard confirmed. Generating an image for each card now.');
+  startCardGeneration();
+}
+
+// =====================================================================
+// GENERATE STAGE — per-card image tiles, individually regenerable,
+// each with its own local version history (never a whole-set version pick)
+// =====================================================================
+const CARD_REGEN_CREDIT = 5;
+window.__cardImageHistory = {}; // n -> [{ready:bool}, ...]
+window.__cardImageActiveIndex = {}; // n -> index into history currently shown
+
+function startCardGeneration(){
+  const n = window.__cardCount;
+  window.__cardImageHistory = {};
+  window.__cardImageActiveIndex = {};
+  for(let i = 1; i <= n; i++){
+    window.__cardImageHistory[i] = [{ ready: false }];
+    window.__cardImageActiveIndex[i] = 0;
+  }
+  renderCarouselGrid();
+  document.getElementById('sizeVariationPanel').style.display = 'none';
+  document.getElementById('generateCtaBtn').disabled = true;
+  document.getElementById('generateCtaMeta').style.display = '';
+  document.getElementById('generateCtaMeta').textContent = 'Waiting for all cards to finish generating';
+
+  for(let i = 1; i <= n; i++){
+    setTimeout(() => {
+      window.__cardImageHistory[i][0].ready = true;
+      renderCarouselGrid();
+      checkAllCardsReady();
+    }, 1200 + i * 700);
+  }
+}
+function renderCarouselGrid(){
+  const n = window.__cardCount;
+  document.getElementById('carouselGrid').innerHTML = Array.from({length: n}, (_, i) => {
+    const num = i + 1;
+    return renderCarouselTile(num);
+  }).join('');
+}
+function renderCarouselTile(n){
+  const hist = window.__cardImageHistory[n];
+  const idx = window.__cardImageActiveIndex[n];
+  const entry = hist[idx];
+  const ready = entry.ready;
+  const hasHistory = hist.length > 1;
+  return `
+    <div class="carousel-tile ${ready ? 'ready' : 'generating'}${hasHistory ? ' has-history' : ''}" id="carouselTile${n}">
+      <div class="carousel-tile-preview">
+        <div class="carousel-tile-overlay-top">
+          <span class="carousel-tile-ready-badge">✓ Ready</span>
+          <button type="button" class="carousel-tile-regen-btn" onclick="regenerateCard(${n})" title="Regenerate this card only · ⚡${CARD_REGEN_CREDIT}">↻</button>
+        </div>
+        <div class="spinner-mini"></div>
+        <span class="carousel-tile-badge">Card ${n}</span>
+      </div>
+      <div class="carousel-tile-pager">
+        <button onclick="cardHistoryPrev(${n})" ${idx === 0 ? 'disabled' : ''}>‹</button>
+        <span>${idx + 1}/${hist.length}</span>
+        <button onclick="cardHistoryNext(${n})" ${idx === hist.length - 1 ? 'disabled' : ''}>›</button>
+      </div>
+    </div>`;
+}
+function regenerateCard(n){
+  const hist = window.__cardImageHistory[n];
+  hist.push({ ready: false });
+  window.__cardImageActiveIndex[n] = hist.length - 1;
+  renderCarouselGrid();
+  document.getElementById('generateCtaBtn').disabled = true;
+  setTimeout(() => {
+    hist[hist.length - 1].ready = true;
+    renderCarouselGrid();
+    checkAllCardsReady();
+  }, 1300);
+}
+function cardHistoryPrev(n){
+  if(window.__cardImageActiveIndex[n] > 0) window.__cardImageActiveIndex[n]--;
+  renderCarouselGrid();
+}
+function cardHistoryNext(n){
+  const hist = window.__cardImageHistory[n];
+  if(window.__cardImageActiveIndex[n] < hist.length - 1) window.__cardImageActiveIndex[n]++;
+  renderCarouselGrid();
+}
+function checkAllCardsReady(){
+  const n = window.__cardCount;
+  const allReady = Array.from({length: n}, (_, i) => i + 1).every(num => {
+    const hist = window.__cardImageHistory[num];
+    return hist[window.__cardImageActiveIndex[num]].ready;
+  });
+  const btn = document.getElementById('generateCtaBtn');
+  const meta = document.getElementById('generateCtaMeta');
+  btn.disabled = !allReady;
+  meta.style.display = allReady ? 'none' : '';
+  if(allReady){
+    document.getElementById('sizeVariationPanel').style.display = 'block';
+    renderSizeVarCardPicker();
+    updateSizeVarCost();
+  }
+}
+
+// =====================================================================
+// SIZE VARIATIONS (post-generate) — single selected card, or the whole
+// set at once; results are kept alongside the originals, never overwriting.
+// =====================================================================
+const SIZE_VAR_CREDIT_PER_CARD = 5;
+window.__sizeVarMode = 'single';
+window.__sizeVarSelectedCard = 1;
+window.__sizeVarSets = []; // { ratio, cardCount, label }
+
+function setSizeVarMode(mode){
+  window.__sizeVarMode = mode;
+  document.querySelectorAll('#sizeVarModeToggle .seg-chip').forEach(c => c.classList.toggle('active', c.dataset.mode === mode));
+  document.getElementById('sizeVarSingleControls').style.display = mode === 'single' ? 'block' : 'none';
+  updateSizeVarCost();
+}
+function renderSizeVarCardPicker(){
+  const n = window.__cardCount;
+  document.getElementById('sizeVarCardPicker').innerHTML = Array.from({length: n}, (_, i) => {
+    const num = i + 1;
+    return `<div class="size-var-card-chip${window.__sizeVarSelectedCard === num ? ' selected' : ''}" onclick="selectSizeVarCard(${num})">Card ${num}</div>`;
+  }).join('');
+}
+function selectSizeVarCard(n){
+  window.__sizeVarSelectedCard = n;
+  document.querySelectorAll('.size-var-card-chip').forEach((c, i) => c.classList.toggle('selected', i + 1 === n));
+  updateSizeVarCost();
+}
+function updateSizeVarCost(){
+  const ratio = document.getElementById('sizeVarRatio').value;
+  const n = window.__sizeVarMode === 'batch' ? window.__cardCount : 1;
+  const credits = n * SIZE_VAR_CREDIT_PER_CARD;
+  const label = window.__sizeVarMode === 'batch'
+    ? `Entire set · ${window.__cardCount} cards · ${ratio}`
+    : `Card ${window.__sizeVarSelectedCard} only · ${ratio}`;
+  document.getElementById('sizeVarCost').innerHTML = `${label} · <b>⚡${credits}</b>`;
+}
+function generateSizeVariationSet(){
+  const ratio = document.getElementById('sizeVarRatio').value;
+  const n = window.__sizeVarMode === 'batch' ? window.__cardCount : 1;
+  const btn = document.getElementById('sizeVarGenerateBtn');
+  btn.disabled = true;
+  btn.textContent = 'Generating…';
+  setTimeout(() => {
+    window.__sizeVarSets.push({
+      ratio,
+      cardCount: n,
+      label: window.__sizeVarMode === 'batch' ? `Entire set · ${ratio}` : `Card ${window.__sizeVarSelectedCard} · ${ratio}`
+    });
+    renderSizeVarSets();
+    btn.disabled = false;
+    btn.textContent = 'Generate';
+  }, 1400);
+}
+function renderSizeVarSets(){
+  document.getElementById('sizeVarSets').innerHTML = window.__sizeVarSets.map(s => `
+    <div class="size-var-set">
+      <span class="size-var-set-label">${s.label}</span>
+      <div class="size-var-set-thumbs">
+        ${Array.from({length: s.cardCount}, () => `<div class="size-var-set-thumb" style="aspect-ratio:${s.ratio.replace(':', '/')};"></div>`).join('')}
+      </div>
+    </div>
+  `).join('');
 }
 
 // ---- init ----
-renderCopyFields();
 setBrandMode('none');
-setDraftMode('overlay');
 goToBrief();
 </script>
+
 </body>
 </html>

@@ -126,10 +126,10 @@
   .refine-btn{width:36px; height:36px; border:1px solid var(--neutral-400); border-radius:var(--radius-lg); background:#fff; display:flex; align-items:center; justify-content:center; color:var(--neutral-700); font-size:14px;}
 
   /* ---- Character section (Brief & Style) ---- */
-  .char-section{margin-top:40px;}
+  .char-section{margin-top:24px;}
   .char-section-label{font-size:16px; font-weight:700; color:var(--neutral-900); margin-bottom:2px;}
   .char-section-sub{font-size:13px; color:var(--neutral-500); margin-bottom:16px;}
-  .char-panel{border:1px solid var(--neutral-400); border-radius:12px; padding:24px; background:#fff; display:flex; flex-direction:column; gap:32px;}
+  .char-panel{border:1px solid var(--neutral-400); border-radius:12px; padding:24px; background:#fff; display:flex; flex-direction:column; gap:16px;}
   .char-filter-row{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px;}
   .char-filters{display:flex; gap:12px;}
   .filter-chip{display:flex; align-items:center; gap:4px; height:28px; padding:0 13px; border-radius:999px; background:var(--neutral-150); border:1px solid var(--neutral-500); font-size:12px; font-weight:700; color:var(--neutral-900);}
@@ -145,18 +145,14 @@
   .char-card.new .thumb{display:flex; align-items:center; justify-content:center; font-size:20px; color:var(--neutral-400); background:var(--neutral-75); border:1px solid var(--neutral-300); border-style:solid;}
   .char-card .name{padding:6px 4px 0; font-size:13px; text-align:center; color:var(--neutral-700); font-weight:500;}
   .char-card.selected .name{color:var(--neutral-900);}
-  .char-divider{height:1px; background:var(--neutral-200); width:100%;}
-  .appear-label{font-size:14px; font-weight:600; color:var(--neutral-800); margin:0 0 16px;}
+  .char-divider{height:1px; background:var(--neutral-200); width:100%; margin:32px 0;}
+  .appear-label{font-size:14px; font-weight:600; color:var(--neutral-800); margin:0 0 12px;}
   .appear-label .sub{font-weight:400; color:var(--neutral-500);}
-  #charAppearToggle{margin-bottom:16px;}
+  #charAppearToggle{margin-bottom:12px;}
 
-  /* ---- Voice picker (Character section) — two design directions, switched by demo toggle ---- */
-  .voice-ver-row{display:flex; align-items:center; gap:8px; margin-top:20px; margin-bottom:10px;}
-  .voice-ver-label{font-size:10px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--neutral-400);}
-  .voice-compare{display:inline-flex; gap:1px; background:var(--neutral-100); border-radius:999px; padding:2px; flex-shrink:0;}
-  .voice-compare-btn{font-size:9.5px; font-weight:700; padding:3px 7px; border-radius:999px; color:var(--neutral-500); cursor:pointer; white-space:nowrap;}
-  .voice-compare-btn.active{background:#fff; color:var(--neutral-900); box-shadow:0 1px 2px rgba(15,23,41,.1);}
-  .voice-ver-spacer{flex:1;}
+  /* ---- Voice picker (Character section) — "My voices" card row + Browse ElevenLabs library (inline expand) ---- */
+  .voice-section-label-row{display:flex; align-items:center; justify-content:space-between; margin-top:0; margin-bottom:12px;}
+  .my-voices-label{font-size:13px; font-weight:700; color:var(--neutral-900);}
 
   /* -- shared voice item / row primitives -- */
   .voice-item{display:flex; align-items:center; gap:10px; padding:7px 8px; border-radius:8px; cursor:pointer;}
@@ -169,62 +165,39 @@
   .voice-item-tag{font-size:10.5px; color:var(--neutral-500);}
   .voice-check{color:var(--brand); font-size:13px; font-weight:700; flex-shrink:0; visibility:hidden;}
   .voice-item.selected .voice-check{visibility:visible;}
-  .btn-create-voice{display:inline-flex; align-items:center; gap:4px; border:none; background:var(--neutral-900); color:#fff; font-size:11px; font-weight:600; padding:5px 10px 5px 8px; border-radius:999px; cursor:pointer; font-family:var(--font); flex-shrink:0;}
-  .btn-create-voice:hover{background:#000;}
-  .voice-lib-divider{height:1px; background:var(--neutral-200); margin:2px 0;}
-  .voice-lib-search-row{display:flex; gap:6px;}
   .voice-lib-search{flex:1; min-width:0; border:1px solid var(--neutral-300); border-radius:7px; padding:6px 10px; font-size:12px; font-family:var(--font); outline:none; background:#fff;}
   .voice-lib-search:focus{border-color:var(--brand);}
   .voice-lib-filter-btn{border:1px solid var(--neutral-300); border-radius:7px; padding:6px 9px; font-size:11px; color:var(--neutral-700); background:#fff; cursor:pointer; display:flex; align-items:center; gap:4px; flex-shrink:0; font-family:var(--font);}
-  .voice-lib-list{overflow-y:auto; display:flex; flex-direction:column; gap:1px;}
   .voice-lib-row{display:flex; align-items:center; gap:9px; padding:6px 6px; border-radius:7px;}
   .voice-lib-row:hover{background:var(--neutral-50);}
   .voice-lib-row.hidden{display:none;}
   .voice-lib-add{border:1px solid var(--neutral-300); background:#fff; border-radius:999px; padding:3px 10px; font-size:10.5px; font-weight:600; color:var(--neutral-700); cursor:pointer; flex-shrink:0; font-family:var(--font);}
   .voice-lib-add:hover{border-color:var(--brand); color:var(--brand);}
-  .voice-lib-manage-link{font-size:11px; color:var(--neutral-500); text-align:center; padding-top:6px; cursor:pointer;}
-  .voice-lib-manage-link:hover{color:var(--brand);}
 
-  /* -- selected-voice chip (used in both versions) -- */
-  .voice-chip-row{display:flex; align-items:center; gap:10px;}
-  .voice-chip{flex:1; min-width:0; max-width:340px; display:flex; align-items:center; gap:10px; border:1px solid var(--neutral-400); border-radius:10px; padding:8px 10px; background:#fff;}
-  .voice-chip-info{flex:1; min-width:0; display:flex; flex-direction:column; gap:1px;}
-  .voice-chip-name{font-size:13px; font-weight:600; color:var(--neutral-900); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-  .voice-chip-tag{font-size:11px; color:var(--neutral-500); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  /* -- "My voices" horizontal card row (matches Character card row styling) -- */
+  .voice-card-row{display:flex; gap:10px; overflow-x:auto; padding-bottom:4px;}
+  .voice-item.row-card{flex-shrink:0; min-width:210px; border:1.5px solid var(--neutral-300); border-radius:10px;}
+  .voice-item.row-card:hover{background:#fff; border-color:var(--neutral-450);}
+  .voice-item.row-card.selected{border-color:var(--brand); background:var(--brand-light);}
+  .voice-new-card{flex-shrink:0; display:flex; align-items:center; justify-content:center; gap:6px; min-width:120px; border:1.5px dashed var(--neutral-300); border-radius:10px; font-size:12.5px; font-weight:600; color:var(--neutral-500); cursor:pointer; padding:7px 16px;}
+  .voice-new-card:hover{border-color:var(--neutral-450); color:var(--neutral-700);}
+  .voice-browse-btn{width:100%; border:1px solid var(--neutral-400); background:#fff; border-radius:10px; padding:11px 16px; font-size:13.5px; font-weight:600; color:var(--neutral-900); font-family:var(--font); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; margin-top:16px;}
+  .voice-browse-btn:hover{border-color:var(--neutral-500); background:var(--neutral-50);}
 
-  /* -- VERSION A: a tap-to-switch chip strip, always visible — no card, no boxed list -- */
-  .voice-inline-summary{display:flex; align-items:center; gap:8px; margin-bottom:10px;}
-  .voice-play-mini{width:22px; height:22px; border-radius:999px; border:1px solid var(--neutral-400); background:#fff; color:var(--neutral-700); font-size:8px; flex-shrink:0; display:flex; align-items:center; justify-content:center; cursor:pointer;}
-  .voice-inline-sep{color:var(--neutral-300);}
-  .voice-pill-row{display:flex; gap:8px; overflow-x:auto; padding-bottom:4px;}
-  .voice-pill-row.wrap{flex-wrap:wrap; overflow-x:visible;}
-  .voice-pill{flex-shrink:0; display:flex; align-items:center; gap:7px; padding:7px 14px 7px 8px; border-radius:999px; border:1px solid var(--neutral-400); background:#fff; font-size:12.5px; font-weight:500; color:var(--neutral-700); cursor:pointer; white-space:nowrap;}
-  .voice-pill:hover{border-color:var(--neutral-450);}
-  .voice-pill.selected{background:var(--brand-light); border-color:var(--brand); color:var(--neutral-900); font-weight:600;}
-  .voice-pill .voice-play-mini{width:18px; height:18px; font-size:7px;}
-  .voice-browse-toggle{display:inline-flex; align-items:center; gap:4px; margin-top:12px; font-size:12.5px; font-weight:600; color:var(--brand); cursor:pointer;}
-  .voice-browse-toggle .chevron{font-size:10px; transition:transform .15s;}
-  .voice-browse-toggle.open .chevron{transform:rotate(180deg);}
-  .voice-browse-inline{display:none; flex-direction:column; gap:10px; margin-top:12px;}
-  .voice-browse-inline.open{display:flex;}
-
-  /* -- VERSION B: page shows only a compact chip; browsing lives entirely in a modal -- */
-  .voice-change-btn{border:1px solid var(--neutral-400); background:#fff; border-radius:8px; padding:9px 14px; font-size:13px; font-weight:600; color:var(--neutral-700); font-family:var(--font); cursor:pointer; flex-shrink:0;}
-  .voice-change-btn:hover{border-color:var(--brand); color:var(--brand);}
-  .voice-modal-backdrop{display:none; position:fixed; inset:0; background:rgba(15,23,41,0.44); z-index:200; align-items:center; justify-content:center;}
-  .voice-modal-backdrop.open{display:flex;}
-  .voice-modal{width:460px; max-height:78vh; background:#fff; border-radius:14px; box-shadow:0 24px 60px rgba(15,23,41,.25); display:flex; flex-direction:column; overflow:hidden;}
-  .voice-modal-header{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:16px 18px 12px; flex-shrink:0;}
-  .voice-modal-title{font-size:15px; font-weight:700; color:var(--neutral-900);}
-  .voice-modal-close{width:28px; height:28px; border-radius:999px; border:none; background:var(--neutral-100); color:var(--neutral-700); cursor:pointer; font-size:13px; flex-shrink:0;}
-  .voice-modal-close:hover{background:var(--neutral-200);}
-  .voice-modal-tabs{display:flex; gap:4px; padding:0 18px; border-bottom:1px solid var(--neutral-200); flex-shrink:0;}
-  .voice-modal-tab{font-size:13px; font-weight:600; color:var(--neutral-500); padding:0 2px 10px; border-bottom:2px solid transparent; cursor:pointer;}
-  .voice-modal-tab.active{color:var(--neutral-900); border-bottom-color:var(--neutral-900);}
-  .voice-modal-body{padding:14px 18px 18px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; flex:1; min-height:0;}
-  .voice-modal-pane{display:flex; flex-direction:column; gap:10px;}
-  .voice-modal-manage-link{font-size:11px; color:var(--neutral-500); text-align:center; padding-top:2px; cursor:pointer;}
-  .voice-modal-manage-link:hover{color:var(--brand);}
+  /* -- Browse ElevenLabs Voice Library: expands inline in place of the button -- */
+  .voice-browse-panel{border:1px solid var(--neutral-300); border-radius:12px; padding:20px; margin-top:16px;}
+  .voice-browse-panel-header{display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:16px;}
+  .voice-browse-panel-title{font-size:15px; font-weight:700; color:var(--neutral-900); margin-bottom:4px;}
+  .voice-browse-panel-sub{font-size:12px; color:var(--neutral-500);}
+  .voice-browse-close-btn{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--neutral-300); background:#fff; border-radius:999px; padding:6px 12px; font-size:12px; font-weight:600; color:var(--neutral-700); cursor:pointer; flex-shrink:0; font-family:var(--font);}
+  .voice-browse-close-btn:hover{border-color:var(--neutral-450);}
+  .voice-browse-search-row{display:flex; gap:8px; margin-bottom:16px;}
+  .voice-browse-search-row .voice-lib-search{flex:1;}
+  .voice-browse-chips{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:16px;}
+  .voice-browse-chip{border:1px solid var(--neutral-300); border-radius:999px; padding:5px 12px; font-size:11.5px; font-weight:600; color:var(--neutral-700); cursor:pointer; background:#fff; white-space:nowrap;}
+  .voice-browse-chip.active{background:var(--neutral-900); border-color:var(--neutral-900); color:#fff;}
+  .voice-lib-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; max-height:340px; overflow-y:auto;}
+  .voice-lib-grid .voice-lib-row{border:1px solid var(--neutral-200); border-radius:8px; padding:8px;}
 
   .action-bar{position:absolute; left:0; right:0; bottom:0; background:#fff; border-top:1px solid var(--neutral-200); padding:12px 64px; display:flex; align-items:center; justify-content:center; gap:32px;}
   .readiness{width:300px;}
@@ -341,7 +314,7 @@
   .play-sample{border:1px solid var(--neutral-400); border-radius:8px; padding:9px 14px; font-size:13px; color:var(--neutral-700); background:#fff; display:flex; align-items:center; gap:6px;}
   .stage-cta-row{display:flex; justify-content:flex-end; margin-top:20px;}
 
-  .detail-section{margin-top:40px;}
+  .detail-section{margin-top:24px;}
   .detail-section-toggle{display:flex; align-items:center; justify-content:space-between; gap:12px; cursor:pointer; user-select:none; border:1px solid var(--neutral-300); border-radius:10px; background:#fff; padding:14px 16px; transition:background .15s, border-color .15s;}
   .detail-section-toggle:hover{background:var(--neutral-50); border-color:var(--neutral-400);}
   .detail-section-toggle.open{border-radius:10px 10px 0 0;}
@@ -350,7 +323,8 @@
   .detail-section-toggle-sub{font-size:12px; color:var(--neutral-500);}
   .detail-section-toggle .chevron{font-size:14px; color:var(--neutral-500); transition:transform .15s; flex-shrink:0;}
   .detail-section-toggle.open .chevron{transform:rotate(180deg);}
-  .detail-fields{display:flex; flex-direction:column; gap:14px; border:1px solid var(--neutral-300); border-top:none; border-radius:0 0 10px 10px; padding:16px;}
+  .detail-fields{display:flex; flex-direction:column; gap:16px; border:1px solid var(--neutral-300); border-top:none; border-radius:0 0 10px 10px; padding:16px;}
+  .detail-fields-grid{display:grid; grid-template-columns:1fr 1fr; gap:24px 16px;}
   .detail-field-label{font-size:12px; font-weight:600; color:var(--neutral-700); margin-bottom:6px; display:block;}
   .detail-input{width:100%; border:1px solid var(--neutral-300); border-radius:8px; padding:10px 12px; font-size:13px; font-family:var(--font); color:var(--neutral-900); background:#fff;}
   .detail-input:focus{outline:none; border-color:var(--brand);}
@@ -379,6 +353,18 @@
   .scene-tile-regen-btn{display:none; width:24px; height:24px; border-radius:999px; border:none; background:rgba(255,255,255,0.92); align-items:center; justify-content:center; font-size:12px; color:var(--neutral-700); cursor:pointer; margin-left:auto;}
   .scene-tile-regen-btn:hover{background:#fff; color:var(--neutral-900);}
   .scene-tile.ready .scene-tile-regen-btn{display:flex;}
+
+  /* -- per-scene thumbnail version history (only shown once a scene has been regenerated) -- */
+  .scene-tile-version-wrap{position:relative;}
+  .scene-tile-version-pill{display:none; align-items:center; gap:3px; font-size:10px; font-weight:700; color:var(--neutral-700); background:#fff; padding:3px 7px; border-radius:999px; cursor:pointer;}
+  .scene-tile-version-pill:hover{background:var(--neutral-100);}
+  .scene-tile-version-pill.show{display:inline-flex;}
+  .scene-version-popover{position:absolute; top:calc(100% + 6px); left:0; min-width:100px; background:#fff; border:1px solid var(--neutral-300); border-radius:8px; box-shadow:0 10px 28px rgba(15,23,41,.14); padding:4px; z-index:25;}
+  .scene-version-item{padding:6px 9px; border-radius:6px; font-size:11.5px; font-weight:600; color:var(--neutral-700); cursor:pointer; display:flex; align-items:center; justify-content:space-between; gap:8px;}
+  .scene-version-item:hover{background:var(--neutral-100);}
+  .scene-version-item.active{background:var(--neutral-100); color:var(--neutral-900);}
+  .scene-version-item .check{color:var(--brand); font-size:11px; display:none;}
+  .scene-version-item.active .check{display:inline;}
   .scene-tile.ready .scene-tile-preview{background:linear-gradient(135deg,var(--brand-mid),var(--accent));}
   .scene-tile.generating .scene-tile-badge{display:none;}
   .spinner-mini{display:none; width:26px; height:26px; border-radius:999px; border:2.5px solid rgba(255,255,255,0.35); border-top-color:#fff; animation:spin .8s linear infinite; position:absolute; top:50%; left:50%; margin:-13px 0 0 -13px;}
@@ -740,8 +726,8 @@
 
         <div class="seg-control" id="contentTypeToggle">
           <div class="seg-chip active" data-type="reel" onclick="selectContentType(this)">Reel / Short</div>
-          <div class="seg-chip" data-type="story" onclick="selectContentType(this)">Story image</div>
           <div class="seg-chip" data-type="image" onclick="selectContentType(this)">Image post</div>
+          <div class="seg-chip" data-type="story" onclick="selectContentType(this)">Story image</div>
           <div class="seg-chip" data-type="carousel" onclick="selectContentType(this)">Carousel</div>
         </div>
         <div class="prompt-box">
@@ -766,7 +752,6 @@
                   <div class="duration-option" data-seconds="24" onclick="selectDuration(24)"><span>24 seconds</span><span class="check">✓</span></div>
                 </div>
               </div>
-              <div class="prompt-chip"><div class="ic"></div>2 Versions</div>
             </div>
             <div class="refine-btn" id="refineBtn">↑</div>
           </div>
@@ -807,44 +792,33 @@
               <div class="seg-chip active" data-appear="lipsync" onclick="setCharAppear('lipsync')">Talking (lip-sync)</div>
               <div class="seg-chip" data-appear="acting" onclick="setCharAppear('acting')">Acting only (voiceover)</div>
             </div>
-            <div class="voice-ver-row">
-              <span class="voice-ver-label">Voice UI</span>
-              <div class="voice-compare" title="Prototype-only: two design directions for voice selection">
-                <span class="voice-compare-btn active" data-mode="inline" onclick="setVoiceUIVersion('inline')">Inline</span>
-                <span class="voice-compare-btn" data-mode="modal" onclick="setVoiceUIVersion('modal')">Modal</span>
-              </div>
-              <div class="voice-ver-spacer"></div>
-              <button type="button" class="btn-create-voice" onclick="alert('Create Voice — flow TBD')">+ Create Voice</button>
+            <div class="voice-section-label-row">
+              <span class="my-voices-label">My voices</span>
+              <div class="see-all-link">See all →</div>
             </div>
-
-            <!-- VERSION A: no card, no list-in-a-box — a tap-to-switch chip strip, always visible -->
-            <div class="voice-picker" id="voicePickerInline">
-              <div class="voice-inline-summary">
-                <span class="voice-play-mini" onclick="togglePreview(event,this)">▶</span>
-                <span class="voice-chip-name">Mina — calm</span>
-                <span class="voice-inline-sep">·</span>
-                <span class="voice-chip-tag">Female · Warm · Elena's default</span>
-              </div>
-              <div class="voice-pill-row" id="voiceYourPillRow"></div>
-              <div class="voice-browse-toggle" id="voiceBrowseToggle" onclick="toggleInlineBrowse()">
-                <span>+ Browse ElevenLabs library</span><span class="chevron">▾</span>
-              </div>
-              <div class="voice-browse-inline" id="voiceBrowseInline">
-                <input type="text" class="voice-lib-search" placeholder="Search voices…" oninput="filterVoicePills(this.value)">
-                <div class="voice-pill-row wrap" id="voiceLibPillRow"></div>
-                <div class="voice-lib-manage-link" onclick="alert('Manage voices in library — page TBD')">Manage voices in library →</div>
-              </div>
-            </div>
-
-            <!-- VERSION B: the page only shows a compact chip; all browsing happens in a modal -->
-            <div class="voice-picker" id="voicePickerModal" style="display:none;">
-              <div class="voice-chip-row">
-                <div class="voice-chip">
-                  <div class="voice-play" onclick="togglePreview(event,this)">▶</div>
-                  <div class="voice-chip-info"><span class="voice-chip-name">Mina — calm</span><span class="voice-chip-tag">Female · Warm · Elena's default</span></div>
+            <div class="voice-card-row" id="myVoicesCardRow"></div>
+            <button type="button" class="voice-browse-btn" id="voiceBrowseBtn" onclick="toggleVoiceBrowsePanel()">Browse ElevenLabs Voice Library <span class="chevron">▾</span></button>
+            <div class="voice-browse-panel" id="voiceBrowsePanel" style="display:none;">
+              <div class="voice-browse-panel-header">
+                <div>
+                  <div class="voice-browse-panel-title">ElevenLabs voice library</div>
+                  <div class="voice-browse-panel-sub">Search thousands of community voices. Adding one imports it into your ElevenLabs account.</div>
                 </div>
-                <button type="button" class="voice-change-btn" onclick="openVoiceLibraryModal()">Change voice</button>
+                <button type="button" class="voice-browse-close-btn" onclick="toggleVoiceBrowsePanel()">Close ✕</button>
               </div>
+              <div class="voice-browse-search-row">
+                <input type="text" class="voice-lib-search" placeholder="Search voice…" oninput="filterVoiceLib(this.value,'voiceLibGrid')">
+                <button type="button" class="voice-lib-filter-btn">⚙ Filter</button>
+              </div>
+              <div class="voice-browse-chips">
+                <span class="voice-browse-chip active">All</span>
+                <span class="voice-browse-chip">Social Media</span>
+                <span class="voice-browse-chip">Advertisement</span>
+                <span class="voice-browse-chip">Character Animation</span>
+                <span class="voice-browse-chip">Conversational</span>
+                <span class="voice-browse-chip">Entertainment</span>
+              </div>
+              <div class="voice-lib-grid" id="voiceLibGrid"></div>
             </div>
             </div>
           </div>
@@ -864,28 +838,30 @@
               <button class="detail-import-btn" id="importBrandBtn" onclick="importFromBrandSetup()">⤓ Import from Brand Setup</button>
               <span class="detail-import-empty-note" id="importEmptyNote" style="display:none;">No Brand Setup values yet — <a onclick="event.stopPropagation(); goSetUpBrandFromBrief()">set up your brand</a></span>
             </div>
-            <div>
-              <label class="detail-field-label">Goal</label>
-              <input type="text" class="detail-input" id="briefGoal" placeholder="e.g. Launch online course">
-            </div>
-            <div>
-              <label class="detail-field-label">Tone</label>
-              <select class="detail-input" id="briefTone">
-                <option value="" disabled selected>Select a tone</option>
-                <option>Playful and confident</option>
-                <option>Clear and authoritative</option>
-                <option>Warm and reassuring</option>
-                <option>Bold and energetic</option>
-                <option>Calm and informative</option>
-              </select>
-            </div>
-            <div>
-              <label class="detail-field-label">Target audience</label>
-              <input type="text" class="detail-input" id="briefAudience" placeholder="e.g. Entrepreneurs 25-40">
-            </div>
-            <div>
-              <label class="detail-field-label">Call to action</label>
-              <input type="text" class="detail-input" id="briefCta" placeholder="e.g. Follow for daily tips">
+            <div class="detail-fields-grid">
+              <div>
+                <label class="detail-field-label">Goal</label>
+                <input type="text" class="detail-input" id="briefGoal" placeholder="e.g. Launch online course">
+              </div>
+              <div>
+                <label class="detail-field-label">Tone</label>
+                <select class="detail-input" id="briefTone">
+                  <option value="" disabled selected>Select a tone</option>
+                  <option>Playful and confident</option>
+                  <option>Clear and authoritative</option>
+                  <option>Warm and reassuring</option>
+                  <option>Bold and energetic</option>
+                  <option>Calm and informative</option>
+                </select>
+              </div>
+              <div>
+                <label class="detail-field-label">Target audience</label>
+                <input type="text" class="detail-input" id="briefAudience" placeholder="e.g. Entrepreneurs 25-40">
+              </div>
+              <div>
+                <label class="detail-field-label">Call to action</label>
+                <input type="text" class="detail-input" id="briefCta" placeholder="e.g. Follow for daily tips">
+              </div>
             </div>
           </div>
         </div>
@@ -1376,31 +1352,6 @@
   </div>
 </div>
 
-<!-- Version B: modal browse (shown when compare mode = modal) -->
-<div class="voice-modal-backdrop" id="voiceModalBackdrop" onclick="if(event.target===this) closeVoiceLibraryModal()">
-  <div class="voice-modal">
-    <div class="voice-modal-header">
-      <span class="voice-modal-title">Select a voice</span>
-      <button type="button" class="voice-modal-close" onclick="closeVoiceLibraryModal()">✕</button>
-    </div>
-    <div class="voice-modal-tabs">
-      <div class="voice-modal-tab active" data-tab="myvoices" onclick="setVoiceModalTab('myvoices')">My Voices</div>
-      <div class="voice-modal-tab" data-tab="explore" onclick="setVoiceModalTab('explore')">Explore</div>
-    </div>
-    <div class="voice-modal-body">
-      <div class="voice-modal-pane" id="voiceModalMyVoices"></div>
-      <div class="voice-modal-pane" id="voiceModalExplore" style="display:none;">
-        <div class="voice-lib-search-row">
-          <input type="text" class="voice-lib-search" placeholder="Search voices…" oninput="filterVoiceLib(this.value,'voiceLibListModal')">
-          <button type="button" class="voice-lib-filter-btn">⚙ Filters</button>
-        </div>
-        <div class="voice-lib-list" id="voiceLibListModal"></div>
-        <div class="voice-modal-manage-link" onclick="alert('Manage voices in library — page TBD')">Manage voices in library →</div>
-      </div>
-    </div>
-  </div>
-</div>
-
 <div class="role-switch" id="roleSwitch" role="group" aria-label="Brand setup state">
   <p class="role-cap">Signed in as</p>
   <button type="button" class="role-btn on" data-brand="none" onclick="setBrandMode('none')">No brand setup</button>
@@ -1721,9 +1672,11 @@ function selectContentType(el){
   // Voice/lip-sync only applies to motion content — Image post has no audio.
   const voiceSection = document.getElementById('charVoiceSection');
   if(voiceSection) voiceSection.style.display = el.dataset.type === 'image' ? 'none' : '';
-  // Image post is a fully separate flow with its own Brief screen — leave this file entirely.
+  // Image post and Carousel are each a fully separate flow with their own Brief screen — leave this file entirely.
   if(el.dataset.type === 'image'){
     window.location.href = 'new-image-to-generate.html';
+  } else if(el.dataset.type === 'carousel'){
+    window.location.href = 'new-carousel-to-generate.html';
   }
 }
 
@@ -1829,7 +1782,7 @@ function bindMentionTextarea(el){
 }
 document.querySelectorAll('.mention-wrap textarea').forEach(bindMentionTextarea);
 
-// ---- Voice picker (Character section) — two design directions, switched by demo toggle ----
+// ---- Voice picker (Character section) — "My voices" card row + Browse ElevenLabs library modal ----
 function togglePreview(e, btn){
   e.stopPropagation();
   const wasPlaying = btn.classList.contains('playing');
@@ -1851,50 +1804,23 @@ const YOUR_VOICES_DATA = [
 ];
 let selectedVoiceId = 'mina';
 
-function setVoiceUIVersion(mode){
-  document.getElementById('voicePickerInline').style.display = mode === 'inline' ? 'block' : 'none';
-  document.getElementById('voicePickerModal').style.display = mode === 'modal' ? 'block' : 'none';
-  document.querySelectorAll('.voice-ver-row .voice-compare-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
-  if(mode !== 'modal') closeVoiceLibraryModal();
-}
-
-function renderYourVoiceList(containerId){
-  const el = document.getElementById(containerId);
+function renderMyVoicesCardRow(){
+  const el = document.getElementById('myVoicesCardRow');
   if(!el) return;
-  el.innerHTML = YOUR_VOICES_DATA.map(v => `
-    <div class="voice-item ${v.id === selectedVoiceId ? 'selected' : ''}" onclick="selectVoiceById('${v.id}')">
+  el.innerHTML = `<div class="voice-new-card" onclick="alert('Create Voice — flow TBD')">+ Create New</div>` +
+    YOUR_VOICES_DATA.map(v => `
+    <div class="voice-item row-card ${v.id === selectedVoiceId ? 'selected' : ''}" onclick="selectVoiceById('${v.id}')">
       <div class="voice-play" onclick="togglePreview(event,this)">▶</div>
       <div class="voice-item-info"><span class="voice-item-name">${v.name}</span><span class="voice-item-tag">${v.tag}</span></div>
       <span class="voice-check">✓</span>
     </div>`).join('');
 }
-function renderYourVoicePills(){
-  const el = document.getElementById('voiceYourPillRow');
-  if(!el) return;
-  el.innerHTML = YOUR_VOICES_DATA.map(v => `
-    <div class="voice-pill ${v.id === selectedVoiceId ? 'selected' : ''}" onclick="selectVoiceById('${v.id}')" title="${v.tag}">
-      <span class="voice-play-mini" onclick="togglePreview(event,this)">▶</span>${v.name.split(' — ')[0]}
-    </div>`).join('');
-}
 function selectVoiceById(id){
   selectedVoiceId = id;
-  const v = YOUR_VOICES_DATA.find(x => x.id === id);
-  document.querySelectorAll('.voice-chip-name').forEach(el => el.textContent = v.name);
-  document.querySelectorAll('.voice-chip-tag').forEach(el => el.textContent = v.tag);
-  renderYourVoicePills();
-  renderYourVoiceList('voiceModalMyVoices');
-  closeVoiceLibraryModal();
+  renderMyVoicesCardRow();
 }
 
-function toggleInlineBrowse(){
-  const box = document.getElementById('voiceBrowseInline');
-  const toggle = document.getElementById('voiceBrowseToggle');
-  const isOpen = box.classList.toggle('open');
-  toggle.classList.toggle('open', isOpen);
-  if(isOpen) renderLibraryPills();
-}
-
-// -- Browse ElevenLabs voice library data + rendering (shared by inline pill row and modal Explore tab) --
+// -- Browse ElevenLabs voice library data + rendering (inline expand panel) --
 const VOICE_LIBRARY_DATA = [
   {name:'Adam – Engaging, Friendly and Bright', tag:'Male · American'},
   {name:'Peter Baker – Deep, Clear and Mature', tag:'Male · British'},
@@ -1932,47 +1858,15 @@ function addVoiceFromLibrary(btn){
   btn.disabled = true;
   setTimeout(() => { btn.textContent = original; btn.disabled = false; }, 1500);
 }
-function renderLibraryPills(){
-  const el = document.getElementById('voiceLibPillRow');
-  if(el.dataset.rendered) return;
-  el.dataset.rendered = '1';
-  el.innerHTML = VOICE_LIBRARY_DATA.map((v,i) => `
-    <div class="voice-pill" data-name="${v.name.toLowerCase()}" onclick="addAndSelectLibraryVoice(${i})" title="${v.tag}">
-      <span class="voice-play-mini" onclick="togglePreview(event,this)">▶</span>${v.name.split(' – ')[0]}
-    </div>`).join('');
+function toggleVoiceBrowsePanel(){
+  const panel = document.getElementById('voiceBrowsePanel');
+  const btn = document.getElementById('voiceBrowseBtn');
+  const isOpen = panel.style.display === 'block';
+  panel.style.display = isOpen ? 'none' : 'block';
+  btn.style.display = isOpen ? 'flex' : 'none';
+  if(!isOpen) renderVoiceLibRows('voiceLibGrid');
 }
-function filterVoicePills(query){
-  const q = query.trim().toLowerCase();
-  document.querySelectorAll('#voiceLibPillRow .voice-pill').forEach(p => {
-    p.style.display = (!q || p.dataset.name.includes(q)) ? '' : 'none';
-  });
-}
-function addAndSelectLibraryVoice(i){
-  const v = VOICE_LIBRARY_DATA[i];
-  const id = 'lib_' + i;
-  if(!YOUR_VOICES_DATA.find(x => x.id === id)) YOUR_VOICES_DATA.push({id, name:v.name, tag:v.tag});
-  selectVoiceById(id);
-}
-
-// -- Modal (Version B): My Voices / Explore tabs --
-function setVoiceModalTab(tab){
-  document.querySelectorAll('.voice-modal-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
-  document.getElementById('voiceModalMyVoices').style.display = tab === 'myvoices' ? 'flex' : 'none';
-  document.getElementById('voiceModalExplore').style.display = tab === 'explore' ? 'flex' : 'none';
-}
-function openVoiceLibraryModal(){
-  setVoiceModalTab('myvoices');
-  renderYourVoiceList('voiceModalMyVoices');
-  renderVoiceLibRows('voiceLibListModal');
-  document.getElementById('voiceModalBackdrop').classList.add('open');
-}
-function closeVoiceLibraryModal(){
-  document.getElementById('voiceModalBackdrop').classList.remove('open');
-}
-document.addEventListener('keydown', (e) => {
-  if(e.key === 'Escape') closeVoiceLibraryModal();
-});
-renderYourVoicePills();
+renderMyVoicesCardRow();
 
 // ---- sub-stage switching within Generate ----
 function showSub(name){
@@ -2124,6 +2018,10 @@ function renderTimelineScenes(){
       <div class="scene-tile-preview">
         <div class="scene-tile-overlay-top">
           <span class="scene-tile-ready-badge">✓ Ready</span>
+          <div class="scene-tile-version-wrap">
+            <span class="scene-tile-version-pill" id="sceneVersionPill${i + 1}" onclick="event.stopPropagation(); toggleSceneVersionPopover(${i + 1})">v1</span>
+            <div class="scene-version-popover" id="sceneVersionPopover${i + 1}" style="display:none;" onclick="event.stopPropagation();"></div>
+          </div>
           <button class="scene-tile-regen-btn" onclick="event.stopPropagation(); regenerateScene(${i + 1})" title="Regenerate · 1 credit">↻</button>
         </div>
         <div class="spinner-mini"></div>
@@ -2132,6 +2030,7 @@ function renderTimelineScenes(){
       <div class="scene-tile-line" id="tileLine${i + 1}">${escapeHtml(getSceneScript(i + 1))}</div>
     </div>
   `).join('');
+  scenes.forEach((s, i) => updateSceneVersionPill(i + 1));
 
   document.getElementById('sceneEditorPanel').innerHTML = scenes.map((s, i) => `
     <div class="scene-card scene-editor" id="sceneEditor${i + 1}" style="${i === 0 ? '' : 'display:none;'}">
@@ -2481,8 +2380,54 @@ function regenerateScene(n){
   setTimeout(() => {
     tile.classList.remove('generating');
     tile.classList.add('ready');
+    ensureSceneThumbHistory(n);
+    window.__sceneThumbHistory[n].push({ label: 'v' + (window.__sceneThumbHistory[n].length + 1) });
+    window.__sceneThumbActive[n] = window.__sceneThumbHistory[n].length - 1;
+    updateSceneVersionPill(n);
     updateTimelineCta();
   }, 1400);
+}
+
+// ---- Per-scene thumbnail version history (each regenerate adds a version; pick any to make it active) ----
+window.__sceneThumbHistory = window.__sceneThumbHistory || {};
+window.__sceneThumbActive = window.__sceneThumbActive || {};
+
+function ensureSceneThumbHistory(n){
+  if(!window.__sceneThumbHistory[n]){
+    window.__sceneThumbHistory[n] = [{ label: 'v1' }];
+    window.__sceneThumbActive[n] = 0;
+  }
+}
+function updateSceneVersionPill(n){
+  ensureSceneThumbHistory(n);
+  const pill = document.getElementById('sceneVersionPill' + n);
+  if(!pill) return;
+  const hist = window.__sceneThumbHistory[n];
+  pill.classList.toggle('show', hist.length > 1);
+  pill.textContent = hist[window.__sceneThumbActive[n]].label;
+}
+function toggleSceneVersionPopover(n){
+  document.querySelectorAll('.scene-version-popover').forEach(p => { if(p.id !== 'sceneVersionPopover' + n) p.style.display = 'none'; });
+  renderSceneVersionPopover(n);
+  const pop = document.getElementById('sceneVersionPopover' + n);
+  pop.style.display = pop.style.display === 'block' ? 'none' : 'block';
+}
+document.addEventListener('click', (e) => {
+  if(!e.target.closest('.scene-tile-version-wrap')) document.querySelectorAll('.scene-version-popover').forEach(p => p.style.display = 'none');
+});
+function renderSceneVersionPopover(n){
+  const hist = window.__sceneThumbHistory[n];
+  const activeIdx = window.__sceneThumbActive[n];
+  document.getElementById('sceneVersionPopover' + n).innerHTML = hist.map((h, i) => `
+    <div class="scene-version-item${i === activeIdx ? ' active' : ''}" onclick="selectSceneThumbVersion(${n}, ${i})">
+      <span>${h.label}</span><span class="check">✓</span>
+    </div>
+  `).join('');
+}
+function selectSceneThumbVersion(n, i){
+  window.__sceneThumbActive[n] = i;
+  updateSceneVersionPill(n);
+  document.getElementById('sceneVersionPopover' + n).style.display = 'none';
 }
 function updateTimelineCta(){
   const tiles = document.querySelectorAll('#subTimeline .scene-tile');
