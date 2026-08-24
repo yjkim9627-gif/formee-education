@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>Button — Shared Component</title>
+<link rel="stylesheet" href="../../tokens/tokens.css" />
+<link rel="stylesheet" href="button.css" />
+<style>
+  body {
+    margin: 0;
+    padding: var(--spacing-4xl);
+    background: var(--color-neutral-50);
+    font-family: var(--font-family-text);
+    color: var(--color-neutral-900);
+  }
+
+  h1 {
+    font-size: var(--font-size-display-xs);
+    line-height: var(--line-height-display-xs);
+    font-weight: var(--font-weight-display-xs);
+    margin: 0 0 var(--spacing-3xl);
+  }
+
+  section {
+    margin-bottom: var(--spacing-4xl);
+  }
+
+  section h2 {
+    font-size: var(--font-size-text-md);
+    line-height: var(--line-height-text-md);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-neutral-700);
+    margin: 0 0 var(--spacing-lg);
+  }
+
+  .row {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    flex-wrap: wrap;
+  }
+</style>
+</head>
+<body>
+  <h1>Button</h1>
+
+  <section>
+    <h2>Primary</h2>
+    <div class="row">
+      <button class="btn btn-primary">Button</button>
+      <button class="btn btn-primary" disabled>Button</button>
+    </div>
+  </section>
+
+  <section>
+    <h2>Secondary</h2>
+    <div class="row">
+      <button class="btn btn-secondary">Button</button>
+      <button class="btn btn-secondary" disabled>Button</button>
+    </div>
+  </section>
+
+  <section>
+    <h2>Danger</h2>
+    <div class="row">
+      <button class="btn btn-danger">Button</button>
+      <button class="btn btn-danger" disabled>Button</button>
+    </div>
+  </section>
+</body>
+</html>
