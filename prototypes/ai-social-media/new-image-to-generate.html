@@ -107,14 +107,20 @@
   .msg.ai{align-self:flex-start; background:var(--neutral-150); color:var(--neutral-700); border-bottom-left-radius:3px;}
   .msg.ai .tag{display:inline-block; font-size:10px; font-weight:600; color:var(--brand); margin-bottom:3px;}
   .msg.ai.loading{color:var(--neutral-500);}
+  .copy-proposal-box, .visual-proposal-box{margin-top:8px; background:#fff; border:1px solid var(--neutral-300); border-radius:8px; padding:10px 11px; display:flex; flex-direction:column; gap:8px;}
+  .copy-proposal-row{font-size:12.5px; color:var(--neutral-900); line-height:1.5;}
+  .copy-proposal-row b{display:block; font-size:10px; font-weight:700; color:var(--neutral-500); text-transform:uppercase; letter-spacing:.04em; margin-bottom:1px;}
+  .visual-proposal-text{font-size:12.5px; font-style:italic; color:var(--neutral-900); line-height:1.5;}
+  .copy-applied-note{display:none; font-size:10.5px; font-weight:600; color:var(--green);}
+  .copy-proposal-box.applied .copy-applied-note, .visual-proposal-box.applied .copy-applied-note{display:block;}
+  .copy-proposal-box.applied, .visual-proposal-box.applied{border-color:var(--brand-mid);}
+  .chat-edit-hint{display:block; font-size:10.5px; color:var(--neutral-500); margin-top:3px;}
   .dots span{animation:blink 1.4s infinite; opacity:0;}
   .dots span:nth-child(2){animation-delay:.2s;}
   .dots span:nth-child(3){animation-delay:.4s;}
   @keyframes blink{0%,80%,100%{opacity:0;}40%{opacity:1;}}
   .chat-cta-row{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;}
   .chat-cta-row .btn-primary, .chat-cta-row .btn-secondary{padding:8px 14px; font-size:12px;}
-  .chat-quick{padding:0 16px 10px; display:flex; gap:6px; flex-wrap:wrap;}
-  .quick-chip{border:1px solid var(--neutral-400); border-radius:999px; padding:5px 10px; font-size:11px; color:var(--neutral-700); background:#fff; cursor:pointer;}
   .chat-hint{font-size:10.5px; color:var(--neutral-500); padding:0 16px 10px;}
   .chat-input-row{padding:12px; border-top:1px solid var(--neutral-300); display:flex; gap:8px;}
   .chat-input{flex:1; border:1px solid var(--neutral-400); border-radius:8px; padding:9px 12px; font-size:12.5px; font-family:var(--font); outline:none;}
@@ -145,11 +151,27 @@
   @keyframes spin{to{transform:rotate(360deg);}}
 
   /* ---- VIEW: Brief (minimal — prompt input only) ---- */
-  .brief-content{max-width:720px; margin:0 auto; padding:48px 4px 140px;}
+  .brief-content{max-width:960px; margin:0 auto; padding:48px 4px 140px;}
   .brief-heading h1{font-size:22px; font-weight:700; color:var(--neutral-900); margin:0 0 6px; letter-spacing:-0.2px;}
-  .brief-heading p{font-size:13px; color:var(--neutral-500); margin:0 0 20px;}
+  .brief-heading p{font-size:13px; color:var(--neutral-500); margin:0 0 16px;}
   .brief-prompt{width:100%; min-height:120px; border:1.2px solid var(--neutral-400); border-radius:var(--radius-xl); padding:16px; font-size:14px; font-family:var(--font); color:var(--neutral-900); line-height:1.6; resize:vertical; outline:none;}
   .brief-prompt:focus{border-color:var(--brand);}
+
+  /* -- shared prompt-box card + bottom action bar, matching the video/carousel flow's Brief screen -- */
+  .prompt-box{background:#fff; border:1.2px solid var(--neutral-400); border-radius:var(--radius-xl); padding:24px; display:flex; flex-direction:column; gap:32px;}
+  .prompt-top{display:flex; flex-direction:column; gap:20px;}
+  .prompt-summary{display:block; width:100%; font-size:14px; color:var(--neutral-900); line-height:22px; margin:0; border:none; background:transparent; font-family:var(--font); resize:vertical; outline:none; min-height:66px;}
+  .prompt-bottom{display:flex; align-items:center; justify-content:space-between;}
+  .prompt-chips{display:flex; gap:8px;}
+  .prompt-chip{border:1px solid var(--neutral-400); border-radius:8px; padding:7px 12px 7px 10px; font-size:14px; font-weight:500; color:var(--neutral-700); display:flex; align-items:center; gap:5px;}
+  .prompt-chip .ic{width:16px; height:16px; border-radius:3px; background:var(--neutral-400);}
+  .refine-btn{width:36px; height:36px; border:1px solid var(--neutral-400); border-radius:var(--radius-lg); background:#fff; display:flex; align-items:center; justify-content:center; color:var(--neutral-700); font-size:14px; cursor:pointer;}
+  .readiness{width:300px;}
+  .readiness-top{display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px;}
+  .readiness-top span:first-child{color:var(--neutral-700); font-weight:500;}
+  .readiness-top span:last-child{color:var(--neutral-700); font-weight:600;}
+  .readiness-bar{height:6px; border-radius:999px; background:var(--neutral-100); overflow:hidden;}
+  .readiness-fill{height:100%; background:var(--brand); border-radius:999px;}
 
   /* ---- Draft stage: Copy + Visual concept + Easy/Expert ---- */
   .draft-section{margin-bottom:32px;}
@@ -157,7 +179,7 @@
   .draft-section-hint{font-size:11.5px; color:var(--neutral-500); margin:-8px 0 12px;}
 
   .copy-field-list{border:1px solid var(--neutral-300); border-radius:12px; overflow:hidden; background:#fff;}
-  .copy-field{display:flex; align-items:flex-start; gap:12px; padding:14px 16px; border-bottom:1px solid var(--neutral-200); transition:opacity .15s;}
+  .copy-field{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 16px; border-bottom:1px solid var(--neutral-200); transition:opacity .15s;}
   .copy-field:last-child{border-bottom:none;}
   .copy-field.off{opacity:0.4;}
   .copy-field-body{flex:1; min-width:0; display:flex; flex-direction:column; gap:4px; padding-top:1px;}
@@ -178,19 +200,18 @@
   .brand-kit-label{font-size:13px; font-weight:600; color:var(--neutral-900);}
   .field-switch.disabled{background:var(--neutral-200); cursor:not-allowed;}
   .field-switch.disabled .knob{background:var(--neutral-100);}
-  .brand-kit-summary{margin-top:8px; padding:10px 12px; background:var(--neutral-50); border:1px solid var(--neutral-200); border-radius:8px; font-size:12px; color:var(--neutral-700); display:flex; align-items:center; gap:6px; flex-wrap:wrap;}
-  .brand-kit-summary b{color:var(--neutral-900);}
-  .brand-kit-swatch{width:12px; height:12px; border-radius:999px; flex-shrink:0; display:inline-block;}
+  .brand-kit-summary{margin-top:8px; padding:12px; background:var(--neutral-50); border:1px solid var(--neutral-200); border-radius:8px; display:flex; flex-direction:column; gap:10px;}
+  .brand-kit-summary-label{font-size:12.5px; font-weight:700; color:var(--neutral-900);}
+  .brand-kit-swatch-row{display:flex; height:28px; border:1px solid var(--neutral-300); border-radius:8px; overflow:hidden;}
+  .brand-kit-swatch-row span{flex:1;}
+  .brand-kit-fonts{display:flex; flex-direction:column; gap:4px;}
+  .brand-kit-font-row{display:flex; align-items:baseline; justify-content:space-between; font-size:12px;}
+  .brand-kit-font-role{font-weight:600; color:var(--neutral-900);}
+  .brand-kit-font-name{color:var(--neutral-500);}
   .brand-kit-empty{margin-top:8px; padding:10px 12px; background:var(--neutral-50); border:1px dashed var(--neutral-400); border-radius:8px; font-size:12px; color:var(--neutral-500);}
   .brand-kit-empty a{color:var(--brand); font-weight:600; cursor:pointer; text-decoration:underline;}
 
-  .mode-toggle-row{display:flex; align-items:center; gap:10px; margin-bottom:14px;}
-  .mode-toggle-hint{font-size:11.5px; color:var(--neutral-500);}
-  .expert-panel{display:none; flex-direction:column; gap:10px; padding:14px 16px; border:1px solid var(--neutral-300); border-radius:10px; background:var(--neutral-50);}
-  .expert-panel.open{display:flex;}
-  .baked-in-option{display:flex; align-items:flex-start; gap:10px; font-size:13px; color:var(--neutral-900); cursor:pointer;}
-  .baked-in-option input{margin-top:2px; width:16px; height:16px; accent-color:var(--brand); cursor:pointer; flex-shrink:0;}
-  .baked-in-warning{display:none; align-items:flex-start; gap:8px; font-size:12px; color:var(--amber); background:var(--amber-bg); border:1px solid var(--amber-border); border-radius:8px; padding:10px 12px; line-height:1.5;}
+  .baked-in-warning{display:none; align-items:flex-start; gap:8px; font-size:12px; color:var(--amber); background:var(--amber-bg); border:1px solid var(--amber-border); border-radius:8px; padding:10px 12px; margin-top:12px; line-height:1.5;}
   .baked-in-warning.show{display:flex;}
 
   /* ---- Versions stage: 4-grid parallel generation ---- */
@@ -215,6 +236,16 @@
   .version-tile-use-btn{display:none; border:none; background:var(--neutral-900); color:#fff; border-radius:999px; padding:5px 12px; font-size:11px; font-weight:600; font-family:var(--font); cursor:pointer;}
   .version-tile.ready .version-tile-use-btn{display:inline-flex;}
   .versions-status{font-size:12px; color:var(--neutral-500); text-align:center; margin-top:16px;}
+
+  /* -- selected-version result, shown in place of the grid while keeping Draft/Versions tabs visible -- */
+  .version-result-view{display:flex; gap:24px; align-items:flex-start;}
+  .version-result-preview{width:220px; height:220px; border-radius:12px; background:linear-gradient(135deg,var(--brand-mid),var(--accent)); display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+  .version-result-badge{font-size:20px; font-weight:700; color:#fff;}
+  .version-result-title{font-size:16px; font-weight:700; color:var(--neutral-900); margin:0 0 4px;}
+  .version-result-sub{font-size:13px; color:var(--neutral-500); margin:0 0 16px;}
+  .version-result-actions{display:flex; gap:10px;}
+  .version-result-back{display:block; margin-top:12px; font-size:12.5px; color:var(--neutral-500); cursor:pointer; background:none; border:none; font-family:var(--font); padding:0;}
+  .version-result-back:hover{color:var(--brand);}
 
   /* ---- Develop (minimal step-3 landing) ---- */
   .develop-body{display:flex; gap:32px; padding:48px; max-width:960px; margin:0 auto;}
@@ -295,10 +326,28 @@
           <div class="seg-chip active" data-type="image" onclick="selectContentType(this)">Image post</div>
           <div class="seg-chip" data-type="carousel" onclick="selectContentType(this)">Carousel</div>
         </div>
-        <textarea class="brief-prompt" id="briefPrompt">A study-abroad promo image for the January UK intake — bright, aspirational, campus setting, diverse group of students.</textarea>
-        <div class="stage-cta-row" style="display:flex; justify-content:flex-end; margin-top:16px;">
-          <button class="btn-primary" onclick="goToGenerate()">Continue to Draft →</button>
+        <div class="prompt-box">
+          <div class="prompt-top">
+            <textarea class="prompt-summary" id="briefPrompt">A study-abroad promo image for the January UK intake — bright, aspirational, campus setting, diverse group of students.</textarea>
+          </div>
+          <div class="prompt-bottom">
+            <div class="prompt-chips">
+              <div class="prompt-chip"><div class="ic"></div>1:1</div>
+            </div>
+            <div class="refine-btn" id="refineBtn" onclick="goToGenerate()">↑</div>
+          </div>
         </div>
+      </div>
+    </div>
+    <div class="action-bar" id="briefActionBar">
+      <div class="readiness">
+        <div class="readiness-top"><span>Brief readiness</span><span>92%</span></div>
+        <div class="readiness-bar"><div class="readiness-fill" style="width:92%"></div></div>
+      </div>
+      <div class="meta-text">Image post · 1:1</div>
+      <div class="bar-actions">
+        <button class="btn-secondary">Save as draft</button>
+        <button class="btn-dark" id="continueBtn" onclick="goToGenerate()">Continue</button>
       </div>
     </div>
 
@@ -309,10 +358,6 @@
         <!-- CHAT (persistent across Draft/Versions) -->
         <div class="chat">
           <div class="chat-log" id="chatLog"></div>
-          <div class="chat-quick" id="chatQuick">
-            <div class="quick-chip" onclick="quickAction('looks-good')">Looks good → generate</div>
-            <div class="quick-chip" onclick="quickAction('rework')">Rework</div>
-          </div>
           <div class="chat-hint">💬 Requests like "make the headline shorter" or "try a warmer tone" work here too</div>
           <div class="chat-input-row">
             <input class="chat-input" id="chatInput" placeholder="Type a message...">
@@ -347,14 +392,28 @@
 
               <div class="draft-section">
                 <div class="draft-section-label">Visual concept</div>
-                <textarea class="visual-concept-text" id="visualConceptText" oninput="onVisualConceptEdited()"></textarea>
+                <textarea class="visual-concept-text" id="visualConceptText" placeholder="Not drafted yet — I'll work this out once the copy is confirmed." oninput="onVisualConceptEdited()"></textarea>
 
                 <div class="brand-kit-row">
                   <button type="button" class="field-switch" id="brandKitSwitch" onclick="toggleBrandKit()"><span class="knob"></span></button>
                   <span class="brand-kit-label">Use brand kit</span>
                 </div>
                 <div class="brand-kit-summary" id="brandKitSummary">
-                  <b>Formee Express</b> · Primary <span class="brand-kit-swatch" style="background:#4F6DE6;"></span> #4F6DE6 · Headline: DM Sans Bold
+                  <div class="brand-kit-summary-label">Formee Express</div>
+                  <div class="brand-kit-swatch-row">
+                    <span style="background:#2b6a6c"></span>
+                    <span style="background:#b80d48"></span>
+                    <span style="background:#f29724"></span>
+                    <span style="background:#444444"></span>
+                    <span style="background:#6d9697"></span>
+                    <span style="background:#aa5a77"></span>
+                    <span style="background:#ffffff"></span>
+                  </div>
+                  <div class="brand-kit-fonts">
+                    <div class="brand-kit-font-row"><span class="brand-kit-font-role">Heading</span><span class="brand-kit-font-name">Manrope Bold</span></div>
+                    <div class="brand-kit-font-row"><span class="brand-kit-font-role">Subhead</span><span class="brand-kit-font-name">Manrope Semibold</span></div>
+                    <div class="brand-kit-font-row"><span class="brand-kit-font-role">Body</span><span class="brand-kit-font-name">Manrope Regular</span></div>
+                  </div>
                 </div>
                 <div class="brand-kit-empty" id="brandKitEmpty" style="display:none;">
                   Set up your brand kit to apply it here automatically → <a onclick="goToBrandSetup()">Brand Setup</a>
@@ -362,21 +421,14 @@
               </div>
 
               <div class="draft-section">
-                <div class="mode-toggle-row">
-                  <div class="seg-control small" id="draftModeToggle">
-                    <div class="seg-chip active" data-mode="easy" onclick="setDraftMode('easy')">Easy</div>
-                    <div class="seg-chip" data-mode="expert" onclick="setDraftMode('expert')">Expert</div>
-                  </div>
-                  <span class="mode-toggle-hint" id="modeToggleHint">Text stays on an editable layer over the image.</span>
+                <div class="draft-section-label">Text placement</div>
+                <p class="draft-section-hint">How the headline, subhead, and call to action should appear on the image.</p>
+                <div class="seg-control" id="textPlacementToggle">
+                  <div class="seg-chip active" data-mode="overlay" onclick="setDraftMode('overlay')">Editable overlay</div>
+                  <div class="seg-chip" data-mode="baked" onclick="setDraftMode('baked')">Baked into image</div>
                 </div>
-                <div class="expert-panel" id="expertPanel">
-                  <label class="baked-in-option">
-                    <input type="checkbox" id="bakedInCheckbox" onchange="toggleBakedIn(this.checked)">
-                    <span>Let AI render the copy directly into the image (baked-in)</span>
-                  </label>
-                  <div class="baked-in-warning" id="bakedInWarning">
-                    ⚠️ If you edit the copy later, the image will need to be regenerated — and your brand font may not be reproduced exactly.
-                  </div>
+                <div class="baked-in-warning" id="bakedInWarning">
+                  ⚠️ If you edit the copy later, the image will need to be regenerated — and your brand font may not be reproduced exactly.
                 </div>
               </div>
             </div></div>
@@ -385,10 +437,26 @@
           <!-- SUB-STAGE: Versions -->
           <div class="stage-sub" id="subVersions" style="display:none;">
             <div class="stage-body"><div class="stage-body-inner" style="max-width:640px;">
-              <h2 class="stage-title">Choose a version</h2>
-              <p class="stage-sub-text">All 4 are generating in parallel — pick one to continue, or regenerate any that miss the mark.</p>
-              <div class="version-grid" id="versionGrid"></div>
-              <div class="versions-status" id="versionsStatus">Generating 4 versions…</div>
+              <div id="versionsChooser">
+                <h2 class="stage-title">Choose a version</h2>
+                <p class="stage-sub-text">All 4 are generating in parallel — pick one to continue, or regenerate any that miss the mark.</p>
+                <div class="version-grid" id="versionGrid"></div>
+                <div class="versions-status" id="versionsStatus">Generating 4 versions…</div>
+              </div>
+
+              <!-- Shown after "Use this" — Draft/Versions tabs above stay visible so you can navigate back -->
+              <div class="version-result-view" id="versionResultView" style="display:none;">
+                <div class="version-result-preview"><span class="version-result-badge" id="versionResultBadge">V1</span></div>
+                <div>
+                  <div class="version-result-title">Your image is ready</div>
+                  <p class="version-result-sub">Image post · 1:1 · English</p>
+                  <div class="version-result-actions">
+                    <button class="btn-primary" onclick="goToDevelop()">Continue to editing →</button>
+                    <button class="btn-secondary" onclick="skipToPublish()">Skip to publish</button>
+                  </div>
+                  <button type="button" class="version-result-back" onclick="backToVersions()">← Back to versions</button>
+                </div>
+              </div>
             </div></div>
           </div>
         </div>
@@ -437,23 +505,207 @@
 
 <script>
 // ---- Copy fields (Draft > Copy) ----
+// Starts empty — AI drafts these via chat first; fields only fill in once that draft is applied.
 const copyFields = [
-  {key:'headline', label:'Headline', text:'Study in the UK — Applications open for 2026', on:true},
-  {key:'subhead', label:'Subhead', text:'Applications open for the January intake', on:true},
-  {key:'cta', label:'Call to action', text:'Apply Now', on:true}
+  {key:'headline', label:'Headline', text:'', on:true},
+  {key:'subhead', label:'Subhead', text:'', on:true},
+  {key:'cta', label:'Call to action', text:'', on:true}
 ];
 
 function renderCopyFields(){
   const list = document.getElementById('copyFieldList');
   list.innerHTML = copyFields.map((f,i) => `
     <div class="copy-field ${f.on ? '' : 'off'}" data-key="${f.key}">
-      <button type="button" class="field-switch ${f.on ? 'on' : ''}" onclick="toggleCopyField(${i})"><span class="knob"></span></button>
       <div class="copy-field-body">
         <span class="copy-field-label">${f.label}</span>
-        <input class="copy-field-input" value="${f.text.replace(/"/g,'&quot;')}" oninput="onCopyFieldInput(${i}, this.value)">
+        <input class="copy-field-input" value="${f.text.replace(/"/g,'&quot;')}" placeholder="Not drafted yet — see the chat →" oninput="onCopyFieldInput(${i}, this.value)">
       </div>
+      <button type="button" class="field-switch ${f.on ? 'on' : ''}" onclick="toggleCopyField(${i})"><span class="knob"></span></button>
     </div>`).join('');
 }
+
+// ---- Chat-driven copy revision (mirrors the video flow's script-revision pattern) ----
+function escapeHtmlLocal(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+let copyDraftCounter = 0;
+window.__copyDrafts = {};
+function renderCopyProposalMessage(draft, introText){
+  copyDraftCounter++;
+  const id = copyDraftCounter;
+  window.__copyDrafts[id] = draft;
+  return `
+    <div class="msg ai">
+      <span class="tag">AI</span>${escapeHtmlLocal(introText)}
+      <div class="copy-proposal-box" id="copyProposal${id}">
+        <div class="copy-proposal-row"><b>Headline</b>${escapeHtmlLocal(draft.headline)}</div>
+        <div class="copy-proposal-row"><b>Subhead</b>${escapeHtmlLocal(draft.subhead)}</div>
+        <div class="copy-proposal-row"><b>Call to action</b>${escapeHtmlLocal(draft.cta)}</div>
+        <span class="copy-applied-note">✓ Applied to Copy fields</span>
+        <button class="btn-primary" data-draft-id="${id}" onclick="handleCopyProposalClick(this)">Apply to draft →</button>
+      </div>
+      <span class="chat-edit-hint">Want more changes? Type them below and I'll revise again.</span>
+    </div>
+  `;
+}
+function handleCopyProposalClick(btn){
+  applyCopyDraft(Number(btn.dataset.draftId), btn);
+}
+function applyCopyDraft(id, btn){
+  const draft = window.__copyDrafts[id];
+  if(!draft) return;
+  copyFields.find(f => f.key === 'headline').text = draft.headline;
+  copyFields.find(f => f.key === 'subhead').text = draft.subhead;
+  copyFields.find(f => f.key === 'cta').text = draft.cta;
+  renderCopyFields();
+  updateVisualConceptPrompt();
+  document.querySelectorAll('.copy-proposal-box').forEach(box => {
+    box.classList.remove('applied');
+    const b = box.querySelector('.btn-primary');
+    if(b){ b.textContent = 'Apply to draft →'; b.disabled = false; }
+  });
+  const box = document.getElementById('copyProposal' + id);
+  box.classList.add('applied');
+  btn.textContent = '✓ Applied';
+  btn.disabled = true;
+  if(!visualConceptDraftStarted){
+    visualConceptDraftStarted = true;
+    draftVisualConcept();
+  }
+}
+
+function buildRevisedCopy(requestText){
+  const req = requestText.toLowerCase();
+  const cur = {};
+  copyFields.forEach(f => cur[f.key] = f.text);
+  let { headline, subhead, cta } = cur;
+  if(req.includes('short') || req.includes('짧') || req.includes('줄여')){
+    const words = headline.split(' ');
+    headline = words.slice(0, Math.max(2, Math.ceil(words.length / 2))).join(' ');
+  } else if(req.includes('formal') || req.includes('격식') || req.includes('정중')){
+    headline = headline.replace(/—/g, ',');
+    cta = cta.replace(/!$/, '.');
+  } else if(req.includes('fun') || req.includes('energetic') || req.includes('신나') || req.includes('발랄') || req.includes('punch')){
+    headline = headline.replace(/\.$/, '') + '!';
+    cta = cta.replace(/\.$/, '') + ' →';
+  } else if(req.includes('urgent') || req.includes('급하') || req.includes('마감') || req.includes('deadline')){
+    subhead = subhead.replace(/\.$/, '') + ' — limited seats';
+  } else {
+    headline = headline.replace(/\.$/, '') + ` (${requestText})`;
+  }
+  return { headline, subhead, cta };
+}
+
+// First-draft copy proposal — shown automatically on load, mirrors the video flow's runBriefToScript.
+function draftCopy(){
+  const log = document.getElementById('chatLog');
+  const loadingEl = document.createElement('div');
+  loadingEl.className = 'msg ai loading';
+  loadingEl.innerHTML = `<span class="tag">AI</span>Drafting your copy based on your brief<span class="dots"><span>.</span><span>.</span><span>.</span></span>`;
+  log.appendChild(loadingEl);
+  log.scrollTop = log.scrollHeight;
+
+  setTimeout(() => {
+    const draft = {
+      headline: 'Study in the UK — Applications open for 2026',
+      subhead: 'Applications open for the January intake',
+      cta: 'Apply Now'
+    };
+    loadingEl.remove();
+    const wrap = document.createElement('div');
+    wrap.innerHTML = renderCopyProposalMessage(draft, 'I\'ve drafted a headline, subhead, and call to action based on your brief. Should I apply this?').trim();
+    log.appendChild(wrap.firstElementChild);
+    log.scrollTop = log.scrollHeight;
+  }, 1400);
+}
+
+function reviseCopy(requestText){
+  const log = document.getElementById('chatLog');
+  const loadingEl = document.createElement('div');
+  loadingEl.className = 'msg ai loading';
+  loadingEl.innerHTML = `<span class="tag">AI</span>Let me refine the draft<span class="dots"><span>.</span><span>.</span><span>.</span></span>`;
+  log.appendChild(loadingEl);
+  log.scrollTop = log.scrollHeight;
+
+  setTimeout(() => {
+    const draft = buildRevisedCopy(requestText);
+    loadingEl.remove();
+    const wrap = document.createElement('div');
+    wrap.innerHTML = renderCopyProposalMessage(draft, 'I\'ve refined the headline, subhead, and call to action below. Should I apply this?').trim();
+    log.appendChild(wrap.firstElementChild);
+    log.scrollTop = log.scrollHeight;
+  }, 1100);
+}
+
+// ---- Chat-driven visual concept drafting ----
+let visualDraftCounter = 0;
+window.__visualDrafts = {};
+function renderVisualProposalMessage(promptText, introText){
+  visualDraftCounter++;
+  const id = visualDraftCounter;
+  window.__visualDrafts[id] = promptText;
+  return `
+    <div class="msg ai">
+      <span class="tag">AI</span>${escapeHtmlLocal(introText)}
+      <div class="visual-proposal-box" id="visualProposal${id}">
+        <div class="visual-proposal-text">"${escapeHtmlLocal(promptText)}"</div>
+        <span class="copy-applied-note">✓ Applied to Visual concept</span>
+        <button class="btn-primary" data-draft-id="${id}" onclick="handleVisualProposalClick(this)">Apply to draft →</button>
+      </div>
+      <span class="chat-edit-hint">Want a different direction? Type it below and I'll redraft.</span>
+    </div>
+  `;
+}
+function handleVisualProposalClick(btn){
+  applyVisualDraft(Number(btn.dataset.draftId), btn);
+}
+function applyVisualDraft(id, btn){
+  const text = window.__visualDrafts[id];
+  if(text === undefined) return;
+  document.getElementById('visualConceptText').value = text;
+  userEditedPrompt = true;
+  visualConceptDrafted = true;
+  updateDevelopPreview();
+  document.querySelectorAll('.visual-proposal-box').forEach(box => {
+    box.classList.remove('applied');
+    const b = box.querySelector('.btn-primary');
+    if(b){ b.textContent = 'Apply to draft →'; b.disabled = false; }
+  });
+  const box = document.getElementById('visualProposal' + id);
+  box.classList.add('applied');
+  btn.textContent = '✓ Applied';
+  btn.disabled = true;
+  appendChatCta('Ready when you are.', '<button class="btn-primary" onclick="confirmAndGenerate()">Confirm & generate 4 versions →</button>');
+}
+
+function draftVisualConcept(){
+  addChatMsg('ai', '<span class="tag">AI</span>Great — I\'ll work out the visual concept based on this now.');
+  const log = document.getElementById('chatLog');
+  const loadingEl = document.createElement('div');
+  loadingEl.className = 'msg ai loading';
+  loadingEl.innerHTML = `<span class="tag">AI</span>Drafting the visual concept<span class="dots"><span>.</span><span>.</span><span>.</span></span>`;
+  log.appendChild(loadingEl);
+  log.scrollTop = log.scrollHeight;
+  setTimeout(() => {
+    const prompt = buildVisualConceptPrompt();
+    loadingEl.remove();
+    const wrap = document.createElement('div');
+    wrap.innerHTML = renderVisualProposalMessage(prompt, 'Here\'s a visual concept based on your finalized copy. Should I apply this?').trim();
+    log.appendChild(wrap.firstElementChild);
+    log.scrollTop = log.scrollHeight;
+  }, 1200);
+}
+
+// Mirrors the video flow's stage-progress CTA row appended inline in chat messages.
+function appendChatCta(text, buttonsHtml){
+  const log = document.getElementById('chatLog');
+  log.innerHTML += `<div class="msg ai"><span class="tag">AI</span>${text}<div class="chat-cta-row">${buttonsHtml}</div></div>`;
+  log.scrollTop = log.scrollHeight;
+}
+
 function toggleCopyField(i){
   copyFields[i].on = !copyFields[i].on;
   renderCopyFields();
@@ -503,25 +755,11 @@ function goToBrandSetup(){
 }
 
 // ---- Easy / Expert mode ----
-let draftMode = 'easy';
-let bakedInOn = false;
+let draftMode = 'overlay'; // 'overlay' (editable text layer) | 'baked' (rendered into the image pixels)
 function setDraftMode(mode){
   draftMode = mode;
-  document.querySelectorAll('#draftModeToggle .seg-chip').forEach(c => c.classList.toggle('active', c.dataset.mode === mode));
-  document.getElementById('expertPanel').classList.toggle('open', mode === 'expert');
-  document.getElementById('modeToggleHint').textContent = mode === 'easy'
-    ? 'Text stays on an editable layer over the image.'
-    : 'Advanced: optionally let AI bake the copy into the image itself.';
-  if(mode === 'easy'){
-    bakedInOn = false;
-    document.getElementById('bakedInCheckbox').checked = false;
-    document.getElementById('bakedInWarning').classList.remove('show');
-  }
-  updateVisualConceptPrompt();
-}
-function toggleBakedIn(checked){
-  bakedInOn = checked;
-  document.getElementById('bakedInWarning').classList.toggle('show', checked);
+  document.querySelectorAll('#textPlacementToggle .seg-chip').forEach(c => c.classList.toggle('active', c.dataset.mode === mode));
+  document.getElementById('bakedInWarning').classList.toggle('show', mode === 'baked');
   updateVisualConceptPrompt();
 }
 
@@ -529,21 +767,26 @@ function toggleBakedIn(checked){
 // Auto-drafted prompt always includes negative-space placement and graphic-element direction
 // (not just a plain subject description), per the "avoid monotonous prompts" guide.
 let userEditedPrompt = false;
+let visualConceptDrafted = false; // becomes true once the AI's chat-drafted concept has been applied
+let visualConceptDraftStarted = false; // guards against re-triggering the auto-chained draft on later copy edits
 function onVisualConceptEdited(){ userEditedPrompt = true; }
-function updateVisualConceptPrompt(){
-  if(userEditedPrompt) return; // don't clobber a manual edit
+function buildVisualConceptPrompt(){
   const activeLabels = copyFields.filter(f => f.on).map(f => f.key === 'cta' ? 'call-to-action button' : f.label.toLowerCase());
   const base = 'A bright, aspirational photo of a diverse group of international students on a UK university campus, golden-hour lighting, candid and optimistic mood.';
   const spaceLine = activeLabels.length
     ? ` Leave generous negative space in the lower third of the frame for ${activeLabels.join(', ')} text overlay.`
     : '';
   const graphicLine = brandKitOn
-    ? ' Include abstract geometric shapes in the brand\'s primary blue (#4F6DE6), a subtle pattern overlay, and layered graphic elements for visual depth.'
+    ? ' Include abstract geometric shapes in the brand\'s primary teal (#2B6A6C), a subtle pattern overlay, and layered graphic elements for visual depth.'
     : ' Include abstract geometric shapes, a subtle pattern overlay, and layered graphic elements for visual depth.';
-  const bakedLine = (draftMode === 'expert' && bakedInOn && activeLabels.length)
+  const bakedLine = (draftMode === 'baked' && activeLabels.length)
     ? ` Render this text directly into the image: ${copyFields.filter(f=>f.on).map(f=>f.text).join(' / ')}.`
     : '';
-  document.getElementById('visualConceptText').value = (base + spaceLine + graphicLine + bakedLine).trim();
+  return (base + spaceLine + graphicLine + bakedLine).trim();
+}
+function updateVisualConceptPrompt(){
+  if(userEditedPrompt || !visualConceptDrafted) return; // don't clobber a manual edit, and don't fill it in before the chat has drafted it
+  document.getElementById('visualConceptText').value = buildVisualConceptPrompt();
   updateDevelopPreview();
 }
 
@@ -557,10 +800,7 @@ function addChatMsg(role, html){
   log.scrollTop = log.scrollHeight;
 }
 function quickAction(action){
-  if(action === 'looks-good'){
-    addChatMsg('user', 'Looks good → generate');
-    confirmAndGenerate();
-  } else if(action === 'rework'){
+  if(action === 'rework'){
     addChatMsg('user', 'Rework');
     addChatMsg('ai', '<span class="tag">AI</span>Sure — tell me what to change (e.g. "make the headline shorter" or "try a warmer tone"), or adjust the fields directly on the right.');
   }
@@ -571,7 +811,13 @@ function sendChatMessage(){
   if(!text) return;
   addChatMsg('user', text);
   input.value = '';
-  setTimeout(() => addChatMsg('ai', '<span class="tag">AI</span>Got it — this is a prototype, so I won\'t actually rewrite the draft, but in the real flow this is where that request would land.'), 500);
+
+  const versionsTab = document.getElementById('tabVersions');
+  if(versionsTab && versionsTab.classList.contains('locked')){
+    reviseCopy(text);
+  } else {
+    setTimeout(() => addChatMsg('ai', '<span class="tag">AI</span>Got it — this is a prototype, so I won\'t actually rewrite the draft, but in the real flow this is where that request would land.'), 500);
+  }
 }
 
 // ---- Draft <-> Versions sub-stage tabs ----
@@ -642,7 +888,21 @@ function regenerateVersion(id){
 }
 function selectVersion(id){
   addChatMsg('user', `Use version ${id}`);
-  goToDevelop();
+  window.__selectedVersionId = id;
+  document.getElementById('tabVersions').innerHTML = '<span class="check">✓</span> Versions';
+  showVersionResult(id);
+}
+
+function showVersionResult(id){
+  document.getElementById('versionsChooser').style.display = 'none';
+  document.getElementById('versionResultView').style.display = 'flex';
+  document.getElementById('versionResultBadge').textContent = 'V' + id;
+  document.getElementById('draftActionBar').style.display = 'none';
+}
+
+function backToVersions(){
+  document.getElementById('versionResultView').style.display = 'none';
+  document.getElementById('versionsChooser').style.display = '';
 }
 
 // ---- Develop preview (reflects the current Copy fields) ----
@@ -673,26 +933,46 @@ function setStep(active){
   });
   document.getElementById('stepBrief').querySelector('.num').textContent = idx > 0 ? '✓' : '1';
   document.getElementById('stepGenerate').querySelector('.num').textContent = idx > 1 ? '✓' : '2';
+  document.getElementById('sideNav').classList.toggle('collapsed', idx !== 0);
 }
 function selectContentType(el){
   document.querySelectorAll('#contentTypeToggle .seg-chip').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
+  // Reel/Short, Story image, and Carousel live in the other prototype file — Image post is the only
+  // type with its own Brief/Draft/Versions flow here, so switching away leaves this file entirely.
+  if(el.dataset.type !== 'image'){
+    window.location.href = 'new-content-brief-to-generate.html';
+  }
 }
-function goToBrief(){ showView('briefView'); setStep('stepBrief'); }
-function goToGenerate(){ showView('generateView'); setStep('stepGenerate'); showSub('draft'); }
+function goToBrief(){ showView('briefView'); setStep('stepBrief'); document.getElementById('briefActionBar').style.display = 'flex'; }
+let copyDraftStarted = false;
+function goToGenerate(){
+  showView('generateView'); setStep('stepGenerate'); showSub('draft');
+  document.getElementById('briefActionBar').style.display = 'none';
+  if(!copyDraftStarted){
+    copyDraftStarted = true;
+    draftCopy();
+  }
+}
 function goToDevelop(){
   if(!versionState.some(v => v.ready)) return; // nothing to develop yet
   updateDevelopPreview();
   showView('developView');
   setStep('stepEdit');
+  document.getElementById('briefActionBar').style.display = 'none';
+}
+
+// Publish is shared with the video/carousel flow — hand off to that file's Publish screen directly.
+function skipToPublish(){
+  if(!versionState.some(v => v.ready)) return; // nothing to publish yet
+  window.location.href = 'new-content-brief-to-generate.html?goto=publish';
 }
 
 // ---- init ----
 renderCopyFields();
 setBrandMode('none');
-setDraftMode('easy');
-updateVisualConceptPrompt();
-addChatMsg('ai', '<span class="tag">AI</span>I\'ve drafted your copy and a visual concept based on your brief. Toggle any Copy field on/off, edit the Visual concept prompt, and confirm when it looks right.');
+setDraftMode('overlay');
+goToBrief();
 </script>
 </body>
 </html>

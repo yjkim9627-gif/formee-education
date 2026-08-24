@@ -510,7 +510,7 @@
 
   /* ---- Queue panel (floating, shown while thumbnails generate) ---- */
   @keyframes queuePulse{0%,100%{opacity:1;} 50%{opacity:0.25;}}
-  .queue-panel{position:fixed; top:76px; right:24px; z-index:9998; width:280px; background:#fff; border-radius:12px; box-shadow:0 20px 50px rgba(15,23,41,0.18); border:1px solid var(--neutral-200); padding:16px;}
+  .queue-panel{position:absolute; top:76px; right:24px; z-index:9998; width:280px; background:#fff; border-radius:12px; box-shadow:0 20px 50px rgba(15,23,41,0.18); border:1px solid var(--neutral-200); padding:16px;}
   .queue-header{display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;}
   .queue-title{font-size:13px; font-weight:700; color:var(--neutral-900);}
   .queue-badge{font-size:10.5px; font-weight:600; color:var(--neutral-700); background:var(--neutral-100); padding:3px 8px; border-radius:999px;}
@@ -799,6 +799,8 @@
               <div class="char-card" onclick="selectChar(this)"><div class="thumb"></div><div class="name">Sofia</div></div>
             </div>
 
+            <!-- Voice/appearance only applies to motion content — hidden entirely for Image post -->
+            <div id="charVoiceSection">
             <div class="char-divider"></div>
             <div class="appear-label">How does character appear in this video?</div>
             <div class="seg-control" id="charAppearToggle">
@@ -843,6 +845,7 @@
                 </div>
                 <button type="button" class="voice-change-btn" onclick="openVoiceLibraryModal()">Change voice</button>
               </div>
+            </div>
             </div>
           </div>
           </div>
@@ -1108,6 +1111,13 @@
 
         </div>
       </div>
+    </div>
+
+    <!-- anchored inside the main content area (not the viewport) so it stays inside the app frame instead of floating in the page background -->
+    <div class="queue-panel" id="queuePanel" style="display:none;">
+      <div class="queue-header"><span class="queue-title">Queue</span><span class="queue-badge" id="queueBadge">● 2 ACTIVE</span></div>
+      <div class="queue-sub">We keep working even if you leave this page.</div>
+      <div class="queue-jobs" id="queueJobs"></div>
     </div>
 
   </div>
@@ -1397,12 +1407,6 @@
   <button type="button" class="role-btn" data-brand="set" onclick="setBrandMode('set')">Brand set up</button>
 </div>
 
-<div class="queue-panel" id="queuePanel" style="display:none;">
-  <div class="queue-header"><span class="queue-title">Queue</span><span class="queue-badge" id="queueBadge">● 2 ACTIVE</span></div>
-  <div class="queue-sub">We keep working even if you leave this page.</div>
-  <div class="queue-jobs" id="queueJobs"></div>
-</div>
-
 <script>
 // ---- Brand setup awareness (demo preview toggle, bottom-right) ----
 function setBrandMode(mode){
@@ -1421,6 +1425,11 @@ function setStep(active){
   document.getElementById('sideNav').classList.toggle('collapsed', active !== 1);
 }
 setStep(1);
+
+// Reached directly from the image-post flow's "Skip to publish" — jump straight to Publish.
+if(new URLSearchParams(location.search).get('goto') === 'publish'){
+  skipToPublish();
+}
 
 function goToBrief(){
   hideEditorView();
@@ -1452,6 +1461,13 @@ function jumpToEditPublish(){
 }
 
 function proceedToGenerate(){
+  // Image post has its own dedicated Brief -> Draft -> Versions flow in a separate prototype file.
+  const contentType = document.querySelector('#contentTypeToggle .seg-chip.active')?.dataset.type;
+  if(contentType === 'image'){
+    window.location.href = 'new-image-to-generate.html';
+    return;
+  }
+
   document.getElementById('briefView').classList.add('hidden');
   document.getElementById('generateView').classList.remove('hidden');
   document.getElementById('briefActionBar').style.display = 'none';
@@ -1702,6 +1718,13 @@ function reviseScript(requestText){
 function selectContentType(el){
   document.querySelectorAll('#contentTypeToggle .seg-chip').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
+  // Voice/lip-sync only applies to motion content — Image post has no audio.
+  const voiceSection = document.getElementById('charVoiceSection');
+  if(voiceSection) voiceSection.style.display = el.dataset.type === 'image' ? 'none' : '';
+  // Image post is a fully separate flow with its own Brief screen — leave this file entirely.
+  if(el.dataset.type === 'image'){
+    window.location.href = 'new-image-to-generate.html';
+  }
 }
 
 // ---- Character section (Brief & Style) ----
