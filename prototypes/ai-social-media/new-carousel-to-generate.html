@@ -199,6 +199,7 @@
   .char-card .thumb{height:88px; background:linear-gradient(135deg,var(--neutral-300),var(--neutral-150));}
   .char-card.new .thumb{display:flex; align-items:center; justify-content:center; font-size:20px; color:var(--neutral-400); background:var(--neutral-50); border-bottom:1px dashed var(--neutral-300);}
   .char-card .name{padding:7px 4px; font-size:12px; text-align:center; color:var(--neutral-700); font-weight:500;}
+  .char-per-card-note{margin:10px 0 0; font-size:12px; color:var(--neutral-500); line-height:1.5;}
 
   /* -- Advanced settings (Brief & Style, collapsible) -- */
   .advanced-section{background:#fff; border:1.2px solid var(--neutral-400); border-radius:var(--radius-xl); margin-top:16px; overflow:hidden;}
@@ -231,24 +232,36 @@
   .brand-kit-empty{margin-top:8px; padding:10px 12px; background:var(--neutral-50); border:1px dashed var(--neutral-400); border-radius:8px; font-size:12px; color:var(--neutral-500);}
   .brand-kit-empty a{color:var(--brand); font-weight:600; cursor:pointer; text-decoration:underline;}
 
-  /* ---- Script stage: per-card text drafting ---- */
+  /* ---- Script stage: one compact card per grid cell, message only ---- */
   .script-card-row{display:grid; grid-template-columns:repeat(auto-fill, minmax(170px, 1fr)); gap:12px; margin-bottom:8px;}
   .script-card{border:1px solid var(--neutral-300); border-radius:10px; padding:12px; display:flex; flex-direction:column; gap:8px; background:#fff; transition:border-color .15s;}
   .script-card:focus-within{border-color:var(--brand);}
   .script-card-num{font-size:10.5px; font-weight:700; color:var(--neutral-500); text-transform:uppercase; letter-spacing:.04em;}
   .script-card-text{flex:1; min-height:110px; border:none; resize:vertical; font-size:13px; font-family:var(--font); outline:none; background:transparent; color:var(--neutral-900); line-height:1.5; padding:0;}
 
-  /* ---- Storyboard stage: two-column layout (canvas grid + card editor sidebar) ---- */
-  #subStoryboard{display:flex; flex-direction:column; flex:1; min-height:0;}
+  /* ---- Storyboard stage: canvas grid (mirrors the video Timeline) + selected-card editor sidebar ---- */
   .storyboard-stage{display:flex; gap:20px; flex:1; min-height:0;}
   .storyboard-canvas{flex:1; min-width:0; min-height:0; display:flex; flex-direction:column;}
-  .storyboard-grid{display:grid; grid-template-columns:1fr 1fr; grid-auto-rows:min-content; gap:14px; align-content:start; flex:1; min-height:0; overflow-y:auto;}
+  .storyboard-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); grid-auto-rows:min-content; gap:14px; align-content:start; flex:1; min-height:0; overflow-y:auto;}
   .storyboard-tile{border:1.5px solid var(--neutral-300); border-radius:12px; overflow:hidden; cursor:pointer; background:#fff; transition:border-color 0.15s, box-shadow 0.15s;}
   .storyboard-tile:hover{border-color:var(--neutral-450);}
   .storyboard-tile.active{border-color:var(--brand); box-shadow:0 0 0 3px rgba(79,109,230,0.12);}
-  .storyboard-tile-preview{width:100%; aspect-ratio:4/5; background:linear-gradient(135deg,var(--neutral-200),var(--neutral-150)); position:relative; display:flex; align-items:flex-end; padding:10px;}
+  .storyboard-tile-preview{position:relative; width:100%; aspect-ratio:4/5; background:linear-gradient(135deg,var(--neutral-200),var(--neutral-150)); display:flex; align-items:flex-end; padding:10px;}
+  .storyboard-tile.ready .storyboard-tile-preview{background:linear-gradient(135deg,var(--brand-mid),var(--accent));}
+  .storyboard-tile.generating .storyboard-tile-badge{display:none;}
+  .storyboard-tile.generating .spinner-mini{display:block;}
   .storyboard-tile-badge{font-size:11px; font-weight:600; color:#fff; background:rgba(15,23,41,0.55); padding:4px 8px; border-radius:6px; backdrop-filter:blur(2px);}
-  .storyboard-tile-line{padding:10px 12px; font-size:12.5px; color:var(--neutral-700); line-height:1.4; border-top:1px solid var(--neutral-200); min-height:18px;}
+  .storyboard-tile-overlay-top{position:absolute; top:8px; left:8px; right:8px; display:flex; align-items:center; justify-content:space-between; gap:6px;}
+  .storyboard-tile-ready-badge{display:none; align-items:center; gap:3px; font-size:10px; font-weight:700; color:var(--green); background:#fff; padding:3px 7px; border-radius:999px;}
+  .storyboard-tile.ready .storyboard-tile-ready-badge{display:inline-flex;}
+  .storyboard-tile-regen-btn{display:none; width:24px; height:24px; border-radius:999px; border:none; background:rgba(255,255,255,0.92); align-items:center; justify-content:center; font-size:12px; color:var(--neutral-700); cursor:pointer; margin-left:auto;}
+  .storyboard-tile-regen-btn:hover{background:#fff; color:var(--neutral-900);}
+  .storyboard-tile.ready .storyboard-tile-regen-btn{display:flex;}
+  .storyboard-tile-pager{display:none; align-items:center; justify-content:center; gap:6px; padding:6px 8px; border-top:1px solid var(--neutral-200); font-size:11px; font-weight:600; color:var(--neutral-700); background:#fff;}
+  .storyboard-tile.has-history .storyboard-tile-pager{display:flex;}
+  .storyboard-tile-pager button{width:18px; height:18px; border-radius:999px; border:1px solid var(--neutral-300); background:#fff; color:var(--neutral-700); font-size:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;}
+  .storyboard-tile-pager button:hover{border-color:var(--neutral-450);}
+  .storyboard-tile-pager button:disabled{opacity:.35; cursor:default;}
 
   .storyboard-editor-col{width:320px; flex-shrink:0; display:flex; flex-direction:column;}
   .storyboard-global-brand{border:1px solid var(--neutral-300); border-radius:10px; padding:14px 16px; margin-bottom:14px;}
@@ -259,6 +272,8 @@
   .card-nav-btn.active{background:var(--brand-light); border-color:var(--brand); color:var(--neutral-900);}
   .storyboard-editor-panel{width:100%;}
   .storyboard-card-editor{border:1px solid var(--neutral-300); border-radius:10px; padding:16px;}
+  .storyboard-generate-cta{margin-top:14px;}
+  .storyboard-generate-cta .meta-text{display:block; margin-top:8px;}
 
   .copy-field-list{border:1px solid var(--neutral-300); border-radius:12px; overflow:hidden; background:#fff; margin-bottom:16px;}
   .copy-field{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 16px; border-bottom:1px solid var(--neutral-200); transition:opacity .15s;}
@@ -272,26 +287,6 @@
   .scene-desc-label{font-size:11px; font-weight:700; color:var(--neutral-500); text-transform:uppercase; letter-spacing:.04em; display:block; margin-bottom:6px;}
   .story-desc-input{width:100%; min-height:70px; border:1px solid var(--neutral-300); border-radius:8px; padding:10px 12px; font-size:13px; font-family:var(--font); color:var(--neutral-900); line-height:1.5; resize:vertical; outline:none;}
   .story-desc-input:focus{border-color:var(--brand);}
-
-  /* ---- Generate stage: per-card image tiles + local version pager ---- */
-  .carousel-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:14px; margin-bottom:24px;}
-  .carousel-tile{border:1.5px solid var(--neutral-300); border-radius:12px; overflow:hidden; background:#fff; transition:border-color .15s;}
-  .carousel-tile.ready{border-color:var(--neutral-300);}
-  .carousel-tile-preview{position:relative; width:100%; aspect-ratio:4/5; background:linear-gradient(135deg,var(--neutral-200),var(--neutral-150)); display:flex; align-items:center; justify-content:center;}
-  .carousel-tile.ready .carousel-tile-preview{background:linear-gradient(135deg,var(--brand-mid),var(--accent));}
-  .carousel-tile.generating .spinner-mini{display:block;}
-  .carousel-tile-overlay-top{position:absolute; top:8px; left:8px; right:8px; display:flex; align-items:center; justify-content:space-between; gap:6px;}
-  .carousel-tile-badge{font-size:11px; font-weight:600; color:#fff; background:rgba(15,23,41,0.55); padding:4px 8px; border-radius:6px; backdrop-filter:blur(2px); position:absolute; bottom:8px; left:8px;}
-  .carousel-tile-ready-badge{display:none; align-items:center; gap:3px; font-size:10px; font-weight:700; color:var(--green); background:#fff; padding:3px 7px; border-radius:999px;}
-  .carousel-tile.ready .carousel-tile-ready-badge{display:inline-flex;}
-  .carousel-tile-regen-btn{display:none; width:24px; height:24px; border-radius:999px; border:none; background:rgba(255,255,255,0.92); align-items:center; justify-content:center; font-size:12px; color:var(--neutral-700); cursor:pointer; margin-left:auto;}
-  .carousel-tile-regen-btn:hover{background:#fff; color:var(--neutral-900);}
-  .carousel-tile.ready .carousel-tile-regen-btn{display:flex;}
-  .carousel-tile-pager{display:none; align-items:center; justify-content:center; gap:6px; padding:6px 8px; border-top:1px solid var(--neutral-200); font-size:11px; font-weight:600; color:var(--neutral-700);}
-  .carousel-tile.has-history .carousel-tile-pager{display:flex;}
-  .carousel-tile-pager button{width:18px; height:18px; border-radius:999px; border:1px solid var(--neutral-300); background:#fff; color:var(--neutral-700); font-size:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;}
-  .carousel-tile-pager button:hover{border-color:var(--neutral-450);}
-  .carousel-tile-pager button:disabled{opacity:.35; cursor:default;}
 
   /* ---- Size variation panel (Generate stage, once all cards ready) ---- */
   .size-variation-panel{border:1px solid var(--neutral-300); border-radius:12px; padding:20px; margin-bottom:8px;}
@@ -448,6 +443,7 @@
                 <div class="char-card" onclick="selectChar(this)"><div class="thumb"></div><div class="name">Sofia</div></div>
                 <div class="char-card" onclick="selectChar(this)"><div class="thumb"></div><div class="name">Esther</div></div>
               </div>
+              <p class="char-per-card-note">This character is included on every card by default — you'll be able to turn it off for individual cards later, in Storyboard.</p>
             </div>
           </div>
         </div>
@@ -500,7 +496,6 @@
           <div class="stage-tabs">
             <div class="stage-tab active" id="tabScript" onclick="showSub('script')">Script</div>
             <div class="stage-tab locked" id="tabStoryboard" onclick="showSub('storyboard')">Storyboard</div>
-            <div class="stage-tab locked" id="tabGenerate" onclick="showSub('generate')">Generate</div>
           </div>
 
           <div class="settings-bar" id="settingsBar">
@@ -511,7 +506,7 @@
             <div class="setting-chip brand-chip-setting" id="brandSettingChip" style="display:none;">🏷 Brand: <b>Formee Express</b></div>
           </div>
 
-          <!-- SUB-STAGE: Script -->
+          <!-- SUB-STAGE: Script — message only, per card -->
           <div class="stage-sub" id="subScript">
             <div class="stage-body"><div class="stage-body-inner">
               <h2 class="stage-title">Script</h2>
@@ -523,11 +518,11 @@
             </div></div>
           </div>
 
-          <!-- SUB-STAGE: Storyboard -->
+          <!-- SUB-STAGE: Storyboard — canvas grid (mirrors video Timeline) + selected-card editor: copy, scene & background description, character-in-card. Image generation happens in-place here, no separate Generate tab. -->
           <div class="stage-sub" id="subStoryboard" style="display:none;">
             <div class="stage-body"><div class="stage-body-inner">
               <h2 class="stage-title">Storyboard</h2>
-              <p class="stage-sub-text">Confirm the background, action, and on-card copy for each card, then move on to image generation.</p>
+              <p class="stage-sub-text">Confirm the background, action, and on-card copy for each card, then generate.</p>
               <div class="storyboard-stage">
                 <div class="storyboard-canvas">
                   <div class="storyboard-grid" id="storyboardGrid"></div>
@@ -536,7 +531,7 @@
                   <div class="storyboard-global-brand" id="storyboardGlobalBrand">
                     <div class="brand-kit-row" style="margin-top:0;">
                       <button type="button" class="field-switch" id="globalBrandKitSwitch" onclick="toggleGlobalBrandKit()"><span class="knob"></span></button>
-                      <span class="brand-kit-label">Use brand kit for all cards</span>
+                      <span class="brand-kit-label">Use brand kit</span>
                     </div>
                     <div class="brand-kit-summary" id="globalBrandKitSummary" style="display:none;">
                       <span class="brand-kit-summary-label">Formee Express</span>
@@ -550,20 +545,12 @@
                   </div>
                   <div class="storyboard-nav" id="storyboardCardNav"></div>
                   <div class="storyboard-editor-panel" id="storyboardEditorPanel"></div>
+                  <div class="storyboard-generate-cta">
+                    <button class="btn-primary" id="storyboardGenerateBtn" onclick="startCardGeneration()">Generate images</button>
+                    <span class="meta-text" id="storyboardGenerateMeta">Regenerating an image once it is made will use credits</span>
+                  </div>
                 </div>
               </div>
-              <div class="stage-cta-row">
-                <button class="btn-primary" onclick="confirmStoryboard()">Confirm storyboard → Generate images</button>
-              </div>
-            </div></div>
-          </div>
-
-          <!-- SUB-STAGE: Generate -->
-          <div class="stage-sub" id="subGenerate" style="display:none;">
-            <div class="stage-body"><div class="stage-body-inner">
-              <h2 class="stage-title">Generate</h2>
-              <p class="stage-sub-text" id="generateStageSub">Each card is generating its image — regenerate any one individually if it misses the mark.</p>
-              <div class="carousel-grid" id="carouselGrid"></div>
               <div class="size-variation-panel" id="sizeVariationPanel" style="display:none;">
                 <div class="size-var-title">📐 Size variations</div>
                 <div class="size-var-sub">Regenerate this carousel at a different ratio for another platform — originals are kept as-is.</div>
@@ -589,7 +576,7 @@
                 <div class="size-var-sets" id="sizeVarSets"></div>
               </div>
               <div class="stage-cta-row">
-                <span class="meta-text" id="generateCtaMeta">Waiting for all cards to finish generating</span>
+                <span class="meta-text" id="generateCtaMeta" style="display:none;">Waiting for all cards to finish generating</span>
                 <button class="btn-primary" id="generateCtaBtn" disabled onclick="goToDevelop()">Proceed to Edit & Publish →</button>
               </div>
             </div></div>
@@ -730,6 +717,7 @@ function updateBriefMeta(){
 
 // ---- Character section (Brief & Style) ----
 function setCharMode(mode){
+  window.__charMode = mode;
   document.querySelectorAll('#charModeToggle .seg-chip').forEach(c => c.classList.toggle('active', c.dataset.mode === mode));
   document.getElementById('charWithSection').style.display = mode === 'with' ? 'block' : 'none';
 }
@@ -774,14 +762,14 @@ function sendChatMessage(){
 
 // ---- Script / Storyboard / Generate tab switching ----
 function showSub(name){
-  const tabs = {script:'tabScript', storyboard:'tabStoryboard', generate:'tabGenerate'};
-  const subs = {script:'subScript', storyboard:'subStoryboard', generate:'subGenerate'};
+  const tabs = {script:'tabScript', storyboard:'tabStoryboard'};
+  const subs = {script:'subScript', storyboard:'subStoryboard'};
   const tabEl = document.getElementById(tabs[name]);
   if(tabEl.classList.contains('locked')) return;
   Object.values(tabs).forEach(id => document.getElementById(id).classList.remove('active'));
   tabEl.classList.add('active');
   Object.values(subs).forEach(id => document.getElementById(id).style.display = 'none');
-  document.getElementById(subs[name]).style.display = name === 'storyboard' ? 'flex' : 'block';
+  document.getElementById(subs[name]).style.display = 'block';
 }
 
 let scriptDraftStarted = false;
@@ -843,17 +831,22 @@ function confirmScript(){
   document.getElementById('tabScript').innerHTML = '<span class="check">✓</span> Script';
   document.getElementById('tabStoryboard').classList.remove('locked');
   showSub('storyboard');
-  addChatMsg('ai', '<span class="tag">AI</span>Script confirmed. Now let\'s set the background and action for each card.');
+  addChatMsg('ai', '<span class="tag">AI</span>Now let\'s set the background, on-card copy, and character for each card — then generate when you\'re ready.');
   renderStoryboard();
 }
 
 // =====================================================================
-// STORYBOARD STAGE — left: per-card image grid; right: card selector +
-// headline/subhead/CTA copy fields + scene description. Brand kit is a
-// single toggle applied to every card, not a per-card setting.
+// STORYBOARD STAGE — canvas grid on the left (mirrors the video flow's
+// Timeline: each tile starts as a plain placeholder, then generating,
+// then ready — image generation happens in place here, no separate
+// Generate tab). Right sidebar: card selector + headline/subhead/CTA
+// copy fields + scene & background description + include-character
+// toggle for whichever card is selected. Brand kit is a single toggle
+// applied to every card, not a per-card setting.
 // =====================================================================
 window.__cardDescriptions = {};
 window.__cardCopyFields = {};
+window.__cardCharacterOn = {};
 window.__globalBrandKitOn = undefined; // unset until first computed from __brandMode
 window.__storyboardSelectedCard = 1;
 const STORYBOARD_TEMPLATES = [
@@ -865,6 +858,9 @@ const STORYBOARD_TEMPLATES = [
   'Close-up of hands submitting an application on a laptop, warm desk lighting.'
 ];
 const CTA_DEFAULT_TEXT = 'Learn more';
+const CARD_REGEN_CREDIT = 5;
+window.__cardImageHistory = {}; // n -> [{ready:bool}, ...], absent until generation has started for that card
+window.__cardImageActiveIndex = {}; // n -> index into history currently shown
 
 function ensureCardCopyFields(n){
   if(!window.__cardCopyFields[n]){
@@ -881,11 +877,19 @@ function ensureCardCopyFields(n){
 function renderStoryboard(){
   const n = window.__cardCount;
   if(window.__globalBrandKitOn === undefined) window.__globalBrandKitOn = window.__brandMode === 'set';
+  window.__cardImageHistory = {};
+  window.__cardImageActiveIndex = {};
   for(let i = 1; i <= n; i++){
     if(window.__cardDescriptions[i] === undefined) window.__cardDescriptions[i] = STORYBOARD_TEMPLATES[i - 1] || `Card ${i} — describe the scene and action.`;
+    if(window.__cardCharacterOn[i] === undefined) window.__cardCharacterOn[i] = true;
     ensureCardCopyFields(i);
   }
   window.__storyboardSelectedCard = 1;
+  document.getElementById('storyboardGenerateBtn').disabled = false;
+  document.getElementById('storyboardGenerateBtn').textContent = 'Generate images';
+  document.getElementById('sizeVariationPanel').style.display = 'none';
+  document.getElementById('generateCtaBtn').disabled = true;
+  document.getElementById('generateCtaMeta').style.display = 'none';
   renderStoryboardGrid();
   buildStoryboardCardNav();
   renderStoryboardEditorPanels();
@@ -894,20 +898,46 @@ function renderStoryboard(){
 }
 function renderStoryboardGrid(){
   const n = window.__cardCount;
-  document.getElementById('storyboardGrid').innerHTML = Array.from({length: n}, (_, i) => {
-    const num = i + 1;
-    return `
-      <div class="storyboard-tile${num === window.__storyboardSelectedCard ? ' active' : ''}" data-card="${num}" id="storyboardTile${num}" onclick="selectStoryboardCard(${num})">
-        <div class="storyboard-tile-preview">
-          <span class="storyboard-tile-badge">Card ${num}</span>
+  document.getElementById('storyboardGrid').innerHTML = Array.from({length: n}, (_, i) => renderStoryboardTile(i + 1)).join('');
+}
+function renderStoryboardTile(n){
+  const hist = window.__cardImageHistory[n];
+  let stateClass = '';
+  let pagerHtml = '';
+  if(hist){
+    const idx = window.__cardImageActiveIndex[n];
+    stateClass = hist[idx].ready ? 'ready' : 'generating';
+    if(hist.length > 1){
+      stateClass += ' has-history';
+      pagerHtml = `
+        <div class="storyboard-tile-pager">
+          <button onclick="event.stopPropagation(); cardHistoryPrev(${n})" ${idx === 0 ? 'disabled' : ''}>‹</button>
+          <span>${idx + 1}/${hist.length}</span>
+          <button onclick="event.stopPropagation(); cardHistoryNext(${n})" ${idx === hist.length - 1 ? 'disabled' : ''}>›</button>
+        </div>`;
+    }
+  }
+  return `
+    <div class="storyboard-tile ${stateClass}${n === window.__storyboardSelectedCard ? ' active' : ''}" data-card="${n}" id="storyboardTile${n}" onclick="selectStoryboardCard(${n})">
+      <div class="storyboard-tile-preview">
+        <div class="storyboard-tile-overlay-top">
+          <span class="storyboard-tile-ready-badge">✓ Ready</span>
+          <button type="button" class="storyboard-tile-regen-btn" onclick="event.stopPropagation(); regenerateCard(${n})" title="Regenerate this card only · ⚡${CARD_REGEN_CREDIT}">↻</button>
         </div>
-        <div class="storyboard-tile-line" id="storyboardTileLine${num}">${escapeHtml(storyboardTileText(num))}</div>
-      </div>`;
-  }).join('');
+        <div class="spinner-mini"></div>
+        <span class="storyboard-tile-badge">Card ${n}</span>
+      </div>
+      <div class="storyboard-tile-line" id="storyboardTileLine${n}">${escapeHtml(storyboardTileText(n))}</div>
+      ${pagerHtml}
+    </div>`;
 }
 function storyboardTileText(n){
   const headline = ensureCardCopyFields(n).find(f => f.key === 'headline');
   return (headline && headline.text) ? headline.text : 'No headline yet';
+}
+function updateStoryboardTileLine(n){
+  const line = document.getElementById('storyboardTileLine' + n);
+  if(line) line.textContent = storyboardTileText(n);
 }
 function buildStoryboardCardNav(){
   const n = window.__cardCount;
@@ -926,6 +956,11 @@ function renderStoryboardEditorPanels(){
         <div class="copy-field-list" id="copyFieldList${num}"></div>
         <label class="scene-desc-label">Scene &amp; background description</label>
         <textarea class="story-desc-input" data-card="${num}" oninput="updateCardDescription(${num}, this.value)">${escapeHtml(window.__cardDescriptions[num] || '')}</textarea>
+        ${window.__charMode === 'with' ? `
+        <div class="brand-kit-row" id="cardCharRow${num}">
+          <button type="button" class="field-switch ${window.__cardCharacterOn[num] ? 'on' : ''}" onclick="toggleCardCharacter(${num})"><span class="knob"></span></button>
+          <span class="brand-kit-label">Include character in this card</span>
+        </div>` : ''}
       </div>`;
   }).join('');
   for(let i = 1; i <= n; i++) renderCardCopyFields(i);
@@ -954,9 +989,13 @@ function onCardCopyFieldInput(n, i, value){
   fields[i].text = value;
   if(fields[i].key === 'headline') updateStoryboardTileLine(n);
 }
-function updateStoryboardTileLine(n){
-  const line = document.getElementById('storyboardTileLine' + n);
-  if(line) line.textContent = storyboardTileText(n);
+function toggleCardCharacter(n){
+  window.__cardCharacterOn[n] = !window.__cardCharacterOn[n];
+  const row = document.getElementById('cardCharRow' + n);
+  if(row) row.querySelector('.field-switch').classList.toggle('on', window.__cardCharacterOn[n]);
+}
+function updateCardDescription(n, value){
+  window.__cardDescriptions[n] = value;
 }
 function selectStoryboardCard(n){
   n = Number(n);
@@ -968,9 +1007,6 @@ function selectStoryboardCard(n){
   if(editor) editor.style.display = 'block';
   const tile = document.getElementById('storyboardTile' + n);
   if(tile) tile.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
-}
-function updateCardDescription(n, value){
-  window.__cardDescriptions[n] = value;
 }
 function toggleGlobalBrandKit(){
   if(window.__brandMode !== 'set') return; // disabled until brand is set up
@@ -994,22 +1030,8 @@ function updateGlobalBrandKitUI(){
     empty.style.display = 'block';
   }
 }
-function confirmStoryboard(){
-  document.getElementById('tabStoryboard').innerHTML = '<span class="check">✓</span> Storyboard';
-  document.getElementById('tabGenerate').classList.remove('locked');
-  showSub('generate');
-  addChatMsg('ai', '<span class="tag">AI</span>Storyboard confirmed. Generating an image for each card now.');
-  startCardGeneration();
-}
 
-// =====================================================================
-// GENERATE STAGE — per-card image tiles, individually regenerable,
-// each with its own local version history (never a whole-set version pick)
-// =====================================================================
-const CARD_REGEN_CREDIT = 5;
-window.__cardImageHistory = {}; // n -> [{ready:bool}, ...]
-window.__cardImageActiveIndex = {}; // n -> index into history currently shown
-
+// ---- Image generation (manual "Generate images" click — mirrors the video flow's "Generate thumbnails") ----
 function startCardGeneration(){
   const n = window.__cardCount;
   window.__cardImageHistory = {};
@@ -1018,82 +1040,57 @@ function startCardGeneration(){
     window.__cardImageHistory[i] = [{ ready: false }];
     window.__cardImageActiveIndex[i] = 0;
   }
-  renderCarouselGrid();
+  renderStoryboardGrid();
   document.getElementById('sizeVariationPanel').style.display = 'none';
+  document.getElementById('storyboardGenerateBtn').disabled = true;
+  document.getElementById('storyboardGenerateBtn').textContent = 'Generating…';
   document.getElementById('generateCtaBtn').disabled = true;
   document.getElementById('generateCtaMeta').style.display = '';
   document.getElementById('generateCtaMeta').textContent = 'Waiting for all cards to finish generating';
+  addChatMsg('ai', '<span class="tag">AI</span>Generating an image for each card now.');
 
   for(let i = 1; i <= n; i++){
     setTimeout(() => {
       window.__cardImageHistory[i][0].ready = true;
-      renderCarouselGrid();
+      renderStoryboardGrid();
       checkAllCardsReady();
     }, 1200 + i * 700);
   }
-}
-function renderCarouselGrid(){
-  const n = window.__cardCount;
-  document.getElementById('carouselGrid').innerHTML = Array.from({length: n}, (_, i) => {
-    const num = i + 1;
-    return renderCarouselTile(num);
-  }).join('');
-}
-function renderCarouselTile(n){
-  const hist = window.__cardImageHistory[n];
-  const idx = window.__cardImageActiveIndex[n];
-  const entry = hist[idx];
-  const ready = entry.ready;
-  const hasHistory = hist.length > 1;
-  return `
-    <div class="carousel-tile ${ready ? 'ready' : 'generating'}${hasHistory ? ' has-history' : ''}" id="carouselTile${n}">
-      <div class="carousel-tile-preview">
-        <div class="carousel-tile-overlay-top">
-          <span class="carousel-tile-ready-badge">✓ Ready</span>
-          <button type="button" class="carousel-tile-regen-btn" onclick="regenerateCard(${n})" title="Regenerate this card only · ⚡${CARD_REGEN_CREDIT}">↻</button>
-        </div>
-        <div class="spinner-mini"></div>
-        <span class="carousel-tile-badge">Card ${n}</span>
-      </div>
-      <div class="carousel-tile-pager">
-        <button onclick="cardHistoryPrev(${n})" ${idx === 0 ? 'disabled' : ''}>‹</button>
-        <span>${idx + 1}/${hist.length}</span>
-        <button onclick="cardHistoryNext(${n})" ${idx === hist.length - 1 ? 'disabled' : ''}>›</button>
-      </div>
-    </div>`;
 }
 function regenerateCard(n){
   const hist = window.__cardImageHistory[n];
   hist.push({ ready: false });
   window.__cardImageActiveIndex[n] = hist.length - 1;
-  renderCarouselGrid();
+  renderStoryboardGrid();
   document.getElementById('generateCtaBtn').disabled = true;
   setTimeout(() => {
     hist[hist.length - 1].ready = true;
-    renderCarouselGrid();
+    renderStoryboardGrid();
     checkAllCardsReady();
   }, 1300);
 }
 function cardHistoryPrev(n){
   if(window.__cardImageActiveIndex[n] > 0) window.__cardImageActiveIndex[n]--;
-  renderCarouselGrid();
+  renderStoryboardGrid();
 }
 function cardHistoryNext(n){
   const hist = window.__cardImageHistory[n];
   if(window.__cardImageActiveIndex[n] < hist.length - 1) window.__cardImageActiveIndex[n]++;
-  renderCarouselGrid();
+  renderStoryboardGrid();
 }
 function checkAllCardsReady(){
   const n = window.__cardCount;
   const allReady = Array.from({length: n}, (_, i) => i + 1).every(num => {
     const hist = window.__cardImageHistory[num];
-    return hist[window.__cardImageActiveIndex[num]].ready;
+    return hist && hist[window.__cardImageActiveIndex[num]].ready;
   });
   const btn = document.getElementById('generateCtaBtn');
   const meta = document.getElementById('generateCtaMeta');
   btn.disabled = !allReady;
   meta.style.display = allReady ? 'none' : '';
   if(allReady){
+    document.getElementById('storyboardGenerateBtn').disabled = false;
+    document.getElementById('storyboardGenerateBtn').textContent = 'Regenerate all';
     document.getElementById('sizeVariationPanel').style.display = 'block';
     renderSizeVarCardPicker();
     updateSizeVarCost();
@@ -1165,6 +1162,7 @@ function renderSizeVarSets(){
 }
 
 // ---- init ----
+setCharMode('with'); // matches the "With Character" chip that's active by default in the HTML
 setBrandMode('none');
 goToBrief();
 </script>
