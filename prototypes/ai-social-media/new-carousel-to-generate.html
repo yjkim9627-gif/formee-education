@@ -873,16 +873,29 @@ const STORYBOARD_TEMPLATES = [
   'Close-up of hands submitting an application on a laptop, warm desk lighting.'
 ];
 const CTA_DEFAULT_TEXT = 'Learn more';
+const SUBHEAD_DEFAULT_FIRST = 'A quick look at what to expect.';
+const BODY_TEMPLATES = [
+  'Real students, real journeys — see how they made it happen.',
+  'Every lecture, every friendship, every "aha" moment adds up to something bigger.',
+  'From your first application to move-in day, you\'re never figuring it out alone.'
+];
 const CARD_REGEN_CREDIT = 5;
 window.__cardImageHistory = {}; // n -> [{ready:bool}, ...], absent until generation has started for that card
 window.__cardImageActiveIndex = {}; // n -> index into history currently shown
 
+// Card structure: card 1 = headline + subhead (both auto-filled); middle
+// cards = headline + body (renamed from subhead, both on); last card =
+// headline + call to action.
 function ensureCardCopyFields(n){
   if(!window.__cardCopyFields[n]){
+    const isFirst = n === 1;
     const isLast = n === window.__cardCount;
+    const isMiddle = !isFirst && !isLast;
     window.__cardCopyFields[n] = [
       { key:'headline', label:'Headline', text: window.__cardScripts[n] || '', on:true },
-      { key:'subhead', label:'Subhead', text:'', on:false },
+      { key:'subhead', label: isMiddle ? 'Body' : 'Subhead',
+        text: isFirst ? SUBHEAD_DEFAULT_FIRST : (isMiddle ? BODY_TEMPLATES[(n - 2) % BODY_TEMPLATES.length] : ''),
+        on: isFirst || isMiddle },
       { key:'cta', label:'Call to action', text: isLast ? CTA_DEFAULT_TEXT : '', on:isLast }
     ];
   }
