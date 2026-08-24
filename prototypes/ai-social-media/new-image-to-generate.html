@@ -660,7 +660,7 @@
         <div class="develop-side">
           <h2 class="stage-title">Develop</h2>
           <p class="stage-sub-text" style="margin-bottom:14px;">This version is ready to fine-tune.</p>
-          <button class="btn-dark" onclick="alert('Publish flow — TBD')">⬆ Publish →</button>
+          <button class="btn-dark" onclick="goToPublish()">⬆ Publish →</button>
           <div class="develop-note">Full Develop editing (Solid/Gradient background panels, layer controls, etc.) reuses the existing Edit &amp; Publish canvas from the video/carousel flow — wiring that up is the next piece of this prototype.</div>
         </div>
       </div>
@@ -1337,10 +1337,14 @@ function goToDevelop(){
   document.getElementById('briefActionBar').style.display = 'none';
 }
 
-// Publish is shared with the video/carousel flow — hand off to that file's Publish screen directly.
+// Publish is shared with the video/carousel flow — hand off to that file's Publish screen
+// directly, so editing Publish once updates it everywhere instead of per content type.
+function goToPublish(){
+  window.location.href = 'new-content-brief-to-generate.html?goto=publish';
+}
 function skipToPublish(){
   if(!versionState.some(v => v.ready)) return; // nothing to publish yet
-  window.location.href = 'new-content-brief-to-generate.html?goto=publish';
+  goToPublish();
 }
 
 // ---- init ----
