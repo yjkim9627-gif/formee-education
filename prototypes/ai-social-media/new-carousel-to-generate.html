@@ -232,12 +232,12 @@
   .brand-kit-empty{margin-top:8px; padding:10px 12px; background:var(--neutral-50); border:1px dashed var(--neutral-400); border-radius:8px; font-size:12px; color:var(--neutral-500);}
   .brand-kit-empty a{color:var(--brand); font-weight:600; cursor:pointer; text-decoration:underline;}
 
-  /* ---- Script stage: one compact card per grid cell, message only ---- */
-  .script-card-row{display:grid; grid-template-columns:repeat(auto-fill, minmax(170px, 1fr)); gap:12px; margin-bottom:8px;}
-  .script-card{border:1px solid var(--neutral-300); border-radius:10px; padding:12px; display:flex; flex-direction:column; gap:8px; background:#fff; transition:border-color .15s;}
-  .script-card:focus-within{border-color:var(--brand);}
-  .script-card-num{font-size:10.5px; font-weight:700; color:var(--neutral-500); text-transform:uppercase; letter-spacing:.04em;}
-  .script-card-text{flex:1; min-height:110px; border:none; resize:vertical; font-size:13px; font-family:var(--font); outline:none; background:transparent; color:var(--neutral-900); line-height:1.5; padding:0;}
+  /* ---- Script stage: brand kit + one full-width, always-expanded block per card ---- */
+  .script-global-brand{border:1px solid var(--neutral-300); border-radius:10px; padding:14px 16px; margin-bottom:18px;}
+  .script-card-list{display:flex; flex-direction:column; gap:14px; margin-bottom:8px;}
+  .script-card-block{border:1px solid var(--neutral-300); border-radius:12px; padding:18px 20px; background:#fff;}
+  .script-card-block-header{font-size:13px; font-weight:700; color:var(--neutral-900); margin-bottom:12px;}
+  .script-card-block .story-desc-input{margin-bottom:12px;}
 
   /* ---- Storyboard stage: canvas grid (mirrors the video Timeline) + selected-card editor sidebar ---- */
   .storyboard-stage{display:flex; gap:20px; flex:1; min-height:0;}
@@ -264,7 +264,6 @@
   .storyboard-tile-pager button:disabled{opacity:.35; cursor:default;}
 
   .storyboard-editor-col{width:320px; flex-shrink:0; display:flex; flex-direction:column;}
-  .storyboard-global-brand{border:1px solid var(--neutral-300); border-radius:10px; padding:14px 16px; margin-bottom:14px;}
   .storyboard-nav{display:flex; align-items:center; gap:6px; flex-shrink:0; margin-bottom:10px; flex-wrap:wrap;}
   .storyboard-nav-label{font-size:11px; font-weight:600; color:var(--neutral-500); margin-right:2px;}
   .card-nav-btn{width:24px; height:24px; border-radius:6px; border:1px solid var(--neutral-300); background:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; color:var(--neutral-700); cursor:pointer;}
@@ -443,7 +442,7 @@
                 <div class="char-card" onclick="selectChar(this)"><div class="thumb"></div><div class="name">Sofia</div></div>
                 <div class="char-card" onclick="selectChar(this)"><div class="thumb"></div><div class="name">Esther</div></div>
               </div>
-              <p class="char-per-card-note">This character is included on every card by default — you'll be able to turn it off for individual cards later, in Storyboard.</p>
+              <p class="char-per-card-note">This character is included on every card by default — you'll be able to turn it off for individual cards in the next step (Script).</p>
             </div>
           </div>
         </div>
@@ -506,19 +505,34 @@
             <div class="setting-chip brand-chip-setting" id="brandSettingChip" style="display:none;">🏷 Brand: <b>Formee Express</b></div>
           </div>
 
-          <!-- SUB-STAGE: Script — message only, per card -->
+          <!-- SUB-STAGE: Script — brand kit + one always-expanded block per card (message, character) -->
           <div class="stage-sub" id="subScript">
             <div class="stage-body"><div class="stage-body-inner">
               <h2 class="stage-title">Script</h2>
-              <p class="stage-sub-text">AI drafted text for each card based on your brief — edit any card directly, then confirm to move on.</p>
-              <div class="script-card-row" id="scriptCardRow"></div>
+              <p class="stage-sub-text">AI drafted text for each card based on your brief — edit any card directly, choose whether the brand kit and character apply, then confirm to move on.</p>
+              <div class="script-global-brand" id="scriptGlobalBrand">
+                <div class="brand-kit-row" style="margin-top:0;">
+                  <button type="button" class="field-switch" id="globalBrandKitSwitch" onclick="toggleGlobalBrandKit()"><span class="knob"></span></button>
+                  <span class="brand-kit-label">Use brand kit</span>
+                </div>
+                <div class="brand-kit-summary" id="globalBrandKitSummary" style="display:none;">
+                  <span class="brand-kit-summary-label">Formee Express</span>
+                  <div class="brand-kit-swatch-row">
+                    <span style="background:#2b6a6c"></span><span style="background:#b80d48"></span><span style="background:#f29724"></span><span style="background:#444444"></span>
+                  </div>
+                </div>
+                <div class="brand-kit-empty" id="globalBrandKitEmpty" style="display:none;">
+                  Set up your brand kit to apply it here automatically → <a onclick="goToBrandSetup()">Brand Setup</a>
+                </div>
+              </div>
+              <div class="script-card-list" id="scriptCardList"></div>
               <div class="stage-cta-row">
                 <button class="btn-primary" id="confirmScriptBtn" onclick="confirmScript()">Confirm & continue to Storyboard →</button>
               </div>
             </div></div>
           </div>
 
-          <!-- SUB-STAGE: Storyboard — canvas grid (mirrors video Timeline) + selected-card editor: copy, scene & background description, character-in-card. Image generation happens in-place here, no separate Generate tab. -->
+          <!-- SUB-STAGE: Storyboard — canvas grid (mirrors video Timeline) + selected-card editor: copy, scene & background description. Image generation happens in-place here, no separate Generate tab. -->
           <div class="stage-sub" id="subStoryboard" style="display:none;">
             <div class="stage-body"><div class="stage-body-inner">
               <h2 class="stage-title">Storyboard</h2>
@@ -528,21 +542,6 @@
                   <div class="storyboard-grid" id="storyboardGrid"></div>
                 </div>
                 <div class="storyboard-editor-col">
-                  <div class="storyboard-global-brand" id="storyboardGlobalBrand">
-                    <div class="brand-kit-row" style="margin-top:0;">
-                      <button type="button" class="field-switch" id="globalBrandKitSwitch" onclick="toggleGlobalBrandKit()"><span class="knob"></span></button>
-                      <span class="brand-kit-label">Use brand kit</span>
-                    </div>
-                    <div class="brand-kit-summary" id="globalBrandKitSummary" style="display:none;">
-                      <span class="brand-kit-summary-label">Formee Express</span>
-                      <div class="brand-kit-swatch-row">
-                        <span style="background:#2b6a6c"></span><span style="background:#b80d48"></span><span style="background:#f29724"></span><span style="background:#444444"></span>
-                      </div>
-                    </div>
-                    <div class="brand-kit-empty" id="globalBrandKitEmpty" style="display:none;">
-                      Set up your brand kit to apply it here automatically → <a onclick="goToBrandSetup()">Brand Setup</a>
-                    </div>
-                  </div>
                   <div class="storyboard-nav" id="storyboardCardNav"></div>
                   <div class="storyboard-editor-panel" id="storyboardEditorPanel"></div>
                   <div class="storyboard-generate-cta">
@@ -815,14 +814,24 @@ function draftScript(){
 
 function renderScriptCards(){
   const n = window.__cardCount;
-  document.getElementById('scriptCardRow').innerHTML = Array.from({length: n}, (_, i) => {
+  if(window.__globalBrandKitOn === undefined) window.__globalBrandKitOn = window.__brandMode === 'set';
+  for(let i = 1; i <= n; i++){
+    if(window.__cardCharacterOn[i] === undefined) window.__cardCharacterOn[i] = true;
+  }
+  document.getElementById('scriptCardList').innerHTML = Array.from({length: n}, (_, i) => {
     const num = i + 1;
     return `
-      <div class="script-card">
-        <span class="script-card-num">Card ${num}</span>
-        <textarea class="script-card-text" data-card="${num}" oninput="updateCardScript(${num}, this.value)">${escapeHtml(window.__cardScripts[num] || '')}</textarea>
+      <div class="script-card-block">
+        <div class="script-card-block-header">Card ${num}</div>
+        <textarea class="story-desc-input" data-card="${num}" oninput="updateCardScript(${num}, this.value)">${escapeHtml(window.__cardScripts[num] || '')}</textarea>
+        ${window.__charMode === 'with' ? `
+        <div class="brand-kit-row" id="cardCharRow${num}">
+          <button type="button" class="field-switch ${window.__cardCharacterOn[num] ? 'on' : ''}" onclick="toggleCardCharacter(${num})"><span class="knob"></span></button>
+          <span class="brand-kit-label">Include character in this card</span>
+        </div>` : ''}
       </div>`;
   }).join('');
+  updateGlobalBrandKitUI();
 }
 function updateCardScript(n, value){
   window.__cardScripts[n] = value;
@@ -831,7 +840,7 @@ function confirmScript(){
   document.getElementById('tabScript').innerHTML = '<span class="check">✓</span> Script';
   document.getElementById('tabStoryboard').classList.remove('locked');
   showSub('storyboard');
-  addChatMsg('ai', '<span class="tag">AI</span>Now let\'s set the background, on-card copy, and character for each card — then generate when you\'re ready.');
+  addChatMsg('ai', '<span class="tag">AI</span>Now let\'s set the background and on-card copy for each card — then generate when you\'re ready.');
   renderStoryboard();
 }
 
@@ -840,9 +849,8 @@ function confirmScript(){
 // Timeline: each tile starts as a plain placeholder, then generating,
 // then ready — image generation happens in place here, no separate
 // Generate tab). Right sidebar: card selector + headline/subhead/CTA
-// copy fields + scene & background description + include-character
-// toggle for whichever card is selected. Brand kit is a single toggle
-// applied to every card, not a per-card setting.
+// copy fields + scene & background description for whichever card is
+// selected. Brand kit and character-per-card are set back in Script.
 // =====================================================================
 window.__cardDescriptions = {};
 window.__cardCopyFields = {};
@@ -876,12 +884,10 @@ function ensureCardCopyFields(n){
 
 function renderStoryboard(){
   const n = window.__cardCount;
-  if(window.__globalBrandKitOn === undefined) window.__globalBrandKitOn = window.__brandMode === 'set';
   window.__cardImageHistory = {};
   window.__cardImageActiveIndex = {};
   for(let i = 1; i <= n; i++){
     if(window.__cardDescriptions[i] === undefined) window.__cardDescriptions[i] = STORYBOARD_TEMPLATES[i - 1] || `Card ${i} — describe the scene and action.`;
-    if(window.__cardCharacterOn[i] === undefined) window.__cardCharacterOn[i] = true;
     ensureCardCopyFields(i);
   }
   window.__storyboardSelectedCard = 1;
@@ -894,7 +900,6 @@ function renderStoryboard(){
   buildStoryboardCardNav();
   renderStoryboardEditorPanels();
   selectStoryboardCard(1);
-  updateGlobalBrandKitUI();
 }
 function renderStoryboardGrid(){
   const n = window.__cardCount;
@@ -956,11 +961,6 @@ function renderStoryboardEditorPanels(){
         <div class="copy-field-list" id="copyFieldList${num}"></div>
         <label class="scene-desc-label">Scene &amp; background description</label>
         <textarea class="story-desc-input" data-card="${num}" oninput="updateCardDescription(${num}, this.value)">${escapeHtml(window.__cardDescriptions[num] || '')}</textarea>
-        ${window.__charMode === 'with' ? `
-        <div class="brand-kit-row" id="cardCharRow${num}">
-          <button type="button" class="field-switch ${window.__cardCharacterOn[num] ? 'on' : ''}" onclick="toggleCardCharacter(${num})"><span class="knob"></span></button>
-          <span class="brand-kit-label">Include character in this card</span>
-        </div>` : ''}
       </div>`;
   }).join('');
   for(let i = 1; i <= n; i++) renderCardCopyFields(i);
