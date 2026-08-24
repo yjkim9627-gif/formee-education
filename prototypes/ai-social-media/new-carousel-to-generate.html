@@ -113,6 +113,8 @@
   .msg.ai .tag{display:inline-block; font-size:10px; font-weight:600; color:var(--brand); margin-bottom:3px;}
   .msg.ai .note{display:block; font-size:10.5px; color:var(--neutral-500); margin-top:3px;}
   .msg.ai.loading{color:var(--neutral-500);}
+  .chat-cta-row{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;}
+  .chat-cta-row .btn-primary, .chat-cta-row .btn-secondary{padding:8px 14px; font-size:12px;}
   .dots span{animation:blink 1.4s infinite; opacity:0;}
   .dots span:nth-child(2){animation-delay:.2s;}
   .dots span:nth-child(3){animation-delay:.4s;}
@@ -251,11 +253,13 @@
   .storyboard-tile{border:1.5px solid var(--neutral-300); border-radius:12px; overflow:hidden; cursor:pointer; background:#fff; transition:border-color 0.15s, box-shadow 0.15s;}
   .storyboard-tile:hover{border-color:var(--neutral-450);}
   .storyboard-tile.active{border-color:var(--brand); box-shadow:0 0 0 3px rgba(79,109,230,0.12);}
-  .storyboard-tile-preview{position:relative; width:100%; aspect-ratio:4/5; background:linear-gradient(135deg,var(--neutral-200),var(--neutral-150)); display:flex; align-items:flex-end; padding:10px;}
+  .storyboard-tile-preview{position:relative; width:100%; aspect-ratio:4/5; background:linear-gradient(135deg,var(--neutral-200),var(--neutral-150)); display:flex; align-items:flex-end; justify-content:space-between; padding:10px;}
   .storyboard-tile.ready .storyboard-tile-preview{background:linear-gradient(135deg,var(--brand-mid),var(--accent));}
   .storyboard-tile.generating .storyboard-tile-badge{display:none;}
   .storyboard-tile.generating .spinner-mini{display:block;}
   .storyboard-tile-badge{font-size:11px; font-weight:600; color:#fff; background:rgba(15,23,41,0.55); padding:4px 8px; border-radius:6px; backdrop-filter:blur(2px);}
+  .storyboard-tile-char-badge{font-size:10px; font-weight:600; color:#fff; background:rgba(15,23,41,0.55); padding:4px 7px; border-radius:6px; backdrop-filter:blur(2px); white-space:nowrap;}
+  .storyboard-tile-char-badge.off{background:rgba(15,23,41,0.28); color:rgba(255,255,255,0.8);}
   .storyboard-tile-overlay-top{position:absolute; top:8px; left:8px; right:8px; display:flex; align-items:center; justify-content:space-between; gap:6px;}
   .storyboard-tile-ready-badge{display:none; align-items:center; gap:3px; font-size:10px; font-weight:700; color:var(--green); background:#fff; padding:3px 7px; border-radius:999px;}
   .storyboard-tile.ready .storyboard-tile-ready-badge{display:inline-flex;}
@@ -755,6 +759,13 @@ function addChatMsg(role, html){
   log.appendChild(wrap);
   log.scrollTop = log.scrollHeight;
 }
+// Appends an AI message with an inline button row, so the next stage can be
+// triggered right from the chat (mirrors the video flow's stage-progress CTA).
+function appendChatCta(text, buttonsHtml){
+  const log = document.getElementById('chatLog');
+  log.innerHTML += `<div class="msg ai"><span class="tag">AI</span>${text}<div class="chat-cta-row">${buttonsHtml}</div></div>`;
+  log.scrollTop = log.scrollHeight;
+}
 function sendChatMessage(){
   const input = document.getElementById('chatInput');
   const text = input.value.trim();
@@ -811,7 +822,11 @@ function draftScript(){
 
   setTimeout(() => {
     for(let i = 1; i <= n; i++) window.__cardScripts[i] = SCRIPT_TEMPLATES[i - 1] || `Card ${i} — key message goes here.`;
-    log.innerHTML = `<div class="msg ai"><span class="tag">AI</span>Here's a first draft for all ${n} cards — edit any of them directly, or tell me what to change.</div>`;
+    log.innerHTML = '';
+    appendChatCta(
+      `I've drafted the script for all ${n} cards based on your brief. Send a message here if you'd like any changes, or continue when you're ready.`,
+      '<button class="btn-primary" onclick="confirmScript()">Continue to Storyboard →</button>'
+    );
     renderScriptCards();
     document.getElementById('confirmScriptBtn').disabled = false;
   }, 1500);
@@ -847,8 +862,17 @@ function confirmScript(){
   document.getElementById('tabScript').innerHTML = '<span class="check">✓</span> Script';
   document.getElementById('tabStoryboard').classList.remove('locked');
   showSub('storyboard');
-  addChatMsg('ai', '<span class="tag">AI</span>Now let\'s set the background and on-card copy for each card — then generate when you\'re ready.');
-  renderStoryboard();
+  const log = document.getElementById('chatLog');
+  log.innerHTML += `<div class="msg ai loading" id="storyboardLoadingMsg"><span class="tag">AI</span>Building the storyboard from your script<span class="dots"><span>.</span><span>.</span><span>.</span></span></div>`;
+  log.scrollTop = log.scrollHeight;
+  setTimeout(() => {
+    document.getElementById('storyboardLoadingMsg')?.remove();
+    renderStoryboard();
+    appendChatCta(
+      'I\'ve built the storyboard from your script — headline, subhead/body, call to action, and a scene &amp; background description are filled in for each card. Edit anything you like, or hit Generate images when you\'re ready.',
+      '<button class="btn-primary" onclick="startCardGeneration()">Generate images →</button>'
+    );
+  }, 1200);
 }
 
 // =====================================================================
@@ -951,6 +975,7 @@ function renderStoryboardTile(n){
         </div>
         <div class="spinner-mini"></div>
         <span class="storyboard-tile-badge">Card ${n}</span>
+        ${window.__charMode === 'with' ? `<span class="storyboard-tile-char-badge ${window.__cardCharacterOn[n] ? '' : 'off'}">${window.__cardCharacterOn[n] ? '🧑 Character' : 'No character'}</span>` : ''}
       </div>
       <div class="storyboard-tile-line" id="storyboardTileLine${n}">${escapeHtml(storyboardTileText(n))}</div>
       ${pagerHtml}
