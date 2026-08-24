@@ -235,7 +235,7 @@
   .brand-kit-empty a{color:var(--brand); font-weight:600; cursor:pointer; text-decoration:underline;}
 
   /* ---- Text placement (Script stage): editable overlay vs. baked into the image ---- */
-  .draft-section{margin-top:18px;}
+  .draft-section{margin-top:18px; margin-bottom:28px;}
   .draft-section-label{font-size:13px; font-weight:700; color:var(--neutral-900); margin-bottom:2px;}
   .draft-section-hint{font-size:12px; color:var(--neutral-500); margin:0 0 10px;}
   .baked-in-warning{display:none; align-items:flex-start; gap:8px; font-size:12px; color:var(--amber); background:var(--amber-bg); border:1px solid var(--amber-border); border-radius:8px; padding:10px 12px; margin-top:12px; line-height:1.5;}
@@ -260,23 +260,25 @@
   .storyboard-tile{border:1.5px solid var(--neutral-300); border-radius:12px; overflow:hidden; cursor:pointer; background:#fff; transition:border-color 0.15s, box-shadow 0.15s;}
   .storyboard-tile:hover{border-color:var(--neutral-450);}
   .storyboard-tile.active{border-color:var(--brand); box-shadow:0 0 0 3px rgba(79,109,230,0.12);}
-  .storyboard-tile-preview{position:relative; width:100%; aspect-ratio:4/5; background:linear-gradient(135deg,var(--neutral-200),var(--neutral-150)); display:flex; align-items:flex-end; justify-content:space-between; padding:10px;}
+  /* Every tile — pending, generating, and ready — renders inside this same fixed 4:5 box, so the
+     card number / character badge sit at one consistent spot instead of drifting with content
+     length or jumping when a card finishes generating. */
+  .storyboard-tile-preview{position:relative; width:100%; aspect-ratio:4/5; overflow:hidden; background:linear-gradient(135deg,var(--neutral-200),var(--neutral-150));}
+  .storyboard-tile.pending .storyboard-tile-preview{background:linear-gradient(135deg,var(--neutral-100),var(--neutral-50));}
   .storyboard-tile.ready .storyboard-tile-preview{background:linear-gradient(135deg,var(--brand-mid),var(--accent));}
   .storyboard-tile.generating .storyboard-tile-badge{display:none;}
   .storyboard-tile.generating .spinner-mini{display:block;}
+  .storyboard-tile-preview .spinner-mini{position:absolute; top:50%; left:50%; margin:-11px 0 0 -11px;}
   .storyboard-tile-badge{font-size:11px; font-weight:600; color:#fff; background:rgba(15,23,41,0.55); padding:4px 8px; border-radius:6px; backdrop-filter:blur(2px);}
   .storyboard-tile-char-badge{font-size:10px; font-weight:600; color:#fff; background:rgba(15,23,41,0.55); padding:4px 7px; border-radius:6px; backdrop-filter:blur(2px); white-space:nowrap;}
   .storyboard-tile-char-badge.off{background:rgba(15,23,41,0.28); color:rgba(255,255,255,0.8);}
   .storyboard-tile-overlay-top{position:absolute; top:8px; left:8px; right:8px; display:flex; align-items:center; justify-content:space-between; gap:6px;}
-  /* Pending (not-yet-generated) tiles preview the on-card copy as plain text instead of the
-     fixed-aspect image placeholder — full height, dark text, nothing clamped, since the point
-     is letting the user see and judge the full length before generating. */
-  .storyboard-tile.pending{background:linear-gradient(135deg,var(--neutral-100),var(--neutral-50)); display:flex; flex-direction:column;}
-  .storyboard-tile-copy{padding:14px 12px 8px; display:flex; flex-direction:column; gap:6px;}
+  /* Fixed bottom bar — card number + character badge — shared by pending and generated tiles alike. */
+  .storyboard-tile-bottom-row{position:absolute; left:10px; right:10px; bottom:10px; display:flex; align-items:center; justify-content:space-between; gap:6px; z-index:2;}
+  .storyboard-tile-copy{position:absolute; inset:0; padding:14px 12px 40px; display:flex; flex-direction:column; gap:6px; overflow:hidden;}
   .storyboard-tile-copy-headline{font-size:12.5px; font-weight:800; color:var(--neutral-800); line-height:1.35;}
   .storyboard-tile-copy-subhead{font-size:11px; font-weight:600; color:var(--neutral-600); line-height:1.4;}
   .storyboard-tile-copy-cta{align-self:flex-start; margin-top:2px; font-size:10px; font-weight:700; color:#fff; background:var(--neutral-900); padding:4px 10px; border-radius:999px; white-space:nowrap;}
-  .storyboard-tile-footer{display:flex; align-items:center; justify-content:space-between; gap:6px; padding:8px 12px 12px;}
   .storyboard-tile-ready-badge{display:none; align-items:center; gap:3px; font-size:10px; font-weight:700; color:var(--green); background:#fff; padding:3px 7px; border-radius:999px;}
   .storyboard-tile.ready .storyboard-tile-ready-badge{display:inline-flex;}
   .storyboard-tile-regen-btn{display:none; width:24px; height:24px; border-radius:999px; border:none; background:rgba(255,255,255,0.92); align-items:center; justify-content:center; font-size:12px; color:var(--neutral-700); cursor:pointer; margin-left:auto;}
@@ -320,18 +322,17 @@
   /* ---- Storyboard header: title/hint on the left, "+ Size variations" trigger on the right ---- */
   .storyboard-header-row{display:flex; align-items:flex-start; justify-content:space-between; gap:16px;}
 
-  /* ---- Size variations modal ---- */
-  .modal-overlay{position:fixed; inset:0; background:rgba(15,23,41,0.45); display:flex; align-items:center; justify-content:center; z-index:100;}
-  .sizevar-modal{width:600px; max-width:calc(100vw - 48px); max-height:calc(100vh - 96px); background:#fff; border-radius:var(--radius-xl); box-shadow:0 24px 60px rgba(15,23,41,0.28); display:flex; flex-direction:column; overflow:hidden;}
-  .sizevar-modal-header{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 10px 10px 16px; border-bottom:1px solid var(--neutral-200); flex-shrink:0;}
-  .sizevar-modal-tabs{display:flex; align-items:center; gap:4px; flex-wrap:wrap;}
+  /* ---- Size variations panel — lives inline in the Storyboard work screen (swaps in for the
+       card grid + editor sidebar), not a modal. ---- */
+  .storyboard-sizevar-panel{flex:1; min-height:0; display:flex; flex-direction:column; border:1px solid var(--neutral-300); border-radius:var(--radius-xl); background:#fff; overflow:hidden;}
+  .sizevar-back-btn{align-self:flex-start; margin:14px 0 0 14px;}
+  .sizevar-panel-header{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 16px 0; flex-shrink:0;}
+  .sizevar-modal-tabs{display:flex; align-items:center; gap:4px; flex-wrap:wrap; border-bottom:1px solid var(--neutral-200); width:100%; padding-bottom:0;}
   .sizevar-tab{padding:8px 16px; border-radius:8px 8px 0 0; font-size:13px; font-weight:600; color:var(--neutral-500); cursor:pointer;}
   .sizevar-tab:hover{color:var(--neutral-700);}
   .sizevar-tab.active{color:var(--neutral-900); background:var(--neutral-100);}
   .sizevar-tab-add{font-size:15px; font-weight:700; padding:8px 14px;}
-  .sizevar-modal-close{width:28px; height:28px; border-radius:999px; border:none; background:none; font-size:14px; color:var(--neutral-500); cursor:pointer; flex-shrink:0;}
-  .sizevar-modal-close:hover{background:var(--neutral-100); color:var(--neutral-900);}
-  .sizevar-modal-body{padding:20px; overflow-y:auto;}
+  .sizevar-modal-body{padding:20px; overflow-y:auto; flex:1; min-height:0;}
   .sizevar-create-row{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:8px;}
   .sizevar-selectall-btn{border:1px solid var(--neutral-300); background:#fff; border-radius:999px; padding:5px 12px; font-size:11.5px; font-weight:600; color:var(--neutral-700); cursor:pointer; font-family:var(--font);}
   .sizevar-selectall-btn:hover{border-color:var(--neutral-450);}
@@ -600,7 +601,7 @@
                 </div>
                 <button type="button" class="btn-secondary" id="sizeVarOpenBtn" onclick="openSizeVarModal()" style="display:none;">+ Size variations</button>
               </div>
-              <div class="storyboard-stage">
+              <div class="storyboard-stage" id="storyboardMainStage">
                 <div class="storyboard-canvas">
                   <div class="storyboard-grid" id="storyboardGrid"></div>
                 </div>
@@ -613,6 +614,18 @@
                   </div>
                 </div>
               </div>
+
+              <!-- Size variations panel: create a variation at another ratio (individual cards or all
+                   at once), then browse/download completed variation sets via tabs, "+" to start
+                   another. Lives inline in the Storyboard work screen, not a modal. -->
+              <div class="storyboard-sizevar-panel" id="sizeVarPanel" style="display:none;">
+                <button type="button" class="btn-secondary sizevar-back-btn" onclick="closeSizeVarModal()">← Back to Storyboard</button>
+                <div class="sizevar-panel-header">
+                  <div class="sizevar-modal-tabs" id="sizeVarModalTabs"></div>
+                </div>
+                <div class="sizevar-modal-body" id="sizeVarModalBody"></div>
+              </div>
+
               <div class="stage-cta-row" id="storyboardCtaRow" style="display:none;">
                 <span class="meta-text" id="generateCtaMeta" style="display:none;">Waiting for all cards to finish generating</span>
                 <button class="btn-secondary" id="skipToPublishBtn" onclick="goToPublish()" style="display:none;">Skip to publish</button>
@@ -621,18 +634,6 @@
             </div></div>
           </div>
 
-        </div>
-      </div>
-
-      <!-- Size variations modal: create a variation at another ratio (individual cards or all at
-           once), then browse/download completed variation sets via tabs, "+" to start another. -->
-      <div class="modal-overlay" id="sizeVarModalOverlay" style="display:none;" onclick="if(event.target===this) closeSizeVarModal()">
-        <div class="sizevar-modal">
-          <div class="sizevar-modal-header">
-            <div class="sizevar-modal-tabs" id="sizeVarModalTabs"></div>
-            <button type="button" class="sizevar-modal-close" onclick="closeSizeVarModal()">✕</button>
-          </div>
-          <div class="sizevar-modal-body" id="sizeVarModalBody"></div>
         </div>
       </div>
     </div>
@@ -1000,6 +1001,8 @@ function renderStoryboard(){
   document.getElementById('storyboardGenerateBtn').disabled = false;
   document.getElementById('storyboardGenerateBtn').textContent = 'Generate images';
   document.getElementById('sizeVarOpenBtn').style.display = 'none';
+  document.getElementById('sizeVarPanel').style.display = 'none';
+  document.getElementById('storyboardMainStage').style.display = 'flex';
   document.getElementById('storyboardCtaRow').style.display = 'none';
   window.__sizeVarSets = [];
   window.__sizeVarActiveTab = 'new';
@@ -1022,15 +1025,17 @@ function renderStoryboardTile(n){
   const hist = window.__cardImageHistory[n];
   const isActive = n === window.__storyboardSelectedCard;
 
-  // Not generated yet — preview the on-card copy as plain text instead of a fixed-aspect
-  // image placeholder, since the real generated image will carry this text once it exists.
+  // Not generated yet — preview the on-card copy as plain text, inside the same fixed 4:5 box
+  // and bottom badge row the generated states use, so nothing shifts once the image appears.
   if(!hist){
     return `
       <div class="storyboard-tile pending${isActive ? ' active' : ''}" data-card="${n}" id="storyboardTile${n}" onclick="selectStoryboardCard(${n})">
-        <div class="storyboard-tile-copy" id="storyboardTileCopy${n}">${storyboardTileCopyHtml(n)}</div>
-        <div class="storyboard-tile-footer">
-          <span class="storyboard-tile-badge">Card ${n}</span>
-          ${storyboardTileCharBadgeHtml(n)}
+        <div class="storyboard-tile-preview">
+          <div class="storyboard-tile-copy" id="storyboardTileCopy${n}">${storyboardTileCopyHtml(n)}</div>
+          <div class="storyboard-tile-bottom-row">
+            <span class="storyboard-tile-badge">Card ${n}</span>
+            ${storyboardTileCharBadgeHtml(n)}
+          </div>
         </div>
       </div>`;
   }
@@ -1055,8 +1060,10 @@ function renderStoryboardTile(n){
           <button type="button" class="storyboard-tile-regen-btn" onclick="event.stopPropagation(); regenerateCard(${n})" title="Regenerate this card only · ⚡${CARD_REGEN_CREDIT}">↻</button>
         </div>
         <div class="spinner-mini"></div>
-        <span class="storyboard-tile-badge">Card ${n}</span>
-        ${storyboardTileCharBadgeHtml(n)}
+        <div class="storyboard-tile-bottom-row">
+          <span class="storyboard-tile-badge">Card ${n}</span>
+          ${storyboardTileCharBadgeHtml(n)}
+        </div>
       </div>
       ${pagerHtml}
     </div>`;
@@ -1264,12 +1271,14 @@ function availableSizeVarRatios(){
 }
 function openSizeVarModal(){
   if(!window.__sizeVarSets.length) window.__sizeVarActiveTab = 'new';
-  document.getElementById('sizeVarModalOverlay').style.display = 'flex';
+  document.getElementById('storyboardMainStage').style.display = 'none';
+  document.getElementById('sizeVarPanel').style.display = 'block';
   renderSizeVarModalTabs();
   renderSizeVarModalBody();
 }
 function closeSizeVarModal(){
-  document.getElementById('sizeVarModalOverlay').style.display = 'none';
+  document.getElementById('sizeVarPanel').style.display = 'none';
+  document.getElementById('storyboardMainStage').style.display = 'flex';
 }
 function selectSizeVarTab(tab){
   window.__sizeVarActiveTab = tab;
