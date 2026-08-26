@@ -298,6 +298,46 @@
   .canvas-image__checker { position: absolute; inset: 0; display: none; background-image: conic-gradient(var(--color-neutral-200) 90deg, transparent 90deg 180deg, var(--color-neutral-200) 180deg 270deg, transparent 270deg); background-size: 12px 12px; }
   .canvas-image.is-bg-removed .canvas-image__checker { display: block; }
 
+  /* ---------- Text element (Figma node 4554:125066/125129 "Text panel") ---------- */
+  .canvas-text { z-index: 2; }
+  .canvas-text__content { position: absolute; inset: 0; display: flex; align-items: center; padding: 4px; overflow: hidden; word-break: break-word; white-space: pre-wrap; outline: none; cursor: text; font-family: var(--font-family-logo); color: var(--color-neutral-900); }
+  .canvas-text__content[contenteditable="true"] { cursor: text; }
+  .canvas-text__content[contenteditable="false"] { cursor: inherit; user-select: none; }
+  .canvas-text--align-left .canvas-text__content { justify-content: flex-start; text-align: left; }
+  .canvas-text--align-center .canvas-text__content { justify-content: center; text-align: center; }
+  .canvas-text--align-right .canvas-text__content { justify-content: flex-end; text-align: right; }
+  .canvas-text--effect-light-box .canvas-text__content > span, .canvas-text--effect-dark-box .canvas-text__content > span { padding: 2px 8px; border-radius: var(--radius-sm); box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+  .canvas-text--effect-light-box .canvas-text__content > span { background: var(--color-brand-primary-light); }
+  .canvas-text--effect-dark-box .canvas-text__content > span { background: var(--color-neutral-900); color: var(--color-neutral-0); }
+  .canvas-text.is-editing .canvas-selectable__selection { pointer-events: none; }
+  /* Initial (never-yet-selected) look for the poster's own baked-in headline/subhead, now real
+     .canvas-text instances — matches the old standalone .poster__title/.poster__subtitle
+     exactly. Once selected, renderTextStyle() takes over via inline styles sourced from the
+     same numbers (see initStaticPosterTexts()), so the look never actually changes. */
+  .canvas-text__content--poster-title { font-family: var(--font-family-display); font-size: var(--font-size-display-md); line-height: var(--line-height-display-md); font-weight: var(--font-weight-display-md); letter-spacing: -0.2px; color: var(--color-neutral-0); }
+  .canvas-text__content--poster-subtitle { font-family: var(--font-family-display); font-size: var(--font-size-text-md); line-height: var(--line-height-text-md); font-weight: var(--font-weight-medium); color: var(--color-neutral-0); }
+
+  /* ---- Text detail panel controls (Figma node 4554:125129) ---- */
+  .text-style-row { display: flex; flex-direction: column; gap: var(--spacing-2); width: 100%; }
+  .text-style-row__label { font-size: var(--font-size-text-sm); line-height: var(--line-height-text-sm); font-weight: var(--font-weight-semibold); color: var(--color-neutral-700); }
+  .text-font-select { width: 100%; height: 36px; padding: 0 var(--spacing-md); background: var(--color-neutral-0); border: var(--border-width-1) solid var(--color-neutral-400); border-radius: var(--radius-lg); font-family: var(--font-family-text); font-size: var(--font-size-text-sm); font-weight: var(--font-weight-medium); color: var(--color-neutral-900); }
+  .text-format-row { display: flex; align-items: center; gap: var(--spacing-2); height: 36px; padding: var(--spacing-2) var(--spacing-xs); background: var(--color-neutral-0); border: var(--border-width-1) solid var(--color-neutral-400); border-radius: var(--radius-lg); }
+  .text-format-btn { display: flex; align-items: center; justify-content: center; width: 30px; height: 28px; border-radius: var(--radius-md); font-family: var(--font-family-text); font-size: var(--font-size-text-sm); font-weight: var(--font-weight-bold); color: var(--color-neutral-700); cursor: pointer; }
+  .text-format-btn.is-active { background: var(--color-neutral-150); color: var(--color-neutral-900); }
+  .text-format-btn--italic { font-style: italic; font-weight: var(--font-weight-medium); }
+  .text-format-btn--underline { text-decoration: underline; font-weight: var(--font-weight-medium); }
+  .text-format-btn--strike { text-decoration: line-through; font-weight: var(--font-weight-medium); }
+  .text-format-btn--upper { font-size: var(--font-size-text-2xs); font-weight: var(--font-weight-medium); }
+  .text-align-btn .icon__frag { background: var(--color-neutral-700); border-radius: 1px; }
+  .text-align-btn.is-active .icon__frag { background: var(--color-neutral-900); }
+  .effect-tile-row { display: flex; align-items: center; gap: var(--spacing-2); width: 100%; }
+  .effect-tile { display: flex; flex: 1 0 0; flex-direction: column; align-items: center; justify-content: center; gap: var(--spacing-xs); padding: var(--spacing-xs); background: var(--color-neutral-0); border: var(--border-width-1) solid var(--color-neutral-400); border-radius: var(--radius-md); cursor: pointer; min-width: 0; }
+  .effect-tile.is-active { background: var(--color-neutral-150); border-color: var(--color-neutral-500); }
+  .effect-tile__preview { display: flex; align-items: center; justify-content: center; height: 30px; width: 100%; border-radius: var(--radius-md); }
+  .effect-tile__chip { display: flex; align-items: center; justify-content: center; padding: 1px 5px; border-radius: var(--radius-sm); font-family: var(--font-family-logo); font-weight: var(--font-weight-bold); font-size: 15px; color: var(--color-neutral-900); }
+  .effect-tile__label { font-size: var(--font-size-text-3xs); line-height: var(--line-height-text-3xs); font-weight: var(--font-weight-medium); color: var(--color-neutral-500); white-space: nowrap; }
+  .effect-tile.is-active .effect-tile__label { font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); }
+
   /* ---------- Shape detail — Style / Border / Transform (Figma node 4554:122820) ---------- */
   .panel-divider { background: var(--color-neutral-100); height: 1px; width: 100%; flex-shrink: 0; }
   .shape-style-cols { display: flex; gap: var(--spacing-md); width: 100%; }
@@ -463,6 +503,7 @@
   .floating-toolbar { position: absolute; left: 50%; top: var(--spacing-sm); display: flex; align-items: center; gap: var(--spacing-xs); padding: var(--spacing-sm); background: var(--color-neutral-0); border: var(--border-width-1) solid var(--color-neutral-400); border-radius: var(--radius-xl); box-shadow: var(--shadow-modal); opacity: 0; pointer-events: none; transform: translateX(-50%) translateY(-12px); transition: opacity 0.2s ease, transform 0.2s ease; }
   .floating-toolbar--visible { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
   .toolbar-item { display: flex; align-items: center; justify-content: center; gap: var(--spacing-xs); padding: 6px; border-radius: var(--radius-lg); }
+  .toolbar-item[hidden] { display: none; }
   .toolbar-item span { font-size: var(--font-size-text-md); line-height: normal; font-weight: var(--font-weight-medium); color: var(--color-neutral-700); white-space: nowrap; }
   .toolbar-item.is-focused { background: var(--color-neutral-150); }
   .toolbar-swatches { display: flex; align-items: center; gap: 6px; padding: 6px; border-radius: var(--radius-lg); }
@@ -511,15 +552,20 @@
   .poster__guides.is-visible { display: block; }
   .poster__guide-v { position: absolute; top: 0; width: 1px; height: 100%; background: var(--color-brand-accent); opacity: 0.7; }
   .poster__guide-h { position: absolute; left: 0; height: 1px; width: 100%; background: var(--color-brand-accent); opacity: 0.7; }
+  /* Center-snap feedback lines — shown only while dragging an element within snap range of the
+     poster's own center, on either axis independently. Always in the DOM, toggled by JS. */
+  .snap-guide-v, .snap-guide-h { position: absolute; background: var(--color-brand-primary); opacity: 0; pointer-events: none; z-index: 55; }
+  .snap-guide-v { top: 0; left: 50%; width: 1px; height: 100%; }
+  .snap-guide-h { left: 0; top: 50%; height: 1px; width: 100%; }
+  .snap-guide-v.is-active, .snap-guide-h.is-active { opacity: 1; }
 
   .stage-canvas { flex: 1; min-height: 0; position: relative; overflow: hidden; }
   /* top offset by half of .context-bar's height (62px / 2 = 31px) so the poster centers on W:Canvas as a whole, not just the stage area below the context bar */
   .poster { position: absolute; left: 50%; top: calc(50% - 31px); transform: translate(-50%, -50%); width: 477px; height: 596px; overflow: hidden; background: var(--color-neutral-800); box-shadow: var(--shadow-canvas-poster); transition: transform 0.1s ease-out; }
   .poster__bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .poster__overlay { position: absolute; inset: 0; width: 100%; height: 100%; }
-  .poster__title { position: absolute; left: 31px; top: 33px; width: 340px; font-size: var(--font-size-display-md); line-height: var(--line-height-display-md); font-weight: var(--font-weight-display-md); letter-spacing: -0.2px; color: var(--color-neutral-0); }
-  .poster__subtitle { position: absolute; left: 31px; top: 166px; width: 410px; font-size: var(--font-size-text-md); line-height: var(--line-height-text-md); font-weight: var(--font-weight-medium); color: var(--color-neutral-0); }
   .poster__cta { position: absolute; left: 103px; top: 514px; display: flex; align-items: center; justify-content: center; padding: var(--spacing-md) var(--spacing-xl); background: var(--color-neutral-0); border-radius: var(--radius-xl); box-shadow: var(--shadow-poster-cta); }
+  .poster__cta.is-selected { outline: 1.5px solid var(--color-brand-primary); outline-offset: 4px; }
   .poster__cta span { font-size: var(--font-size-text-md); line-height: var(--line-height-text-md); font-weight: var(--font-weight-bold); color: var(--color-brand-primary-dark); white-space: nowrap; }
   .poster__brand { position: absolute; left: 408px; top: 33px; width: 32.94px; height: 32px; }
   /* Layers panel (Figma node 4554:127075 "Canvas overlays · layers panel open") — the trigger
@@ -552,6 +598,42 @@
   .layer-row__eye, .layer-row__lock { flex-shrink: 0; cursor: pointer; }
   .layer-row__lock.is-locked { opacity: 1; }
   .layer-row__lock:not(.is-locked) { opacity: 0.55; }
+
+  /* ---------- AI Improve (Figma nodes 2994:29193/2999:29719/2994:29593/2989:28996) ----------
+     Trigger + popover live at .stage-canvas level (position:fixed, JS-positioned off the CTA's
+     real rect — see selectCtaButton()/positionAiImproveUi()) rather than inside .poster, so
+     their own UI chrome doesn't shrink/grow with the poster's zoom transform. */
+  .cta-spark-btn { position: fixed; display: none; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: var(--radius-full); background: var(--color-brand-primary); box-shadow: 0 3px 8px rgba(79, 109, 230, 0.4); cursor: pointer; z-index: 70; }
+  .cta-spark-btn.is-visible { display: flex; }
+  .ai-improve-popover { position: fixed; display: none; flex-direction: column; gap: var(--spacing-sm); width: 340px; max-height: 70vh; overflow-y: auto; padding: var(--spacing-md) var(--spacing-lg); background: var(--color-neutral-0); border-radius: var(--radius-xl); box-shadow: var(--shadow-modal); z-index: 71; }
+  .ai-improve-popover.is-visible { display: flex; }
+  .ai-popover-header { display: flex; align-items: center; justify-content: space-between; width: 100%; flex-shrink: 0; }
+  .ai-gradient-text { background: linear-gradient(to right, var(--color-brand-primary), var(--color-brand-accent)); -webkit-background-clip: text; background-clip: text; color: transparent; font-size: var(--font-size-text-sm); line-height: var(--line-height-text-sm); font-weight: var(--font-weight-semibold); }
+  .ai-section-label { display: flex; align-items: center; gap: var(--spacing-xs); width: 100%; }
+  .ai-field-label { font-size: var(--font-size-text-sm); line-height: var(--line-height-text-sm); font-weight: var(--font-weight-semibold); color: var(--color-neutral-700); }
+  .ai-prompt-box { width: 100%; padding: var(--spacing-md); border: 1.2px solid var(--color-neutral-400); border-radius: var(--radius-lg); font-size: var(--font-size-text-md); line-height: var(--line-height-text-md); color: var(--color-neutral-900); }
+  .ai-quick-actions { display: flex; flex-wrap: wrap; gap: var(--spacing-sm); width: 100%; }
+  .ai-quick-actions[hidden] { display: none; }
+  .ai-quick-action-chip { display: flex; align-items: center; height: 28px; padding: var(--spacing-sm) var(--spacing-md); border: var(--border-width-1) solid var(--color-neutral-400); border-radius: var(--radius-full); font-size: var(--font-size-text-xs); font-weight: var(--font-weight-medium); color: var(--color-neutral-700); cursor: pointer; background: var(--color-neutral-0); }
+  .ai-quick-action-chip:hover { border-color: var(--color-neutral-500); }
+  .ai-chat-log { display: flex; flex-direction: column; gap: var(--spacing-sm); width: 100%; }
+  .ai-user-bubble { align-self: flex-end; max-width: 85%; padding: var(--spacing-md); background: var(--color-brand-primary-light); border-radius: var(--radius-2xl) var(--radius-xs) var(--radius-2xl) var(--radius-2xl); font-size: var(--font-size-text-md); color: var(--color-neutral-900); }
+  .ai-generating-card { width: 100%; padding: var(--spacing-md); background: var(--color-neutral-25); border: var(--border-width-1) solid var(--color-neutral-200); border-radius: var(--radius-xs) var(--radius-2xl) var(--radius-2xl) var(--radius-2xl); }
+  .ai-generating-card__title { font-size: var(--font-size-text-md); line-height: var(--line-height-text-md); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); }
+  .ai-generating-card__sub { font-size: var(--font-size-text-2xs); line-height: var(--line-height-text-2xs); color: var(--color-neutral-500); margin-top: var(--spacing-2); }
+  .ai-result-box { width: 100%; padding: var(--spacing-md); border: 1.5px solid var(--color-brand-primary); border-radius: var(--radius-lg); font-size: var(--font-size-text-md); line-height: var(--line-height-text-md); color: var(--color-neutral-900); }
+  .ai-use-this-row { display: flex; justify-content: flex-end; width: 100%; }
+  .ai-use-this-btn { padding: var(--spacing-sm) var(--spacing-md); background: var(--color-neutral-900); border-radius: var(--radius-lg); font-size: var(--font-size-text-sm); font-weight: var(--font-weight-semibold); color: var(--color-neutral-0); cursor: pointer; }
+  .ai-applied-card { width: 100%; padding: var(--spacing-md) var(--spacing-lg); background: var(--color-neutral-50); border: var(--border-width-1) solid var(--color-neutral-400); border-radius: var(--radius-xs) var(--radius-2xl) var(--radius-2xl) var(--radius-2xl); }
+  .ai-applied-card__header { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: var(--spacing-sm); }
+  .ai-applied-card__title { display: flex; align-items: center; gap: var(--spacing-sm); font-size: var(--font-size-text-md); line-height: var(--line-height-text-md); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); }
+  .ai-applied-card__undo { font-size: var(--font-size-text-md); line-height: var(--line-height-text-md); font-weight: var(--font-weight-semibold); color: var(--color-neutral-900); cursor: pointer; text-decoration: underline; flex-shrink: 0; }
+  .ai-applied-card__detail { font-size: var(--font-size-text-2xs); line-height: var(--line-height-text-2xs); color: var(--color-neutral-500); margin-top: var(--spacing-xs); }
+  .ai-result-turn { display: flex; flex-direction: column; gap: var(--spacing-sm); width: 100%; }
+  .ai-refine-row { display: flex; align-items: center; gap: var(--spacing-sm); width: 100%; padding: var(--spacing-md); border: var(--border-width-1) solid var(--color-neutral-400); border-radius: var(--radius-lg); flex-shrink: 0; }
+  .ai-refine-input { flex: 1 0 0; min-width: 0; border: none; outline: none; font-size: var(--font-size-text-md); font-family: var(--font-family-text); color: var(--color-neutral-900); }
+  .ai-refine-input::placeholder { color: var(--color-neutral-400); }
+  .ai-refine-submit { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border: var(--border-width-1) solid var(--color-neutral-400); border-radius: var(--radius-lg); cursor: pointer; flex-shrink: 0; background: var(--color-neutral-0); }
 
   /* ---------- W:ActionBar ---------- */
   .actionbar { height: 76px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 var(--spacing-2xl); background: var(--color-neutral-0); border-top: var(--border-width-1) solid var(--color-neutral-300); }
@@ -931,7 +1013,7 @@
               </span>
             </div>
           </div>
-          <button class="cta-btn">
+          <button class="cta-btn" onclick="addTextToCanvas('heading')">
             <span class="icon" style="width:16px;height:16px">
               <span class="icon__frag" style="inset:calc(50% - 0.8px) 20.83% calc(50% - 0.8px) 20.83%"><img src="assets/screen-01-elements-panel/toolpanel/cta-plus-1.svg" alt="" /></span>
               <span class="icon__frag" style="inset:20.83% calc(50% - 0.8px) 20.83% calc(50% - 0.8px)"><img src="assets/screen-01-elements-panel/toolpanel/cta-plus-2.svg" alt="" /></span>
@@ -953,17 +1035,188 @@
             <p class="section-header__title">Brand Fonts</p>
             <p class="section-header__seeall section-header__seeall--darker">Edit</p>
           </div>
-          <div class="font-card">
+          <div class="font-card" style="cursor:pointer;" onclick="addTextToCanvas('heading')">
             <p class="font-card__label font-card__label--heading">Heading</p>
             <p class="font-card__caption">Manrope Bold</p>
           </div>
-          <div class="font-card">
+          <div class="font-card" style="cursor:pointer;" onclick="addTextToCanvas('subheading')">
             <p class="font-card__label font-card__label--subheading">Subheading</p>
             <p class="font-card__caption">Manrope Semibold</p>
           </div>
-          <div class="font-card">
+          <div class="font-card" style="cursor:pointer;" onclick="addTextToCanvas('body')">
             <p class="font-card__label font-card__label--body">Body</p>
             <p class="font-card__caption">Manrope Regular</p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ============ W:ToolPanel (Text detail, Figma node 4554:125129) ============ -->
+      <aside class="toolpanel" id="panel-text-detail" data-panel="text-detail" hidden>
+        <div class="panel-section">
+          <div class="panel-header">
+            <div class="panel-header__row">
+              <div style="display:flex; align-items:center; gap:var(--spacing-sm);">
+                <span class="icon panel-header__back" style="width:16px;height:16px" onclick="switchPanel('text')" role="button" aria-label="뒤로">
+                  <span class="icon__frag" style="inset:20.83% 50% 20.83% 20.83%"><img src="assets/screen-01-elements-panel/topbar/back-1.svg" alt="" /></span>
+                  <span class="icon__frag" style="inset:calc(50% - 0.8px) 20.83% calc(50% - 0.8px) 20.83%"><img src="assets/screen-01-elements-panel/topbar/download-3-back-2.svg" alt="" /></span>
+                </span>
+                <p class="panel-header__title">Text</p>
+              </div>
+              <span class="icon panel-header__close" style="width:20px;height:20px" onclick="deselectText()" role="button" aria-label="패널 닫기">
+                <span class="icon__frag" style="inset:25%"><img src="assets/screen-01-elements-panel/panel-text/panel-close.svg" alt="" /></span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <div class="text-style-row">
+            <p class="text-style-row__label">Font</p>
+            <select class="text-font-select" id="textFontSelect" onchange="applyTextFont(this.value)">
+              <option value="heading">Heading — Manrope Bold</option>
+              <option value="subheading">Subheading — Manrope Semibold</option>
+              <option value="body">Body — Manrope Regular</option>
+            </select>
+          </div>
+          <div class="shape-style-cols">
+            <div class="shape-style-col">
+              <p class="shape-style-col__label">Size</p>
+              <div class="prop-stepper">
+                <span class="prop-stepper__btn" onclick="stepTextSize(-2)">
+                  <span class="icon" style="width:16px;height:16px"><span class="icon__frag" style="inset:calc(50% - 0.8px) 20.83% calc(50% - 0.8px) 20.83%"><img src="assets/screen-01-elements-panel/canvas/quickadd-plus-1.svg" alt="" /></span></span>
+                </span>
+                <span class="prop-stepper__val" id="textSizeStepperVal">28</span>
+                <span class="prop-stepper__btn" onclick="stepTextSize(2)">
+                  <span class="icon" style="width:16px;height:16px"><span class="icon__frag" style="inset:calc(50% - 0.8px) 20.83% calc(50% - 0.8px) 20.83%"><img src="assets/screen-01-elements-panel/canvas/quickadd-plus-1.svg" alt="" /></span><span class="icon__frag" style="inset:20.83% calc(50% - 0.8px) 20.83% calc(50% - 0.8px)"><img src="assets/screen-01-elements-panel/canvas/quickadd-plus-2.svg" alt="" /></span></span>
+                </span>
+              </div>
+            </div>
+            <div class="shape-style-col">
+              <p class="shape-style-col__label">Format</p>
+              <div class="text-format-row">
+                <span class="text-format-btn" id="textFormatBold" onclick="toggleTextFormat('bold')">B</span>
+                <span class="text-format-btn text-format-btn--italic" id="textFormatItalic" onclick="toggleTextFormat('italic')">I</span>
+                <span class="text-format-btn text-format-btn--underline" id="textFormatUnderline" onclick="toggleTextFormat('underline')">U</span>
+                <span class="text-format-btn text-format-btn--strike" id="textFormatStrike" onclick="toggleTextFormat('strike')">S</span>
+                <span class="text-format-btn text-format-btn--upper" id="textFormatUpper" onclick="toggleTextFormat('uppercase')">AB</span>
+              </div>
+            </div>
+          </div>
+          <div class="text-style-row">
+            <p class="text-style-row__label">Alignment</p>
+            <div class="text-format-row" style="width:102px;">
+              <span class="text-format-btn text-align-btn" id="textAlignLeft" onclick="applyTextAlign('left')">
+                <span class="icon" style="width:16px;height:16px">
+                  <span class="icon__frag" style="inset:20.83% 25% 70.83% 0%"></span>
+                  <span class="icon__frag" style="inset:45.83% 45% 45.83% 0%"></span>
+                  <span class="icon__frag" style="inset:70.83% 62.5% 20.83% 0%"></span>
+                </span>
+              </span>
+              <span class="text-format-btn text-align-btn" id="textAlignCenter" onclick="applyTextAlign('center')">
+                <span class="icon" style="width:16px;height:16px">
+                  <span class="icon__frag" style="inset:20.83% 0% 70.83% 0%"></span>
+                  <span class="icon__frag" style="inset:45.83% 22.5% 45.83% 22.5%"></span>
+                  <span class="icon__frag" style="inset:70.83% 31.25% 20.83% 31.25%"></span>
+                </span>
+              </span>
+              <span class="text-format-btn text-align-btn" id="textAlignRight" onclick="applyTextAlign('right')">
+                <span class="icon" style="width:16px;height:16px">
+                  <span class="icon__frag" style="inset:20.83% 0% 70.83% 25%"></span>
+                  <span class="icon__frag" style="inset:45.83% 0% 45.83% 45%"></span>
+                  <span class="icon__frag" style="inset:70.83% 0% 20.83% 62.5%"></span>
+                </span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div style="height:1px; background:var(--color-neutral-100); width:100%; margin:0 var(--spacing-lg);"></div>
+
+        <div class="panel-section">
+          <div class="section-header"><p class="section-header__title">Colour &amp; effects</p></div>
+          <div class="shape-style-cols">
+            <div class="shape-style-col">
+              <p class="shape-style-col__label">Text colour</p>
+              <div class="shape-swatch-row">
+                <span class="shape-swatch" id="textDetailFillSwatch" style="cursor:pointer;" onclick="event.stopPropagation(); openColorFullPanel('fill');"></span>
+              </div>
+            </div>
+            <div class="shape-style-col">
+              <p class="shape-style-col__label">Outline colour</p>
+              <div class="shape-swatch-row" id="textOutlineSwatchRow">
+                <span class="shape-swatch color-none-swatch" id="textDetailBorderSwatch" style="cursor:pointer;" onclick="event.stopPropagation(); openColorFullPanel('border');"></span>
+                <span class="shape-swatch color-add-swatch" id="textOutlineAddSwatch" style="cursor:pointer;" onclick="event.stopPropagation(); openColorFullPanel('border');" title="Outline 추가" hidden>
+                  <span class="color-add-swatch__inner">
+                    <span class="icon" style="width:16px;height:16px">
+                      <span class="icon__frag" style="inset:7.4px 2.733px 7.4px 2.733px"><img src="assets/screen-01-elements-panel/panel-shape-detail/color-swatches/plus-h.svg" alt="" /></span>
+                      <span class="icon__frag" style="inset:2.733px 7.4px 2.733px 7.4px"><img src="assets/screen-01-elements-panel/panel-shape-detail/color-swatches/plus-v.svg" alt="" /></span>
+                    </span>
+                  </span>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="text-style-row">
+            <p class="text-style-row__label">Outline width</p>
+            <div class="prop-stepper" id="textOutlineWidthStepper" style="width:108px;">
+              <span class="prop-stepper__btn" onclick="stepTextOutlineWidth(-1)">
+                <span class="icon" style="width:16px;height:16px"><span class="icon__frag" style="inset:calc(50% - 0.8px) 20.83% calc(50% - 0.8px) 20.83%"><img src="assets/screen-01-elements-panel/canvas/quickadd-plus-1.svg" alt="" /></span></span>
+              </span>
+              <span class="prop-stepper__val" id="textOutlineWidthVal">2</span>
+              <span class="prop-stepper__btn" onclick="stepTextOutlineWidth(1)">
+                <span class="icon" style="width:16px;height:16px"><span class="icon__frag" style="inset:calc(50% - 0.8px) 20.83% calc(50% - 0.8px) 20.83%"><img src="assets/screen-01-elements-panel/canvas/quickadd-plus-1.svg" alt="" /></span><span class="icon__frag" style="inset:20.83% calc(50% - 0.8px) 20.83% calc(50% - 0.8px)"><img src="assets/screen-01-elements-panel/canvas/quickadd-plus-2.svg" alt="" /></span></span>
+              </span>
+            </div>
+          </div>
+          <div class="text-style-row">
+            <p class="text-style-row__label">Effects</p>
+            <div class="effect-tile-row">
+              <div class="effect-tile" id="textEffect-none" onclick="applyTextEffect('none')">
+                <div class="effect-tile__preview"><span class="effect-tile__chip">Ag</span></div>
+                <p class="effect-tile__label">None</p>
+              </div>
+              <div class="effect-tile" id="textEffect-shadow" onclick="applyTextEffect('shadow')">
+                <div class="effect-tile__preview"><span class="effect-tile__chip" style="text-shadow:2px 2.5px 2px rgba(15,23,41,0.45);">Ag</span></div>
+                <p class="effect-tile__label">Shadow</p>
+              </div>
+              <div class="effect-tile" id="textEffect-outline" onclick="applyTextEffect('outline')">
+                <div class="effect-tile__preview"><span class="effect-tile__chip" style="color:transparent; -webkit-text-stroke:1px var(--color-neutral-900);">Ag</span></div>
+                <p class="effect-tile__label">Outline</p>
+              </div>
+              <div class="effect-tile" id="textEffect-light-box" onclick="applyTextEffect('light-box')">
+                <div class="effect-tile__preview"><span class="effect-tile__chip" style="background:var(--color-brand-primary-light);">Ag</span></div>
+                <p class="effect-tile__label">Light box</p>
+              </div>
+              <div class="effect-tile" id="textEffect-dark-box" onclick="applyTextEffect('dark-box')">
+                <div class="effect-tile__preview"><span class="effect-tile__chip" style="background:var(--color-neutral-900); color:var(--color-neutral-0);">Ag</span></div>
+                <p class="effect-tile__label">Dark box</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="height:1px; background:var(--color-neutral-100); width:100%; margin:0 var(--spacing-lg);"></div>
+
+        <div class="panel-section">
+          <div class="section-header"><p class="section-header__title">Transform</p></div>
+          <div class="text-style-row">
+            <p class="text-style-row__label">Rotation</p>
+            <div class="prop-stepper" style="width:108px;">
+              <span class="prop-stepper__btn" onclick="stepTextRotation(-15)">
+                <span class="icon" style="width:16px;height:16px"><span class="icon__frag" style="inset:calc(50% - 0.8px) 20.83% calc(50% - 0.8px) 20.83%"><img src="assets/screen-01-elements-panel/canvas/quickadd-plus-1.svg" alt="" /></span></span>
+              </span>
+              <span class="prop-stepper__val" id="textRotationStepperVal">0</span>
+              <span class="prop-stepper__btn" onclick="stepTextRotation(15)">
+                <span class="icon" style="width:16px;height:16px"><span class="icon__frag" style="inset:calc(50% - 0.8px) 20.83% calc(50% - 0.8px) 20.83%"><img src="assets/screen-01-elements-panel/canvas/quickadd-plus-1.svg" alt="" /></span><span class="icon__frag" style="inset:20.83% calc(50% - 0.8px) 20.83% calc(50% - 0.8px)"><img src="assets/screen-01-elements-panel/canvas/quickadd-plus-2.svg" alt="" /></span></span>
+              </span>
+            </div>
+          </div>
+          <div class="text-style-row">
+            <p class="text-style-row__label">Opacity</p>
+            <div style="display:flex; align-items:center; gap:var(--spacing-md); width:100%;">
+              <input type="range" class="opacity-slider" id="textOpacitySlider" min="0" max="100" step="1" value="100" oninput="applyElementOpacity(this.value)" aria-label="투명도" />
+              <span class="prop-stepper__val" id="textOpacityVal" style="width:auto;">100</span>
+            </div>
           </div>
         </div>
       </aside>
@@ -2775,7 +3028,7 @@
                 </span>
                 <p class="panel-header__title" id="colorFullPanelTitle">Fill Colour</p>
               </div>
-              <span class="icon panel-header__close" style="width:20px;height:20px" onclick="deselectShape()" role="button" aria-label="패널 닫기">
+              <span class="icon panel-header__close" style="width:20px;height:20px" onclick="deselectColorFullPanelOwner()" role="button" aria-label="패널 닫기">
                 <span class="icon__frag" style="inset:25%"><img src="assets/screen-01-elements-panel/panel-text/panel-close.svg" alt="" /></span>
               </span>
             </div>
@@ -2850,6 +3103,29 @@
             </div>
             <div class="toolbar-item" style="cursor:pointer; padding:6px;" onclick="event.stopPropagation(); openColorFullPanel('border');">
               <span class="toolbar-swatch" id="itemLineColorSwatch" style="width:24px;height:24px;"></span>
+            </div>
+            <div class="toolbar-item" id="spacingToolbarItem" style="cursor:pointer; position:relative;" onclick="event.stopPropagation(); toggleSpacingPopover();">
+              <span class="icon" style="width:20px;height:20px">
+                <img src="assets/screen-01-elements-panel/canvas/spacing-glyph.svg" alt="" style="display:block; width:100%; height:100%;" />
+              </span>
+              <span>Spacing</span>
+
+              <div class="toolbar-popover" id="spacingPopover" onclick="event.stopPropagation();">
+                <div class="toolbar-popover__item" style="cursor:default;">
+                  <span>Letter spacing</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:var(--spacing-lg); padding:0 var(--spacing-sm) var(--spacing-sm);">
+                  <input type="range" class="opacity-slider" id="letterSpacingSlider" min="-20" max="20" step="1" value="0" oninput="applyLetterSpacing(this.value)" aria-label="자간" />
+                  <span class="prop-stepper__val" id="letterSpacingVal" style="width:auto;">0</span>
+                </div>
+                <div class="toolbar-popover__item" style="cursor:default;">
+                  <span>Line spacing</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:var(--spacing-lg); padding:0 var(--spacing-sm) var(--spacing-sm);">
+                  <input type="range" class="opacity-slider" id="lineSpacingSlider" min="-100" max="100" step="1" value="0" oninput="applyLineSpacing(this.value)" aria-label="행간" />
+                  <span class="prop-stepper__val" id="lineSpacingVal" style="width:auto;">0</span>
+                </div>
+              </div>
             </div>
             <div class="toolbar-item" id="replaceToolbarItem" style="cursor:pointer;" onclick="event.stopPropagation(); toggleReplaceMenu();">
               <span class="icon" style="width:20px;height:20px">
@@ -3140,13 +3416,6 @@
                 <span class="icon__frag" style="inset:8.33% 33.33% 75% 33.33%"><img src="assets/screen-01-elements-panel/canvas/item13-c.svg" alt="" /></span>
               </span>
             </div>
-            <div class="toolbar-item">
-              <span class="icon" style="width:20px;height:20px">
-                <span class="icon__frag" style="inset:45.83%"><img src="assets/screen-01-elements-panel/canvas/item14-dot.svg" alt="" /></span>
-                <span class="icon__frag" style="inset:45.83% 16.67% 45.83% 75%"><img src="assets/screen-01-elements-panel/canvas/item14-dot.svg" alt="" /></span>
-                <span class="icon__frag" style="inset:45.83% 75% 45.83% 16.67%"><img src="assets/screen-01-elements-panel/canvas/item14-dot.svg" alt="" /></span>
-              </span>
-            </div>
           </div>
 
           <div class="toggle-pill">
@@ -3174,9 +3443,66 @@
           <div class="poster" id="posterEl">
             <img class="poster__bg" src="assets/screen-01-elements-panel/canvas/poster-bg.jpg" alt="" />
             <img class="poster__overlay" src="assets/screen-01-elements-panel/canvas/poster-overlay.svg" alt="" />
-            <p class="poster__title">Guided Application &amp; Visa Support</p>
-            <p class="poster__subtitle">Card 3 of 3 — your complete journey, supported by experts.</p>
-            <div class="poster__cta"><span>Get Started with Formee Express</span></div>
+            <div class="canvas-selectable canvas-text canvas-text--align-left is-visible" id="canvasText-title" style="left:31px; top:33px; width:340px; height:72px;" onpointerdown="startTextMove(event)" onclick="event.stopPropagation(); selectTextEl(this);" ondblclick="event.stopPropagation(); startTextEditFor(this);">
+              <div class="canvas-text__content canvas-text__content--poster-title" contenteditable="false" onblur="commitTextEdit(this);" onpointerdown="if (this.getAttribute('contenteditable') === 'true') { event.stopPropagation(); }"><span>Guided Application &amp; Visa Support</span></div>
+              <div class="canvas-selectable__selection">
+                <span class="canvas-selectable__dot canvas-selectable__dot--tl"></span>
+                <span class="canvas-selectable__dot canvas-selectable__dot--tr"></span>
+                <span class="canvas-selectable__dot canvas-selectable__dot--bl"></span>
+                <span class="canvas-selectable__dot canvas-selectable__dot--br"></span>
+                <span class="canvas-selectable__pill canvas-selectable__pill--top"></span>
+                <span class="canvas-selectable__pill canvas-selectable__pill--bottom"></span>
+                <span class="canvas-selectable__pill canvas-selectable__pill--left"></span>
+                <span class="canvas-selectable__pill canvas-selectable__pill--right"></span>
+              </div>
+              <span class="canvas-selectable__handle canvas-selectable__handle--tl" onpointerdown="startTextResizeAxis(event, 'tl')" onclick="event.stopPropagation();"></span>
+              <span class="canvas-selectable__handle canvas-selectable__handle--tr" onpointerdown="startTextResizeAxis(event, 'tr')" onclick="event.stopPropagation();"></span>
+              <span class="canvas-selectable__handle canvas-selectable__handle--bl" onpointerdown="startTextResizeAxis(event, 'bl')" onclick="event.stopPropagation();"></span>
+              <span class="canvas-selectable__handle canvas-selectable__handle--br" onpointerdown="startTextResizeAxis(event, 'br')" onclick="event.stopPropagation();"></span>
+              <span class="canvas-selectable__handle canvas-selectable__handle--top" onpointerdown="startTextResizeAxis(event, 'top')" onclick="event.stopPropagation();"></span>
+              <span class="canvas-selectable__handle canvas-selectable__handle--bottom" onpointerdown="startTextResizeAxis(event, 'bottom')" onclick="event.stopPropagation();"></span>
+              <span class="canvas-selectable__handle canvas-selectable__handle--left" onpointerdown="startTextResizeAxis(event, 'left')" onclick="event.stopPropagation();"></span>
+              <span class="canvas-selectable__handle canvas-selectable__handle--right" onpointerdown="startTextResizeAxis(event, 'right')" onclick="event.stopPropagation();"></span>
+              <button class="canvas-selectable__rotate" onpointerdown="startTextRotate(event)" onclick="event.stopPropagation();" aria-label="회전">
+                <span class="icon" style="width:14px;height:14px">
+                  <span class="icon__frag" style="inset:12.5% 12.83% 55% 12.5%"><img src="assets/screen-01-elements-panel/panel-sticker-detail/rotate-1.svg" alt="" /></span>
+                  <span class="icon__frag" style="inset:12.5% 66.67% 66.67% 12.5%"><img src="assets/screen-01-elements-panel/panel-sticker-detail/rotate-2.svg" alt="" /></span>
+                  <span class="icon__frag" style="inset:55% 12.5% 12.5% 12.83%"><img src="assets/screen-01-elements-panel/panel-sticker-detail/rotate-3.svg" alt="" /></span>
+                  <span class="icon__frag" style="inset:66.67% 12.5% 12.5% 66.67%"><img src="assets/screen-01-elements-panel/panel-sticker-detail/rotate-4.svg" alt="" /></span>
+                </span>
+              </button>
+            </div>
+
+            <div class="canvas-selectable canvas-text canvas-text--align-left is-visible" id="canvasText-subtitle" style="left:31px; top:166px; width:410px; height:22px;" onpointerdown="startTextMove(event)" onclick="event.stopPropagation(); selectTextEl(this);" ondblclick="event.stopPropagation(); startTextEditFor(this);">
+              <div class="canvas-text__content canvas-text__content--poster-subtitle" contenteditable="false" onblur="commitTextEdit(this);" onpointerdown="if (this.getAttribute('contenteditable') === 'true') { event.stopPropagation(); }"><span>Card 3 of 3 — your complete journey, supported by experts.</span></div>
+              <div class="canvas-selectable__selection">
+                <span class="canvas-selectable__dot canvas-selectable__dot--tl"></span>
+                <span class="canvas-selectable__dot canvas-selectable__dot--tr"></span>
+                <span class="canvas-selectable__dot canvas-selectable__dot--bl"></span>
+                <span class="canvas-selectable__dot canvas-selectable__dot--br"></span>
+                <span class="canvas-selectable__pill canvas-selectable__pill--top"></span>
+                <span class="canvas-selectable__pill canvas-selectable__pill--bottom"></span>
+                <span class="canvas-selectable__pill canvas-selectable__pill--left"></span>
+                <span class="canvas-selectable__pill canvas-selectable__pill--right"></span>
+              </div>
+              <span class="canvas-selectable__handle canvas-selectable__handle--tl" onpointerdown="startTextResizeAxis(event, 'tl')" onclick="event.stopPropagation();"></span>
+              <span class="canvas-selectable__handle canvas-selectable__handle--tr" onpointerdown="startTextResizeAxis(event, 'tr')" onclick="event.stopPropagation();"></span>
+              <span class="canvas-selectable__handle canvas-selectable__handle--bl" onpointerdown="startTextResizeAxis(event, 'bl')" onclick="event.stopPropagation();"></span>
+              <span class="canvas-selectable__handle canvas-selectable__handle--br" onpointerdown="startTextResizeAxis(event, 'br')" onclick="event.stopPropagation();"></span>
+              <span class="canvas-selectable__handle canvas-selectable__handle--top" onpointerdown="startTextResizeAxis(event, 'top')" onclick="event.stopPropagation();"></span>
+              <span class="canvas-selectable__handle canvas-selectable__handle--bottom" onpointerdown="startTextResizeAxis(event, 'bottom')" onclick="event.stopPropagation();"></span>
+              <span class="canvas-selectable__handle canvas-selectable__handle--left" onpointerdown="startTextResizeAxis(event, 'left')" onclick="event.stopPropagation();"></span>
+              <span class="canvas-selectable__handle canvas-selectable__handle--right" onpointerdown="startTextResizeAxis(event, 'right')" onclick="event.stopPropagation();"></span>
+              <button class="canvas-selectable__rotate" onpointerdown="startTextRotate(event)" onclick="event.stopPropagation();" aria-label="회전">
+                <span class="icon" style="width:14px;height:14px">
+                  <span class="icon__frag" style="inset:12.5% 12.83% 55% 12.5%"><img src="assets/screen-01-elements-panel/panel-sticker-detail/rotate-1.svg" alt="" /></span>
+                  <span class="icon__frag" style="inset:12.5% 66.67% 66.67% 12.5%"><img src="assets/screen-01-elements-panel/panel-sticker-detail/rotate-2.svg" alt="" /></span>
+                  <span class="icon__frag" style="inset:55% 12.5% 12.5% 12.83%"><img src="assets/screen-01-elements-panel/panel-sticker-detail/rotate-3.svg" alt="" /></span>
+                  <span class="icon__frag" style="inset:66.67% 12.5% 12.5% 66.67%"><img src="assets/screen-01-elements-panel/panel-sticker-detail/rotate-4.svg" alt="" /></span>
+                </span>
+              </button>
+            </div>
+            <div class="poster__cta" id="posterCta" style="cursor:pointer;" onclick="event.stopPropagation(); selectCtaButton(this);"><span>Get Started with Formee Express</span></div>
             <img class="poster__brand" src="assets/screen-01-elements-panel/canvas/poster-brand-mark.svg" alt="Formee" />
             <div class="poster__guides" id="posterGuides">
               <span class="poster__guide-v" style="left:29px;"></span>
@@ -3186,6 +3512,8 @@
               <span class="poster__guide-h" style="top:50%;"></span>
               <span class="poster__guide-h" style="top:514px;"></span>
             </div>
+            <span class="snap-guide-v" id="snapGuideV"></span>
+            <span class="snap-guide-h" id="snapGuideH"></span>
             <div class="canvas-selectable" id="canvasSticker" style="left:324px; top:252px; width:52px; height:52px;" onpointerdown="startStickerMove(event)" onclick="event.stopPropagation(); selectPlacedSticker();">
               <span class="icon" id="canvasStickerIcon" style="width:52px;height:52px; display:block;">
                 <span class="icon__frag sticker-frag is-active" data-sticker-key="growing-heart" style="inset:17.59% 6.46% 5.12% 5.19%; transform:translateY(-6.25%);"><img src="assets/screen-01-elements-panel/toolpanel/sticker-heart-1.svg" alt="" /></span>
@@ -3360,6 +3688,38 @@
               </button>
             </div>
             </template>
+
+            <template id="textTemplate">
+            <div class="canvas-selectable canvas-text canvas-text--align-left" style="width:200px; height:50px;" onpointerdown="startTextMove(event)" onclick="event.stopPropagation(); selectTextEl(this);" ondblclick="event.stopPropagation(); startTextEditFor(this);">
+              <div class="canvas-text__content" contenteditable="false" onblur="commitTextEdit(this);" onpointerdown="if (this.getAttribute('contenteditable') === 'true') { event.stopPropagation(); }"><span>Add your text</span></div>
+              <div class="canvas-selectable__selection">
+                <span class="canvas-selectable__dot canvas-selectable__dot--tl"></span>
+                <span class="canvas-selectable__dot canvas-selectable__dot--tr"></span>
+                <span class="canvas-selectable__dot canvas-selectable__dot--bl"></span>
+                <span class="canvas-selectable__dot canvas-selectable__dot--br"></span>
+                <span class="canvas-selectable__pill canvas-selectable__pill--top"></span>
+                <span class="canvas-selectable__pill canvas-selectable__pill--bottom"></span>
+                <span class="canvas-selectable__pill canvas-selectable__pill--left"></span>
+                <span class="canvas-selectable__pill canvas-selectable__pill--right"></span>
+              </div>
+              <span class="canvas-selectable__handle canvas-selectable__handle--tl" onpointerdown="startTextResizeAxis(event, 'tl')" onclick="event.stopPropagation();"></span>
+              <span class="canvas-selectable__handle canvas-selectable__handle--tr" onpointerdown="startTextResizeAxis(event, 'tr')" onclick="event.stopPropagation();"></span>
+              <span class="canvas-selectable__handle canvas-selectable__handle--bl" onpointerdown="startTextResizeAxis(event, 'bl')" onclick="event.stopPropagation();"></span>
+              <span class="canvas-selectable__handle canvas-selectable__handle--br" onpointerdown="startTextResizeAxis(event, 'br')" onclick="event.stopPropagation();"></span>
+              <span class="canvas-selectable__handle canvas-selectable__handle--top" onpointerdown="startTextResizeAxis(event, 'top')" onclick="event.stopPropagation();"></span>
+              <span class="canvas-selectable__handle canvas-selectable__handle--bottom" onpointerdown="startTextResizeAxis(event, 'bottom')" onclick="event.stopPropagation();"></span>
+              <span class="canvas-selectable__handle canvas-selectable__handle--left" onpointerdown="startTextResizeAxis(event, 'left')" onclick="event.stopPropagation();"></span>
+              <span class="canvas-selectable__handle canvas-selectable__handle--right" onpointerdown="startTextResizeAxis(event, 'right')" onclick="event.stopPropagation();"></span>
+              <button class="canvas-selectable__rotate" onpointerdown="startTextRotate(event)" onclick="event.stopPropagation();" aria-label="회전">
+                <span class="icon" style="width:14px;height:14px">
+                  <span class="icon__frag" style="inset:12.5% 12.83% 55% 12.5%"><img src="assets/screen-01-elements-panel/panel-sticker-detail/rotate-1.svg" alt="" /></span>
+                  <span class="icon__frag" style="inset:12.5% 66.67% 66.67% 12.5%"><img src="assets/screen-01-elements-panel/panel-sticker-detail/rotate-2.svg" alt="" /></span>
+                  <span class="icon__frag" style="inset:55% 12.5% 12.5% 12.83%"><img src="assets/screen-01-elements-panel/panel-sticker-detail/rotate-3.svg" alt="" /></span>
+                  <span class="icon__frag" style="inset:66.67% 12.5% 12.5% 66.67%"><img src="assets/screen-01-elements-panel/panel-sticker-detail/rotate-4.svg" alt="" /></span>
+                </span>
+              </button>
+            </div>
+            </template>
           </div>
 
           <div class="layers-panel" id="layersPanel">
@@ -3375,6 +3735,48 @@
               </span>
             </div>
             <div class="layers-panel__list" id="layersPanelList" onclick="handleLayersPanelClick(event)"></div>
+          </div>
+
+          <div class="cta-spark-btn" id="ctaSparkBtn" onclick="event.stopPropagation(); toggleAiImprovePopover();">
+            <span class="icon" style="width:18px;height:18px">
+              <span class="icon__frag" style="inset:16.67% 27.78% 27.78% 5.56%"><img src="assets/screen-01-elements-panel/ai-improve/spark-btn-1.svg" alt="" /></span>
+              <span class="icon__frag" style="inset:0% 5.56% 61.11% 55.56%"><img src="assets/screen-01-elements-panel/ai-improve/spark-btn-2.svg" alt="" /></span>
+            </span>
+          </div>
+
+          <div class="ai-improve-popover" id="aiImprovePopover" onclick="event.stopPropagation();">
+            <div class="ai-popover-header">
+              <div class="ai-section-label" style="width:auto;">
+                <span class="icon" style="width:16px;height:16px"><img src="assets/screen-01-elements-panel/ai-improve/sparkle-frame.svg" alt="" style="width:100%;height:100%;" /></span>
+                <span class="ai-gradient-text">AI Assistant</span>
+              </div>
+              <span class="icon panel-header__close" style="width:16px;height:16px" onclick="closeAiImprovePopover()" role="button" aria-label="닫기">
+                <img src="assets/screen-01-elements-panel/ai-improve/panel-close.svg" alt="" style="width:100%;height:100%;" />
+              </span>
+            </div>
+
+            <p class="ai-field-label">Selected Text</p>
+            <div class="ai-prompt-box" id="aiSelectedTextBox">Get Started with Formee Education</div>
+
+            <div class="ai-chat-log" id="aiChatLog"></div>
+
+            <p class="ai-field-label" id="aiQuickActionsLabel">Quick actions</p>
+            <div class="ai-quick-actions" id="aiQuickActions">
+              <div class="ai-quick-action-chip" onclick="submitAiPrompt('Make it longer')">Make it longer</div>
+              <div class="ai-quick-action-chip" onclick="submitAiPrompt('More professional')">More professional</div>
+              <div class="ai-quick-action-chip" onclick="submitAiPrompt('Change tone')">Change tone</div>
+            </div>
+
+            <div class="ai-section-label">
+              <span class="icon" style="width:16px;height:16px"><img src="assets/screen-01-elements-panel/ai-improve/sparkle-frame.svg" alt="" style="width:100%;height:100%;" /></span>
+              <span class="ai-gradient-text">Refine the prompt</span>
+            </div>
+            <div class="ai-refine-row">
+              <input type="text" class="ai-refine-input" id="aiRefineInput" placeholder="Ask for another change..." onkeydown="if (event.key === 'Enter') { submitAiPromptFromInput(); }" />
+              <span class="ai-refine-submit" onclick="submitAiPromptFromInput()">
+                <span class="icon" style="width:16px;height:16px"><img src="assets/screen-01-elements-panel/ai-improve/arrow-up.svg" alt="" style="width:100%;height:100%;" /></span>
+              </span>
+            </div>
           </div>
         </div>
       </section>
@@ -3843,12 +4245,16 @@
 
       function onMove(ev) {
         var scale = PAGE_FIT_SCALE * ZOOM_BASE_SCALE * (parseInt(document.getElementById('zoomSlider').value, 10) / 100);
-        el.style.left = (startLeft + (ev.clientX - startX) / scale) + 'px';
-        el.style.top = (startTop + (ev.clientY - startY) / scale) + 'px';
+        var rawLeft = startLeft + (ev.clientX - startX) / scale;
+        var rawTop = startTop + (ev.clientY - startY) / scale;
+        var snapped = applyCenterSnap(rawLeft, rawTop, parseFloat(el.style.width), parseFloat(el.style.height));
+        el.style.left = snapped.left + 'px';
+        el.style.top = snapped.top + 'px';
       }
       function onUp() {
         document.removeEventListener('pointermove', onMove);
         document.removeEventListener('pointerup', onUp);
+        clearSnapGuides();
       }
       document.addEventListener('pointermove', onMove);
       document.addEventListener('pointerup', onUp);
@@ -3913,11 +4319,51 @@
     var POSTER_HEIGHT = 596;
     var shapeInstanceCounter = 0;
 
+    // ---- Center-snap ("magnetic") guides — shared by every draggable element type (sticker,
+    // shape, image, text) since they all funnel their move handler through this one helper.
+    // Only snaps to the poster's own horizontal/vertical center for now (the most common case
+    // when placing/aligning content), not to other elements' edges.
+    var SNAP_THRESHOLD = 6;
+
+    function applyCenterSnap(left, top, width, height) {
+      var centerX = left + width / 2;
+      var centerY = top + height / 2;
+      var posterCenterX = POSTER_WIDTH / 2;
+      var posterCenterY = POSTER_HEIGHT / 2;
+      var snappedX = Math.abs(centerX - posterCenterX) < SNAP_THRESHOLD;
+      var snappedY = Math.abs(centerY - posterCenterY) < SNAP_THRESHOLD;
+      if (snappedX) { left = posterCenterX - width / 2; }
+      if (snappedY) { top = posterCenterY - height / 2; }
+      document.getElementById('snapGuideV').classList.toggle('is-active', snappedX);
+      document.getElementById('snapGuideH').classList.toggle('is-active', snappedY);
+      return { left: left, top: top };
+    }
+
+    function clearSnapGuides() {
+      document.getElementById('snapGuideV').classList.remove('is-active');
+      document.getElementById('snapGuideH').classList.remove('is-active');
+    }
+
+    // .screen carries the PAGE_FIT_SCALE transform (see fitScreenToViewport()), and a
+    // transformed ancestor becomes the containing block for its position:fixed descendants —
+    // so any left/top computed from getBoundingClientRect() (real viewport px) has to be
+    // divided back down before being assigned to a fixed element living inside .screen, or it
+    // lands scaled-up and miles from where it should be. offsetLeft/offsetTop-based positioning
+    // (see toggleAddMenu/toggleReplaceMenu/toggleToolbarPopover) is already in this same local
+    // space and needs no conversion — only raw getBoundingClientRect() results do.
+    function toScreenLocalPx(viewportPx) {
+      return viewportPx / PAGE_FIT_SCALE;
+    }
+
     // Replace is available for every selectable element type (sticker and shape both show it —
     // toggleReplaceMenu() picks the right popover content based on what's currently selected).
+    // Replace only makes sense for sticker/shape (swapping which glyph is shown) — Figma's
+    // Image and Text ContextBars don't have a Replace item at all (images have their own
+    // "Replace image" file-picker action inside the side panel instead).
     function setFloatingToolbarMode(mode) {
       document.getElementById('replaceMenu').classList.remove('is-visible');
       document.getElementById('replaceToolbarItem').classList.remove('is-focused');
+      document.getElementById('replaceToolbarItem').hidden = (mode !== 'sticker' && mode !== 'shape');
     }
 
     function makeShapeState(key, borderStyle) {
@@ -4140,6 +4586,7 @@
       updateImageTransform();
       document.getElementById('imageRotationStepperVal').textContent = Math.round(imageRotationDeg % 360);
 
+      setFloatingToolbarMode('image');
       document.querySelector('.floating-toolbar').classList.add('floating-toolbar--visible');
       refreshCarousels();
       switchPanel('image-detail');
@@ -4173,12 +4620,16 @@
       var startTop = parseFloat(el.style.top);
       function onMove(ev) {
         var scale = PAGE_FIT_SCALE * ZOOM_BASE_SCALE * (parseInt(document.getElementById('zoomSlider').value, 10) / 100);
-        el.style.left = (startLeft + (ev.clientX - startX) / scale) + 'px';
-        el.style.top = (startTop + (ev.clientY - startY) / scale) + 'px';
+        var rawLeft = startLeft + (ev.clientX - startX) / scale;
+        var rawTop = startTop + (ev.clientY - startY) / scale;
+        var snapped = applyCenterSnap(rawLeft, rawTop, parseFloat(el.style.width), parseFloat(el.style.height));
+        el.style.left = snapped.left + 'px';
+        el.style.top = snapped.top + 'px';
       }
       function onUp() {
         document.removeEventListener('pointermove', onMove);
         document.removeEventListener('pointerup', onUp);
+        clearSnapGuides();
       }
       document.addEventListener('pointermove', onMove);
       document.addEventListener('pointerup', onUp);
@@ -4381,6 +4832,427 @@
       event.target.value = '';
     }
 
+    // ---- Text element (Figma nodes 4554:125066 "Text panel · default" and 4554:125129
+    // "text selected") — mirrors the shape/image multi-instance architecture exactly: cloned
+    // from #textTemplate, one selected at a time via .is-selected, per-instance state saved/
+    // loaded on the element itself via el.textState. Font presets reuse the exact CSS classes
+    // (.font-card__label--heading/subheading/body) already defined for the default panel's
+    // Brand Fonts cards, so a placed text pixel-matches its source card.
+    var textInstanceCounter = 0;
+    var TEXT_FONT_PRESETS = {
+      heading: { sizeVar: '--font-size-display-sm', lineVar: '--line-height-display-sm', weightVar: '--font-weight-bold', label: 'Heading' },
+      subheading: { sizeVar: '--font-size-text-2xl', lineVar: '--line-height-text-2xl', weightVar: '--font-weight-semibold', label: 'Subheading' },
+      body: { sizeVar: '--font-size-text-xl', lineVar: '--line-height-text-xl', weightVar: '--font-weight-regular', label: 'Body' }
+    };
+    var textFontPreset = 'heading';
+    // Every text placed via the Text tool (Add text / font cards) uses the brand font
+    // (--font-family-logo, Manrope) — but the poster's own baked-in headline/subhead were
+    // authored in the display font (--font-family-display, DM Sans) and keep that when they
+    // become real .canvas-text instances (see initStaticPosterTexts()), so converting them to
+    // editable text doesn't change how the poster already looks.
+    var textFontFamilyVar = '--font-family-logo';
+    var textFontSizePx = 28;
+    var textBold = false;
+    var textItalic = false;
+    var textUnderline = false;
+    var textStrike = false;
+    var textUppercase = false;
+    var textAlign = 'left';
+    var textEffect = 'none';
+    var textRotationDeg = 0;
+    var textFlipX = 1;
+    var textFlipY = 1;
+    var textLetterSpacing = 0;
+    var textLineSpacing = 0;
+
+    function getSelectedTextEl() {
+      return document.querySelector('.canvas-text.is-selected');
+    }
+
+    function cssVarPx(varName) {
+      return parseFloat(getComputedStyle(document.documentElement).getPropertyValue(varName)) || 16;
+    }
+
+    function makeTextState() {
+      return {
+        fontPreset: 'heading', fontSizePx: cssVarPx('--font-size-display-sm'), fontFamilyVar: '--font-family-logo',
+        bold: false, italic: false, underline: false, strike: false, uppercase: false,
+        align: 'left', effect: 'none', rotationDeg: 0, flipX: 1, flipY: 1,
+        letterSpacing: 0, lineSpacing: 0,
+        fill: makeSolidColor('#0f1729'), border: makeNoneColor(), outlineWidth: 2
+      };
+    }
+
+    function saveTextState(el) {
+      if (!el) { return; }
+      el.textState = {
+        fontPreset: textFontPreset, fontSizePx: textFontSizePx, fontFamilyVar: textFontFamilyVar,
+        bold: textBold, italic: textItalic, underline: textUnderline, strike: textStrike, uppercase: textUppercase,
+        align: textAlign, effect: textEffect, rotationDeg: textRotationDeg, flipX: textFlipX, flipY: textFlipY,
+        letterSpacing: textLetterSpacing, lineSpacing: textLineSpacing,
+        fill: textColor.fill, border: textColor.border, outlineWidth: textOutlineWidth
+      };
+    }
+
+    function loadTextState(el) {
+      var s = el.textState;
+      textFontPreset = s.fontPreset; textFontSizePx = s.fontSizePx; textFontFamilyVar = s.fontFamilyVar || '--font-family-logo';
+      textBold = s.bold; textItalic = s.italic; textUnderline = s.underline; textStrike = s.strike; textUppercase = s.uppercase;
+      textAlign = s.align; textEffect = s.effect; textRotationDeg = s.rotationDeg; textFlipX = s.flipX; textFlipY = s.flipY;
+      textLetterSpacing = s.letterSpacing; textLineSpacing = s.lineSpacing;
+      textColor.fill = s.fill; textColor.border = s.border; textOutlineWidth = s.outlineWidth;
+    }
+
+    // The poster's headline/subhead ship as real .canvas-text instances already in the HTML
+    // (not created through addTextToCanvas()) so they need their own textState + a spot in
+    // layerOrder set up once at load — everything else (select/drag/resize/edit/panel controls)
+    // is the exact same machinery every other text element uses.
+    function initStaticPosterTexts() {
+      var title = document.getElementById('canvasText-title');
+      title.textState = makeTextState();
+      title.textState.fontFamilyVar = '--font-family-display';
+      title.textState.fontSizePx = cssVarPx('--font-size-display-md');
+      title.textState.bold = true;
+      title.textState.fill = makeSolidColor('#ffffff');
+
+      var subtitle = document.getElementById('canvasText-subtitle');
+      subtitle.textState = makeTextState();
+      subtitle.textState.fontPreset = 'body';
+      subtitle.textState.fontFamilyVar = '--font-family-display';
+      subtitle.textState.fontSizePx = cssVarPx('--font-size-text-md');
+      subtitle.textState.fill = makeSolidColor('#ffffff');
+
+      layerOrder.unshift('canvasText-subtitle');
+      layerOrder.unshift('canvasText-title');
+      applyLayerOrder();
+    }
+
+    // Font cards and "Add text" both place a new text box — Figma marks each Brand Fonts card
+    // action="Add" rather than "apply to selection", so that's the real behaviour here too.
+    function addTextToCanvas(preset) {
+      var template = document.getElementById('textTemplate');
+      var el = document.importNode(template.content, true).firstElementChild;
+      textInstanceCounter++;
+      el.id = 'canvasText-' + textInstanceCounter;
+
+      var width = 220;
+      var height = 60;
+      var cascade = ((textInstanceCounter - 1) % 6) * 24;
+      el.style.width = width + 'px';
+      el.style.height = height + 'px';
+      el.style.left = (((POSTER_WIDTH - width) / 2) + cascade) + 'px';
+      el.style.top = (((POSTER_HEIGHT - height) / 2) + cascade) + 'px';
+      el.style.opacity = 1;
+      el.classList.add('is-visible');
+      el.textState = makeTextState();
+      el.textState.fontPreset = preset || 'heading';
+      el.textState.fontSizePx = cssVarPx(TEXT_FONT_PRESETS[el.textState.fontPreset].sizeVar);
+
+      document.getElementById('posterEl').appendChild(el);
+      layerOrder.push(el.id);
+      applyLayerOrder();
+
+      selectTextEl(el);
+    }
+
+    function selectTextEl(el) {
+      if (el.classList.contains('is-selected')) { return; }
+      var prevShape = getSelectedShapeEl();
+      if (prevShape) { saveShapeState(prevShape); prevShape.classList.remove('is-selected'); }
+      var prevImage = getSelectedImageEl();
+      if (prevImage) { saveImageState(prevImage); prevImage.classList.remove('is-selected'); }
+      var prevText = getSelectedTextEl();
+      if (prevText && prevText !== el) { saveTextState(prevText); prevText.classList.remove('is-selected'); }
+      document.getElementById('canvasSticker').classList.remove('is-selected');
+      document.getElementById('posterCta').classList.remove('is-selected');
+
+      el.classList.add('is-selected');
+      loadTextState(el);
+      renderTextStyle();
+      renderTextColorTargets();
+      updateTextTransform();
+      document.getElementById('textRotationStepperVal').textContent = Math.round(textRotationDeg % 360);
+
+      setFloatingToolbarMode('text');
+      document.querySelector('.floating-toolbar').classList.add('floating-toolbar--visible');
+      refreshCarousels();
+      switchPanel('text-detail');
+      renderOpacityPopoverForSelection();
+      showAiSparkFor(el);
+    }
+
+    function deselectText() {
+      var el = getSelectedTextEl();
+      if (el) { saveTextState(el); el.classList.remove('is-selected'); }
+      document.querySelector('.floating-toolbar').classList.remove('floating-toolbar--visible');
+      hideAiSpark();
+      closePanel();
+    }
+
+    // Same rule as deselectImageToUploads(): clicking outside just clears the selection, panel
+    // stays open — switched back to the Text tool's default (font-picking) screen.
+    function deselectTextToTextPanel() {
+      var el = getSelectedTextEl();
+      if (el) { saveTextState(el); el.classList.remove('is-selected'); }
+      document.querySelector('.floating-toolbar').classList.remove('floating-toolbar--visible');
+      hideAiSpark();
+      switchPanel('text');
+    }
+
+    // The double-click lands on the wrapper, not the content div directly — .canvas-selectable
+    // __selection (the selection-outline overlay) gains pointer-events:auto while .is-selected
+    // (so its own border is grabbable), which sits on top of and would otherwise swallow every
+    // click meant for the text underneath. .is-editing switches it back to pointer-events:none
+    // for the duration of the edit so clicks can reach the text to place the cursor / select.
+    function startTextEditFor(wrapperEl) {
+      wrapperEl.classList.add('is-editing');
+      var contentEl = wrapperEl.querySelector('.canvas-text__content');
+      contentEl.setAttribute('contenteditable', 'true');
+      contentEl.focus();
+      document.execCommand && document.execCommand('selectAll', false, null);
+    }
+
+    function commitTextEdit(contentEl) {
+      contentEl.setAttribute('contenteditable', 'false');
+      if (!contentEl.textContent.trim()) { contentEl.innerHTML = '<span>Add your text</span>'; }
+      var wrapperEl = contentEl.closest('.canvas-text');
+      if (wrapperEl) { wrapperEl.classList.remove('is-editing'); }
+    }
+
+    function startTextMove(e) {
+      e.preventDefault();
+      var el = e.currentTarget;
+      selectTextEl(el);
+      var startX = e.clientX;
+      var startY = e.clientY;
+      var startLeft = parseFloat(el.style.left);
+      var startTop = parseFloat(el.style.top);
+      function onMove(ev) {
+        var scale = PAGE_FIT_SCALE * ZOOM_BASE_SCALE * (parseInt(document.getElementById('zoomSlider').value, 10) / 100);
+        var rawLeft = startLeft + (ev.clientX - startX) / scale;
+        var rawTop = startTop + (ev.clientY - startY) / scale;
+        var snapped = applyCenterSnap(rawLeft, rawTop, parseFloat(el.style.width), parseFloat(el.style.height));
+        el.style.left = snapped.left + 'px';
+        el.style.top = snapped.top + 'px';
+      }
+      function onUp() {
+        document.removeEventListener('pointermove', onMove);
+        document.removeEventListener('pointerup', onUp);
+        clearSnapGuides();
+      }
+      document.addEventListener('pointermove', onMove);
+      document.addEventListener('pointerup', onUp);
+    }
+
+    // A single handler for every handle (4 corners + 4 edges) — text boxes have no aspect lock,
+    // so corners just move both edges at once instead of scaling by distance like images do.
+    function startTextResizeAxis(e, handle) {
+      e.stopPropagation();
+      e.preventDefault();
+      var el = e.currentTarget.closest('.canvas-selectable');
+      var startWidth = parseFloat(el.style.width);
+      var startHeight = parseFloat(el.style.height);
+      var startLeft = parseFloat(el.style.left);
+      var startTop = parseFloat(el.style.top);
+      var startX = e.clientX;
+      var startY = e.clientY;
+      var affectsRight = handle === 'right' || handle === 'tr' || handle === 'br';
+      var affectsLeft = handle === 'left' || handle === 'tl' || handle === 'bl';
+      var affectsBottom = handle === 'bottom' || handle === 'bl' || handle === 'br';
+      var affectsTop = handle === 'top' || handle === 'tl' || handle === 'tr';
+      function onMove(ev) {
+        var scale = PAGE_FIT_SCALE * ZOOM_BASE_SCALE * (parseInt(document.getElementById('zoomSlider').value, 10) / 100);
+        var dx = (ev.clientX - startX) / scale;
+        var dy = (ev.clientY - startY) / scale;
+        if (affectsRight) { el.style.width = Math.max(40, startWidth + dx) + 'px'; }
+        else if (affectsLeft) {
+          var newWidth = Math.max(40, startWidth - dx);
+          el.style.width = newWidth + 'px';
+          el.style.left = (startLeft + (startWidth - newWidth)) + 'px';
+        }
+        if (affectsBottom) { el.style.height = Math.max(24, startHeight + dy) + 'px'; }
+        else if (affectsTop) {
+          var newHeight = Math.max(24, startHeight - dy);
+          el.style.height = newHeight + 'px';
+          el.style.top = (startTop + (startHeight - newHeight)) + 'px';
+        }
+      }
+      function onUp() {
+        document.removeEventListener('pointermove', onMove);
+        document.removeEventListener('pointerup', onUp);
+      }
+      document.addEventListener('pointermove', onMove);
+      document.addEventListener('pointerup', onUp);
+    }
+
+    function updateTextTransform() {
+      var el = getSelectedTextEl();
+      if (!el) { return; }
+      el.style.transform = 'rotate(' + textRotationDeg + 'deg) scale(' + textFlipX + ',' + textFlipY + ')';
+    }
+
+    function applyTextRotation(deg) {
+      textRotationDeg = deg;
+      updateTextTransform();
+      var normalized = Math.round(((deg % 360) + 540) % 360 - 180);
+      document.getElementById('textRotationStepperVal').textContent = normalized;
+    }
+
+    function stepTextRotation(delta) {
+      applyTextRotation(textRotationDeg + delta);
+    }
+
+    function startTextRotate(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      var el = e.currentTarget.closest('.canvas-selectable');
+      var rect = el.getBoundingClientRect();
+      var centerX = rect.left + rect.width / 2;
+      var centerY = rect.top + rect.height / 2;
+      var startAngle = Math.atan2(e.clientY - centerY, e.clientX - centerX) * 180 / Math.PI;
+      var startRotation = textRotationDeg;
+      function onMove(ev) {
+        var angle = Math.atan2(ev.clientY - centerY, ev.clientX - centerX) * 180 / Math.PI;
+        applyTextRotation(startRotation + (angle - startAngle));
+      }
+      function onUp() {
+        document.removeEventListener('pointermove', onMove);
+        document.removeEventListener('pointerup', onUp);
+      }
+      document.addEventListener('pointermove', onMove);
+      document.addEventListener('pointerup', onUp);
+    }
+
+    // Font family/size/format/alignment/effects all funnel through here — one function keeps
+    // the applied CSS and the panel's own control states (buttons/steppers) from drifting apart.
+    function renderTextStyle() {
+      var el = getSelectedTextEl();
+      if (!el) { return; }
+      var content = el.querySelector('.canvas-text__content');
+      var preset = TEXT_FONT_PRESETS[textFontPreset];
+      content.style.fontFamily = 'var(' + textFontFamilyVar + ')';
+      content.style.fontSize = textFontSizePx + 'px';
+      content.style.lineHeight = (1 + textLineSpacing / 100) * 1.3;
+      content.style.fontWeight = textBold ? 'var(--font-weight-bold)' : 'var(' + preset.weightVar + ')';
+      content.style.fontStyle = textItalic ? 'italic' : 'normal';
+      var decorations = [];
+      if (textUnderline) { decorations.push('underline'); }
+      if (textStrike) { decorations.push('line-through'); }
+      content.style.textDecorationLine = decorations.length ? decorations.join(' ') : 'none';
+      content.style.textTransform = textUppercase ? 'uppercase' : 'none';
+      content.style.letterSpacing = textLetterSpacing + 'px';
+
+      var wasEditing = el.classList.contains('is-editing');
+      el.className = 'canvas-selectable canvas-text is-visible is-selected canvas-text--align-' + textAlign + ' canvas-text--effect-' + textEffect + (wasEditing ? ' is-editing' : '');
+
+      var span = content.querySelector('span');
+      if (span) {
+        span.style.textShadow = textEffect === 'shadow' ? '2px 2.5px 2px rgba(15,23,41,0.45)' : 'none';
+      }
+
+      document.getElementById('textFontSelect').value = textFontPreset;
+      document.getElementById('textSizeStepperVal').textContent = Math.round(textFontSizePx);
+      document.getElementById('textFormatBold').classList.toggle('is-active', textBold);
+      document.getElementById('textFormatItalic').classList.toggle('is-active', textItalic);
+      document.getElementById('textFormatUnderline').classList.toggle('is-active', textUnderline);
+      document.getElementById('textFormatStrike').classList.toggle('is-active', textStrike);
+      document.getElementById('textFormatUpper').classList.toggle('is-active', textUppercase);
+      ['left', 'center', 'right'].forEach(function (a) {
+        document.getElementById('textAlign' + a.charAt(0).toUpperCase() + a.slice(1)).classList.toggle('is-active', textAlign === a);
+      });
+      ['none', 'shadow', 'outline', 'light-box', 'dark-box'].forEach(function (fx) {
+        var tile = document.getElementById('textEffect-' + fx);
+        if (tile) { tile.classList.toggle('is-active', textEffect === fx); }
+      });
+      document.getElementById('textOutlineWidthVal').textContent = textOutlineWidth;
+      document.getElementById('textOutlineWidthStepper').classList.toggle('is-disabled', textColor.border.type === 'none');
+    }
+
+    function applyTextFont(preset) {
+      if (!getSelectedTextEl()) { return; }
+      textFontPreset = preset;
+      textFontSizePx = cssVarPx(TEXT_FONT_PRESETS[preset].sizeVar);
+      textFontFamilyVar = '--font-family-logo'; // picking a Brand Fonts preset always means Manrope
+      renderTextStyle();
+    }
+
+    function stepTextSize(delta) {
+      if (!getSelectedTextEl()) { return; }
+      textFontSizePx = Math.max(8, Math.min(200, textFontSizePx + delta));
+      renderTextStyle();
+    }
+
+    function toggleTextFormat(kind) {
+      if (!getSelectedTextEl()) { return; }
+      if (kind === 'bold') { textBold = !textBold; }
+      else if (kind === 'italic') { textItalic = !textItalic; }
+      else if (kind === 'underline') { textUnderline = !textUnderline; }
+      else if (kind === 'strike') { textStrike = !textStrike; }
+      else if (kind === 'uppercase') { textUppercase = !textUppercase; }
+      renderTextStyle();
+    }
+
+    function applyTextAlign(align) {
+      if (!getSelectedTextEl()) { return; }
+      textAlign = align;
+      renderTextStyle();
+    }
+
+    // Effect presets: Shadow/Outline drive the same fill+outline machinery the colour swatches
+    // use (so switching a preset and then fine-tuning outline colour/width stays consistent);
+    // Light box/Dark box add a padded background chip behind the text via CSS (see .canvas-text
+    // --effect-light-box/--effect-dark-box).
+    function applyTextEffect(effect) {
+      if (!getSelectedTextEl()) { return; }
+      textEffect = effect;
+      if (effect === 'outline') {
+        textColor.border = makeSolidColor('#0f1729');
+      } else if (textEffect !== 'outline' && textColor.border.type !== 'none' && effect !== 'outline') {
+        // leave any manually-set outline alone for other presets
+      }
+      renderTextStyle();
+      renderTextColorTargets();
+    }
+
+    function stepTextOutlineWidth(delta) {
+      if (!getSelectedTextEl() || textColor.border.type === 'none') { return; }
+      textOutlineWidth = Math.max(1, Math.min(10, textOutlineWidth + delta));
+      renderTextColorTargets();
+      renderTextStyle();
+    }
+
+    // ---- Spacing popover (Figma node 4554:81524 "ContextBar / Popover / Spacing") — letter
+    // spacing in real px, line spacing as a percent nudge on top of the font's own line-height.
+    function toggleSpacingPopover() {
+      if (!getSelectedTextEl()) { return; }
+      toggleToolbarPopover('spacingPopover', 'spacingToolbarItem', renderSpacingPopover);
+    }
+
+    function renderSpacingPopover() {
+      var letterSlider = document.getElementById('letterSpacingSlider');
+      var lineSlider = document.getElementById('lineSpacingSlider');
+      letterSlider.value = textLetterSpacing;
+      letterSlider.style.setProperty('--fill-end', ((textLetterSpacing + 20) / 40 * 100) + '%');
+      document.getElementById('letterSpacingVal').textContent = textLetterSpacing;
+      lineSlider.value = textLineSpacing;
+      lineSlider.style.setProperty('--fill-end', ((textLineSpacing + 100) / 200 * 100) + '%');
+      document.getElementById('lineSpacingVal').textContent = textLineSpacing;
+    }
+
+    function applyLetterSpacing(val) {
+      if (!getSelectedTextEl()) { return; }
+      textLetterSpacing = Math.round(parseFloat(val) || 0);
+      renderTextStyle();
+      renderSpacingPopover();
+    }
+
+    function applyLineSpacing(val) {
+      if (!getSelectedTextEl()) { return; }
+      textLineSpacing = Math.round(parseFloat(val) || 0);
+      renderTextStyle();
+      renderSpacingPopover();
+    }
+
     // Replace Shape (Figma: node 4554:122820 "Replace Shape" section) — swaps which fragment is
     // shown on the selected shape, same as replaceSticker(): position/size/colour/rotation/corner
     // radius are untouched (except corner radius re-renders since it only applies to some keys).
@@ -4406,6 +5278,12 @@
       if (shapeEl) { saveShapeState(shapeEl); shapeEl.classList.remove('is-selected'); }
       document.querySelector('.floating-toolbar').classList.remove('floating-toolbar--visible');
       closePanel();
+    }
+
+    // The colour-full panel's own close (X) button is shared by shape and text — dispatch to
+    // whichever is actually selected instead of hardcoding deselectShape().
+    function deselectColorFullPanelOwner() {
+      if (getSelectedTextEl()) { deselectText(); } else { deselectShape(); }
     }
 
     function deselectShapeToShapesAll() {
@@ -4444,6 +5322,17 @@
       fill: makeSolidColor(SHAPE_DEFAULT_COLOR_HEX),
       border: makeNoneColor()
     };
+    // Text colour reuses the exact same colour-full panel as shapes (Figma nodes 4554:122942/
+    // 4554:123185 and 4554:125362 are the same component, just reached from a text selection).
+    // activeColorStore is repointed to whichever object is relevant so every existing
+    // hue/sat/hex/palette handler below (which all read/write activeColorStore[colorPanelTarget])
+    // works unchanged for either element type — see openColorFullPanel().
+    var textColor = {
+      fill: makeSolidColor('#0f1729'),
+      border: makeNoneColor()
+    };
+    var textOutlineWidth = 2;
+    var activeColorStore = shapeColor;
     var colorPanelTarget = 'fill';
     var pickerHsv = { h: 0, s: 0, v: 0 };
 
@@ -4551,6 +5440,36 @@
       applySwatchVisual(document.getElementById('itemLineColorSwatch'), shapeColor.border);
       toggleClearAddSwatches('fill', shapeColor.fill.type === 'none');
       toggleClearAddSwatches('border', shapeColor.border.type === 'none');
+      if (!document.getElementById('panel-color-full').hidden) { renderColorFullPanelSwatch(); }
+    }
+
+    // Dispatches to whichever selection type is active — every colour-full-panel interaction
+    // (hue drag, hex input, palette click, opacity slider, etc.) calls this instead of
+    // renderShapeColorTargets() directly, so the same handful of shared handlers work for text.
+    function renderActiveColorTargets() {
+      if (getSelectedTextEl()) { renderTextColorTargets(); } else { renderShapeColorTargets(); }
+    }
+
+    // Text colour → CSS color; outline colour → -webkit-text-stroke (width comes from the
+    // separate Outline width stepper, textOutlineWidth).
+    function renderTextColorTargets() {
+      var el = getSelectedTextEl();
+      if (!el) { return; }
+      var content = el.querySelector('.canvas-text__content');
+      var fill = textColor.fill;
+      content.style.color = fill.type === 'none' ? 'transparent' : hexToRgba(fill.hex, fill.alpha);
+      var border = textColor.border;
+      if (border.type === 'none') {
+        content.style.webkitTextStrokeWidth = '0px';
+      } else {
+        content.style.webkitTextStrokeWidth = textOutlineWidth + 'px';
+        content.style.webkitTextStrokeColor = hexToRgba(border.hex, border.alpha);
+      }
+      applySwatchVisual(document.getElementById('textDetailFillSwatch'), textColor.fill);
+      applySwatchVisual(document.getElementById('textDetailBorderSwatch'), textColor.border);
+      applySwatchVisual(document.getElementById('itemColorSwatch'), textColor.fill);
+      applySwatchVisual(document.getElementById('itemLineColorSwatch'), textColor.border);
+      document.getElementById('textOutlineAddSwatch').hidden = border.type !== 'none';
       if (!document.getElementById('panel-color-full').hidden) { renderColorFullPanelSwatch(); }
     }
 
@@ -4704,12 +5623,17 @@
     // Reached from the ContextBar colour chips. Unlike the floating popover, the picker here is
     // always expanded inline (matches Figma exactly — no click-to-reveal step), so any drag/hex/
     // palette interaction is available immediately.
+    var colorFullPanelReturnTarget = 'shape-detail';
+
     function openColorFullPanel(target) {
-      if (!getSelectedShapeEl()) { return; }
+      var textEl = getSelectedTextEl();
+      if (!getSelectedShapeEl() && !textEl) { return; }
+      activeColorStore = textEl ? textColor : shapeColor;
+      colorFullPanelReturnTarget = textEl ? 'text-detail' : 'shape-detail';
       closeAllToolbarPopovers();
       colorPanelTarget = target;
-      document.getElementById('colorFullPanelTitle').textContent = target === 'fill' ? 'Fill Colour' : 'Border Colour';
-      document.getElementById('colorFullPanelSwatchLabel').textContent = target === 'fill' ? 'Shape colour' : 'Outline colour';
+      document.getElementById('colorFullPanelTitle').textContent = target === 'fill' ? (textEl ? 'Text Colour' : 'Fill Colour') : 'Outline Colour';
+      document.getElementById('colorFullPanelSwatchLabel').textContent = target === 'fill' ? (textEl ? 'Text colour' : 'Shape colour') : 'Outline colour';
       moveColourPopoverTo(document.getElementById('colorFullPanelPickerSlot'), true);
       buildBrandPalette();
       buildDefaultsPalette();
@@ -4722,7 +5646,7 @@
     function closeColorFullPanel() {
       moveColourPopoverTo(document.getElementById('colourPopoverFloatingHome'), false);
       document.getElementById('colourPopover').classList.remove('is-visible');
-      switchPanel('shape-detail');
+      switchPanel(colorFullPanelReturnTarget);
     }
 
     // Status-only swatch (Figma: single circle, filled or diagonal — no click-to-open behaviour
@@ -4730,7 +5654,7 @@
     // "clear to none" button when a colour is set, or a decorative "add" indicator (focuses the
     // hex field) when it's 'none' — same clear/add pairing as the sidebar Style row.
     function renderColorFullPanelSwatch() {
-      var c = shapeColor[colorPanelTarget];
+      var c = activeColorStore[colorPanelTarget];
       applySwatchVisual(document.getElementById('colorFullPanelSwatch'), c);
       var isNone = c.type === 'none';
       document.getElementById('colorFullPanelClearSwatch').hidden = isNone;
@@ -4745,9 +5669,9 @@
 
     // Wired to the diagonal "clear" swatch next to Fill/Border colour — immediate, no popover.
     function applyNoneColor(target) {
-      if (!getSelectedShapeEl()) { return; }
-      shapeColor[target] = makeNoneColor();
-      renderShapeColorTargets();
+      if (!getSelectedShapeEl() && !getSelectedTextEl()) { return; }
+      activeColorStore[target] = makeNoneColor();
+      renderActiveColorTargets();
       if (target === colorPanelTarget && document.getElementById('colourPopover').classList.contains('is-visible')) {
         renderPopoverForCurrentState();
       }
@@ -4793,8 +5717,8 @@
     }
 
     function applyPaletteColor(hex) {
-      shapeColor[colorPanelTarget] = makeSolidColor(hex);
-      renderShapeColorTargets();
+      activeColorStore[colorPanelTarget] = makeSolidColor(hex);
+      renderActiveColorTargets();
       if (document.getElementById('colourPopover').classList.contains('is-visible')) {
         renderPopoverForCurrentState();
       }
@@ -4805,14 +5729,15 @@
     }
 
     function switchColourTab(tab) {
-      var current = shapeColor[colorPanelTarget];
+      if (tab === 'gradient' && getSelectedTextEl()) { return; } // text colour is solid-only for now
+      var current = activeColorStore[colorPanelTarget];
       if (tab === 'gradient' && current.type !== 'gradient') {
-        shapeColor[colorPanelTarget] = makeGradientColor();
+        activeColorStore[colorPanelTarget] = makeGradientColor();
       } else if (tab === 'solid' && current.type !== 'solid') {
         var hex = current.type === 'gradient' ? current.stops[current.selectedStop].hex : SHAPE_DEFAULT_BORDER_HEX;
-        shapeColor[colorPanelTarget] = makeSolidColor(hex);
+        activeColorStore[colorPanelTarget] = makeSolidColor(hex);
       }
-      renderShapeColorTargets();
+      renderActiveColorTargets();
       renderPopoverForCurrentState();
     }
 
@@ -4820,7 +5745,7 @@
     // shapeColor — opening the popover on an unset border must not silently apply a colour; only
     // an actual interaction (drag/hex/palette) commits the transition to 'solid'.
     function renderPopoverForCurrentState() {
-      var c = shapeColor[colorPanelTarget];
+      var c = activeColorStore[colorPanelTarget];
       var isGradient = c.type === 'gradient';
       document.getElementById('colourTabSolidBtn').classList.toggle('is-active', !isGradient);
       document.getElementById('colourTabGradientBtn').classList.toggle('is-active', isGradient);
@@ -4870,14 +5795,14 @@
     }
 
     function commitSolidFromPicker(alpha) {
-      var c = shapeColor[colorPanelTarget];
+      var c = activeColorStore[colorPanelTarget];
       if (c.type !== 'solid') {
         c = makeSolidColor(c.type === 'gradient' ? c.stops[c.selectedStop].hex : SHAPE_DEFAULT_BORDER_HEX);
-        shapeColor[colorPanelTarget] = c;
+        activeColorStore[colorPanelTarget] = c;
       }
       c.hex = currentPickerHex();
       if (typeof alpha === 'number') { c.alpha = alpha; }
-      renderShapeColorTargets();
+      renderActiveColorTargets();
       renderColourEditor(c.hex, c.alpha);
       renderAlphaSlider(c.hex, c.alpha);
     }
@@ -4940,7 +5865,7 @@
       val = (val || '').trim();
       if (!/^#?[0-9a-fA-F]{6}$/.test(val)) { renderPopoverForCurrentState(); return; }
       if (val[0] !== '#') { val = '#' + val; }
-      var c = shapeColor[colorPanelTarget];
+      var c = activeColorStore[colorPanelTarget];
       if (c.type === 'gradient') {
         c.stops[c.selectedStop].hex = val;
         renderGradientBar();
@@ -4948,7 +5873,7 @@
       } else {
         if (c.type !== 'solid') {
           c = makeSolidColor(val);
-          shapeColor[colorPanelTarget] = c;
+          activeColorStore[colorPanelTarget] = c;
         } else {
           c.hex = val;
         }
@@ -4959,7 +5884,7 @@
         renderAlphaSlider(val, c.alpha);
         renderColourEditor(val, c.alpha);
       }
-      renderShapeColorTargets();
+      renderActiveColorTargets();
     }
 
     function useEyedropper() {
@@ -4974,33 +5899,33 @@
 
     // ---- Gradient tab ----
     function setGradientType(type) {
-      var c = shapeColor[colorPanelTarget];
+      var c = activeColorStore[colorPanelTarget];
       if (c.type !== 'gradient') { return; }
       c.gradientType = type;
-      renderShapeColorTargets();
+      renderActiveColorTargets();
       renderGradientType();
       renderGradientAngleRow();
     }
     function renderGradientType() {
-      var c = shapeColor[colorPanelTarget];
+      var c = activeColorStore[colorPanelTarget];
       document.getElementById('gradientTypeLinearBtn').classList.toggle('is-active', c.gradientType === 'linear');
       document.getElementById('gradientTypeRadialBtn').classList.toggle('is-active', c.gradientType === 'radial');
     }
     function renderGradientAngleRow() {
-      var c = shapeColor[colorPanelTarget];
+      var c = activeColorStore[colorPanelTarget];
       document.getElementById('gradientAngleRow').style.display = c.gradientType === 'radial' ? 'none' : 'flex';
       document.getElementById('gradientAngleVal').textContent = Math.round(c.angle);
     }
     function stepGradientAngle(delta) {
-      var c = shapeColor[colorPanelTarget];
+      var c = activeColorStore[colorPanelTarget];
       if (c.type !== 'gradient') { return; }
       c.angle = ((c.angle + delta) % 360 + 360) % 360;
-      renderShapeColorTargets();
+      renderActiveColorTargets();
       renderGradientAngleRow();
     }
 
     function renderGradientBar() {
-      var c = shapeColor[colorPanelTarget];
+      var c = activeColorStore[colorPanelTarget];
       var bar = document.getElementById('gradientBar');
       var sorted = c.stops.slice().sort(function (a, b) { return a.position - b.position; });
       var cssStops = sorted.map(function (s) { return hexToRgba(s.hex, s.alpha) + ' ' + s.position + '%'; }).join(', ');
@@ -5017,7 +5942,7 @@
     }
 
     function selectGradientStop(idx) {
-      var c = shapeColor[colorPanelTarget];
+      var c = activeColorStore[colorPanelTarget];
       c.selectedStop = idx;
       renderGradientBar();
       var stop = c.stops[idx];
@@ -5029,12 +5954,12 @@
       e.preventDefault();
       selectGradientStop(idx);
       var bar = document.getElementById('gradientBar');
-      var c = shapeColor[colorPanelTarget];
+      var c = activeColorStore[colorPanelTarget];
       function update(ev) {
         var rect = bar.getBoundingClientRect();
         var pos = Math.max(0, Math.min(100, ((ev.clientX - rect.left) / rect.width) * 100));
         c.stops[idx].position = Math.round(pos);
-        renderShapeColorTargets();
+        renderActiveColorTargets();
         renderGradientBar();
       }
       function onMove(ev) { update(ev); }
@@ -5045,7 +5970,7 @@
 
     function onGradientBarPointerDown(e) {
       if (e.target.classList.contains('gradient-bar__stop')) { return; }
-      var c = shapeColor[colorPanelTarget];
+      var c = activeColorStore[colorPanelTarget];
       if (c.type !== 'gradient') { return; }
       var bar = document.getElementById('gradientBar');
       var rect = bar.getBoundingClientRect();
@@ -5053,7 +5978,7 @@
       var newHex = c.stops[c.stops.length - 1].hex;
       c.stops.push({ position: Math.round(pos), hex: newHex, alpha: 100 });
       c.selectedStop = c.stops.length - 1;
-      renderShapeColorTargets();
+      renderActiveColorTargets();
       renderGradientBar();
       renderColourEditor(newHex, 100);
     }
@@ -5187,12 +6112,16 @@
 
       function onMove(ev) {
         var scale = PAGE_FIT_SCALE * ZOOM_BASE_SCALE * (parseInt(document.getElementById('zoomSlider').value, 10) / 100);
-        el.style.left = (startLeft + (ev.clientX - startX) / scale) + 'px';
-        el.style.top = (startTop + (ev.clientY - startY) / scale) + 'px';
+        var rawLeft = startLeft + (ev.clientX - startX) / scale;
+        var rawTop = startTop + (ev.clientY - startY) / scale;
+        var snapped = applyCenterSnap(rawLeft, rawTop, parseFloat(el.style.width), parseFloat(el.style.height));
+        el.style.left = snapped.left + 'px';
+        el.style.top = snapped.top + 'px';
       }
       function onUp() {
         document.removeEventListener('pointermove', onMove);
         document.removeEventListener('pointerup', onUp);
+        clearSnapGuides();
       }
       document.addEventListener('pointermove', onMove);
       document.addEventListener('pointerup', onUp);
@@ -5353,7 +6282,9 @@
       var shapeEl = getSelectedShapeEl();
       if (shapeEl) { return shapeEl.id; }
       var imageEl = getSelectedImageEl();
-      return imageEl ? imageEl.id : null;
+      if (imageEl) { return imageEl.id; }
+      var textEl = getSelectedTextEl();
+      return textEl ? textEl.id : null;
     }
 
     // Quick Add menu (Figma node 4554:127175) — a shortcut into the same tools the left nav
@@ -5486,10 +6417,14 @@
 
     function layerDisplayName(id) {
       if (id === 'canvasSticker') { return 'Sticker'; }
+      if (id === 'canvasText-title') { return 'Title'; }
+      if (id === 'canvasText-subtitle') { return 'Subtitle'; }
       var m = id.match(/^canvasShape-(\d+)$/);
       if (m) { return 'Shape ' + m[1]; }
       m = id.match(/^canvasImage-(\d+)$/);
       if (m) { return 'Image ' + m[1]; }
+      m = id.match(/^canvasText-(\d+)$/);
+      if (m) { return 'Text ' + m[1]; }
       return id;
     }
 
@@ -5503,11 +6438,16 @@
         renderLayersPanel();
         // Anchored to the toggle button's actual viewport position (not a hardcoded Figma
         // pixel offset), using position:fixed so it can't be clipped by .stage-canvas's
-        // overflow:hidden — this stays correct at any browser window size.
+        // overflow:hidden — this stays correct at any browser window size. Converted through
+        // toScreenLocalPx() since .screen's PAGE_FIT_SCALE transform is this panel's containing
+        // block (see toScreenLocalPx() for why raw getBoundingClientRect() px can't be used as-is).
         var btnRect = toggleBtn.getBoundingClientRect();
-        var left = Math.min(btnRect.right - panel.offsetWidth, window.innerWidth - panel.offsetWidth - 8);
+        var btnRight = toScreenLocalPx(btnRect.right);
+        var btnBottom = toScreenLocalPx(btnRect.bottom);
+        var maxLeft = toScreenLocalPx(window.innerWidth) - panel.offsetWidth - 8;
+        var left = Math.min(btnRight - panel.offsetWidth, maxLeft);
         panel.style.left = Math.max(8, left) + 'px';
-        panel.style.top = (btnRect.bottom + 8) + 'px';
+        panel.style.top = (btnBottom + 8) + 'px';
       }
     }
 
@@ -5591,6 +6531,7 @@
       if (id === 'canvasSticker') { selectPlacedSticker(); }
       else if (el.classList.contains('canvas-shape')) { selectShapeEl(el); }
       else if (el.classList.contains('canvas-image')) { selectImageEl(el); }
+      else if (el.classList.contains('canvas-text')) { selectTextEl(el); }
       renderLayersPanel();
     }
 
@@ -5605,6 +6546,7 @@
         if (id === 'canvasSticker') { deselectSticker(); }
         else if (el.classList.contains('canvas-shape')) { deselectShape(); }
         else if (el.classList.contains('canvas-image')) { deselectImage(); }
+        else if (el.classList.contains('canvas-text')) { deselectText(); }
       }
       renderLayersPanel();
     }
@@ -5675,12 +6617,16 @@
       var id = currentlySelectedLayerId();
       if (!id) { return; }
       var imageEl = getSelectedImageEl();
+      var textEl = getSelectedTextEl();
       if (id === 'canvasSticker') {
         if (axis === 'horizontal') { stickerFlipX *= -1; } else { stickerFlipY *= -1; }
         updateStickerTransform();
       } else if (imageEl && imageEl.id === id) {
         if (axis === 'horizontal') { imageFlipX *= -1; } else { imageFlipY *= -1; }
         updateImageTransform();
+      } else if (textEl && textEl.id === id) {
+        if (axis === 'horizontal') { textFlipX *= -1; } else { textFlipY *= -1; }
+        updateTextTransform();
       } else {
         if (axis === 'horizontal') { shapeFlipX *= -1; } else { shapeFlipY *= -1; }
         updateShapeTransform();
@@ -5708,6 +6654,11 @@
       imageSlider.value = val;
       imageSlider.style.setProperty('--fill-end', val + '%');
       document.getElementById('imageOpacityVal').textContent = val;
+
+      var textSlider = document.getElementById('textOpacitySlider');
+      textSlider.value = val;
+      textSlider.style.setProperty('--fill-end', val + '%');
+      document.getElementById('textOpacityVal').textContent = val;
     }
 
     function applyElementOpacity(val) {
@@ -5745,6 +6696,7 @@
       var sticker = document.getElementById('canvasSticker');
       var shape = getSelectedShapeEl();
       var image = getSelectedImageEl();
+      var text = getSelectedTextEl();
       var stage = document.querySelector('.stage-canvas');
       if (sticker.classList.contains('is-selected') && stage.contains(e.target) && !sticker.contains(e.target)) {
         deselectStickerToStickersAll();
@@ -5754,6 +6706,13 @@
       }
       if (image && stage.contains(e.target) && !image.contains(e.target)) {
         deselectImageToUploads();
+      }
+      if (text && stage.contains(e.target) && !text.contains(e.target)) {
+        deselectTextToTextPanel();
+      }
+      var cta = document.getElementById('posterCta');
+      if (cta.classList.contains('is-selected') && stage.contains(e.target) && !cta.contains(e.target)) {
+        deselectCtaButton();
       }
     });
 
@@ -5765,15 +6724,230 @@
     // (unscaled) pixel space and now need to divide out this factor too.
     var PAGE_FIT_SCALE = 1;
 
+    // ---- AI Improve (Figma nodes 2994:29193 "1 empty" / 2999:29719 "2 typing" /
+    // 2994:29593 "3 generating" / 2989:28996 "4 result" / 3037:29873 "5 conversation" /
+    // 2994:29969 "6 applied") — selecting the Poster CTA *or any text layer* (title/subtitle/
+    // any box added via the Text tool) reveals the spark button; clicking that opens a
+    // chat-style popover that edits whichever one is currently selected. No real AI backend
+    // exists in a static prototype, so the "suggestions" are template rewrites of whatever text
+    // is currently there, not a live model — but select → ask → wait → apply is genuinely wired.
+    var aiImproveLastResult = null;
+    var aiImproveTarget = null; // the CTA div or a .canvas-text wrapper — whichever is selected
+
+    // The CTA's text lives directly in its own <span>; a .canvas-text's lives in its
+    // .canvas-text__content child — this is the one place that difference needs to be known.
+    function aiTargetContainer(target) {
+      return target.id === 'posterCta' ? target : target.querySelector('.canvas-text__content');
+    }
+
+    function getAiTargetText(target) {
+      return aiTargetContainer(target).textContent.trim();
+    }
+
+    // Rebuilds a single <span> child rather than setting textContent directly, since a
+    // .canvas-text's Light box/Dark box effects (see .canvas-text--effect-light/dark-box CSS)
+    // key off a child <span> to paint the padded background chip.
+    function setAiTargetText(target, text) {
+      var container = aiTargetContainer(target);
+      container.innerHTML = '';
+      var span = document.createElement('span');
+      span.textContent = text;
+      container.appendChild(span);
+    }
+
+    function showAiSparkFor(target) {
+      aiImproveTarget = target;
+      document.getElementById('ctaSparkBtn').classList.add('is-visible');
+      positionAiImproveUi();
+      // The just-selected target's own layout (outline, selection box, etc.) can still be
+      // settling in the same tick this runs, so the very first measurement is occasionally a
+      // few px stale — a double rAF re-measures once the browser has actually finished a full
+      // layout/paint pass, which is enough to catch it without a visible flash.
+      requestAnimationFrame(function () { requestAnimationFrame(positionAiImproveUi); });
+    }
+
+    function hideAiSpark() {
+      document.getElementById('ctaSparkBtn').classList.remove('is-visible');
+      closeAiImprovePopover();
+      aiImproveTarget = null;
+    }
+
+    function selectCtaButton(el) {
+      if (el.classList.contains('is-selected')) { return; }
+      document.querySelectorAll('.poster__cta.is-selected').forEach(function (c) { c.classList.remove('is-selected'); });
+      var prevText = getSelectedTextEl();
+      if (prevText) { saveTextState(prevText); prevText.classList.remove('is-selected'); }
+      el.classList.add('is-selected');
+      showAiSparkFor(el);
+    }
+
+    function deselectCtaButton() {
+      var el = document.getElementById('posterCta');
+      el.classList.remove('is-selected');
+      hideAiSpark();
+    }
+
+    // Anchored to the target's real getBoundingClientRect() (position:fixed), same reason as
+    // the layers panel — immune to the poster's own zoom transform and PAGE_FIT_SCALE.
+    function positionAiImproveUi() {
+      var target = aiImproveTarget;
+      if (!target) { return; }
+      // Converted through toScreenLocalPx() — see its comment: .screen's PAGE_FIT_SCALE
+      // transform is the containing block for these position:fixed elements, so raw
+      // getBoundingClientRect() (real viewport px) can't be assigned to left/top directly.
+      var rect = target.getBoundingClientRect();
+      var sparkBtn = document.getElementById('ctaSparkBtn');
+      // Vertically centered on the selection box, 4px past its right edge.
+      var sparkLeft = toScreenLocalPx(rect.right) + 4;
+      var sparkTop = toScreenLocalPx(rect.top + rect.height / 2) - 15;
+      sparkBtn.style.left = sparkLeft + 'px';
+      sparkBtn.style.top = sparkTop + 'px';
+
+      var popover = document.getElementById('aiImprovePopover');
+      if (popover.classList.contains('is-visible')) {
+        var maxLeft = toScreenLocalPx(window.innerWidth) - popover.offsetWidth - 8;
+        var left = Math.min(sparkLeft + 20, maxLeft);
+        popover.style.left = Math.max(8, left) + 'px';
+        popover.style.bottom = (toScreenLocalPx(window.innerHeight) - sparkTop + 12) + 'px';
+      }
+    }
+
+    function toggleAiImprovePopover() {
+      if (!aiImproveTarget) { return; }
+      var popover = document.getElementById('aiImprovePopover');
+      var willShow = !popover.classList.contains('is-visible');
+      if (willShow) {
+        document.getElementById('aiSelectedTextBox').textContent = getAiTargetText(aiImproveTarget);
+        document.getElementById('aiChatLog').innerHTML = '';
+        document.getElementById('aiQuickActions').hidden = false;
+        document.getElementById('aiQuickActionsLabel').hidden = false;
+        document.getElementById('aiRefineInput').value = '';
+        aiImproveLastResult = null;
+        popover.classList.add('is-visible');
+        positionAiImproveUi();
+      } else {
+        popover.classList.remove('is-visible');
+      }
+    }
+
+    function closeAiImprovePopover() {
+      document.getElementById('aiImprovePopover').classList.remove('is-visible');
+    }
+
+    function submitAiPromptFromInput() {
+      var input = document.getElementById('aiRefineInput');
+      var text = input.value.trim();
+      if (!text) { return; }
+      input.value = '';
+      submitAiPrompt(text);
+    }
+
+    // Canned "generation" — deterministic templated rewrites, not a real model call, since a
+    // static prototype has no backend to actually call. Genuinely asynchronous (setTimeout)
+    // so the Generating state is real, not instant.
+    function submitAiPrompt(promptText) {
+      var log = document.getElementById('aiChatLog');
+      document.getElementById('aiQuickActions').hidden = true;
+      document.getElementById('aiQuickActionsLabel').hidden = true;
+
+      var userBubble = document.createElement('div');
+      userBubble.className = 'ai-user-bubble';
+      userBubble.textContent = promptText;
+      log.appendChild(userBubble);
+
+      // Each turn lives in its own wrapper (no styling of its own — just a lookup anchor for
+      // useAiSuggestion()/undoAiApply() via closest(), since a "conversation" with several
+      // turns means several of these coexist in the log at once) so a later turn can never
+      // accidentally act on an earlier turn's result box.
+      var turn = document.createElement('div');
+      turn.className = 'ai-generating-card';
+      turn.innerHTML = '<p class="ai-generating-card__title">Generating…</p><p class="ai-generating-card__sub">Applying brand voice to your selection</p>';
+      log.appendChild(turn);
+      positionAiImproveUi();
+
+      // Refines the PREVIOUS turn's result if there is one (matching Figma's "conversation"
+      // state, where a 2nd instruction like "make it shorter" acts on the 1st turn's output,
+      // not the original) — otherwise the original selected text.
+      var baseText = aiImproveLastResult || document.getElementById('aiSelectedTextBox').textContent.trim();
+      setTimeout(function () {
+        var result = generateAiSuggestion(baseText, promptText);
+        turn.className = 'ai-result-turn';
+        turn.innerHTML =
+          '<div class="ai-section-label"><span class="icon" style="width:16px;height:16px"><img src="assets/screen-01-elements-panel/ai-improve/sparkle-frame.svg" alt="" style="width:100%;height:100%;" /></span><span class="ai-gradient-text">Updated by AI</span></div>'
+          + '<div class="ai-result-box" contenteditable="true">' + result + '</div>'
+          + '<div class="ai-use-this-row"><div class="ai-use-this-btn" onclick="useAiSuggestion(this)">Use this</div></div>';
+        document.getElementById('aiQuickActions').hidden = false;
+        document.getElementById('aiQuickActionsLabel').hidden = false;
+        positionAiImproveUi();
+      }, 1100);
+    }
+
+    // Deterministic template rewrites keyed on keywords in the instruction — not real language
+    // generation, just enough variety that different quick actions / typed prompts visibly
+    // produce different results.
+    function generateAiSuggestion(baseText, instruction) {
+      var lower = instruction.toLowerCase();
+      if (lower.indexOf('longer') !== -1) { return baseText + ' — Start Your Journey Today'; }
+      if (lower.indexOf('professional') !== -1) { return 'Begin Your Application'; }
+      if (lower.indexOf('tone') !== -1) { return 'Let’s Get You Started'; }
+      if (lower.indexOf('welcom') !== -1 || lower.indexOf('friendly') !== -1) { return 'Come Get Started With Us'; }
+      if (lower.indexOf('short') !== -1) { return 'Get Started'; }
+      return 'Start Now';
+    }
+
+    // Matches Figma's "6 applied" state — the popover stays open (not closed) and this turn's
+    // result box turns into an Applied card with Undo, so a multi-turn conversation can keep
+    // going from here (submitAiPrompt() picks up aiImproveLastResult as the next base text).
+    function useAiSuggestion(btn) {
+      var target = aiImproveTarget;
+      if (!target) { return; }
+      var turn = btn.closest('.ai-result-turn');
+      var resultBox = turn.querySelector('.ai-result-box');
+      var finalText = resultBox.textContent.trim();
+      if (!finalText) { return; }
+
+      var previousText = getAiTargetText(target);
+      setAiTargetText(target, finalText);
+      aiImproveLastResult = finalText;
+      document.getElementById('aiSelectedTextBox').textContent = finalText;
+
+      turn.className = 'ai-applied-card';
+      turn.dataset.previousText = previousText;
+      turn.innerHTML =
+        '<div class="ai-applied-card__header">'
+        + '<span class="ai-applied-card__title"><img src="assets/screen-01-elements-panel/topbar/check.svg" alt="" style="width:16px;height:16px;" />Applied</span>'
+        + '<span class="ai-applied-card__undo">Undo</span>'
+        + '</div>'
+        + '<p class="ai-applied-card__detail"></p>';
+      turn.querySelector('.ai-applied-card__detail').textContent = '‘' + finalText + '’ · Selected text';
+      turn.querySelector('.ai-applied-card__undo').onclick = function () { undoAiApply(turn); };
+      positionAiImproveUi();
+    }
+
+    function undoAiApply(turn) {
+      var target = aiImproveTarget;
+      if (!target) { return; }
+      var previousText = turn.dataset.previousText;
+      setAiTargetText(target, previousText);
+      aiImproveLastResult = previousText;
+      document.getElementById('aiSelectedTextBox').textContent = previousText;
+      var undoLink = turn.querySelector('.ai-applied-card__undo');
+      undoLink.onclick = null;
+      undoLink.style.pointerEvents = 'none';
+      undoLink.style.opacity = '0.4';
+    }
+
     function fitScreenToViewport() {
       PAGE_FIT_SCALE = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
       var screenEl = document.querySelector('.screen');
       screenEl.style.transform = 'scale(' + PAGE_FIT_SCALE + ')';
       document.body.style.width = (1920 * PAGE_FIT_SCALE) + 'px';
       document.body.style.height = (1080 * PAGE_FIT_SCALE) + 'px';
+      positionAiImproveUi();
     }
     window.addEventListener('resize', fitScreenToViewport);
     fitScreenToViewport();
+    initStaticPosterTexts();
 
     var ZOOM_MIN = 50;
     var ZOOM_MAX = 150;
