@@ -244,8 +244,8 @@
   .script-proposal-box{margin-top:8px; background:#fff; border:1px solid var(--color-neutral-300); border-radius:8px; padding:10px 11px; display:flex; flex-direction:column; gap:8px;}
   .script-proposal-text{font-size:12.5px; font-style:italic; color:var(--color-neutral-900); line-height:1.5;}
   .script-proposal-box .btn-dark{width:100%; padding:8px 10px; font-size:12px;}
-  .script-applied-note{display:none; font-size:10.5px; font-weight:600; color:var(--color-badge-green-text);}
-  .script-proposal-box.applied .script-applied-note{display:block;}
+  .script-applied-note{display:none; align-items:center; gap:5px; align-self:flex-start; background:var(--color-brand-primary-light); color:var(--color-brand-primary); font-size:12px; font-weight:600; padding:5px 10px; border-radius:999px;}
+  .script-proposal-box.applied .script-applied-note{display:inline-flex;}
   .script-proposal-box.applied{border-color:var(--color-brand-primary-mid);}
   .chat-edit-hint{display:block; font-size:10.5px; color:var(--color-neutral-500); margin-top:3px;}
   .dots span{animation:blink 1.4s infinite; opacity:0;}
@@ -256,11 +256,23 @@
   .quick-chip{border:1px solid var(--color-neutral-300); border-radius:999px; padding:5px 10px; font-size:11px; color:var(--color-neutral-700); background:#fff; cursor:pointer;}
   .chat-hint{font-size:10.5px; color:var(--color-neutral-500); padding:0 16px 10px;}
   .chat-input-box{margin:0 16px 16px; border:1.5px solid var(--color-brand-primary); border-radius:12px; background:var(--color-neutral-0); padding:14px 14px 12px; display:flex; flex-direction:column; gap:12px;}
-  .chat-input{border:none; outline:none; background:transparent; width:100%; font-size:13px; color:var(--color-neutral-900); font-family:var(--font-family-text);}
+  .chat-input{border:none; outline:none; background:transparent; width:100%; font-size:13px; color:var(--color-neutral-900); font-family:var(--font-family-text); resize:none; min-height:38px; max-height:120px; line-height:1.5;}
   .chat-input::placeholder{color:var(--color-neutral-500);}
   .chat-input-bottom-row{display:flex; align-items:center; justify-content:space-between;}
   .chat-attach-btn{width:18px; height:18px; border:none; background:none; padding:0; color:var(--color-neutral-500); cursor:pointer; display:flex; align-items:center; justify-content:center;}
   .chat-send{width:28px; height:28px; border-radius:999px; background:var(--color-brand-primary); border:none; color:#fff; cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:14px;}
+  /* -- Chat card patterns (loading / next-action) shared across Script, Timeline, Video -- */
+  .chat-card{background:var(--color-neutral-50); border:1px solid var(--color-neutral-200); border-radius:10px; padding:14px; display:flex; flex-direction:column; gap:8px;}
+  .chat-card-title{font-size:13.5px; font-weight:700; color:var(--color-neutral-900); font-family:var(--font-family-text);}
+  .chat-card-desc{font-size:12.5px; color:var(--color-neutral-700); line-height:1.5;}
+  .chat-card .btn{width:100%;}
+  .chat-loading-card{flex-direction:row; align-items:flex-start; gap:10px;}
+  .chat-loading-spinner{width:16px; height:16px; border-radius:999px; border:2px solid var(--color-neutral-300); border-top-color:var(--color-neutral-600); animation:spin .8s linear infinite; flex-shrink:0; margin-top:2px;}
+  .chat-loading-text{display:flex; flex-direction:column; gap:2px;}
+  .chat-loading-title{font-size:13.5px; font-weight:700; color:var(--color-neutral-900); font-family:var(--font-family-text);}
+  .chat-loading-sub{font-size:12px; color:var(--color-neutral-500);}
+  .chat-final-buttons{display:flex; flex-direction:column; gap:10px;}
+  .chat-final-buttons .btn{width:100%;}
 
   .stage-area{flex:1; display:flex; flex-direction:column; min-width:0; min-height:0; position:relative;}
   .stage-tabs{display:flex; justify-content:center; gap:18px; padding:12px 24px 0; border-bottom:1px solid var(--color-neutral-300); flex-shrink:0;}
@@ -296,10 +308,10 @@
   .stage-sub{font-size:12px; color:var(--color-neutral-500); margin:0 0 6px;}
 
   .scene-nav{display:flex; align-items:center; gap:6px; flex-shrink:0; margin-bottom:10px;}
-  .scene-nav-label{font-size:11px; font-weight:600; color:var(--color-neutral-500); margin-right:2px;}
-  .segment-nav-btn{width:24px; height:24px; border-radius:6px; border:1px solid var(--color-neutral-300); background:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; color:var(--color-neutral-700); cursor:pointer;}
+  .scene-nav-label, .scene-section-label{font-size:14px; font-weight:600; color:var(--color-neutral-900); font-family:var(--font-family-text); width:48px; flex-shrink:0;}
+  .segment-nav-btn{width:28px; height:28px; border-radius:6px; border:1px solid var(--color-neutral-400); background:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:500; color:var(--color-neutral-700); cursor:pointer;}
   .segment-nav-btn:hover{border-color:var(--color-neutral-450);}
-  .segment-nav-btn.active{background:var(--color-brand-primary-light); border-color:var(--color-brand-primary); color:var(--color-neutral-900);}
+  .segment-nav-btn.active{background:var(--color-neutral-150); border-color:var(--color-neutral-500); font-weight:600; color:var(--color-neutral-900);}
 
   /* ---- Script stage ---- */
   #subScript .stage-title, #subScript .stage-sub{text-align:center;}
@@ -345,15 +357,15 @@
   .detail-import-empty-note a{color:var(--color-brand-primary); font-weight:600; cursor:pointer; text-decoration:underline;}
 
   /* ---- Timeline stage: canvas grid + selected-scene editor panel ---- */
-  .timeline-stage{display:flex; gap:20px; max-width:960px; flex:1; min-height:0;}
+  .timeline-stage{display:flex; gap:40px; max-width:1024px; flex:1; min-height:0;}
   .timeline-canvas{flex:1; min-width:0; min-height:0; display:flex; flex-direction:column;}
   .scene-grid{display:grid; grid-template-columns:1fr 1fr; grid-auto-rows:min-content; gap:14px; align-content:start; flex:1; min-height:0; overflow-y:auto;}
-  .scene-tile{border:1.5px solid var(--color-neutral-300); border-radius:12px; overflow:hidden; cursor:pointer; background:#fff; transition:border-color 0.15s, box-shadow 0.15s;}
+  .scene-tile{border:1.2px solid var(--color-neutral-400); border-radius:12px; overflow:hidden; cursor:pointer; background:#fff; transition:border-color 0.15s, box-shadow 0.15s;}
   .scene-tile:hover{border-color:var(--color-neutral-450);}
-  .scene-tile.active{border-color:var(--color-brand-primary); box-shadow:0 0 0 3px rgba(79,109,230,0.12);}
-  .scene-tile-preview{width:100%; aspect-ratio:9/16; max-height:294px; background:linear-gradient(135deg,var(--color-neutral-200),var(--color-neutral-150)); position:relative; display:flex; align-items:flex-end; padding:10px;}
+  .scene-tile.active{border-color:var(--color-neutral-500);}
+  .scene-tile-preview{width:100%; aspect-ratio:9/16; max-height:294px; background:linear-gradient(119deg,var(--color-neutral-200) 14%,var(--color-neutral-150) 86%); position:relative; display:flex; align-items:flex-end; padding:10px;}
   .scene-grid.single-row .scene-tile-preview{max-height:none;}
-  .scene-tile-badge{font-size:11px; font-weight:600; color:#fff; background:rgba(15,23,41,0.55); padding:4px 8px; border-radius:6px; backdrop-filter:blur(2px);}
+  .scene-tile-badge{font-size:11px; font-weight:600; color:#fff; background:var(--color-neutral-700); padding:4px 8px; border-radius:4px;}
   .scene-tile-line{padding:10px 12px; font-size:12.5px; color:var(--color-neutral-700); line-height:1.4; border-top:1px solid var(--color-neutral-200);}
   .scene-tile-overlay-top{position:absolute; top:8px; left:8px; right:8px; display:flex; align-items:center; justify-content:space-between; gap:6px;}
   .scene-tile-ready-badge{display:none; align-items:center; gap:3px; font-size:10px; font-weight:700; color:var(--color-badge-green-text); background:#fff; padding:3px 7px; border-radius:999px;}
@@ -378,15 +390,15 @@
   .spinner-mini{display:none; width:26px; height:26px; border-radius:999px; border:2.5px solid rgba(255,255,255,0.35); border-top-color:#fff; animation:spin .8s linear infinite; position:absolute; top:50%; left:50%; margin:-13px 0 0 -13px;}
   .scene-tile.generating .spinner-mini{display:block;}
 
-  .scene-editor-col{width:320px; flex-shrink:0; display:flex; flex-direction:column;}
+  .scene-editor-col{width:358px; flex-shrink:0; display:flex; flex-direction:column;}
   .scene-editor-panel{width:100%;}
-  .scene-card{border:1px solid var(--color-neutral-300); border-radius:10px; padding:16px;}
+  .scene-card{border:1px solid var(--color-neutral-300); border-radius:12px; padding:16px;}
   .scene-time{font-size:11px; font-weight:600; color:var(--color-neutral-500); display:flex; align-items:center; gap:6px;}
   .scene-time .dot{width:7px; height:7px; border-radius:999px; background:var(--color-brand-primary);}
   .scene-guide{font-size:10.5px; color:var(--color-neutral-500); margin-bottom:12px;}
   .voice-section{border:1px solid var(--color-neutral-300); border-radius:10px; padding:14px; margin-bottom:14px; flex-shrink:0;}
   .voice-section-header{display:flex; align-items:center; justify-content:space-between; gap:10px;}
-  .voice-section-header .scene-desc-label{margin-bottom:0;}
+  .voice-section-header .scene-section-label{margin-bottom:0;}
   .voice-section-header-right{display:flex; align-items:center; gap:8px; flex-shrink:0;}
   .voice-mode-toggle{display:flex; gap:2px; background:var(--color-neutral-100); border-radius:999px; padding:3px; flex-shrink:0;}
   .voice-mode-btn{font-size:10.5px; font-weight:600; color:var(--color-neutral-600); padding:5px 10px; border-radius:999px; cursor:pointer;}
@@ -402,7 +414,7 @@
   .voice-cost-summary b{color:var(--color-neutral-700); font-weight:700;}
   .voice-script-text{width:100%; border:1px solid var(--color-neutral-300); border-radius:7px; padding:10px 12px; font-size:13px; font-family:var(--font-family-text); color:var(--color-neutral-900); line-height:1.5; resize:vertical; min-height:44px;}
   .voice-script-text.whole{min-height:72px;}
-  .voice-preview-btn{display:inline-flex; align-items:center; justify-content:center; gap:6px; border:1px solid var(--color-neutral-300); background:#fff; border-radius:999px; padding:6px 12px; font-size:11.5px; font-weight:600; color:var(--color-neutral-700); cursor:pointer; font-family:var(--font-family-text); transition:border-color .15s, color .15s; flex-shrink:0;}
+  .voice-preview-btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; border:1px solid var(--color-neutral-400); background:#fff; border-radius:var(--radius-lg); padding:10px 14px; font-size:13px; font-weight:600; color:var(--color-neutral-900); cursor:pointer; font-family:var(--font-family-text); transition:border-color .15s, color .15s; flex-shrink:0;}
   .voice-preview-btn:hover{border-color:var(--color-neutral-450);}
   .voice-preview-btn .vp-cost{color:var(--color-neutral-500); font-weight:700;}
   .voice-preview-btn.cached{border-color:var(--color-brand-primary-mid); color:var(--color-brand-primary);}
@@ -431,11 +443,11 @@
   .voice-acc-bottom{display:flex; align-items:center; justify-content:space-between; gap:10px;}
   .voice-acc-bottom .scene-guide{margin-bottom:0; flex:1; min-width:0;}
   .scene-desc-block{margin-bottom:12px;}
-  .scene-desc-label{font-size:10.5px; font-weight:600; color:var(--color-neutral-500); display:flex; align-items:center; gap:4px; margin-bottom:6px;}
+  .scene-desc-label{font-size:13px; font-weight:500; color:var(--color-neutral-700); font-family:var(--font-family-text); display:flex; align-items:center; gap:4px; margin-bottom:6px;}
   .scene-desc-box{border:1px solid var(--color-neutral-300); border-radius:7px; padding:10px 12px 32px; display:flex; flex-direction:column; gap:8px; position:relative; transition:border-color .15s, box-shadow .15s;}
   .scene-desc-box:focus-within{border-color:var(--color-brand-primary); box-shadow:0 0 0 3px rgba(79,109,230,.12);}
   .scene-desc{width:100%; border:none; padding:0; font-size:13px; font-family:var(--font-family-text); color:var(--color-neutral-900); line-height:1.5; resize:vertical; min-height:56px; background:transparent; outline:none; cursor:text;}
-  .scene-note{font-size:10.5px; color:var(--color-neutral-500);}
+  .scene-note{font-size:11.5px; color:var(--color-neutral-500);}
   .timeline-cta{display:flex; flex-direction:column; align-items:stretch; gap:8px; margin-top:14px; flex-shrink:0;}
   .timeline-cta .meta-text{text-align:left; line-height:1.4;}
   .timeline-cta .btn-dark{width:100%;}
@@ -485,22 +497,30 @@
   .video-cta-row .meta-text{text-align:left; line-height:1.4;}
   .video-cta-row .btn-dark{width:100%;}
 
-  .combine-result-view{display:none; flex:1; min-height:0;}
-  .combine-canvas{align-items:center; justify-content:flex-start; gap:16px;}
-  .combine-player{position:relative; width:300px; aspect-ratio:9/16; border-radius:14px; background:linear-gradient(135deg,var(--color-brand-primary-mid),var(--color-brand-accent)); display:flex; align-items:center; justify-content:center;}
-  .combine-player .video-play-btn{position:static; display:flex; transform:none;}
-  .combine-player-duration{position:absolute; bottom:10px; left:10px; font-size:11px; font-weight:600; color:#fff; background:rgba(15,23,41,0.55); padding:4px 8px; border-radius:6px;}
-  .combine-timeline-ticks{position:relative; width:300px; height:6px; background:var(--color-neutral-200); border-radius:999px;}
-  .combine-tick{position:absolute; top:-2px; width:2px; height:10px; background:var(--color-neutral-900); border-radius:2px;}
-  .combine-summary-card{border:1px solid var(--color-neutral-300); border-radius:10px; padding:16px;}
-  .combine-summary-title{font-size:13px; font-weight:700; color:var(--color-neutral-900); margin-bottom:10px;}
-  .combine-summary-chips{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px;}
-  .combine-summary-chips .setting-chip{background:var(--color-neutral-50);}
-  .combine-audio-note{font-size:11.5px; color:var(--color-neutral-500); line-height:1.5; margin:0;}
-  .combine-result-actions{display:flex; flex-direction:column; gap:10px; margin-top:14px; flex-shrink:0;}
-  .combine-result-actions .btn-dark, .combine-result-actions .btn-secondary{width:100%;}
-  .back-to-scenes-link{display:block; background:none; border:none; color:var(--color-neutral-500); font-size:12px; font-family:var(--font-family-text); cursor:pointer; text-decoration:underline; margin-top:10px; padding:0; text-align:left;}
+  .combine-result-view{display:none; flex:1; min-height:0; flex-direction:column; gap:20px; max-width:1024px;}
+  .back-to-scenes-link{display:inline-flex; align-items:center; gap:6px; align-self:flex-start; background:none; border:none; color:var(--color-neutral-500); font-size:13px; font-family:var(--font-family-text); cursor:pointer; padding:0;}
   .back-to-scenes-link:hover{color:var(--color-neutral-700);}
+  .combine-result-header{display:flex; align-items:flex-start; justify-content:space-between; gap:16px;}
+  .combine-result-header .stage-title{margin-bottom:4px;}
+  .combine-result-body{display:flex; gap:40px; align-items:flex-start; flex:1; min-height:0;}
+  .combine-player{position:relative; width:300px; flex-shrink:0; aspect-ratio:9/16; border-radius:14px; background:linear-gradient(135deg,var(--color-brand-primary-mid),var(--color-brand-accent)); display:flex; align-items:center; justify-content:center; overflow:hidden;}
+  .combine-player .video-play-btn{position:static; display:flex; transform:none;}
+  .combine-player-controls{position:absolute; left:0; right:0; bottom:0; display:flex; align-items:center; justify-content:space-between; padding:8px 10px; background:linear-gradient(0deg,rgba(15,23,41,0.55),transparent);}
+  .combine-player-time{font-size:11px; font-weight:600; color:#fff;}
+  .combine-player-icons{font-size:12px; color:#fff;}
+  .combine-info-panel{flex:1; min-width:0; border:1px solid var(--color-neutral-300); border-radius:12px; padding:16px;}
+  .combine-info-title-row{display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:8px;}
+  .combine-info-title{font-size:15px; font-weight:700; color:var(--color-neutral-900); line-height:1.35; margin:0; flex:1; min-width:0;}
+  .combine-info-title[contenteditable="true"]{outline:1px solid var(--color-brand-primary-mid); border-radius:6px; padding:2px 4px; margin:-2px -4px;}
+  .combine-title-edit-btn{flex-shrink:0; width:24px; height:24px; border-radius:999px; border:none; background:var(--color-neutral-50); display:flex; align-items:center; justify-content:center; font-size:11px; cursor:pointer; font-family:var(--font-family-text);}
+  .combine-title-edit-btn:hover{background:var(--color-neutral-100);}
+  .combine-info-desc{font-size:12.5px; color:var(--color-neutral-700); line-height:1.5; margin:0 0 16px;}
+  .combine-info-specs{display:flex; flex-direction:column; gap:12px;}
+  .combine-spec-row{display:flex; align-items:center; gap:8px; font-size:12.5px; padding-bottom:12px; border-bottom:1px solid var(--color-neutral-100);}
+  .combine-spec-row:last-child{border-bottom:none; padding-bottom:0;}
+  .combine-spec-row .spec-icon{width:16px; flex-shrink:0; text-align:center; color:var(--color-neutral-500); font-size:12px;}
+  .combine-spec-row .spec-label{color:var(--color-neutral-500); flex:1;}
+  .combine-spec-row .spec-value{color:var(--color-neutral-900); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:160px;}
 
   /* ---- Queue panel (floating, shown while thumbnails generate) ---- */
   @keyframes queuePulse{0%,100%{opacity:1;} 50%{opacity:0.25;}}
@@ -950,9 +970,8 @@
             <div class="quick-chip" onclick="quickAction('looks-good')">Looks good → Timeline</div>
             <div class="quick-chip" onclick="quickAction('regenerate')">Regenerate</div>
           </div>
-          <div class="chat-hint">💬 Requests like "make it shorter" or "redo Seg 2 only" work here too</div>
           <div class="chat-input-box">
-            <input class="chat-input" id="chatInput" placeholder="Type a message...">
+            <textarea class="chat-input" id="chatInput" placeholder="Ask for changes" rows="1"></textarea>
             <div class="chat-input-bottom-row">
               <button class="chat-attach-btn" title="Attach">📎</button>
               <button class="chat-send" id="chatSend">↑</button>
@@ -1052,9 +1071,11 @@
                   <div class="scene-grid" id="sceneGrid"></div>
                 </div>
                 <div class="scene-editor-col">
+                  <div class="scene-nav" id="segmentNav"></div>
+                  <div class="scene-editor-panel" id="sceneEditorPanel"></div>
                   <div class="voice-section" id="voiceSection_tl">
                     <div class="voice-section-header">
-                      <label class="scene-desc-label">🎙 Voice</label>
+                      <label class="scene-section-label">Voice</label>
                       <div class="voice-section-header-right">
                         <div class="voice-mode-toggle" id="voiceModeToggle_tl">
                           <div class="voice-mode-btn" data-mode="whole" onclick="setVoiceMode('whole')">Whole take</div>
@@ -1066,8 +1087,6 @@
                     <div class="voice-cost-summary" id="voiceCostSummary_tl"></div>
                     <div class="voice-section-body" id="voiceSectionBody_tl"></div>
                   </div>
-                  <div class="scene-nav" id="segmentNav"></div>
-                  <div class="scene-editor-panel" id="sceneEditorPanel"></div>
                   <div class="timeline-cta">
                     <button class="btn btn-dark" id="timelineCtaBtn" onclick="generateThumbnails()">Generate thumbnails</button>
                     <span class="meta-text" id="timelineCtaMeta">Regenerating a thumbnail once it is made will use credits</span>
@@ -1090,9 +1109,11 @@
                   <div class="video-grid" id="videoGrid"></div>
                 </div>
                 <div class="scene-editor-col">
+                  <div class="scene-nav" id="videoSegmentNav"></div>
+                  <div class="video-editor-panel" id="videoEditorPanel"></div>
                   <div class="voice-section" id="voiceSection_vid">
                     <div class="voice-section-header">
-                      <label class="scene-desc-label">🎙 Voice</label>
+                      <label class="scene-section-label">Voice</label>
                       <div class="voice-section-header-right">
                         <div class="voice-mode-toggle" id="voiceModeToggle_vid">
                           <div class="voice-mode-btn" data-mode="whole" onclick="setVoiceMode('whole')">Whole take</div>
@@ -1104,8 +1125,6 @@
                     <div class="voice-cost-summary" id="voiceCostSummary_vid"></div>
                     <div class="voice-section-body" id="voiceSectionBody_vid"></div>
                   </div>
-                  <div class="scene-nav" id="videoSegmentNav"></div>
-                  <div class="video-editor-panel" id="videoEditorPanel"></div>
                   <div class="combine-stale-banner" id="combineStaleBanner" style="display:none;">
                     <span>⚠️ This scene changed — recombine to reflect the latest state.</span>
                     <button class="btn btn-secondary" onclick="combineVideo()">Recombine</button>
@@ -1118,25 +1137,29 @@
               </div>
 
               <div class="combine-result-view" id="combineResultView" style="display:none;">
-                <div class="timeline-stage">
-                  <div class="timeline-canvas combine-canvas">
-                    <div class="combine-player">
-                      <button class="video-play-btn" onclick="playCombineResult(this)" title="Play">▶</button>
-                      <span class="combine-player-duration" id="combineResultDuration">8s</span>
-                    </div>
-                    <div class="combine-timeline-ticks" id="combineResultTicks"></div>
+                <button class="back-to-scenes-link" onclick="backToSceneVideos()">← Back to scene videos</button>
+                <div class="combine-result-header">
+                  <div>
+                    <h2 class="stage-title">Your Video is ready</h2>
+                    <p class="stage-sub">Your final video is ready. Edit it with our built-in tools, or publish it now.</p>
                   </div>
-                  <div class="scene-editor-col">
-                    <div class="combine-summary-card">
-                      <div class="combine-summary-title">Final video</div>
-                      <div class="combine-summary-chips" id="combineSummaryChips"></div>
-                      <p class="combine-audio-note">🎙 Narration from Timeline is already mixed in — no extra steps needed.</p>
+                  <button class="btn btn-secondary" onclick="downloadCombineResult()">⬇ Download</button>
+                </div>
+                <div class="combine-result-body">
+                  <div class="combine-player">
+                    <button class="video-play-btn" onclick="playCombineResult(this)" title="Play">▶</button>
+                    <div class="combine-player-controls">
+                      <span class="combine-player-time" id="combineResultTime">0:00 / 8s</span>
+                      <span class="combine-player-icons">🔊 ⛶</span>
                     </div>
-                    <div class="combine-result-actions">
-                      <button class="btn btn-dark" onclick="continueToEditing()">Continue to editing →</button>
-                      <button class="btn btn-secondary" onclick="skipToPublish()">Skip to publish</button>
+                  </div>
+                  <div class="combine-info-panel">
+                    <div class="combine-info-title-row">
+                      <h3 class="combine-info-title" id="combineVideoTitle"></h3>
+                      <button class="combine-title-edit-btn" onclick="editCombineTitle()" title="Edit title">✏️</button>
                     </div>
-                    <button class="back-to-scenes-link" onclick="backToSceneVideos()">← Back to scene videos</button>
+                    <p class="combine-info-desc" id="combineVideoDesc"></p>
+                    <div class="combine-info-specs" id="combineInfoSpecs"></div>
                   </div>
                 </div>
               </div>
@@ -1472,6 +1495,18 @@
 </div>
 
 <script>
+// ---- Stage-aware chat input placeholder (matches Figma: the suggestion copy lives in the placeholder itself) ----
+const CHAT_PLACEHOLDERS = {
+  script: 'Requests like "make it 24s instead" or "add a scene" work here too',
+  timeline: 'Requests like "redo Scene 2" or "make the thumbnails brighter" work here too',
+  video: 'Requests like "regenerate Scene 1" or "make it more energetic" work here too',
+  done: 'Ask anything'
+};
+function setChatPlaceholder(stage){
+  const el = document.getElementById('chatInput');
+  if(el) el.placeholder = CHAT_PLACEHOLDERS[stage] || 'Ask for changes';
+}
+
 // ---- Brand setup awareness (demo preview toggle, bottom-right) ----
 function setBrandMode(mode){
   window.__brandMode = mode;
@@ -1655,7 +1690,8 @@ function renderScriptProposalMessage(scriptText, introText){
   return `
     <div class="msg ai">
       ${introText ? `<span class="tag">AI</span>${escapeHtml(introText)}` : ''}
-      <div class="script-proposal-box" id="scriptProposal${id}">
+      <div class="script-proposal-box chat-card" id="scriptProposal${id}">
+        <span class="chat-card-title">${introText ? 'Updated Script' : 'Generate Script'}</span>
         <div class="script-proposal-text">"${escapeHtml(scriptText)}"</div>
         <span class="script-applied-note">✓ Applied to Script panel</span>
         <button class="btn btn-dark" data-draft-id="${id}" onclick="handleScriptProposalClick(this)">Use this script →</button>
@@ -1699,7 +1735,7 @@ function runBriefToScript(){
   const panel = document.getElementById('scriptPanel');
   if(panel) panel.style.display = 'none';
 
-  chatLog.innerHTML = `<div class="msg ai loading" id="loadingMsg"><span class="tag">AI</span>Writing the script for your 'lip tint promo' video based on what you shared<span class="dots"><span>.</span><span>.</span><span>.</span></span></div>`;
+  chatLog.innerHTML = `<div class="msg ai loading" id="loadingMsg"><span class="tag">AI</span><div class="chat-card chat-loading-card"><div class="chat-loading-spinner"></div><div class="chat-loading-text"><span class="chat-loading-title">Writing the script...</span><span class="chat-loading-sub">Preparing your script based on what you shared</span></div></div></div>`;
 
   setTimeout(() => {
     let refinedScript, introHTML;
@@ -1763,7 +1799,7 @@ function reviseScript(requestText){
   const log = document.getElementById('chatLog');
   const loadingEl = document.createElement('div');
   loadingEl.className = 'msg ai loading';
-  loadingEl.innerHTML = `<span class="tag">AI</span>Revising the script based on your note<span class="dots"><span>.</span><span>.</span><span>.</span></span>`;
+  loadingEl.innerHTML = `<span class="tag">AI</span><div class="chat-card chat-loading-card"><div class="chat-loading-spinner"></div><div class="chat-loading-text"><span class="chat-loading-title">Refining the script...</span><span class="chat-loading-sub">Applying your note</span></div></div>`;
   log.appendChild(loadingEl);
   log.scrollTop = log.scrollHeight;
 
@@ -1998,6 +2034,7 @@ function showSub(name){
   Object.values(subs).forEach(id => document.getElementById(id).style.display = 'none');
   document.getElementById(subs[name]).style.display = 'flex';
   if(name !== 'studio') document.getElementById('settingsBar').style.display = '';
+  setChatPlaceholder(name === 'studio' ? 'video' : name);
 }
 showSub('script');
 
@@ -2039,9 +2076,11 @@ function selectSettingVoice(el, label){
 }
 
 // Mirrors the main-panel stage CTAs inside the chat log, so the flow can be driven from either side.
-function appendChatCta(text, buttonsHtml){
+function appendChatCta(text, buttonsHtml, stacked){
   const log = document.getElementById('chatLog');
-  log.innerHTML += `<div class="msg ai"><span class="tag">AI</span>${text}<div class="chat-cta-row">${buttonsHtml}</div></div>`;
+  const textHtml = stacked ? `<span class="chat-card-title">${text}</span>` : text;
+  const rowClass = stacked ? 'chat-final-buttons' : 'chat-cta-row';
+  log.innerHTML += `<div class="msg ai"><span class="tag">AI</span>${textHtml}<div class="${rowClass}">${buttonsHtml}</div></div>`;
   log.scrollTop = log.scrollHeight;
 }
 
@@ -2154,7 +2193,7 @@ function renderTimelineScenes(){
   document.getElementById('sceneEditorPanel').innerHTML = scenes.map((s, i) => `
     <div class="scene-card scene-editor" id="sceneEditor${i + 1}" style="${i === 0 ? '' : 'display:none;'}">
       <div class="scene-desc-block">
-        <label class="scene-desc-label">🎬 Scene &amp; character action description</label>
+        <label class="scene-desc-label">Scene &amp; character action description</label>
         <div class="scene-desc-box">
           <div class="reference-images-row compact"></div>
           <div class="mention-wrap">
@@ -2732,38 +2771,88 @@ function combineVideo(){
   updateVideoCta();
   document.getElementById('tabStudio').innerHTML = '<span class="check">✓</span> Video';
   document.getElementById('chatLog').innerHTML += '<div class="msg ai"><span class="tag">AI</span>Combined all scenes into the final cut — free, no credits used. Your narration track from Timeline is already mixed in.</div>';
-  appendChatCta('Your video is ready. What\'s next?', '<button class="btn btn-dark" onclick="continueToEditing()">Continue to editing →</button><button class="btn btn-secondary" onclick="skipToPublish()">Skip to publish</button>');
+  appendChatCta('Your video is ready. What\'s next?', '<button class="btn btn-dark" onclick="continueToEditing()">Continue to editing →</button><button class="btn btn-secondary" onclick="skipToPublish()">Skip to publish</button>', true);
+  setChatPlaceholder('done');
   showCombineResult();
 }
 
 function showCombineResult(){
-  const count = getSceneCount();
   document.querySelector('#subStudio .timeline-stage').style.display = 'none';
   document.getElementById('combineResultView').style.display = 'flex';
   document.getElementById('settingsBar').style.display = 'none';
-  document.getElementById('combineResultDuration').textContent = `${window.__videoDuration || 8}s`;
-  document.getElementById('combineResultTicks').innerHTML = Array.from({ length: count - 1 }, (_, i) => {
-    const pct = ((i + 1) / count) * 100;
-    return `<div class="combine-tick" style="left:${pct}%"></div>`;
-  }).join('');
-  renderCombineSummaryChips();
+  document.getElementById('combineResultTime').textContent = `0:00 / ${window.__videoDuration || 8}s`;
+  renderCombineInfoPanel();
 }
 
-function renderCombineSummaryChips(){
-  const el = document.getElementById('combineSummaryChips');
+function getAutoVideoTitle(){
+  const script = getSceneScript(1) || '';
+  const briefText = document.getElementById('briefSummary')?.value.trim() || '';
+  const source = script.replace(/^"|"$/g, '').trim() || briefText;
+  if(!source) return 'Untitled video';
+  const words = source.split(/\s+/);
+  const title = words.slice(0, 8).join(' ');
+  return title.charAt(0).toUpperCase() + title.slice(1) + (words.length > 8 ? '…' : '');
+}
+
+function getAutoVideoDesc(){
+  const briefText = document.getElementById('briefSummary')?.value.trim() || '';
+  const base = briefText || getSceneScript(1) || 'A short-form video generated from your brief.';
+  return base.length > 140 ? base.slice(0, 140).trim() + '…' : base;
+}
+
+function editCombineTitle(){
+  const el = document.getElementById('combineVideoTitle');
   if(!el) return;
+  el.setAttribute('contenteditable', 'true');
+  el.focus();
+  document.execCommand('selectAll', false, null);
+
+  function save(){
+    el.removeAttribute('contenteditable');
+    window.__videoTitle = el.textContent.trim() || getAutoVideoTitle();
+    el.textContent = window.__videoTitle;
+    el.removeEventListener('blur', save);
+    el.removeEventListener('keydown', onKey);
+  }
+  function onKey(e){
+    if(e.key === 'Enter'){ e.preventDefault(); el.blur(); }
+    if(e.key === 'Escape'){ el.textContent = window.__videoTitle || getAutoVideoTitle(); el.blur(); }
+  }
+  el.addEventListener('blur', save);
+  el.addEventListener('keydown', onKey);
+}
+
+function renderCombineInfoPanel(){
+  const titleEl = document.getElementById('combineVideoTitle');
+  const descEl = document.getElementById('combineVideoDesc');
+  const specsEl = document.getElementById('combineInfoSpecs');
+  if(!titleEl || !specsEl) return;
+
+  titleEl.textContent = window.__videoTitle || getAutoVideoTitle();
+  descEl.textContent = getAutoVideoDesc();
+
   const duration = document.getElementById('genSettingDuration')?.textContent || '8s';
   const character = document.getElementById('settingCharacter')?.textContent || '';
   const voice = document.getElementById('settingVoice')?.textContent || '';
-  const chips = [
-    `⏱ <b>${duration}</b>`,
-    `▭ <b>9:16</b>`,
-    `🌐 <b>English</b>`,
-    `Character: <b>${character}</b>`,
-    `🔊 <b>${voice}</b>`
+  const specs = [
+    { icon: '⏱', label: 'Duration', value: duration },
+    { icon: '▭', label: 'Ratio', value: '9:16' },
+    { icon: '👤', label: 'Character', value: character },
+    { icon: '🔊', label: 'Voice', value: voice },
   ];
-  if(window.__brandMode === 'set') chips.push(`🏷 Brand: <b>Formee Express</b>`);
-  el.innerHTML = chips.map(c => `<div class="setting-chip">${c}</div>`).join('');
+  if(window.__brandMode === 'set') specs.push({ icon: '🏷', label: 'Brand', value: 'Formee Express' });
+
+  specsEl.innerHTML = specs.map(s => `
+    <div class="combine-spec-row">
+      <span class="spec-icon">${s.icon}</span>
+      <span class="spec-label">${s.label}</span>
+      <span class="spec-value">${escapeHtml(s.value)}</span>
+    </div>
+  `).join('');
+}
+
+function downloadCombineResult(){
+  alert('This would download the final video — outside this prototype\'s scope.');
 }
 
 function backToSceneVideos(){
@@ -3327,7 +3416,8 @@ function quickAction(action){
 }
 
 document.getElementById('chatSend').addEventListener('click', sendMsg);
-document.getElementById('chatInput').addEventListener('keydown', (e) => { if(e.key === 'Enter') sendMsg(); });
+document.getElementById('chatInput').addEventListener('keydown', (e) => { if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); sendMsg(); } });
+document.getElementById('chatInput').addEventListener('input', function(){ this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 120) + 'px'; });
 function sendMsg(){
   const input = document.getElementById('chatInput');
   const text = input.value.trim();
