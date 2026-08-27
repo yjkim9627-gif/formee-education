@@ -6,6 +6,14 @@
 <link rel="stylesheet" href="../../../../tokens/tokens.css">
 <link rel="stylesheet" href="../../../../components/shared/button.css">
 <link rel="stylesheet" href="../../../../components/shared/modal.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/nav.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/topbar-stepper.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/chat-panel.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/switch.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/prompt-box.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/character-card.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/filter-chip.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/setting-chip.css">
 <style>
   *{box-sizing:border-box;}
   body{margin:0; font-family:var(--font-family-text); background:var(--color-neutral-200); display:flex; align-items:flex-start; justify-content:flex-start; min-height:100vh; overflow:auto;}
@@ -15,51 +23,12 @@
     display:flex; border:1px solid var(--color-neutral-300);
   }
 
-  /* ============ NAV SIDEBAR ============ */
-  .nav{width:262px; flex-shrink:0; background:#fff; border-right:1px solid var(--color-neutral-300); padding:16px 12px; display:flex; flex-direction:column; gap:20px; transition:width 0.2s ease, padding 0.2s ease; overflow:hidden;}
-  .nav-brand{display:flex; align-items:center; gap:10px; padding:8px 4px;}
-  .nav-brand .mark{width:28px; height:28px; border-radius:7px; background:linear-gradient(135deg,var(--color-brand-primary),var(--color-brand-accent)); flex-shrink:0;}
-  .nav-brand .txt b{display:block; font-size:13px; font-weight:600; color:var(--color-neutral-900); white-space:nowrap;}
-  .nav-brand .txt span{display:block; font-size:10.5px; color:var(--color-neutral-500); white-space:nowrap;}
-  .nav-group{display:flex; flex-direction:column; gap:1px;}
-  .nav-label{font-size:10px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--color-neutral-500); padding:6px 8px; white-space:nowrap;}
-  .nav-item{display:flex; align-items:center; gap:9px; padding:8px 8px; border-radius:7px; font-size:13px; color:var(--color-neutral-700); font-weight:500; white-space:nowrap;}
-  .nav-item .ic{position:relative; flex-shrink:0;}
-  .nav-item .ic.clip{overflow:hidden;}
-  .nav-item .ic .f{position:absolute;}
-  .nav-item .ic img{display:block; width:100%; height:100%; max-width:none;}
-  .nav-item.active{background:var(--color-brand-primary-light); color:var(--color-neutral-900);}
-  .nav-workspace{display:flex; align-items:center; justify-content:space-between; gap:8px; height:36px; padding:0 12px; margin:0 4px 4px; border:1px solid var(--color-neutral-400); border-radius:8px; background:#fff; font-size:14px; color:var(--color-neutral-500); cursor:pointer;}
-  .nav-workspace .chevron{color:var(--color-neutral-500); font-size:10px; flex-shrink:0;}
-
-  .nav.collapsed{width:64px; padding:16px 8px;}
-  .nav.collapsed .nav-workspace{display:none;}
-  .nav.collapsed .nav-brand{justify-content:center; padding:8px 0;}
-  .nav.collapsed .nav-brand .txt, .nav.collapsed .nav-label, .nav.collapsed .nav-item .label{display:none;}
-  .nav.collapsed .nav-item{justify-content:center; padding:8px;}
+  /* ============ NAV SIDEBAR — components/ai-social-media/nav.css ============ */
 
   /* ============ MAIN ============ */
   .main{flex:1; display:flex; flex-direction:column; min-width:0; position:relative; background:var(--color-neutral-50);}
 
-  .topbar{
-    height:56px; border-bottom:1px solid var(--color-neutral-300); background:#fff; display:flex; align-items:center;
-    gap:20px; padding:0 24px; flex-shrink:0;
-  }
-  .stepper{display:flex; align-items:center; gap:8px;}
-  .step{display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:var(--color-neutral-400); cursor:pointer;}
-  .step .num{width:20px; height:20px; border-radius:10px; border:1px solid var(--color-neutral-400); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; color:var(--color-neutral-400); background:#fff;}
-  .step.active{color:var(--color-brand-primary);}
-  .step.active .num{background:var(--color-brand-primary); border-color:var(--color-brand-primary); color:#fff;}
-  .step.done{color:var(--color-neutral-700); cursor:pointer;}
-  .step.done .num{background:var(--color-badge-green-text); border-color:var(--color-badge-green-text); color:#fff;}
-  .step.done:hover{color:var(--color-brand-primary);}
-  .connector{width:30px; height:2px; background:var(--color-neutral-200);}
-  .topbar-spacer{flex:1;}
-  .topbar-actions{display:flex; align-items:center; gap:16px;}
-  .topbar-icon-btn{width:36px; height:36px; border-radius:8px; border:none; background:transparent; display:flex; align-items:center; justify-content:center; color:var(--color-neutral-700); position:relative; cursor:pointer; flex-shrink:0;}
-  .topbar-icon-btn:hover{background:var(--color-neutral-100);}
-  .topbar-icon-btn .dot{position:absolute; top:8px; right:9px; width:4px; height:4px; border-radius:2px; background:var(--color-brand-accent);}
-  .topbar-avatar{width:32px; height:32px; border-radius:999px; background:var(--color-brand-primary-mid); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:#0b2b55; flex-shrink:0;}
+  /* ---- topbar + stepper — components/ai-social-media/topbar-stepper.css ---- */
 
   /* ---- shared view ---- */
   .view{position:absolute; inset:56px 0 0 0; overflow-y:auto; opacity:1; transition:opacity .2s ease;}
@@ -95,38 +64,16 @@
   .credit-est .credit-value{font-size:13px; font-weight:600; color:var(--color-neutral-900);}
   .credit-est .credit-value .credit-sub{font-weight:400; color:var(--color-neutral-500);}
 
-  /* ---- VIEW: Generate (shared shell: chat + stage area) ---- */
+  /* ---- VIEW: Generate (shared shell: chat + stage area) — chat panel base rules now in
+     components/ai-social-media/chat-panel.css; only screen-specific additions stay here. ---- */
   .gen-body{display:flex; height:100%;}
-  .chat{width:324px; flex-shrink:0; min-height:0; background:var(--color-neutral-0); border-right:1px solid var(--color-neutral-200); display:flex; flex-direction:column;}
-  .chat-header{flex-shrink:0; padding:20px 16px 0; display:flex; align-items:center; justify-content:space-between;}
-  .chat-header-title{font-size:16px; font-weight:700; color:var(--color-neutral-900); font-family:var(--font-family-text);}
-  .chat-new-btn{width:28px; height:28px; border-radius:8px; background:var(--color-neutral-0); border:1px solid var(--color-neutral-200); display:flex; align-items:center; justify-content:center; font-size:16px; line-height:1; color:var(--color-neutral-700); cursor:pointer;}
-  .chat-new-btn:hover{background:var(--color-neutral-50);}
-  .chat-log{flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:12px;}
-  .msg{font-size:14px; line-height:20px; max-width:92%; white-space:pre-wrap; font-family:var(--font-family-text);}
-  .msg.user{align-self:flex-end; display:flex; align-items:flex-end; gap:8px; max-width:100%;}
-  .msg.user .bubble{background:var(--color-brand-primary-light); color:var(--color-neutral-900); padding:12px 14px; border-radius:16px 16px 4px 16px; max-width:224px;}
-  .msg.user .avatar{flex-shrink:0; width:32px; height:32px; border-radius:999px; background:var(--color-brand-primary-mid); color:var(--color-neutral-800); font-size:11px; font-weight:600; font-family:var(--font-family-text); display:flex; align-items:center; justify-content:center;}
-  .msg.ai{align-self:stretch; background:none; color:var(--color-neutral-700); padding:0; border-radius:0; max-width:100%; display:flex; flex-direction:column; gap:12px;}
-  .msg.ai .tag{display:none;}
-  .msg.ai .note{display:block; font-size:10.5px; color:var(--color-neutral-500); margin-top:3px;}
-  .msg.ai.loading{color:var(--color-neutral-500); font-size:13px;}
   .msg-status{font-size:13px; font-family:var(--font-family-text);}
   .msg-status .worked-label{font-weight:600; color:var(--color-neutral-700);}
   .msg-status .worked-time{font-weight:400; color:var(--color-neutral-500);}
+  /* .chat-cta-row here is the plain flex-wrap row (matches brief/reel) — see note in chat-panel.css
+     re: why it's not shared with new-image-to-generate.html's bordered-card variant. */
   .chat-cta-row{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;}
   .chat-cta-row .btn-dark, .chat-cta-row .btn-secondary{padding:8px 14px; font-size:12px;}
-  .dots span{animation:blink 1.4s infinite; opacity:0;}
-  .dots span:nth-child(2){animation-delay:.2s;}
-  .dots span:nth-child(3){animation-delay:.4s;}
-  @keyframes blink{0%,80%,100%{opacity:0;}40%{opacity:1;}}
-  .chat-hint{font-size:10.5px; color:var(--color-neutral-500); padding:0 16px 10px;}
-  .chat-input-box{margin:0 16px 16px; border:1.5px solid var(--color-brand-primary); border-radius:12px; background:var(--color-neutral-0); padding:14px 14px 12px; display:flex; flex-direction:column; gap:12px;}
-  .chat-input{border:none; outline:none; background:transparent; width:100%; font-size:13px; color:var(--color-neutral-900); font-family:var(--font-family-text);}
-  .chat-input::placeholder{color:var(--color-neutral-500);}
-  .chat-input-bottom-row{display:flex; align-items:center; justify-content:space-between;}
-  .chat-attach-btn{width:18px; height:18px; border:none; background:none; padding:0; color:var(--color-neutral-500); cursor:pointer; display:flex; align-items:center; justify-content:center;}
-  .chat-send{width:28px; height:28px; border-radius:999px; background:var(--color-brand-primary); border:none; color:#fff; cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:14px;}
 
   .stage-area{flex:1; display:flex; flex-direction:column; min-width:0; min-height:0; position:relative;}
   .stage-tabs{display:flex; justify-content:center; gap:18px; padding:12px 24px 0; border-bottom:1px solid var(--color-neutral-300); flex-shrink:0;}
@@ -137,9 +84,7 @@
 
   .settings-bar{position:absolute; top:56px; left:28px; right:28px; z-index:15; display:flex; justify-content:center; gap:8px; flex-wrap:wrap; pointer-events:none;}
   .settings-bar > *{pointer-events:auto;}
-  .setting-chip{display:flex; align-items:center; gap:6px; border:1px solid var(--color-neutral-300); border-radius:999px; padding:5px 12px; font-size:11.5px; color:var(--color-neutral-700); background:var(--color-neutral-50);}
-  .setting-chip b{color:var(--color-neutral-900); font-weight:600;}
-  .brand-chip-setting{background:var(--color-brand-primary-light); border-color:var(--color-brand-primary-mid);}
+  /* .setting-chip / .brand-chip-setting — components/ai-social-media/setting-chip.css */
 
   .stage-body{flex:1; min-height:0; padding:52px 28px 14px; overflow-y:auto; display:flex; flex-direction:column;}
   .stage-body-inner{max-width:960px; margin:0 auto; width:100%; flex:1; min-height:0; display:flex; flex-direction:column;}
@@ -156,24 +101,10 @@
   .brief-heading h1{font-size:22px; font-weight:700; color:var(--color-neutral-900); margin:0 0 6px; letter-spacing:-0.2px;}
   .brief-heading p{font-size:13px; color:var(--color-neutral-500); margin:0 0 16px;}
 
-  .prompt-box{background:#fff; border:1.2px solid var(--color-neutral-400); border-radius:var(--radius-xl); padding:24px; display:flex; flex-direction:column; gap:32px;}
-  .prompt-top{display:flex; flex-direction:column; gap:20px;}
-  .prompt-summary{display:block; width:100%; font-size:14px; color:var(--color-neutral-900); line-height:22px; margin:0; border:none; background:transparent; font-family:var(--font-family-text); resize:vertical; outline:none; min-height:66px;}
-  .prompt-bottom{display:flex; align-items:center; justify-content:space-between;}
-  .prompt-chips{display:flex; gap:8px;}
-  .prompt-chip{border:1px solid var(--color-neutral-400); border-radius:8px; padding:7px 12px 7px 10px; font-size:14px; font-weight:500; color:var(--color-neutral-700); display:flex; align-items:center; gap:5px;}
-  .prompt-chip .ic{width:16px; height:16px; border-radius:3px; background:var(--color-neutral-400);}
-  .prompt-chip.clickable{cursor:pointer;}
-  .prompt-chip.clickable .chevron{font-size:9px; color:var(--color-neutral-500); margin-left:1px;}
-  .prompt-chip-wrap{position:relative;}
-  .chip-popover{position:absolute; bottom:calc(100% + 6px); left:0; min-width:160px; background:#fff; border:1px solid var(--color-neutral-400); border-radius:8px; box-shadow:0 10px 28px rgba(15,23,41,.14); padding:8px; z-index:40;}
-  .chip-popover-label{font-size:12px; font-weight:600; color:var(--color-neutral-700); padding:7px 8px;}
-  .chip-option{display:flex; align-items:center; justify-content:space-between; gap:16px; padding:8px; border-radius:6px; font-size:14px; font-weight:500; color:var(--color-neutral-700); cursor:pointer;}
-  .chip-option:hover{background:var(--color-neutral-50);}
-  .chip-option.selected{background:var(--color-neutral-100);}
-  .chip-option .check{display:none; color:var(--color-brand-primary); font-size:13px;}
-  .chip-option.selected .check{display:inline;}
-  .refine-btn{width:36px; height:36px; border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); background:#fff; display:flex; align-items:center; justify-content:center; color:var(--color-neutral-700); font-size:14px; cursor:pointer;}
+  /* AI Prompt Box shell — components/ai-social-media/prompt-box.css. This screen's chip icon slot
+     is still a plain gray placeholder box (not a real icon asset like new-image-to-generate.html),
+     so the .ic override stays local. */
+  .prompt-chip .ic{border-radius:3px; background:var(--color-neutral-400);}
 
   /* -- Reference image chips (Brief prompt box) -- */
   .reference-images-row{display:flex; gap:8px; flex-wrap:wrap;}
@@ -187,23 +118,10 @@
   .ref-image-add:hover{background:var(--color-neutral-150);}
   .ref-image-add .ic{width:20px; height:20px; border-radius:4px; background:var(--color-neutral-400);}
 
-  /* -- Character section (Brief & Style) -- */
-  .char-section{margin-top:24px;}
-  .char-section-label{font-size:16px; font-weight:700; color:var(--color-neutral-900); margin-bottom:2px;}
-  .char-section-sub{font-size:13px; color:var(--color-neutral-500); margin:0 0 16px;}
-  .char-panel{background:#fff; border:1.2px solid var(--color-neutral-400); border-radius:var(--radius-xl); padding:24px; display:flex; flex-direction:column; gap:16px;}
-  .char-filters{display:flex; align-items:center; gap:8px; margin-bottom:12px;}
-  .filter-chip{display:flex; align-items:center; gap:4px; border:1px solid var(--color-neutral-300); border-radius:999px; padding:6px 12px; font-size:12.5px; font-weight:500; color:var(--color-neutral-700); cursor:pointer; background:#fff;}
-  .filter-chip.active{background:var(--color-neutral-100); border-color:var(--color-neutral-300); font-weight:600;}
-  .filter-chip .chevron{font-size:9px; color:var(--color-neutral-500);}
-  .char-see-all{margin-left:auto; font-size:12.5px; font-weight:600; color:var(--color-neutral-700); cursor:pointer; white-space:nowrap;}
-  .char-see-all:hover{color:var(--color-brand-primary);}
-  .char-grid{display:flex; gap:12px; overflow-x:auto; padding-bottom:4px;}
-  .char-card{width:104px; flex-shrink:0; border:1.5px solid var(--color-neutral-300); border-radius:10px; overflow:hidden; cursor:pointer; background:#fff;}
-  .char-card.selected{border-color:var(--color-brand-primary); box-shadow:0 0 0 3px rgba(79,109,230,0.12);}
-  .char-card .thumb{height:88px; background:linear-gradient(135deg,var(--color-neutral-300),var(--color-neutral-150));}
-  .char-card.new .thumb{display:flex; align-items:center; justify-content:center; font-size:20px; color:var(--color-neutral-400); background:var(--color-neutral-50); border-bottom:1px dashed var(--color-neutral-300);}
-  .char-card .name{padding:7px 4px; font-size:12px; text-align:center; color:var(--color-neutral-700); font-weight:500;}
+  /* -- Character section (Brief & Style) — components/ai-social-media/character-card.css +
+     filter-chip.css. Selection state harmonized: this screen previously used a brand-primary
+     border+shadow ring on .char-card.selected, which contradicted style-reference.md's documented
+     "card selection uses neutral tone, not brand blue" rule — now matches new-image-to-generate.html. -- */
   .char-per-card-note{margin:10px 0 0; font-size:12px; color:var(--color-neutral-500); line-height:1.5;}
 
   /* -- Advanced settings (Brief & Style, collapsible) -- */
@@ -220,13 +138,7 @@
   .advanced-field input{border:1px solid var(--color-neutral-300); border-radius:8px; padding:10px 12px; font-size:13px; font-family:var(--font-family-text); color:var(--color-neutral-900); outline:none;}
   .advanced-field input:focus{border-color:var(--color-brand-primary);}
 
-  /* switch — [DS] Controls/Switch: 40x23, off=neutral-300, on=brand/primary */
-  .field-switch{width:40px; height:23px; border-radius:12px; border:none; background:var(--color-neutral-300); position:relative; cursor:pointer; flex-shrink:0; margin-top:2px; transition:background .15s;}
-  .field-switch .knob{position:absolute; top:2px; left:2px; width:19px; height:19px; border-radius:999px; background:#fff; box-shadow:0 1px 2px rgba(0,0,0,.2); transition:transform .15s;}
-  .field-switch.on{background:var(--color-brand-primary);}
-  .field-switch.on .knob{transform:translateX(17px);}
-  .field-switch.disabled{background:var(--color-neutral-200); cursor:not-allowed;}
-  .field-switch.disabled .knob{background:var(--color-neutral-100);}
+  /* switch — components/ai-social-media/switch.css */
 
   .brand-kit-row{display:flex; align-items:center; gap:10px; margin-top:12px;}
   .brand-kit-label{font-size:13px; font-weight:600; color:var(--color-neutral-900);}
@@ -355,6 +267,43 @@
   .sizevar-set-thumb-label{font-size:11px; font-weight:600; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,.4);}
   .sizevar-download-btn{align-self:stretch; border:none; background:rgba(255,255,255,0.92); border-radius:7px; padding:6px 8px; font-size:11.5px; font-weight:700; color:var(--color-neutral-900); cursor:pointer; font-family:var(--font-family-text);}
   .sizevar-download-btn:hover{background:#fff;}
+
+  /* ---- Preview stage (Generate step, 3rd tab): finished-carousel grid + per-card editor.
+       Reuses Storyboard's card data (copy fields, scene description, image history) — editing
+       either place keeps both in sync. ---- */
+  .preview-back-link{display:flex; align-items:center; gap:4px; font-size:13px; font-weight:500; color:var(--color-neutral-700); cursor:pointer; margin-bottom:20px; background:none; border:none; padding:0; font-family:var(--font-family-text);}
+  .preview-back-link:hover{color:var(--color-neutral-900);}
+  .preview-back-link img{width:16px; height:16px;}
+  .preview-heading-row{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:24px;}
+  .preview-heading-row h2{margin:0 0 4px;}
+  .preview-download-all{display:flex; align-items:center; gap:4px;}
+  .preview-download-all img{width:16px; height:16px;}
+  .preview-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:20px; align-content:start; flex:1; min-height:0; overflow-y:auto;}
+  .preview-tile{cursor:pointer;}
+  .preview-tile-frame{position:relative; width:100%; aspect-ratio:303/379; border:1px solid var(--color-neutral-400); border-radius:var(--radius-xl); background:var(--color-neutral-200); display:flex; flex-direction:column; justify-content:space-between; padding:16px; overflow:hidden; transition:border-color .15s; margin-bottom:8px;}
+  .preview-tile.active .preview-tile-frame{border-color:var(--color-neutral-500);}
+  .preview-tile-top-row{display:flex; justify-content:flex-end; gap:8px;}
+  .preview-icon-btn{width:24px; height:24px; border-radius:var(--radius-md); border:1px solid var(--color-neutral-400); background:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 1px 1.5px rgba(15,23,41,0.1),0 1px 0.5px rgba(15,23,41,0.04); padding:0;}
+  .preview-icon-btn img{width:14px; height:14px; display:block;}
+  .preview-icon-btn.ghost{background:rgba(255,255,255,0.35); border:none; backdrop-filter:blur(5px); box-shadow:none;}
+  .preview-icon-btn.ghost img{width:16px; height:16px;}
+  .preview-tile-image{flex:1; display:flex; align-items:center; justify-content:center;}
+  .preview-tile-image img{width:72px; height:72px; opacity:.6;}
+  .preview-version-pills{display:flex; gap:8px; flex-wrap:wrap;}
+  .version-pill{height:28px; padding:0 13px; border-radius:999px; border:1px solid var(--color-neutral-400); background:#fff; font-size:12px; font-weight:500; color:var(--color-neutral-700); cursor:pointer; font-family:var(--font-family-text);}
+  .version-pill.active{background:var(--color-neutral-150); border-color:var(--color-neutral-500); font-weight:600; color:var(--color-neutral-900);}
+  .preview-editor-col{width:358px; flex-shrink:0; display:flex; flex-direction:column;}
+  .preview-undo-redo{display:flex; gap:6px; margin-left:auto;}
+  .card-nav-btn.icon img{width:14px; height:14px; display:block;}
+  .preview-cta-row{display:flex; gap:14px; margin-top:14px;}
+  .preview-cta-row .btn{flex:1;}
+
+  /* ---- Character styles sub-row (Brief & Style): once a character is selected, pick which of
+       their saved reference looks/outfits applies. Same card visual as the character grid above. ---- */
+  .char-styles-section{margin-top:20px; padding-top:20px; border-top:1px solid var(--color-neutral-200);}
+  .char-styles-header{display:flex; align-items:center; gap:8px; margin-bottom:12px;}
+  .char-styles-avatar{width:20px; height:20px; border-radius:999px; background:var(--color-brand-primary-mid); flex-shrink:0;}
+  .char-styles-title{font-size:13px; font-weight:700; color:var(--color-neutral-900);}
 
   /* ---- Develop (minimal step-3 landing) ---- */
   .develop-body{display:flex; gap:32px; padding:48px; max-width:960px; margin:0 auto;}
@@ -492,6 +441,27 @@
                 <div class="char-card" onclick="selectChar(this)"><div class="thumb"></div><div class="name">Esther</div></div>
               </div>
               <p class="char-per-card-note">This character is included on every card by default — you'll be able to turn it off for individual cards in the next step (Script).</p>
+
+              <div class="char-styles-section">
+                <div class="char-styles-header">
+                  <div class="char-styles-avatar"></div>
+                  <span class="char-styles-title" id="charStylesTitle">Elena's styles</span>
+                  <div class="char-see-all" style="margin-left:auto;">See all →</div>
+                </div>
+                <div class="char-filters">
+                  <div class="filter-chip active">Favorites ★</div>
+                </div>
+                <div class="char-grid" id="charStylesGrid">
+                  <div class="char-card new"><div class="thumb">+</div><div class="name">Create New</div></div>
+                  <div class="char-card selected" onclick="selectCharStyle(this)"><div class="thumb"></div><div class="name">Headshot</div></div>
+                  <div class="char-card" onclick="selectCharStyle(this)"><div class="thumb"></div><div class="name">Studio Portrait</div></div>
+                  <div class="char-card" onclick="selectCharStyle(this)"><div class="thumb"></div><div class="name">Armchair Library</div></div>
+                  <div class="char-card" onclick="selectCharStyle(this)"><div class="thumb"></div><div class="name">Autumn Park</div></div>
+                  <div class="char-card" onclick="selectCharStyle(this)"><div class="thumb"></div><div class="name">Balcony Plants</div></div>
+                  <div class="char-card" onclick="selectCharStyle(this)"><div class="thumb"></div><div class="name">Beige Blazer</div></div>
+                  <div class="char-card" onclick="selectCharStyle(this)"><div class="thumb"></div><div class="name">Bright Hallway</div></div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -551,6 +521,7 @@
           <div class="stage-tabs">
             <div class="stage-tab active" id="tabScript" onclick="showSub('script')">Script</div>
             <div class="stage-tab locked" id="tabStoryboard" onclick="showSub('storyboard')">Storyboard</div>
+            <div class="stage-tab locked" id="tabPreview" onclick="showSub('preview')">Preview</div>
           </div>
 
           <div class="settings-bar" id="settingsBar">
@@ -644,7 +615,51 @@
             </div></div>
           </div>
 
+          <!-- SUB-STAGE: Preview — finished-carousel review once every card has an image. Same
+               underlying card data as Storyboard (copy fields, scene description, image history);
+               editing either place keeps both in sync. -->
+          <div class="stage-sub" id="subPreview" style="display:none;">
+            <div class="stage-body"><div class="stage-body-inner">
+              <button type="button" class="preview-back-link" onclick="showSub('storyboard')">
+                <img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gdWkgLyBiYWNrIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTcuOTk5OTggMTIuNjY2NkwzLjMzMzMxIDcuOTk5OThMNy45OTk5OCAzLjMzMzMxIiBzdHJva2U9IiM0NzUwNjkiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggaWQ9IlZlY3Rvcl8yIiBkPSJNMTIuNjY2NiA4SDMuMzMzMzEiIHN0cm9rZT0iIzQ3NTA2OSIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L2c+Cjwvc3ZnPgo=" alt="">
+                Back to Storyboard
+              </button>
+              <div class="preview-heading-row">
+                <div>
+                  <h2 class="stage-title">Your Carousel is ready</h2>
+                  <p class="stage-sub-text" style="margin:0;" id="previewSubText">All 5 cards are generated and ready to go — download them, or head back to Storyboard if anything needs another pass.</p>
+                </div>
+                <button type="button" class="btn btn-secondary preview-download-all" onclick="downloadAllCards()">
+                  <img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gdWkgLyBkb3dubG9hZCI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik04IDEwVjIiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzIiIGQ9Ik00IDcuMzMzMzFMOCAxMS4zMzMzTDEyIDcuMzMzMzEiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzMiIGQ9Ik0xMi42NjY2IDE0SDMuMzMzMzEiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L2c+Cjwvc3ZnPgo=" alt="">
+                  Download All
+                </button>
+              </div>
+              <div class="storyboard-stage">
+                <div class="storyboard-canvas">
+                  <div class="preview-grid" id="previewGrid"></div>
+                </div>
+                <div class="preview-editor-col">
+                  <div class="storyboard-nav" id="previewCardNav"></div>
+                  <div class="storyboard-editor-panel" id="previewEditorPanel"></div>
+                </div>
+              </div>
+            </div></div>
+          </div>
+
         </div>
+      </div>
+    </div>
+
+    <!-- Preview stage bottom bar — mirrors briefActionBar, shown only while the Preview tab is active -->
+    <div class="action-bar" id="previewActionBar" style="display:none;">
+      <div class="readiness">
+        <div class="readiness-top"><span>Brief readiness</span><span>79%</span></div>
+        <div class="readiness-bar"><div class="readiness-fill" style="width:79%"></div></div>
+      </div>
+      <div class="meta-text">Carousel · 4:5 · 5 cards</div>
+      <div class="bar-actions">
+        <button class="btn btn-secondary" onclick="goToPublish()">Skip to publish</button>
+        <button class="btn btn-dark" onclick="goToDevelop()">Continue to editing →</button>
       </div>
     </div>
 
@@ -708,7 +723,7 @@ function selectContentType(el){
     window.location.href = 'new-content-brief-to-generate.html';
   }
 }
-function goToBrief(){ showView('briefView'); setStep('stepBrief'); document.getElementById('briefActionBar').style.display = 'flex'; }
+function goToBrief(){ showView('briefView'); setStep('stepBrief'); document.getElementById('briefActionBar').style.display = 'flex'; document.getElementById('previewActionBar').style.display = 'none'; }
 
 // ---- Reference image attach (Brief prompt box) ----
 let referenceImages = [];
@@ -785,7 +800,11 @@ function setCharMode(mode){
   document.getElementById('charWithSection').style.display = mode === 'with' ? 'block' : 'none';
 }
 function selectChar(el){
-  document.querySelectorAll('.char-card').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll('#charGrid .char-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function selectCharStyle(el){
+  document.querySelectorAll('#charStylesGrid .char-card').forEach(c => c.classList.remove('selected'));
   el.classList.add('selected');
 }
 
@@ -842,14 +861,15 @@ function sendChatMessage(){
 
 // ---- Script / Storyboard / Generate tab switching ----
 function showSub(name){
-  const tabs = {script:'tabScript', storyboard:'tabStoryboard'};
-  const subs = {script:'subScript', storyboard:'subStoryboard'};
+  const tabs = {script:'tabScript', storyboard:'tabStoryboard', preview:'tabPreview'};
+  const subs = {script:'subScript', storyboard:'subStoryboard', preview:'subPreview'};
   const tabEl = document.getElementById(tabs[name]);
   if(tabEl.classList.contains('locked')) return;
   Object.values(tabs).forEach(id => document.getElementById(id).classList.remove('active'));
   tabEl.classList.add('active');
   Object.values(subs).forEach(id => document.getElementById(id).style.display = 'none');
   document.getElementById(subs[name]).style.display = 'block';
+  document.getElementById('previewActionBar').style.display = name === 'preview' ? 'flex' : 'none';
 }
 
 let scriptDraftStarted = false;
@@ -864,6 +884,7 @@ function goToGenerate(){
 function goToDevelop(){
   showView('developView');
   setStep('stepEdit');
+  document.getElementById('previewActionBar').style.display = 'none';
 }
 function backToStoryboard(){
   showView('generateView');
@@ -1036,6 +1057,10 @@ function renderStoryboardGrid(){
   const n = window.__cardCount;
   document.getElementById('storyboardGrid').innerHTML = Array.from({length: n}, (_, i) => renderStoryboardTile(i + 1)).join('');
   for(let i = 1; i <= n; i++) updateStoryboardCardRegenBtn(i);
+  // Keep the Preview tab's grid (finished-carousel review) in sync — it reads the same
+  // __cardImageHistory data, just rendered with download/expand actions instead of a regen badge.
+  renderPreviewGrid();
+  for(let i = 1; i <= n; i++) updatePreviewCardRegenBtn(i);
 }
 function storyboardTileCharBadgeHtml(n){
   if(window.__charMode !== 'with') return '';
@@ -1139,7 +1164,13 @@ function updateStoryboardCardRegenBtn(n){
   btn.disabled = !(hist && hist[window.__cardImageActiveIndex[n]].ready);
 }
 function renderCardCopyFields(n){
-  const list = document.getElementById('copyFieldList' + n);
+  // Storyboard and Preview each keep their own copy-field-list container for the same card,
+  // so both stay visually in sync whichever tab was last edited.
+  renderCardCopyFieldsInto(n, 'copyFieldList' + n);
+  renderCardCopyFieldsInto(n, 'previewCopyFieldList' + n);
+}
+function renderCardCopyFieldsInto(n, listId){
+  const list = document.getElementById(listId);
   if(!list) return;
   const fields = ensureCardCopyFields(n);
   list.innerHTML = fields.map((f, i) => `
@@ -1161,6 +1192,14 @@ function onCardCopyFieldInput(n, i, value){
   const fields = ensureCardCopyFields(n);
   fields[i].text = value;
   updateStoryboardTileCopyOverlay(n);
+  // Mirror the keystroke into the same field on the other tab (Storyboard <-> Preview) without
+  // rebuilding either list, so the one being typed in never loses focus/cursor position.
+  ['copyFieldList' + n, 'previewCopyFieldList' + n].forEach(listId => {
+    const list = document.getElementById(listId);
+    if(!list) return;
+    const input = list.querySelectorAll('.copy-field-input')[i];
+    if(input && input.value !== value) input.value = value;
+  });
 }
 function toggleCardCharacter(n){
   window.__cardCharacterOn[n] = !window.__cardCharacterOn[n];
@@ -1169,17 +1208,27 @@ function toggleCardCharacter(n){
 }
 function updateCardDescription(n, value){
   window.__cardDescriptions[n] = value;
+  // Mirror into the other tab's textarea for the same card (Storyboard <-> Preview) without
+  // touching the one currently focused, so typing never loses cursor position.
+  document.querySelectorAll(`.story-desc-input[data-card="${n}"]`).forEach(el => {
+    if(el.value !== value) el.value = value;
+  });
 }
 function selectStoryboardCard(n){
   n = Number(n);
   window.__storyboardSelectedCard = n;
   document.querySelectorAll('#storyboardGrid .storyboard-tile').forEach(t => t.classList.toggle('active', Number(t.dataset.card) === n));
-  document.querySelectorAll('.card-nav-btn').forEach(b => b.classList.toggle('active', Number(b.dataset.target) === n));
+  document.querySelectorAll('#storyboardCardNav .card-nav-btn, #previewCardNav .card-nav-btn').forEach(b => b.classList.toggle('active', Number(b.dataset.target) === n));
   document.querySelectorAll('.storyboard-card-editor').forEach(e => e.style.display = 'none');
   const editor = document.getElementById('storyboardCardEditor' + n);
   if(editor) editor.style.display = 'block';
   const tile = document.getElementById('storyboardTile' + n);
   if(tile) tile.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+  // Keep the Preview tab's grid/editor selection pointed at the same card.
+  document.querySelectorAll('#previewGrid .preview-tile').forEach(t => t.classList.toggle('active', Number(t.dataset.card) === n));
+  document.querySelectorAll('.preview-card-editor').forEach(e => e.style.display = 'none');
+  const previewEditor = document.getElementById('previewCardEditor' + n);
+  if(previewEditor) previewEditor.style.display = 'block';
 }
 function toggleGlobalBrandKit(){
   if(window.__brandMode !== 'set') return; // disabled until brand is set up
@@ -1268,8 +1317,117 @@ function checkAllCardsReady(){
     document.getElementById('storyboardGenerateBtn').disabled = false;
     document.getElementById('storyboardGenerateBtn').textContent = 'Regenerate all';
     document.getElementById('sizeVarOpenBtn').style.display = '';
+    const previewTab = document.getElementById('tabPreview');
+    if(previewTab.classList.contains('locked')){
+      previewTab.classList.remove('locked');
+      const n = window.__cardCount;
+      document.getElementById('previewSubText').textContent =
+        `All ${n} cards are generated and ready to go — download them, or head back to Storyboard if anything needs another pass.`;
+      renderPreview();
+      appendChatCta(
+        `All ${n} images are generated and ready to review. Head back to Storyboard for more edits, or continue when you're happy with how it looks.`,
+        '<button class="btn btn-dark" onclick="showSub(\'preview\')">Continue to editing →</button>'
+      );
+      showSub('preview');
+    }
   }
 }
+
+// =====================================================================
+// PREVIEW STAGE (Generate step, 3rd tab) — finished-carousel review once every
+// card has an image. Reads the exact same state as Storyboard (image history,
+// copy fields, scene descriptions); editing a card here or in Storyboard keeps
+// both tabs in sync. Adds download/expand actions per tile and version pills
+// (instead of Storyboard's prev/next pager) plus per-card undo/redo.
+// =====================================================================
+const PREVIEW_ICON_DOWNLOAD = 'data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE0IiBoZWlnaHQ9IjE0IiB2aWV3Qm94PSIwIDAgMTQgMTQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gdWkgLyBkb3dubG9hZCI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik03IDguNzVWMS43NSIgc3Ryb2tlPSIjNjg3MTg4IiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxwYXRoIGlkPSJWZWN0b3JfMiIgZD0iTTMuNSA2LjQxNjY1TDcgOS45MTY2NUwxMC41IDYuNDE2NjUiIHN0cm9rZT0iIzY4NzE4OCIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzMiIGQ9Ik0xMS4wODMzIDEyLjI1SDIuOTE2NjUiIHN0cm9rZT0iIzY4NzE4OCIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L2c+Cjwvc3ZnPgo=';
+const PREVIEW_ICON_MAXIMIZE = 'data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE5LjYiIGhlaWdodD0iMTkuNiIgdmlld0JveD0iMCAwIDE5LjYgMTkuNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgaWQ9Imljb24gLyBtYXhpbWl6ZSIgZmlsdGVyPSJ1cmwoI2ZpbHRlcjBfZGRfMF85OTYpIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTcuMTMzMzMgMi44SDUuMTMzMzNDNC43Nzk3MSAyLjggNC40NDA1NyAyLjk0MDQ4IDQuMTkwNTIgMy4xOTA1MkMzLjk0MDQ4IDMuNDQwNTcgMy44IDMuNzc5NzEgMy44IDQuMTMzMzNWNi4xMzMzMyIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzIiIGQ9Ik0xNS44IDYuMTMzMzNWNC4xMzMzM0MxNS44IDMuNzc5NzEgMTUuNjU5NSAzLjQ0MDU3IDE1LjQwOTUgMy4xOTA1MkMxNS4xNTk0IDIuOTQwNDggMTQuODIwMyAyLjggMTQuNDY2NyAyLjhIMTIuNDY2NyIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzMiIGQ9Ik0zLjggMTEuNDY2N1YxMy40NjY3QzMuOCAxMy44MjAzIDMuOTQwNDggMTQuMTU5NCA0LjE5MDUyIDE0LjQwOTVDNC40NDA1NyAxNC42NTk1IDQuNzc5NzEgMTQuOCA1LjEzMzMzIDE0LjhINy4xMzMzMyIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzQiIGQ9Ik0xMi40NjY3IDE0LjhIMTQuNDY2N0MxNC44MjAzIDE0LjggMTUuMTU5NCAxNC42NTk1IDE1LjQwOTUgMTQuNDA5NUMxNS42NTk1IDE0LjE1OTQgMTUuOCAxMy44MjAzIDE1LjggMTMuNDY2N1YxMS40NjY3IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjEuNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjwvZz4KPGRlZnM+CjxmaWx0ZXIgaWQ9ImZpbHRlcjBfZGRfMF85OTYiIHg9Ii0xLjIiIHk9Ii0xLjIiIHdpZHRoPSIyMiIgaGVpZ2h0PSIyMiIgZmlsdGVyVW5pdHM9InVzZXJTcGFjZU9uVXNlIiBjb2xvci1pbnRlcnBvbGF0aW9uLWZpbHRlcnM9InNSR0IiPgo8ZmVGbG9vZCBmbG9vZC1vcGFjaXR5PSIwIiByZXN1bHQ9IkJhY2tncm91bmRJbWFnZUZpeCIvPgo8ZmVDb2xvck1hdHJpeCBpbj0iU291cmNlQWxwaGEiIHR5cGU9Im1hdHJpeCIgdmFsdWVzPSIwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAxMjcgMCIgcmVzdWx0PSJoYXJkQWxwaGEiLz4KPGZlT2Zmc2V0IGR5PSIxIi8+CjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjAuNSIvPgo8ZmVDb21wb3NpdGUgaW4yPSJoYXJkQWxwaGEiIG9wZXJhdG9yPSJvdXQiLz4KPGZlQ29sb3JNYXRyaXggdHlwZT0ibWF0cml4IiB2YWx1ZXM9IjAgMCAwIDAgMC4wNTg4IDAgMCAwIDAgMC4wOTAyIDAgMCAwIDAgMC4xNjA4IDAgMCAwIDAuMDQgMCIvPgo8ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluMj0iQmFja2dyb3VuZEltYWdlRml4IiByZXN1bHQ9ImVmZmVjdDFfZHJvcFNoYWRvd18wXzk5NiIvPgo8ZmVDb2xvck1hdHJpeCBpbj0iU291cmNlQWxwaGEiIHR5cGU9Im1hdHJpeCIgdmFsdWVzPSIwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAxMjcgMCIgcmVzdWx0PSJoYXJkQWxwaGEiLz4KPGZlT2Zmc2V0IGR5PSIxIi8+CjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjEuNSIvPgo8ZmVDb21wb3NpdGUgaW4yPSJoYXJkQWxwaGEiIG9wZXJhdG9yPSJvdXQiLz4KPGZlQ29sb3JNYXRyaXggdHlwZT0ibWF0cml4IiB2YWx1ZXM9IjAgMCAwIDAgMC4wNTg4IDAgMCAwIDAgMC4wOTAyIDAgMCAwIDAgMC4xNjA4IDAgMCAwIDAuMSAwIi8+CjxmZUJsZW5kIG1vZGU9Im5vcm1hbCIgaW4yPSJlZmZlY3QxX2Ryb3BTaGFkb3dfMF85OTYiIHJlc3VsdD0iZWZmZWN0Ml9kcm9wU2hhZG93XzBfOTk2Ii8+CjxmZUJsZW5kIG1vZGU9Im5vcm1hbCIgaW49IlNvdXJjZUdyYXBoaWMiIGluMj0iZWZmZWN0Ml9kcm9wU2hhZG93XzBfOTk2IiByZXN1bHQ9InNoYXBlIi8+CjwvZmlsdGVyPgo8L2RlZnM+Cjwvc3ZnPgo=';
+const PREVIEW_ICON_IMAGE = 'data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjcyIiBoZWlnaHQ9IjcyIiB2aWV3Qm94PSIwIDAgNzIgNzIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gY29udGVudCAvIGltYWdlIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTU3IDlIMTVDMTEuNjg2MyA5IDkgMTEuNjg2MyA5IDE1VjU3QzkgNjAuMzEzNyAxMS42ODYzIDYzIDE1IDYzSDU3QzYwLjMxMzcgNjMgNjMgNjAuMzEzNyA2MyA1N1YxNUM2MyAxMS42ODYzIDYwLjMxMzcgOSA1NyA5WiIgc3Ryb2tlPSIjQzhEMUUxIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzIiIGQ9Ik0yNyAzM0MzMC4zMTM3IDMzIDMzIDMwLjMxMzcgMzMgMjdDMzMgMjMuNjg2MyAzMC4zMTM3IDIxIDI3IDIxQzIzLjY4NjMgMjEgMjEgMjMuNjg2MyAyMSAyN0MyMSAzMC4zMTM3IDIzLjY4NjMgMzMgMjcgMzNaIiBzdHJva2U9IiNDOEQxRTEiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxwYXRoIGlkPSJWZWN0b3JfMyIgZD0iTTYzIDQ1TDUzLjc0MiAzNS43NDJDNTIuNjE2OCAzNC42MTcyIDUxLjA5MSAzMy45ODUzIDQ5LjUgMzMuOTg1M0M0Ny45MDkgMzMuOTg1MyA0Ni4zODMyIDM0LjYxNzIgNDUuMjU4IDM1Ljc0MkwxOCA2MyIgc3Ryb2tlPSIjQzhEMUUxIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L2c+Cjwvc3ZnPgo=';
+const PREVIEW_ICON_UNDO = 'data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gdWkgLyB1bmRvIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTUuOTk5OTkgOS4zMzMzNUwyLjY2NjY2IDYuMDAwMDJMNS45OTk5OSAyLjY2NjY5IiBzdHJva2U9IiM4QTkzQTgiIHN0cm9rZS13aWR0aD0iMS42IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggaWQ9IlZlY3Rvcl8yIiBkPSJNMi42NjY2NiA2SDkuNjY2NjZDMTAuMTQ4MiA2IDEwLjYyNSA2LjA5NDg0IDExLjA2OTggNi4yNzkxMUMxMS41MTQ3IDYuNDYzMzggMTEuOTE4OSA2LjczMzQ2IDEyLjI1OTQgNy4wNzM5NEMxMi41OTk5IDcuNDE0NDIgMTIuODY5OSA3LjgxODYzIDEzLjA1NDIgOC4yNjM0OUMxMy4yMzg1IDguNzA4MzUgMTMuMzMzMyA5LjE4NTE1IDEzLjMzMzMgOS42NjY2N0MxMy4zMzMzIDEwLjE0ODIgMTMuMjM4NSAxMC42MjUgMTMuMDU0MiAxMS4wNjk4QzEyLjg2OTkgMTEuNTE0NyAxMi41OTk5IDExLjkxODkgMTIuMjU5NCAxMi4yNTk0QzExLjkxODkgMTIuNTk5OSAxMS41MTQ3IDEyLjg3IDExLjA2OTggMTMuMDU0MkMxMC42MjUgMTMuMjM4NSAxMC4xNDgyIDEzLjMzMzMgOS42NjY2NiAxMy4zMzMzSDcuMzMzMzIiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L2c+Cjwvc3ZnPgo=';
+const PREVIEW_ICON_REDO = 'data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gdWkgLyByZWRvIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTEwIDkuMzMzMzVMMTMuMzMzMyA2LjAwMDAyTDEwIDIuNjY2NjkiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzIiIGQ9Ik0xMy4zMzMzIDZINi4zMzMzMkM1LjM2MDg2IDYgNC40MjgyMyA2LjM4NjMxIDMuNzQwNiA3LjA3Mzk0QzMuMDUyOTcgNy43NjE1NyAyLjY2NjY2IDguNjk0MjEgMi42NjY2NiA5LjY2NjY3QzIuNjY2NjYgMTAuMTQ4MiAyLjc2MTUgMTAuNjI1IDIuOTQ1NzYgMTEuMDY5OEMzLjEzMDAzIDExLjUxNDcgMy40MDAxMiAxMS45MTg5IDMuNzQwNiAxMi4yNTk0QzQuNDI4MjMgMTIuOTQ3IDUuMzYwODYgMTMuMzMzMyA2LjMzMzMyIDEzLjMzMzNIOC42NjY2NiIgc3Ryb2tlPSIjOEE5M0E4IiBzdHJva2Utd2lkdGg9IjEuNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjwvZz4KPC9zdmc+Cg==';
+
+function renderPreview(){
+  buildPreviewCardNav();
+  renderPreviewGrid();
+  renderPreviewEditorPanels();
+}
+function buildPreviewCardNav(){
+  const n = window.__cardCount;
+  const buttons = Array.from({length: n}, (_, i) => {
+    const num = i + 1;
+    return `<div class="card-nav-btn${num === window.__storyboardSelectedCard ? ' active' : ''}" data-target="${num}" onclick="selectPreviewCard(${num})">${num}</div>`;
+  }).join('');
+  const undoRedo = `
+    <div class="preview-undo-redo">
+      <button type="button" class="card-nav-btn icon" onclick="cardHistoryPrev(window.__storyboardSelectedCard)" title="Previous version"><img src="${PREVIEW_ICON_UNDO}" alt=""></button>
+      <button type="button" class="card-nav-btn icon" onclick="cardHistoryNext(window.__storyboardSelectedCard)" title="Next version"><img src="${PREVIEW_ICON_REDO}" alt=""></button>
+    </div>`;
+  document.getElementById('previewCardNav').innerHTML = `<span class="storyboard-nav-label">Card</span>${buttons}${undoRedo}`;
+}
+function renderPreviewGrid(){
+  const grid = document.getElementById('previewGrid');
+  if(!grid) return;
+  const n = window.__cardCount;
+  grid.innerHTML = Array.from({length: n}, (_, i) => renderPreviewTile(i + 1)).join('');
+}
+function renderPreviewTile(n){
+  const hist = window.__cardImageHistory[n];
+  const idx = window.__cardImageActiveIndex[n] || 0;
+  const ready = !!(hist && hist[idx] && hist[idx].ready);
+  const isActive = n === window.__storyboardSelectedCard;
+  const pills = hist && hist.length > 1
+    ? hist.map((h, i) => `<button type="button" class="version-pill ${i === idx ? 'active' : ''}" onclick="event.stopPropagation(); selectCardHistoryVersion(${n}, ${i})">V${i === 0 ? '1' : '1.' + i}</button>`).join('')
+    : `<span class="version-pill active">V1</span>`;
+  return `
+    <div class="preview-tile${isActive ? ' active' : ''}" data-card="${n}" onclick="selectPreviewCard(${n})">
+      <div class="preview-tile-frame">
+        <div class="preview-tile-top-row">
+          <button type="button" class="preview-icon-btn" onclick="event.stopPropagation(); downloadCard(${n})" title="Download this card"><img src="${PREVIEW_ICON_DOWNLOAD}" alt=""></button>
+          <button type="button" class="preview-icon-btn ghost" onclick="event.stopPropagation(); expandCard(${n})" title="Expand"><img src="${PREVIEW_ICON_MAXIMIZE}" alt=""></button>
+        </div>
+        <div class="preview-tile-image">${ready ? `<img src="${PREVIEW_ICON_IMAGE}" alt="">` : '<div class="spinner-mini" style="display:block;"></div>'}</div>
+      </div>
+      <div class="preview-version-pills">${pills}</div>
+    </div>`;
+}
+function selectCardHistoryVersion(n, idx){
+  window.__cardImageActiveIndex[n] = idx;
+  renderStoryboardGrid();
+}
+function selectPreviewCard(n){
+  n = Number(n);
+  selectStoryboardCard(n);
+}
+function renderPreviewEditorPanels(){
+  const n = window.__cardCount;
+  document.getElementById('previewEditorPanel').innerHTML = Array.from({length: n}, (_, i) => {
+    const num = i + 1;
+    return `
+      <div class="preview-card-editor storyboard-card-editor" id="previewCardEditor${num}" style="${num === 1 ? '' : 'display:none;'}">
+        <div class="copy-field-list" id="previewCopyFieldList${num}"></div>
+        <label class="scene-desc-label">Scene &amp; background description</label>
+        <textarea class="story-desc-input" data-card="${num}" oninput="updateCardDescription(${num}, this.value)">${escapeHtml(window.__cardDescriptions[num] || '')}</textarea>
+        <div class="preview-cta-row">
+          <button type="button" class="btn btn-secondary" onclick="startCardGeneration()">Regenerate All</button>
+          <button type="button" class="btn btn-dark" id="previewCardRegenBtn${num}" onclick="regenerateCard(${num})" disabled>Regenerate Card ${num}</button>
+        </div>
+      </div>`;
+  }).join('');
+  for(let i = 1; i <= n; i++){
+    renderCardCopyFields(i);
+    updatePreviewCardRegenBtn(i);
+  }
+}
+function updatePreviewCardRegenBtn(n){
+  const btn = document.getElementById('previewCardRegenBtn' + n);
+  if(!btn) return;
+  const hist = window.__cardImageHistory[n];
+  btn.disabled = !(hist && hist[window.__cardImageActiveIndex[n]].ready);
+}
+// Prototype only — no real files exist to save, so these are visual no-ops.
+function downloadCard(n){}
+function expandCard(n){}
+function downloadAllCards(){}
 
 // =====================================================================
 // SIZE VARIATIONS (post-generate) — a modal opened via "+ Size variations"
