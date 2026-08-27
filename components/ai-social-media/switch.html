@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>Controls / Switch — Shared Component</title>
+<link rel="stylesheet" href="../../tokens/tokens.css" />
+<link rel="stylesheet" href="switch.css" />
+<style>
+  body { margin: 0; padding: var(--spacing-4xl); background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
+  h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-3xl); }
+  .row { display: flex; align-items: center; gap: var(--spacing-2xl); }
+  .row div { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-sm); font-size: var(--font-size-text-xs); color: var(--color-neutral-700); }
+</style>
+</head>
+<body>
+  <h1>Controls / Switch</h1>
+  <div class="row">
+    <div><div class="field-switch"><div class="knob"></div></div>off</div>
+    <div><div class="field-switch on"><div class="knob"></div></div>on</div>
+    <div><div class="field-switch disabled"><div class="knob"></div></div>disabled (off)</div>
+    <div><div class="field-switch on disabled"><div class="knob"></div></div>disabled (on)</div>
+  </div>
+</body>
+</html>

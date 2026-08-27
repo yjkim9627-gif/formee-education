@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>Character Card — Shared Component</title>
+<link rel="stylesheet" href="../../tokens/tokens.css" />
+<link rel="stylesheet" href="filter-chip.css" />
+<link rel="stylesheet" href="character-card.css" />
+<style>
+  body { margin: 0; padding: var(--spacing-4xl); background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
+  h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-3xl); }
+</style>
+</head>
+<body>
+  <h1>Character Card</h1>
+
+  <div class="char-panel" style="max-width:640px;">
+    <div class="char-filters">
+      <div class="filter-chip active">Favorites ★</div>
+      <div class="filter-chip">Age <span class="chevron">▾</span></div>
+    </div>
+    <div class="char-grid">
+      <div class="char-card new"><div class="thumb">+</div><div class="name">Create New</div></div>
+      <div class="char-card selected"><div class="thumb"></div><div class="name">Elena</div><div class="char-check">✓</div></div>
+      <div class="char-card"><div class="thumb"></div><div class="name">Milo</div></div>
+      <div class="char-card disabled"><div class="thumb"></div><div class="name">Priya (disabled)</div></div>
+    </div>
+  </div>
+</body>
+</html>

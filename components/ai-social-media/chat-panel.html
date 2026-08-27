@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>Chat Panel — Shared Component</title>
+<link rel="stylesheet" href="../../tokens/tokens.css" />
+<link rel="stylesheet" href="../shared/button.css" />
+<link rel="stylesheet" href="chat-panel.css" />
+<style>
+  body { margin: 0; padding: var(--spacing-4xl); background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); display: flex; gap: var(--spacing-3xl); }
+  h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-lg); width: 100%; }
+  .frame { border: 1px solid var(--color-neutral-300); height: 640px; }
+</style>
+</head>
+<body>
+  <h1>Chat Panel</h1>
+
+  <div class="frame">
+    <div class="chat">
+      <div class="chat-header">
+        <div class="chat-header-title">AI Assistant</div>
+        <button class="chat-new-btn" aria-label="New chat">+</button>
+      </div>
+      <div class="chat-log">
+        <div class="msg user"><div class="bubble">에너지 넘치는 UGC 스타일 립틴트 영상 만들어줘</div><div class="avatar">DV</div></div>
+        <div class="msg ai"><span class="tag">AI</span>브랜드 톤에 맞춰 초안을 준비했어요.
+          <div class="chat-cta-row"><button class="btn btn-secondary">수정 요청</button><button class="btn btn-dark">이대로 진행</button></div>
+        </div>
+        <div class="msg ai loading">작업 중<span class="dots"><span>.</span><span>.</span><span>.</span></span></div>
+      </div>
+      <div class="chat-hint">Enter로 전송 · Shift+Enter로 줄바꿈</div>
+      <div class="chat-input-box">
+        <textarea class="chat-input" placeholder="AI에게 요청하기..."></textarea>
+        <div class="chat-input-bottom-row">
+          <button class="chat-attach-btn" aria-label="첨부">📎</button>
+          <button class="chat-send" aria-label="전송">↑</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="frame" style="width:324px;">
+    <div class="chat">
+      <div class="chat-header">
+        <div class="chat-header-title">AI Assistant</div>
+        <button class="chat-new-btn" aria-label="New chat">+</button>
+      </div>
+      <div class="chat-log"></div>
+      <div class="chat-input-box">
+        <textarea class="chat-input" disabled placeholder="전송 중에는 입력할 수 없어요"></textarea>
+        <div class="chat-input-bottom-row">
+          <button class="chat-attach-btn" aria-label="첨부">📎</button>
+          <button class="chat-send" disabled aria-label="전송">↑</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

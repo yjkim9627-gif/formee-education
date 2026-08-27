@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>Topbar + Stepper — Shared Component</title>
+<link rel="stylesheet" href="../../tokens/tokens.css" />
+<link rel="stylesheet" href="topbar-stepper.css" />
+<style>
+  body { margin: 0; padding: var(--spacing-4xl); background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
+  h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-3xl); }
+  section { margin-bottom: var(--spacing-3xl); }
+  section h2 { font-size: var(--font-size-text-md); font-weight: var(--font-weight-semibold); color: var(--color-neutral-700); margin: 0 0 var(--spacing-lg); }
+  .frame { border: 1px solid var(--color-neutral-300); background: var(--color-neutral-0); }
+</style>
+</head>
+<body>
+  <h1>Topbar + Stepper</h1>
+
+  <section>
+    <h2>Step 1 active (아무것도 완료 안 됨)</h2>
+    <div class="frame">
+      <div class="topbar">
+        <div class="stepper">
+          <div class="step active"><div class="num">1</div>Brief &amp; Style</div>
+          <div class="connector"></div>
+          <div class="step"><div class="num">2</div>Generate</div>
+          <div class="connector"></div>
+          <div class="step"><div class="num">3</div>Edit &amp; Publish</div>
+        </div>
+        <div class="topbar-spacer"></div>
+        <div class="topbar-actions">
+          <button class="topbar-icon-btn" aria-label="Search">🔍</button>
+          <button class="topbar-icon-btn" aria-label="Notifications">🔔<span class="dot"></span></button>
+          <div class="topbar-avatar">DV</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Step 2 active, step 1 done</h2>
+    <div class="frame">
+      <div class="topbar">
+        <div class="stepper">
+          <div class="step done"><div class="num">✓</div>Brief &amp; Style</div>
+          <div class="connector"></div>
+          <div class="step active"><div class="num">2</div>Generate</div>
+          <div class="connector"></div>
+          <div class="step"><div class="num">3</div>Edit &amp; Publish</div>
+        </div>
+        <div class="topbar-spacer"></div>
+        <div class="topbar-actions">
+          <button class="topbar-icon-btn" aria-label="Search">🔍</button>
+          <button class="topbar-icon-btn" disabled aria-label="Notifications">🔔</button>
+          <div class="topbar-avatar">DV</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</body>
+</html>

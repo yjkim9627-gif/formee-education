@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>Nav / Navigation — Shared Component</title>
+<link rel="stylesheet" href="../../tokens/tokens.css" />
+<link rel="stylesheet" href="nav.css" />
+<style>
+  body { margin: 0; padding: var(--spacing-4xl); background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); display: flex; gap: var(--spacing-4xl); flex-wrap: wrap; }
+  h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-lg); width: 100%; }
+  section h2 { font-size: var(--font-size-text-md); font-weight: var(--font-weight-semibold); color: var(--color-neutral-700); margin: 0 0 var(--spacing-lg); }
+  .frame { border: 1px solid var(--color-neutral-300); background: var(--color-neutral-0); height: 640px; }
+  .dot { width: 12px; height: 12px; border-radius: 999px; background: var(--color-neutral-icon); flex-shrink: 0; }
+</style>
+</head>
+<body>
+  <h1>Nav / Navigation</h1>
+
+  <section>
+    <h2>Expanded (default)</h2>
+    <div class="frame">
+      <div class="nav">
+        <div class="nav-brand"><div class="mark"></div><div class="txt"><b>Formee Education</b><span>AI Social Media</span></div></div>
+        <div class="nav-workspace"><span>Placeholder</span><span class="chevron">▾</span></div>
+        <div class="nav-group"><div class="nav-item"><div class="dot"></div><span class="label">Home</span></div></div>
+        <div class="nav-group">
+          <div class="nav-label">Create</div>
+          <div class="nav-item active"><div class="dot"></div><span class="label">New Content</span></div>
+        </div>
+        <div class="nav-group">
+          <div class="nav-label">Content</div>
+          <div class="nav-item"><div class="dot"></div><span class="label">Library</span></div>
+          <div class="nav-item"><div class="dot"></div><span class="label">Schedule</span></div>
+          <div class="nav-item disabled"><div class="dot"></div><span class="label">Analytics (disabled)</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Collapsed</h2>
+    <div class="frame" style="width:96px;">
+      <div class="nav collapsed">
+        <div class="nav-brand"><div class="mark"></div><div class="txt"><b>Formee Education</b><span>AI Social Media</span></div></div>
+        <div class="nav-workspace"><span>Placeholder</span><span class="chevron">▾</span></div>
+        <div class="nav-group"><div class="nav-item"><div class="dot"></div><span class="label">Home</span></div></div>
+        <div class="nav-group">
+          <div class="nav-label">Create</div>
+          <div class="nav-item active"><div class="dot"></div><span class="label">New Content</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</body>
+</html>

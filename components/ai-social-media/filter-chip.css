@@ -1,0 +1,23 @@
+/* Controls / Filter / Toggle — shared component (components/ai-social-media/filter-chip.html 참고)
+   Figma: FME_Design-System, "03 Inputs & Controls" → Filter/Toggle 계열 pill.
+   style-reference.md §2: "세그먼트/토글류는 선택 시 흰 배경 pill + shadow/sm로 표현되는 경우가
+   많지만, 이 필터 칩은 뉴트럴 배경 틴트(neutral-100)로 표현되는 변형" — 브랜드 컬러를 쓰지 않는
+   일반적인 "선택" 표현 규칙과 일치한다.
+   new-image-to-generate.html / new-carousel-to-generate.html 2곳에서 byte-identical했다
+   (new-content-brief-to-generate.html은 이 토글형 칩 대신 "always-on 라벨" 성격의 다른 마크업
+   — height:28px 고정, brand 없는 정적 pill —을 쓰고 있어 같은 컴포넌트로 보기 어려워 포함하지 않음). */
+
+.filter-chip{
+  display:flex; align-items:center; gap:4px; border:1px solid var(--color-neutral-300); border-radius:999px;
+  padding:6px 12px; font-size:12.5px; font-weight:500; color:var(--color-neutral-700); cursor:pointer;
+  background:var(--color-neutral-0); transition:background .15s ease, border-color .15s ease, font-weight .15s ease;
+}
+.filter-chip:hover:not(.active){background:var(--color-neutral-50);}
+.filter-chip:focus-visible{outline:2px solid var(--color-brand-primary); outline-offset:1px;}
+.filter-chip .chevron{font-size:9px; color:var(--color-neutral-500);}
+
+/* state: active/selected — 뉴트럴 톤 강조(카드/필터 선택 공통 규칙), 브랜드 블루 아님 */
+.filter-chip.active{background:var(--color-neutral-100); border-color:var(--color-neutral-300); font-weight:600;}
+
+/* state: disabled (documented for completeness — not currently used) */
+.filter-chip.disabled{color:var(--color-neutral-400); cursor:not-allowed; pointer-events:none;}

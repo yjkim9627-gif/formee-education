@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>Controls / Filter / Toggle — Shared Component</title>
+<link rel="stylesheet" href="../../tokens/tokens.css" />
+<link rel="stylesheet" href="filter-chip.css" />
+<style>
+  body { margin: 0; padding: var(--spacing-4xl); background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
+  h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-3xl); }
+  .row { display: flex; gap: var(--spacing-sm); }
+</style>
+</head>
+<body>
+  <h1>Controls / Filter / Toggle</h1>
+  <div class="row">
+    <div class="filter-chip">Favorites ★</div>
+    <div class="filter-chip active">Favorites ★</div>
+    <div class="filter-chip disabled">Favorites ★</div>
+    <div class="filter-chip">Age <span class="chevron">▾</span></div>
+  </div>
+</body>
+</html>
