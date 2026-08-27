@@ -11,7 +11,7 @@
   body{margin:0; font-family:var(--font-family-text); background:var(--color-neutral-200); display:flex; align-items:flex-start; justify-content:flex-start; min-height:100vh; overflow:auto;}
 
   .app{
-    width:1920px; height:1080px; flex-shrink:0; background:#fff; overflow:hidden;
+    width:1920px; height:900px; flex-shrink:0; background:#fff; overflow:hidden;
     display:flex; border:1px solid var(--color-neutral-300);
   }
 
@@ -121,6 +121,9 @@
   .dots span:nth-child(3){animation-delay:.4s;}
   @keyframes blink{0%,80%,100%{opacity:0;}40%{opacity:1;}}
   .chat-hint{font-size:10.5px; color:var(--color-neutral-500); padding:0 16px 10px;}
+  .chat-quick-chips{display:none; flex-wrap:wrap; gap:6px; padding:0 16px 10px;}
+  .chat-chip{border:1px solid var(--color-neutral-300); border-radius:999px; background:#fff; padding:6px 12px; font-size:12.5px; font-weight:600; color:var(--color-neutral-900); font-family:var(--font-family-text); cursor:pointer;}
+  .chat-chip:hover{border-color:var(--color-neutral-450);}
   .chat-input-box{margin:0 16px 16px; border:1.5px solid var(--color-brand-primary); border-radius:12px; background:var(--color-neutral-0); padding:14px 14px 12px; display:flex; flex-direction:column; gap:12px;}
   .chat-input{border:none; outline:none; background:transparent; width:100%; font-size:13px; color:var(--color-neutral-900); font-family:var(--font-family-text);}
   .chat-input::placeholder{color:var(--color-neutral-500);}
@@ -246,7 +249,7 @@
 
   /* ---- Script stage: brand kit + one full-width, always-expanded block per card ---- */
   .script-global-brand{border:1px solid var(--color-neutral-300); border-radius:10px; padding:14px 16px; margin-bottom:18px;}
-  .script-card-list{display:flex; flex-direction:column; gap:10px; margin-bottom:8px;}
+  .script-card-list{display:flex; flex-direction:column; gap:10px; margin-bottom:24px;}
   .script-card-block{border:1px solid var(--color-neutral-300); border-radius:10px; padding:12px 14px; background:#fff;}
   .script-card-block-header{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:8px;}
   .script-card-block-title{font-size:12.5px; font-weight:700; color:var(--color-neutral-900);}
@@ -285,7 +288,8 @@
   .storyboard-tile-ready-badge{display:none; align-items:center; gap:3px; font-size:10px; font-weight:700; color:var(--color-badge-green-text); background:#fff; padding:3px 7px; border-radius:999px;}
   .storyboard-tile.ready .storyboard-tile-ready-badge{display:inline-flex;}
   .storyboard-tile-regen-btn{display:none; width:24px; height:24px; border-radius:999px; border:none; background:rgba(255,255,255,0.92); align-items:center; justify-content:center; font-size:12px; color:var(--color-neutral-700); cursor:pointer; margin-left:auto;}
-  .storyboard-tile-regen-btn:hover{background:#fff; color:var(--color-neutral-900);}
+  .storyboard-tile-regen-btn:hover:not(:disabled){background:#fff; color:var(--color-neutral-900);}
+  .storyboard-tile-regen-btn:disabled{opacity:.4; cursor:not-allowed;}
   .storyboard-tile.ready .storyboard-tile-regen-btn{display:flex;}
   .storyboard-tile-pager{display:none; align-items:center; justify-content:center; gap:6px; padding:6px 8px; border-top:1px solid var(--color-neutral-200); font-size:11px; font-weight:600; color:var(--color-neutral-700); background:#fff;}
   .storyboard-tile.has-history .storyboard-tile-pager{display:flex;}
@@ -308,6 +312,15 @@
   .storyboard-generate-cta{margin-top:14px;}
   .storyboard-generate-cta .meta-text{display:block; margin-top:8px;}
 
+  .copy-field-header-row{display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;}
+  .copy-field-section-label{font-size:11px; font-weight:700; color:var(--color-neutral-500); text-transform:uppercase; letter-spacing:.04em;}
+  .copy-field-controls{display:flex; align-items:center; gap:6px;}
+  .copy-edit-btn{display:flex; align-items:center; gap:4px; border:1px solid var(--color-neutral-300); border-radius:999px; background:#fff; padding:5px 10px; font-size:12px; font-weight:600; color:var(--color-neutral-900); font-family:var(--font-family-text); cursor:pointer;}
+  .copy-edit-btn:hover{border-color:var(--color-neutral-450);}
+  .copy-undo-btn{width:26px; height:26px; border-radius:999px; border:1px solid var(--color-neutral-300); background:#fff; color:var(--color-neutral-700); font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center;}
+  .copy-undo-btn:hover:not(:disabled){border-color:var(--color-neutral-450); color:var(--color-neutral-900);}
+  .copy-undo-btn:disabled{opacity:.35; cursor:not-allowed;}
+
   .copy-field-list{border:1px solid var(--color-neutral-300); border-radius:12px; overflow:hidden; background:#fff; margin-bottom:16px;}
   .copy-field{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 16px; border-bottom:1px solid var(--color-neutral-200); transition:opacity .15s;}
   .copy-field:last-child{border-bottom:none;}
@@ -316,45 +329,24 @@
   .copy-field-label{font-size:11px; font-weight:700; color:var(--color-neutral-500); text-transform:uppercase; letter-spacing:.04em;}
   .copy-field-input{border:none; background:transparent; font-size:14px; color:var(--color-neutral-900); font-family:var(--font-family-text); padding:0; outline:none; width:100%;}
   .copy-field.off .copy-field-input{pointer-events:none;}
+  /* Locked = that card has already generated once; text/toggle read as muted until "Edit" is clicked. */
+  .copy-field-list.locked .copy-field-label{color:var(--color-neutral-400);}
+  .copy-field-list.locked .copy-field-input{color:var(--color-neutral-400); cursor:default;}
+  .copy-field-list.locked .field-switch{opacity:.4; pointer-events:none;}
 
   .scene-desc-label{font-size:11px; font-weight:700; color:var(--color-neutral-500); text-transform:uppercase; letter-spacing:.04em; display:block; margin-bottom:6px;}
   .story-desc-input{width:100%; min-height:70px; border:1px solid var(--color-neutral-300); border-radius:8px; padding:10px 12px; font-size:13px; font-family:var(--font-family-text); color:var(--color-neutral-900); line-height:1.5; resize:vertical; outline:none;}
   .story-desc-input:focus{border-color:var(--color-brand-primary);}
 
-  /* ---- Size variation panel (Generate stage, once all cards ready) ---- */
-  /* ---- Storyboard header: title/hint on the left, "+ Size variations" trigger on the right ---- */
-  .storyboard-header-row{display:flex; align-items:flex-start; justify-content:space-between; gap:16px;}
+  /* ---- Per-card Image prompt (revealed once that card has generated at least once) ---- */
+  .card-prompt-block{display:none; margin-top:14px;}
+  .card-prompt-block.visible{display:block;}
+  .card-prompt-text{width:100%; min-height:70px; border:1px solid var(--color-neutral-300); border-radius:8px; padding:10px 12px; font-size:13px; font-family:var(--font-family-text); color:var(--color-neutral-900); line-height:1.5; resize:vertical; outline:none;}
+  .card-prompt-text:focus{border-color:var(--color-brand-primary);}
 
-  /* ---- Size variations panel — lives inline in the Storyboard work screen (swaps in for the
-       card grid + editor sidebar), not a modal. ---- */
-  .storyboard-sizevar-panel{flex:1; min-height:0; display:flex; flex-direction:column; border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl); background:#fff; overflow:hidden;}
-  .sizevar-back-btn{align-self:flex-start; margin:14px 0 0 14px;}
-  .sizevar-panel-header{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 16px 0; flex-shrink:0;}
-  .sizevar-modal-tabs{display:flex; align-items:center; gap:4px; flex-wrap:wrap; border-bottom:1px solid var(--color-neutral-200); width:100%; padding-bottom:0;}
-  .sizevar-tab{padding:8px 16px; border-radius:8px 8px 0 0; font-size:13px; font-weight:600; color:var(--color-neutral-500); cursor:pointer;}
-  .sizevar-tab:hover{color:var(--color-neutral-700);}
-  .sizevar-tab.active{color:var(--color-neutral-900); background:var(--color-neutral-100);}
-  .sizevar-tab-add{font-size:15px; font-weight:700; padding:8px 14px;}
-  .sizevar-modal-body{padding:20px; overflow-y:auto; flex:1; min-height:0;}
-  .sizevar-create-row{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:8px;}
-  .sizevar-selectall-btn{border:1px solid var(--color-neutral-300); background:#fff; border-radius:999px; padding:5px 12px; font-size:11.5px; font-weight:600; color:var(--color-neutral-700); cursor:pointer; font-family:var(--font-family-text);}
-  .sizevar-selectall-btn:hover{border-color:var(--color-neutral-450);}
-  .sizevar-card-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(90px, 1fr)); gap:10px;}
-  .sizevar-card-thumb{position:relative; aspect-ratio:4/5; border-radius:10px; border:2px solid transparent; background:linear-gradient(135deg,var(--color-brand-primary-mid),var(--color-brand-accent)); cursor:pointer; display:flex; align-items:flex-end; padding:8px;}
-  .sizevar-card-thumb.selected{border-color:var(--color-brand-primary); box-shadow:0 0 0 3px rgba(79,109,230,0.14);}
-  .sizevar-card-thumb-check{position:absolute; top:6px; right:6px; width:18px; height:18px; border-radius:999px; background:#fff; color:var(--color-brand-primary); font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center;}
-  .sizevar-card-thumb-label{font-size:11px; font-weight:600; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,.4);}
-  .sizevar-ratio-row{display:flex; align-items:flex-end; gap:16px; margin-top:18px; flex-wrap:wrap;}
-  .sizevar-cost-row{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:18px; padding-top:16px; border-top:1px solid var(--color-neutral-200);}
-  .sizevar-cost-text{font-size:12.5px; color:var(--color-neutral-700);}
-  .sizevar-cost-text b{color:var(--color-neutral-900); font-weight:700;}
-  .sizevar-empty-hint{font-size:12.5px; color:var(--color-neutral-500); padding:12px 0;}
-  .sizevar-set-view-title{font-size:13px; font-weight:700; color:var(--color-neutral-900); margin-bottom:14px;}
-  .sizevar-set-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(120px, 1fr)); gap:14px;}
-  .sizevar-set-thumb{border-radius:10px; background:linear-gradient(135deg,var(--color-brand-primary-mid),var(--color-brand-accent)); display:flex; flex-direction:column; align-items:flex-start; justify-content:space-between; padding:10px; overflow:hidden;}
-  .sizevar-set-thumb-label{font-size:11px; font-weight:600; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,.4);}
-  .sizevar-download-btn{align-self:stretch; border:none; background:rgba(255,255,255,0.92); border-radius:7px; padding:6px 8px; font-size:11.5px; font-weight:700; color:var(--color-neutral-900); cursor:pointer; font-family:var(--font-family-text);}
-  .sizevar-download-btn:hover{background:#fff;}
+  /* ---- Storyboard header: title/hint on the left ---- */
+  .storyboard-header-row{display:flex; align-items:flex-start; justify-content:space-between; gap:16px;}
+  .preview-back-btn{margin-bottom:16px;}
 
   /* ---- Develop (minimal step-3 landing) ---- */
   .develop-body{display:flex; gap:32px; padding:48px; max-width:960px; margin:0 auto;}
@@ -536,7 +528,8 @@
             <button class="chat-new-btn" title="New chat" onclick="startNewChat()">+</button>
           </div>
           <div class="chat-log" id="chatLog"></div>
-          <div class="chat-hint">💬 Requests like "make card 2 shorter" or "try a warmer tone" work here too</div>
+          <div class="chat-quick-chips" id="chatQuickChips"></div>
+          <div class="chat-hint" id="chatHint">💬 Requests like "make card 2 shorter" or "try a warmer tone" work here too</div>
           <div class="chat-input-box">
             <input class="chat-input" id="chatInput" placeholder="Type a message...">
             <div class="chat-input-bottom-row">
@@ -551,6 +544,7 @@
           <div class="stage-tabs">
             <div class="stage-tab active" id="tabScript" onclick="showSub('script')">Script</div>
             <div class="stage-tab locked" id="tabStoryboard" onclick="showSub('storyboard')">Storyboard</div>
+            <div class="stage-tab locked" id="tabPreview" onclick="showSub('preview')">Preview</div>
           </div>
 
           <div class="settings-bar" id="settingsBar">
@@ -566,6 +560,8 @@
             <div class="stage-body"><div class="stage-body-inner">
               <h2 class="stage-title">Script</h2>
               <p class="stage-sub-text">AI drafted text for each card based on your brief — edit any card directly, choose whether the brand kit and character apply, then confirm to move on.</p>
+              <div class="script-card-list" id="scriptCardList"></div>
+
               <div class="script-global-brand" id="scriptGlobalBrand">
                 <div class="brand-kit-row" style="margin-top:0;">
                   <button type="button" class="field-switch" id="globalBrandKitSwitch" onclick="toggleGlobalBrandKit()"><span class="knob"></span></button>
@@ -594,7 +590,6 @@
                 </div>
               </div>
 
-              <div class="script-card-list" id="scriptCardList"></div>
               <div class="stage-cta-row">
                 <button class="btn btn-dark" id="confirmScriptBtn" onclick="confirmScript()">Confirm & continue to Storyboard →</button>
               </div>
@@ -609,7 +604,6 @@
                   <h2 class="stage-title">Storyboard</h2>
                   <p class="stage-sub-text">Confirm the background, action, and on-card copy for each card, then generate.</p>
                 </div>
-                <button type="button" class="btn btn-secondary" id="sizeVarOpenBtn" onclick="openSizeVarModal()" style="display:none;">+ Size variations</button>
               </div>
               <div class="storyboard-stage" id="storyboardMainStage">
                 <div class="storyboard-canvas">
@@ -625,21 +619,38 @@
                 </div>
               </div>
 
-              <!-- Size variations panel: create a variation at another ratio (individual cards or all
-                   at once), then browse/download completed variation sets via tabs, "+" to start
-                   another. Lives inline in the Storyboard work screen, not a modal. -->
-              <div class="storyboard-sizevar-panel" id="sizeVarPanel" style="display:none;">
-                <button type="button" class="btn btn-secondary sizevar-back-btn" onclick="closeSizeVarModal()">← Back to Storyboard</button>
-                <div class="sizevar-panel-header">
-                  <div class="sizevar-modal-tabs" id="sizeVarModalTabs"></div>
-                </div>
-                <div class="sizevar-modal-body" id="sizeVarModalBody"></div>
-              </div>
-
               <div class="stage-cta-row" id="storyboardCtaRow" style="display:none;">
                 <span class="meta-text" id="generateCtaMeta" style="display:none;">Waiting for all cards to finish generating</span>
-                <button class="btn btn-secondary" id="skipToPublishBtn" onclick="goToPublish()" style="display:none;">Skip to publish</button>
-                <button class="btn btn-dark" id="continueToEditingBtn" onclick="goToDevelop()" style="display:none;">Continue to editing →</button>
+                <button class="btn btn-dark" id="continueToPreviewBtn" onclick="goToPreviewFromStoryboard()" style="display:none;">Continue to Preview →</button>
+              </div>
+            </div></div>
+          </div>
+
+          <!-- SUB-STAGE: Preview — final review of the generated set once every card is ready. Storyboard
+               stays the free-form working area (regenerate/edit as much as you like); Preview is the
+               settled "here's what you're about to publish" check before moving on. -->
+          <div class="stage-sub" id="subPreview" style="display:none;">
+            <div class="stage-body"><div class="stage-body-inner">
+              <button type="button" class="btn btn-secondary preview-back-btn" onclick="backToStoryboard()">← Back to Storyboard</button>
+              <div class="storyboard-header-row">
+                <div>
+                  <h2 class="stage-title">Your Carousel is ready</h2>
+                  <p class="stage-sub-text">All 5 cards are generated and ready to go — download them, or head back to Storyboard if anything needs another pass.</p>
+                </div>
+                <button type="button" class="btn btn-secondary" onclick="downloadAllCards()">⬇ Download All</button>
+              </div>
+              <div class="storyboard-stage" id="previewMainStage">
+                <div class="storyboard-canvas">
+                  <div class="storyboard-grid" id="previewGrid"></div>
+                </div>
+                <div class="storyboard-editor-col">
+                  <div class="storyboard-nav" id="previewCardNav"></div>
+                  <div class="storyboard-editor-panel" id="previewEditorPanel"></div>
+                </div>
+              </div>
+              <div class="stage-cta-row">
+                <button class="btn btn-secondary" id="previewSkipToPublishBtn" onclick="goToPublish()">Skip to publish</button>
+                <button class="btn btn-dark" id="previewContinueToEditingBtn" onclick="goToDevelop()">Continue to editing →</button>
               </div>
             </div></div>
           </div>
@@ -823,6 +834,40 @@ function startNewChat(){
   if(log) log.innerHTML = '';
   const input = document.getElementById('chatInput');
   if(input) input.value = '';
+  renderChatQuickChips([]);
+  setChatGuideHint('💬 Requests like "make card 2 shorter" or "try a warmer tone" work here too');
+}
+// Quick-action chips shown above the chat input, contextual to whatever stage/state just
+// finished (e.g. script drafted, storyboard ready) — mirrors the Copilot-style chip pattern.
+// Each chip is either {label, direct: fn} (runs fn immediately, e.g. "Regenerate all") or
+// just {label} (sent through the normal chat pipeline, same as if the user had typed it).
+function renderChatQuickChips(chips){
+  window.__chatQuickChips = chips || [];
+  const wrap = document.getElementById('chatQuickChips');
+  if(!wrap) return;
+  if(!chips || !chips.length){
+    wrap.style.display = 'none';
+    wrap.innerHTML = '';
+    return;
+  }
+  wrap.style.display = 'flex';
+  wrap.innerHTML = chips.map((c, i) => `<button type="button" class="chat-chip" onclick="handleQuickChipClick(${i})">${escapeHtml(c.label)}</button>`).join('');
+}
+function handleQuickChipClick(i){
+  const chip = (window.__chatQuickChips || [])[i];
+  if(!chip) return;
+  if(chip.direct){
+    addChatMsg('user', chip.label);
+    chip.direct();
+  } else {
+    const input = document.getElementById('chatInput');
+    input.value = chip.label;
+    sendChatMessage();
+  }
+}
+function setChatGuideHint(text){
+  const hint = document.getElementById('chatHint');
+  if(hint) hint.textContent = text;
 }
 // Appends an AI message with an inline button row, so the next stage can be
 // triggered right from the chat (mirrors the video flow's stage-progress CTA).
@@ -837,13 +882,23 @@ function sendChatMessage(){
   if(!text) return;
   addChatMsg('user', text);
   input.value = '';
+
+  // Once every card has generated at least once, free-text chat becomes a live style/edit
+  // request instead of the generic prototype stub — see handleStoryboardStyleRequest().
+  const storyboardSub = document.getElementById('subStoryboard');
+  const storyboardVisible = storyboardSub && storyboardSub.style.display !== 'none';
+  if(storyboardVisible && storyboardCardsReady()){
+    handleStoryboardStyleRequest(text);
+    return;
+  }
+
   setTimeout(() => addChatMsg('ai', '<span class="tag">AI</span>Got it — this is a prototype, so I won\'t actually rewrite anything, but in the real flow this request would land on whichever card or stage you\'re currently working on.'), 500);
 }
 
 // ---- Script / Storyboard / Generate tab switching ----
 function showSub(name){
-  const tabs = {script:'tabScript', storyboard:'tabStoryboard'};
-  const subs = {script:'subScript', storyboard:'subStoryboard'};
+  const tabs = {script:'tabScript', storyboard:'tabStoryboard', preview:'tabPreview'};
+  const subs = {script:'subScript', storyboard:'subStoryboard', preview:'subPreview'};
   const tabEl = document.getElementById(tabs[name]);
   if(tabEl.classList.contains('locked')) return;
   Object.values(tabs).forEach(id => document.getElementById(id).classList.remove('active'));
@@ -869,6 +924,10 @@ function backToStoryboard(){
   showView('generateView');
   setStep('stepGenerate');
   showSub('storyboard');
+}
+function goToPreviewFromStoryboard(){
+  showSub('preview');
+  renderPreview();
 }
 // Publish is shared with the video/image flow — hand off to that file's Publish screen
 // directly, so editing Publish once updates it everywhere instead of per content type.
@@ -902,6 +961,7 @@ function draftScript(){
   const log = document.getElementById('chatLog');
   log.innerHTML = `<div class="msg ai loading" id="scriptLoadingMsg"><span class="tag">AI</span>Writing text for ${n} cards based on your brief<span class="dots"><span>.</span><span>.</span><span>.</span></span></div>`;
   document.getElementById('confirmScriptBtn').disabled = true;
+  renderChatQuickChips([]);
 
   setTimeout(() => {
     for(let i = 1; i <= n; i++) window.__cardScripts[i] = SCRIPT_TEMPLATES[i - 1] || `Card ${i} — key message goes here.`;
@@ -912,7 +972,55 @@ function draftScript(){
     );
     renderScriptCards();
     document.getElementById('confirmScriptBtn').disabled = false;
+    renderChatQuickChips([
+      { label: 'Regenerate all' },
+      { label: 'Add a card', direct: addScriptCard }
+    ]);
+    setChatGuideHint('Tweak one card: "make card 2 shorter" or "try a warmer tone" →');
   }, 1500);
+}
+const MAX_CAROUSEL_CARDS = 6;
+// "Add a card" both grows the script and offers to redraft everything so the story still
+// flows across the new card count — declining just leaves the new card on its template text.
+function addScriptCard(){
+  if(window.__cardCount >= MAX_CAROUSEL_CARDS){
+    addChatMsg('ai', `<span class="tag">AI</span>A carousel can have up to ${MAX_CAROUSEL_CARDS} cards, so I can't add another one.`);
+    renderChatQuickChips([
+      { label: 'Regenerate all' },
+      { label: 'Add a card', direct: addScriptCard }
+    ]);
+    return;
+  }
+  const newNum = window.__cardCount + 1;
+  selectCardCount(newNum);
+  window.__cardScripts[newNum] = SCRIPT_TEMPLATES[newNum - 1] || `Card ${newNum} — key message goes here.`;
+  renderScriptCards();
+
+  const atMax = newNum >= MAX_CAROUSEL_CARDS;
+  appendChatCta(
+    `Added Card ${newNum}${atMax ? ` — that's the max for a carousel (${MAX_CAROUSEL_CARDS} cards)` : ''}. Want me to rewrite all ${newNum} cards so the story flows with the new count?`,
+    '<button class="btn btn-dark" onclick="rewriteAllScriptCards()">Rewrite all cards</button>'
+  );
+  renderChatQuickChips(atMax
+    ? [{ label: 'Regenerate all' }]
+    : [{ label: 'Regenerate all' }, { label: 'Add a card', direct: addScriptCard }]);
+}
+function rewriteAllScriptCards(){
+  const n = window.__cardCount;
+  const log = document.getElementById('chatLog');
+  log.innerHTML += `<div class="msg ai loading" id="scriptRewriteMsg"><span class="tag">AI</span>Rewriting the script for all ${n} cards<span class="dots"><span>.</span><span>.</span><span>.</span></span></div>`;
+  log.scrollTop = log.scrollHeight;
+  renderChatQuickChips([]);
+  setTimeout(() => {
+    for(let i = 1; i <= n; i++) window.__cardScripts[i] = SCRIPT_TEMPLATES[i - 1] || `Card ${i} — key message goes here.`;
+    document.getElementById('scriptRewriteMsg')?.remove();
+    addChatMsg('ai', `<span class="tag">AI</span>Rewrote the script for all ${n} cards.`);
+    renderScriptCards();
+    renderChatQuickChips(n >= MAX_CAROUSEL_CARDS
+      ? [{ label: 'Regenerate all' }]
+      : [{ label: 'Regenerate all' }, { label: 'Add a card', direct: addScriptCard }]);
+    setChatGuideHint('Tweak one card: "make card 2 shorter" or "try a warmer tone" →');
+  }, 1400);
 }
 
 function renderScriptCards(){
@@ -948,6 +1056,7 @@ function confirmScript(){
   const log = document.getElementById('chatLog');
   log.innerHTML += `<div class="msg ai loading" id="storyboardLoadingMsg"><span class="tag">AI</span>Building the storyboard from your script<span class="dots"><span>.</span><span>.</span><span>.</span></span></div>`;
   log.scrollTop = log.scrollHeight;
+  renderChatQuickChips([]);
   setTimeout(() => {
     document.getElementById('storyboardLoadingMsg')?.remove();
     renderStoryboard();
@@ -969,6 +1078,13 @@ function confirmScript(){
 window.__cardDescriptions = {};
 window.__cardCopyFields = {};
 window.__cardCharacterOn = {};
+window.__cardImagePrompts = {}; // n -> current image prompt text (auto-composed, then freely editable)
+window.__cardImagePromptBaseline = {}; // n -> prompt text as of that card's last (re)generation, for dirty-checking
+window.__cardEditMode = {}; // n -> bool, whether that card's on-card copy is currently unlocked for editing
+window.__cardCopyBaseline = {}; // n -> copy fields JSON as of that card's last (re)generation, for dirty-checking
+window.__cardCopyUndoStack = {}; // n -> array of past copy-field snapshots
+window.__cardCopyRedoStack = {}; // n -> array of undone copy-field snapshots
+window.__storyboardReadyMsgShown = false; // gates the "all images ready, want a different style?" chat message to once per batch
 window.__globalBrandKitOn = undefined; // unset until first computed from __brandMode
 window.__storyboardSelectedCard = 1;
 const STORYBOARD_TEMPLATES = [
@@ -1020,13 +1136,8 @@ function renderStoryboard(){
   window.__storyboardSelectedCard = 1;
   document.getElementById('storyboardGenerateBtn').disabled = false;
   document.getElementById('storyboardGenerateBtn').textContent = 'Generate images';
-  document.getElementById('sizeVarOpenBtn').style.display = 'none';
-  document.getElementById('sizeVarPanel').style.display = 'none';
   document.getElementById('storyboardMainStage').style.display = 'flex';
   document.getElementById('storyboardCtaRow').style.display = 'none';
-  window.__sizeVarSets = [];
-  window.__sizeVarActiveTab = 'new';
-  window.__sizeVarSelectedCards = new Set(Array.from({length: n}, (_, i) => i + 1));
   renderStoryboardGrid();
   buildStoryboardCardNav();
   renderStoryboardEditorPanels();
@@ -1077,7 +1188,7 @@ function renderStoryboardTile(n){
       <div class="storyboard-tile-preview">
         <div class="storyboard-tile-overlay-top">
           <span class="storyboard-tile-ready-badge">✓ Ready</span>
-          <button type="button" class="storyboard-tile-regen-btn" onclick="event.stopPropagation(); regenerateCard(${n})" title="Regenerate this card only · ⚡${CARD_REGEN_CREDIT}">↻</button>
+          <button type="button" class="storyboard-tile-regen-btn" onclick="event.stopPropagation(); regenerateCard(${n})" title="Regenerate this card only · ⚡${CARD_REGEN_CREDIT}" ${isCardRegenEnabled(n) ? '' : 'disabled'}>↻</button>
         </div>
         <div class="spinner-mini"></div>
         <div class="storyboard-tile-bottom-row">
@@ -1119,9 +1230,17 @@ function renderStoryboardEditorPanels(){
     const num = i + 1;
     return `
       <div class="storyboard-card-editor" id="storyboardCardEditor${num}" style="${num === 1 ? '' : 'display:none;'}">
+        <div class="copy-field-header-row">
+          <span class="copy-field-section-label">On-card text</span>
+          <div class="copy-field-controls" id="copyFieldControls${num}"></div>
+        </div>
         <div class="copy-field-list" id="copyFieldList${num}"></div>
         <label class="scene-desc-label">Scene &amp; background description</label>
         <textarea class="story-desc-input" data-card="${num}" oninput="updateCardDescription(${num}, this.value)">${escapeHtml(window.__cardDescriptions[num] || '')}</textarea>
+        <div class="card-prompt-block" id="cardPromptBlock${num}">
+          <label class="scene-desc-label">Image prompt</label>
+          <textarea class="card-prompt-text" id="cardImagePrompt${num}" data-card="${num}" oninput="onCardPromptInput(${num}, this.value)"></textarea>
+        </div>
         <button type="button" class="regen-pill-btn" id="storyboardCardRegenBtn${num}" onclick="regenerateCard(${num})" disabled>
           <span>↻</span> Regenerate <span class="regen-pill-cost">⚡${CARD_REGEN_CREDIT}</span>
         </button>
@@ -1129,31 +1248,108 @@ function renderStoryboardEditorPanels(){
   }).join('');
   for(let i = 1; i <= n; i++){
     renderCardCopyFields(i);
+    renderCardImagePrompt(i);
     updateStoryboardCardRegenBtn(i);
   }
 }
-function updateStoryboardCardRegenBtn(n){
-  const btn = document.getElementById('storyboardCardRegenBtn' + n);
-  if(!btn) return;
+// Image prompt is auto-composed from the card's copy fields + scene description the first
+// time that card generates (mirrors the video flow's per-scene prompt), then persists as its
+// own editable field — editing copy/description afterwards does not silently overwrite it.
+function isCardRegenEnabled(n){
   const hist = window.__cardImageHistory[n];
-  btn.disabled = !(hist && hist[window.__cardImageActiveIndex[n]].ready);
+  const ready = !!(hist && hist[window.__cardImageActiveIndex[n]].ready);
+  const promptDirty = window.__cardImagePromptBaseline[n] !== undefined && window.__cardImagePrompts[n] !== window.__cardImagePromptBaseline[n];
+  const copyDirty = window.__cardCopyBaseline[n] !== undefined && window.__cardCopyBaseline[n] !== snapshotCardCopy(n);
+  return ready && (promptDirty || copyDirty);
+}
+function updateStoryboardCardRegenBtn(n){
+  const enabled = isCardRegenEnabled(n);
+  const btn = document.getElementById('storyboardCardRegenBtn' + n);
+  if(btn) btn.disabled = !enabled;
+  const tileBtn = document.querySelector(`#storyboardTile${n} .storyboard-tile-regen-btn`);
+  if(tileBtn) tileBtn.disabled = !enabled;
+}
+// Once a card has generated, its on-card copy locks (grayed text + inert toggles) so a stray
+// click can't silently drift the copy out of sync with the image — "Edit" explicitly opts back
+// in, and doing so is what's allowed to enable Regenerate again (see isCardRegenEnabled).
+function isCardCopyLocked(n){
+  return !!window.__cardImageHistory[n] && !window.__cardEditMode[n];
 }
 function renderCardCopyFields(n){
   const list = document.getElementById('copyFieldList' + n);
   if(!list) return;
   const fields = ensureCardCopyFields(n);
+  const locked = isCardCopyLocked(n);
+  list.classList.toggle('locked', locked);
   list.innerHTML = fields.map((f, i) => `
     <div class="copy-field ${f.on ? '' : 'off'}" data-key="${f.key}">
       <div class="copy-field-body">
         <span class="copy-field-label">${f.label}</span>
-        <input class="copy-field-input" value="${f.text.replace(/"/g,'&quot;')}" placeholder="Not set" oninput="onCardCopyFieldInput(${n}, ${i}, this.value)">
+        <input class="copy-field-input" value="${f.text.replace(/"/g,'&quot;')}" placeholder="Not set"
+          oninput="onCardCopyFieldInput(${n}, ${i}, this.value)"
+          onfocus="onCardCopyFieldFocus(${n})" onblur="onCardCopyFieldBlur(${n})"
+          ${locked ? 'disabled' : ''}>
       </div>
-      <button type="button" class="field-switch ${f.on ? 'on' : ''}" onclick="toggleCardCopyField(${n}, ${i})"><span class="knob"></span></button>
+      <button type="button" class="field-switch ${f.on ? 'on' : ''}" onclick="toggleCardCopyField(${n}, ${i})" ${locked ? 'disabled' : ''}><span class="knob"></span></button>
     </div>`).join('');
+  renderCopyFieldControls(n);
+}
+function renderCopyFieldControls(n){
+  const wrap = document.getElementById('copyFieldControls' + n);
+  if(!wrap) return;
+  if(!window.__cardImageHistory[n]){
+    wrap.innerHTML = '';
+    return;
+  }
+  if(!window.__cardEditMode[n]){
+    wrap.innerHTML = `<button type="button" class="copy-edit-btn" onclick="enterCardCopyEditMode(${n})">✎ Edit</button>`;
+    return;
+  }
+  const canUndo = (window.__cardCopyUndoStack[n] || []).length > 0;
+  const canRedo = (window.__cardCopyRedoStack[n] || []).length > 0;
+  wrap.innerHTML = `
+    <button type="button" class="copy-undo-btn" onclick="undoCardCopy(${n})" title="Undo" ${canUndo ? '' : 'disabled'}>↶</button>
+    <button type="button" class="copy-undo-btn" onclick="redoCardCopy(${n})" title="Redo" ${canRedo ? '' : 'disabled'}>↷</button>`;
+}
+function enterCardCopyEditMode(n){
+  window.__cardEditMode[n] = true;
+  renderCardCopyFields(n);
+}
+function snapshotCardCopy(n){
+  return JSON.stringify(ensureCardCopyFields(n));
+}
+function pushCardCopyUndoSnapshot(n, snapshotBeforeChange){
+  if(!window.__cardCopyUndoStack[n]) window.__cardCopyUndoStack[n] = [];
+  window.__cardCopyUndoStack[n].push(snapshotBeforeChange);
+  window.__cardCopyRedoStack[n] = [];
+  updateStoryboardCardRegenBtn(n);
+}
+function undoCardCopy(n){
+  const stack = window.__cardCopyUndoStack[n];
+  if(!stack || !stack.length) return;
+  const current = snapshotCardCopy(n);
+  (window.__cardCopyRedoStack[n] = window.__cardCopyRedoStack[n] || []).push(current);
+  window.__cardCopyFields[n] = JSON.parse(stack.pop());
+  renderCardCopyFields(n);
+  updateStoryboardTileCopyOverlay(n);
+  updateStoryboardCardRegenBtn(n);
+}
+function redoCardCopy(n){
+  const stack = window.__cardCopyRedoStack[n];
+  if(!stack || !stack.length) return;
+  const current = snapshotCardCopy(n);
+  (window.__cardCopyUndoStack[n] = window.__cardCopyUndoStack[n] || []).push(current);
+  window.__cardCopyFields[n] = JSON.parse(stack.pop());
+  renderCardCopyFields(n);
+  updateStoryboardTileCopyOverlay(n);
+  updateStoryboardCardRegenBtn(n);
 }
 function toggleCardCopyField(n, i){
+  if(isCardCopyLocked(n)) return;
+  const before = snapshotCardCopy(n);
   const fields = ensureCardCopyFields(n);
   fields[i].on = !fields[i].on;
+  pushCardCopyUndoSnapshot(n, before);
   renderCardCopyFields(n);
   updateStoryboardTileCopyOverlay(n);
 }
@@ -1162,6 +1358,16 @@ function onCardCopyFieldInput(n, i, value){
   fields[i].text = value;
   updateStoryboardTileCopyOverlay(n);
 }
+// Snapshot on focus/blur rather than every keystroke, so Undo steps through meaningful edits
+// (one per field visit) instead of one per character typed.
+function onCardCopyFieldFocus(n){
+  (window.__cardCopyFieldFocusSnapshot = window.__cardCopyFieldFocusSnapshot || {})[n] = snapshotCardCopy(n);
+}
+function onCardCopyFieldBlur(n){
+  const before = window.__cardCopyFieldFocusSnapshot && window.__cardCopyFieldFocusSnapshot[n];
+  if(before && before !== snapshotCardCopy(n)) pushCardCopyUndoSnapshot(n, before);
+  renderCopyFieldControls(n);
+}
 function toggleCardCharacter(n){
   window.__cardCharacterOn[n] = !window.__cardCharacterOn[n];
   const row = document.getElementById('cardCharRow' + n);
@@ -1169,6 +1375,29 @@ function toggleCardCharacter(n){
 }
 function updateCardDescription(n, value){
   window.__cardDescriptions[n] = value;
+}
+function buildCardImagePrompt(n){
+  const fields = ensureCardCopyFields(n);
+  const overlay = fields.filter(f => f.on && f.text).map(f => `${f.label}: "${f.text}"`).join(', ');
+  const desc = (window.__cardDescriptions[n] || '').trim().replace(/\.+$/, '');
+  const overlayLine = overlay ? ` On-card text — ${overlay}.` : '';
+  return `${desc}.${overlayLine} Bright, on-brand social carousel photography — natural lighting, clean composition, true-to-life color.`;
+}
+function ensureCardImagePrompt(n){
+  if(window.__cardImagePrompts[n] === undefined) window.__cardImagePrompts[n] = buildCardImagePrompt(n);
+  return window.__cardImagePrompts[n];
+}
+function onCardPromptInput(n, value){
+  window.__cardImagePrompts[n] = value;
+  updateStoryboardCardRegenBtn(n);
+}
+function renderCardImagePrompt(n){
+  const block = document.getElementById('cardPromptBlock' + n);
+  const ta = document.getElementById('cardImagePrompt' + n);
+  if(!block || !ta) return;
+  const everGenerated = !!window.__cardImageHistory[n];
+  block.classList.toggle('visible', everGenerated);
+  if(everGenerated) ta.value = ensureCardImagePrompt(n);
 }
 function selectStoryboardCard(n){
   n = Number(n);
@@ -1180,6 +1409,10 @@ function selectStoryboardCard(n){
   if(editor) editor.style.display = 'block';
   const tile = document.getElementById('storyboardTile' + n);
   if(tile) tile.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+  // The copy-editing chips always target whichever card is selected, so they need to refresh
+  // on every selection change — available from the moment a card exists (pending or generated),
+  // not gated behind generation the way the whole-set image actions are.
+  renderStoryboardQuickChips();
 }
 function toggleGlobalBrandKit(){
   if(window.__brandMode !== 'set') return; // disabled until brand is set up
@@ -1209,25 +1442,40 @@ function startCardGeneration(){
   const n = window.__cardCount;
   window.__cardImageHistory = {};
   window.__cardImageActiveIndex = {};
+  window.__storyboardReadyMsgShown = false;
   for(let i = 1; i <= n; i++){
     window.__cardImageHistory[i] = [{ ready: false }];
     window.__cardImageActiveIndex[i] = 0;
+    // Composes the prompt from copy + description the first time only — a later "Regenerate
+    // all" reuses whatever prompt is already there (including any manual edits/style notes)
+    // instead of clobbering them.
+    ensureCardImagePrompt(i);
   }
   renderStoryboardGrid();
   document.getElementById('storyboardGenerateBtn').disabled = true;
   document.getElementById('storyboardGenerateBtn').textContent = 'Generating…';
   const ctaRow = document.getElementById('storyboardCtaRow');
   ctaRow.style.display = '';
-  document.getElementById('skipToPublishBtn').style.display = 'none';
-  document.getElementById('continueToEditingBtn').style.display = 'none';
+  document.getElementById('continueToPreviewBtn').style.display = 'none';
   document.getElementById('generateCtaMeta').style.display = '';
   document.getElementById('generateCtaMeta').textContent = 'Waiting for all cards to finish generating';
   addChatMsg('ai', '<span class="tag">AI</span>Generating an image for each card now.');
+  renderChatQuickChips([]);
 
   for(let i = 1; i <= n; i++){
     setTimeout(() => {
       window.__cardImageHistory[i][0].ready = true;
+      window.__cardImagePromptBaseline[i] = window.__cardImagePrompts[i];
+      // A fresh generation locks the on-card copy back in as the new source of truth — any
+      // prior undo/redo history is moot once the image itself has moved past it.
+      window.__cardCopyBaseline[i] = snapshotCardCopy(i);
+      window.__cardEditMode[i] = false;
+      window.__cardCopyUndoStack[i] = [];
+      window.__cardCopyRedoStack[i] = [];
       renderStoryboardGrid();
+      renderCardImagePrompt(i);
+      renderCardCopyFields(i);
+      updateStoryboardCardRegenBtn(i);
       checkAllCardsReady();
     }, 1200 + i * 700);
   }
@@ -1237,14 +1485,34 @@ function regenerateCard(n){
   hist.push({ ready: false });
   window.__cardImageActiveIndex[n] = hist.length - 1;
   renderStoryboardGrid();
-  document.getElementById('skipToPublishBtn').style.display = 'none';
-  document.getElementById('continueToEditingBtn').style.display = 'none';
+  document.getElementById('continueToPreviewBtn').style.display = 'none';
   document.getElementById('generateCtaMeta').style.display = '';
   setTimeout(() => {
     hist[hist.length - 1].ready = true;
+    window.__cardImagePromptBaseline[n] = window.__cardImagePrompts[n];
+    window.__cardCopyBaseline[n] = snapshotCardCopy(n);
+    window.__cardEditMode[n] = false;
+    window.__cardCopyUndoStack[n] = [];
+    window.__cardCopyRedoStack[n] = [];
     renderStoryboardGrid();
+    renderCardImagePrompt(n);
+    renderCardCopyFields(n);
+    updateStoryboardCardRegenBtn(n);
     checkAllCardsReady();
   }, 1300);
+}
+// Regenerates every card using its CURRENT prompt (whatever the user already has, including
+// any appended style note) rather than re-deriving from copy fields — used by chat-driven
+// "regenerate everyone with this style" requests, as opposed to the main button's
+// startCardGeneration(), which only (re)composes a prompt the first time a card is generated.
+function regenerateAllCardsWithStyle(){
+  const n = window.__cardCount;
+  window.__storyboardReadyMsgShown = false;
+  document.getElementById('storyboardGenerateBtn').disabled = true;
+  document.getElementById('storyboardGenerateBtn').textContent = 'Regenerating…';
+  for(let i = 1; i <= n; i++){
+    setTimeout(() => regenerateCard(i), i * 250);
+  }
 }
 function cardHistoryPrev(n){
   if(window.__cardImageActiveIndex[n] > 0) window.__cardImageActiveIndex[n]--;
@@ -1257,192 +1525,221 @@ function cardHistoryNext(n){
 }
 function checkAllCardsReady(){
   const n = window.__cardCount;
-  const allReady = Array.from({length: n}, (_, i) => i + 1).every(num => {
-    const hist = window.__cardImageHistory[num];
-    return hist && hist[window.__cardImageActiveIndex[num]].ready;
-  });
+  const allReady = storyboardCardsReady();
   document.getElementById('generateCtaMeta').style.display = allReady ? 'none' : '';
-  document.getElementById('skipToPublishBtn').style.display = allReady ? '' : 'none';
-  document.getElementById('continueToEditingBtn').style.display = allReady ? '' : 'none';
+  document.getElementById('continueToPreviewBtn').style.display = allReady ? '' : 'none';
+  document.getElementById('tabPreview').classList.toggle('locked', !allReady);
   if(allReady){
     document.getElementById('storyboardGenerateBtn').disabled = false;
     document.getElementById('storyboardGenerateBtn').textContent = 'Regenerate all';
-    document.getElementById('sizeVarOpenBtn').style.display = '';
+    if(!window.__storyboardReadyMsgShown){
+      window.__storyboardReadyMsgShown = true;
+      addChatMsg('ai', `<span class="tag">AI</span>All ${n} images are ready. Want to change a specific card? Tell me which one and how (e.g. "card 3, more colorful"). Want a different look for everyone? Just describe the style and I'll regenerate all of them with it.`);
+      setChatGuideHint('Tweak one card: "card 3, more colorful" →');
+      renderStoryboardQuickChips();
+    }
+    // Preview mirrors whichever cards are currently generated — keep it in sync so switching
+    // tabs after a later regenerate-all/regenerate-one never shows a stale image or copy.
+    if(document.getElementById('subPreview').style.display !== 'none') renderPreview();
   }
+}
+function storyboardCardsReady(){
+  const n = window.__cardCount;
+  return Array.from({length: n}, (_, i) => i + 1).every(num => {
+    const hist = window.__cardImageHistory[num];
+    return hist && hist[window.__cardImageActiveIndex[num]].ready;
+  });
+}
+// A card is always selected in Storyboard, so the chips above the chat input always reflect
+// whichever card's editor panel is currently open — re-rendered on every selectStoryboardCard()
+// call, from the moment a card exists (even before it's generated). The whole-set image actions
+// ("Regenerate all" / "Try a different style") only make sense once there's something to
+// regenerate, so those two are appended on top only once every card has an image.
+function renderStoryboardQuickChips(){
+  const n = window.__storyboardSelectedCard;
+  const fields = ensureCardCopyFields(n);
+  const secondary = fields.find(f => f.key !== 'headline' && f.on && f.text);
+  const chips = [
+    { label: 'Shorten headline', direct: shortenCardHeadline }
+  ];
+  if(secondary){
+    chips.push({ label: `Make ${secondary.label.toLowerCase()} more engaging`, direct: hookifyCardSecondaryField });
+  }
+  const ready = storyboardCardsReady();
+  if(ready){
+    chips.push({ label: 'Regenerate all', direct: startCardGeneration });
+    chips.push({ label: 'Try a different style' });
+  }
+  renderChatQuickChips(chips);
+  setChatGuideHint(ready
+    ? 'Tweak one card: "card 3, more colorful" →'
+    : `Tweak Card ${n}'s copy, or type your own request →`);
+}
+// Trims a copy line down to roughly 60% of its length (min 5 words) — a simple stand-in for
+// "make this shorter" since this prototype doesn't call a real model.
+function shortenText(text){
+  const words = text.trim().replace(/[?!.]+$/, '').split(/\s+/);
+  if(words.length <= 5) return text;
+  const keep = Math.max(5, Math.ceil(words.length * 0.6));
+  return words.slice(0, keep).join(' ');
+}
+const HOOK_TEMPLATES = [
+  t => `Here's why: ${t.replace(/[?!.]+$/, '')}`,
+  t => `Wait — ${t.charAt(0).toLowerCase()}${t.slice(1).replace(/[?!.]+$/, '')}`,
+  t => `You need to see this: ${t.replace(/[?!.]+$/, '')}`,
+  t => `${t.replace(/[?!.]+$/, '')} — here's how`
+];
+function hookifyText(text, seed){
+  return HOOK_TEMPLATES[Math.abs(seed) % HOOK_TEMPLATES.length](text);
+}
+function shortenCardHeadline(){
+  const n = window.__storyboardSelectedCard;
+  const before = snapshotCardCopy(n);
+  const fields = ensureCardCopyFields(n);
+  const headline = fields.find(f => f.key === 'headline');
+  headline.text = shortenText(headline.text);
+  pushCardCopyUndoSnapshot(n, before);
+  renderCardCopyFields(n);
+  updateStoryboardTileCopyOverlay(n);
+  addChatMsg('ai', `<span class="tag">AI</span>Shortened the headline for Card ${n}.`);
+  renderStoryboardQuickChips();
+}
+// Targets whichever non-headline field is currently on for this card — Subhead on the first
+// card, Body on middle cards, Call to action on the last card — since only one of them is ever
+// active at once (see ensureCardCopyFields).
+function hookifyCardSecondaryField(){
+  const n = window.__storyboardSelectedCard;
+  const fields = ensureCardCopyFields(n);
+  const secondary = fields.find(f => f.key !== 'headline' && f.on && f.text);
+  if(!secondary) return;
+  const before = snapshotCardCopy(n);
+  secondary.text = hookifyText(secondary.text, n + 1);
+  pushCardCopyUndoSnapshot(n, before);
+  renderCardCopyFields(n);
+  updateStoryboardTileCopyOverlay(n);
+  addChatMsg('ai', `<span class="tag">AI</span>Made the ${secondary.label.toLowerCase()} more engaging for Card ${n}.`);
+  renderStoryboardQuickChips();
 }
 
 // =====================================================================
-// SIZE VARIATIONS (post-generate) — a modal opened via "+ Size variations"
-// next to the Storyboard title. One tab per completed variation set (named
-// by ratio), a trailing "+" tab to start another, and a "new" tab that
-// lets you pick any number of cards (individually or all at once) plus a
-// ratio not already generated. Every result stays viewable/downloadable
-// via its tab — originals in the main canvas are never touched.
+// PREVIEW STAGE — settled "here's what you're about to publish" review,
+// reached once every card in Storyboard has an image. Read-only view of
+// the same per-card data Storyboard edits (copy fields, description,
+// image prompt); "Edit in Storyboard" jumps back to that card's editor
+// instead of duplicating the edit/regenerate machinery here.
 // =====================================================================
-const SIZE_VAR_CREDIT_PER_CARD = 5;
-const ALL_RATIOS = ['9:16', '1:1', '4:5'];
-window.__sizeVarSets = []; // { id, ratio, cards:[n,...] }
-window.__sizeVarActiveTab = 'new'; // 'new' | a set's id
-window.__sizeVarSelectedCards = new Set();
-
-function availableSizeVarRatios(){
-  const used = new Set([window.__carouselRatio, ...window.__sizeVarSets.map(s => s.ratio)]);
-  return ALL_RATIOS.filter(r => !used.has(r));
+function renderPreview(){
+  renderPreviewGrid();
+  buildPreviewCardNav();
+  renderPreviewEditorPanels();
+  selectPreviewCard(window.__storyboardSelectedCard || 1);
 }
-function openSizeVarModal(){
-  if(!window.__sizeVarSets.length) window.__sizeVarActiveTab = 'new';
-  document.getElementById('storyboardMainStage').style.display = 'none';
-  document.getElementById('sizeVarPanel').style.display = 'block';
-  renderSizeVarModalTabs();
-  renderSizeVarModalBody();
+function renderPreviewGrid(){
+  const n = window.__cardCount;
+  document.getElementById('previewGrid').innerHTML = Array.from({length: n}, (_, i) => renderPreviewTile(i + 1)).join('');
 }
-function closeSizeVarModal(){
-  document.getElementById('sizeVarPanel').style.display = 'none';
-  document.getElementById('storyboardMainStage').style.display = 'flex';
-}
-function selectSizeVarTab(tab){
-  window.__sizeVarActiveTab = tab;
-  renderSizeVarModalTabs();
-  renderSizeVarModalBody();
-}
-function renderSizeVarModalTabs(){
-  const tabsHtml = window.__sizeVarSets.map(s => `
-    <div class="sizevar-tab ${window.__sizeVarActiveTab === s.id ? 'active' : ''}" onclick="selectSizeVarTab('${s.id}')">${s.ratio}</div>
-  `).join('');
-  document.getElementById('sizeVarModalTabs').innerHTML = `
-    ${tabsHtml}
-    <div class="sizevar-tab sizevar-tab-add ${window.__sizeVarActiveTab === 'new' ? 'active' : ''}" onclick="selectSizeVarTab('new')" title="Create another size variation">+</div>`;
-}
-function renderSizeVarModalBody(){
-  const body = document.getElementById('sizeVarModalBody');
-  if(window.__sizeVarActiveTab === 'new'){
-    body.innerHTML = renderSizeVarCreatePanel();
-    renderSizeVarCardGrid();
-    updateSizeVarCost();
-  } else {
-    const set = window.__sizeVarSets.find(s => s.id === window.__sizeVarActiveTab);
-    body.innerHTML = set ? renderSizeVarSetView(set) : '';
-  }
-}
-function renderSizeVarCreatePanel(){
-  const ratios = availableSizeVarRatios();
-  if(!ratios.length){
-    return `<p class="sizevar-empty-hint">All available ratios for this carousel have already been generated.</p>`;
-  }
+function renderPreviewTile(n){
+  const isActive = n === window.__storyboardSelectedCard;
   return `
-    <div class="sizevar-create-row">
-      <label class="scene-desc-label" style="margin:0;">Cards</label>
-      <button type="button" class="sizevar-selectall-btn" id="sizeVarSelectAllBtn" onclick="toggleSizeVarSelectAll()"></button>
-    </div>
-    <div class="sizevar-card-grid" id="sizeVarCardGrid"></div>
-    <div class="sizevar-ratio-row">
-      <div class="size-var-field">
-        <label>New ratio</label>
-        <select class="size-var-select" id="sizeVarRatio" onchange="updateSizeVarCost()">
-          ${ratios.map(r => `<option value="${r}">${r}</option>`).join('')}
-        </select>
+    <div class="storyboard-tile ready${isActive ? ' active' : ''}" data-card="${n}" id="previewTile${n}" onclick="selectPreviewCard(${n})">
+      <div class="storyboard-tile-preview">
+        <div class="storyboard-tile-overlay-top">
+          <span></span>
+          <button type="button" class="storyboard-tile-regen-btn" onclick="event.stopPropagation(); downloadCard(${n})" title="Download Card ${n}">⬇</button>
+        </div>
       </div>
-    </div>
-    <div class="sizevar-cost-row">
-      <span class="sizevar-cost-text" id="sizeVarCost"></span>
-      <button class="btn btn-dark" id="sizeVarGenerateBtn" onclick="generateSizeVariationSet()">Generate</button>
     </div>`;
 }
-function renderSizeVarCardGrid(){
-  const grid = document.getElementById('sizeVarCardGrid');
-  if(!grid) return;
+function buildPreviewCardNav(){
   const n = window.__cardCount;
-  grid.innerHTML = Array.from({length: n}, (_, i) => {
+  const buttons = Array.from({length: n}, (_, i) => {
     const num = i + 1;
-    const selected = window.__sizeVarSelectedCards.has(num);
+    return `<div class="card-nav-btn${num === window.__storyboardSelectedCard ? ' active' : ''}" data-target="${num}" onclick="selectPreviewCard(${num})">${num}</div>`;
+  }).join('');
+  document.getElementById('previewCardNav').innerHTML = `<span class="storyboard-nav-label">Card</span>${buttons}`;
+}
+function previewCopyFieldsHtml(n){
+  const fields = ensureCardCopyFields(n);
+  return fields.map(f => `
+    <div class="copy-field ${f.on ? '' : 'off'}" data-key="${f.key}">
+      <div class="copy-field-body">
+        <span class="copy-field-label">${f.label}</span>
+        <input class="copy-field-input" value="${f.text.replace(/"/g,'&quot;')}" placeholder="Not set" disabled>
+      </div>
+      <button type="button" class="field-switch ${f.on ? 'on' : ''}" disabled><span class="knob"></span></button>
+    </div>`).join('');
+}
+function renderPreviewEditorPanels(){
+  const n = window.__cardCount;
+  document.getElementById('previewEditorPanel').innerHTML = Array.from({length: n}, (_, i) => {
+    const num = i + 1;
     return `
-      <div class="sizevar-card-thumb${selected ? ' selected' : ''}" onclick="toggleSizeVarCard(${num})">
-        ${selected ? '<span class="sizevar-card-thumb-check">✓</span>' : ''}
-        <span class="sizevar-card-thumb-label">Card ${num}</span>
+      <div class="storyboard-card-editor" id="previewCardEditor${num}" style="${num === 1 ? '' : 'display:none;'}">
+        <div class="copy-field-header-row">
+          <span class="copy-field-section-label">On-card text</span>
+          <button type="button" class="copy-edit-btn" onclick="editCardFromPreview(${num})">✎ Edit in Storyboard</button>
+        </div>
+        <div class="copy-field-list locked">${previewCopyFieldsHtml(num)}</div>
+        <label class="scene-desc-label">Scene &amp; background description</label>
+        <textarea class="story-desc-input" disabled>${escapeHtml(window.__cardDescriptions[num] || '')}</textarea>
+        <div class="card-prompt-block visible">
+          <label class="scene-desc-label">Image prompt</label>
+          <textarea class="card-prompt-text" disabled>${escapeHtml(ensureCardImagePrompt(num))}</textarea>
+        </div>
       </div>`;
   }).join('');
-  updateSizeVarSelectAllBtn();
 }
-function toggleSizeVarCard(n){
-  if(window.__sizeVarSelectedCards.has(n)) window.__sizeVarSelectedCards.delete(n);
-  else window.__sizeVarSelectedCards.add(n);
-  renderSizeVarCardGrid();
-  updateSizeVarCost();
+function selectPreviewCard(n){
+  n = Number(n);
+  window.__storyboardSelectedCard = n;
+  document.querySelectorAll('#previewGrid .storyboard-tile').forEach(t => t.classList.toggle('active', Number(t.dataset.card) === n));
+  document.querySelectorAll('#previewCardNav .card-nav-btn').forEach(b => b.classList.toggle('active', Number(b.dataset.target) === n));
+  document.querySelectorAll('#previewEditorPanel .storyboard-card-editor').forEach(e => e.style.display = 'none');
+  const editor = document.getElementById('previewCardEditor' + n);
+  if(editor) editor.style.display = 'block';
+  const tile = document.getElementById('previewTile' + n);
+  if(tile) tile.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
 }
-function toggleSizeVarSelectAll(){
-  if(window.__sizeVarSelectedCards.size === window.__cardCount) window.__sizeVarSelectedCards.clear();
-  else window.__sizeVarSelectedCards = new Set(Array.from({length: window.__cardCount}, (_, i) => i + 1));
-  renderSizeVarCardGrid();
-  updateSizeVarCost();
+function editCardFromPreview(n){
+  window.__storyboardSelectedCard = Number(n);
+  backToStoryboard();
+  selectStoryboardCard(n);
 }
-function updateSizeVarSelectAllBtn(){
-  const btn = document.getElementById('sizeVarSelectAllBtn');
-  if(btn) btn.textContent = window.__sizeVarSelectedCards.size === window.__cardCount ? 'Clear all' : 'Select all';
+function downloadCard(n){
+  alert(`This is a prototype — in the real product this downloads Card ${n}'s image.`);
 }
-function updateSizeVarCost(){
-  const ratioEl = document.getElementById('sizeVarRatio');
-  const costEl = document.getElementById('sizeVarCost');
-  const genBtn = document.getElementById('sizeVarGenerateBtn');
-  if(!ratioEl || !costEl) return;
-  const count = window.__sizeVarSelectedCards.size;
-  if(!count){
-    costEl.textContent = 'Select at least one card';
-    genBtn.disabled = true;
-    return;
-  }
-  const credits = count * SIZE_VAR_CREDIT_PER_CARD;
-  costEl.innerHTML = `${count} card${count > 1 ? 's' : ''} · ${ratioEl.value} · <b>⚡${credits}</b>`;
-  genBtn.disabled = false;
+function downloadAllCards(){
+  alert(`This is a prototype — in the real product this downloads all ${window.__cardCount} cards as a zip.`);
 }
-function generateSizeVariationSet(){
-  const ratio = document.getElementById('sizeVarRatio').value;
-  const cards = Array.from(window.__sizeVarSelectedCards).sort((a, b) => a - b);
-  if(!cards.length) return;
-  const btn = document.getElementById('sizeVarGenerateBtn');
-  btn.disabled = true;
-  btn.textContent = 'Generating…';
+// Folds a free-text style request into a card's prompt as a trailing "Style note", replacing
+// any previous note rather than stacking them indefinitely.
+function appendStyleNoteToPrompt(n, note){
+  const base = ensureCardImagePrompt(n).replace(/\s*Style note:.*$/i, '');
+  const updated = `${base} Style note: ${note}.`;
+  window.__cardImagePrompts[n] = updated;
+  const ta = document.getElementById('cardImagePrompt' + n);
+  if(ta) ta.value = updated;
+}
+// Chat-driven regeneration: "card 3 ..." targets one card's prompt + regenerates just that
+// card; anything else is treated as a style note for the whole set and regenerates everyone.
+function handleStoryboardStyleRequest(text){
+  const n = window.__cardCount;
+  const cardMatch = text.match(/card\s*(\d+)/i);
   setTimeout(() => {
-    const id = 'sv' + Date.now();
-    window.__sizeVarSets.push({ id, ratio, cards });
-    window.__sizeVarActiveTab = id;
-    renderSizeVarModalTabs();
-    renderSizeVarModalBody();
-  }, 1400);
+    if(cardMatch){
+      const num = Math.min(Math.max(parseInt(cardMatch[1], 10), 1), n);
+      const note = text.replace(/card\s*\d+[,:\s-]*/i, '').trim() || text;
+      appendStyleNoteToPrompt(num, note);
+      addChatMsg('ai', `<span class="tag">AI</span>Got it — regenerating Card ${num} with that.`);
+      regenerateCard(num);
+    } else {
+      for(let i = 1; i <= n; i++) appendStyleNoteToPrompt(i, text);
+      addChatMsg('ai', `<span class="tag">AI</span>Got it — regenerating all ${n} images with that style.`);
+      regenerateAllCardsWithStyle();
+    }
+  }, 500);
 }
-function renderSizeVarSetView(set){
-  return `
-    <div class="sizevar-set-view-title">${set.ratio} · ${set.cards.length} card${set.cards.length > 1 ? 's' : ''}</div>
-    <div class="sizevar-set-grid">
-      ${set.cards.map(num => `
-        <div class="sizevar-set-thumb" style="aspect-ratio:${set.ratio.replace(':', '/')};">
-          <span class="sizevar-set-thumb-label">Card ${num}</span>
-          <button type="button" class="sizevar-download-btn" onclick="downloadSizeVarImage('${set.id}', ${num})">⬇ Download</button>
-        </div>
-      `).join('')}
-    </div>`;
-}
-function downloadSizeVarImage(setId, cardNum){
-  const set = window.__sizeVarSets.find(s => s.id === setId);
-  if(!set) return;
-  const [rw, rh] = set.ratio.split(':').map(Number);
-  const scale = 90;
-  const canvas = document.createElement('canvas');
-  canvas.width = rw * scale;
-  canvas.height = rh * scale;
-  const ctx = canvas.getContext('2d');
-  const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-  grad.addColorStop(0, '#a8cbff');
-  grad.addColorStop(1, '#ed7797');
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = 'rgba(255,255,255,0.95)';
-  ctx.font = `bold ${Math.round(scale * 0.32)}px sans-serif`;
-  ctx.fillText(`Card ${cardNum} · ${set.ratio}`, 16, canvas.height - 18);
-  const a = document.createElement('a');
-  a.href = canvas.toDataURL('image/png');
-  a.download = `card-${cardNum}-${set.ratio.replace(':', 'x')}.png`;
-  a.click();
-}
+
 
 // ---- init ----
 setCharMode('with'); // matches the "With Character" chip that's active by default in the HTML

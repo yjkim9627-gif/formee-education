@@ -106,6 +106,7 @@
   .prompt-chips{display:flex; gap:8px;}
   .prompt-chip{border:1px solid var(--color-neutral-400); border-radius:8px; padding:7px 12px 7px 10px; font-size:14px; font-weight:500; color:var(--color-neutral-700); display:flex; align-items:center; gap:5px;}
   .prompt-chip .ic{width:16px; height:16px; border-radius:3px; background:var(--color-neutral-400);}
+  .ic-svg{flex-shrink:0; display:inline-block;}
   .prompt-chip.clickable{cursor:pointer;}
   .prompt-chip.clickable .chevron{font-size:9px; color:var(--color-neutral-500); margin-left:1px;}
   .prompt-chip-wrap{position:relative;}
@@ -133,11 +134,19 @@
   .char-grid{display:flex; gap:12px; overflow-x:auto; padding-bottom:4px;}
   .char-card{flex-shrink:0; border:1px solid var(--color-neutral-400); border-radius:8px; cursor:pointer; background:#fff; padding:8px 8px 4px;}
   .char-card.selected{border-color:var(--color-neutral-500); background:var(--color-neutral-100);}
-  .char-card .thumb{width:88px; height:88px; border-radius:6px; background:linear-gradient(135deg,var(--color-neutral-300),var(--color-neutral-150));}
+  .char-card .thumb{width:88px; height:88px; border-radius:6px; background:linear-gradient(135deg,var(--color-neutral-300),var(--color-neutral-150)) center/cover;}
   .char-card.new{border-style:dashed;}
   .char-card.new .thumb{display:flex; align-items:center; justify-content:center; font-size:20px; color:var(--color-neutral-400); background:var(--color-neutral-75); border:1px solid var(--color-neutral-300); border-style:solid;}
   .char-card .name{padding:6px 4px 0; font-size:13px; text-align:center; color:var(--color-neutral-700); font-weight:500;}
   .char-card.selected .name{color:var(--color-neutral-900);}
+  /* Second row of style variations for whichever character is selected — mirrors the main
+     char-grid but each card's thumb is taller (matches Figma's "X's styles" sub-panel). */
+  .char-styles-panel{margin-top:16px; display:none;}
+  .char-styles-panel.show{display:block;}
+  .char-styles-header{display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;}
+  .char-styles-title{display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:var(--color-neutral-800);}
+  .char-styles-title .mini-avatar{width:20px; height:20px; border-radius:999px; background:var(--color-neutral-300) center/cover;}
+  .char-card .thumb.tall{height:108px;}
   .char-divider{height:1px; background:var(--color-neutral-200); width:100%; margin:32px 0;}
   .appear-label{font-size:14px; font-weight:600; color:var(--color-neutral-800); margin:0 0 12px;}
   .appear-label .sub{font-weight:400; color:var(--color-neutral-500);}
@@ -351,32 +360,14 @@
   .scene-tile{border:1.5px solid var(--color-neutral-300); border-radius:12px; overflow:hidden; cursor:pointer; background:#fff; transition:border-color 0.15s, box-shadow 0.15s;}
   .scene-tile:hover{border-color:var(--color-neutral-450);}
   .scene-tile.active{border-color:var(--color-brand-primary); box-shadow:0 0 0 3px rgba(79,109,230,0.12);}
+  /* Still a plain placeholder box (no thumbnail is ever generated here) — kept only so the
+     Timeline scene grid keeps the same tall video-frame layout Studio's video-tile grid uses,
+     rather than collapsing into a flat text card. */
   .scene-tile-preview{width:100%; aspect-ratio:9/16; max-height:294px; background:linear-gradient(135deg,var(--color-neutral-200),var(--color-neutral-150)); position:relative; display:flex; align-items:flex-end; padding:10px;}
   .scene-grid.single-row .scene-tile-preview{max-height:none;}
   .scene-tile-badge{font-size:11px; font-weight:600; color:#fff; background:rgba(15,23,41,0.55); padding:4px 8px; border-radius:6px; backdrop-filter:blur(2px);}
   .scene-tile-line{padding:10px 12px; font-size:12.5px; color:var(--color-neutral-700); line-height:1.4; border-top:1px solid var(--color-neutral-200);}
-  .scene-tile-overlay-top{position:absolute; top:8px; left:8px; right:8px; display:flex; align-items:center; justify-content:space-between; gap:6px;}
-  .scene-tile-ready-badge{display:none; align-items:center; gap:3px; font-size:10px; font-weight:700; color:var(--color-badge-green-text); background:#fff; padding:3px 7px; border-radius:999px;}
-  .scene-tile.ready .scene-tile-ready-badge{display:inline-flex;}
-  .scene-tile-regen-btn{display:none; width:24px; height:24px; border-radius:999px; border:none; background:rgba(255,255,255,0.92); align-items:center; justify-content:center; font-size:12px; color:var(--color-neutral-700); cursor:pointer; margin-left:auto;}
-  .scene-tile-regen-btn:hover{background:#fff; color:var(--color-neutral-900);}
-  .scene-tile.ready .scene-tile-regen-btn{display:flex;}
-
-  /* -- per-scene thumbnail version history (only shown once a scene has been regenerated) -- */
-  .scene-tile-version-wrap{position:relative;}
-  .scene-tile-version-pill{display:none; align-items:center; gap:3px; font-size:10px; font-weight:700; color:var(--color-neutral-700); background:#fff; padding:3px 7px; border-radius:999px; cursor:pointer;}
-  .scene-tile-version-pill:hover{background:var(--color-neutral-100);}
-  .scene-tile-version-pill.show{display:inline-flex;}
-  .scene-version-popover{position:absolute; top:calc(100% + 6px); left:0; min-width:100px; background:#fff; border:1px solid var(--color-neutral-300); border-radius:8px; box-shadow:0 10px 28px rgba(15,23,41,.14); padding:4px; z-index:25;}
-  .scene-version-item{padding:6px 9px; border-radius:6px; font-size:11.5px; font-weight:600; color:var(--color-neutral-700); cursor:pointer; display:flex; align-items:center; justify-content:space-between; gap:8px;}
-  .scene-version-item:hover{background:var(--color-neutral-100);}
-  .scene-version-item.active{background:var(--color-neutral-100); color:var(--color-neutral-900);}
-  .scene-version-item .check{color:var(--color-brand-primary); font-size:11px; display:none;}
-  .scene-version-item.active .check{display:inline;}
-  .scene-tile.ready .scene-tile-preview{background:linear-gradient(135deg,var(--color-brand-primary-mid),var(--color-brand-accent));}
-  .scene-tile.generating .scene-tile-badge{display:none;}
   .spinner-mini{display:none; width:26px; height:26px; border-radius:999px; border:2.5px solid rgba(255,255,255,0.35); border-top-color:#fff; animation:spin .8s linear infinite; position:absolute; top:50%; left:50%; margin:-13px 0 0 -13px;}
-  .scene-tile.generating .spinner-mini{display:block;}
 
   .scene-editor-col{width:320px; flex-shrink:0; display:flex; flex-direction:column;}
   .scene-editor-panel{width:100%;}
@@ -440,13 +431,6 @@
   .timeline-cta .meta-text{text-align:left; line-height:1.4;}
   .timeline-cta .btn-dark{width:100%;}
 
-  .scene-prompt-block{margin-bottom:12px; display:none;}
-  .scene-prompt-block.visible{display:block;}
-  .scene-prompt-header-row{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:6px;}
-  .scene-prompt-header-row .scene-desc-label{margin-bottom:0;}
-  .prompt-regen-btn{display:inline-flex; align-items:center; gap:5px; border:1px solid var(--color-neutral-300); background:#fff; border-radius:999px; padding:5px 10px; font-size:11px; font-weight:600; color:var(--color-neutral-700); cursor:pointer; font-family:var(--font-family-text); flex-shrink:0;}
-  .prompt-regen-btn:hover{border-color:var(--color-neutral-450);}
-  .prompt-regen-btn .cost{color:var(--color-neutral-500); font-weight:700;}
   .scene-prompt-text{width:100%; border:1px solid var(--color-neutral-300); border-radius:7px; padding:10px 12px; font-size:12.5px; font-family:var(--font-family-text); color:var(--color-neutral-900); line-height:1.5; resize:vertical; min-height:70px; background:var(--color-neutral-50);}
   .scene-prompt-text:focus{background:#fff; border-color:var(--color-brand-primary); outline:none;}
 
@@ -455,7 +439,7 @@
   .video-tile{border:1.5px solid var(--color-neutral-300); border-radius:12px; overflow:hidden; cursor:pointer; background:#fff; transition:border-color 0.15s, box-shadow 0.15s;}
   .video-tile:hover{border-color:var(--color-neutral-450);}
   .video-tile.active{border-color:var(--color-brand-primary); box-shadow:0 0 0 3px rgba(79,109,230,0.12);}
-  .video-tile-preview{width:100%; aspect-ratio:9/16; max-height:294px; background:linear-gradient(135deg,var(--color-neutral-200),var(--color-neutral-150)); position:relative; display:flex; align-items:flex-end; padding:10px;}
+  .video-tile-preview{width:100%; aspect-ratio:9/16; max-height:294px; background:linear-gradient(135deg,var(--color-neutral-200),var(--color-neutral-150)); background-size:cover; background-position:center; background-repeat:no-repeat; position:relative; display:flex; align-items:flex-end; padding:10px;}
   .video-grid.single-row .video-tile-preview{max-height:none;}
   .video-tile.ready .video-tile-preview{background:linear-gradient(135deg,var(--color-brand-primary-mid),var(--color-brand-accent));}
   .video-tile-badge{font-size:11px; font-weight:600; color:#fff; background:rgba(15,23,41,0.55); padding:4px 8px; border-radius:6px; backdrop-filter:blur(2px);}
@@ -487,7 +471,7 @@
 
   .combine-result-view{display:none; flex:1; min-height:0;}
   .combine-canvas{align-items:center; justify-content:flex-start; gap:16px;}
-  .combine-player{position:relative; width:300px; aspect-ratio:9/16; border-radius:14px; background:linear-gradient(135deg,var(--color-brand-primary-mid),var(--color-brand-accent)); display:flex; align-items:center; justify-content:center;}
+  .combine-player{position:relative; width:300px; aspect-ratio:9/16; border-radius:14px; background:url('assets/video/scene1.png') center/cover no-repeat, linear-gradient(135deg,var(--color-brand-primary-mid),var(--color-brand-accent)); display:flex; align-items:center; justify-content:center;}
   .combine-player .video-play-btn{position:static; display:flex; transform:none;}
   .combine-player-duration{position:absolute; bottom:10px; left:10px; font-size:11px; font-weight:600; color:#fff; background:rgba(15,23,41,0.55); padding:4px 8px; border-radius:6px;}
   .combine-timeline-ticks{position:relative; width:300px; height:6px; background:var(--color-neutral-200); border-radius:999px;}
@@ -530,7 +514,7 @@
   @keyframes spin{to{transform:rotate(360deg);}}
 
   /* ============ EDITOR VIEW (Edit & Publish canvas editor) ============ */
-  .editor-view{display:none; flex:1; min-width:0; flex-direction:column; background:#fff;}
+  .editor-view{display:none; flex:1; min-width:0; flex-direction:column; background:#fff; position:relative;}
   .editor-view.active{display:flex;}
 
   .ed-topbar{height:56px; flex-shrink:0; border-bottom:1px solid var(--color-neutral-300); display:flex; align-items:center; gap:24px; padding:0 24px;}
@@ -720,6 +704,37 @@
   .pub-divider{height:1px; background:var(--color-neutral-200); margin:24px 0;}
   .pub-run-ad{display:flex; align-items:center; justify-content:space-between; gap:16px;}
   .pub-run-ad-sub{font-size:12px; color:var(--color-neutral-500); margin:4px 0 0;}
+  .pub-dest-handle{color:var(--color-neutral-500); font-weight:400;}
+
+  /* ---- Publish confirmation modal — "type the handle to confirm" per destination, since
+       going live is not reversible the way saving a draft is. Built on the shared modal.css
+       shell (.modal-overlay/.modal/.modal__*), with custom content below for the tabs/preview/
+       warning box. ---- */
+  .pub-confirm-modal{gap:var(--spacing-2xl); max-width:520px;}
+  .pub-confirm-tabs{display:flex; gap:4px; background:var(--color-neutral-100); border-radius:var(--radius-lg); padding:4px;}
+  .pub-confirm-tab{flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:10px 12px; border:none; border-radius:var(--radius-md); background:transparent; font-size:13.5px; font-weight:600; color:var(--color-neutral-600); cursor:pointer; font-family:var(--font-family-text);}
+  .pub-confirm-tab:hover{color:var(--color-neutral-900);}
+  .pub-confirm-tab.active{background:#fff; color:var(--color-neutral-900); box-shadow:0 1px 2px rgba(15,23,41,.1);}
+  .pub-confirm-tab .check{color:var(--color-badge-green-text);}
+  .pub-confirm-body{display:flex; flex-direction:column; gap:var(--spacing-xl);}
+  .pub-confirm-preview-row{display:flex; gap:14px; align-items:center; border:1px solid var(--color-neutral-250); border-radius:var(--radius-lg); padding:14px;}
+  .pub-confirm-thumb{width:72px; height:72px; border-radius:var(--radius-md); background:linear-gradient(135deg,var(--color-brand-primary-mid),var(--color-brand-accent)); flex-shrink:0;}
+  .pub-confirm-platform-label{font-size:11.5px; font-weight:700; letter-spacing:.03em; text-transform:uppercase; color:var(--color-brand-primary); margin-bottom:4px;}
+  .pub-confirm-handle{color:var(--color-brand-primary); font-weight:600; text-transform:none;}
+  .pub-confirm-format{font-size:13px; color:var(--color-neutral-600);}
+  .pub-confirm-warning-box{background:var(--color-brand-primary-light); border:1px solid var(--color-brand-primary-mid); border-radius:var(--radius-lg); padding:18px; display:flex; flex-direction:column; gap:10px;}
+  .pub-confirm-warning-box.done{background:var(--color-badge-green-bg, #eafaf1); border-color:var(--color-badge-green-text);}
+  .pub-confirm-warning-title{display:flex; align-items:center; gap:8px; font-size:14px; font-weight:700; color:var(--color-brand-primary); margin:0;}
+  .pub-confirm-warning-title.done{color:var(--color-badge-green-text);}
+  .pub-confirm-warning-text{font-size:12.5px; color:var(--color-neutral-700); line-height:1.55; margin:0;}
+  .pub-confirm-input{width:100%; border:1px solid var(--color-neutral-300); border-radius:var(--radius-md); padding:10px 12px; font-size:13.5px; font-family:var(--font-family-text); outline:none; background:#fff; color:var(--color-neutral-900);}
+  .pub-confirm-input:focus{border-color:var(--color-brand-primary);}
+  .pub-confirm-publish-btn{width:100%; justify-content:center; display:flex; align-items:center; gap:6px;}
+  .pub-confirm-publish-btn:disabled{opacity:.5; cursor:not-allowed;}
+  .pub-confirm-success{text-align:center; display:flex; flex-direction:column; align-items:center; gap:6px; padding:8px 0 4px;}
+  .pub-confirm-success-icon{font-size:32px;}
+  .pub-confirm-success-title{font-size:16px; font-weight:700; color:var(--color-neutral-900); margin:0;}
+  .pub-confirm-success-sub{font-size:13px; color:var(--color-neutral-600); margin:0;}
 </style>
 </head>
 <body>
@@ -801,10 +816,10 @@
           </div>
           <div class="prompt-bottom">
             <div class="prompt-chips">
-              <div class="prompt-chip"><div class="ic"></div>9:16</div>
+              <div class="prompt-chip"><svg class="ic-svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="3.5" y="1.5" width="9" height="13" rx="1.6" stroke="#8A93A8" stroke-width="1.4"/><path d="M6.5 12.3H9.5" stroke="#8A93A8" stroke-width="1.4" stroke-linecap="round"/></svg>9:16</div>
               <div class="prompt-chip-wrap" id="durationChipWrap">
                 <div class="prompt-chip clickable" onclick="toggleDurationPopover(event)">
-                  <div class="ic"></div><span id="durationChipText">8s</span><span class="chevron">▾</span>
+                  <svg class="ic-svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.3" stroke="#8A93A8" stroke-width="1.4"/><path d="M8 4.7V8L10.2 9.6" stroke="#8A93A8" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="durationChipText">8s</span><span class="chevron">▾</span>
                 </div>
                 <div class="duration-popover" id="durationPopover" style="display:none;">
                   <div class="duration-popover-label">Duration</div>
@@ -838,11 +853,33 @@
             </div>
             <div class="char-grid" id="charGrid">
               <div class="char-card new"><div class="thumb">+</div><div class="name">Create New</div></div>
-              <div class="char-card selected" onclick="selectChar(this)"><div class="thumb"></div><div class="name">Elena</div></div>
-              <div class="char-card" onclick="selectChar(this)"><div class="thumb"></div><div class="name">Milo</div></div>
-              <div class="char-card" onclick="selectChar(this)"><div class="thumb"></div><div class="name">Priya</div></div>
-              <div class="char-card" onclick="selectChar(this)"><div class="thumb"></div><div class="name">Maya</div></div>
-              <div class="char-card" onclick="selectChar(this)"><div class="thumb"></div><div class="name">Sofia</div></div>
+              <div class="char-card selected" onclick="selectChar(this,'elena')"><div class="thumb" style="background-image:url('assets/characters/elena.png')"></div><div class="name">Elena</div></div>
+              <div class="char-card" onclick="selectChar(this,'milo')"><div class="thumb" style="background-image:url('assets/characters/milo.jpeg')"></div><div class="name">Milo</div></div>
+              <div class="char-card" onclick="selectChar(this,'priya')"><div class="thumb" style="background-image:url('assets/characters/priya.png')"></div><div class="name">Priya</div></div>
+              <div class="char-card" onclick="selectChar(this,'monster')"><div class="thumb" style="background-image:url('assets/characters/monster.jpeg')"></div><div class="name">Monster</div></div>
+              <div class="char-card" onclick="selectChar(this,'maya')"><div class="thumb" style="background-image:url('assets/characters/maya.png')"></div><div class="name">Maya</div></div>
+              <div class="char-card" onclick="selectChar(this,'sofia')"><div class="thumb" style="background-image:url('assets/characters/sofia.png')"></div><div class="name">Sofia</div></div>
+              <div class="char-card" onclick="selectChar(this,'esther')"><div class="thumb" style="background-image:url('assets/characters/esther.jpeg')"></div><div class="name">Esther</div></div>
+            </div>
+
+            <!-- Style variations for whichever character is selected — only Elena has a style
+                 set in this prototype, matching the Figma reference; other characters simply
+                 hide this row (see selectChar()). -->
+            <div class="char-styles-panel show" id="charStylesPanel">
+              <div class="char-styles-header">
+                <div class="char-styles-title"><span class="mini-avatar" id="charStylesAvatar" style="background-image:url('assets/characters/elena.png')"></span><span id="charStylesLabel">Elena's styles</span></div>
+                <div class="see-all-link">See all →</div>
+              </div>
+              <div class="char-grid" id="charStylesGrid">
+                <div class="char-card new"><div class="thumb tall">+</div><div class="name">Create New</div></div>
+                <div class="char-card selected" onclick="selectCharStyle(this)"><div class="thumb tall" style="background-image:url('assets/characters/elena-styles/headshot.png')"></div><div class="name">Headshot</div></div>
+                <div class="char-card" onclick="selectCharStyle(this)"><div class="thumb tall" style="background-image:url('assets/characters/elena-styles/studio-portrait.png')"></div><div class="name">Studio Portrait</div></div>
+                <div class="char-card" onclick="selectCharStyle(this)"><div class="thumb tall" style="background-image:url('assets/characters/elena-styles/armchair-library.png')"></div><div class="name">Armchair Library</div></div>
+                <div class="char-card" onclick="selectCharStyle(this)"><div class="thumb tall" style="background-image:url('assets/characters/elena-styles/autumn-park.png')"></div><div class="name">Autumn Park</div></div>
+                <div class="char-card" onclick="selectCharStyle(this)"><div class="thumb tall" style="background-image:url('assets/characters/elena-styles/balcony-plants.png')"></div><div class="name">Balcony Plants</div></div>
+                <div class="char-card" onclick="selectCharStyle(this)"><div class="thumb tall" style="background-image:url('assets/characters/elena-styles/beige-blazer.png')"></div><div class="name">Beige Blazer</div></div>
+                <div class="char-card" onclick="selectCharStyle(this)"><div class="thumb tall" style="background-image:url('assets/characters/elena-styles/bright-hallway.png')"></div><div class="name">Bright Hallway</div></div>
+              </div>
             </div>
 
             <!-- Voice/appearance only applies to motion content — hidden entirely for Image post -->
@@ -1049,12 +1086,13 @@
             </div>
           </div>
 
-          <!-- SUB-STAGE: Timeline (thumbnail generation happens in-place here) -->
+          <!-- SUB-STAGE: Timeline (confirms per-segment dialogue + scene description only — video
+               generation happens directly on Video, grouped into 8s clips; see subStudio below) -->
           <div class="stage-sub" id="subTimeline" style="display:none;">
             <div class="stage-body">
             <div class="stage-body-inner">
               <h2 class="stage-title">Timeline</h2>
-              <p class="stage-sub" id="timelineStageSub">Confirm the dialogue and scene description for each segment, then generate thumbnails.</p>
+              <p class="stage-sub" id="timelineStageSub">Confirm the dialogue and scene description for each segment, then generate the video.</p>
 
               <div class="timeline-stage">
                 <div class="timeline-canvas">
@@ -1078,8 +1116,8 @@
                   <div class="scene-nav" id="segmentNav"></div>
                   <div class="scene-editor-panel" id="sceneEditorPanel"></div>
                   <div class="timeline-cta">
-                    <button class="btn btn-dark" id="timelineCtaBtn" onclick="generateThumbnails()">Generate thumbnails</button>
-                    <span class="meta-text" id="timelineCtaMeta">Regenerating a thumbnail once it is made will use credits</span>
+                    <button class="btn btn-dark" id="timelineCtaBtn" onclick="proceedToStudio()">Generate video</button>
+                    <span class="meta-text" id="timelineCtaMeta"></span>
                   </div>
                 </div>
               </div>
@@ -1092,7 +1130,7 @@
             <div class="stage-body">
             <div class="stage-body-inner">
               <h2 class="stage-title">Video</h2>
-              <p class="stage-sub" id="studioStageSub">Generate a video clip for each scene, then combine them into the final cut. The narration audio from Timeline carries over automatically.</p>
+              <p class="stage-sub" id="studioStageSub">Generate an 8-second video clip for each part of the video, then combine them into the final cut. The narration audio from Timeline carries over automatically.</p>
 
               <div class="timeline-stage">
                 <div class="timeline-canvas">
@@ -1476,6 +1514,25 @@
       <button class="ed-publish-btn" id="pubMainBtn" onclick="handlePublishMainAction()">⬆ Publish →</button>
     </div>
   </div>
+
+  <!-- Publish confirmation modal: going live isn't reversible the way a draft is, so each
+       selected platform gets its own "type the handle to confirm" unlock before it actually
+       posts. One tab per selected destination; a check mark lands on a tab once it's done. -->
+  <div class="modal-overlay" id="pubConfirmOverlay" style="display:none;" onclick="if(event.target===this) closePublishConfirmModal()">
+    <div class="modal modal--form pub-confirm-modal">
+      <button type="button" class="modal__close" onclick="closePublishConfirmModal()">✕</button>
+      <div class="modal__content">
+        <h2 class="modal__title">Publish to social</h2>
+        <p class="modal__body" id="pubConfirmSubtitle">Preview is live. Publishing requires typing the handle to confirm.</p>
+      </div>
+      <div class="pub-confirm-tabs" id="pubConfirmTabs"></div>
+      <div class="pub-confirm-body" id="pubConfirmBody"></div>
+      <div class="modal__footer" id="pubConfirmFooter">
+        <button type="button" class="btn btn-secondary" onclick="handlePublishConfirmSaveDraft()">✓ Save as draft instead</button>
+        <button type="button" class="btn btn-secondary" onclick="closePublishConfirmModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
   </div>
 </div>
 
@@ -1821,8 +1878,22 @@ function setCharMode(mode){
 function setCharAppear(mode){
   document.querySelectorAll('#charAppearToggle .seg-chip').forEach(c => c.classList.toggle('active', c.dataset.appear === mode));
 }
-function selectChar(el){
-  document.querySelectorAll('.char-card').forEach(c => c.classList.remove('selected'));
+// Only Elena has a downloaded style set in this prototype — selecting any other character
+// hides the styles sub-panel rather than showing empty/wrong photos.
+const CHAR_WITH_STYLES = { elena: { label: "Elena's styles", avatar: 'assets/characters/elena.png' } };
+function selectChar(el, charId){
+  document.querySelectorAll('#charGrid .char-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  const panel = document.getElementById('charStylesPanel');
+  const styles = CHAR_WITH_STYLES[charId];
+  panel.classList.toggle('show', !!styles);
+  if(styles){
+    document.getElementById('charStylesLabel').textContent = styles.label;
+    document.getElementById('charStylesAvatar').style.backgroundImage = `url('${styles.avatar}')`;
+  }
+}
+function selectCharStyle(el){
+  document.querySelectorAll('#charStylesGrid .char-card').forEach(c => c.classList.remove('selected'));
   el.classList.add('selected');
 }
 
@@ -1856,11 +1927,12 @@ function renderReferenceImages(){
       <span class="remove" onclick="removeReferenceImage(${n})">✕</span>
     </div>
   `).join('');
+  const refIcon = `<svg class="ic-svg" width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1.5" y="1.5" width="11" height="11" rx="1.6" stroke="currentColor" stroke-width="1.3"/><circle cx="5" cy="5.3" r="1.1" stroke="currentColor" stroke-width="1.1"/><path d="M2 10.3L5 7.6L7 9.2L9.5 6.6L12 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
   const fullHtml = chips + `
-    <div class="ref-image-add" onclick="addReferenceImage(this)"><div class="ic"></div><span>+ Reference</span></div>
+    <div class="ref-image-add" onclick="addReferenceImage(this)">${refIcon}<span>+ Reference</span></div>
   `;
   const compactHtml = chips + `
-    <div class="ref-image-add-compact" onclick="addReferenceImage(this)" title="Add reference image"><div class="ic"></div><span>+ Reference</span></div>
+    <div class="ref-image-add-compact" onclick="addReferenceImage(this)" title="Add reference image">${refIcon}<span>+ Reference</span></div>
   `;
   document.querySelectorAll('.reference-images-row').forEach(row => {
     row.innerHTML = row.classList.contains('compact') ? compactHtml : fullHtml;
@@ -2068,8 +2140,15 @@ function confirmScript(){
   showSub('timeline');
   renderTimelineScenes();
   document.getElementById('chatQuick').style.display = 'none';
-  document.getElementById('chatLog').innerHTML += '<div class="msg ai"><span class="tag">AI</span>Script confirmed. I\'ll split the 8 seconds into two 4-second segments and design the scenes.</div>';
-  appendChatCta('Next, let\'s generate a thumbnail for each scene.', '<button class="btn btn-dark" onclick="generateThumbnails()">Generate thumbnails →</button>');
+  const durationSec = window.__videoDuration || 8;
+  const sceneCount = getSceneCount();
+  document.getElementById('chatLog').innerHTML += `<div class="msg ai"><span class="tag">AI</span>Script confirmed. I'll split the ${durationSec} seconds into ${sceneCount} 4-second segments and design the scenes.</div>`;
+  const unitCount = getVideoUnitCount();
+  const totalCost = unitCount * VIDEO_COST_PER_UNIT;
+  const videoMsg = unitCount > 1
+    ? `Once you're happy with the scenes, I'll generate ${unitCount} 8-second video clips — the current minimum length — and combine them into your final ${durationSec}s video.`
+    : `Once you're happy with the scenes, I'll generate your ${durationSec}-second video.`;
+  appendChatCta(videoMsg, `<button class="btn btn-dark" onclick="proceedToStudio()">Generate video ⚡${totalCost} →</button>`);
 }
 
 // Distributes the approved full-script sentences across `count` scene slots —
@@ -2104,6 +2183,31 @@ const SCENE_TEMPLATES = [
 function getSceneCount(){
   const seconds = window.__videoDuration || 8;
   return Math.min(6, Math.max(1, Math.round(seconds / 4)));
+}
+// AI video generation currently has an 8-second minimum clip length, so actual video
+// generation is grouped into 8s units (each covering 2 consecutive 4s Timeline scenes) —
+// e.g. a 16s video generates as 2 clips, which then get combined into the final cut.
+function getVideoUnitCount(){
+  const seconds = window.__videoDuration || 8;
+  return Math.max(1, Math.round(seconds / 8));
+}
+function getVideoUnitScenes(unit){
+  return [unit * 2 - 1, unit * 2];
+}
+function getVideoUnitTimeLabel(unit){
+  const [first, last] = getVideoUnitScenes(unit);
+  const start = SCENE_TEMPLATES[first - 1]?.time.split('–')[0] || '';
+  const end = SCENE_TEMPLATES[last - 1]?.time.split('–')[1] || SCENE_TEMPLATES[first - 1]?.time.split('–')[1] || '';
+  return `${start}–${end}`;
+}
+// Tells the user, right in Timeline, which 8s video clip this 4s scene will end up in —
+// since scenes stay 4s for narration pacing but video generation groups pairs of them.
+function timelineSceneNoteText(n){
+  const totalUnits = getVideoUnitCount();
+  if(totalUnits <= 1) return 'This scene will be generated as part of a single 8-second video.';
+  const unit = Math.ceil(n / 2);
+  const partner = n % 2 === 1 ? n + 1 : n - 1;
+  return `Paired with Scene ${partner} into one 8-second video (Video ${unit} of ${totalUnits}).`;
 }
 function toggleDurationPopover(e){
   e.stopPropagation();
@@ -2149,21 +2253,11 @@ function renderTimelineScenes(){
   document.getElementById('sceneGrid').innerHTML = scenes.map((s, i) => `
     <div class="scene-tile${i === 0 ? ' active' : ''}" data-scene="${i + 1}" id="sceneTile${i + 1}" onclick="selectScene(${i + 1})">
       <div class="scene-tile-preview">
-        <div class="scene-tile-overlay-top">
-          <span class="scene-tile-ready-badge">✓ Ready</span>
-          <div class="scene-tile-version-wrap">
-            <span class="scene-tile-version-pill" id="sceneVersionPill${i + 1}" onclick="event.stopPropagation(); toggleSceneVersionPopover(${i + 1})">v1</span>
-            <div class="scene-version-popover" id="sceneVersionPopover${i + 1}" style="display:none;" onclick="event.stopPropagation();"></div>
-          </div>
-          <button class="scene-tile-regen-btn" onclick="event.stopPropagation(); regenerateScene(${i + 1})" title="Regenerate · 1 credit">↻</button>
-        </div>
-        <div class="spinner-mini"></div>
         <span class="scene-tile-badge">Scene ${i + 1} · ${s.time}</span>
       </div>
       <div class="scene-tile-line" id="tileLine${i + 1}">${escapeHtml(getSceneScript(i + 1))}</div>
     </div>
   `).join('');
-  scenes.forEach((s, i) => updateSceneVersionPill(i + 1));
 
   document.getElementById('sceneEditorPanel').innerHTML = scenes.map((s, i) => `
     <div class="scene-card scene-editor" id="sceneEditor${i + 1}" style="${i === 0 ? '' : 'display:none;'}">
@@ -2177,14 +2271,7 @@ function renderTimelineScenes(){
           </div>
         </div>
       </div>
-      <div class="scene-prompt-block" id="scenePromptBlock${i + 1}">
-        <div class="scene-prompt-header-row">
-          <label class="scene-desc-label">Image prompt</label>
-          <button class="prompt-regen-btn" onclick="regenerateScene(${i + 1})">↻ Regenerate <span class="cost">⚡15</span></button>
-        </div>
-        <textarea class="scene-prompt-text" id="scenePrompt${i + 1}"></textarea>
-      </div>
-      <div class="scene-note">Scene (designed) · AI automatically builds a scene to match this line</div>
+      <div class="scene-note">${escapeHtml(timelineSceneNoteText(i + 1))}</div>
     </div>
   `).join('');
 
@@ -2476,137 +2563,41 @@ function playVoiceButton(btn, justGenerated, onDone){
   }, 1300);
 }
 
-// ---- Thumbnail generation happens directly on the Timeline scene tiles ----
-// Turns the user's scene description into an image-generation prompt.
-function buildImagePrompt(desc){
-  desc = desc.trim().replace(/\.+$/, '');
-  return `${desc}. Realistic beauty UGC style — natural daylight, shallow depth of field, handheld camera feel, true-to-life skin texture and color.`;
-}
-
-function generateThumbnails(){
-  document.querySelectorAll('#subTimeline .scene-tile').forEach((t, i) => {
-    t.classList.add('generating');
-    t.classList.remove('ready');
-    const n = i + 1;
-    const descEl = document.querySelector(`#sceneEditor${n} .scene-desc`);
-    const promptBlock = document.getElementById(`scenePromptBlock${n}`);
-    const promptText = document.getElementById(`scenePrompt${n}`);
-    if(descEl && promptText && promptBlock){
-      promptText.value = buildImagePrompt(descEl.value);
-      promptBlock.classList.add('visible');
-    }
-  });
-  updateTimelineCta();
-  showQueuePanel('#subTimeline .scene-tile', 'thumbnail generation', () => {
-    document.querySelectorAll('#subTimeline .scene-tile').forEach(t => { t.classList.remove('generating'); t.classList.add('ready'); });
-    updateTimelineCta();
-    const total = document.querySelectorAll('#subTimeline .scene-tile').length * VIDEO_COST_PER_SCENE;
-    appendChatCta('All thumbnails are ready.', `<button class="btn btn-dark" onclick="proceedToStudio()">Generate video ⚡${total} →</button>`);
-  });
-}
-function regenerateScene(n){
-  const tile = document.getElementById('sceneTile' + n);
-  if(!tile) return;
-  tile.classList.remove('ready');
-  tile.classList.add('generating');
-  updateTimelineCta();
-  setTimeout(() => {
-    tile.classList.remove('generating');
-    tile.classList.add('ready');
-    ensureSceneThumbHistory(n);
-    window.__sceneThumbHistory[n].push({ label: 'v' + (window.__sceneThumbHistory[n].length + 1) });
-    window.__sceneThumbActive[n] = window.__sceneThumbHistory[n].length - 1;
-    updateSceneVersionPill(n);
-    updateTimelineCta();
-  }, 1400);
-}
-
-// ---- Per-scene thumbnail version history (each regenerate adds a version; pick any to make it active) ----
-window.__sceneThumbHistory = window.__sceneThumbHistory || {};
-window.__sceneThumbActive = window.__sceneThumbActive || {};
-
-function ensureSceneThumbHistory(n){
-  if(!window.__sceneThumbHistory[n]){
-    window.__sceneThumbHistory[n] = [{ label: 'v1' }];
-    window.__sceneThumbActive[n] = 0;
-  }
-}
-function updateSceneVersionPill(n){
-  ensureSceneThumbHistory(n);
-  const pill = document.getElementById('sceneVersionPill' + n);
-  if(!pill) return;
-  const hist = window.__sceneThumbHistory[n];
-  pill.classList.toggle('show', hist.length > 1);
-  pill.textContent = hist[window.__sceneThumbActive[n]].label;
-}
-function toggleSceneVersionPopover(n){
-  document.querySelectorAll('.scene-version-popover').forEach(p => { if(p.id !== 'sceneVersionPopover' + n) p.style.display = 'none'; });
-  renderSceneVersionPopover(n);
-  const pop = document.getElementById('sceneVersionPopover' + n);
-  pop.style.display = pop.style.display === 'block' ? 'none' : 'block';
-}
-document.addEventListener('click', (e) => {
-  if(!e.target.closest('.scene-tile-version-wrap')) document.querySelectorAll('.scene-version-popover').forEach(p => p.style.display = 'none');
-});
-function renderSceneVersionPopover(n){
-  const hist = window.__sceneThumbHistory[n];
-  const activeIdx = window.__sceneThumbActive[n];
-  document.getElementById('sceneVersionPopover' + n).innerHTML = hist.map((h, i) => `
-    <div class="scene-version-item${i === activeIdx ? ' active' : ''}" onclick="selectSceneThumbVersion(${n}, ${i})">
-      <span>${h.label}</span><span class="check">✓</span>
-    </div>
-  `).join('');
-}
-function selectSceneThumbVersion(n, i){
-  window.__sceneThumbActive[n] = i;
-  updateSceneVersionPill(n);
-  document.getElementById('sceneVersionPopover' + n).style.display = 'none';
-}
+// ---- Timeline CTA: no generation happens here anymore — confirming scene content moves
+// straight to Video, where actual generation runs in 8s units (see startVideoGeneration). ----
 function updateTimelineCta(){
-  const tiles = document.querySelectorAll('#subTimeline .scene-tile');
-  const readyTiles = document.querySelectorAll('#subTimeline .scene-tile.ready');
-  const generatingTiles = document.querySelectorAll('#subTimeline .scene-tile.generating');
   const btn = document.getElementById('timelineCtaBtn');
   const meta = document.getElementById('timelineCtaMeta');
   if(!btn) return;
-  if(tiles.length > 0 && readyTiles.length === tiles.length){
-    const total = tiles.length * VIDEO_COST_PER_SCENE;
-    btn.textContent = `Generate video ⚡${total}`;
-    btn.title = `${tiles.length} scene${tiles.length > 1 ? 's' : ''} × ⚡${VIDEO_COST_PER_SCENE}`;
-    btn.disabled = false;
-    btn.onclick = proceedToStudio;
-    meta.style.display = 'none';
-    document.getElementById('tabStudio').classList.remove('locked');
-  } else if(generatingTiles.length > 0){
-    btn.textContent = 'Generating…';
-    btn.title = '';
-    btn.disabled = true;
-    meta.style.display = '';
-    meta.textContent = 'Generating thumbnails…';
-  } else {
-    btn.textContent = 'Generate thumbnails';
-    btn.title = '';
-    btn.disabled = false;
-    btn.onclick = generateThumbnails;
-    meta.style.display = '';
-    meta.textContent = 'Regenerating a thumbnail once it is made will use credits';
-  }
+  const unitCount = getVideoUnitCount();
+  const total = unitCount * VIDEO_COST_PER_UNIT;
+  btn.textContent = `Generate video ⚡${total}`;
+  btn.title = unitCount > 1 ? `${unitCount} × 8s clips × ⚡${VIDEO_COST_PER_UNIT}` : `⚡${VIDEO_COST_PER_UNIT}`;
+  btn.disabled = false;
+  btn.onclick = proceedToStudio;
+  meta.style.display = '';
+  meta.textContent = unitCount > 1
+    ? `Generates ${unitCount} 8-second clips and combines them into your final video.`
+    : 'Generates your video.';
 }
 function proceedToStudio(){
   document.getElementById('tabTimeline').innerHTML = '<span class="check">✓</span> Timeline';
-  document.getElementById('chatLog').innerHTML += '<div class="msg ai"><span class="tag">AI</span>All scene thumbnails are ready. Generating your scene videos now.</div>';
+  document.getElementById('tabStudio').classList.remove('locked');
+  const unitCount = getVideoUnitCount();
+  document.getElementById('chatLog').innerHTML += `<div class="msg ai"><span class="tag">AI</span>${unitCount > 1 ? `Generating ${unitCount} 8-second video clips now.` : 'Generating your video now.'}</div>`;
   showSub('studio');
   startVideoGeneration();
 }
 
 // ---- Queue panel (simulates background generation jobs) ----
-function showQueuePanel(tileSelector, jobLabel, onDone){
+function showQueuePanel(tileSelector, jobLabel, onDone, itemName){
+  itemName = itemName || 'Scene';
   const scenes = document.querySelectorAll(tileSelector);
   const jobsHTML = [...scenes].map((c, i) => `
     <div class="queue-job" data-job="${i}">
       <div class="thumb"></div>
       <div class="queue-job-info">
-        <div class="queue-job-title">Scene ${i + 1} ${jobLabel}</div>
+        <div class="queue-job-title">${itemName} ${i + 1} ${jobLabel}</div>
         <div class="queue-job-status"><span class="spin"></span>WORKING</div>
       </div>
     </div>
@@ -2628,11 +2619,10 @@ function showQueuePanel(tileSelector, jobLabel, onDone){
 }
 
 // ---- Voice + Video stage: per-scene video generation, then free combine ----
-const VIDEO_COST_PER_SCENE = 175;
+const VIDEO_COST_PER_UNIT = 175;
 
 function startVideoGeneration(){
-  const count = getSceneCount();
-  const scenes = SCENE_TEMPLATES.slice(0, count);
+  const count = getVideoUnitCount();
 
   document.getElementById('combineResultView').style.display = 'none';
   document.querySelector('#subStudio .timeline-stage').style.display = 'flex';
@@ -2643,28 +2633,28 @@ function startVideoGeneration(){
   const grid = document.getElementById('videoGrid');
   grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
   grid.classList.toggle('single-row', rows <= 1);
-  grid.innerHTML = scenes.map((s, i) => `
+  grid.innerHTML = Array.from({ length: count }, (_, i) => `
     <div class="video-tile generating${i === 0 ? ' active' : ''}" data-scene="${i + 1}" id="videoTile${i + 1}" onclick="selectVideoScene(${i + 1})">
       <div class="video-tile-preview">
         <div class="video-tile-overlay-top">
           <span class="video-tile-ready-badge">✓ Ready</span>
-          <button class="video-tile-regen-btn" onclick="event.stopPropagation(); regenerateVideoScene(${i + 1})" title="Regenerate · ⚡${VIDEO_COST_PER_SCENE}">↻</button>
+          <button class="video-tile-regen-btn" onclick="event.stopPropagation(); regenerateVideoScene(${i + 1})" title="Regenerate · ⚡${VIDEO_COST_PER_UNIT}">↻</button>
         </div>
         <div class="spinner-mini"></div>
         <button class="video-play-btn" onclick="event.stopPropagation(); playVideoScene(${i + 1})" title="Play">▶</button>
-        <span class="video-tile-badge">Scene ${i + 1} · ${s.time}</span>
+        <span class="video-tile-badge">Video ${i + 1} · ${getVideoUnitTimeLabel(i + 1)}</span>
       </div>
     </div>
   `).join('');
 
-  document.getElementById('videoEditorPanel').innerHTML = scenes.map((s, i) => `
+  document.getElementById('videoEditorPanel').innerHTML = Array.from({ length: count }, (_, i) => `
     <div class="video-scene-card" id="videoSceneEditor${i + 1}" style="${i === 0 ? '' : 'display:none;'}">
       <div class="video-scene-header-row">
-        <div class="scene-time"><span class="dot"></span>${s.time}</div>
+        <div class="scene-time"><span class="dot"></span>${getVideoUnitTimeLabel(i + 1)} · Scenes ${getVideoUnitScenes(i + 1).join('–')}</div>
       </div>
       <label class="scene-desc-label">Video prompt</label>
       <textarea class="scene-prompt-text" id="videoPrompt${i + 1}">${escapeHtml(buildVideoPrompt(i + 1))}</textarea>
-      <button class="video-regen-btn" onclick="regenerateVideoScene(${i + 1})">🔁 Regenerate <span class="cost">⚡${VIDEO_COST_PER_SCENE}</span></button>
+      <button class="video-regen-btn" onclick="regenerateVideoScene(${i + 1})">🔁 Regenerate <span class="cost">⚡${VIDEO_COST_PER_UNIT}</span></button>
     </div>
   `).join('');
 
@@ -2681,19 +2671,28 @@ function startVideoGeneration(){
   updateVideoCta();
 
   showQueuePanel('#videoGrid .video-tile', 'video generation', () => {
-    document.querySelectorAll('#videoGrid .video-tile').forEach(t => { t.classList.remove('generating'); t.classList.add('ready'); });
+    document.querySelectorAll('#videoGrid .video-tile').forEach((t, i) => {
+      t.classList.remove('generating'); t.classList.add('ready');
+      applySampleVideoFrame(t, i);
+    });
     updateVideoCta();
-    appendChatCta('All scene videos are ready.', '<button class="btn btn-dark" onclick="combineVideo()">Combine into final video →</button>');
-  });
+    appendChatCta('All video clips are ready.', '<button class="btn btn-dark" onclick="combineVideo()">Combine into final video →</button>');
+  }, 'Video');
+}
+// Prototype stand-in for a real generated clip's first frame — cycles between the two sample
+// stills so every ready tile shows something instead of a flat gradient.
+function applySampleVideoFrame(tile, index){
+  const preview = tile.querySelector('.video-tile-preview');
+  if(preview) preview.style.backgroundImage = `url('assets/video/scene${(index % 2) + 1}.png')`;
 }
 
-function buildVideoPrompt(n){
-  const descEl = document.querySelector('#sceneEditor' + n + ' .scene-desc');
-  const imagePromptEl = document.getElementById('scenePrompt' + n);
-  const imagePrompt = imagePromptEl ? imagePromptEl.value.trim() : '';
-  if(imagePrompt) return `${imagePrompt} Animate naturally with subtle movement — keep framing and character consistent with the still image.`;
-  const desc = descEl ? descEl.value.trim() : '';
-  return desc;
+// A video unit spans 2 Timeline scenes (4s each) to reach the 8s minimum clip length —
+// combine both scene descriptions into one prompt for that clip.
+function buildVideoPrompt(unit){
+  const [a, b] = getVideoUnitScenes(unit);
+  const descA = document.querySelector('#sceneEditor' + a + ' .scene-desc')?.value.trim() || '';
+  const descB = document.querySelector('#sceneEditor' + b + ' .scene-desc')?.value.trim() || '';
+  return [descA, descB].filter(Boolean).join(' Then, ');
 }
 
 function buildVideoSegmentNav(){
@@ -2704,7 +2703,7 @@ function buildVideoSegmentNav(){
     const n = tile.dataset.scene;
     return `<div class="segment-nav-btn${n === '1' ? ' active' : ''}" data-target="${n}" onclick="selectVideoScene(${n})">${n}</div>`;
   }).join('');
-  nav.innerHTML = `<span class="scene-nav-label">Scene</span>${buttons}`;
+  nav.innerHTML = `<span class="scene-nav-label">Video</span>${buttons}`;
 }
 
 function selectVideoScene(n){
@@ -2727,6 +2726,7 @@ function regenerateVideoScene(n){
   setTimeout(() => {
     tile.classList.remove('generating');
     tile.classList.add('ready');
+    applySampleVideoFrame(tile, n - 1);
     if(window.__videoCombined) window.__videoCombineStale = true;
     updateVideoCta();
   }, 1400);
@@ -2751,7 +2751,7 @@ function combineVideo(){
 }
 
 function showCombineResult(){
-  const count = getSceneCount();
+  const count = getVideoUnitCount();
   document.querySelector('#subStudio .timeline-stage').style.display = 'none';
   document.getElementById('combineResultView').style.display = 'flex';
   document.getElementById('settingsBar').style.display = 'none';
@@ -2883,9 +2883,9 @@ function continueToPublish(){
 window.__platformConnections = window.__platformConnections || { instagram: true, facebook: true, tiktok: false };
 
 const PUBLISH_PLATFORMS = [
-  { key: 'instagram', label: '📸 Instagram' },
-  { key: 'facebook', label: '📘 Facebook' },
-  { key: 'tiktok', label: '🎵 TikTok' }
+  { key: 'instagram', label: '📸 Instagram', handle: 'formee.education', format: 'Reel' },
+  { key: 'facebook', label: '📘 Facebook', handle: 'Formee.Education', format: 'Reel' },
+  { key: 'tiktok', label: '🎵 TikTok', handle: 'formee.education', format: 'Video' }
 ];
 
 function showPublishView(){
@@ -3088,7 +3088,7 @@ function renderPublishDestinations(){
         <div class="pub-dest-row">
           <label class="pub-dest-checkbox">
             <input type="checkbox" data-platform="${p.key}" checked onchange="onDestinationToggle()">
-            <span>${p.label}</span>
+            <span>${p.label} <span class="pub-dest-handle">· @${p.handle}</span></span>
           </label>
         </div>
       `;
@@ -3311,7 +3311,111 @@ function handlePublishMainAction(){
     return;
   }
   clearPublishWarning();
-  alert(`Published now to ${describeDestinations(destinations)}.`);
+  openPublishConfirmModal(destinations);
+}
+
+// ---- Publish confirmation modal — one "type the handle to confirm" tab per selected
+// destination. Publishing now isn't reversible, so nothing actually posts until each
+// platform's handle is typed exactly and its own "Publish live" button is clicked.
+window.__pubConfirmDestinations = window.__pubConfirmDestinations || [];
+window.__pubConfirmActiveTab = window.__pubConfirmActiveTab || null;
+window.__pubConfirmDone = window.__pubConfirmDone || new Set();
+
+function openPublishConfirmModal(destinations){
+  window.__pubConfirmDestinations = destinations;
+  window.__pubConfirmActiveTab = destinations[0];
+  window.__pubConfirmDone = new Set();
+  document.getElementById('pubConfirmOverlay').style.display = 'flex';
+  renderPublishConfirmModal();
+}
+
+function closePublishConfirmModal(){
+  document.getElementById('pubConfirmOverlay').style.display = 'none';
+}
+
+function selectPublishConfirmTab(key){
+  window.__pubConfirmActiveTab = key;
+  renderPublishConfirmModal();
+}
+
+function renderPublishConfirmModal(){
+  const allDone = window.__pubConfirmDestinations.length > 0
+    && window.__pubConfirmDestinations.every(key => window.__pubConfirmDone.has(key));
+
+  document.getElementById('pubConfirmTabs').style.display = allDone ? 'none' : 'flex';
+  document.getElementById('pubConfirmTabs').innerHTML = window.__pubConfirmDestinations.map(key => {
+    const platform = PUBLISH_PLATFORMS.find(p => p.key === key);
+    const active = key === window.__pubConfirmActiveTab;
+    const done = window.__pubConfirmDone.has(key);
+    return `<button type="button" class="pub-confirm-tab${active ? ' active' : ''}" onclick="selectPublishConfirmTab('${key}')">${platform.label}${done ? ' <span class="check">✓</span>' : ''}</button>`;
+  }).join('');
+
+  const body = document.getElementById('pubConfirmBody');
+  const footer = document.getElementById('pubConfirmFooter');
+  const subtitle = document.getElementById('pubConfirmSubtitle');
+
+  if(allDone){
+    subtitle.textContent = 'All set — your post is live.';
+    body.innerHTML = `
+      <div class="pub-confirm-success">
+        <span class="pub-confirm-success-icon">🎉</span>
+        <p class="pub-confirm-success-title">Published to ${describeDestinations(window.__pubConfirmDestinations)}</p>
+        <p class="pub-confirm-success-sub">You can find this post under each platform's activity log.</p>
+      </div>`;
+    footer.innerHTML = `<button type="button" class="btn btn-dark" style="flex:1; justify-content:center;" onclick="closePublishConfirmModal()">Done</button>`;
+    return;
+  }
+
+  subtitle.textContent = 'Preview is live. Publishing requires typing the handle to confirm.';
+  footer.innerHTML = `
+    <button type="button" class="btn btn-secondary" onclick="handlePublishConfirmSaveDraft()">✓ Save as draft instead</button>
+    <button type="button" class="btn btn-secondary" onclick="closePublishConfirmModal()">Cancel</button>`;
+
+  const key = window.__pubConfirmActiveTab;
+  const platform = PUBLISH_PLATFORMS.find(p => p.key === key);
+  const done = window.__pubConfirmDone.has(key);
+
+  body.innerHTML = `
+    <div class="pub-confirm-preview-row">
+      <div class="pub-confirm-thumb"></div>
+      <div>
+        <div class="pub-confirm-platform-label">${platform.label.replace(/^\S+\s*/, '')} · <span class="pub-confirm-handle">@${platform.handle}</span></div>
+        <div class="pub-confirm-format">Format: ${platform.format}</div>
+      </div>
+    </div>
+    ${done ? `
+      <div class="pub-confirm-warning-box done">
+        <p class="pub-confirm-warning-title done">✓ Published to @${platform.handle}</p>
+      </div>
+    ` : `
+      <div class="pub-confirm-warning-box">
+        <p class="pub-confirm-warning-title">⚠ This will post live to @${platform.handle}</p>
+        <p class="pub-confirm-warning-text">Heads up: this isn't a dry run. Clicking it posts the asset above straight to ${platform.label.replace(/^\S+\s*/, '')}. Type the handle below to unlock the button.</p>
+        <input type="text" class="pub-confirm-input" id="pubConfirmInput" placeholder='Type &quot;${platform.handle}&quot; to confirm' oninput="updatePublishConfirmButtonState()">
+        <button type="button" class="btn btn-dark pub-confirm-publish-btn" id="pubConfirmPublishBtn" disabled onclick="confirmPublishToPlatform('${key}')">✨ Publish live to ${platform.label.replace(/^\S+\s*/, '')}</button>
+      </div>
+    `}
+  `;
+}
+
+function updatePublishConfirmButtonState(){
+  const input = document.getElementById('pubConfirmInput');
+  const btn = document.getElementById('pubConfirmPublishBtn');
+  if(!input || !btn) return;
+  const platform = PUBLISH_PLATFORMS.find(p => p.key === window.__pubConfirmActiveTab);
+  btn.disabled = input.value.trim().toLowerCase() !== platform.handle.toLowerCase();
+}
+
+function confirmPublishToPlatform(key){
+  window.__pubConfirmDone.add(key);
+  const remaining = window.__pubConfirmDestinations.find(k => !window.__pubConfirmDone.has(k));
+  window.__pubConfirmActiveTab = remaining || key;
+  renderPublishConfirmModal();
+}
+
+function handlePublishConfirmSaveDraft(){
+  closePublishConfirmModal();
+  quickSaveDraft();
 }
 
 function runAsAd(){
