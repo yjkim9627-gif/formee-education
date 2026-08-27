@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>Formee Design Prototype — Index</title>
+<title>AI Social Media Prototype — Index</title>
 <link rel="stylesheet" href="tokens/tokens.css">
 <style>
   *{box-sizing:border-box;}
@@ -34,40 +34,50 @@
   }
   .badge.new{background:var(--color-brand-primary-light); color:var(--color-brand-primary-dark);}
   .badge.legacy{background:var(--color-neutral-150); color:var(--color-neutral-500);}
+
+  details.group summary{
+    cursor:pointer; list-style:none; font-size:14px; font-weight:700; color:var(--color-neutral-900);
+    padding-top:8px; margin-bottom:4px; display:flex; align-items:center; gap:6px; user-select:none;
+  }
+  details.group summary::-webkit-details-marker{display:none;}
+  details.group summary::before{content:'▸'; color:var(--color-neutral-400); font-size:10px; width:10px; flex-shrink:0;}
+  details.group[open] summary::before{content:'▾';}
+  details.group .group-note{margin-top:0;}
+  details.group ul{margin-top:12px;}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>Formee Design Prototype</h1>
+  <h1>AI Social Media Prototype</h1>
   <p class="sub">디자인 시스템 기반 HTML 프로토타입 모음 — 화면을 클릭해서 바로 확인하세요.</p>
 
   <div class="group">
-    <h2>AI Social Media · v3 (최신 통합본)</h2>
+    <h2>New Content Generation · v3 (최신 통합본)</h2>
     <p class="group-note">Image post + Carousel 생성부터 Publish까지 한 파일로 합친 버전. 개발 참고용으로는 이걸 우선 확인하세요.</p>
     <ul>
-      <li><a href="prototypes/ai-social-media/new-content-generation/v3/new-content-to-generate.html"><span>New Content — Image post / Carousel → Publish<span class="path">new-content-generation/v3/new-content-to-generate.html</span></span><span class="badge new">v3</span></a></li>
+      <li><a href="prototypes/ai-social-media/new-content-generation/v3/new-content-to-generate.html"><span>New Content — Image post / Carousel → Publish<span class="path">new-content-generation/v3/new-content-to-generate.html</span></span><span class="badge new">여기서 확인</span></a></li>
     </ul>
   </div>
 
   <div class="group">
-    <h2>AI Social Media · v2 (화면별 개별 파일)</h2>
+    <h2>Editing</h2>
+    <ul>
+      <li><a href="prototypes/ai-social-media/editing/image-editing.html"><span>Image editing<span class="path">editing/image-editing.html</span></span><span class="badge new">여기서 확인</span></a></li>
+    </ul>
+  </div>
+
+  <details class="group">
+    <summary>New Content Generation · v2 (플로우별 개별 파일)</summary>
     <p class="group-note">Figma 디자인 시스템에 맞춰 화면별로 작업된 버전.</p>
     <ul>
       <li><a href="prototypes/ai-social-media/new-content-generation/v2/new-image-to-generate.html"><span>New Image — Brief → Draft → Versions<span class="path">v2/new-image-to-generate.html</span></span><span class="arrow">→</span></a></li>
       <li><a href="prototypes/ai-social-media/new-content-generation/v2/new-carousel-to-generate.html"><span>New Carousel — Brief → Script → Storyboard<span class="path">v2/new-carousel-to-generate.html</span></span><span class="arrow">→</span></a></li>
       <li><a href="prototypes/ai-social-media/new-content-generation/v2/new-content-brief-to-generate.html"><span>Reel/Short — Brief → Script → Timeline → Video (+ Publish)<span class="path">v2/new-content-brief-to-generate.html</span></span><span class="arrow">→</span></a></li>
     </ul>
-  </div>
+  </details>
 
-  <div class="group">
-    <h2>AI Social Media · Editing</h2>
-    <ul>
-      <li><a href="prototypes/ai-social-media/editing/screen-01-elements-panel.html"><span>Elements Panel<span class="path">editing/screen-01-elements-panel.html</span></span><span class="arrow">→</span></a></li>
-    </ul>
-  </div>
-
-  <div class="group">
-    <h2>컴포넌트 데모 (베리언트 모음)</h2>
+  <details class="group">
+    <summary>컴포넌트 데모 (베리언트 모음)</summary>
     <p class="group-note">components/ai-social-media, components/shared — 재사용 컴포넌트의 상태/베리언트를 모아 볼 수 있는 데모 페이지.</p>
     <ul>
       <li><a href="components/ai-social-media/nav.html"><span>Nav<span class="path">components/ai-social-media/nav.html</span></span><span class="arrow">→</span></a></li>
@@ -83,17 +93,17 @@
       <li><a href="components/shared/modal-form.html"><span>Modal · Form (shared)<span class="path">components/shared/modal-form.html</span></span><span class="arrow">→</span></a></li>
       <li><a href="components/shared/modal-success.html"><span>Modal · Success (shared)<span class="path">components/shared/modal-success.html</span></span><span class="arrow">→</span></a></li>
     </ul>
-  </div>
+  </details>
 
-  <div class="group">
-    <h2>이전 버전 (참고용)</h2>
+  <details class="group">
+    <summary>이전 버전 (참고용)</summary>
     <p class="group-note">v2 이전 초기 버전 — 현재 작업 기준은 아니며 비교 참고용으로만 남아있음.</p>
     <ul>
       <li><a href="prototypes/ai-social-media/new-content-generation/new-image-to-generate.html"><span>New Image (legacy)<span class="path">new-content-generation/new-image-to-generate.html</span></span><span class="badge legacy">legacy</span></a></li>
       <li><a href="prototypes/ai-social-media/new-content-generation/new-carousel-to-generate.html"><span>New Carousel (legacy)<span class="path">new-content-generation/new-carousel-to-generate.html</span></span><span class="badge legacy">legacy</span></a></li>
       <li><a href="prototypes/ai-social-media/new-content-generation/new-content-brief-to-generate.html"><span>Reel/Short (legacy)<span class="path">new-content-generation/new-content-brief-to-generate.html</span></span><span class="badge legacy">legacy</span></a></li>
     </ul>
-  </div>
+  </details>
 
 </div>
 </body>
