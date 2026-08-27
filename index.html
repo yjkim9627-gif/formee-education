@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Formee Design Prototype — Index</title>
+<link rel="stylesheet" href="tokens/tokens.css">
+<style>
+  *{box-sizing:border-box;}
+  body{
+    margin:0; font-family:var(--font-family-text, -apple-system, sans-serif);
+    background:var(--color-neutral-50); color:var(--color-neutral-900);
+    padding:48px 24px 96px;
+  }
+  .wrap{max-width:760px; margin:0 auto;}
+  h1{font-size:22px; font-weight:700; margin:0 0 4px;}
+  .sub{font-size:13px; color:var(--color-neutral-500); margin:0 0 40px;}
+  h2{font-size:14px; font-weight:700; color:var(--color-neutral-900); margin:0 0 4px; padding-top:8px;}
+  .group{margin-bottom:32px;}
+  .group-note{font-size:12px; color:var(--color-neutral-500); margin:0 0 12px;}
+  ul{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:1px;
+     background:var(--color-neutral-0); border:1px solid var(--color-neutral-200); border-radius:12px; overflow:hidden;}
+  li{border-bottom:1px solid var(--color-neutral-150);}
+  li:last-child{border-bottom:none;}
+  a{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:14px 16px; text-decoration:none; color:var(--color-neutral-900); font-size:13.5px; font-weight:500;
+  }
+  a:hover{background:var(--color-neutral-50);}
+  a .arrow{color:var(--color-neutral-400); font-size:13px; flex-shrink:0;}
+  a .path{font-size:11.5px; color:var(--color-neutral-500); font-weight:400; margin-top:2px; display:block;}
+  .badge{
+    font-size:10px; font-weight:700; letter-spacing:.02em; text-transform:uppercase;
+    padding:2px 7px; border-radius:999px; flex-shrink:0; margin-left:8px;
+  }
+  .badge.new{background:var(--color-brand-primary-light); color:var(--color-brand-primary-dark);}
+  .badge.legacy{background:var(--color-neutral-150); color:var(--color-neutral-500);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Formee Design Prototype</h1>
+  <p class="sub">디자인 시스템 기반 HTML 프로토타입 모음 — 화면을 클릭해서 바로 확인하세요.</p>
+
+  <div class="group">
+    <h2>AI Social Media · v3 (최신 통합본)</h2>
+    <p class="group-note">Image post + Carousel 생성부터 Publish까지 한 파일로 합친 버전. 개발 참고용으로는 이걸 우선 확인하세요.</p>
+    <ul>
+      <li><a href="prototypes/ai-social-media/new-content-generation/v3/new-content-to-generate.html"><span>New Content — Image post / Carousel → Publish<span class="path">new-content-generation/v3/new-content-to-generate.html</span></span><span class="badge new">v3</span></a></li>
+    </ul>
+  </div>
+
+  <div class="group">
+    <h2>AI Social Media · v2 (화면별 개별 파일)</h2>
+    <p class="group-note">Figma 디자인 시스템에 맞춰 화면별로 작업된 버전.</p>
+    <ul>
+      <li><a href="prototypes/ai-social-media/new-content-generation/v2/new-image-to-generate.html"><span>New Image — Brief → Draft → Versions<span class="path">v2/new-image-to-generate.html</span></span><span class="arrow">→</span></a></li>
+      <li><a href="prototypes/ai-social-media/new-content-generation/v2/new-carousel-to-generate.html"><span>New Carousel — Brief → Script → Storyboard<span class="path">v2/new-carousel-to-generate.html</span></span><span class="arrow">→</span></a></li>
+      <li><a href="prototypes/ai-social-media/new-content-generation/v2/new-content-brief-to-generate.html"><span>Reel/Short — Brief → Script → Timeline → Video (+ Publish)<span class="path">v2/new-content-brief-to-generate.html</span></span><span class="arrow">→</span></a></li>
+    </ul>
+  </div>
+
+  <div class="group">
+    <h2>AI Social Media · Editing</h2>
+    <ul>
+      <li><a href="prototypes/ai-social-media/editing/screen-01-elements-panel.html"><span>Elements Panel<span class="path">editing/screen-01-elements-panel.html</span></span><span class="arrow">→</span></a></li>
+    </ul>
+  </div>
+
+  <div class="group">
+    <h2>컴포넌트 데모 (베리언트 모음)</h2>
+    <p class="group-note">components/ai-social-media, components/shared — 재사용 컴포넌트의 상태/베리언트를 모아 볼 수 있는 데모 페이지.</p>
+    <ul>
+      <li><a href="components/ai-social-media/nav.html"><span>Nav<span class="path">components/ai-social-media/nav.html</span></span><span class="arrow">→</span></a></li>
+      <li><a href="components/ai-social-media/topbar-stepper.html"><span>Topbar + Stepper<span class="path">components/ai-social-media/topbar-stepper.html</span></span><span class="arrow">→</span></a></li>
+      <li><a href="components/ai-social-media/chat-panel.html"><span>Chat Panel<span class="path">components/ai-social-media/chat-panel.html</span></span><span class="arrow">→</span></a></li>
+      <li><a href="components/ai-social-media/character-card.html"><span>Character Card<span class="path">components/ai-social-media/character-card.html</span></span><span class="arrow">→</span></a></li>
+      <li><a href="components/ai-social-media/switch.html"><span>Switch<span class="path">components/ai-social-media/switch.html</span></span><span class="arrow">→</span></a></li>
+      <li><a href="components/ai-social-media/prompt-box.html"><span>Prompt Box<span class="path">components/ai-social-media/prompt-box.html</span></span><span class="arrow">→</span></a></li>
+      <li><a href="components/ai-social-media/filter-chip.html"><span>Filter Chip<span class="path">components/ai-social-media/filter-chip.html</span></span><span class="arrow">→</span></a></li>
+      <li><a href="components/ai-social-media/setting-chip.html"><span>Setting Chip<span class="path">components/ai-social-media/setting-chip.html</span></span><span class="arrow">→</span></a></li>
+      <li><a href="components/shared/button.html"><span>Button (shared)<span class="path">components/shared/button.html</span></span><span class="arrow">→</span></a></li>
+      <li><a href="components/shared/modal-confirm.html"><span>Modal · Confirm (shared)<span class="path">components/shared/modal-confirm.html</span></span><span class="arrow">→</span></a></li>
+      <li><a href="components/shared/modal-form.html"><span>Modal · Form (shared)<span class="path">components/shared/modal-form.html</span></span><span class="arrow">→</span></a></li>
+      <li><a href="components/shared/modal-success.html"><span>Modal · Success (shared)<span class="path">components/shared/modal-success.html</span></span><span class="arrow">→</span></a></li>
+    </ul>
+  </div>
+
+  <div class="group">
+    <h2>이전 버전 (참고용)</h2>
+    <p class="group-note">v2 이전 초기 버전 — 현재 작업 기준은 아니며 비교 참고용으로만 남아있음.</p>
+    <ul>
+      <li><a href="prototypes/ai-social-media/new-content-generation/new-image-to-generate.html"><span>New Image (legacy)<span class="path">new-content-generation/new-image-to-generate.html</span></span><span class="badge legacy">legacy</span></a></li>
+      <li><a href="prototypes/ai-social-media/new-content-generation/new-carousel-to-generate.html"><span>New Carousel (legacy)<span class="path">new-content-generation/new-carousel-to-generate.html</span></span><span class="badge legacy">legacy</span></a></li>
+      <li><a href="prototypes/ai-social-media/new-content-generation/new-content-brief-to-generate.html"><span>Reel/Short (legacy)<span class="path">new-content-generation/new-content-brief-to-generate.html</span></span><span class="badge legacy">legacy</span></a></li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>
