@@ -1,0 +1,25 @@
+/* 컴포넌트 데모 페이지 전용 사이드바 — 실제 제품 컴포넌트가 아니라 이 리포의 데모 페이지들을
+   서로 넘나들기 위한 내비게이션. components/ai-social-media, components/shared 두 폴더의
+   데모 html 12개가 전부 이 파일을 공유해서 링크한다. */
+
+.demo-shell{display:flex; min-height:100vh;}
+
+.demo-sidebar{
+  width:200px; flex-shrink:0; box-sizing:border-box;
+  background:var(--color-neutral-0); border-right:1px solid var(--color-neutral-200);
+  padding:32px 16px; position:sticky; top:0; align-self:flex-start; height:100vh; overflow-y:auto;
+}
+.demo-sidebar-group{margin-bottom:24px;}
+.demo-sidebar-group:last-child{margin-bottom:0;}
+.demo-sidebar-label{
+  font-size:10px; font-weight:700; letter-spacing:.05em; text-transform:uppercase;
+  color:var(--color-neutral-500); padding:0 10px; margin:0 0 6px;
+}
+.demo-sidebar a{
+  display:block; padding:7px 10px; border-radius:7px; font-size:12.5px; line-height:1.4;
+  color:var(--color-neutral-700); text-decoration:none; font-family:var(--font-family-text);
+}
+.demo-sidebar a:hover{background:var(--color-neutral-50);}
+.demo-sidebar a.active{background:var(--color-neutral-100); color:var(--color-neutral-900); font-weight:600;}
+
+.demo-main{flex:1; min-width:0; box-sizing:border-box;}

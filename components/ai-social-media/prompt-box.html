@@ -4,15 +4,39 @@
 <meta charset="UTF-8" />
 <title>AI Prompt Box — Shared Component</title>
 <link rel="stylesheet" href="../../tokens/tokens.css" />
+<link rel="stylesheet" href="../demo-nav.css" />
 <link rel="stylesheet" href="prompt-box.css" />
 <style>
-  body { margin: 0; padding: var(--spacing-4xl); background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); max-width: 720px; }
+  body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
+  .demo-main { padding: var(--spacing-4xl); max-width: 720px; }
   h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-3xl); }
   section { margin-bottom: var(--spacing-3xl); }
   section h2 { font-size: var(--font-size-text-md); font-weight: var(--font-weight-semibold); color: var(--color-neutral-700); margin: 0 0 var(--spacing-lg); }
 </style>
 </head>
 <body>
+<div class="demo-shell">
+  <nav class="demo-sidebar">
+    <div class="demo-sidebar-group">
+      <div class="demo-sidebar-label">AI Social Media</div>
+      <a href="nav.html">Nav / Navigation</a>
+      <a href="topbar-stepper.html">Topbar + Stepper</a>
+      <a href="chat-panel.html">Chat Panel</a>
+      <a href="character-card.html">Character Card</a>
+      <a href="switch.html">Controls / Switch</a>
+      <a href="prompt-box.html" class="active">AI Prompt Box</a>
+      <a href="filter-chip.html">Controls / Filter / Toggle</a>
+      <a href="setting-chip.html">Setting Chip</a>
+    </div>
+    <div class="demo-sidebar-group">
+      <div class="demo-sidebar-label">Shared</div>
+      <a href="../shared/button.html">Button</a>
+      <a href="../shared/modal-confirm.html">Modal / Confirm</a>
+      <a href="../shared/modal-form.html">Modal / Form</a>
+      <a href="../shared/modal-success.html">Modal / Success</a>
+    </div>
+  </nav>
+  <main class="demo-main">
   <h1>AI Prompt Box</h1>
 
   <section>
@@ -50,5 +74,7 @@
       </div>
     </div>
   </section>
+  </main>
+</div>
 </body>
 </html>

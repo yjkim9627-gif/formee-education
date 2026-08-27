@@ -4,15 +4,19 @@
 <meta charset="UTF-8" />
 <title>Modal / Success — Shared Component</title>
 <link rel="stylesheet" href="../../tokens/tokens.css" />
+<link rel="stylesheet" href="../demo-nav.css" />
 <link rel="stylesheet" href="button.css" />
 <link rel="stylesheet" href="modal.css" />
 <style>
   body {
     margin: 0;
-    padding: var(--spacing-4xl);
     background: var(--color-neutral-50);
     font-family: var(--font-family-text);
     color: var(--color-neutral-900);
+  }
+
+  .demo-main {
+    padding: var(--spacing-4xl);
   }
 
   h1 {
@@ -36,6 +40,28 @@
 </style>
 </head>
 <body>
+<div class="demo-shell">
+  <nav class="demo-sidebar">
+    <div class="demo-sidebar-group">
+      <div class="demo-sidebar-label">AI Social Media</div>
+      <a href="../ai-social-media/nav.html">Nav / Navigation</a>
+      <a href="../ai-social-media/topbar-stepper.html">Topbar + Stepper</a>
+      <a href="../ai-social-media/chat-panel.html">Chat Panel</a>
+      <a href="../ai-social-media/character-card.html">Character Card</a>
+      <a href="../ai-social-media/switch.html">Controls / Switch</a>
+      <a href="../ai-social-media/prompt-box.html">AI Prompt Box</a>
+      <a href="../ai-social-media/filter-chip.html">Controls / Filter / Toggle</a>
+      <a href="../ai-social-media/setting-chip.html">Setting Chip</a>
+    </div>
+    <div class="demo-sidebar-group">
+      <div class="demo-sidebar-label">Shared</div>
+      <a href="button.html">Button</a>
+      <a href="modal-confirm.html">Modal / Confirm</a>
+      <a href="modal-form.html">Modal / Form</a>
+      <a href="modal-success.html" class="active">Modal / Success</a>
+    </div>
+  </nav>
+  <main class="demo-main">
   <h1>Modal / Success</h1>
 
   <section>
@@ -103,5 +129,7 @@
       </div>
     </div>
   </section>
+  </main>
+</div>
 </body>
 </html>
