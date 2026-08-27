@@ -30,6 +30,8 @@
 }
 .prompt-chip .ic{width:16px; height:16px; display:flex; align-items:center; justify-content:center;}
 .prompt-chip .ic img{width:16px; height:16px; display:block;}
+/* 비율(ratio) 칩 아이콘 — Figma에 별도 아이콘 에셋이 없고 세로 직사각형 테두리만 그려서 표현한다 */
+.ratio-box-ic::after{content:''; display:block; width:11px; height:14px; border:1.2px solid var(--color-neutral-500); border-radius:2px;}
 .prompt-chip.clickable{cursor:pointer; transition:border-color .15s ease, background .15s ease;}
 .prompt-chip.clickable:hover{background:var(--color-neutral-50); border-color:var(--color-neutral-450);}
 .prompt-chip.clickable .chevron{font-size:9px; color:var(--color-neutral-500); margin-left:1px;}
