@@ -566,7 +566,10 @@
   .pub-block-label{display:block; font-size:var(--font-size-text-md); line-height:var(--line-height-text-md); font-weight:var(--font-weight-semibold); color:var(--color-neutral-900); margin:0 0 var(--spacing-md);}
   .pub-card{background:#fff; border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl); padding:var(--spacing-xl); display:flex; flex-direction:column; gap:var(--spacing-lg);}
 
-  /* -- Suggest hashtags & SEO keywords trigger -- */
+  /* -- Suggest hashtags & SEO keywords trigger + Generate caption — a persistent pair of
+     entry points into the caption below, both available from the very first screen
+     (matching Figma) rather than "Generate caption" only appearing once tags are picked. -- */
+  .pub-caption-actions-row{display:flex; align-items:center; gap:var(--spacing-md);}
   .pub-suggest-btn{align-self:flex-start; display:inline-flex; align-items:center; gap:var(--spacing-sm); height:40px; border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); background:#fff; padding:9px 14px; cursor:pointer; font-family:var(--font-family-text);}
   .pub-suggest-btn:hover{border-color:var(--color-brand-primary);}
   .pub-suggest-btn:disabled{cursor:default; opacity:.7;}
@@ -599,8 +602,6 @@
   .pub-hashtag-chip .x img{width:100%; height:100%; display:block;}
   .pub-hashtag-chip.added .x{display:inline-flex;}
   .pub-hashtag-seo-divider{height:1px; background:var(--color-neutral-200);}
-  .pub-caption-compose-row{display:flex; align-items:center; gap:10px;}
-  .pub-caption-compose-row .btn{padding:9px 16px; font-size:12.5px;}
 
   /* -- Caption editor block (header shared by the whole card — hashtag/SEO suggestion above
      and the textarea below both belong to this one "Caption" block) -- */
@@ -2075,13 +2076,16 @@
               <span class="pub-caption-block-title">Caption</span>
               <span class="pub-caption-hint" id="pubCaptionHint">The same caption is used across all platforms.</span>
             </div>
-            <span class="pub-ai-draft-badge" id="pubAiDraftBadge">AI draft</span>
+            <span class="pub-ai-draft-badge" id="pubAiDraftBadge" style="display:none;">AI draft</span>
           </div>
 
-          <button type="button" class="pub-suggest-btn" id="pubHashtagSeoBtn" onclick="generateHashtagsSEO()">
-            <span class="ic"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gYWkgLyByZWZpbmUiIGNsaXAtcGF0aD0idXJsKCNjbGlwMF8wXzM3MykiPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNMTMuNTczMyAxLjU3MzMzTDE0LjQyNjcgMi40MjY2N0MxNC41MDMzIDIuNTAxMjEgMTQuNTY0MiAyLjU5MDM2IDE0LjYwNTcgMi42ODg4M0MxNC42NDczIDIuNzg3MyAxNC42Njg3IDIuODkzMTEgMTQuNjY4NyAzQzE0LjY2ODcgMy4xMDY4OSAxNC42NDczIDMuMjEyNyAxNC42MDU3IDMuMzExMTdDMTQuNTY0MiAzLjQwOTY0IDE0LjUwMzMgMy40OTg3OSAxNC40MjY3IDMuNTczMzNMMy41NzMzMyAxNC40MjY3QzMuNDk4NzkgMTQuNTAzMyAzLjQwOTY0IDE0LjU2NDIgMy4zMTExNyAxNC42MDU3QzMuMjEyNyAxNC42NDczIDMuMTA2ODkgMTQuNjY4NyAzIDE0LjY2ODdDMi44OTMxMSAxNC42Njg3IDIuNzg3MyAxNC42NDczIDIuNjg4ODMgMTQuNjA1N0MyLjU5MDM2IDE0LjU2NDIgMi41MDEyMSAxNC41MDMzIDIuNDI2NjcgMTQuNDI2N0wxLjU3MzMzIDEzLjU3MzNDMS40OTc1NCAxMy40OTgzIDEuNDM3MzggMTMuNDA5IDEuMzk2MzIgMTMuMzEwNkMxLjM1NTI2IDEzLjIxMjIgMS4zMzQxMiAxMy4xMDY2IDEuMzM0MTIgMTNDMS4zMzQxMiAxMi44OTM0IDEuMzU1MjYgMTIuNzg3OCAxLjM5NjMyIDEyLjY4OTRDMS40MzczOCAxMi41OTEgMS40OTc1NCAxMi41MDE3IDEuNTczMzMgMTIuNDI2N0wxMi40MjY3IDEuNTczMzNDMTIuNTAxNyAxLjQ5NzU0IDEyLjU5MSAxLjQzNzM4IDEyLjY4OTQgMS4zOTYzMkMxMi43ODc4IDEuMzU1MjYgMTIuODkzNCAxLjMzNDEyIDEzIDEuMzM0MTJDMTMuMTA2NiAxLjMzNDEyIDEzLjIxMjIgMS4zNTUyNiAxMy4zMTA2IDEuMzk2MzJDMTMuNDA5IDEuNDM3MzggMTMuNDk4MyAxLjQ5NzU0IDEzLjU3MzMgMS41NzMzM1oiIHN0cm9rZT0iIzRGNkRFNiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzIiIGQ9Ik05LjMzMzMzIDQuNjY2NjdMMTEuMzMzMyA2LjY2NjY3IiBzdHJva2U9IiM0RjZERTYiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggaWQ9IlZlY3Rvcl8zIiBkPSJNMy4zMzMzMyA0VjYuNjY2NjciIHN0cm9rZT0iIzRGNkRFNiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzQiIGQ9Ik0xMi42NjY3IDkuMzMzMzNWMTIiIHN0cm9rZT0iIzRGNkRFNiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzUiIGQ9Ik02LjY2NjY3IDEuMzMzMzNWMi42NjY2NyIgc3Ryb2tlPSIjNEY2REU2IiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxwYXRoIGlkPSJWZWN0b3JfNiIgZD0iTTQuNjY2NjcgNS4zMzMzM0gyIiBzdHJva2U9IiM0RjZERTYiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggaWQ9IlZlY3Rvcl83IiBkPSJNMTQgMTAuNjY2N0gxMS4zMzMzIiBzdHJva2U9IiM0RjZERTYiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggaWQ9IlZlY3Rvcl84IiBkPSJNNy4zMzMzMyAySDYiIHN0cm9rZT0iIzRGNkRFNiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L2c+CjxkZWZzPgo8Y2xpcFBhdGggaWQ9ImNsaXAwXzBfMzczIj4KPHJlY3Qgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPgo=" alt=""></span>
-            <span class="pub-suggest-label">Suggest hashtags &amp; SEO keywords</span>
-          </button>
+          <div class="pub-caption-actions-row">
+            <button type="button" class="pub-suggest-btn" id="pubHashtagSeoBtn" onclick="generateHashtagsSEO()">
+              <span class="ic"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gYWkgLyByZWZpbmUiIGNsaXAtcGF0aD0idXJsKCNjbGlwMF8wXzM3MykiPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNMTMuNTczMyAxLjU3MzMzTDE0LjQyNjcgMi40MjY2N0MxNC41MDMzIDIuNTAxMjEgMTQuNTY0MiAyLjU5MDM2IDE0LjYwNTcgMi42ODg4M0MxNC42NDczIDIuNzg3MyAxNC42Njg3IDIuODkzMTEgMTQuNjY4NyAzQzE0LjY2ODcgMy4xMDY4OSAxNC42NDczIDMuMjEyNyAxNC42MDU3IDMuMzExMTdDMTQuNTY0MiAzLjQwOTY0IDE0LjUwMzMgMy40OTg3OSAxNC40MjY3IDMuNTczMzNMMy41NzMzMyAxNC40MjY3QzMuNDk4NzkgMTQuNTAzMyAzLjQwOTY0IDE0LjU2NDIgMy4zMTExNyAxNC42MDU3QzMuMjEyNyAxNC42NDczIDMuMTA2ODkgMTQuNjY4NyAzIDE0LjY2ODdDMi44OTMxMSAxNC42Njg3IDIuNzg3MyAxNC42NDczIDIuNjg4ODMgMTQuNjA1N0MyLjU5MDM2IDE0LjU2NDIgMi41MDEyMSAxNC41MDMzIDIuNDI2NjcgMTQuNDI2N0wxLjU3MzMzIDEzLjU3MzNDMS40OTc1NCAxMy40OTgzIDEuNDM3MzggMTMuNDA5IDEuMzk2MzIgMTMuMzEwNkMxLjM1NTI2IDEzLjIxMjIgMS4zMzQxMiAxMy4xMDY2IDEuMzM0MTIgMTNDMS4zMzQxMiAxMi44OTM0IDEuMzU1MjYgMTIuNzg3OCAxLjM5NjMyIDEyLjY4OTRDMS40MzczOCAxMi41OTEgMS40OTc1NCAxMi41MDE3IDEuNTczMzMgMTIuNDI2N0wxMi40MjY3IDEuNTczMzNDMTIuNTAxNyAxLjQ5NzU0IDEyLjU5MSAxLjQzNzM4IDEyLjY4OTQgMS4zOTYzMkMxMi43ODc4IDEuMzU1MjYgMTIuODkzNCAxLjMzNDEyIDEzIDEuMzM0MTJDMTMuMTA2NiAxLjMzNDEyIDEzLjIxMjIgMS4zNTUyNiAxMy4zMTA2IDEuMzk2MzJDMTMuNDA5IDEuNDM3MzggMTMuNDk4MyAxLjQ5NzU0IDEzLjU3MzMgMS41NzMzM1oiIHN0cm9rZT0iIzRGNkRFNiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzIiIGQ9Ik05LjMzMzMzIDQuNjY2NjdMMTEuMzMzMyA2LjY2NjY3IiBzdHJva2U9IiM0RjZERTYiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggaWQ9IlZlY3Rvcl8zIiBkPSJNMy4zMzMzMyA0VjYuNjY2NjciIHN0cm9rZT0iIzRGNkRFNiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzQiIGQ9Ik0xMi42NjY3IDkuMzMzMzNWMTIiIHN0cm9rZT0iIzRGNkRFNiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzUiIGQ9Ik02LjY2NjY3IDEuMzMzMzNWMi42NjY2NyIgc3Ryb2tlPSIjNEY2REU2IiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxwYXRoIGlkPSJWZWN0b3JfNiIgZD0iTTQuNjY2NjcgNS4zMzMzM0gyIiBzdHJva2U9IiM0RjZERTYiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggaWQ9IlZlY3Rvcl83IiBkPSJNMTQgMTAuNjY2N0gxMS4zMzMzIiBzdHJva2U9IiM0RjZERTYiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggaWQ9IlZlY3Rvcl84IiBkPSJNNy4zMzMzMyAySDYiIHN0cm9rZT0iIzRGNkRFNiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L2c+CjxkZWZzPgo8Y2xpcFBhdGggaWQ9ImNsaXAwXzBfMzczIj4KPHJlY3Qgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPgo=" alt=""></span>
+              <span class="pub-suggest-label">Suggest hashtags &amp; SEO keywords</span>
+            </button>
+            <button type="button" class="btn btn-dark" id="pubComposeCaptionBtn" onclick="generateCaptionFromSelection()">✨ Generate caption</button>
+          </div>
 
           <div class="pub-hashtag-seo-result" id="pubHashtagSeoResult" style="display:none;">
             <div class="pub-hseo-head">
@@ -2108,10 +2112,7 @@
             </div>
           </div>
 
-          <textarea class="pub-caption-input" id="pubCaption" placeholder="Write a caption for your post..." oninput="onSharedCaptionInput()"></textarea>
-          <div class="pub-caption-compose-row" id="pubCaptionComposeRow" style="display:none;">
-            <button type="button" class="btn btn-dark" id="pubComposeCaptionBtn" onclick="generateCaptionFromSelection()">✨ Generate caption</button>
-          </div>
+          <textarea class="pub-caption-input" id="pubCaption" placeholder="Draft your caption — or generate suggestions above and tap a chip to add it." oninput="onSharedCaptionInput()"></textarea>
           <div class="pub-caption-refine-row">
             <div class="pub-refine-chips">
               <button type="button" class="pub-refine-chip" onclick="refineCaptionWithAI('shorter')">Make it shorter</button>
@@ -5085,8 +5086,6 @@ function populatePublishView(){
   document.getElementById('pubProjectName').textContent = window.__contentType === 'carousel' ? 'New Carousel · Draft' : window.__contentType === 'reel' ? 'New Reel/Short · Draft' : 'New Image Post · Draft';
   renderPublishDestinations();
   updateWhenSelection();
-  const captionEl = document.getElementById('pubCaption');
-  if(captionEl && !captionEl.value.trim()) captionEl.value = buildAutoCaption();
   if(document.getElementById('pubCaptionCustomToggle').checked) renderPerPlatformCaptions();
 }
 
@@ -5256,7 +5255,6 @@ function buildHashtagSeoSummary(){
 function renderHashtagSeoChips(){
   document.getElementById('pubHashtagChips').innerHTML = PUB_HASHTAGS.map(renderPubTagChip).join('');
   document.getElementById('pubSeoChips').innerHTML = PUB_SEO_KEYWORDS.map(renderPubTagChip).join('');
-  updateCaptionComposeRow();
 }
 
 const PUB_TAG_CHIP_X_ICON = 'data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gYnV0dG9uIC8geCI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik0xMiA0TDQgMTIiIHN0cm9rZT0iIzQ3NTA2OSIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzIiIGQ9Ik00IDRMMTIgMTIiIHN0cm9rZT0iIzQ3NTA2OSIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L2c+Cjwvc3ZnPgo=';
@@ -5282,18 +5280,14 @@ function toggleHashtagSelection(tag, btn){
     textarea.value = textarea.value.trim() ? textarea.value.trim() + ' ' + tag : tag;
   }
   onSharedCaptionInput();
-  updateCaptionComposeRow();
 }
 
-function updateCaptionComposeRow(){
-  const count = [...PUB_HASHTAGS, ...PUB_SEO_KEYWORDS].filter(t => window.__pubSelectedTags.has(t)).length;
-  document.getElementById('pubCaptionComposeRow').style.display = count > 0 ? 'flex' : 'none';
-}
-
+// Always available — with nothing selected yet it composes a base caption from the
+// script/brief alone (same inputs buildAutoCaption draws from); any selected tags get
+// folded in on top of that.
 function generateCaptionFromSelection(){
   const selectedHashtags = PUB_HASHTAGS.filter(t => window.__pubSelectedTags.has(t));
   const selectedKeywords = PUB_SEO_KEYWORDS.filter(t => window.__pubSelectedTags.has(t));
-  if(!selectedHashtags.length && !selectedKeywords.length) return;
 
   const btn = document.getElementById('pubComposeCaptionBtn');
   const originalLabel = btn.textContent;
@@ -5305,7 +5299,7 @@ function generateCaptionFromSelection(){
     document.getElementById('pubCaption').value = composePubCaption(selectedKeywords, selectedHashtags);
     onSharedCaptionInput();
     const badge = document.getElementById('pubAiDraftBadge');
-    if(badge) badge.style.display = 'none';
+    if(badge) badge.style.display = '';
   }, 700);
 }
 
@@ -5417,13 +5411,6 @@ function buildAutoCaption(){
   parts.push(tags.slice(0, 5).join(' '));
 
   return parts.filter(Boolean).join('\n\n');
-}
-
-function generateCaptionDraft(){
-  document.getElementById('pubCaption').value = buildAutoCaption();
-  onSharedCaptionInput();
-  const badge = document.getElementById('pubAiDraftBadge');
-  if(badge) badge.style.display = '';
 }
 
 // Quick AI-style refine actions for the caption textarea (mirrors the script's
