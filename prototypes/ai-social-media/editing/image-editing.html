@@ -12,6 +12,10 @@
     color: var(--color-neutral-900);
     background: var(--color-neutral-200);
   }
+  /* Centers the (already width/height-matched) body in the viewport — body's own size is
+     set to the scaled frame size in fitScreenToViewport() below, so centering html around
+     it centers the visible frame with even breathing room on every side. */
+  html { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
   p { margin: 0; }
   button { all: unset; box-sizing: border-box; cursor: pointer; font-family: inherit; }
 
@@ -6939,7 +6943,11 @@
     }
 
     function fitScreenToViewport() {
-      PAGE_FIT_SCALE = Math.min(window.innerWidth / 1920, window.innerHeight / 1162);
+      // FRAME_MARGIN reserves real screen pixels (not scaled) on every side, matching
+      // brand-setup/index.html's own body{padding:40px 0} — otherwise the constraining
+      // dimension scales to exactly 100% of the window and the frame touches the edge.
+      var FRAME_MARGIN = 40;
+      PAGE_FIT_SCALE = Math.min((window.innerWidth - FRAME_MARGIN * 2) / 1920, (window.innerHeight - FRAME_MARGIN * 2) / 1162);
       var screenEl = document.querySelector('.screen');
       screenEl.style.transform = 'scale(' + PAGE_FIT_SCALE + ')';
       document.body.style.width = (1920 * PAGE_FIT_SCALE) + 'px';
