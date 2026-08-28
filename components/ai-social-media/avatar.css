@@ -1,0 +1,17 @@
+/* Avatar — shared component (components/ai-social-media/avatar.html 참고)
+   Figma: FME_AI-Social-Media, "Avatar" (5877:119503) — 20px plain circle placeholder.
+   The product also uses a larger 32px variant filled with user initials (topbar avatar,
+   chat user-message avatar) — documented here too since it's the same primitive at a
+   different size/fill, not a separate component. */
+
+.ai-avatar{border-radius:var(--radius-full); background:var(--color-neutral-400); flex-shrink:0;}
+
+/* size: sm — plain placeholder circle, as in the Figma symbol */
+.ai-avatar.sm{width:20px; height:20px;}
+
+/* size: md — with initials (topbar, chat bubbles) */
+.ai-avatar.md{
+  width:32px; height:32px; background:var(--color-brand-primary-mid);
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-family-text); font-size:11px; font-weight:700; color:var(--color-neutral-800);
+}

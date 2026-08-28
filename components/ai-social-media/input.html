@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>Input — Shared Component</title>
+<link rel="stylesheet" href="../../tokens/tokens.css" />
+<link rel="stylesheet" href="../demo-nav.css" />
+<link rel="stylesheet" href="input.css" />
+<style>
+  body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
+  .demo-main { padding: var(--spacing-4xl); }
+  h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-3xl); }
+  .demo-row { display: flex; flex-direction: column; gap: var(--spacing-sm); margin-bottom: var(--spacing-2xl); max-width: 640px; }
+  .demo-label { font-size: var(--font-size-text-xs); color: var(--color-neutral-500); }
+</style>
+</head>
+<body>
+<div class="demo-shell">
+  <nav class="demo-sidebar">
+    <a href="../../index.html" class="demo-sidebar-home">← Home</a>
+    <div class="demo-sidebar-group">
+      <div class="demo-sidebar-label">AI Social Media</div>
+      <a href="nav.html">Nav / Navigation</a>
+      <a href="topbar-stepper.html">Topbar + Stepper</a>
+      <a href="heading.html">Heading</a>
+      <a href="chat-panel.html">Chat Panel</a>
+      <a href="character-card.html">Character Card</a>
+      <a href="avatar.html">Avatar</a>
+      <a href="switch.html">Controls / Switch</a>
+      <a href="prompt-box.html">AI Prompt Box</a>
+      <a href="input.html" class="active">Input</a>
+      <a href="filter-chip.html">Controls / Filter / Toggle</a>
+      <a href="table-filter.html">Table / Filter</a>
+      <a href="setting-chip.html">Setting Chip</a>
+      <a href="actions-button.html">Actions / Button</a>
+    </div>
+    <div class="demo-sidebar-group">
+      <div class="demo-sidebar-label">Shared</div>
+      <a href="../shared/button.html">Button</a>
+      <a href="../shared/modal-confirm.html">Modal / Confirm</a>
+      <a href="../shared/modal-form.html">Modal / Form</a>
+      <a href="../shared/modal-success.html">Modal / Success</a>
+    </div>
+  </nav>
+  <main class="demo-main">
+  <h1>Input</h1>
+
+  <div class="demo-row">
+    <span class="demo-label">default (empty)</span>
+    <textarea class="ai-input" placeholder="Enter a description"></textarea>
+  </div>
+
+  <div class="demo-row">
+    <span class="demo-label">default — filled</span>
+    <textarea class="ai-input">Enter a description</textarea>
+  </div>
+
+  <div class="demo-row">
+    <span class="demo-label">focused (click into the field)</span>
+    <textarea class="ai-input" placeholder="Enter a description"></textarea>
+  </div>
+
+  <div class="demo-row">
+    <span class="demo-label">error</span>
+    <div class="ai-input-wrap">
+      <textarea class="ai-input error">Enter a description</textarea>
+      <div class="ai-input-error-msg">
+        <svg class="icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="10" cy="10" r="8"/><path d="M10 6v5M10 14v.01"/></svg>
+        <span>You've gone over the word limit (16/15 words). For a 8s video, up to 15 words is safe. Tap Make it shorter and we'll trim what you wrote down to 15 words.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-row">
+    <span class="demo-label">word count</span>
+    <div class="ai-input-wrap">
+      <textarea class="ai-input">Okay wait, you guys have to see this new lip tint — I'm already obsessed! Watch it glide on, blend into the color, and see the difference for yourself.</textarea>
+      <span class="ai-input-wordcount">28/30 words</span>
+    </div>
+  </div>
+  </main>
+</div>
+</body>
+</html>

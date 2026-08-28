@@ -1,0 +1,32 @@
+/* Heading — shared component (components/ai-social-media/heading.html 참고)
+   Figma: FME_AI-Social-Media, "Heading" (5988:99452) — stage title + subtitle, with two
+   optional right-aligned accessories: AI / Refine Pill (gradient text, e.g. "Refine with
+   AI" on the Script screen) and Actions / Text Button (bordered, icon + label — e.g. the
+   "Download" button on the combine-result screen). Both accessories were already built ad
+   hoc in the generate flows; this pulls them into the one shared Heading pattern. */
+
+.ai-heading{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; width:100%; box-sizing:border-box;}
+.ai-heading-text{display:flex; flex-direction:column; gap:4px; min-width:0;}
+.ai-heading-title{font-family:var(--font-family-text); font-size:20px; font-weight:600; line-height:28px; color:var(--color-neutral-900); margin:0;}
+.ai-heading-sub{font-family:var(--font-family-text); font-size:13px; font-weight:400; line-height:20px; color:var(--color-neutral-500); margin:0;}
+
+/* accessory: AI / Refine Pill */
+.ai-heading-refine-pill{
+  display:inline-flex; align-items:center; gap:4px; padding:6px 11px; background:var(--color-neutral-0);
+  border:none; border-radius:999px; box-shadow:0 1px 2px rgba(15,23,41,.05); flex-shrink:0; cursor:pointer;
+}
+.ai-heading-refine-pill span{
+  font-family:var(--font-family-text); font-size:12px; font-weight:600; line-height:16px;
+  background:linear-gradient(90deg,var(--color-brand-primary),var(--color-brand-accent));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.ai-heading-refine-pill .icon{width:16px; height:16px;}
+
+/* accessory: Actions / Text Button (e.g. Download) */
+.ai-heading-download-btn{
+  display:inline-flex; align-items:center; gap:4px; padding:8px 12px; background:var(--color-neutral-0);
+  border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); flex-shrink:0; cursor:pointer;
+  font-family:var(--font-family-text); font-size:13px; font-weight:600; color:var(--color-neutral-700);
+}
+.ai-heading-download-btn:hover{border-color:var(--color-neutral-450);}
+.ai-heading-download-btn .icon{width:16px; height:16px;}

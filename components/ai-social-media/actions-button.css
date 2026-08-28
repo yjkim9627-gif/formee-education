@@ -1,0 +1,20 @@
+/* Actions / Button — shared component (components/ai-social-media/actions-button.html 참고)
+   Figma: FME_AI-Social-Media, "Actions / Button" (6010:102242) — bordered full-width
+   button with a circular play glyph + label, used for audio/voice previews. Matches
+   .voice-preview-btn already built ad hoc in the Timeline/Video Voice sections. */
+
+.actions-btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px; width:100%; box-sizing:border-box;
+  padding:10px 14px; background:var(--color-neutral-0); border:1px solid var(--color-neutral-400);
+  border-radius:var(--radius-lg); cursor:pointer;
+  font-family:var(--font-family-text); font-size:13px; font-weight:600; color:var(--color-neutral-900);
+}
+.actions-btn:hover{border-color:var(--color-neutral-450);}
+.actions-btn .play-icon{
+  width:20px; height:20px; border-radius:999px; border:1.5px solid var(--color-neutral-700);
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.actions-btn .play-icon::after{
+  content:''; width:0; height:0; margin-left:1px;
+  border-style:solid; border-width:4px 0 4px 6px; border-color:transparent transparent transparent var(--color-neutral-700);
+}

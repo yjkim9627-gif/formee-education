@@ -1,0 +1,13 @@
+/* Table / Filter — shared component (components/ai-social-media/table-filter.html 참고)
+   Figma: FME_AI-Social-Media, "Table / Filter" (5834:114162) — 79×36 filter button, used
+   above data lists/tables (Library, Characters, Voices grids etc.). Figma's border color
+   (#c5cee0) doesn't match any token exactly — it's effectively identical to
+   --color-neutral-400 (#c8d1e1), so that's what this uses rather than a new hardcoded hex. */
+
+.table-filter-btn{
+  display:inline-flex; align-items:center; gap:10px; height:36px; padding:8px 10px; box-sizing:border-box;
+  background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg);
+  font-family:var(--font-family-text); font-size:14px; color:var(--color-neutral-900); cursor:pointer;
+}
+.table-filter-btn:hover{border-color:var(--color-neutral-450);}
+.table-filter-btn .icon{width:16px; height:16px; flex-shrink:0;}

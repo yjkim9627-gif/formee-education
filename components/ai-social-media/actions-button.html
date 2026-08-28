@@ -2,15 +2,15 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
-<title>Setting Chip — Shared Component</title>
+<title>Actions / Button — Shared Component</title>
 <link rel="stylesheet" href="../../tokens/tokens.css" />
 <link rel="stylesheet" href="../demo-nav.css" />
-<link rel="stylesheet" href="setting-chip.css" />
+<link rel="stylesheet" href="actions-button.css" />
 <style>
   body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
   .demo-main { padding: var(--spacing-4xl); }
   h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-3xl); }
-  .row { display: flex; gap: var(--spacing-sm); }
+  .row { display: flex; align-items: center; gap: var(--spacing-2xl); max-width: 320px; }
 </style>
 </head>
 <body>
@@ -30,8 +30,8 @@
       <a href="input.html">Input</a>
       <a href="filter-chip.html">Controls / Filter / Toggle</a>
       <a href="table-filter.html">Table / Filter</a>
-      <a href="setting-chip.html" class="active">Setting Chip</a>
-      <a href="actions-button.html">Actions / Button</a>
+      <a href="setting-chip.html">Setting Chip</a>
+      <a href="actions-button.html" class="active">Actions / Button</a>
     </div>
     <div class="demo-sidebar-group">
       <div class="demo-sidebar-label">Shared</div>
@@ -42,12 +42,9 @@
     </div>
   </nav>
   <main class="demo-main">
-  <h1>Setting Chip</h1>
+  <h1>Actions / Button</h1>
   <div class="row">
-    <div class="setting-chip"><div class="chip-ic ratio-box-ic"></div>Ratio <b>9:16</b></div>
-    <div class="setting-chip brand-chip-setting">Brand kit <b>applied</b></div>
-    <div class="setting-chip clickable">Character <b>Elena</b> <span class="chevron">▾</span></div>
-    <div class="setting-chip disabled"><div class="chip-ic ratio-box-ic"></div>Ratio <b>9:16</b></div>
+    <button class="actions-btn"><span class="play-icon"></span><span>Preview</span></button>
   </div>
   </main>
 </div>
