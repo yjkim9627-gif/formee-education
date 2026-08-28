@@ -26,6 +26,10 @@
 <link rel="stylesheet" href="../../../../components/ai-social-media/destination-account.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/date-picker.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/carousel-card-block.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/image-scene-card.css">
+<!-- Playfair Display: only used live for the Draft screen's brand-kit font-preview tags (Formee
+     Express's Heading face, matching brand-setup-kit-character-library.html's own import). -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap">
 <style>
   *{box-sizing:border-box;}
   /* Real Figma icons (components/ai-social-media/icons/), replacing emoji/ad-hoc glyphs. See
@@ -195,80 +199,66 @@
   .copy-field:last-child{border-bottom:none;}
   .copy-field.off{opacity:0.4;}
   .copy-field-body{flex:1; min-width:0; display:flex; flex-direction:column; gap:4px; padding-top:1px;}
-  .copy-field-label{font-size:11px; font-weight:700; color:var(--color-neutral-500); text-transform:uppercase; letter-spacing:.04em;}
-  .copy-field-input{border:none; background:transparent; font-size:14px; color:var(--color-neutral-900); font-family:var(--font-family-text); padding:0; outline:none; width:100%;}
+  .copy-field-label{font-size:var(--font-size-text-xs); line-height:var(--line-height-text-xs); font-weight:var(--font-weight-semibold); color:var(--color-neutral-500); text-transform:uppercase; letter-spacing:0.6px;}
+  .copy-field-input{border:none; background:transparent; font-size:14px; line-height:22px; color:var(--color-neutral-900); font-family:var(--font-family-text); padding:0; outline:none; width:100%;}
   .copy-field.off .copy-field-input{pointer-events:none;}
 
-  .visual-concept-text{width:100%; min-height:96px; border:1px solid var(--color-neutral-400); border-radius:var(--radius-xl); padding:14px 16px; font-size:13.5px; font-family:var(--font-family-text); color:var(--color-neutral-900); line-height:1.6; resize:vertical; outline:none; background:#fff;}
+  .visual-concept-text{width:100%; min-height:100px; border:1px solid var(--color-neutral-400); border-radius:var(--radius-xl); padding:12px; font-size:var(--font-size-text-md); line-height:var(--line-height-text-md); font-family:var(--font-family-text); color:var(--color-neutral-900); resize:vertical; outline:none; background:#fff;}
   .visual-concept-text:focus{border-color:var(--color-brand-primary);}
 
   .scene-desc-label{font-size:11px; font-weight:700; color:var(--color-neutral-500); text-transform:uppercase; letter-spacing:.04em; display:block; margin-bottom:6px;}
   .story-desc-input{width:100%; min-height:70px; border:1px solid var(--color-neutral-300); border-radius:8px; padding:10px 12px; font-size:13px; font-family:var(--font-family-text); color:var(--color-neutral-900); line-height:1.5; resize:vertical; outline:none;}
   .story-desc-input:focus{border-color:var(--color-brand-primary);}
 
-  /* ---- Versions stage (Image): 4-grid parallel generation ----
-     Same situation as .storyboard-tile — real product states (spinner, regenerate
-     button, a per-tile "V1"/"V2" corner badge for telling parallel generations apart)
-     beyond what image-scene-card.css's static Figma capture needed, so class names stay
-     local; values below are aligned to that file's verified spec. */
-  .version-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px; align-content:start;}
-  .version-tile{border:1.2px solid var(--color-neutral-400); border-radius:var(--radius-xl); overflow:hidden; cursor:pointer; background:var(--color-neutral-0); transition:border-color .15s;}
-  .version-tile:hover{border-color:var(--color-neutral-450);}
-  .version-tile.ready:hover{border-color:var(--color-neutral-500);}
-  .version-tile-preview{width:100%; aspect-ratio:4/5; background:linear-gradient(129deg,var(--color-neutral-200) 14%,var(--color-neutral-150) 86%); position:relative; display:flex; align-items:flex-end; padding:var(--spacing-lg);}
-  .version-tile-badge{font-size:11px; font-weight:600; line-height:16px; color:var(--color-neutral-0); background:rgba(71,80,105,.6); padding:4px 8px; border-radius:var(--radius-sm);}
-  .version-tile.generating .version-tile-badge{display:none;}
-  .version-tile-overlay-top{position:absolute; top:8px; left:8px; right:8px; display:flex; align-items:center; justify-content:space-between; gap:6px;}
-  .version-tile-ready-badge{display:none; align-items:center; gap:3px; font-size:10px; font-weight:600; line-height:14px; color:var(--color-badge-green-text); background:var(--color-badge-green-bg); padding:4px 8px; border-radius:999px; box-shadow:0 4px 4px rgba(15,23,41,.08),0 2px 2px rgba(15,23,41,.05);}
-  .version-tile.ready .version-tile-ready-badge{display:inline-flex;}
-  .version-tile-regen-btn{display:none; width:24px; height:24px; border-radius:999px; border:none; background:rgba(255,255,255,0.92); align-items:center; justify-content:center; font-size:12px; color:var(--color-neutral-700); cursor:pointer; margin-left:auto;}
-  .version-tile-regen-btn:hover{background:#fff; color:var(--color-neutral-900);}
-  .version-tile.ready .version-tile-regen-btn{display:flex;}
-  .version-tile-spinner{display:none; width:26px; height:26px; border-radius:999px; border:2.5px solid rgba(255,255,255,0.35); border-top-color:#fff; animation:spin .8s linear infinite; position:absolute; top:50%; left:50%; margin:-13px 0 0 -13px;}
-  .version-tile.generating .version-tile-spinner{display:block;}
-  .version-tile-footer{padding:10px var(--spacing-lg); display:flex; align-items:center; justify-content:space-between; gap:8px;}
-  .version-tile-label{font-size:13px; font-weight:400; line-height:20px; color:var(--color-neutral-700);}
-  .version-tile-use-btn{
-    display:none; align-items:center; gap:var(--spacing-sm); border:none; cursor:pointer;
-    border-radius:var(--radius-lg); padding:7px 14px; font-size:14px; font-weight:600; font-family:var(--font-family-text); color:var(--color-neutral-0);
-    background:linear-gradient(180deg,var(--color-action-primary-dark-gradient-start),var(--color-action-primary-dark-gradient-end));
-    box-shadow:0 1px 2px rgba(13,13,13,.1), inset 0 -1px 1.2px #121212, inset 0 .5px 1px rgba(255,255,255,.15);
-  }
-  .version-tile.ready .version-tile-use-btn{display:inline-flex;}
-  .versions-status{font-size:12px; color:var(--color-neutral-500); text-align:center; margin-top:16px;}
-  .versions-chooser-head{display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:4px;}
+  /* ---- Versions + Preview stages (Image) ----
+     Figma: Image post · Versions (6269-124021) + the same screen's Preview tab (6269-124472).
+     Cards now come from the real components/ai-social-media/image-scene-card.css (data-type
+     "version" for the picker grid, "final" for the single locked-in Preview card) instead of
+     a local .version-tile reimplementation — and the right-hand editor panel reuses the exact
+     same .scene-nav/.scene-card/.scene-desc-box pattern the Reel/Short Timeline tab already
+     uses, for a consistent look across every "pick from a generated grid" screen in this file.
+     Scoped down from Figma: the grid's per-version chip stays a single "V{n}" (no "V2.1"
+     regeneration-history sub-chips there) — that history only starts once a version is picked
+     into Preview, where .refine-history-pill already covers it; showing full regen history
+     mid-generation on the grid would need a second, parallel history model this session didn't
+     have room to build safely. */
+  .versions-chooser-head{display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:24px;}
   .versions-chooser-head .stage-title, .versions-chooser-head .stage-sub-text{margin-bottom:0;}
   .versions-chooser-head-text{flex:1; min-width:0;}
-  .download-all-btn{flex-shrink:0; white-space:nowrap;}
+  .download-all-btn{flex-shrink:0; white-space:nowrap; display:inline-flex; align-items:center; gap:4px;}
+  .versions-status{font-size:12px; color:var(--color-neutral-500); margin-top:16px;}
 
-  .version-result-view{display:flex; gap:24px; align-items:flex-start;}
-  .refine-preview-col{flex-shrink:0; width:312px; display:flex; flex-direction:column; gap:12px;}
-  .refine-controls-col{flex:1; min-width:0;}
-  .version-result-preview{position:relative; width:312px; aspect-ratio:4/5; border-radius:12px; background:linear-gradient(135deg,var(--color-brand-primary-mid),var(--color-brand-accent)); display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:opacity .15s;}
-  .version-result-preview.generating{opacity:.5;}
-  .version-result-badge{font-size:20px; font-weight:700; color:#fff;}
-  .image-download-btn{position:absolute; top:8px; right:8px; width:30px; height:30px; border-radius:999px; border:none; background:rgba(255,255,255,0.92); display:flex; align-items:center; justify-content:center; font-size:13px; color:var(--color-neutral-900); cursor:pointer;}
-  .image-download-btn:hover{background:#fff;}
-  .version-result-title{font-size:16px; font-weight:700; color:var(--color-neutral-900); margin:0 0 4px;}
-  .version-result-sub{font-size:13px; color:var(--color-neutral-500); margin:0 0 16px;}
-  .version-result-actions{display:flex; gap:10px;}
-  .version-result-back{display:block; margin-top:12px; font-size:12.5px; color:var(--color-neutral-500); cursor:pointer; background:none; border:none; font-family:var(--font-family-text); padding:0;}
-  .version-result-back:hover{color:var(--color-brand-primary);}
+  .versions-timeline-stage{display:flex; gap:20px; align-items:flex-start;}
+  .versions-scene-grid{display:flex; gap:20px; align-items:flex-start; flex:1; min-width:0;}
+  .versions-scene-grid-col{flex:1; min-width:0; display:flex; flex-direction:column; gap:12px; align-items:flex-start;}
+  .versions-scene-grid-col.detail{flex:none; width:400px;}
+  .versions-editor-col{width:358px; flex-shrink:0; display:flex; flex-direction:column; gap:24px;}
+  .versions-segment-nav{display:flex; gap:6px;}
+  #stageAreaImage .versions-editor-col .segment-nav-btn{width:28px; height:28px; border-radius:6px;}
+  .image-scene-card-preview.generating{opacity:.55;}
+  .image-scene-card.generating-final .image-scene-card-preview{opacity:.55;}
 
-  .refine-history-row{display:flex; gap:6px; flex-wrap:wrap;}
-  .refine-history-pill{border:1.5px solid var(--color-neutral-300); border-radius:999px; padding:5px 11px; font-size:11.5px; font-weight:600; color:var(--color-neutral-700); cursor:pointer; background:#fff; display:inline-flex; align-items:center; gap:5px;}
-  .refine-history-pill:hover{border-color:var(--color-neutral-450);}
-  .refine-history-pill.active{background:var(--color-neutral-900); border-color:var(--color-neutral-900); color:#fff;}
+  /* Per-card "V{n}" chip + Preview's V{n}/V{n}.{k} regen-history chips share this pill look
+     (Figma's Controls / Filter / Toggle), selected = the one currently shown in the editor panel. */
+  .img-version-chip{display:inline-flex; align-items:center; height:28px; padding:0 13px; border-radius:999px; border:1px solid var(--color-neutral-400); background:var(--color-neutral-0); font-size:12px; font-weight:500; color:var(--color-neutral-700); font-family:var(--font-family-text); cursor:pointer;}
+  .img-version-chip.selected{background:var(--color-neutral-150); border-color:var(--color-neutral-500); font-weight:600; color:var(--color-neutral-900);}
+  .img-version-chip .mini-spinner{width:10px; height:10px; border-width:2px; margin-right:5px;}
 
-  .refine-label{display:block; font-size:12px; font-weight:600; color:var(--color-neutral-700); margin-bottom:8px;}
-  .refine-edit-box{border:1px solid var(--color-neutral-300); border-radius:10px; padding:14px; margin-bottom:16px;}
-  .refine-edit-box-head{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:8px;}
-  .refine-edit-box-head .refine-label{margin-bottom:0;}
-  .refine-edit-input{width:100%; min-height:56px; border:1px solid var(--color-neutral-300); border-radius:8px; padding:9px 11px; font-size:13px; font-family:var(--font-family-text); color:var(--color-neutral-900); resize:vertical; outline:none; box-sizing:border-box;}
-  .refine-edit-input:focus{border-color:var(--color-brand-primary);}
-  .refine-regen-btn{width:auto; justify-content:center; display:flex; align-items:center; gap:5px; padding:6px 12px; font-size:12px; border-radius:999px; flex-shrink:0;}
-  .refine-regen-btn .cost{color:var(--color-neutral-500); font-weight:700;}
-  .refine-regen-btn:disabled{opacity:.55; cursor:default;}
+  .scene-card-head-row{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:8px;}
+  .scene-card-head-label{font-size:13px; font-weight:500; color:var(--color-neutral-700);}
+  .img-prompt-regen-btn{display:inline-flex; align-items:center; gap:4px; border:1px solid var(--color-neutral-400); background:var(--color-neutral-50); border-radius:999px; padding:6px 12px; font-size:11px; font-weight:500; color:var(--color-neutral-500); font-family:var(--font-family-text); cursor:pointer;}
+  .img-prompt-regen-btn .cost{display:inline-flex; align-items:center; gap:2px; font-weight:700;}
+  .img-prompt-regen-btn:hover:not(:disabled){border-color:var(--color-neutral-450);}
+  .img-prompt-regen-btn:disabled{cursor:default; opacity:.6;}
+  .img-prompt-regen-btn.used{background:var(--color-neutral-0); color:var(--color-neutral-700);}
+  .img-prompt-regen-btn.used .cost{color:var(--color-brand-primary);}
+  #stageAreaImage .scene-card .scene-note{font-size:11.5px; color:var(--color-neutral-500); margin-top:8px;}
+
+  .preview-back-row{display:flex; align-items:center; gap:4px; margin-bottom:20px; font-size:13px; font-weight:500; color:var(--color-neutral-700); cursor:pointer; background:none; border:none; font-family:var(--font-family-text); padding:0;}
+  .preview-back-row:hover{color:var(--color-neutral-900);}
+  .preview-back-row img{width:16px; height:16px;}
+
+  .refine-history-row{display:flex; gap:6px; flex-wrap:wrap; margin-top:12px;}
 
   .refine-size-box{border:1px solid var(--color-neutral-300); border-radius:10px; padding:14px; margin-bottom:20px;}
   .refine-size-row{display:flex; gap:12px; flex-wrap:wrap; align-items:flex-start;}
@@ -454,21 +444,29 @@
   #stageAreaCarousel .stage-body-inner{max-width:960px; margin:0 auto; width:100%; flex:1; min-height:0; display:flex; flex-direction:column;}
   #stageAreaCarousel .stage-sub-text{font-size:12px; color:var(--color-neutral-500); margin:0 0 24px;}
 
-  /* ---- Generate — brand kit summary + baked-in warning + draft-section spacing ---- */
+  /* ---- Generate — brand kit summary + baked-in warning + draft-section spacing ----
+     Figma: Image post · Draft — Brand kit on (node 6236-205), stage-body-inner (6236-267). ---- */
   #stageAreaImage .draft-section{margin-bottom:32px;}
-  #stageAreaImage .draft-section-label{font-size:13px; font-weight:700; color:var(--color-neutral-900); margin-bottom:12px;}
-  #stageAreaImage .draft-section-hint{font-size:11.5px; color:var(--color-neutral-500); margin:-8px 0 12px;}
+  #stageAreaImage .draft-section-label{font-size:var(--font-size-text-md); line-height:var(--line-height-text-md); font-weight:var(--font-weight-semibold); color:var(--color-neutral-900); margin-bottom:12px;}
+  #stageAreaImage .draft-section-hint{font-size:var(--font-size-text-sm); line-height:var(--line-height-text-sm); color:var(--color-neutral-500); margin:-8px 0 12px;}
+  /* Text placement's title+hint pair sits closer together (gap 4) than the generic label→content gap (12) used everywhere else */
+  #stageAreaImage .draft-section-placement .draft-section-label{margin-bottom:4px;}
+  #stageAreaImage .draft-section-placement .draft-section-hint{margin:0 0 12px;}
   #stageAreaImage .brand-kit-row{display:flex; align-items:center; gap:16px; margin-top:14px;}
-  #stageAreaImage .brand-kit-label{font-size:14px; font-weight:600; color:var(--color-neutral-900);}
-  #stageAreaImage .brand-kit-summary{margin-top:12px; padding:0; background:none; border:none; border-radius:0; display:flex; flex-wrap:wrap; gap:20px 32px;}
-  #stageAreaImage .brand-kit-summary-label{display:inline-flex; align-items:center; gap:4px; font-size:12.5px; font-weight:600; color:var(--color-neutral-700); border:1px solid var(--color-neutral-300); border-radius:999px; padding:5px 10px 5px 12px; margin-bottom:10px; width:fit-content;}
-  #stageAreaImage .brand-kit-summary-label .chevron{font-size:9px; color:var(--color-neutral-500);}
-  #stageAreaImage .brand-kit-swatch-row{display:flex; gap:3px; height:28px;}
-  #stageAreaImage .brand-kit-swatch-row span{flex:1; border-radius:4px;}
-  #stageAreaImage .brand-kit-fonts{display:flex; flex-wrap:wrap; gap:8px; align-items:flex-start;}
-  #stageAreaImage .brand-kit-font-row{display:flex; align-items:baseline; gap:6px; font-size:12px; border:1px solid var(--color-neutral-300); border-radius:var(--radius-lg); padding:7px 10px;}
-  #stageAreaImage .brand-kit-font-role{font-weight:700; color:var(--color-neutral-900);}
-  #stageAreaImage .brand-kit-font-name{color:var(--color-neutral-500);}
+  #stageAreaImage .brand-kit-label{font-size:14px; line-height:22px; font-weight:600; color:var(--color-neutral-900);}
+  #stageAreaImage .brand-kit-summary{margin-top:12px; padding:16px; background:#fff; border:1px solid var(--color-neutral-200); border-radius:var(--radius-xl); display:flex; align-items:flex-start; gap:20px;}
+  #stageAreaImage .brand-kit-summary-col{flex:1; min-width:0; display:flex; flex-direction:column; gap:12px;}
+  #stageAreaImage .brand-kit-divider{align-self:stretch; width:1px; background:var(--color-neutral-200); flex-shrink:0;}
+  #stageAreaImage .brand-kit-summary-label{display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:500; color:var(--color-neutral-700); border:1px solid var(--color-neutral-400); border-radius:999px; padding:5px 10px 5px 12px; width:fit-content;}
+  #stageAreaImage .brand-kit-summary-label .chevron{width:16px; height:16px; display:flex;}
+  #stageAreaImage .brand-kit-fonts-title{font-size:14px; line-height:22px; font-weight:600; color:var(--color-neutral-900);}
+  #stageAreaImage .brand-kit-swatch-row{display:flex; height:38px; border:1px solid var(--color-neutral-300); border-radius:var(--radius-lg); overflow:hidden;}
+  #stageAreaImage .brand-kit-swatch-row span{flex:1;}
+  #stageAreaImage .brand-kit-fonts{display:grid; grid-template-columns:repeat(2, auto); gap:8px; align-items:start;}
+  #stageAreaImage .brand-kit-font-row{display:flex; align-items:center; gap:8px; border:1px solid var(--color-neutral-300); border-radius:var(--radius-lg); padding:6px 8px 6px 6px; width:fit-content;}
+  #stageAreaImage .brand-kit-font-tag{display:flex; align-items:center; justify-content:center; background:var(--color-neutral-150); border-radius:var(--radius-md); padding:4px 8px; color:var(--color-neutral-900); white-space:nowrap;}
+  #stageAreaImage .brand-kit-font-meta{display:flex; align-items:center; gap:6px; font-size:12px; font-weight:500; color:var(--color-neutral-500); white-space:nowrap;}
+  #stageAreaImage .brand-kit-font-meta .dot{width:2px; height:2px; border-radius:999px; background:var(--color-neutral-500);}
   #stageAreaImage .brand-kit-empty{margin-top:8px; padding:12px 16px; background:#fff; border:1px dashed var(--color-neutral-400); border-radius:var(--radius-xl); font-size:14px; color:var(--color-neutral-500); display:flex; align-items:center; justify-content:space-between; gap:16px;}
   #stageAreaImage .baked-in-warning{display:none; align-items:center; gap:12px; font-size:12px; color:var(--color-warning-text); background:var(--color-badge-yellow-bg); border:1px solid var(--color-badge-yellow-text); border-radius:10px; padding:10px 16px; margin-top:12px; line-height:1.5;}
   #stageAreaImage .baked-in-warning.show{display:flex;}
@@ -1671,8 +1669,8 @@
                   <span class="brand-kit-label">Use brand kit</span>
                 </div>
                 <div class="brand-kit-summary" id="brandKitSummary">
-                  <div>
-                    <div class="brand-kit-summary-label">Palette · Formee Express <span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span></div>
+                  <div class="brand-kit-summary-col">
+                    <div class="brand-kit-summary-label">Palette · Formee Express <span class="chevron"><img src="../../../../components/ai-social-media/icons/caret-down-filled.svg" class="icon-inline" alt=""></span></div>
                     <div class="brand-kit-swatch-row">
                       <span style="background:#2b6a6c"></span>
                       <span style="background:#b80d48"></span>
@@ -1683,12 +1681,13 @@
                       <span style="background:#ffffff; border:1px solid var(--color-neutral-200);"></span>
                     </div>
                   </div>
-                  <div>
-                    <div class="brand-kit-summary-label" style="border:none; padding:0 0 5px; margin-bottom:0;">Fonts</div>
+                  <div class="brand-kit-divider"></div>
+                  <div class="brand-kit-summary-col">
+                    <div class="brand-kit-fonts-title">Fonts</div>
                     <div class="brand-kit-fonts">
-                      <div class="brand-kit-font-row"><span class="brand-kit-font-role">Heading</span><span class="brand-kit-font-name">Manrope · Bold</span></div>
-                      <div class="brand-kit-font-row"><span class="brand-kit-font-role">Subhead</span><span class="brand-kit-font-name">Manrope · SemiBold</span></div>
-                      <div class="brand-kit-font-row"><span class="brand-kit-font-role">Body</span><span class="brand-kit-font-name">Manrope · Regular</span></div>
+                      <div class="brand-kit-font-row"><span class="brand-kit-font-tag" style="font-family:'Playfair Display',Georgia,serif; font-weight:700; font-size:18px;">Heading</span><span class="brand-kit-font-meta">Playfair<span class="dot"></span>Bold</span></div>
+                      <div class="brand-kit-font-row"><span class="brand-kit-font-tag" style="font-family:Georgia,serif; font-weight:700; font-size:16px;">Subheading</span><span class="brand-kit-font-meta">Georgia<span class="dot"></span>SemiBold</span></div>
+                      <div class="brand-kit-font-row"><span class="brand-kit-font-tag" style="font-family:Georgia,serif; font-weight:400; font-size:16px;">Body</span><span class="brand-kit-font-meta">Georgia<span class="dot"></span>Regular</span></div>
                     </div>
                   </div>
                 </div>
@@ -1698,7 +1697,7 @@
                 </div>
               </div>
 
-              <div class="draft-section">
+              <div class="draft-section draft-section-placement">
                 <div class="draft-section-label">Text placement</div>
                 <p class="draft-section-hint">How the headline, subhead, and call to action should appear on the image.</p>
                 <div class="seg-control" id="textPlacementToggleImage">
@@ -1713,53 +1712,103 @@
             </div></div>
           </div>
 
-          <!-- SUB-STAGE: Versions -->
+          <!-- SUB-STAGE: Versions — Figma: Image post · Versions (node 6269-124021). Cards use
+               the real Image Scene Card component; the right panel mirrors the Reel/Short
+               Timeline's scene-nav + scene-card pattern (Version 1/2 nav, editable Image prompt
+               + Regenerate). -->
           <div class="stage-sub" id="subVersions" style="display:none;">
-            <div class="stage-body"><div class="stage-body-inner" style="max-width:640px;">
+            <div class="stage-body"><div class="stage-body-inner" style="max-width:1024px;">
               <div id="versionsChooser">
                 <div class="versions-chooser-head">
                   <div class="versions-chooser-head-text">
                     <h2 class="stage-title">Choose a version</h2>
                     <p class="stage-sub-text" id="versionsStageSub">All 2 are generating in parallel — pick one to continue, or regenerate any that miss the mark.</p>
                   </div>
-                  <button type="button" class="btn btn-secondary download-all-btn" onclick="downloadAllVersions()">⬇ Download All</button>
+                  <button type="button" class="btn btn-secondary download-all-btn" onclick="downloadAllVersions()"><img src="../../../../components/ai-social-media/icons/download-ui.svg" class="icon-inline" alt="">Download All</button>
                 </div>
-                <div class="version-grid" id="versionGrid"></div>
+                <div class="versions-timeline-stage">
+                  <div class="versions-scene-grid" id="versionGrid"></div>
+                  <div class="versions-editor-col">
+                    <div class="scene-nav">
+                      <span class="scene-nav-label">Version</span>
+                      <div class="versions-segment-nav" id="versionSegmentNav"></div>
+                    </div>
+                    <div class="scene-card">
+                      <div class="scene-card-head-row">
+                        <span class="scene-card-head-label">Image prompt</span>
+                        <button type="button" class="img-prompt-regen-btn" id="versionsRegenBtn" onclick="regenerateActiveVersion()">Regenerate <span class="cost"><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">5</span></button>
+                      </div>
+                      <div class="scene-desc-box"><textarea class="scene-desc" id="versionsPromptText" oninput="onVersionsPromptEdited()"></textarea></div>
+                      <p class="scene-note">Auto-drafted from your Copy and Visual concept in the Draft step</p>
+                    </div>
+                  </div>
+                </div>
                 <div class="versions-status" id="versionsStatus">Generating 4 versions…</div>
               </div>
             </div></div>
           </div>
 
-          <!-- SUB-STAGE: Preview — reached once a version is picked ("Use this"); size variations
-               are intentionally not offered here. -->
+          <!-- SUB-STAGE: Preview — reached once a version is picked ("Use this"); Figma: same
+               screen's Preview tab (node 6269-124472). size variations are intentionally not
+               offered here. -->
           <div class="stage-sub" id="subPreviewImage" style="display:none;">
-            <div class="stage-body"><div class="stage-body-inner" style="max-width:640px;">
-              <div class="version-result-view" id="versionResultView">
-                <div class="refine-preview-col">
-                  <div class="version-result-preview" id="versionResultPreview">
-                    <button type="button" class="image-download-btn" onclick="event.stopPropagation(); downloadImage('main')" title="Download image">⬇</button>
-                    <span class="version-result-badge" id="versionResultBadge">V1</span>
-                  </div>
-                  <div class="refine-history-row" id="refineHistoryRow"></div>
+            <div class="stage-body"><div class="stage-body-inner" style="max-width:1024px;">
+              <button type="button" class="preview-back-row" onclick="backToVersions()"><img src="../../../../components/ai-social-media/icons/back.svg" class="icon-inline" alt="">Back to versions</button>
+              <div class="versions-chooser-head">
+                <div class="versions-chooser-head-text">
+                  <h2 class="stage-title">Your image is ready</h2>
+                  <p class="stage-sub-text" id="versionResultSub">All 2 are generating in parallel — pick one to continue, or regenerate any that miss the mark.</p>
                 </div>
-                <div class="refine-controls-col">
-                  <div class="version-result-title">Your image is ready</div>
-                  <p class="version-result-sub" id="versionResultSub">Image post · 4:5 · English</p>
-
-                  <div class="refine-edit-box">
-                    <div class="refine-edit-box-head">
-                      <label class="refine-label">✏️ Edit with a prompt</label>
-                      <button type="button" class="btn btn-secondary refine-regen-btn" id="refineRegenBtn" onclick="regenerateWithPrompt()" disabled>↻ Regenerate <span class="cost"><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">8</span></button>
+                <button type="button" class="btn btn-secondary download-all-btn" onclick="downloadImage('main')"><img src="../../../../components/ai-social-media/icons/download-ui.svg" class="icon-inline" alt="">Download</button>
+              </div>
+              <div class="versions-timeline-stage">
+                <div class="versions-scene-grid">
+                  <div class="versions-scene-grid-col detail">
+                    <div class="image-scene-card" data-type="final" id="versionResultCard">
+                      <div class="image-scene-card-preview">
+                        <div class="image-scene-card-top-row">
+                          <div class="image-scene-card-icon-row">
+                            <button class="image-scene-card-icon-btn download" type="button" onclick="downloadImage('main')"><img src="../../../../components/ai-social-media/icons/download-ui.svg" alt=""></button>
+                            <button class="image-scene-card-icon-btn maximize" type="button"><img src="../../../../components/ai-social-media/icons/maximize.svg" alt=""></button>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <textarea class="refine-edit-input" id="refineEditInput" placeholder="e.g. Make the lighting warmer, add more students in the background..." oninput="onRefinePromptEdited()"></textarea>
+                    <div class="refine-history-row" id="refineHistoryRow"></div>
                   </div>
-
-                  <div class="version-result-actions">
-                    <button class="btn btn-dark" onclick="imgGoToDevelop()">Continue to editing →</button>
-                    <button class="btn btn-secondary" onclick="skipToPublish()">Skip to publish</button>
-                  </div>
-                  <button type="button" class="version-result-back" onclick="backToVersions()"><img src="../../../../components/ai-social-media/icons/back.svg" class="icon-inline" alt="" style="margin-right:4px;"> Back to versions</button>
                 </div>
+                <div class="versions-editor-col">
+                  <div class="video-summary-card">
+                    <div class="video-summary-card-head">
+                      <div class="video-summary-card-name"><span id="versionSummaryTitle">Study in the UK</span><img src="../../../../components/ai-social-media/icons/edit-pencil.svg" alt="Edit"></div>
+                      <p class="video-summary-card-desc" id="versionSummaryDesc">A short intro image post promoting the UK study abroad programme.</p>
+                    </div>
+                    <div class="video-summary-card-divider"></div>
+                    <div class="video-summary-card-row">
+                      <span class="video-summary-card-row-label"><span class="spec-ratio-box"></span><span>Ratio</span></span>
+                      <span class="video-summary-card-row-value" id="versionSummaryRatio">4:5</span>
+                    </div>
+                    <div class="video-summary-card-row">
+                      <span class="video-summary-card-row-label"><img src="../../../../components/ai-social-media/icons/circle-user-round.svg" alt=""><span>Character</span></span>
+                      <span class="video-summary-card-row-value" id="versionSummaryCharacter">Elena</span>
+                    </div>
+                  </div>
+                  <div class="scene-card">
+                    <div class="scene-card-head-row">
+                      <span class="scene-card-head-label">Image prompt</span>
+                      <button type="button" class="img-prompt-regen-btn used" id="refineRegenBtn" onclick="regenerateWithPrompt()" disabled><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt="">Regenerate <span class="cost"><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">8</span></button>
+                    </div>
+                    <div class="scene-desc-box"><textarea class="scene-desc" id="refineEditInput" oninput="onRefinePromptEdited()"></textarea></div>
+                    <p class="scene-note">Auto-drafted from your Copy and Visual concept in the Draft step</p>
+                  </div>
+                </div>
+              </div>
+              <!-- Hidden — not part of Figma's Preview screen (that CTA lives only in the
+                   persistent bottom action bar, like every other Generate sub-stage), but kept
+                   in the DOM as the actual source syncGenActionBarV3() mirrors text/onclick from. -->
+              <div class="version-result-actions" style="display:none;">
+                <button class="btn btn-dark" onclick="imgGoToDevelop()">Continue to editing →</button>
+                <button class="btn btn-secondary" onclick="skipToPublish()">Skip to publish</button>
               </div>
             </div></div>
           </div>
@@ -2780,15 +2829,25 @@ function quickAction(action){
 // ---- Draft <-> Versions sub-stage tabs ----
 
 // ---- Confirm & generate N versions (parallel, individually regenerable) ----
+// versionState[i] = {id, ready, prompt} — "prompt" seeds the right-panel Image prompt box
+// for that version; editing + regenerating there just rewrites this same field (matches
+// Figma's Versions screen, node 6269-124021, where the prompt box sits directly in the grid's
+// editor panel rather than behind a separate "edit" step).
 let versionState = [];
+window.__activeVersionId = 1; // which version's prompt shows in the right-hand editor panel
+
 function confirmAndGenerate(btn){
   if(btn){ btn.disabled = true; }
   renderChatQuickChips([]);
   const n = window.__versionCount || 2;
   document.getElementById('tabVersions').classList.remove('locked');
   showSub('versions');
-  versionState = Array.from({length: n}, (_, i) => ({id: i + 1, ready: false}));
+  const basePrompt = document.getElementById('visualConceptText').value;
+  versionState = Array.from({length: n}, (_, i) => ({id: i + 1, ready: false, prompt: basePrompt}));
+  window.__activeVersionId = 1;
   renderVersionGrid();
+  renderVersionSegmentNav();
+  renderVersionEditorPanel();
   const label = `${n} version${n > 1 ? 's' : ''}`;
   document.getElementById('versionsStageSub').textContent = `All ${n} ${n > 1 ? 'are' : 'is'} generating in parallel — pick one to continue, or regenerate any that miss the mark.`;
   document.getElementById('versionsStatus').textContent = `Generating ${label}…`;
@@ -2797,13 +2856,14 @@ function confirmAndGenerate(btn){
     setTimeout(() => {
       v.ready = true;
       renderVersionGrid();
+      renderVersionEditorPanel();
       checkAllVersionsReady();
     }, 1400 + i * 900);
   });
 }
 // Version pills mirror the ones on the canvas tiles — lets you pick a version right from the
-// chat too (onclick reuses selectVersion(), same action as the tile's "Use this" button), so
-// picking a favorite doesn't mean leaving the conversation to go find the right tile.
+// chat too (onclick reuses selectVersion(), same action as the card's "Use this" button), so
+// picking a favorite doesn't mean leaving the conversation to go find the right card.
 function checkAllVersionsReady(){
   if(versionState.every(v => v.ready)){
     const n = versionState.length;
@@ -2813,32 +2873,68 @@ function checkAllVersionsReady(){
     addChatMsg('ai', `<span class="tag">AI</span>All ${label} are ready. Pick your favorite to move into Develop, or regenerate any one individually.<div class="chat-cta-row">${pills}</div>`);
   }
 }
+// Cards: real Image Scene Card component (components/ai-social-media/image-scene-card.css),
+// type="version" — Ready badge + "Version N" / "Use this" footer, matching Figma exactly.
+// Below each card: a single "V{n}" chip (selects that version into the editor panel on the
+// right) — Figma's grid also shows regeneration-history sub-chips (e.g. "V2.1") per card, but
+// that history only starts once a version is picked into Preview here (see renderRefineHistory).
 function renderVersionGrid(){
   const grid = document.getElementById('versionGrid');
   grid.innerHTML = versionState.map(v => `
-    <div class="version-tile ${v.ready ? 'ready' : 'generating'}" onclick="${v.ready ? `selectVersion(${v.id})` : ''}">
-      <div class="version-tile-preview">
-        <div class="version-tile-overlay-top">
-          <span class="version-tile-badge">V${v.id}</span>
-          <span class="version-tile-ready-badge">Ready</span>
-          <button type="button" class="version-tile-regen-btn" onclick="event.stopPropagation(); regenerateVersion(${v.id})" title="Regenerate this version only"><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt=""></button>
+    <div class="versions-scene-grid-col">
+      <div class="image-scene-card${v.ready && v.id === window.__activeVersionId ? ' selected' : ''}" data-type="version">
+        <div class="image-scene-card-preview${v.ready ? '' : ' generating'}">
+          <div class="image-scene-card-top-row">
+            <span class="image-scene-card-ready-badge" style="${v.ready ? '' : 'display:none;'}">Ready</span>
+            <div class="image-scene-card-icon-row">
+              <button class="image-scene-card-icon-btn download" type="button" onclick="event.stopPropagation(); downloadImage(${v.id})"><img src="../../../../components/ai-social-media/icons/download-ui.svg" alt=""></button>
+              <button class="image-scene-card-icon-btn maximize" type="button" onclick="event.stopPropagation();"><img src="../../../../components/ai-social-media/icons/maximize.svg" alt=""></button>
+            </div>
+          </div>
+          <div class="spinner-mini" style="${v.ready ? '' : 'display:block;'}"></div>
         </div>
-        <div class="version-tile-spinner"></div>
+        <div class="image-scene-card-footer">
+          <span class="image-scene-card-version-label">Version ${v.id}</span>
+          <button type="button" class="image-scene-card-use-btn" style="${v.ready ? '' : 'display:none;'}" onclick="event.stopPropagation(); selectVersion(${v.id})">Use this</button>
+        </div>
       </div>
-      <div class="version-tile-footer">
-        <span class="version-tile-label">Version ${v.id}</span>
-        <button type="button" class="version-tile-use-btn" onclick="event.stopPropagation(); selectVersion(${v.id})">Use this</button>
-      </div>
+      <button type="button" class="img-version-chip${v.id === window.__activeVersionId ? ' selected' : ''}" onclick="selectActiveVersion(${v.id})">${v.ready ? '' : '<span class="mini-spinner"></span>'}V${v.id}</button>
     </div>`).join('');
+}
+function renderVersionSegmentNav(){
+  const nav = document.getElementById('versionSegmentNav');
+  if(!nav) return;
+  nav.innerHTML = versionState.map(v => `<div class="segment-nav-btn${v.id === window.__activeVersionId ? ' active' : ''}" onclick="selectActiveVersion(${v.id})">${v.id}</div>`).join('');
+}
+function renderVersionEditorPanel(){
+  const v = versionState.find(x => x.id === window.__activeVersionId);
+  if(!v) return;
+  document.getElementById('versionsPromptText').value = v.prompt;
+  document.getElementById('versionsRegenBtn').disabled = !v.ready;
+}
+function selectActiveVersion(id){
+  window.__activeVersionId = id;
+  renderVersionGrid();
+  renderVersionSegmentNav();
+  renderVersionEditorPanel();
+}
+function onVersionsPromptEdited(){ /* live-typed; picked up whenever Regenerate is pressed */ }
+function regenerateActiveVersion(){
+  const v = versionState.find(x => x.id === window.__activeVersionId);
+  if(!v || !v.ready) return;
+  v.prompt = document.getElementById('versionsPromptText').value;
+  regenerateVersion(v.id);
 }
 function regenerateVersion(id){
   const v = versionState.find(x => x.id === id);
   v.ready = false;
   renderVersionGrid();
+  renderVersionEditorPanel();
   document.getElementById('versionsStatus').textContent = `Regenerating version ${id}…`;
   setTimeout(() => {
     v.ready = true;
     renderVersionGrid();
+    renderVersionEditorPanel();
     checkAllVersionsReady();
   }, 1400);
 }
@@ -2846,7 +2942,8 @@ function selectVersion(id){
   addChatMsg('user', `Use version ${id}`);
   window.__selectedVersionId = id;
   document.getElementById('tabVersions').innerHTML = '<span class="check">✓</span> Versions';
-  window.__editHistory = [{ label: 'V' + id, ready: true }];
+  const v = versionState.find(x => x.id === id);
+  window.__editHistory = [{ label: 'V' + id, ready: true, prompt: v.prompt }];
   window.__activeEditIndex = 0;
   showVersionResult(id);
 }
@@ -2854,7 +2951,12 @@ function selectVersion(id){
 function showVersionResult(id){
   document.getElementById('tabPreviewImage').classList.remove('locked');
   showSub('previewImage');
-  applyPreviewAspect(window.__imageRatio);
+  const h = copyFields.find(f => f.key === 'headline');
+  const s = copyFields.find(f => f.key === 'subhead');
+  document.getElementById('versionSummaryTitle').textContent = (h && h.text) || 'Image post';
+  document.getElementById('versionSummaryDesc').textContent = (s && s.text) || 'Image post generated from your Draft copy and visual concept.';
+  document.getElementById('versionSummaryRatio').textContent = window.__imageRatio || '4:5';
+  document.getElementById('versionSummaryCharacter').textContent = window.__brandMode === 'set' ? 'Elena' : '—';
   renderRefineHistory();
 }
 
@@ -2862,7 +2964,7 @@ function backToVersions(){
   showSub('versions');
 }
 
-// ---- Refine the picked version: prompt-edit history ----
+// ---- Refine the picked version: prompt-edit history (V1, V1.1, V1.2…) ----
 const REGEN_EDIT_CREDIT = 8;
 
 window.__editHistory = [];
@@ -2872,40 +2974,34 @@ function currentEditEntry(){
   return window.__editHistory[window.__activeEditIndex];
 }
 
-function applyPreviewAspect(ratio){
-  const [w, h] = ratio.split(':').map(Number);
-  document.getElementById('versionResultPreview').style.aspectRatio = `${w} / ${h}`;
-}
-
 function renderRefineHistory(){
   const entry = currentEditEntry();
-  const previewEl = document.getElementById('versionResultPreview');
-  document.getElementById('versionResultBadge').textContent = entry.label;
-  previewEl.classList.toggle('generating', !entry.ready);
+  document.getElementById('versionResultCard').classList.toggle('generating-final', !entry.ready);
   document.getElementById('refineHistoryRow').innerHTML = window.__editHistory.map((h, i) => `
-    <div class="refine-history-pill${i === window.__activeEditIndex ? ' active' : ''}" onclick="selectHistoryEntry(${i})">
+    <button type="button" class="img-version-chip${i === window.__activeEditIndex ? ' selected' : ''}" onclick="selectHistoryEntry(${i})">
       ${h.ready ? '' : '<span class="mini-spinner"></span>'}${h.label}
-    </div>
+    </button>
   `).join('');
   const input = document.getElementById('refineEditInput');
+  input.value = entry.prompt;
   input.disabled = !entry.ready;
   syncRefineRegenBtn();
 }
 
-// Regenerate stays disabled until the prompt has actually been edited (and the current
-// version isn't already mid-regeneration) — nothing to regenerate from an untouched prompt.
+// Regenerate stays disabled until the prompt has actually changed from what's already
+// generated (and the current entry isn't already mid-regeneration) — nothing to regenerate
+// from an unchanged prompt.
 function onRefinePromptEdited(){ syncRefineRegenBtn(); }
 function syncRefineRegenBtn(){
   const entry = currentEditEntry();
   const input = document.getElementById('refineEditInput');
-  document.getElementById('refineRegenBtn').disabled = !entry.ready || input.value.trim().length === 0;
+  document.getElementById('refineRegenBtn').disabled = !entry.ready || input.value.trim() === entry.prompt.trim();
 }
 
 function selectHistoryEntry(i){
   if(!window.__editHistory[i].ready) return;
   window.__activeEditIndex = i;
   renderRefineHistory();
-  applyPreviewAspect(window.__imageRatio);
 }
 
 function regenerateWithPrompt(){
@@ -2914,9 +3010,8 @@ function regenerateWithPrompt(){
   if(!promptText) return;
   const rootLabel = window.__editHistory[0].label;
   const newLabel = `${rootLabel}.${window.__editHistory.length}`;
-  window.__editHistory.push({ label: newLabel, ready: false, promptEdit: promptText });
+  window.__editHistory.push({ label: newLabel, ready: false, prompt: promptText });
   window.__activeEditIndex = window.__editHistory.length - 1;
-  input.value = '';
   renderRefineHistory();
   setTimeout(() => {
     currentEditEntry().ready = true;
@@ -2925,7 +3020,7 @@ function regenerateWithPrompt(){
 }
 
 function downloadImage(which){
-  alert(which === 'main' ? 'Download image — TBD' : `Download ${which} image — TBD`);
+  alert(which === 'main' ? 'Download image — TBD' : `Download version ${which} — TBD`);
 }
 function downloadAllVersions(){
   alert('Download all versions — TBD');
@@ -6147,6 +6242,10 @@ function showSub(name){
   Object.values(subs).forEach(id => { const el = document.getElementById(id); if(el) el.style.display = 'none'; });
   const subEl = document.getElementById(subs[name]);
   if(subEl) subEl.style.display = displays[name];
+  // Figma's Preview tab (node 6269-124472) drops the ratio/versions/character settings-bar
+  // entirely, replacing it with the in-page "← Back to versions" breadcrumb instead.
+  const settingsBarImage = document.getElementById('settingsBarImage');
+  if(settingsBarImage) settingsBarImage.style.display = (name === 'previewImage') ? 'none' : '';
   syncGenActionBarV3();
 }
 
@@ -6170,7 +6269,7 @@ function syncGenActionBarV3(){
     } else if(document.getElementById('subVersions').style.display !== 'none'){
       sourceBtn = { textContent: 'Choose a version to continue', disabled: true, click: () => {} };
     } else if(document.getElementById('subPreviewImage').style.display !== 'none'){
-      sourceBtn = document.querySelector('#versionResultView .version-result-actions .btn-dark');
+      sourceBtn = document.querySelector('#subPreviewImage .version-result-actions .btn-dark');
       secondaryBtn.textContent = 'Skip to publish';
       secondaryBtn.onclick = () => skipToPublish();
     }
