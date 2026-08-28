@@ -206,26 +206,34 @@
   .story-desc-input{width:100%; min-height:70px; border:1px solid var(--color-neutral-300); border-radius:8px; padding:10px 12px; font-size:13px; font-family:var(--font-family-text); color:var(--color-neutral-900); line-height:1.5; resize:vertical; outline:none;}
   .story-desc-input:focus{border-color:var(--color-brand-primary);}
 
-  /* ---- Versions stage (Image): 4-grid parallel generation ---- */
+  /* ---- Versions stage (Image): 4-grid parallel generation ----
+     Same situation as .storyboard-tile — real product states (spinner, regenerate
+     button, a per-tile "V1"/"V2" corner badge for telling parallel generations apart)
+     beyond what image-scene-card.css's static Figma capture needed, so class names stay
+     local; values below are aligned to that file's verified spec. */
   .version-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px; align-content:start;}
-  .version-tile{border:1.5px solid var(--color-neutral-300); border-radius:12px; overflow:hidden; cursor:pointer; background:#fff; transition:border-color .15s, box-shadow .15s;}
+  .version-tile{border:1.2px solid var(--color-neutral-400); border-radius:var(--radius-xl); overflow:hidden; cursor:pointer; background:var(--color-neutral-0); transition:border-color .15s;}
   .version-tile:hover{border-color:var(--color-neutral-450);}
-  .version-tile.ready:hover{border-color:var(--color-brand-primary);}
-  .version-tile-preview{width:100%; aspect-ratio:1; background:linear-gradient(135deg,var(--color-neutral-200),var(--color-neutral-150)); position:relative; display:flex; align-items:flex-end; padding:10px;}
-  .version-tile.ready .version-tile-preview{background:linear-gradient(135deg,var(--color-brand-primary-mid),var(--color-brand-accent));}
-  .version-tile-badge{font-size:11px; font-weight:600; color:#fff; background:rgba(15,23,41,0.55); padding:4px 8px; border-radius:6px; backdrop-filter:blur(2px);}
+  .version-tile.ready:hover{border-color:var(--color-neutral-500);}
+  .version-tile-preview{width:100%; aspect-ratio:4/5; background:linear-gradient(129deg,var(--color-neutral-200) 14%,var(--color-neutral-150) 86%); position:relative; display:flex; align-items:flex-end; padding:var(--spacing-lg);}
+  .version-tile-badge{font-size:11px; font-weight:600; line-height:16px; color:var(--color-neutral-0); background:rgba(71,80,105,.6); padding:4px 8px; border-radius:var(--radius-sm);}
   .version-tile.generating .version-tile-badge{display:none;}
   .version-tile-overlay-top{position:absolute; top:8px; left:8px; right:8px; display:flex; align-items:center; justify-content:space-between; gap:6px;}
-  .version-tile-ready-badge{display:none; align-items:center; gap:3px; font-size:10px; font-weight:700; color:var(--color-badge-green-text); background:#fff; padding:3px 7px; border-radius:999px;}
+  .version-tile-ready-badge{display:none; align-items:center; gap:3px; font-size:10px; font-weight:600; line-height:14px; color:var(--color-badge-green-text); background:var(--color-badge-green-bg); padding:4px 8px; border-radius:999px; box-shadow:0 4px 4px rgba(15,23,41,.08),0 2px 2px rgba(15,23,41,.05);}
   .version-tile.ready .version-tile-ready-badge{display:inline-flex;}
   .version-tile-regen-btn{display:none; width:24px; height:24px; border-radius:999px; border:none; background:rgba(255,255,255,0.92); align-items:center; justify-content:center; font-size:12px; color:var(--color-neutral-700); cursor:pointer; margin-left:auto;}
   .version-tile-regen-btn:hover{background:#fff; color:var(--color-neutral-900);}
   .version-tile.ready .version-tile-regen-btn{display:flex;}
   .version-tile-spinner{display:none; width:26px; height:26px; border-radius:999px; border:2.5px solid rgba(255,255,255,0.35); border-top-color:#fff; animation:spin .8s linear infinite; position:absolute; top:50%; left:50%; margin:-13px 0 0 -13px;}
   .version-tile.generating .version-tile-spinner{display:block;}
-  .version-tile-footer{padding:10px 12px; display:flex; align-items:center; justify-content:space-between; gap:8px; border-top:1px solid var(--color-neutral-200);}
-  .version-tile-label{font-size:12px; font-weight:600; color:var(--color-neutral-700);}
-  .version-tile-use-btn{display:none; border:none; background:var(--color-neutral-900); color:#fff; border-radius:999px; padding:5px 12px; font-size:11px; font-weight:600; font-family:var(--font-family-text); cursor:pointer;}
+  .version-tile-footer{padding:10px var(--spacing-lg); display:flex; align-items:center; justify-content:space-between; gap:8px;}
+  .version-tile-label{font-size:13px; font-weight:400; line-height:20px; color:var(--color-neutral-700);}
+  .version-tile-use-btn{
+    display:none; align-items:center; gap:var(--spacing-sm); border:none; cursor:pointer;
+    border-radius:var(--radius-lg); padding:7px 14px; font-size:14px; font-weight:600; font-family:var(--font-family-text); color:var(--color-neutral-0);
+    background:linear-gradient(180deg,var(--color-action-primary-dark-gradient-start),var(--color-action-primary-dark-gradient-end));
+    box-shadow:0 1px 2px rgba(13,13,13,.1), inset 0 -1px 1.2px #121212, inset 0 .5px 1px rgba(255,255,255,.15);
+  }
   .version-tile.ready .version-tile-use-btn{display:inline-flex;}
   .versions-status{font-size:12px; color:var(--color-neutral-500); text-align:center; margin-top:16px;}
   .versions-chooser-head{display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:4px;}
@@ -2812,14 +2820,14 @@ function renderVersionGrid(){
       <div class="version-tile-preview">
         <div class="version-tile-overlay-top">
           <span class="version-tile-badge">V${v.id}</span>
-          <span class="version-tile-ready-badge">✓ Ready</span>
+          <span class="version-tile-ready-badge">Ready</span>
           <button type="button" class="version-tile-regen-btn" onclick="event.stopPropagation(); regenerateVersion(${v.id})" title="Regenerate this version only"><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt=""></button>
         </div>
         <div class="version-tile-spinner"></div>
       </div>
       <div class="version-tile-footer">
         <span class="version-tile-label">Version ${v.id}</span>
-        <button type="button" class="version-tile-use-btn" onclick="event.stopPropagation(); selectVersion(${v.id})">Use this →</button>
+        <button type="button" class="version-tile-use-btn" onclick="event.stopPropagation(); selectVersion(${v.id})">Use this</button>
       </div>
     </div>`).join('');
 }
