@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>Storyboard Card — AI Social Media Component</title>
+<link rel="stylesheet" href="../../tokens/tokens.css" />
+<link rel="stylesheet" href="../demo-nav.css" />
+<link rel="stylesheet" href="storyboard-card.css" />
+<style>
+  body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
+  .demo-main { padding: var(--spacing-4xl); }
+  h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-3xl); }
+  .demo-row { display: flex; flex-direction: column; gap: var(--spacing-sm); margin-bottom: var(--spacing-3xl); }
+  .demo-label { font-size: var(--font-size-text-xs); color: var(--color-neutral-500); }
+  .demo-grid { display: flex; flex-wrap: wrap; gap: var(--spacing-2xl); align-items: flex-start; }
+  .demo-cell { display: flex; flex-direction: column; gap: var(--spacing-sm); width: 220px; }
+</style>
+</head>
+<body>
+<div class="demo-shell">
+  <nav class="demo-sidebar">
+    <a href="../../index.html" class="demo-sidebar-home">← Home</a>
+    <div class="demo-sidebar-group">
+      <div class="demo-sidebar-label">AI Social Media</div>
+      <a href="nav.html">Nav / Navigation</a>
+      <a href="topbar-stepper.html">Topbar + Stepper</a>
+      <a href="heading.html">Heading</a>
+      <a href="chat-panel.html">Chat Panel</a>
+      <a href="character-card.html">Character Card</a>
+      <a href="avatar.html">Avatar</a>
+      <a href="switch.html">Controls / Switch</a>
+      <a href="prompt-box.html">AI Prompt Box</a>
+      <a href="input.html">Input</a>
+      <a href="filter-chip.html">Controls / Filter / Toggle</a>
+      <a href="table-filter.html">Table / Filter</a>
+      <a href="setting-chip.html">Setting Chip</a>
+      <a href="actions-button.html">Actions / Button</a>
+      <a href="icons.html">Icons</a>
+      <a href="scene-tile.html">Scene Tile</a>
+      <a href="storyboard-card.html" class="active">Storyboard Card</a>
+      <a href="image-scene-card.html">Image Scene Card</a>
+    </div>
+    <div class="demo-sidebar-group">
+      <div class="demo-sidebar-label">Shared</div>
+      <a href="../shared/button.html">Button</a>
+      <a href="../shared/modal-confirm.html">Modal / Confirm</a>
+      <a href="../shared/modal-form.html">Modal / Form</a>
+      <a href="../shared/modal-success.html">Modal / Success</a>
+    </div>
+  </nav>
+  <main class="demo-main">
+  <h1>Storyboard Card</h1>
+
+  <div class="demo-row">
+    <span class="demo-label">Type = Storyboard (carousel copy card — headline / subhead / body / CTA)</span>
+    <div class="demo-grid">
+      <div class="demo-cell">
+        <span class="demo-label">Selected = False</span>
+        <div class="storyboard-card" data-type="storyboard">
+          <div class="storyboard-card-preview">
+            <p class="storyboard-card-headline">Ever wondered what it's really like to study abroad?</p>
+            <p class="storyboard-card-subhead">A quick look at what to expect.</p>
+            <p class="storyboard-card-body">A quick look at what to expect.</p>
+            <span class="storyboard-card-cta">Learn more</span>
+            <div class="storyboard-card-spacer"></div>
+            <span class="storyboard-card-badge">Card 1</span>
+          </div>
+        </div>
+      </div>
+      <div class="demo-cell">
+        <span class="demo-label">Selected = True</span>
+        <div class="storyboard-card selected" data-type="storyboard">
+          <div class="storyboard-card-preview">
+            <p class="storyboard-card-headline">Ever wondered what it's really like to study abroad?</p>
+            <p class="storyboard-card-subhead">A quick look at what to expect.</p>
+            <p class="storyboard-card-body">A quick look at what to expect.</p>
+            <span class="storyboard-card-cta">Learn more</span>
+            <div class="storyboard-card-spacer"></div>
+            <span class="storyboard-card-badge">Card 1</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-row">
+    <span class="demo-label">Type = Image (generated image preview — empty state + version chips)</span>
+    <div class="demo-grid">
+      <div class="demo-cell">
+        <span class="demo-label">Selected = False</span>
+        <div class="storyboard-card" data-type="image">
+          <div class="storyboard-card-preview">
+            <div class="storyboard-card-top-row">
+              <button class="storyboard-card-icon-btn download" type="button"><img src="icons/download-ui.svg" alt=""></button>
+              <button class="storyboard-card-icon-btn maximize" type="button"><img src="icons/maximize.svg" alt=""></button>
+            </div>
+            <div class="storyboard-card-image-empty"><img src="icons/content-image.svg" alt=""></div>
+          </div>
+          <div class="storyboard-card-version-row">
+            <span class="storyboard-version-chip selected">V1</span>
+            <span class="storyboard-version-chip">V1.1</span>
+          </div>
+        </div>
+      </div>
+      <div class="demo-cell">
+        <span class="demo-label">Selected = True</span>
+        <div class="storyboard-card selected" data-type="image">
+          <div class="storyboard-card-preview">
+            <div class="storyboard-card-top-row">
+              <button class="storyboard-card-icon-btn download" type="button"><img src="icons/download-ui.svg" alt=""></button>
+              <button class="storyboard-card-icon-btn maximize" type="button"><img src="icons/maximize.svg" alt=""></button>
+            </div>
+            <div class="storyboard-card-image-empty"><img src="icons/content-image.svg" alt=""></div>
+          </div>
+          <div class="storyboard-card-version-row">
+            <span class="storyboard-version-chip selected">V1</span>
+            <span class="storyboard-version-chip">V1.1</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </main>
+</div>
+</body>
+</html>

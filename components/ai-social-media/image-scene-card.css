@@ -1,0 +1,65 @@
+/* Image Scene Card — Figma node 6409:134714
+   Variants: Type = Version (has a "Version N" / "Use this" footer row) / Final (no footer,
+   just the image), each with Selected true/false for Version (Final only ships
+   Selected=False in Figma — the "locked in" display card doesn't need a selection ring).
+
+   Photography in the Figma reference is a real stock photo — like scene-tile.css /
+   character-card.css elsewhere in this library, the preview uses a neutral gradient
+   placeholder instead of downloading the photo.
+*/
+
+.image-scene-card{
+  width:100%; max-width:400px;
+  background:var(--color-neutral-0);
+  border-radius:var(--radius-xl);
+  overflow:hidden;
+  display:flex; flex-direction:column; align-items:flex-start;
+}
+.image-scene-card[data-type="version"]{
+  border:1.2px solid var(--color-neutral-400);
+}
+.image-scene-card[data-type="version"].selected{border-color:var(--color-neutral-500);}
+.image-scene-card[data-type="final"]{border:2px solid var(--color-neutral-400);}
+
+.image-scene-card-preview{
+  position:relative; width:100%; aspect-ratio:400/500; box-sizing:border-box;
+  padding:var(--spacing-lg);
+  background:linear-gradient(129deg,var(--color-neutral-200) 14%,var(--color-neutral-150) 86%);
+  display:flex; flex-direction:column;
+}
+.image-scene-card-top-row{display:flex; align-items:flex-start; justify-content:space-between; width:100%;}
+.image-scene-card[data-type="final"] .image-scene-card-top-row{justify-content:flex-end;}
+
+.image-scene-card-ready-badge{
+  display:inline-flex; align-items:center; font-family:var(--font-family-text);
+  font-size:10px; font-weight:600; line-height:14px; color:var(--color-badge-green-text);
+  background:var(--color-badge-green-bg); border-radius:999px; padding:4px 8px;
+  box-shadow:0 4px 4px rgba(15,23,41,.08),0 2px 2px rgba(15,23,41,.05);
+}
+
+.image-scene-card-icon-row{display:flex; align-items:center; gap:var(--spacing-sm);}
+.image-scene-card-icon-btn{
+  width:24px; height:24px; border-radius:var(--radius-md); border:none;
+  display:flex; align-items:center; justify-content:center; padding:0; cursor:pointer;
+}
+.image-scene-card-icon-btn.download{
+  background:var(--color-neutral-0); border:1px solid var(--color-neutral-400);
+  box-shadow:0 1px 1.5px rgba(15,23,41,.1),0 1px .5px rgba(15,23,41,.04);
+}
+.image-scene-card-icon-btn.maximize{background:rgba(255,255,255,.2); backdrop-filter:blur(5px); padding:5px;}
+.image-scene-card-icon-btn img{display:block;}
+.image-scene-card-icon-btn.download img{width:14px; height:14px;}
+.image-scene-card-icon-btn.maximize img{width:16px; height:16px;}
+
+.image-scene-card-footer{
+  width:100%; box-sizing:border-box; display:flex; align-items:center; justify-content:space-between;
+  padding:10px var(--spacing-lg);
+}
+.image-scene-card-version-label{font-family:var(--font-family-text); font-size:13px; font-weight:400; line-height:20px; color:var(--color-neutral-700);}
+.image-scene-card-use-btn{
+  display:inline-flex; align-items:center; gap:var(--spacing-sm);
+  padding:7px 14px; border:none; border-radius:var(--radius-lg); cursor:pointer;
+  background:linear-gradient(180deg,var(--color-action-primary-dark-gradient-start),var(--color-action-primary-dark-gradient-end));
+  box-shadow:0 1px 2px rgba(13,13,13,.1), inset 0 -1px 1.2px #121212, inset 0 .5px 1px rgba(255,255,255,.15);
+  font-family:var(--font-family-text); font-size:14px; font-weight:600; line-height:22px; color:var(--color-neutral-0);
+}

@@ -4692,7 +4692,7 @@ function updateVoicePreviewButton(scope, n){
   btn.classList.toggle('cached', cached);
   btn.classList.toggle('stale', stale);
   if(cached){
-    btn.innerHTML = `<span class="vp-icon">🔁</span> Preview`;
+    btn.innerHTML = `<span class="vp-icon"><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt=""></span> Preview`;
     btn.title = 'Replay the cached preview — no extra cost';
   } else if(stale){
     btn.innerHTML = `<span class="vp-icon"><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt=""></span> Regenerate <span class="vp-cost"><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">${SEGMENT_VOICE_CREDIT}</span>`;
@@ -4745,7 +4745,7 @@ function updateWholeVoiceButton(scope){
   btn.classList.toggle('cached', cached);
   btn.classList.toggle('stale', stale);
   if(cached){
-    btn.innerHTML = `<span class="vp-icon">🔁</span> Preview`;
+    btn.innerHTML = `<span class="vp-icon"><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt=""></span> Preview`;
     btn.title = 'Replay the cached preview — no extra cost';
   } else if(stale){
     btn.innerHTML = `<span class="vp-icon"><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt=""></span> Regenerate <span class="vp-cost"><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">${wholeCredits}</span>`;

@@ -1,0 +1,80 @@
+/* Storyboard Card — Figma node 6566:115735
+   Variants: Type = Storyboard / Image, each × Selected true/false.
+
+   Storyboard type = a copy/CTA card (headline + subhead + body + "Learn more" CTA +
+   "Card N" badge) on a flat neutral-100 panel — no photo.
+   Image type = a generated-image preview card (download/maximize icon row + centered
+   placeholder glyph until an image is generated) + a V1/V1.1 version-chip row below
+   the card, using the Filter/Toggle "selected" pattern but at this component's own
+   fixed 28px pill sizing (see .storyboard-version-chip below — kept separate from the
+   general-purpose .filter-chip in filter-chip.css since the box model differs).
+*/
+
+.storyboard-card{
+  display:flex; flex-direction:column; align-items:flex-start; overflow:hidden;
+  border-radius:var(--radius-xl); width:100%; max-width:303px;
+}
+.storyboard-card[data-type="storyboard"]{
+  background:var(--color-neutral-0);
+  border:1px solid var(--color-neutral-400);
+}
+.storyboard-card[data-type="storyboard"].selected{border-color:var(--color-neutral-500);}
+.storyboard-card[data-type="image"]{gap:8px;}
+
+.storyboard-card-preview{
+  width:100%; aspect-ratio:303/379; padding:var(--spacing-lg); box-sizing:border-box; overflow:hidden;
+  display:flex; flex-direction:column;
+}
+.storyboard-card[data-type="storyboard"] .storyboard-card-preview{
+  background:var(--color-neutral-100); gap:var(--spacing-sm);
+}
+.storyboard-card[data-type="image"] .storyboard-card-preview{
+  background:var(--color-neutral-200); border:1px solid var(--color-neutral-400);
+  border-radius:var(--radius-xl); justify-content:space-between;
+}
+.storyboard-card[data-type="image"].selected .storyboard-card-preview{border-color:var(--color-neutral-500);}
+
+/* Storyboard type content */
+.storyboard-card-headline{font-family:var(--font-family-text); font-size:13px; font-weight:600; line-height:20px; color:var(--color-neutral-800); margin:0;}
+.storyboard-card-subhead{font-family:var(--font-family-text); font-size:12px; font-weight:500; line-height:18px; color:var(--color-neutral-700); margin:0;}
+.storyboard-card-body{font-family:var(--font-family-text); font-size:10px; font-weight:400; line-height:14px; color:var(--color-neutral-700); margin:0;}
+.storyboard-card-cta{
+  align-self:flex-start; margin-top:4px;
+  background:var(--color-neutral-700); border-radius:var(--radius-md);
+  padding:4px 8px; font-family:var(--font-family-text); font-size:10px; font-weight:500; line-height:14px; color:var(--color-neutral-0);
+}
+.storyboard-card-spacer{flex:1 0 0; min-height:0;}
+.storyboard-card-badge{
+  align-self:flex-start;
+  background:rgba(71,80,105,.6); border-radius:var(--radius-sm);
+  padding:4px 8px; font-family:var(--font-family-text); font-size:11px; font-weight:600; line-height:16px; color:var(--color-neutral-0);
+}
+
+/* Image type content */
+.storyboard-card-top-row{display:flex; align-items:center; justify-content:flex-end; width:100%; gap:var(--spacing-sm);}
+.storyboard-card-icon-btn{
+  width:24px; height:24px; border-radius:var(--radius-md); border:none;
+  display:flex; align-items:center; justify-content:center; padding:0; cursor:pointer;
+}
+.storyboard-card-icon-btn.download{
+  background:var(--color-neutral-0); border:1px solid var(--color-neutral-400);
+  box-shadow:0 1px 1.5px rgba(15,23,41,.1),0 1px .5px rgba(15,23,41,.04);
+}
+.storyboard-card-icon-btn.maximize{background:rgba(255,255,255,.2); backdrop-filter:blur(5px); padding:5px;}
+.storyboard-card-icon-btn img{display:block;}
+.storyboard-card-icon-btn.download img{width:14px; height:14px;}
+.storyboard-card-icon-btn.maximize img{width:16px; height:16px;}
+.storyboard-card-image-empty{flex:1; display:flex; align-items:center; justify-content:center; width:100%;}
+.storyboard-card-image-empty img{width:72px; height:72px; opacity:.5;}
+
+.storyboard-card-version-row{display:flex; align-items:flex-start; gap:8px;}
+.storyboard-version-chip{
+  display:inline-flex; align-items:center; height:28px; border-radius:999px; border:1px solid var(--color-neutral-400);
+  padding:9px 13px; background:var(--color-neutral-0);
+  font-family:var(--font-family-text); font-size:12px; font-weight:500; line-height:18px; color:var(--color-neutral-700);
+  cursor:pointer;
+}
+.storyboard-version-chip.selected{
+  background:var(--color-neutral-150); border-color:var(--color-neutral-500);
+  font-weight:600; color:var(--color-neutral-900);
+}
