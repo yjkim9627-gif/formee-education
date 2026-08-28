@@ -21,6 +21,11 @@
 <link rel="stylesheet" href="../../../../components/ai-social-media/actions-button.css">
 <style>
   *{box-sizing:border-box;}
+  /* Real Figma icons (components/ai-social-media/icons/), replacing emoji/ad-hoc glyphs. See
+     components/ai-social-media/icons.html for the full catalog + which emoji each one replaces. */
+  .icon-inline{width:14px; height:14px; display:inline-block; vertical-align:-2px; flex-shrink:0;}
+  .icon-inline.icon-16{width:16px; height:16px; vertical-align:-3px;}
+  .icon-inline.icon-flip{transform:scaleX(-1);}
   /* Fixed 1920x1162 to match the shared reference frame size (brand-setup/index.html) —
      scaled to fit whatever the actual browser window size is via fitScreenToViewport()
      below, same technique as prototypes/ai-social-media/editing/image-editing.html. */
@@ -1113,7 +1118,7 @@
       <div class="mark"></div>
       <div class="txt"><b>Formee Education</b><span>AI Social Media</span></div>
     </div>
-    <div class="nav-workspace"><span>Placeholder</span><span class="chevron">▾</span></div>
+    <div class="nav-workspace"><span>Placeholder</span><span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span></div>
     <div class="nav-group"><div class="nav-item"><div class="ic clip" style="width:20px;height:20px;"><div class="f" style="inset:50% 37.5% 12.5% 37.5%"><div class="f" style="inset:-10.67% -16%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjYuNiIgaGVpZ2h0PSI5LjEiIHZpZXdCb3g9IjAgMCA2LjYgOS4xIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNNS44IDguM1YxLjYzMzMzQzUuOCAxLjQxMjMyIDUuNzEyMiAxLjIwMDM2IDUuNTU1OTIgMS4wNDQwOEM1LjM5OTY0IDAuODg3Nzk4IDUuMTg3NjggMC44IDQuOTY2NjcgMC44SDEuNjMzMzNDMS40MTIzMiAwLjggMS4yMDAzNiAwLjg4Nzc5OCAxLjA0NDA4IDEuMDQ0MDhDMC44ODc3OTggMS4yMDAzNiAwLjggMS40MTIzMiAwLjggMS42MzMzM1Y4LjMiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div><div class="f" style="inset:8.33% 12.5% 12.5% 12.5%"><div class="f" style="inset:-5.05% -5.33%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2LjYiIGhlaWdodD0iMTcuNDMzNyIgdmlld0JveD0iMCAwIDE2LjYgMTcuNDMzNyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTAuOCA3LjQ2NzA3QzAuNzk5OTQyIDcuMjI0NjIgMC44NTI3NzggNi45ODUwOSAwLjk1NDgyMyA2Ljc2NTE2QzEuMDU2ODcgNi41NDUyNCAxLjIwNTY2IDYuMzUwMjMgMS4zOTA4MyA2LjE5MzczTDcuMjI0MTcgMS4xOTM3M0M3LjUyNDk5IDAuOTM5NDkgNy45MDYxMyAwLjggOC4zIDAuOEM4LjY5Mzg3IDAuOCA5LjA3NTAxIDAuOTM5NDkgOS4zNzU4MyAxLjE5MzczTDE1LjIwOTIgNi4xOTM3M0MxNS4zOTQzIDYuMzUwMjMgMTUuNTQzMSA2LjU0NTI0IDE1LjY0NTIgNi43NjUxNkMxNS43NDcyIDYuOTg1MDkgMTUuODAwMSA3LjIyNDYyIDE1LjggNy40NjcwN1YxNC45NjcxQzE1LjggMTUuNDA5MSAxNS42MjQ0IDE1LjgzMyAxNS4zMTE4IDE2LjE0NTZDMTQuOTk5MyAxNi40NTgxIDE0LjU3NTQgMTYuNjMzNyAxNC4xMzMzIDE2LjYzMzdIMi40NjY2N0MyLjAyNDY0IDE2LjYzMzcgMS42MDA3MiAxNi40NTgxIDEuMjg4MTYgMTYuMTQ1NkMwLjk3NTU5NSAxNS44MzMgMC44IDE1LjQwOTEgMC44IDE0Ljk2NzFWNy40NjcwN1oiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div></div><span class="label">Home</span></div></div>
     <div class="nav-group">
       <div class="nav-label">Create</div>
@@ -1181,7 +1186,7 @@
             <div class="prompt-chips">
               <div class="prompt-chip-wrap" id="ratioChipWrapImage">
                 <div class="prompt-chip clickable" onclick="imgToggleRatioPopover(event)">
-                  <div class="ic ratio-box-ic"></div><span id="ratioChipTextImage">4:5</span><span class="chevron">▾</span>
+                  <div class="ic ratio-box-ic"></div><span id="ratioChipTextImage">4:5</span><span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span>
                 </div>
                 <div class="chip-popover" id="ratioPopoverImage" style="display:none;">
                   <div class="chip-popover-label">Aspect Ratio</div>
@@ -1192,7 +1197,7 @@
               </div>
               <div class="prompt-chip-wrap" id="versionsChipWrap">
                 <div class="prompt-chip clickable" onclick="toggleVersionsPopover(event)">
-                  <div class="ic"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gY29udGVudCAvIGNhcm91c2VsIiBjbGlwLXBhdGg9InVybCgjY2xpcDBfMF8xMTUxKSI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik04LjU1MzMzIDEuNDUzMzNDOC4zNzk2MiAxLjM3NDEgOC4xOTA5MyAxLjMzMzEgOCAxLjMzMzFDNy44MDkwNyAxLjMzMzEgNy42MjAzNyAxLjM3NDEgNy40NDY2NyAxLjQ1MzMzTDEuNzMzMzMgNC4wNTMzM0MxLjYxNTAzIDQuMTA1NSAxLjUxNDQ1IDQuMTkwOTMgMS40NDM4NCA0LjI5OTI0QzEuMzczMjMgNC40MDc1NCAxLjMzNTY0IDQuNTM0MDQgMS4zMzU2NCA0LjY2MzMzQzEuMzM1NjQgNC43OTI2MiAxLjM3MzIzIDQuOTE5MTIgMS40NDM4NCA1LjAyNzQzQzEuNTE0NDUgNS4xMzU3MyAxLjYxNTAzIDUuMjIxMTcgMS43MzMzMyA1LjI3MzMzTDcuNDUzMzMgNy44OEM3LjYyNzA0IDcuOTU5MjMgNy44MTU3NCA4LjAwMDI0IDguMDA2NjcgOC4wMDAyNEM4LjE5NzU5IDguMDAwMjQgOC4zODYyOSA3Ljk1OTIzIDguNTYgNy44OEwxNC4yOCA1LjI4QzE0LjM5ODMgNS4yMjc4NCAxNC40OTg5IDUuMTQyNCAxNC41Njk1IDUuMDM0MUMxNC42NDAxIDQuOTI1NzkgMTQuNjc3NyA0Ljc5OTI5IDE0LjY3NzcgNC42N0MxNC42Nzc3IDQuNTQwNzEgMTQuNjQwMSA0LjQxNDIxIDE0LjU2OTUgNC4zMDU5QzE0LjQ5ODkgNC4xOTc2IDE0LjM5ODMgNC4xMTIxNiAxNC4yOCA0LjA2TDguNTUzMzMgMS40NTMzM1oiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzIiIGQ9Ik0xLjMzMzMzIDhDMS4zMzMwMiA4LjEyNzUxIDEuMzY5MjggOC4yNTI0NCAxLjQzNzgxIDguMzU5OTdDMS41MDYzNSA4LjQ2NzQ5IDEuNjA0MjggOC41NTMxMSAxLjcyIDguNjA2NjdMNy40NTMzMyAxMS4yMTMzQzcuNjI2MTMgMTEuMjkxNiA3LjgxMzY0IDExLjMzMjEgOC4wMDMzMyAxMS4zMzIxQzguMTkzMDIgMTEuMzMyMSA4LjM4MDUzIDExLjI5MTYgOC41NTMzMyAxMS4yMTMzTDE0LjI3MzMgOC42MTMzM0MxNC4zOTEzIDguNTYwMjkgMTQuNDkxNCA4LjQ3NDA2IDE0LjU2MTIgOC4zNjUxNkMxNC42MzEgOC4yNTYyNSAxNC42Njc3IDguMTI5MzcgMTQuNjY2NyA4IiBzdHJva2U9IiM4QTkzQTgiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggaWQ9IlZlY3Rvcl8zIiBkPSJNMS4zMzMzMyAxMS4zMzMzQzEuMzMzMDIgMTEuNDYwOCAxLjM2OTI4IDExLjU4NTggMS40Mzc4MSAxMS42OTMzQzEuNTA2MzUgMTEuODAwOCAxLjYwNDI4IDExLjg4NjQgMS43MiAxMS45NEw3LjQ1MzMzIDE0LjU0NjdDNy42MjYxMyAxNC42MjQ5IDcuODEzNjQgMTQuNjY1NCA4LjAwMzMzIDE0LjY2NTRDOC4xOTMwMiAxNC42NjU0IDguMzgwNTMgMTQuNjI0OSA4LjU1MzMzIDE0LjU0NjdMMTQuMjczMyAxMS45NDY3QzE0LjM5MTMgMTEuODkzNiAxNC40OTE0IDExLjgwNzQgMTQuNTYxMiAxMS42OTg1QzE0LjYzMSAxMS41ODk2IDE0LjY2NzcgMTEuNDYyNyAxNC42NjY3IDExLjMzMzMiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L2c+CjxkZWZzPgo8Y2xpcFBhdGggaWQ9ImNsaXAwXzBfMTE1MSI+CjxyZWN0IHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgZmlsbD0id2hpdGUiLz4KPC9jbGlwUGF0aD4KPC9kZWZzPgo8L3N2Zz4K" alt=""></div><span id="versionsChipText">2 Versions</span><span class="chevron">▾</span>
+                  <div class="ic"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gY29udGVudCAvIGNhcm91c2VsIiBjbGlwLXBhdGg9InVybCgjY2xpcDBfMF8xMTUxKSI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik04LjU1MzMzIDEuNDUzMzNDOC4zNzk2MiAxLjM3NDEgOC4xOTA5MyAxLjMzMzEgOCAxLjMzMzFDNy44MDkwNyAxLjMzMzEgNy42MjAzNyAxLjM3NDEgNy40NDY2NyAxLjQ1MzMzTDEuNzMzMzMgNC4wNTMzM0MxLjYxNTAzIDQuMTA1NSAxLjUxNDQ1IDQuMTkwOTMgMS40NDM4NCA0LjI5OTI0QzEuMzczMjMgNC40MDc1NCAxLjMzNTY0IDQuNTM0MDQgMS4zMzU2NCA0LjY2MzMzQzEuMzM1NjQgNC43OTI2MiAxLjM3MzIzIDQuOTE5MTIgMS40NDM4NCA1LjAyNzQzQzEuNTE0NDUgNS4xMzU3MyAxLjYxNTAzIDUuMjIxMTcgMS43MzMzMyA1LjI3MzMzTDcuNDUzMzMgNy44OEM3LjYyNzA0IDcuOTU5MjMgNy44MTU3NCA4LjAwMDI0IDguMDA2NjcgOC4wMDAyNEM4LjE5NzU5IDguMDAwMjQgOC4zODYyOSA3Ljk1OTIzIDguNTYgNy44OEwxNC4yOCA1LjI4QzE0LjM5ODMgNS4yMjc4NCAxNC40OTg5IDUuMTQyNCAxNC41Njk1IDUuMDM0MUMxNC42NDAxIDQuOTI1NzkgMTQuNjc3NyA0Ljc5OTI5IDE0LjY3NzcgNC42N0MxNC42Nzc3IDQuNTQwNzEgMTQuNjQwMSA0LjQxNDIxIDE0LjU2OTUgNC4zMDU5QzE0LjQ5ODkgNC4xOTc2IDE0LjM5ODMgNC4xMTIxNiAxNC4yOCA0LjA2TDguNTUzMzMgMS40NTMzM1oiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzIiIGQ9Ik0xLjMzMzMzIDhDMS4zMzMwMiA4LjEyNzUxIDEuMzY5MjggOC4yNTI0NCAxLjQzNzgxIDguMzU5OTdDMS41MDYzNSA4LjQ2NzQ5IDEuNjA0MjggOC41NTMxMSAxLjcyIDguNjA2NjdMNy40NTMzMyAxMS4yMTMzQzcuNjI2MTMgMTEuMjkxNiA3LjgxMzY0IDExLjMzMjEgOC4wMDMzMyAxMS4zMzIxQzguMTkzMDIgMTEuMzMyMSA4LjM4MDUzIDExLjI5MTYgOC41NTMzMyAxMS4yMTMzTDE0LjI3MzMgOC42MTMzM0MxNC4zOTEzIDguNTYwMjkgMTQuNDkxNCA4LjQ3NDA2IDE0LjU2MTIgOC4zNjUxNkMxNC42MzEgOC4yNTYyNSAxNC42Njc3IDguMTI5MzcgMTQuNjY2NyA4IiBzdHJva2U9IiM4QTkzQTgiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggaWQ9IlZlY3Rvcl8zIiBkPSJNMS4zMzMzMyAxMS4zMzMzQzEuMzMzMDIgMTEuNDYwOCAxLjM2OTI4IDExLjU4NTggMS40Mzc4MSAxMS42OTMzQzEuNTA2MzUgMTEuODAwOCAxLjYwNDI4IDExLjg4NjQgMS43MiAxMS45NEw3LjQ1MzMzIDE0LjU0NjdDNy42MjYxMyAxNC42MjQ5IDcuODEzNjQgMTQuNjY1NCA4LjAwMzMzIDE0LjY2NTRDOC4xOTMwMiAxNC42NjU0IDguMzgwNTMgMTQuNjI0OSA4LjU1MzMzIDE0LjU0NjdMMTQuMjczMyAxMS45NDY3QzE0LjM5MTMgMTEuODkzNiAxNC40OTE0IDExLjgwNzQgMTQuNTYxMiAxMS42OTg1QzE0LjYzMSAxMS41ODk2IDE0LjY2NzcgMTEuNDYyNyAxNC42NjY3IDExLjMzMzMiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L2c+CjxkZWZzPgo8Y2xpcFBhdGggaWQ9ImNsaXAwXzBfMTE1MSI+CjxyZWN0IHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgZmlsbD0id2hpdGUiLz4KPC9jbGlwUGF0aD4KPC9kZWZzPgo8L3N2Zz4K" alt=""></div><span id="versionsChipText">2 Versions</span><span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span>
                 </div>
                 <div class="chip-popover" id="versionsPopover" style="display:none;">
                   <div class="chip-popover-label">Versions</div>
@@ -1218,9 +1223,9 @@
             <div id="charWithSectionImage">
               <div class="char-filters">
                 <div class="filter-chip active">Favorites <img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjEyIiBoZWlnaHQ9IjEyIiB2aWV3Qm94PSIwIDAgMTIgMTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gc3Rhci1maWxsIiBjbGlwLXBhdGg9InVybCgjY2xpcDBfMF8xMjM5KSI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik01Ljc2MjUgMS4xNDc1QzUuNzg0NDEgMS4xMDMyMyA1LjgxODI2IDEuMDY1OTcgNS44NjAyMyAxLjAzOTkxQzUuOTAyMTkgMS4wMTM4NiA1Ljk1MDYgMS4wMDAwNSA2IDEuMDAwMDVDNi4wNDk0IDEuMDAwMDUgNi4wOTc4MSAxLjAxMzg2IDYuMTM5NzcgMS4wMzk5MUM2LjE4MTc0IDEuMDY1OTcgNi4yMTU1OSAxLjEwMzIzIDYuMjM3NSAxLjE0NzVMNy4zOTI1IDMuNDg3QzcuNDY4NTkgMy42NDA5OCA3LjU4MDkxIDMuNzc0MiA3LjcxOTgxIDMuODc1MjNDNy44NTg3MiAzLjk3NjI1IDguMDIwMDYgNC4wNDIwNiA4LjE5IDQuMDY3TDEwLjc3MyA0LjQ0NUMxMC44MjE5IDQuNDUyMDkgMTAuODY3OSA0LjQ3Mjc0IDEwLjkwNTcgNC41MDQ2QzEwLjk0MzYgNC41MzY0NiAxMC45NzE3IDQuNTc4MjcgMTAuOTg3IDQuNjI1M0MxMS4wMDIzIDQuNjcyMzMgMTEuMDA0MSA0LjcyMjcgMTAuOTkyMyA0Ljc3MDcyQzEwLjk4MDUgNC44MTg3MyAxMC45NTU0IDQuODYyNDggMTAuOTIgNC44OTdMOS4wNTIgNi43MTZDOC45Mjg4MSA2LjgzNjA1IDguODM2NjQgNi45ODQyNCA4Ljc4MzQyIDcuMTQ3ODFDOC43MzAyIDcuMzExMzkgOC43MTc1MyA3LjQ4NTQ0IDguNzQ2NSA3LjY1NUw5LjE4NzUgMTAuMjI1QzkuMTk2MTQgMTAuMjczOSA5LjE5MDg2IDEwLjMyNDMgOS4xNzIyNSAxMC4zNzAzQzkuMTUzNjQgMTAuNDE2NCA5LjEyMjQ3IDEwLjQ1NjMgOS4wODIyNyAxMC40ODU1QzkuMDQyMDggMTAuNTE0NyA4Ljk5NDQ5IDEwLjUzMiA4Ljk0NDkzIDEwLjUzNTRDOC44OTUzOCAxMC41Mzg5IDguODQ1ODUgMTAuNTI4MyA4LjgwMiAxMC41MDVMNi40OTMgOS4yOTFDNi4zNDA4NiA5LjIxMTExIDYuMTcxNTkgOS4xNjkzOCA1Ljk5OTc1IDkuMTY5MzhDNS44Mjc5MSA5LjE2OTM4IDUuNjU4NjQgOS4yMTExMSA1LjUwNjUgOS4yOTFMMy4xOTggMTAuNTA1QzMuMTU0MTcgMTAuNTI4MiAzLjEwNDcgMTAuNTM4NiAzLjA1NTIzIDEwLjUzNTFDMy4wMDU3NSAxMC41MzE2IDIuOTU4MjYgMTAuNTE0MyAyLjkxODE1IDEwLjQ4NTFDMi44NzgwNCAxMC40NTU5IDIuODQ2OTIgMTAuNDE2MSAyLjgyODMzIDEwLjM3MDFDMi44MDk3NCAxMC4zMjQxIDIuODA0NDMgMTAuMjczOSAyLjgxMyAxMC4yMjVMMy4yNTM1IDcuNjU1NUMzLjI4MjYgNy40ODU4NyAzLjI2OTk5IDcuMzExNyAzLjIxNjc3IDcuMTQ4MDJDMy4xNjM1NSA2Ljk4NDM1IDMuMDcxMyA2LjgzNjA4IDIuOTQ4IDYuNzE2TDEuMDggNC44OTc1QzEuMDQ0MyA0Ljg2MzAyIDEuMDE5IDQuODE5MiAxLjAwNjk4IDQuNzcxMDRDMC45OTQ5NjYgNC43MjI4OCAwLjk5NjcxOSA0LjY3MjMxIDEuMDEyMDQgNC42MjUxQzEuMDI3MzYgNC41Nzc4OCAxLjA1NTYzIDQuNTM1OTIgMS4wOTM2NCA0LjUwMzk5QzEuMTMxNjQgNC40NzIwNiAxLjE3Nzg1IDQuNDUxNDUgMS4yMjcgNC40NDQ1TDMuODA5NSA0LjA2N0MzLjk3OTYzIDQuMDQyMjUgNC4xNDExOSAzLjk3NjUzIDQuMjgwMjkgMy44NzU0OUM0LjQxOTM5IDMuNzc0NDYgNC41MzE4NSAzLjY0MTE0IDQuNjA4IDMuNDg3TDUuNzYyNSAxLjE0NzVaIiBmaWxsPSIjNDc1MDY5IiBzdHJva2U9IiM0NzUwNjkiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMF8wXzEyMzkiPgo8cmVjdCB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIGZpbGw9IndoaXRlIi8+CjwvY2xpcFBhdGg+CjwvZGVmcz4KPC9zdmc+Cg==" alt="" width="12" height="12" style="margin-left:2px;"></div>
-                <div class="filter-chip">Age <span class="chevron">▾</span></div>
-                <div class="filter-chip">Gender <span class="chevron">▾</span></div>
-                <div class="char-see-all">See all →</div>
+                <div class="filter-chip">Age <span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span></div>
+                <div class="filter-chip">Gender <span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span></div>
+                <div class="char-see-all">See all <img src="../../../../components/ai-social-media/icons/back.svg" class="icon-inline icon-flip" alt="" style="margin-left:2px;"></div>
               </div>
               <div class="char-grid" id="charGridImage">
                 <div class="char-card new"><div class="thumb">+</div><div class="name">Create New</div></div>
@@ -1237,7 +1242,7 @@
                 <div class="char-styles-head">
                   <div class="char-styles-avatar"><img src="data:image/jpeg;base64,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" alt=""></div>
                   <span class="char-styles-title">Elena's styles</span>
-                  <span class="char-styles-see-all">See all →</span>
+                  <span class="char-styles-see-all">See all <img src="../../../../components/ai-social-media/icons/back.svg" class="icon-inline icon-flip" alt="" style="margin-left:2px;"></span>
                 </div>
                 <div class="char-filters">
                   <div class="filter-chip active">Favorites <img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjEyIiBoZWlnaHQ9IjEyIiB2aWV3Qm94PSIwIDAgMTIgMTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gc3Rhci1maWxsIiBjbGlwLXBhdGg9InVybCgjY2xpcDBfMF8xMjM5KSI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik01Ljc2MjUgMS4xNDc1QzUuNzg0NDEgMS4xMDMyMyA1LjgxODI2IDEuMDY1OTcgNS44NjAyMyAxLjAzOTkxQzUuOTAyMTkgMS4wMTM4NiA1Ljk1MDYgMS4wMDAwNSA2IDEuMDAwMDVDNi4wNDk0IDEuMDAwMDUgNi4wOTc4MSAxLjAxMzg2IDYuMTM5NzcgMS4wMzk5MUM2LjE4MTc0IDEuMDY1OTcgNi4yMTU1OSAxLjEwMzIzIDYuMjM3NSAxLjE0NzVMNy4zOTI1IDMuNDg3QzcuNDY4NTkgMy42NDA5OCA3LjU4MDkxIDMuNzc0MiA3LjcxOTgxIDMuODc1MjNDNy44NTg3MiAzLjk3NjI1IDguMDIwMDYgNC4wNDIwNiA4LjE5IDQuMDY3TDEwLjc3MyA0LjQ0NUMxMC44MjE5IDQuNDUyMDkgMTAuODY3OSA0LjQ3Mjc0IDEwLjkwNTcgNC41MDQ2QzEwLjk0MzYgNC41MzY0NiAxMC45NzE3IDQuNTc4MjcgMTAuOTg3IDQuNjI1M0MxMS4wMDIzIDQuNjcyMzMgMTEuMDA0MSA0LjcyMjcgMTAuOTkyMyA0Ljc3MDcyQzEwLjk4MDUgNC44MTg3MyAxMC45NTU0IDQuODYyNDggMTAuOTIgNC44OTdMOS4wNTIgNi43MTZDOC45Mjg4MSA2LjgzNjA1IDguODM2NjQgNi45ODQyNCA4Ljc4MzQyIDcuMTQ3ODFDOC43MzAyIDcuMzExMzkgOC43MTc1MyA3LjQ4NTQ0IDguNzQ2NSA3LjY1NUw5LjE4NzUgMTAuMjI1QzkuMTk2MTQgMTAuMjczOSA5LjE5MDg2IDEwLjMyNDMgOS4xNzIyNSAxMC4zNzAzQzkuMTUzNjQgMTAuNDE2NCA5LjEyMjQ3IDEwLjQ1NjMgOS4wODIyNyAxMC40ODU1QzkuMDQyMDggMTAuNTE0NyA4Ljk5NDQ5IDEwLjUzMiA4Ljk0NDkzIDEwLjUzNTRDOC44OTUzOCAxMC41Mzg5IDguODQ1ODUgMTAuNTI4MyA4LjgwMiAxMC41MDVMNi40OTMgOS4yOTFDNi4zNDA4NiA5LjIxMTExIDYuMTcxNTkgOS4xNjkzOCA1Ljk5OTc1IDkuMTY5MzhDNS44Mjc5MSA5LjE2OTM4IDUuNjU4NjQgOS4yMTExMSA1LjUwNjUgOS4yOTFMMy4xOTggMTAuNTA1QzMuMTU0MTcgMTAuNTI4MiAzLjEwNDcgMTAuNTM4NiAzLjA1NTIzIDEwLjUzNTFDMy4wMDU3NSAxMC41MzE2IDIuOTU4MjYgMTAuNTE0MyAyLjkxODE1IDEwLjQ4NTFDMi44NzgwNCAxMC40NTU5IDIuODQ2OTIgMTAuNDE2MSAyLjgyODMzIDEwLjM3MDFDMi44MDk3NCAxMC4zMjQxIDIuODA0NDMgMTAuMjczOSAyLjgxMyAxMC4yMjVMMy4yNTM1IDcuNjU1NUMzLjI4MjYgNy40ODU4NyAzLjI2OTk5IDcuMzExNyAzLjIxNjc3IDcuMTQ4MDJDMy4xNjM1NSA2Ljk4NDM1IDMuMDcxMyA2LjgzNjA4IDIuOTQ4IDYuNzE2TDEuMDggNC44OTc1QzEuMDQ0MyA0Ljg2MzAyIDEuMDE5IDQuODE5MiAxLjAwNjk4IDQuNzcxMDRDMC45OTQ5NjYgNC43MjI4OCAwLjk5NjcxOSA0LjY3MjMxIDEuMDEyMDQgNC42MjUxQzEuMDI3MzYgNC41Nzc4OCAxLjA1NTYzIDQuNTM1OTIgMS4wOTM2NCA0LjUwMzk5QzEuMTMxNjQgNC40NzIwNiAxLjE3Nzg1IDQuNDUxNDUgMS4yMjcgNC40NDQ1TDMuODA5NSA0LjA2N0MzLjk3OTYzIDQuMDQyMjUgNC4xNDExOSAzLjk3NjUzIDQuMjgwMjkgMy44NzU0OUM0LjQxOTM5IDMuNzc0NDYgNC41MzE4NSAzLjY0MTE0IDQuNjA4IDMuNDg3TDUuNzYyNSAxLjE0NzVaIiBmaWxsPSIjNDc1MDY5IiBzdHJva2U9IiM0NzUwNjkiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMF8wXzEyMzkiPgo8cmVjdCB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIGZpbGw9IndoaXRlIi8+CjwvY2xpcFBhdGg+CjwvZGVmcz4KPC9zdmc+Cg==" alt="" width="12" height="12" style="margin-left:2px;"></div>
@@ -1263,7 +1268,7 @@
               <div class="advanced-title">Advanced settings</div>
               <div class="advanced-sub">Goal, Tone, Target audience, Call to action</div>
             </div>
-            <span class="advanced-chevron">▾</span>
+            <span class="advanced-chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span>
           </div>
           <div class="advanced-body">
             <div class="advanced-field"><label>Goal</label><input type="text" placeholder="e.g. Drive applications for the January intake"></div>
@@ -1287,7 +1292,7 @@
               <div class="prompt-chip"><svg class="ic-svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="3.5" y="1.5" width="9" height="13" rx="1.6" stroke="#8A93A8" stroke-width="1.4"/><path d="M6.5 12.3H9.5" stroke="#8A93A8" stroke-width="1.4" stroke-linecap="round"/></svg>9:16</div>
               <div class="prompt-chip-wrap" id="durationChipWrap">
                 <div class="prompt-chip clickable" onclick="toggleDurationPopover(event)">
-                  <svg class="ic-svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.3" stroke="#8A93A8" stroke-width="1.4"/><path d="M8 4.7V8L10.2 9.6" stroke="#8A93A8" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="durationChipText">16s</span><span class="chevron">▾</span>
+                  <svg class="ic-svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.3" stroke="#8A93A8" stroke-width="1.4"/><path d="M8 4.7V8L10.2 9.6" stroke="#8A93A8" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="durationChipText">16s</span><span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span>
                 </div>
                 <div class="duration-popover" id="durationPopover" style="display:none;">
                   <div class="duration-popover-label">Duration</div>
@@ -1297,7 +1302,7 @@
                 </div>
               </div>
             </div>
-            <div class="refine-btn" id="refineBtn">↑</div>
+            <div class="refine-btn" id="refineBtn"><img src="../../../../components/ai-social-media/icons/arrow-up.svg" class="icon-inline icon-16" alt=""></div>
           </div>
         </div>
 
@@ -1314,10 +1319,10 @@
             <div class="char-filter-row">
               <div class="char-filters">
                 <div class="filter-chip">Favorites ★</div>
-                <div class="filter-select">Age<span class="chevron">▾</span></div>
-                <div class="filter-select">Gender<span class="chevron">▾</span></div>
+                <div class="filter-select">Age<span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span></div>
+                <div class="filter-select">Gender<span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span></div>
               </div>
-              <div class="see-all-link">See all →</div>
+              <div class="see-all-link">See all <img src="../../../../components/ai-social-media/icons/back.svg" class="icon-inline icon-flip" alt="" style="margin-left:2px;"></div>
             </div>
             <div class="char-grid" id="charGrid">
               <div class="char-card-reel new"><div class="thumb">+</div><div class="name">Create New</div></div>
@@ -1336,7 +1341,7 @@
             <div class="char-styles-panel show" id="charStylesPanelReel">
               <div class="char-styles-header">
                 <div class="char-styles-title"><span class="mini-avatar" id="charStylesAvatarReel" style="background-image:url('assets/characters/elena.png')"></span><span id="charStylesLabelReel">Elena's styles</span></div>
-                <div class="see-all-link">See all →</div>
+                <div class="see-all-link">See all <img src="../../../../components/ai-social-media/icons/back.svg" class="icon-inline icon-flip" alt="" style="margin-left:2px;"></div>
               </div>
               <div class="char-grid" id="charStylesGridReel">
                 <div class="char-card-reel new"><div class="thumb tall">+</div><div class="name">Create New</div></div>
@@ -1360,17 +1365,17 @@
             </div>
             <div class="voice-section-label-row">
               <span class="my-voices-label">My voices</span>
-              <div class="see-all-link">See all →</div>
+              <div class="see-all-link">See all <img src="../../../../components/ai-social-media/icons/back.svg" class="icon-inline icon-flip" alt="" style="margin-left:2px;"></div>
             </div>
             <div class="voice-card-row" id="myVoicesCardRow"></div>
-            <button type="button" class="voice-browse-btn" id="voiceBrowseBtn" onclick="reelToggleVoiceBrowsePanel()">Browse ElevenLabs Voice Library <span class="chevron">▾</span></button>
+            <button type="button" class="voice-browse-btn" id="voiceBrowseBtn" onclick="reelToggleVoiceBrowsePanel()">Browse ElevenLabs Voice Library <span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span></button>
             <div class="voice-browse-panel" id="voiceBrowsePanel" style="display:none;">
               <div class="voice-browse-panel-header">
                 <div>
                   <div class="voice-browse-panel-title">ElevenLabs voice library</div>
                   <div class="voice-browse-panel-sub">Search thousands of community voices. Adding one imports it into your ElevenLabs account.</div>
                 </div>
-                <button type="button" class="voice-browse-close-btn" onclick="reelToggleVoiceBrowsePanel()">Close ✕</button>
+                <button type="button" class="voice-browse-close-btn" onclick="reelToggleVoiceBrowsePanel()">Close <img src="../../../../components/ai-social-media/icons/close-x.svg" class="icon-inline" alt=""></button>
               </div>
               <div class="voice-browse-search-row">
                 <input type="text" class="voice-lib-search" placeholder="Search voice…" oninput="filterVoiceLib(this.value,'voiceLibGrid')">
@@ -1397,7 +1402,7 @@
               <span class="detail-section-toggle-label">Advanced settings</span>
               <span class="detail-section-toggle-sub">Goal, Tone, Target audience, Call to action</span>
             </div>
-            <span class="chevron">⌄</span>
+            <span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span>
           </div>
           <div class="detail-fields" id="advancedSettingsBody" style="display:none;">
             <div class="detail-import-row">
@@ -1443,7 +1448,7 @@
             <div class="prompt-chips">
               <div class="prompt-chip-wrap" id="ratioChipWrapCarousel">
                 <div class="prompt-chip clickable" onclick="carToggleRatioPopover(event)">
-                  <div class="ic"></div><span id="ratioChipTextCarousel">4:5</span><span class="chevron">▾</span>
+                  <div class="ic"></div><span id="ratioChipTextCarousel">4:5</span><span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span>
                 </div>
                 <div class="chip-popover" id="ratioPopoverCarousel" style="display:none;">
                   <div class="chip-popover-label">Aspect Ratio</div>
@@ -1454,7 +1459,7 @@
               </div>
               <div class="prompt-chip-wrap" id="cardsChipWrap">
                 <div class="prompt-chip clickable" onclick="toggleCardsPopover(event)">
-                  <div class="ic"></div><span id="cardsChipText">5 Cards</span><span class="chevron">▾</span>
+                  <div class="ic"></div><span id="cardsChipText">5 Cards</span><span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span>
                 </div>
                 <div class="chip-popover" id="cardsPopover" style="display:none;">
                   <div class="chip-popover-label">Number of cards</div>
@@ -1466,7 +1471,7 @@
                 </div>
               </div>
             </div>
-            <div class="refine-btn" id="refineBtnCarousel" onclick="goToGenerate()">↑</div>
+            <div class="refine-btn" id="refineBtnCarousel" onclick="goToGenerate()"><img src="../../../../components/ai-social-media/icons/arrow-up.svg" class="icon-inline icon-16" alt=""></div>
           </div>
         </div>
 
@@ -1481,9 +1486,9 @@
             <div id="charWithSectionCarousel">
               <div class="char-filters">
                 <div class="filter-chip active">Favorites ★</div>
-                <div class="filter-chip">Age <span class="chevron">▾</span></div>
-                <div class="filter-chip">Gender <span class="chevron">▾</span></div>
-                <div class="char-see-all">See all →</div>
+                <div class="filter-chip">Age <span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span></div>
+                <div class="filter-chip">Gender <span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span></div>
+                <div class="char-see-all">See all <img src="../../../../components/ai-social-media/icons/back.svg" class="icon-inline icon-flip" alt="" style="margin-left:2px;"></div>
               </div>
               <div class="char-grid" id="charGridCarousel">
                 <div class="char-card new"><div class="thumb">+</div><div class="name">Create New</div></div>
@@ -1501,7 +1506,7 @@
                 <div class="char-styles-header">
                   <div class="char-styles-avatar"></div>
                   <span class="char-styles-title" id="charStylesTitle">Elena's styles</span>
-                  <div class="char-see-all" style="margin-left:auto;">See all →</div>
+                  <div class="char-see-all" style="margin-left:auto;">See all <img src="../../../../components/ai-social-media/icons/back.svg" class="icon-inline icon-flip" alt="" style="margin-left:2px;"></div>
                 </div>
                 <div class="char-filters">
                   <div class="filter-chip active">Favorites ★</div>
@@ -1527,7 +1532,7 @@
               <div class="advanced-title">Advanced settings</div>
               <div class="advanced-sub">Goal, Tone, Target audience, Call to action</div>
             </div>
-            <span class="advanced-chevron">▾</span>
+            <span class="advanced-chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span>
           </div>
           <div class="advanced-body">
             <div class="advanced-field"><label>Goal</label><input type="text" placeholder="e.g. Drive applications for the January intake"></div>
@@ -1590,7 +1595,7 @@
           <div class="chat-input-box">
             <input class="chat-input" id="chatInput" placeholder="Type a message...">
             <div class="chat-input-bottom-row">
-              <button class="chat-attach-btn" title="Attach">📎</button>
+              <button class="chat-attach-btn" title="Attach"><img src="../../../../components/ai-social-media/icons/attach.svg" class="icon-inline icon-16" alt=""></button>
               <button class="chat-send" id="chatSend" onclick="sendChatMessage()"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiB2aWV3Qm94PSIwIDAgMjAgMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gdWkgLyBhcnJvdy11cCI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik0xNS44MzY3IDEwLjAwMzNMMTAuMDAzMyA0LjE3TDQuMTcgMTAuMDAzM00xMC4wMDMzIDQuMTdWMTUuODM2NyIgc3Ryb2tlPSIjOEE5M0E4IiBzdHJva2Utd2lkdGg9IjEuNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjwvZz4KPC9zdmc+Cg==" alt="" width="14" height="14" style="filter:invert(1);"></button>
             </div>
           </div>
@@ -1631,7 +1636,7 @@
                 </div>
                 <div class="brand-kit-summary" id="brandKitSummary">
                   <div>
-                    <div class="brand-kit-summary-label">Palette · Formee Express <span class="chevron">▾</span></div>
+                    <div class="brand-kit-summary-label">Palette · Formee Express <span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span></div>
                     <div class="brand-kit-swatch-row">
                       <span style="background:#2b6a6c"></span>
                       <span style="background:#b80d48"></span>
@@ -1708,7 +1713,7 @@
                   <div class="refine-edit-box">
                     <div class="refine-edit-box-head">
                       <label class="refine-label">✏️ Edit with a prompt</label>
-                      <button type="button" class="btn btn-secondary refine-regen-btn" id="refineRegenBtn" onclick="regenerateWithPrompt()" disabled>↻ Regenerate <span class="cost">⚡8</span></button>
+                      <button type="button" class="btn btn-secondary refine-regen-btn" id="refineRegenBtn" onclick="regenerateWithPrompt()" disabled>↻ Regenerate <span class="cost"><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">8</span></button>
                     </div>
                     <textarea class="refine-edit-input" id="refineEditInput" placeholder="e.g. Make the lighting warmer, add more students in the background..." oninput="onRefinePromptEdited()"></textarea>
                   </div>
@@ -1717,7 +1722,7 @@
                     <button class="btn btn-dark" onclick="imgGoToDevelop()">Continue to editing →</button>
                     <button class="btn btn-secondary" onclick="skipToPublish()">Skip to publish</button>
                   </div>
-                  <button type="button" class="version-result-back" onclick="backToVersions()">← Back to versions</button>
+                  <button type="button" class="version-result-back" onclick="backToVersions()"><img src="../../../../components/ai-social-media/icons/back.svg" class="icon-inline" alt="" style="margin-right:4px;"> Back to versions</button>
                 </div>
               </div>
             </div></div>
@@ -1767,7 +1772,7 @@
                   <div class="seg-chip" data-mode="baked" onclick="carSetDraftMode('baked')">Baked into image</div>
                 </div>
                 <div class="baked-in-warning" id="bakedInWarningCarousel">
-                  ⚠️ If you edit the copy later, that card's image will need to be regenerated — and your brand font may not be reproduced exactly.
+                  <img src="../../../../components/ai-social-media/icons/alert-sm.svg" class="icon-inline" alt=""> If you edit the copy later, that card's image will need to be regenerated — and your brand font may not be reproduced exactly.
                 </div>
               </div>
 
@@ -1806,7 +1811,7 @@
                    at once), then browse/download completed variation sets via tabs, "+" to start
                    another. Lives inline in the Storyboard work screen, not a modal. -->
               <div class="storyboard-sizevar-panel" id="sizeVarPanel" style="display:none;">
-                <button type="button" class="btn btn-secondary sizevar-back-btn" onclick="closeSizeVarModal()">← Back to Storyboard</button>
+                <button type="button" class="btn btn-secondary sizevar-back-btn" onclick="closeSizeVarModal()"><img src="../../../../components/ai-social-media/icons/back.svg" class="icon-inline" alt="" style="margin-right:4px;"> Back to Storyboard</button>
                 <div class="sizevar-panel-header">
                   <div class="sizevar-modal-tabs" id="sizeVarModalTabs"></div>
                 </div>
@@ -1863,12 +1868,12 @@
           <!-- persistent settings bar -->
           <div class="settings-bar" id="settingsBar">
             <div class="setting-chip"><span class="ratio-icon"><i></i></span>9:16</div>
-            <div class="setting-chip">⏱ <span id="genSettingDuration">16s</span></div>
+            <div class="setting-chip"><img src="../../../../components/ai-social-media/icons/spec-duration.svg" class="icon-inline" alt=""> <span id="genSettingDuration">16s</span></div>
             <div class="setting-chip">🌐 English</div>
 
             <div class="setting-chip-wrap" id="characterChipWrap">
               <div class="setting-chip clickable" onclick="toggleSettingPopover(event,'character')">
-                <span class="avatar-mini"></span>Character<span class="dot-sep"></span><b id="settingCharacter">Minji</b><span class="chevron">▾</span>
+                <span class="avatar-mini"></span>Character<span class="dot-sep"></span><b id="settingCharacter">Minji</b><span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span>
               </div>
               <div class="setting-popover" id="characterPopover" style="display:none;">
                 <div class="char-mini-grid">
@@ -1882,21 +1887,21 @@
 
             <div class="setting-chip-wrap" id="voiceChipWrap">
               <div class="setting-chip clickable" onclick="toggleSettingPopover(event,'voice')">
-                🔊 Voice<span class="dot-sep"></span><b id="settingVoice">Minji — bright, upbeat tone</b><span class="chevron">▾</span>
+                <img src="../../../../components/ai-social-media/icons/nav-voices.svg" class="icon-inline" alt=""> Voice<span class="dot-sep"></span><b id="settingVoice">Minji — bright, upbeat tone</b><span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span>
               </div>
               <div class="setting-popover" id="voiceSettingPopover" style="display:none;">
                 <div class="voice-item selected" onclick="selectSettingVoice(this,'Minji — bright, upbeat tone')">
-                  <div class="voice-play" onclick="togglePreview(event,this)">▶</div>
+                  <div class="voice-play" onclick="togglePreview(event,this)"><img src="../../../../components/ai-social-media/icons/audio-play.svg" class="icon-inline icon-16" alt=""></div>
                   <div class="voice-item-info"><span class="voice-item-name">Minji — bright, upbeat tone</span><span class="voice-item-tag">Female · Bright</span></div>
                   <span class="voice-check">✓</span>
                 </div>
                 <div class="voice-item" onclick="selectSettingVoice(this,'Hyunwoo — calm, steady tone')">
-                  <div class="voice-play" onclick="togglePreview(event,this)">▶</div>
+                  <div class="voice-play" onclick="togglePreview(event,this)"><img src="../../../../components/ai-social-media/icons/audio-play.svg" class="icon-inline icon-16" alt=""></div>
                   <div class="voice-item-info"><span class="voice-item-name">Hyunwoo — calm, steady tone</span><span class="voice-item-tag">Male · Calm</span></div>
                   <span class="voice-check">✓</span>
                 </div>
                 <div class="voice-item" onclick="selectSettingVoice(this,'Soyul — playful, bubbly tone')">
-                  <div class="voice-play" onclick="togglePreview(event,this)">▶</div>
+                  <div class="voice-play" onclick="togglePreview(event,this)"><img src="../../../../components/ai-social-media/icons/audio-play.svg" class="icon-inline icon-16" alt=""></div>
                   <div class="voice-item-info"><span class="voice-item-name">Soyul — playful, bubbly tone</span><span class="voice-item-tag">Female · Playful</span></div>
                   <span class="voice-check">✓</span>
                 </div>
@@ -1950,13 +1955,13 @@
                   <div class="scene-editor-panel" id="sceneEditorPanel"></div>
                   <div class="voice-section" id="voiceSection_tl">
                     <div class="voice-section-header">
-                      <label class="scene-desc-label">🎙 Voice</label>
+                      <label class="scene-desc-label"><img src="../../../../components/ai-social-media/icons/nav-voices.svg" class="icon-inline" alt=""> Voice</label>
                       <div class="voice-section-header-right">
                         <div class="voice-mode-toggle" id="voiceModeToggle_tl">
                           <div class="voice-mode-btn" data-mode="whole" onclick="setVoiceMode('whole')">Whole take</div>
                           <div class="voice-mode-btn" data-mode="split" onclick="setVoiceMode('split')">Split by scene</div>
                         </div>
-                        <button class="voice-section-collapse-btn" onclick="toggleVoiceSectionCollapse('tl')" title="Collapse">▾</button>
+                        <button class="voice-section-collapse-btn" onclick="toggleVoiceSectionCollapse('tl')" title="Collapse"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></button>
                       </div>
                     </div>
                     <div class="voice-cost-summary" id="voiceCostSummary_tl"></div>
@@ -1986,13 +1991,13 @@
                 <div class="scene-editor-col">
                   <div class="voice-section" id="voiceSection_vid">
                     <div class="voice-section-header">
-                      <label class="scene-desc-label">🎙 Voice</label>
+                      <label class="scene-desc-label"><img src="../../../../components/ai-social-media/icons/nav-voices.svg" class="icon-inline" alt=""> Voice</label>
                       <div class="voice-section-header-right">
                         <div class="voice-mode-toggle" id="voiceModeToggle_vid">
                           <div class="voice-mode-btn" data-mode="whole" onclick="setVoiceMode('whole')">Whole take</div>
                           <div class="voice-mode-btn" data-mode="split" onclick="setVoiceMode('split')">Split by scene</div>
                         </div>
-                        <button class="voice-section-collapse-btn" onclick="toggleVoiceSectionCollapse('vid')" title="Collapse">▾</button>
+                        <button class="voice-section-collapse-btn" onclick="toggleVoiceSectionCollapse('vid')" title="Collapse"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></button>
                       </div>
                     </div>
                     <div class="voice-cost-summary" id="voiceCostSummary_vid"></div>
@@ -2001,7 +2006,7 @@
                   <div class="scene-nav" id="videoSegmentNav"></div>
                   <div class="video-editor-panel" id="videoEditorPanel"></div>
                   <div class="combine-stale-banner" id="combineStaleBanner" style="display:none;">
-                    <span>⚠️ This scene changed — recombine to reflect the latest state.</span>
+                    <span><img src="../../../../components/ai-social-media/icons/alert-sm.svg" class="icon-inline" alt=""> This scene changed — recombine to reflect the latest state.</span>
                     <button class="btn btn-secondary" onclick="combineVideo()">Recombine</button>
                   </div>
                   <div class="video-cta-row" id="videoCtaRow" style="display:none;">
@@ -2015,7 +2020,7 @@
                 <div class="timeline-stage">
                   <div class="timeline-canvas combine-canvas">
                     <div class="combine-player">
-                      <button class="video-play-btn" onclick="playCombineResult(this)" title="Play">▶</button>
+                      <button class="video-play-btn" onclick="playCombineResult(this)" title="Play"><img src="../../../../components/ai-social-media/icons/audio-play.svg" class="icon-inline icon-16" alt=""></button>
                       <span class="combine-player-duration" id="combineResultDuration">8s</span>
                     </div>
                     <div class="combine-timeline-ticks" id="combineResultTicks"></div>
@@ -2029,13 +2034,13 @@
                       <p class="combine-summary-desc" id="combineVideoDesc"></p>
                       <div class="combine-summary-divider"></div>
                       <div class="combine-summary-specs" id="combineSummarySpecs"></div>
-                      <p class="combine-audio-note">🎙 Narration from Timeline is already mixed in — no extra steps needed.</p>
+                      <p class="combine-audio-note"><img src="../../../../components/ai-social-media/icons/nav-voices.svg" class="icon-inline" alt=""> Narration from Timeline is already mixed in — no extra steps needed.</p>
                     </div>
                     <div class="combine-result-actions">
                       <button class="btn btn-dark" onclick="goToDevelop()">Continue to editing →</button>
                       <button class="btn btn-secondary" onclick="goToPublish()">Skip to publish</button>
                     </div>
-                    <button class="back-to-scenes-link" onclick="backToSceneVideos()">← Back to scene videos</button>
+                    <button class="back-to-scenes-link" onclick="backToSceneVideos()"><img src="../../../../components/ai-social-media/icons/back.svg" class="icon-inline" alt="" style="margin-right:4px;"> Back to scene videos</button>
                   </div>
                 </div>
               </div>
@@ -2094,7 +2099,7 @@
       <div class="develop-body" id="developBodyCarousel" style="display:none;">
         <div class="develop-preview"></div>
         <div class="develop-side">
-          <button class="btn btn-secondary" onclick="backToStoryboard()" style="margin-bottom:16px;">← Back to Storyboard</button>
+          <button class="btn btn-secondary" onclick="backToStoryboard()" style="margin-bottom:16px;"><img src="../../../../components/ai-social-media/icons/back.svg" class="icon-inline" alt="" style="margin-right:4px;"> Back to Storyboard</button>
           <h2 class="stage-title">Develop</h2>
           <p class="stage-sub-text" style="margin-bottom:14px;">Your carousel is ready to fine-tune.</p>
           <button class="btn btn-dark" onclick="goToPublish()">⬆ Publish →</button>
@@ -2104,7 +2109,7 @@
       <div class="develop-body" id="developBodyReel" style="display:none;">
         <div class="develop-preview"></div>
         <div class="develop-side">
-          <button class="btn btn-secondary" onclick="backToSceneVideos(); showSub('reelVideo')" style="margin-bottom:16px;">← Back to scene videos</button>
+          <button class="btn btn-secondary" onclick="backToSceneVideos(); showSub('reelVideo')" style="margin-bottom:16px;"><img src="../../../../components/ai-social-media/icons/back.svg" class="icon-inline" alt="" style="margin-right:4px;"> Back to scene videos</button>
           <h2 class="stage-title">Develop</h2>
           <p class="stage-sub-text" style="margin-bottom:14px;">Your video is ready to fine-tune.</p>
           <button class="btn btn-dark" onclick="goToPublish()">⬆ Publish →</button>
@@ -2130,7 +2135,7 @@
       <div class="ed-step current"><span class="ed-step-icon">3</span>Edit &amp; Publish</div>
     </div>
     <div class="ed-spacer"></div>
-    <button class="ed-text-btn" onclick="goToDevelop()">← Back to Develop</button>
+    <button class="ed-text-btn" onclick="goToDevelop()"><img src="../../../../components/ai-social-media/icons/back.svg" class="icon-inline" alt="" style="margin-right:4px;"> Back to Develop</button>
   </div>
 
   <div class="pub-body">
@@ -2148,7 +2153,7 @@
               <span class="ic"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gYWkgLyByZWZpbmUiIGNsaXAtcGF0aD0idXJsKCNjbGlwMF8wXzM3MykiPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNMTMuNTczMyAxLjU3MzMzTDE0LjQyNjcgMi40MjY2N0MxNC41MDMzIDIuNTAxMjEgMTQuNTY0MiAyLjU5MDM2IDE0LjYwNTcgMi42ODg4M0MxNC42NDczIDIuNzg3MyAxNC42Njg3IDIuODkzMTEgMTQuNjY4NyAzQzE0LjY2ODcgMy4xMDY4OSAxNC42NDczIDMuMjEyNyAxNC42MDU3IDMuMzExMTdDMTQuNTY0MiAzLjQwOTY0IDE0LjUwMzMgMy40OTg3OSAxNC40MjY3IDMuNTczMzNMMy41NzMzMyAxNC40MjY3QzMuNDk4NzkgMTQuNTAzMyAzLjQwOTY0IDE0LjU2NDIgMy4zMTExNyAxNC42MDU3QzMuMjEyNyAxNC42NDczIDMuMTA2ODkgMTQuNjY4NyAzIDE0LjY2ODdDMi44OTMxMSAxNC42Njg3IDIuNzg3MyAxNC42NDczIDIuNjg4ODMgMTQuNjA1N0MyLjU5MDM2IDE0LjU2NDIgMi41MDEyMSAxNC41MDMzIDIuNDI2NjcgMTQuNDI2N0wxLjU3MzMzIDEzLjU3MzNDMS40OTc1NCAxMy40OTgzIDEuNDM3MzggMTMuNDA5IDEuMzk2MzIgMTMuMzEwNkMxLjM1NTI2IDEzLjIxMjIgMS4zMzQxMiAxMy4xMDY2IDEuMzM0MTIgMTNDMS4zMzQxMiAxMi44OTM0IDEuMzU1MjYgMTIuNzg3OCAxLjM5NjMyIDEyLjY4OTRDMS40MzczOCAxMi41OTEgMS40OTc1NCAxMi41MDE3IDEuNTczMzMgMTIuNDI2N0wxMi40MjY3IDEuNTczMzNDMTIuNTAxNyAxLjQ5NzU0IDEyLjU5MSAxLjQzNzM4IDEyLjY4OTQgMS4zOTYzMkMxMi43ODc4IDEuMzU1MjYgMTIuODkzNCAxLjMzNDEyIDEzIDEuMzM0MTJDMTMuMTA2NiAxLjMzNDEyIDEzLjIxMjIgMS4zNTUyNiAxMy4zMTA2IDEuMzk2MzJDMTMuNDA5IDEuNDM3MzggMTMuNDk4MyAxLjQ5NzU0IDEzLjU3MzMgMS41NzMzM1oiIHN0cm9rZT0iIzRGNkRFNiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzIiIGQ9Ik05LjMzMzMzIDQuNjY2NjdMMTEuMzMzMyA2LjY2NjY3IiBzdHJva2U9IiM0RjZERTYiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggaWQ9IlZlY3Rvcl8zIiBkPSJNMy4zMzMzMyA0VjYuNjY2NjciIHN0cm9rZT0iIzRGNkRFNiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzQiIGQ9Ik0xMi42NjY3IDkuMzMzMzNWMTIiIHN0cm9rZT0iIzRGNkRFNiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzUiIGQ9Ik02LjY2NjY3IDEuMzMzMzNWMi42NjY2NyIgc3Ryb2tlPSIjNEY2REU2IiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxwYXRoIGlkPSJWZWN0b3JfNiIgZD0iTTQuNjY2NjcgNS4zMzMzM0gyIiBzdHJva2U9IiM0RjZERTYiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggaWQ9IlZlY3Rvcl83IiBkPSJNMTQgMTAuNjY2N0gxMS4zMzMzIiBzdHJva2U9IiM0RjZERTYiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggaWQ9IlZlY3Rvcl84IiBkPSJNNy4zMzMzMyAySDYiIHN0cm9rZT0iIzRGNkRFNiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L2c+CjxkZWZzPgo8Y2xpcFBhdGggaWQ9ImNsaXAwXzBfMzczIj4KPHJlY3Qgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPgo=" alt=""></span>
               <span class="pub-suggest-label">Suggest hashtags &amp; SEO keywords</span>
             </button>
-            <button type="button" class="btn btn-dark" id="pubComposeCaptionBtn" onclick="generateCaptionFromSelection()">✨ Generate caption</button>
+            <button type="button" class="btn btn-dark" id="pubComposeCaptionBtn" onclick="generateCaptionFromSelection()"><span style="position:relative;display:inline-block;width:14px;height:14px;vertical-align:-2px;"><img src="../../../../components/ai-social-media/icons/sparkle-single-a.svg" style="position:absolute;inset:0;width:100%;height:100%;" alt=""><img src="../../../../components/ai-social-media/icons/sparkle-single-b.svg" style="position:absolute;inset:0;width:100%;height:100%;" alt=""></span> Generate caption</button>
           </div>
 
           <div class="pub-hashtag-seo-result" id="pubHashtagSeoResult" style="display:none;">
@@ -2307,7 +2312,7 @@
 
 <div class="modal-overlay pub-social-modal-overlay" id="pubSocialModalOverlay" style="display:none;">
   <div class="modal modal--form pub-social-modal">
-    <button type="button" class="modal__close" onclick="closePublishSocialModal()">✕</button>
+    <button type="button" class="modal__close" onclick="closePublishSocialModal()"><img src="../../../../components/ai-social-media/icons/close-x.svg" class="icon-inline" alt=""></button>
     <div class="modal__content">
       <h2 class="modal__title">Publish to social</h2>
       <p class="modal__body" id="pubSocialModalSubtitle">Preview is live. Publishing requires typing the handle to confirm.</p>
@@ -2774,7 +2779,7 @@ function renderVersionGrid(){
         <div class="version-tile-overlay-top">
           <span class="version-tile-badge">V${v.id}</span>
           <span class="version-tile-ready-badge">✓ Ready</span>
-          <button type="button" class="version-tile-regen-btn" onclick="event.stopPropagation(); regenerateVersion(${v.id})" title="Regenerate this version only">↻</button>
+          <button type="button" class="version-tile-regen-btn" onclick="event.stopPropagation(); regenerateVersion(${v.id})" title="Regenerate this version only"><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt=""></button>
         </div>
         <div class="version-tile-spinner"></div>
       </div>
@@ -2916,7 +2921,7 @@ function imgRenderReferenceImages(){
     <div class="ref-image-chip">
       <div class="thumb"></div>
       <span class="label">Image ${n}</span>
-      <span class="remove" onclick="imgRemoveReferenceImage(${n})">✕</span>
+      <span class="remove" onclick="imgRemoveReferenceImage(${n})"><img src="../../../../components/ai-social-media/icons/close-x.svg" class="icon-inline" alt=""></span>
     </div>
   `).join('');
   document.getElementById('referenceImagesRowImage').innerHTML = chips + `
@@ -3049,7 +3054,7 @@ function carRenderReferenceImages(){
     <div class="ref-image-chip">
       <div class="thumb"></div>
       <span class="label">Image ${n}</span>
-      <span class="remove" onclick="carRemoveReferenceImage(${n})">✕</span>
+      <span class="remove" onclick="carRemoveReferenceImage(${n})"><img src="../../../../components/ai-social-media/icons/close-x.svg" class="icon-inline" alt=""></span>
     </div>
   `).join('');
   document.getElementById('referenceImagesRowCarousel').innerHTML = chips + `
@@ -3335,7 +3340,7 @@ function renderStoryboardGrid(){
 }
 function storyboardTileCharBadgeHtml(n){
   if(window.__charMode !== 'with') return '';
-  return `<span class="storyboard-tile-char-badge ${window.__cardCharacterOn[n] ? '' : 'off'}">${window.__cardCharacterOn[n] ? '🧑 Character' : 'No character'}</span>`;
+  return `<span class="storyboard-tile-char-badge ${window.__cardCharacterOn[n] ? '' : 'off'}">${window.__cardCharacterOn[n] ? '<img src="../../../../components/ai-social-media/icons/nav-characters.svg" class="icon-inline" alt=""> Character' : 'No character'}</span>`;
 }
 function renderStoryboardTile(n){
   const hist = window.__cardImageHistory[n];
@@ -3373,7 +3378,7 @@ function renderStoryboardTile(n){
       <div class="storyboard-tile-preview">
         <div class="storyboard-tile-overlay-top">
           <span class="storyboard-tile-ready-badge">✓ Ready</span>
-          <button type="button" class="storyboard-tile-regen-btn" onclick="event.stopPropagation(); regenerateCard(${n})" title="Regenerate this card only · ⚡${CARD_REGEN_CREDIT}">↻</button>
+          <button type="button" class="storyboard-tile-regen-btn" onclick="event.stopPropagation(); regenerateCard(${n})" title="Regenerate this card only · ⚡${CARD_REGEN_CREDIT}"><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt=""></button>
         </div>
         <div class="spinner-mini"></div>
         <div class="storyboard-tile-bottom-row">
@@ -3419,7 +3424,7 @@ function renderStoryboardEditorPanels(){
         <label class="scene-desc-label">Scene &amp; background description</label>
         <textarea class="story-desc-input" data-card="${num}" oninput="updateCardDescription(${num}, this.value)">${escapeHtml(window.__cardDescriptions[num] || '')}</textarea>
         <button type="button" class="regen-pill-btn" id="storyboardCardRegenBtn${num}" onclick="regenerateCard(${num})" disabled>
-          <span>↻</span> Regenerate <span class="regen-pill-cost">⚡${CARD_REGEN_CREDIT}</span>
+          <span><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt=""></span> Regenerate <span class="regen-pill-cost"><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">${CARD_REGEN_CREDIT}</span>
         </button>
       </div>`;
   }).join('');
@@ -3821,7 +3826,7 @@ function updateSizeVarCost(){
     return;
   }
   const credits = count * SIZE_VAR_CREDIT_PER_CARD;
-  costEl.innerHTML = `${count} card${count > 1 ? 's' : ''} · ${ratioEl.value} · <b>⚡${credits}</b>`;
+  costEl.innerHTML = `${count} card${count > 1 ? 's' : ''} · ${ratioEl.value} · <b><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">${credits}</b>`;
   genBtn.disabled = false;
 }
 function generateSizeVariationSet(){
@@ -3925,7 +3930,7 @@ function validateScriptLength(){
   ta.classList.toggle('error', over);
   row.classList.toggle('over', over);
   errEl.textContent = over
-    ? `⚠ You've gone over the word limit (${count}/${max} words). For a ${window.__videoDuration || 8}s video, up to ${max} words is safe. Tap Make it shorter and we'll trim what you wrote down to ${max} words.`
+    ? `<img src="../../../../components/ai-social-media/icons/alert-sm.svg" class="icon-inline" alt=""> You've gone over the word limit (${count}/${max} words). For a ${window.__videoDuration || 8}s video, up to ${max} words is safe. Tap Make it shorter and we'll trim what you wrote down to ${max} words.`
     : `${count}/${max} words`;
 }
 function refineScriptWithAI(){
@@ -4155,7 +4160,7 @@ function renderReferenceImages(){
     <div class="ref-image-chip">
       <div class="thumb"></div>
       <span class="label">Image ${n}</span>
-      <span class="remove" onclick="removeReferenceImage(${n})">✕</span>
+      <span class="remove" onclick="removeReferenceImage(${n})"><img src="../../../../components/ai-social-media/icons/close-x.svg" class="icon-inline" alt=""></span>
     </div>
   `).join('');
   const refIcon = `<svg class="ic-svg" width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1.5" y="1.5" width="11" height="11" rx="1.6" stroke="currentColor" stroke-width="1.3"/><circle cx="5" cy="5.3" r="1.1" stroke="currentColor" stroke-width="1.1"/><path d="M2 10.3L5 7.6L7 9.2L9.5 6.6L12 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
@@ -4222,11 +4227,11 @@ document.querySelectorAll('.mention-wrap textarea').forEach(bindMentionTextarea)
 function togglePreview(e, btn){
   e.stopPropagation();
   const wasPlaying = btn.classList.contains('playing');
-  document.querySelectorAll('.voice-play.playing').forEach(b => { b.classList.remove('playing'); b.textContent = '▶'; });
+  document.querySelectorAll('.voice-play.playing').forEach(b => { b.classList.remove('playing'); b.innerHTML = '<img src="../../../../components/ai-social-media/icons/audio-play.svg" class="icon-inline icon-16" alt="">'; });
   if(!wasPlaying){
     btn.classList.add('playing');
-    btn.textContent = '⏸';
-    setTimeout(() => { btn.classList.remove('playing'); btn.textContent = '▶'; }, 2000);
+    btn.innerHTML = '<img src="../../../../components/ai-social-media/icons/audio-pause.svg" class="icon-inline icon-16" alt="">';
+    setTimeout(() => { btn.classList.remove('playing'); btn.innerHTML = '<img src="../../../../components/ai-social-media/icons/audio-play.svg" class="icon-inline icon-16" alt="">'; }, 2000);
   }
 }
 
@@ -4246,7 +4251,7 @@ function renderMyVoicesCardRow(){
   el.innerHTML = `<div class="voice-new-card" onclick="alert('Create Voice — flow TBD')">+ Create New</div>` +
     YOUR_VOICES_DATA.map(v => `
     <div class="voice-item row-card ${v.id === selectedVoiceId ? 'selected' : ''}" onclick="selectVoiceById('${v.id}')">
-      <div class="voice-play" onclick="togglePreview(event,this)">▶</div>
+      <div class="voice-play" onclick="togglePreview(event,this)"><img src="../../../../components/ai-social-media/icons/audio-play.svg" class="icon-inline icon-16" alt=""></div>
       <div class="voice-item-info"><span class="voice-item-name">${v.name}</span><span class="voice-item-tag">${v.tag}</span></div>
       <span class="voice-check">✓</span>
     </div>`).join('');
@@ -4277,7 +4282,7 @@ function renderVoiceLibRows(containerId){
   container.dataset.rendered = '1';
   container.innerHTML = VOICE_LIBRARY_DATA.map(v => `
     <div class="voice-lib-row" data-name="${v.name.toLowerCase()}">
-      <div class="voice-play" onclick="togglePreview(event,this)">▶</div>
+      <div class="voice-play" onclick="togglePreview(event,this)"><img src="../../../../components/ai-social-media/icons/audio-play.svg" class="icon-inline icon-16" alt=""></div>
       <div class="voice-item-info"><span class="voice-item-name">${v.name}</span><span class="voice-item-tag">${v.tag}</span></div>
       <button type="button" class="voice-lib-add" onclick="event.stopPropagation(); addVoiceFromLibrary(this)">+ Add</button>
     </div>`).join('');
@@ -4366,7 +4371,7 @@ function reelConfirmScript(){
   const videoMsg = unitCount > 1
     ? `Once you're happy with the scenes, I'll generate ${unitCount} 8-second video clips — the current minimum length — and combine them into your final ${durationSec}s video.`
     : `Once you're happy with the scenes, I'll generate your ${durationSec}-second video.`;
-  appendChatCta('Generate Video', videoMsg, `<button class="btn btn-dark" onclick="this.disabled=true; proceedToStudio()">Generate video ⚡${totalCost} →</button>`);
+  appendChatCta('Generate Video', videoMsg, `<button class="btn btn-dark" onclick="this.disabled=true; proceedToStudio()">Generate video <img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">${totalCost} →</button>`);
   renderChatQuickChips([
     { label: 'Regenerate all', direct: () => quickAction('regen-all-scenes') },
     { label: 'Add a scene', direct: () => quickAction('add-scene') }
@@ -4555,7 +4560,7 @@ function renderVoiceCostSummary(scope){
     el.innerHTML = `Whole take · ~${window.__videoDuration || 8}s`;
   } else {
     const count = getSceneCount();
-    el.innerHTML = `Split by scene · ${count} segment${count > 1 ? 's' : ''} · <b>⚡${estimateSplitVoiceCredits(count)}</b> total`;
+    el.innerHTML = `Split by scene · ${count} segment${count > 1 ? 's' : ''} · <b><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">${estimateSplitVoiceCredits(count)}</b> total`;
   }
 }
 
@@ -4632,15 +4637,15 @@ function renderVoiceSection(scope){
             <span class="voice-acc-status ${cached ? 'ready' : 'pending'}" data-status-scene="${n}" data-status-scope="${scope}" title="${cached ? 'Ready' : 'Needs generation'}">${cached ? '✓' : '○'}</span>
             <span class="voice-acc-time">${time}</span>
             <span class="voice-acc-summary" data-summary-scene="${n}">${escapeHtml(script)}</span>
-            <span class="voice-acc-cost">⚡${SEGMENT_VOICE_CREDIT}</span>
-            <span class="voice-acc-chevron">▾</span>
+            <span class="voice-acc-cost"><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">${SEGMENT_VOICE_CREDIT}</span>
+            <span class="voice-acc-chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span>
           </div>
           <div class="voice-acc-body">
             <textarea class="voice-script-text" data-scene="${n}" oninput="updateSceneScript(${n}, this.value)">${escapeHtml(script)}</textarea>
             <div class="voice-acc-bottom">
               <span class="scene-guide voice-guide-${n}">${wordCountGuideText(script)}</span>
               <button class="voice-preview-btn" id="voicePreviewBtn_${scope}_${n}" onclick="previewSceneVoice('${scope}', ${n})">
-                <span class="vp-icon">▶</span> Preview <span class="vp-cost">⚡${SEGMENT_VOICE_CREDIT}</span>
+                <span class="vp-icon"><img src="../../../../components/ai-social-media/icons/audio-play.svg" class="icon-inline icon-16" alt=""></span> Preview <span class="vp-cost"><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">${SEGMENT_VOICE_CREDIT}</span>
               </button>
             </div>
           </div>
@@ -4653,7 +4658,7 @@ function renderVoiceSection(scope){
     body.innerHTML = `
       <textarea class="voice-script-text whole" oninput="window.__wholeScriptText = this.value; updateWholeVoiceButton('tl'); updateWholeVoiceButton('vid');">${escapeHtml(window.__wholeScriptText)}</textarea>
       <button class="voice-preview-btn" id="voicePreviewBtnWhole_${scope}" onclick="previewWholeVoice('${scope}')">
-        <span class="vp-icon">▶</span> Preview <span class="vp-cost">⚡${estimateWholeVoiceCredits()}</span>
+        <span class="vp-icon"><img src="../../../../components/ai-social-media/icons/audio-play.svg" class="icon-inline icon-16" alt=""></span> Preview <span class="vp-cost"><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">${estimateWholeVoiceCredits()}</span>
       </button>
     `;
     updateWholeVoiceButton(scope);
@@ -4690,10 +4695,10 @@ function updateVoicePreviewButton(scope, n){
     btn.innerHTML = `<span class="vp-icon">🔁</span> Preview`;
     btn.title = 'Replay the cached preview — no extra cost';
   } else if(stale){
-    btn.innerHTML = `<span class="vp-icon">↻</span> Regenerate <span class="vp-cost">⚡${SEGMENT_VOICE_CREDIT}</span>`;
+    btn.innerHTML = `<span class="vp-icon"><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt=""></span> Regenerate <span class="vp-cost"><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">${SEGMENT_VOICE_CREDIT}</span>`;
     btn.title = `Text changed since the last generation · ${SEGMENT_VOICE_CREDIT} credits to regenerate`;
   } else {
-    btn.innerHTML = `<span class="vp-icon">▶</span> Preview <span class="vp-cost">⚡${SEGMENT_VOICE_CREDIT}</span>`;
+    btn.innerHTML = `<span class="vp-icon"><img src="../../../../components/ai-social-media/icons/audio-play.svg" class="icon-inline icon-16" alt=""></span> Preview <span class="vp-cost"><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">${SEGMENT_VOICE_CREDIT}</span>`;
     btn.title = `Generate a voice preview · ${SEGMENT_VOICE_CREDIT} credits`;
   }
 }
@@ -4743,10 +4748,10 @@ function updateWholeVoiceButton(scope){
     btn.innerHTML = `<span class="vp-icon">🔁</span> Preview`;
     btn.title = 'Replay the cached preview — no extra cost';
   } else if(stale){
-    btn.innerHTML = `<span class="vp-icon">↻</span> Regenerate <span class="vp-cost">⚡${wholeCredits}</span>`;
+    btn.innerHTML = `<span class="vp-icon"><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt=""></span> Regenerate <span class="vp-cost"><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">${wholeCredits}</span>`;
     btn.title = `Text changed since the last generation · ${wholeCredits} credits to regenerate`;
   } else {
-    btn.innerHTML = `<span class="vp-icon">▶</span> Preview <span class="vp-cost">⚡${wholeCredits}</span>`;
+    btn.innerHTML = `<span class="vp-icon"><img src="../../../../components/ai-social-media/icons/audio-play.svg" class="icon-inline icon-16" alt=""></span> Preview <span class="vp-cost"><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">${wholeCredits}</span>`;
     btn.title = `Generate the full narration · ${wholeCredits} credits`;
   }
 }
@@ -4778,7 +4783,7 @@ function previewWholeVoice(scope){
 
 function playVoiceButton(btn, justGenerated, onDone){
   btn.classList.add('playing');
-  btn.innerHTML = `<span class="vp-icon">🔊</span> ${justGenerated ? 'Playing…' : 'Replaying…'}`;
+  btn.innerHTML = `<span class="vp-icon"><img src="../../../../components/ai-social-media/icons/nav-voices.svg" class="icon-inline" alt=""></span> ${justGenerated ? 'Playing…' : 'Replaying…'}`;
   setTimeout(() => {
     btn.classList.remove('playing');
     onDone();
@@ -4902,10 +4907,10 @@ function startVideoGeneration(){
       <div class="video-tile-preview">
         <div class="video-tile-overlay-top">
           <span class="video-tile-ready-badge">✓ Ready</span>
-          <button class="video-tile-regen-btn" onclick="event.stopPropagation(); regenerateVideoScene(${i + 1})" title="Regenerate · ⚡${VIDEO_COST_PER_UNIT}">↻</button>
+          <button class="video-tile-regen-btn" onclick="event.stopPropagation(); regenerateVideoScene(${i + 1})" title="Regenerate · ⚡${VIDEO_COST_PER_UNIT}"><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt=""></button>
         </div>
         <div class="spinner-mini"></div>
-        <button class="video-play-btn" onclick="event.stopPropagation(); playVideoScene(${i + 1})" title="Play">▶</button>
+        <button class="video-play-btn" onclick="event.stopPropagation(); playVideoScene(${i + 1})" title="Play"><img src="../../../../components/ai-social-media/icons/audio-play.svg" class="icon-inline icon-16" alt=""></button>
         <span class="video-tile-badge">Video ${i + 1} · ${getVideoUnitTimeLabel(i + 1)}</span>
       </div>
     </div>
@@ -4918,7 +4923,7 @@ function startVideoGeneration(){
       </div>
       <label class="scene-desc-label-reel">Video prompt</label>
       <textarea class="scene-prompt-text" id="videoPrompt${i + 1}">${escapeHtml(buildVideoPrompt(i + 1))}</textarea>
-      <button class="video-regen-btn" onclick="regenerateVideoScene(${i + 1})">🔁 Regenerate <span class="cost">⚡${VIDEO_COST_PER_UNIT}</span></button>
+      <button class="video-regen-btn" onclick="regenerateVideoScene(${i + 1})"><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt=""> Regenerate <span class="cost"><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">${VIDEO_COST_PER_UNIT}</span></button>
     </div>
   `).join('');
 
@@ -5000,8 +5005,8 @@ function playVideoScene(n){
   const tile = document.getElementById('videoTile' + n);
   if(!tile || !tile.classList.contains('ready')) return;
   const btn = tile.querySelector('.video-play-btn');
-  btn.textContent = '⏸';
-  setTimeout(() => { btn.textContent = '▶'; }, 1400);
+  btn.innerHTML = '<img src="../../../../components/ai-social-media/icons/audio-pause.svg" class="icon-inline icon-16" alt="">';
+  setTimeout(() => { btn.innerHTML = '<img src="../../../../components/ai-social-media/icons/audio-play.svg" class="icon-inline icon-16" alt="">'; }, 1400);
 }
 
 function combineVideo(){
@@ -5078,12 +5083,13 @@ function renderCombineSummaryCard(){
   const duration = document.getElementById('genSettingDuration')?.textContent || '8s';
   const character = document.getElementById('settingCharacter')?.textContent || '';
   const voice = document.getElementById('settingVoice')?.textContent || '';
+  const ICON_PATH = '../../../../components/ai-social-media/icons/';
   const specs = [
-    { icon: '⏱', label: 'Duration', value: duration },
+    { icon: `<img src="${ICON_PATH}spec-duration.svg" class="icon-inline" alt="">`, label: 'Duration', value: duration },
     { icon: '▭', label: 'Ratio', value: '9:16' },
     { icon: '🌐', label: 'Language', value: 'English' },
-    { icon: '👤', label: 'Character', value: character },
-    { icon: '🔊', label: 'Voice', value: voice },
+    { icon: `<img src="${ICON_PATH}nav-characters.svg" class="icon-inline" alt="">`, label: 'Character', value: character },
+    { icon: `<img src="${ICON_PATH}nav-voices.svg" class="icon-inline" alt="">`, label: 'Voice', value: voice },
   ];
   if(window.__brandMode === 'set') specs.push({ icon: '🏷', label: 'Brand', value: 'Formee Express' });
 
@@ -5104,8 +5110,8 @@ function backToSceneVideos(){
 }
 
 function playCombineResult(btn){
-  btn.textContent = '⏸';
-  setTimeout(() => { btn.textContent = '▶'; }, 1400);
+  btn.innerHTML = '<img src="../../../../components/ai-social-media/icons/audio-pause.svg" class="icon-inline icon-16" alt="">';
+  setTimeout(() => { btn.innerHTML = '<img src="../../../../components/ai-social-media/icons/audio-play.svg" class="icon-inline icon-16" alt="">'; }, 1400);
 }
 
 
@@ -5876,10 +5882,10 @@ function renderSocialTabContent(){
       </div>
     </div>
     <div class="pub-social-confirm-box">
-      <div class="pub-social-confirm-warning">⚠ This will post live to @${PUBLISH_FAKE_HANDLE}</div>
+      <div class="pub-social-confirm-warning"><img src="../../../../components/ai-social-media/icons/alert-sm.svg" class="icon-inline" alt=""> This will post live to @${PUBLISH_FAKE_HANDLE}</div>
       <p class="pub-social-confirm-note">Heads up: this isn't a dry run. Confirming ${verb} the content above straight to ${platform.label}. Type the handle below to unlock the button.</p>
       <input type="text" class="pub-social-confirm-input" id="pubSocialConfirmInput" placeholder='Type &quot;${PUBLISH_FAKE_HANDLE}&quot; to confirm' oninput="onSocialConfirmInput(this.value)">
-      <button type="button" class="btn btn-dark pub-social-confirm-btn" id="pubSocialConfirmBtn" disabled onclick="confirmPublishPlatform('${key}')">✨ ${actionLabel} live to ${platform.label}</button>
+      <button type="button" class="btn btn-dark pub-social-confirm-btn" id="pubSocialConfirmBtn" disabled onclick="confirmPublishPlatform('${key}')"><span style="position:relative;display:inline-block;width:14px;height:14px;vertical-align:-2px;"><img src="../../../../components/ai-social-media/icons/sparkle-single-a.svg" style="position:absolute;inset:0;width:100%;height:100%;" alt=""><img src="../../../../components/ai-social-media/icons/sparkle-single-b.svg" style="position:absolute;inset:0;width:100%;height:100%;" alt=""></span> ${actionLabel} live to ${platform.label}</button>
     </div>
   `;
 }

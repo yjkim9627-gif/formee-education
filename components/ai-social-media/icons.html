@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>Icons — Shared Component</title>
+<link rel="stylesheet" href="../../tokens/tokens.css" />
+<link rel="stylesheet" href="../demo-nav.css" />
+<link rel="stylesheet" href="icons.css" />
+<style>
+  body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
+  .demo-main { padding: var(--spacing-4xl); }
+  h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-sm); }
+  .demo-note { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); max-width: 640px; margin: 0 0 var(--spacing-3xl); line-height: 1.6; }
+  .icon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1px; background: var(--color-neutral-200); border: 1px solid var(--color-neutral-200); border-radius: 12px; overflow: hidden; }
+  .icon-cell { background: var(--color-neutral-0); padding: var(--spacing-lg); display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+  .icon-cell img { width: 24px; height: 24px; }
+  .icon-name { font-size: 11.5px; font-weight: 600; color: var(--color-neutral-900); }
+  .icon-replaces { font-size: 11px; color: var(--color-neutral-500); }
+</style>
+</head>
+<body>
+<div class="demo-shell">
+  <nav class="demo-sidebar">
+    <a href="../../index.html" class="demo-sidebar-home">← Home</a>
+    <div class="demo-sidebar-group">
+      <div class="demo-sidebar-label">AI Social Media</div>
+      <a href="nav.html">Nav / Navigation</a>
+      <a href="topbar-stepper.html">Topbar + Stepper</a>
+      <a href="heading.html">Heading</a>
+      <a href="chat-panel.html">Chat Panel</a>
+      <a href="character-card.html">Character Card</a>
+      <a href="avatar.html">Avatar</a>
+      <a href="switch.html">Controls / Switch</a>
+      <a href="prompt-box.html">AI Prompt Box</a>
+      <a href="input.html">Input</a>
+      <a href="filter-chip.html">Controls / Filter / Toggle</a>
+      <a href="table-filter.html">Table / Filter</a>
+      <a href="setting-chip.html">Setting Chip</a>
+      <a href="actions-button.html">Actions / Button</a>
+      <a href="icons.html" class="active">Icons</a>
+    </div>
+    <div class="demo-sidebar-group">
+      <div class="demo-sidebar-label">Shared</div>
+      <a href="../shared/button.html">Button</a>
+      <a href="../shared/modal-confirm.html">Modal / Confirm</a>
+      <a href="../shared/modal-form.html">Modal / Form</a>
+      <a href="../shared/modal-success.html">Modal / Success</a>
+    </div>
+  </nav>
+  <main class="demo-main">
+  <h1>Icons</h1>
+  <p class="demo-note">Figma's "01 Icons" library (3191:30848) has 130+ icons across 20 categories. This is the first batch — just the ones needed to replace emoji/hand-drawn glyphs already used across the generate flows. Each is exported as-is from Figma (baked-in color, not currentColor), so a spot that needs the icon to recolor on state still needs its own treatment.</p>
+  <div class="icon-grid">
+    <div class="icon-cell"><img src="icons/spec-duration.svg" alt=""><span class="icon-name">spec / duration</span><span class="icon-replaces">⏱</span></div>
+    <div class="icon-cell"><img src="icons/spec-versions.svg" alt=""><span class="icon-name">spec / versions</span><span class="icon-replaces">🔢 (layers glyph)</span></div>
+    <div class="icon-cell"><img src="icons/chevron-down.svg" alt=""><span class="icon-name">ui / chevron-down</span><span class="icon-replaces">▾ ⌄</span></div>
+    <div class="icon-cell"><img src="icons/back.svg" alt=""><span class="icon-name">ui / back</span><span class="icon-replaces">← (rotate 180° for →)</span></div>
+    <div class="icon-cell"><img src="icons/arrow-up.svg" alt=""><span class="icon-name">ui / arrow-up</span><span class="icon-replaces">↑ (chat send)</span></div>
+    <div class="icon-cell"><img src="icons/download.svg" alt=""><span class="icon-name">ui / download</span><span class="icon-replaces">⬇</span></div>
+    <div class="icon-cell"><img src="icons/close-x.svg" alt=""><span class="icon-name">ui / close (x glyph)</span><span class="icon-replaces">✕</span></div>
+    <div class="icon-cell"><img src="icons/chat.svg" alt=""><span class="icon-name">ui / chat</span><span class="icon-replaces">💬</span></div>
+    <div class="icon-cell"><img src="icons/check.svg" alt=""><span class="icon-name">check</span><span class="icon-replaces">✓</span></div>
+    <div class="icon-cell"><img src="icons/attach.svg" alt=""><span class="icon-name">edit / attach</span><span class="icon-replaces">📎</span></div>
+    <div class="icon-cell"><img src="icons/edit-pencil.svg" alt=""><span class="icon-name">edit / pencil</span><span class="icon-replaces">✏️ ✎</span></div>
+    <div class="icon-cell"><img src="icons/refresh-ccw.svg" alt=""><span class="icon-name">refresh-ccw</span><span class="icon-replaces">↻ 🔁</span></div>
+    <div class="icon-cell"><img src="icons/zap.svg" alt=""><span class="icon-name">zap</span><span class="icon-replaces">⚡ (credit cost)</span></div>
+    <div class="icon-cell"><img src="icons/alert-sm.svg" alt=""><span class="icon-name">alert-sm</span><span class="icon-replaces">⚠️</span></div>
+    <div class="icon-cell"><img src="icons/audio-play.svg" alt=""><span class="icon-name">audio / play</span><span class="icon-replaces">▶</span></div>
+    <div class="icon-cell"><img src="icons/audio-pause.svg" alt=""><span class="icon-name">audio / pause</span><span class="icon-replaces">⏸</span></div>
+    <div class="icon-cell"><img src="icons/nav-voices.svg" alt=""><span class="icon-name">nav / voices</span><span class="icon-replaces">🎙 🔊</span></div>
+    <div class="icon-cell"><img src="icons/nav-characters.svg" alt=""><span class="icon-name">nav / characters</span><span class="icon-replaces">👤 🧑</span></div>
+    <div class="icon-cell">
+      <div style="position:relative; width:24px; height:24px;">
+        <img src="icons/sparkle-single-a.svg" alt="" style="position:absolute; inset:0; width:100%; height:100%;">
+        <img src="icons/sparkle-single-b.svg" alt="" style="position:absolute; inset:0; width:100%; height:100%;">
+      </div>
+      <span class="icon-name">ai / sparkle-single</span><span class="icon-replaces">✨</span>
+    </div>
+  </div>
+  </main>
+</div>
+</body>
+</html>

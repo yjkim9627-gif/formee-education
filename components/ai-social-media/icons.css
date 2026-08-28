@@ -1,0 +1,14 @@
+/* Icons — shared component (components/ai-social-media/icons.html 참고)
+   Figma: FME_AI-Social-Media, "01 Icons" (3191:30848) — 130+ icon library, organized by
+   category (ai, arrange, audio, color, content, data, edit, editing tool bar, flip, format,
+   layer, menu, nav, pagebar, panel, social, spec, transition, ui, view, voice).
+
+   Only a first batch is downloaded so far — the icons actually needed to replace emoji/ad-hoc
+   glyphs already used across the generate flows (see icons.html for the exact list and which
+   emoji each one replaces). Figma exports these with a baked-in fill/stroke color rather than
+   currentColor, so they render as-is; a spot that needs the icon to recolor on state (e.g. an
+   active chip) still needs its own CSS-drawn treatment or an inlined <svg> instead of <img>.
+   spec/9-16, spec/4-5, spec/1-1 are CSS-drawn (.ratio-box-ic in prompt-box.css), not image
+   assets, matching how Figma itself defines them — they're not in this folder. */
+
+.icon-swatch{width:20px; height:20px; display:inline-block; vertical-align:middle;}
