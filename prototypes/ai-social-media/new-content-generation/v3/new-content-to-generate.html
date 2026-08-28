@@ -398,7 +398,7 @@
   #briefContentCarousel .char-styles-title{font-size:13px; font-weight:700; color:var(--color-neutral-900);}
 
   /* ---- Generate — stage tabs (Draft/Versions vs Script/Storyboard/Preview) ---- */
-  #stageAreaImage .stage-tabs{display:flex; align-items:stretch; padding:0 24px; border-bottom:1px solid var(--color-neutral-300); flex-shrink:0;}
+  #stageAreaImage .stage-tabs{display:flex; align-items:stretch; max-width:1024px; margin:0 auto; width:100%; padding:12px 24px 0; border-bottom:1px solid var(--color-neutral-300); flex-shrink:0;}
   #stageAreaImage .stage-tab{flex:1; text-align:center; font-size:14px; font-weight:500; color:var(--color-neutral-500); padding:14px 16px 9px; border-bottom:2px solid transparent; cursor:pointer;}
   #stageAreaImage .stage-tab.active{color:var(--color-neutral-800); font-weight:700; border-bottom-color:var(--color-neutral-800);}
   #stageAreaImage .stage-tab.locked{color:var(--color-neutral-400); cursor:default;}
@@ -406,7 +406,7 @@
   #stageAreaImage .stage-body-inner{max-width:720px; margin:0 auto; width:100%; flex:1; min-height:0; display:flex; flex-direction:column;}
   #stageAreaImage .stage-sub-text{font-size:12px; color:var(--color-neutral-500); margin:0 0 28px;}
 
-  #stageAreaCarousel .stage-tabs{display:flex; justify-content:center; gap:18px; padding:12px 24px 0; border-bottom:1px solid var(--color-neutral-300); flex-shrink:0;}
+  #stageAreaCarousel .stage-tabs{display:flex; justify-content:center; gap:18px; max-width:1024px; margin:0 auto; width:100%; padding:12px 24px 0; border-bottom:1px solid var(--color-neutral-300); flex-shrink:0;}
   #stageAreaCarousel .stage-tab{font-size:12.5px; font-weight:600; color:var(--color-neutral-500); padding:0 2px 12px; border-bottom:2px solid transparent; cursor:pointer;}
   #stageAreaCarousel .stage-tab.active{color:var(--color-neutral-900); border-bottom-color:var(--color-neutral-900);}
   #stageAreaCarousel .stage-tab.locked{color:var(--color-neutral-400); cursor:default;}
@@ -804,7 +804,7 @@
   .script-proposal-box.applied .script-applied-note{display:flex;}
   .script-proposal-box.applied{border-color:var(--color-brand-primary-mid);}
 
-  #stageAreaReel .stage-tabs{display:flex; padding:48px 24px 0; border-bottom:1px solid var(--color-neutral-300); flex-shrink:0;}
+  #stageAreaReel .stage-tabs{display:flex; max-width:1024px; margin:0 auto; width:100%; padding:12px 24px 0; border-bottom:1px solid var(--color-neutral-300); flex-shrink:0;}
   #stageAreaReel .stage-tab{flex:1; text-align:center; font-size:14px; font-weight:500; color:var(--color-neutral-500); padding:5px 16px 9px; border-bottom:2px solid transparent;}
   #stageAreaReel .stage-tab.active{color:var(--color-neutral-800); font-weight:700; border-bottom-color:var(--color-neutral-800);}
   #stageAreaReel .stage-tab.locked{color:var(--color-neutral-400);}
@@ -1102,7 +1102,6 @@
         <div class="seg-control" id="contentTypeToggle" style="margin-bottom:16px;">
           <div class="seg-chip" data-type="reel" onclick="selectContentType(this)">Reel / Short</div>
           <div class="seg-chip active" data-type="image" onclick="selectContentType(this)">Image post</div>
-          <div class="seg-chip" data-type="story" onclick="selectContentType(this)">Story image</div>
           <div class="seg-chip" data-type="carousel" onclick="selectContentType(this)">Carousel</div>
         </div>
 <div id="briefContentImage">
@@ -5589,7 +5588,6 @@ function setStep(active){
 // implementation anywhere in this repo yet, so it's inert. ----
 function selectContentType(el){
   const type = el.dataset.type;
-  if(type === 'story') return; // no Story image implementation exists in this repo
   document.querySelectorAll('#contentTypeToggle .seg-chip').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
   window.__contentType = type;
