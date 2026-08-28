@@ -53,9 +53,6 @@
 .msg-status .worked-time{font-weight:400; color:var(--color-neutral-500);}
 
 .chat-edit-hint{display:block; font-size:10.5px; color:var(--color-neutral-500); margin-top:3px;}
-/* Figma (5457-111240) places this hint line INSIDE the bordered chat-input-box, above the
-   textarea — not as a separate label sitting above the box. */
-.chat-hint{font-size:13px; line-height:normal; color:var(--color-neutral-500); width:100%;}
 
 /* ---------- Quick-action chips ----------
    Pill row shown above the hint/input once a stage/state just finished (e.g. copy drafted,
@@ -67,14 +64,21 @@
 
 /* ---------- Input box ----------
    Figma "AI Prompt Box"의 3 타입(readonly/input/ai) 중 이 채팅 입력창은 항상 "ai" 타입
-   (brand-primary 1.5px 보더로 "AI가 개입 중" 신호, style-reference.md §9). */
+   (brand-primary 1.5px 보더로 "AI가 개입 중" 신호, style-reference.md §9).
+   Figma's box is a fixed 292x100 — that only works out (14 top pad + ~34px of text + 12
+   gap + 28px icon row + 12 bottom pad = 100) because there's no separate empty input
+   line reserved below the hint text: the hint IS the placeholder, wrapping up to 2 lines,
+   and typed text takes over that same space. A single-line <input> with its own
+   min-height couldn't do that (placeholders don't wrap), which is why this used to render
+   ~50% taller than Figma — swapped the markup to a 2-row <textarea> so the placeholder
+   wraps in place instead of needing a separate label + reserved input row above it. */
 .chat-input-box{
   margin:0 16px 16px; border:1.5px solid var(--color-brand-primary); border-radius:12px;
   background:var(--color-neutral-0); padding:14px 14px 12px; display:flex; flex-direction:column; gap:12px;
 }
 .chat-input{
   border:none; outline:none; background:transparent; width:100%; font-size:13px; color:var(--color-neutral-900);
-  font-family:var(--font-family-text); resize:none; min-height:38px; max-height:120px; line-height:1.5;
+  font-family:var(--font-family-text); resize:none; max-height:120px; line-height:1.3;
 }
 .chat-input::placeholder{color:var(--color-neutral-500);}
 .chat-input:disabled{color:var(--color-neutral-450); cursor:not-allowed;}

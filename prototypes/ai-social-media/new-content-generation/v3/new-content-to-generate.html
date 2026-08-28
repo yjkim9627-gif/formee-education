@@ -26,14 +26,21 @@
   .icon-inline{width:14px; height:14px; display:inline-block; vertical-align:-2px; flex-shrink:0;}
   .icon-inline.icon-16{width:16px; height:16px; vertical-align:-3px;}
   .icon-inline.icon-flip{transform:scaleX(-1);}
-  /* Fixed 1920x1162 to match the shared reference frame size (brand-setup/index.html) —
-     scaled to fit whatever the actual browser window size is via fitScreenToViewport()
+  /* Fixed 1920x1080 — matches the actual Figma frame size for this flow's screens
+     (confirmed against 5457-111240 "Reel/Short · Script": 1920x1080, standard 16:9).
+     The earlier 1162 was copied from a different file's frame (brand-setup/index.html)
+     without checking against this file's own frames, which is why the whole app read as
+     noticeably taller/narrower than the reference — Brief screens are taller in Figma
+     only because that frame shows the full scrollable page unrolled (1920x1298), not
+     because the actual viewport is taller; .view's overflow-y:auto already scrolls that
+     content within the real 1080-tall frame, same as Generate's screens.
+     Scaled to fit whatever the actual browser window size is via fitScreenToViewport()
      below, same technique as prototypes/ai-social-media/editing/image-editing.html. */
   html{display:flex; align-items:center; justify-content:center; min-height:100vh; margin:0; background:var(--color-neutral-200);}
   body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
 
   .app{
-    width:1920px; height:1162px; flex-shrink:0; background:#fff; overflow:hidden;
+    width:1920px; height:1080px; flex-shrink:0; background:#fff; overflow:hidden;
     display:flex; border:1px solid var(--color-neutral-300); transform-origin:top left;
   }
 
@@ -1615,8 +1622,7 @@
           <div class="chat-log" id="chatLog"></div>
           <div class="chat-quick-chips" id="chatQuickChips"></div>
           <div class="chat-input-box">
-            <div class="chat-hint" id="chatHint">Requests like "make the headline shorter" or "try a warmer tone" work here too</div>
-            <input class="chat-input" id="chatInput" placeholder="Type a message...">
+            <textarea class="chat-input" id="chatInput" rows="2" placeholder="Requests like &quot;make the script shorter&quot; or &quot;try a warmer tone&quot; work here too"></textarea>
             <div class="chat-input-bottom-row">
               <button class="chat-attach-btn" title="Attach"><img src="../../../../components/ai-social-media/icons/attach.svg" class="icon-inline icon-16" alt=""></button>
               <button class="chat-send" id="chatSend" onclick="sendChatMessage()"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiB2aWV3Qm94PSIwIDAgMjAgMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gdWkgLyBhcnJvdy11cCI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik0xNS44MzY3IDEwLjAwMzNMMTAuMDAzMyA0LjE3TDQuMTcgMTAuMDAzM00xMC4wMDMzIDQuMTdWMTUuODM2NyIgc3Ryb2tlPSIjOEE5M0E4IiBzdHJva2Utd2lkdGg9IjEuNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjwvZz4KPC9zdmc+Cg==" alt="" width="14" height="14" style="filter:invert(1);"></button>
@@ -2419,8 +2425,8 @@ function handleQuickChipClick(i){
   }
 }
 function setChatGuideHint(text){
-  const hint = document.getElementById('chatHint');
-  if(hint) hint.textContent = text;
+  const input = document.getElementById('chatInput');
+  if(input) input.placeholder = text;
 }
 
 // Copy fills in directly (no propose/apply step) — the chat just narrates what changed.
@@ -6009,7 +6015,7 @@ function applyContentType(){
   document.getElementById('developBodyImage').style.display = type === 'image' ? 'flex' : 'none';
   document.getElementById('developBodyCarousel').style.display = type === 'carousel' ? 'flex' : 'none';
   document.getElementById('developBodyReel').style.display = type === 'reel' ? 'flex' : 'none';
-  document.getElementById('chatHint').textContent = type === 'carousel'
+  document.getElementById('chatInput').placeholder = type === 'carousel'
     ? 'Requests like "make card 2 shorter" or "try a warmer tone" work here too'
     : type === 'reel'
     ? 'Requests like "make the script shorter" or "try a warmer tone" work here too'
@@ -6201,7 +6207,7 @@ setBrandMode('none');
 applyContentType();
 goToBrief();
 
-// ---- Scale the whole 1920x1162 .app to fit the real browser window, preserving aspect
+// ---- Scale the whole 1920x1080 .app to fit the real browser window, preserving aspect
 // ratio — same technique as prototypes/ai-social-media/editing/image-editing.html, so this
 // prototype reads at the right size on both a large monitor and a laptop screen. ----
 function fitScreenToViewport(){
@@ -6209,16 +6215,13 @@ function fitScreenToViewport(){
   // bar, which is position:absolute to the bottom of .main rather than truly sticky — is
   // always 100% visible with no outer-page scroll. Internal panels (.view, .stage-body,
   // etc.) already scroll on their own via overflow-y:auto regardless of this scale, so
-  // content never gets clipped — only the frame's overall size changes. Because the
-  // 1920x1162 design is proportionally taller than most widescreen monitors, height is
-  // usually the binding constraint, which leaves visible side margins — that trade-off
-  // is intentional so the action bar never ends up scrolled out of view.
+  // content never gets clipped — only the frame's overall size changes.
   const FRAME_MARGIN = 40;
-  const scale = Math.min((window.innerWidth - FRAME_MARGIN * 2) / 1920, (window.innerHeight - FRAME_MARGIN * 2) / 1162);
+  const scale = Math.min((window.innerWidth - FRAME_MARGIN * 2) / 1920, (window.innerHeight - FRAME_MARGIN * 2) / 1080);
   const appEl = document.querySelector('.app');
   appEl.style.transform = `scale(${scale})`;
   document.body.style.width = (1920 * scale) + 'px';
-  document.body.style.height = (1162 * scale) + 'px';
+  document.body.style.height = (1080 * scale) + 'px';
 }
 window.addEventListener('resize', fitScreenToViewport);
 fitScreenToViewport();
