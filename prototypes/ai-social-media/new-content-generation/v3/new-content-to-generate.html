@@ -114,7 +114,9 @@
   .copy-applied-note{display:none; align-items:center; gap:4px; width:fit-content; font-size:12px; font-weight:600; color:var(--color-brand-primary); background:var(--color-brand-primary-light); border:1px solid var(--color-brand-primary-mid); border-radius:999px; padding:6px 10px;}
   .visual-proposal-box.applied .copy-applied-note{display:flex;}
   .visual-proposal-box.applied{border-color:var(--color-brand-primary-mid);}
-  .chat-edit-hint{display:block; font-size:10.5px; color:var(--color-neutral-500); margin-top:3px;}
+  /* Figma's "AI / Review Item" (5457-111240 ai-response > list) is a plain 14px paragraph,
+     same size/weight as the rest of the AI response — not a small muted caption. */
+  .chat-edit-hint{display:block; font-size:14px; line-height:20px; color:var(--color-neutral-700); margin-top:4px;}
 
   .stage-area{flex:1; display:flex; flex-direction:column; min-width:0; min-height:0; position:relative;}
   .stage-body{flex:1; min-height:0; padding:52px 28px 14px; overflow-y:auto; display:flex; flex-direction:column;}
@@ -854,19 +856,24 @@
   .brand-applied-item{font-size:11px; color:var(--color-neutral-700);}
   .brand-applied-item b{color:var(--color-neutral-900);}
   .brand-applied-item s{color:var(--color-neutral-500);}
-  .script-proposal-box{margin-top:8px; background:#fff; border:1px solid var(--color-neutral-300); border-radius:8px; padding:10px 11px; display:flex; flex-direction:column; gap:8px;}
-  .script-proposal-text{font-size:12.5px; font-style:italic; color:var(--color-neutral-900); line-height:1.5;}
-  .script-proposal-box .btn-dark{width:100%; padding:8px 10px; font-size:12px;}
+  /* Same "Generate Script" proposal card as Figma's ai-response > Frame 1410117517 —
+     matches .chat-cta-card's values exactly (kept as its own class since JS toggles an
+     "applied" state/note this specific card needs that appendChatCta()'s cards don't). */
+  .script-proposal-box{margin-top:12px; background:var(--color-neutral-75); border:1px solid var(--color-neutral-400); border-radius:var(--radius-xl); padding:12px; display:flex; flex-direction:column; gap:12px;}
+  .script-proposal-text{font-size:14px; color:var(--color-neutral-700); line-height:1.57;}
+  .script-proposal-box .btn-dark{width:100%; justify-content:center; padding:9px 14px; font-size:13px;}
   .script-applied-note{display:none; align-items:center; gap:8px; font-size:12px; font-weight:600; color:var(--color-brand-primary); background:var(--color-badge-blue-bg); border:1px solid var(--color-brand-primary-mid); border-radius:var(--radius-lg); padding:6px 8px;}
   .script-proposal-box.applied .script-applied-note{display:flex;}
   .script-proposal-box.applied{border-color:var(--color-brand-primary-mid);}
-  .script-proposal-title{font-size:13.5px; font-weight:700; color:var(--color-neutral-900); font-family:var(--font-family-text);}
+  .script-proposal-title{font-size:14px; font-weight:700; color:var(--color-neutral-900); font-family:var(--font-family-text);}
 
-  /* -- Chat "next action" card (Generate Script/Video, Combine, etc.) — matches Figma's AI Assistant panel states -- */
-  .ai-cta-card{background:var(--color-neutral-50); border:1px solid var(--color-neutral-200); border-radius:10px; padding:14px; display:flex; flex-direction:column; gap:8px; margin-top:8px;}
-  .ai-cta-card-title{font-size:13.5px; font-weight:700; color:var(--color-neutral-900); font-family:var(--font-family-text);}
-  .ai-cta-card-desc{font-size:12.5px; color:var(--color-neutral-700); line-height:1.5; margin:0;}
-  .ai-cta-card .btn{width:100%; margin-top:4px;}
+  /* -- Chat "next action" card (Generate Script/Video, Combine, etc.) now unified onto
+     .chat-cta-card (see the shared rule above) — appendChatCta() used to render its own
+     near-duplicate .ai-cta-card with slightly-off values (neutral-50/200 instead of
+     neutral-75/400, 10px radius instead of 12, 13.5px title instead of 14), so the same
+     "Generate Video"/"Combine"/"Your video is ready" cards looked subtly different from
+     the Script/Storyboard proposal cards built with .chat-cta-card. Fixed by pointing
+     appendChatCta() at .chat-cta-card directly instead of keeping a second card style. -- */
 
   /* -- Chat loading state — spinner + title + subtitle card, replaces the old inline "..." dots -- */
   .chat-loading-card{display:flex; align-items:flex-start; gap:10px; background:var(--color-neutral-50); border:1px solid var(--color-neutral-200); border-radius:10px; padding:14px;}
@@ -884,6 +891,17 @@
 
   /* settings bar — sits in normal flow right below the tab row, centered */
   #stageAreaReel .settings-bar{position:static; display:flex; justify-content:center; gap:12px; flex-wrap:wrap; padding:24px 28px 0; flex-shrink:0;}
+  /* Figma's real "Controls" chip (5457-111240 stage-body spec row) is white/radius-8/14px —
+     not the neutral-50/pill/11.5px .setting-chip default (that shape comes from a different
+     Figma context — the floating settings-bar overlay used on Image/Carousel/Brief screens).
+     Scoped here since only Reel/Short's Script/Timeline/Video spec row has been checked
+     against this exact node so far. */
+  #stageAreaReel .setting-chip{
+    background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg);
+    padding:7px 12px 7px 10px; gap:5px; font-size:14px; line-height:22px; color:var(--color-neutral-700);
+  }
+  #stageAreaReel .setting-chip b{font-weight:500; color:var(--color-neutral-700);}
+  #stageAreaReel .setting-chip > img.icon-inline{width:16px; height:16px;}
   .setting-chip .avatar-mini{width:16px; height:16px; border-radius:999px; background:var(--color-neutral-400);}
   .setting-chip .dot-sep{width:2px; height:2px; border-radius:999px; background:var(--color-neutral-400); flex-shrink:0;}
   .setting-chip .ratio-icon{width:16px; height:16px; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
@@ -900,6 +918,11 @@
 
   #subReelScript, #subReelTimeline, #subReelVideo{display:flex; flex-direction:column; flex:1; min-height:0;}
   #stageAreaReel .stage-body{flex:1; min-height:0; padding:32px 28px 14px; overflow-y:auto; display:flex; flex-direction:column;}
+  /* Figma's Script screen (5457-111240) has no button in the right-hand panel — "Continue"
+     lives only in the bottom genActionBarV3 feedback bar. Kept in the DOM (not removed)
+     since syncGenActionBarV3() reads this button's text/disabled/onclick to mirror it into
+     that bottom bar; it's just not meant to be seen here too. */
+  #scriptPanel .stage-cta-row{display:none;}
   #stageAreaReel .stage-body-inner{max-width:960px; margin:0 auto; width:100%; flex:1; min-height:0; display:flex; flex-direction:column;}
   #stageAreaReel .stage-sub-text{font-size:12px; color:var(--color-neutral-500); margin:0 0 6px;}
 
@@ -1587,12 +1610,12 @@
         <div class="chat">
           <div class="chat-header">
             <div class="chat-header-title">AI Assistant</div>
-            <button class="chat-new-btn" title="New chat" onclick="startNewChat()">+</button>
+            <button class="chat-new-btn" title="New chat" onclick="startNewChat()"><img src="../../../../components/ai-social-media/icons/pagebar-plus.svg" class="icon-inline" alt=""></button>
           </div>
           <div class="chat-log" id="chatLog"></div>
           <div class="chat-quick-chips" id="chatQuickChips"></div>
-          <div class="chat-hint" id="chatHint">💬 Requests like "make the headline shorter" or "try a warmer tone" work here too</div>
           <div class="chat-input-box">
+            <div class="chat-hint" id="chatHint">Requests like "make the headline shorter" or "try a warmer tone" work here too</div>
             <input class="chat-input" id="chatInput" placeholder="Type a message...">
             <div class="chat-input-bottom-row">
               <button class="chat-attach-btn" title="Attach"><img src="../../../../components/ai-social-media/icons/attach.svg" class="icon-inline icon-16" alt=""></button>
@@ -1869,7 +1892,8 @@
           <div class="settings-bar" id="settingsBar">
             <div class="setting-chip"><span class="ratio-icon"><i></i></span>9:16</div>
             <div class="setting-chip"><img src="../../../../components/ai-social-media/icons/spec-duration.svg" class="icon-inline" alt=""> <span id="genSettingDuration">16s</span></div>
-            <div class="setting-chip">🌐 English</div>
+            <!-- Figma's spec row (5457-111240) is exactly 9:16 / duration / Character / Voice —
+                 no language chip here (unlike Image's settings bar, out of scope for this pass). -->
 
             <div class="setting-chip-wrap" id="characterChipWrap">
               <div class="setting-chip clickable" onclick="toggleSettingPopover(event,'character')">
@@ -4351,7 +4375,7 @@ function selectSettingVoice(el, label){
 // Generate Script / Generate Video / Ready to Generate card pattern.
 function appendChatCta(title, desc, buttonsHtml){
   const log = document.getElementById('chatLog');
-  log.innerHTML += `<div class="msg ai"><div class="ai-cta-card"><div class="ai-cta-card-title">${escapeHtml(title)}</div>${desc ? `<p class="ai-cta-card-desc">${escapeHtml(desc)}</p>` : ''}${buttonsHtml}</div></div>`;
+  log.innerHTML += `<div class="msg ai"><div class="chat-cta-card"><div class="chat-cta-title">${escapeHtml(title)}</div>${desc ? `<p class="chat-cta-text">${escapeHtml(desc)}</p>` : ''}${buttonsHtml}</div></div>`;
   log.scrollTop = log.scrollHeight;
 }
 
@@ -5986,10 +6010,10 @@ function applyContentType(){
   document.getElementById('developBodyCarousel').style.display = type === 'carousel' ? 'flex' : 'none';
   document.getElementById('developBodyReel').style.display = type === 'reel' ? 'flex' : 'none';
   document.getElementById('chatHint').textContent = type === 'carousel'
-    ? '💬 Requests like "make card 2 shorter" or "try a warmer tone" work here too'
+    ? 'Requests like "make card 2 shorter" or "try a warmer tone" work here too'
     : type === 'reel'
-    ? '💬 Requests like "make the script shorter" or "try a warmer tone" work here too'
-    : '💬 Requests like "make the headline shorter" or "try a warmer tone" work here too';
+    ? 'Requests like "make the script shorter" or "try a warmer tone" work here too'
+    : 'Requests like "make the headline shorter" or "try a warmer tone" work here too';
 }
 
 // ---- Stepper entry points: each dispatches to the img*/car* implementation ported from
