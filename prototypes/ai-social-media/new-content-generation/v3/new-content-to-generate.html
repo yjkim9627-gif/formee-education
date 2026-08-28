@@ -5153,9 +5153,85 @@ function resetPlatformCaption(key){
 // ---- Hashtags & SEO keywords suggestion (Caption section) ----
 // Flow: generate suggestions -> user selects (multi-select, no direct caption edits) ->
 // "Generate caption from selection" composes one coherent caption from whatever's selected.
-const PUB_HASHTAGS = ['#liptint', '#glossylips', '#makeuptok', '#beautyfinds', '#formeeexpress', '#liptintreview', '#grwm'];
-const PUB_SEO_KEYWORDS = ['lip tint review', 'glossy lip tint', 'best lip tint 2026', 'Formee Express lip tint', 'everyday makeup lip color'];
+// The suggestions themselves are derived from the actual script/brief text (see
+// extractContentKeywords/buildDynamicHashtagsSEO below) instead of a fixed placeholder
+// list, so they stay relevant no matter what the content is actually about.
+let PUB_HASHTAGS = [];
+let PUB_SEO_KEYWORDS = [];
 window.__pubSelectedTags = window.__pubSelectedTags || new Set();
+
+// Pulls together every text field the user has already filled in — the confirmed
+// script/headline, the raw brief prompt, and Advanced settings — as the raw material
+// for keyword extraction.
+function getContentSourceText(){
+  const hook = getPublishHookText();
+  const rawPrompt = window.__contentType === 'carousel'
+    ? document.getElementById('briefPromptCarousel')?.value
+    : window.__contentType === 'reel'
+    ? document.getElementById('briefSummary')?.value
+    : document.getElementById('briefPromptImage')?.value;
+  const details = getBriefDetails();
+  return [hook, rawPrompt, details.goal, details.tone, details.audience, details.cta].filter(Boolean).join(' ');
+}
+
+const PUB_STOPWORDS = new Set(['a','an','the','this','that','these','those','with','for','and','or','but','to','of','in','on','at','your','you','our','we','it','its','from','by','as','be','will','can','just','like','watch','see','look','show','first','then','now','here','there','what','how','why','is','are','was','were','been','being','do','does','did','has','have','had','not','no','so','if','than','too','very','more','most','some','any','all','each','into','onto','out','up','down','off','over','under','again','once','when','where','who','whom','which','their','they','them','she','he','her','his','i','my','me','us','get','got','make','made','new','follow','check','today','video','image','post','card','cards','carousel','reel','short','one','should','would','could','must']);
+
+// Simple frequency/adjacency extraction (no real NLP) — good enough to surface the
+// actual subject of the content instead of a hardcoded product name. Bigrams catch
+// compound nouns like "lip tint" or "study abroad" that are meaningless as single words.
+function extractContentKeywords(text){
+  const words = text.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(Boolean);
+  const significant = words.filter(w => w.length > 2 && !PUB_STOPWORDS.has(w));
+
+  const freq = {};
+  significant.forEach(w => freq[w] = (freq[w] || 0) + 1);
+
+  const bigrams = [];
+  for(let i = 0; i < words.length - 1; i++){
+    const a = words[i], b = words[i + 1];
+    if(a.length > 2 && b.length > 2 && !PUB_STOPWORDS.has(a) && !PUB_STOPWORDS.has(b)){
+      bigrams.push(a + ' ' + b);
+    }
+  }
+  // Rank by combined word frequency rather than reading order — a word repeated
+  // elsewhere in the brief/script is a better signal of "the actual subject" than
+  // whichever pair of content words simply happens to appear first.
+  const uniqueBigrams = [...new Set(bigrams)].sort((p, q) => {
+    const scoreOf = (pair) => pair.split(' ').reduce((sum, w) => sum + freq[w], 0);
+    return scoreOf(q) - scoreOf(p);
+  });
+
+  const uniqueWords = [...new Set(significant)].sort((a, b) => freq[b] - freq[a]);
+
+  return { bigrams: uniqueBigrams, words: uniqueWords };
+}
+
+function buildDynamicHashtagsSEO(){
+  const { bigrams, words } = extractContentKeywords(getContentSourceText());
+  const topic = bigrams[0] || words[0] || 'this';
+  const topicWords = topic.split(' ');
+  const topicCompact = topic.replace(/\s+/g, '');
+  const extraWords = words.filter(w => !topicWords.includes(w)).slice(0, 3);
+  const brandOn = window.__brandMode === 'set';
+
+  const hashtags = [`#${topicCompact}`];
+  extraWords.forEach(w => hashtags.push(`#${w}`));
+  if(brandOn) hashtags.push('#formeeexpress');
+  hashtags.push(`#${topicCompact}review`);
+
+  const year = new Date().getFullYear();
+  const seoKeywords = [
+    `${topic} review`,
+    `best ${topic} ${year}`,
+    brandOn ? `Formee Express ${topic}` : `everyday ${topic}`,
+    extraWords[0] ? `${topic} ${extraWords[0]}` : `${topic} tips`,
+  ];
+
+  return {
+    hashtags: [...new Set(hashtags)].slice(0, 7),
+    seoKeywords: [...new Set(seoKeywords)].slice(0, 5)
+  };
+}
 
 function generateHashtagsSEO(){
   const btn = document.getElementById('pubHashtagSeoBtn');
@@ -5165,6 +5241,10 @@ function generateHashtagsSEO(){
   setTimeout(() => {
     if(btn) btn.disabled = false;
     if(regenBtn) regenBtn.disabled = false;
+    const built = buildDynamicHashtagsSEO();
+    PUB_HASHTAGS = built.hashtags;
+    PUB_SEO_KEYWORDS = built.seoKeywords;
+    window.__pubSelectedTags = new Set(); // suggestions changed — stale selections wouldn't match
     document.getElementById('pubHashtagSeoResult').style.display = 'flex';
     document.getElementById('pubHashtagSeoSummary').textContent = buildHashtagSeoSummary();
     renderHashtagSeoChips();
@@ -5177,7 +5257,7 @@ function closeHashtagSeoPanel(){
 
 function buildHashtagSeoSummary(){
   const briefText = getPublishHookText();
-  return briefText || 'Formee Express\'s new lip tint delivers instant color payoff with a lightweight, glide-on formula — perfect for effortless everyday makeup.';
+  return briefText || 'Confirm a script or brief first — suggestions are based on what you\'ve written so far.';
 }
 
 function renderHashtagSeoChips(){
@@ -5339,7 +5419,7 @@ function buildAutoCaption(){
     const tag = details.goal.replace(/[^a-zA-Z0-9]/g, '');
     if(tag) tags.push('#' + tag.toLowerCase());
   }
-  tags.push('#liptint', '#beauty');
+  buildDynamicHashtagsSEO().hashtags.forEach(t => { if(!tags.includes(t)) tags.push(t); });
   parts.push(tags.slice(0, 5).join(' '));
 
   return parts.filter(Boolean).join('\n\n');
