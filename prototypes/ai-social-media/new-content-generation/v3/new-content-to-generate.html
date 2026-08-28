@@ -4513,20 +4513,29 @@ function renderTimelineScenes(){
   scenes.forEach((s, i) => { window.__sceneScripts[i + 1] = s.script; });
   window.__wholeScriptText = null;
 
-  const cols = Math.min(count, 3);
-  const rows = Math.ceil(count / cols);
+  // Canvas preview tiles are grouped by 8s video unit (2 for a 16s video), matching what
+  // actually gets generated/combined by the video API — not by individual 4s scene, even
+  // though scenes stay the finer editing granularity below (dialogue/blocking still
+  // benefits from a beat every 4s). Each tile shows both paired scenes' dialogue joined.
+  const unitCount = getVideoUnitCount();
+  const cols = Math.min(unitCount, 3);
+  const rows = Math.ceil(unitCount / cols);
   const sceneGridEl = document.getElementById('sceneGrid');
   sceneGridEl.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
   sceneGridEl.classList.toggle('single-row', rows <= 1);
 
-  document.getElementById('sceneGrid').innerHTML = scenes.map((s, i) => `
-    <div class="scene-tile${i === 0 ? ' selected' : ''}" data-scene="${i + 1}" id="sceneTile${i + 1}" onclick="selectScene(${i + 1})">
+  document.getElementById('sceneGrid').innerHTML = Array.from({ length: unitCount }, (_, u) => {
+    const unit = u + 1;
+    const unitScenes = getVideoUnitScenes(unit).filter(n => n <= count);
+    const caption = unitScenes.map(n => getSceneScript(n)).join(' ');
+    return `
+    <div class="scene-tile${u === 0 ? ' selected' : ''}" data-scene-start="${unitScenes[0]}" data-scene-end="${unitScenes[unitScenes.length - 1]}" id="sceneTile${unit}" onclick="selectScene(${unitScenes[0]})">
       <div class="scene-tile-preview">
-        <span class="scene-tile-badge">Scene ${i + 1}<span class="dot"></span>${s.time}</span>
+        <span class="scene-tile-badge">Video ${unit}<span class="dot"></span>${getVideoUnitTimeLabel(unit)}</span>
       </div>
-      <div class="scene-tile-line" id="tileLine${i + 1}">${escapeHtml(getSceneScript(i + 1))}</div>
-    </div>
-  `).join('');
+      <div class="scene-tile-line" id="tileLine${unit}">${escapeHtml(caption)}</div>
+    </div>`;
+  }).join('');
 
   document.getElementById('sceneEditorPanel').innerHTML = scenes.map((s, i) => `
     <div class="scene-card scene-editor" id="sceneEditor${i + 1}" style="${i === 0 ? '' : 'display:none;'}">
@@ -4546,29 +4555,34 @@ function renderTimelineScenes(){
 
   renderReferenceImages();
   document.querySelectorAll('#sceneEditorPanel .mention-wrap textarea').forEach(bindMentionTextarea);
-  buildSegmentNav();
+  buildSegmentNav(count);
   selectScene(1);
   updateTimelineCta();
   renderVoiceSection('tl');
 }
-function buildSegmentNav(){
-  const tiles = document.querySelectorAll('#subReelTimeline .scene-tile');
+// Segment nav stays one button per 4s scene (dialogue-editing granularity) even though
+// the canvas above now groups tiles by 8s video unit — pass the scene count explicitly
+// instead of deriving it from .scene-tile elements, since those no longer map 1:1 to scenes.
+function buildSegmentNav(count){
   const nav = document.getElementById('segmentNav');
-  if(!nav || !tiles.length) return;
-  const buttons = [...tiles].map((tile) => {
-    const n = tile.dataset.scene;
-    return `<div class="segment-nav-btn${n === '1' ? ' active' : ''}" data-target="${n}" onclick="selectScene(${n})">${n}</div>`;
+  if(!nav || !count) return;
+  const buttons = Array.from({ length: count }, (_, i) => {
+    const n = i + 1;
+    return `<div class="segment-nav-btn${n === 1 ? ' active' : ''}" data-target="${n}" onclick="selectScene(${n})">${n}</div>`;
   }).join('');
   nav.innerHTML = `<span class="scene-nav-label">Scene</span>${buttons}`;
 }
 function selectScene(n){
   n = Number(n);
-  document.querySelectorAll('#subReelTimeline .scene-tile').forEach(t => t.classList.toggle('selected', Number(t.dataset.scene) === n));
+  document.querySelectorAll('#subReelTimeline .scene-tile').forEach(t => {
+    const start = Number(t.dataset.sceneStart), end = Number(t.dataset.sceneEnd);
+    t.classList.toggle('selected', n >= start && n <= end);
+  });
   document.querySelectorAll('.scene-editor').forEach(e => e.style.display = 'none');
   const editor = document.getElementById('sceneEditor' + n);
   if(editor) editor.style.display = 'block';
   document.querySelectorAll('.segment-nav-btn').forEach(b => b.classList.toggle('active', Number(b.dataset.target) === n));
-  const tile = document.getElementById('sceneTile' + n);
+  const tile = [...document.querySelectorAll('#subReelTimeline .scene-tile')].find(t => n >= Number(t.dataset.sceneStart) && n <= Number(t.dataset.sceneEnd));
   if(tile) tile.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
 }
 // ---- Voice: one narration for the whole video, or split per scene — both TTS-cached ----
@@ -4628,8 +4642,11 @@ function updateSceneScript(n, value){
   window.__sceneScripts[n] = value;
   window.__wholeScriptText = null; // merged view is now stale — recompute next time whole mode renders
 
-  const tileLine = document.getElementById('tileLine' + n);
-  if(tileLine) tileLine.textContent = value;
+  // Canvas tiles are keyed by video unit (pairs of scenes), not by scene — rebuild the
+  // owning tile's combined caption from all scenes in its pair, not just this one.
+  const unit = Math.ceil(n / 2);
+  const tileLine = document.getElementById('tileLine' + unit);
+  if(tileLine) tileLine.textContent = getVideoUnitScenes(unit).filter(s => s <= getSceneCount()).map(s => getSceneScript(s)).join(' ');
   document.querySelectorAll(`.voice-guide-${n}`).forEach(g => { g.textContent = wordCountGuideText(value); });
   document.querySelectorAll(`.voice-script-text[data-scene="${n}"]`).forEach(ta => { if(ta.value !== value) ta.value = value; });
   document.querySelectorAll(`[data-summary-scene="${n}"]`).forEach(el => { el.textContent = value; });
