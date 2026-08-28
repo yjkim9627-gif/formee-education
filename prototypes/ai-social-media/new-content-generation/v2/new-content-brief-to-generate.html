@@ -6,11 +6,6 @@
 <link rel="stylesheet" href="../../../../tokens/tokens.css">
 <link rel="stylesheet" href="../../../../components/shared/button.css">
 <link rel="stylesheet" href="../../../../components/shared/modal.css">
-<link rel="stylesheet" href="../../../../components/ai-social-media/nav.css">
-<link rel="stylesheet" href="../../../../components/ai-social-media/topbar-stepper.css">
-<link rel="stylesheet" href="../../../../components/ai-social-media/chat-panel.css">
-<link rel="stylesheet" href="../../../../components/ai-social-media/prompt-box.css">
-<link rel="stylesheet" href="../../../../components/ai-social-media/setting-chip.css">
 <style>
   *{box-sizing:border-box;}
   /* Fixed 1920x1162 to match the shared reference frame size (brand-setup/index.html) —
@@ -24,12 +19,51 @@
     display:flex; border:1px solid var(--color-neutral-300); transform-origin:top left;
   }
 
-  /* ============ NAV SIDEBAR — components/ai-social-media/nav.css ============ */
+  /* ============ NAV SIDEBAR ============ */
+  .nav{width:262px; flex-shrink:0; background:#fff; border-right:1px solid var(--color-neutral-300); padding:16px 12px; display:flex; flex-direction:column; gap:20px; transition:width 0.2s ease, padding 0.2s ease; overflow:hidden;}
+  .nav-brand{display:flex; align-items:center; gap:10px; padding:8px 4px;}
+  .nav-brand .mark{width:28px; height:28px; border-radius:7px; background:linear-gradient(135deg,var(--color-brand-primary),var(--color-brand-accent)); flex-shrink:0;}
+  .nav-brand .txt b{display:block; font-size:13px; font-weight:600; color:var(--color-neutral-900); white-space:nowrap;}
+  .nav-brand .txt span{display:block; font-size:10.5px; color:var(--color-neutral-500); white-space:nowrap;}
+  .nav-group{display:flex; flex-direction:column; gap:1px;}
+  .nav-label{font-size:10px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--color-neutral-500); padding:6px 8px; white-space:nowrap;}
+  .nav-item{display:flex; align-items:center; gap:9px; padding:8px 8px; border-radius:7px; font-size:13px; color:var(--color-neutral-700); font-weight:500; white-space:nowrap;}
+  .nav-item .ic{position:relative; flex-shrink:0;}
+  .nav-item .ic.clip{overflow:hidden;}
+  .nav-item .ic .f{position:absolute;}
+  .nav-item .ic img{display:block; width:100%; height:100%; max-width:none;}
+  .nav-item.active{background:var(--color-brand-primary-light); color:var(--color-neutral-900);}
+  .nav-workspace{display:flex; align-items:center; justify-content:space-between; gap:8px; height:36px; padding:0 12px; margin:0 4px 4px; border:1px solid var(--color-neutral-400); border-radius:8px; background:#fff; font-size:14px; color:var(--color-neutral-500); cursor:pointer;}
+  .nav-workspace .chevron{color:var(--color-neutral-500); font-size:10px; flex-shrink:0;}
+
+  .nav.collapsed{width:64px; padding:16px 8px;}
+  .nav.collapsed .nav-workspace{display:none;}
+  .nav.collapsed .nav-brand{justify-content:center; padding:8px 0;}
+  .nav.collapsed .nav-brand .txt, .nav.collapsed .nav-label, .nav.collapsed .nav-item .label{display:none;}
+  .nav.collapsed .nav-item{justify-content:center; padding:8px;}
 
   /* ============ MAIN ============ */
   .main{flex:1; display:flex; flex-direction:column; min-width:0; position:relative; background:var(--color-neutral-50);}
 
-  /* ---- topbar + stepper — components/ai-social-media/topbar-stepper.css ---- */
+  .topbar{
+    height:56px; border-bottom:1px solid var(--color-neutral-300); background:#fff; display:flex; align-items:center;
+    gap:20px; padding:0 24px; flex-shrink:0;
+  }
+  .stepper{display:flex; align-items:center; gap:8px;}
+  .step{display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:var(--color-neutral-400); cursor:pointer;}
+  .step .num{width:20px; height:20px; border-radius:10px; border:1px solid var(--color-neutral-400); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; color:var(--color-neutral-400); background:#fff;}
+  .step.active{color:var(--color-brand-primary);}
+  .step.active .num{background:var(--color-brand-primary); border-color:var(--color-brand-primary); color:#fff;}
+  .step.done{color:var(--color-neutral-700); cursor:pointer;}
+  .step.done .num{background:var(--color-badge-green-text); border-color:var(--color-badge-green-text); color:#fff;}
+  .step.done:hover{color:var(--color-brand-primary);}
+  .connector{width:30px; height:2px; background:var(--color-neutral-200);}
+  .topbar-spacer{flex:1;}
+  .topbar-actions{display:flex; align-items:center; gap:16px;}
+  .topbar-icon-btn{width:36px; height:36px; border-radius:8px; border:none; background:transparent; display:flex; align-items:center; justify-content:center; color:var(--color-neutral-700); position:relative; cursor:pointer; flex-shrink:0;}
+  .topbar-icon-btn:hover{background:var(--color-neutral-100);}
+  .topbar-icon-btn .dot{position:absolute; top:8px; right:9px; width:4px; height:4px; border-radius:2px; background:var(--color-brand-accent);}
+  .topbar-avatar{width:32px; height:32px; border-radius:999px; background:var(--color-brand-primary-mid); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:#0b2b55; flex-shrink:0;}
 
   /* ---- shared view ---- */
   .view{position:absolute; inset:56px 0 0 0; overflow-y:auto; opacity:1; transition:opacity .2s ease;}
@@ -50,7 +84,8 @@
   .seg-control{display:inline-flex; background:var(--color-neutral-100); border-radius:var(--radius-xl); padding:4px; gap:2px; margin-bottom:16px;}
   .seg-chip{padding:8px 20px; border-radius:var(--radius-lg); font-size:14px; font-weight:500; color:var(--color-neutral-700);}
   .seg-chip.active{background:#fff; color:var(--color-neutral-900); font-weight:600; box-shadow:0 1px 1.5px rgba(15,23,41,0.1),0 1px 0.5px rgba(15,23,41,0.04);}
-  /* .prompt-box / .prompt-top — components/ai-social-media/prompt-box.css */
+  .prompt-box{background:#fff; border:1.2px solid var(--color-neutral-400); border-radius:var(--radius-xl); padding:24px; display:flex; flex-direction:column; gap:32px;}
+  .prompt-top{display:flex; flex-direction:column; gap:20px;}
   .reference-images-row{display:flex; gap:8px; flex-wrap:wrap;}
   .ref-image-chip{display:flex; align-items:center; gap:8px; background:#fff; border:1px solid var(--color-neutral-300); border-radius:var(--radius-lg); padding:8px 12px 8px 8px;}
   .ref-image-chip .thumb{width:28px; height:28px; border-radius:6px; background:linear-gradient(135deg,var(--color-brand-primary-mid),var(--color-brand-accent)); position:relative; flex-shrink:0;}
@@ -70,12 +105,15 @@
   .mention-popover{position:absolute; top:calc(100% + 4px); left:0; min-width:160px; background:#fff; border:1px solid var(--color-neutral-300); border-radius:8px; box-shadow:0 8px 20px rgba(15,23,41,0.14); z-index:30; padding:4px; max-height:160px; overflow-y:auto;}
   .mention-option{padding:7px 10px; font-size:12.5px; color:var(--color-neutral-900); border-radius:6px; cursor:pointer;}
   .mention-option:hover, .mention-option.active{background:var(--color-neutral-100);}
-  /* .prompt-summary / .prompt-bottom / .prompt-chips / .prompt-chip / .prompt-chip-wrap / .refine-btn
-     — components/ai-social-media/prompt-box.css. This screen's chip icon slot is still a plain gray
-     placeholder box, so the .ic override stays local (same as carousel). .duration-popover is this
-     screen's own picker content — same visual language as the shared .chip-popover but a different,
-     unshared component name, so it stays local too (see note in prompt-box.css). */
-  .prompt-chip .ic{border-radius:3px; background:var(--color-neutral-400);}
+  .prompt-summary{display:block; width:100%; font-size:14px; color:var(--color-neutral-900); line-height:22px; margin:0; border:none; background:transparent; font-family:var(--font-family-text); resize:vertical; outline:none; min-height:66px;}
+  .prompt-bottom{display:flex; align-items:center; justify-content:space-between;}
+  .prompt-chips{display:flex; gap:8px;}
+  .prompt-chip{border:1px solid var(--color-neutral-400); border-radius:8px; padding:7px 12px 7px 10px; font-size:14px; font-weight:500; color:var(--color-neutral-700); display:flex; align-items:center; gap:5px;}
+  .prompt-chip .ic{width:16px; height:16px; border-radius:3px; background:var(--color-neutral-400);}
+  .ic-svg{flex-shrink:0; display:inline-block;}
+  .prompt-chip.clickable{cursor:pointer;}
+  .prompt-chip.clickable .chevron{font-size:9px; color:var(--color-neutral-500); margin-left:1px;}
+  .prompt-chip-wrap{position:relative;}
   .duration-popover{position:absolute; bottom:calc(100% + 6px); left:0; min-width:160px; background:#fff; border:1px solid var(--color-neutral-400); border-radius:8px; box-shadow:0 0 3px var(--color-neutral-150); padding:8px; z-index:40;}
   .duration-popover-label{font-size:12px; font-weight:600; color:var(--color-neutral-700); padding:7px 8px;}
   .duration-option{display:flex; align-items:center; justify-content:space-between; gap:16px; padding:8px; border-radius:6px; font-size:14px; font-weight:500; color:var(--color-neutral-700); cursor:pointer;}
@@ -83,6 +121,7 @@
   .duration-option.selected{background:var(--color-neutral-100);}
   .duration-option .check{display:none; color:var(--color-brand-primary); font-size:13px;}
   .duration-option.selected .check{display:inline;}
+  .refine-btn{width:36px; height:36px; border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); background:#fff; display:flex; align-items:center; justify-content:center; color:var(--color-neutral-700); font-size:14px;}
 
   /* ---- Character section (Brief & Style) ---- */
   .char-section{margin-top:24px;}
@@ -99,11 +138,19 @@
   .char-grid{display:flex; gap:12px; overflow-x:auto; padding-bottom:4px;}
   .char-card{flex-shrink:0; border:1px solid var(--color-neutral-400); border-radius:8px; cursor:pointer; background:#fff; padding:8px 8px 4px;}
   .char-card.selected{border-color:var(--color-neutral-500); background:var(--color-neutral-100);}
-  .char-card .thumb{width:88px; height:88px; border-radius:6px; background:linear-gradient(135deg,var(--color-neutral-300),var(--color-neutral-150));}
+  .char-card .thumb{width:88px; height:88px; border-radius:6px; background:linear-gradient(135deg,var(--color-neutral-300),var(--color-neutral-150)) center/cover;}
   .char-card.new{border-style:dashed;}
   .char-card.new .thumb{display:flex; align-items:center; justify-content:center; font-size:20px; color:var(--color-neutral-400); background:var(--color-neutral-75); border:1px solid var(--color-neutral-300); border-style:solid;}
   .char-card .name{padding:6px 4px 0; font-size:13px; text-align:center; color:var(--color-neutral-700); font-weight:500;}
   .char-card.selected .name{color:var(--color-neutral-900);}
+  /* Second row of style variations for whichever character is selected — mirrors the main
+     char-grid but each card's thumb is taller (matches Figma's "X's styles" sub-panel). */
+  .char-styles-panel{margin-top:16px; display:none;}
+  .char-styles-panel.show{display:block;}
+  .char-styles-header{display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;}
+  .char-styles-title{display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:var(--color-neutral-800);}
+  .char-styles-title .mini-avatar{width:20px; height:20px; border-radius:999px; background:var(--color-neutral-300) center/cover;}
+  .char-card .thumb.tall{height:108px;}
   .char-divider{height:1px; background:var(--color-neutral-200); width:100%; margin:32px 0;}
   .appear-label{font-size:14px; font-weight:600; color:var(--color-neutral-800); margin:0 0 12px;}
   .appear-label .sub{font-weight:400; color:var(--color-neutral-500);}
@@ -172,9 +219,13 @@
   .btn-dark:active:not(:disabled){filter:brightness(0.92);}
   .btn-dark:disabled{background:var(--color-neutral-300); color:var(--color-neutral-500); box-shadow:none;}
 
-  /* ---- VIEW: Generate (shared shell: chat + stage area) — chat panel base rules now in
-     components/ai-social-media/chat-panel.css; only screen-specific additions stay here. ---- */
+  /* ---- VIEW: Generate (shared shell: chat + stage area) ---- */
   .gen-body{display:flex; height:100%;}
+  .chat{width:324px; flex-shrink:0; min-height:0; background:var(--color-neutral-0); border-right:1px solid var(--color-neutral-200); display:flex; flex-direction:column;}
+  .chat-header{flex-shrink:0; padding:20px 16px 0; display:flex; align-items:center; justify-content:space-between;}
+  .chat-header-title{font-size:16px; font-weight:700; color:var(--color-neutral-900); font-family:var(--font-family-text);}
+  .chat-new-btn{width:28px; height:28px; border-radius:8px; background:var(--color-neutral-0); border:1px solid var(--color-neutral-200); display:flex; align-items:center; justify-content:center; font-size:16px; line-height:1; color:var(--color-neutral-700); cursor:pointer;}
+  .chat-new-btn:hover{background:var(--color-neutral-50);}
   .chat-attachments{padding:12px 16px 0; border-bottom:1px solid var(--color-neutral-200); display:flex; flex-direction:column; gap:8px;}
   .chat-attachments-label{font-size:10.5px; font-weight:600; color:var(--color-neutral-500);}
   .chat-attachments-row{display:flex; gap:8px; flex-wrap:wrap; padding-bottom:12px;}
@@ -182,13 +233,20 @@
   .chat-attachment .thumb{width:100%; aspect-ratio:1; border-radius:7px; background:linear-gradient(135deg,var(--color-brand-primary-mid),var(--color-brand-accent)); position:relative;}
   .chat-attachment .thumb::after{content:'🖼'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:14px;}
   .chat-attachment span{font-size:10px; color:var(--color-neutral-500); font-weight:500;}
+  .chat-log{flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:12px;}
+  .msg{font-size:14px; line-height:20px; max-width:92%; white-space:pre-wrap; font-family:var(--font-family-text);}
+  .msg.user{align-self:flex-end; display:flex; align-items:flex-end; gap:8px; max-width:100%;}
+  .msg.user .bubble{background:var(--color-brand-primary-light); color:var(--color-neutral-900); padding:12px 14px; border-radius:16px 16px 4px 16px; max-width:224px;}
+  .msg.user .avatar{flex-shrink:0; width:32px; height:32px; border-radius:999px; background:var(--color-brand-primary-mid); color:var(--color-neutral-800); font-size:11px; font-weight:600; font-family:var(--font-family-text); display:flex; align-items:center; justify-content:center;}
+  .msg.ai{align-self:stretch; background:none; color:var(--color-neutral-700); padding:0; border-radius:0; max-width:100%; display:flex; flex-direction:column; gap:12px;}
+  .msg.ai .tag{display:none;}
+  .msg .note{display:block; font-size:10.5px; color:var(--color-neutral-500); margin-top:3px;}
+  .msg.ai.loading{color:var(--color-neutral-500); font-size:13px;}
   .msg-status{font-size:13px; font-family:var(--font-family-text);}
   .msg-status .worked-label{font-weight:600; color:var(--color-neutral-700);}
   .msg-status .worked-time{font-weight:400; color:var(--color-neutral-500);}
   .msg.ai hr{border:none; border-top:1px solid var(--color-neutral-200); margin:0; width:100%;}
   .msg.ai .section-heading{font-weight:700; color:var(--color-neutral-900); font-size:14px;}
-  /* .chat-cta-row here is the plain flex-wrap row (matches carousel) — see note in chat-panel.css
-     re: why it's not shared with new-image-to-generate.html's bordered-card variant. */
   .chat-cta-row{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;}
   .chat-cta-row .btn-dark, .chat-cta-row .btn-secondary{padding:8px 14px; font-size:12px;}
   .brand-applied-box{margin-top:8px; background:var(--color-brand-primary-light); border:1px solid var(--color-brand-primary-mid); border-radius:8px; padding:8px 10px; display:flex; flex-direction:column; gap:3px;}
@@ -199,23 +257,23 @@
   .script-proposal-box{margin-top:8px; background:#fff; border:1px solid var(--color-neutral-300); border-radius:8px; padding:10px 11px; display:flex; flex-direction:column; gap:8px;}
   .script-proposal-text{font-size:12.5px; font-style:italic; color:var(--color-neutral-900); line-height:1.5;}
   .script-proposal-box .btn-dark{width:100%; padding:8px 10px; font-size:12px;}
-  .script-applied-note{display:none; align-items:center; gap:5px; align-self:flex-start; background:var(--color-brand-primary-light); color:var(--color-brand-primary); font-size:12px; font-weight:600; padding:5px 10px; border-radius:999px;}
-  .script-proposal-box.applied .script-applied-note{display:inline-flex;}
+  .script-applied-note{display:none; font-size:10.5px; font-weight:600; color:var(--color-badge-green-text);}
+  .script-proposal-box.applied .script-applied-note{display:block;}
   .script-proposal-box.applied{border-color:var(--color-brand-primary-mid);}
+  .chat-edit-hint{display:block; font-size:10.5px; color:var(--color-neutral-500); margin-top:3px;}
+  .dots span{animation:blink 1.4s infinite; opacity:0;}
+  .dots span:nth-child(2){animation-delay:.2s;}
+  .dots span:nth-child(3){animation-delay:.4s;}
+  @keyframes blink{0%,80%,100%{opacity:0;}40%{opacity:1;}}
   .chat-quick{padding:0 16px 10px; display:flex; gap:6px; flex-wrap:wrap;}
   .quick-chip{border:1px solid var(--color-neutral-300); border-radius:999px; padding:5px 10px; font-size:11px; color:var(--color-neutral-700); background:#fff; cursor:pointer;}
-  /* -- Chat card patterns (loading / next-action) shared across Script, Timeline, Video -- */
-  .chat-card{background:var(--color-neutral-50); border:1px solid var(--color-neutral-200); border-radius:10px; padding:14px; display:flex; flex-direction:column; gap:8px;}
-  .chat-card-title{font-size:13.5px; font-weight:700; color:var(--color-neutral-900); font-family:var(--font-family-text);}
-  .chat-card-desc{font-size:12.5px; color:var(--color-neutral-700); line-height:1.5;}
-  .chat-card .btn{width:100%;}
-  .chat-loading-card{flex-direction:row; align-items:flex-start; gap:10px;}
-  .chat-loading-spinner{width:16px; height:16px; border-radius:999px; border:2px solid var(--color-neutral-300); border-top-color:var(--color-neutral-600); animation:spin .8s linear infinite; flex-shrink:0; margin-top:2px;}
-  .chat-loading-text{display:flex; flex-direction:column; gap:2px;}
-  .chat-loading-title{font-size:13.5px; font-weight:700; color:var(--color-neutral-900); font-family:var(--font-family-text);}
-  .chat-loading-sub{font-size:12px; color:var(--color-neutral-500);}
-  .chat-final-buttons{display:flex; flex-direction:column; gap:10px;}
-  .chat-final-buttons .btn{width:100%;}
+  .chat-hint{font-size:10.5px; color:var(--color-neutral-500); padding:0 16px 10px;}
+  .chat-input-box{margin:0 16px 16px; border:1.5px solid var(--color-brand-primary); border-radius:12px; background:var(--color-neutral-0); padding:14px 14px 12px; display:flex; flex-direction:column; gap:12px;}
+  .chat-input{border:none; outline:none; background:transparent; width:100%; font-size:13px; color:var(--color-neutral-900); font-family:var(--font-family-text);}
+  .chat-input::placeholder{color:var(--color-neutral-500);}
+  .chat-input-bottom-row{display:flex; align-items:center; justify-content:space-between;}
+  .chat-attach-btn{width:18px; height:18px; border:none; background:none; padding:0; color:var(--color-neutral-500); cursor:pointer; display:flex; align-items:center; justify-content:center;}
+  .chat-send{width:28px; height:28px; border-radius:999px; background:var(--color-brand-primary); border:none; color:#fff; cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:14px;}
 
   .stage-area{flex:1; display:flex; flex-direction:column; min-width:0; min-height:0; position:relative;}
   .stage-tabs{display:flex; justify-content:center; gap:18px; padding:12px 24px 0; border-bottom:1px solid var(--color-neutral-300); flex-shrink:0;}
@@ -227,10 +285,13 @@
   /* persistent settings bar — floats on top of the canvas instead of its own line */
   .settings-bar{position:absolute; top:56px; left:28px; right:28px; z-index:15; display:flex; justify-content:center; gap:8px; flex-wrap:wrap; pointer-events:none;}
   .settings-bar > *{pointer-events:auto;}
-  /* .setting-chip / .brand-chip-setting / .clickable / .chevron — components/ai-social-media/setting-chip.css.
-     .avatar-mini + popover wiring below are this screen's own extra variant (setting chip that
-     opens a character-picker popover) and stay local. */
+  .setting-chip{display:flex; align-items:center; gap:6px; border:1px solid var(--color-neutral-300); border-radius:999px; padding:5px 12px; font-size:11.5px; color:var(--color-neutral-700); background:var(--color-neutral-50);}
+  .setting-chip b{color:var(--color-neutral-900); font-weight:600;}
   .setting-chip .avatar-mini{width:16px; height:16px; border-radius:999px; background:var(--color-brand-primary-mid);}
+  .brand-chip-setting{background:var(--color-brand-primary-light); border-color:var(--color-brand-primary-mid);}
+  .setting-chip.clickable{cursor:pointer;}
+  .setting-chip.clickable:hover{border-color:var(--color-neutral-400); background:#fff;}
+  .setting-chip .chevron{color:var(--color-neutral-500); font-size:9px; margin-left:1px;}
   .setting-chip-wrap{position:relative;}
   .setting-popover{position:absolute; top:calc(100% + 6px); left:0; min-width:230px; background:#fff; border:1px solid var(--color-neutral-300); border-radius:10px; box-shadow:0 10px 28px rgba(15,23,41,0.14); z-index:40; padding:8px;}
   .char-mini-grid{display:flex; gap:12px; padding:4px 4px 2px;}
@@ -248,10 +309,10 @@
   .stage-sub{font-size:12px; color:var(--color-neutral-500); margin:0 0 6px;}
 
   .scene-nav{display:flex; align-items:center; gap:6px; flex-shrink:0; margin-bottom:10px;}
-  .scene-nav-label, .scene-section-label{font-size:14px; font-weight:600; color:var(--color-neutral-900); font-family:var(--font-family-text); width:48px; flex-shrink:0;}
-  .segment-nav-btn{width:28px; height:28px; border-radius:6px; border:1px solid var(--color-neutral-400); background:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:500; color:var(--color-neutral-700); cursor:pointer;}
+  .scene-nav-label{font-size:11px; font-weight:600; color:var(--color-neutral-500); margin-right:2px;}
+  .segment-nav-btn{width:24px; height:24px; border-radius:6px; border:1px solid var(--color-neutral-300); background:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; color:var(--color-neutral-700); cursor:pointer;}
   .segment-nav-btn:hover{border-color:var(--color-neutral-450);}
-  .segment-nav-btn.active{background:var(--color-neutral-150); border-color:var(--color-neutral-500); font-weight:600; color:var(--color-neutral-900);}
+  .segment-nav-btn.active{background:var(--color-brand-primary-light); border-color:var(--color-brand-primary); color:var(--color-neutral-900);}
 
   /* ---- Script stage ---- */
   #subScript .stage-title, #subScript .stage-sub{text-align:center;}
@@ -297,48 +358,30 @@
   .detail-import-empty-note a{color:var(--color-brand-primary); font-weight:600; cursor:pointer; text-decoration:underline;}
 
   /* ---- Timeline stage: canvas grid + selected-scene editor panel ---- */
-  .timeline-stage{display:flex; gap:40px; max-width:1024px; flex:1; min-height:0;}
+  .timeline-stage{display:flex; gap:20px; max-width:960px; flex:1; min-height:0;}
   .timeline-canvas{flex:1; min-width:0; min-height:0; display:flex; flex-direction:column;}
   .scene-grid{display:grid; grid-template-columns:1fr 1fr; grid-auto-rows:min-content; gap:14px; align-content:start; flex:1; min-height:0; overflow-y:auto;}
-  .scene-tile{border:1.2px solid var(--color-neutral-400); border-radius:12px; overflow:hidden; cursor:pointer; background:#fff; transition:border-color 0.15s, box-shadow 0.15s;}
+  .scene-tile{border:1.5px solid var(--color-neutral-300); border-radius:12px; overflow:hidden; cursor:pointer; background:#fff; transition:border-color 0.15s, box-shadow 0.15s;}
   .scene-tile:hover{border-color:var(--color-neutral-450);}
-  .scene-tile.active{border-color:var(--color-neutral-500);}
-  .scene-tile-preview{width:100%; aspect-ratio:9/16; max-height:294px; background:linear-gradient(119deg,var(--color-neutral-200) 14%,var(--color-neutral-150) 86%); position:relative; display:flex; align-items:flex-end; padding:10px;}
+  .scene-tile.active{border-color:var(--color-brand-primary); box-shadow:0 0 0 3px rgba(79,109,230,0.12);}
+  /* Still a plain placeholder box (no thumbnail is ever generated here) — kept only so the
+     Timeline scene grid keeps the same tall video-frame layout Studio's video-tile grid uses,
+     rather than collapsing into a flat text card. */
+  .scene-tile-preview{width:100%; aspect-ratio:9/16; max-height:294px; background:linear-gradient(135deg,var(--color-neutral-200),var(--color-neutral-150)); position:relative; display:flex; align-items:flex-end; padding:10px;}
   .scene-grid.single-row .scene-tile-preview{max-height:none;}
-  .scene-tile-badge{font-size:11px; font-weight:600; color:#fff; background:var(--color-neutral-700); padding:4px 8px; border-radius:4px;}
+  .scene-tile-badge{font-size:11px; font-weight:600; color:#fff; background:rgba(15,23,41,0.55); padding:4px 8px; border-radius:6px; backdrop-filter:blur(2px);}
   .scene-tile-line{padding:10px 12px; font-size:12.5px; color:var(--color-neutral-700); line-height:1.4; border-top:1px solid var(--color-neutral-200);}
-  .scene-tile-overlay-top{position:absolute; top:8px; left:8px; right:8px; display:flex; align-items:center; justify-content:space-between; gap:6px;}
-  .scene-tile-ready-badge{display:none; align-items:center; gap:3px; font-size:10px; font-weight:700; color:var(--color-badge-green-text); background:#fff; padding:3px 7px; border-radius:999px;}
-  .scene-tile.ready .scene-tile-ready-badge{display:inline-flex;}
-  .scene-tile-regen-btn{display:none; width:24px; height:24px; border-radius:999px; border:none; background:rgba(255,255,255,0.92); align-items:center; justify-content:center; font-size:12px; color:var(--color-neutral-700); cursor:pointer; margin-left:auto;}
-  .scene-tile-regen-btn:hover{background:#fff; color:var(--color-neutral-900);}
-  .scene-tile.ready .scene-tile-regen-btn{display:flex;}
-
-  /* -- per-scene thumbnail version history (only shown once a scene has been regenerated) -- */
-  .scene-tile-version-wrap{position:relative;}
-  .scene-tile-version-pill{display:none; align-items:center; gap:3px; font-size:10px; font-weight:700; color:var(--color-neutral-700); background:#fff; padding:3px 7px; border-radius:999px; cursor:pointer;}
-  .scene-tile-version-pill:hover{background:var(--color-neutral-100);}
-  .scene-tile-version-pill.show{display:inline-flex;}
-  .scene-version-popover{position:absolute; top:calc(100% + 6px); left:0; min-width:100px; background:#fff; border:1px solid var(--color-neutral-300); border-radius:8px; box-shadow:0 10px 28px rgba(15,23,41,.14); padding:4px; z-index:25;}
-  .scene-version-item{padding:6px 9px; border-radius:6px; font-size:11.5px; font-weight:600; color:var(--color-neutral-700); cursor:pointer; display:flex; align-items:center; justify-content:space-between; gap:8px;}
-  .scene-version-item:hover{background:var(--color-neutral-100);}
-  .scene-version-item.active{background:var(--color-neutral-100); color:var(--color-neutral-900);}
-  .scene-version-item .check{color:var(--color-brand-primary); font-size:11px; display:none;}
-  .scene-version-item.active .check{display:inline;}
-  .scene-tile.ready .scene-tile-preview{background:linear-gradient(135deg,var(--color-brand-primary-mid),var(--color-brand-accent));}
-  .scene-tile.generating .scene-tile-badge{display:none;}
   .spinner-mini{display:none; width:26px; height:26px; border-radius:999px; border:2.5px solid rgba(255,255,255,0.35); border-top-color:#fff; animation:spin .8s linear infinite; position:absolute; top:50%; left:50%; margin:-13px 0 0 -13px;}
-  .scene-tile.generating .spinner-mini{display:block;}
 
-  .scene-editor-col{width:358px; flex-shrink:0; display:flex; flex-direction:column;}
+  .scene-editor-col{width:320px; flex-shrink:0; display:flex; flex-direction:column;}
   .scene-editor-panel{width:100%;}
-  .scene-card{border:1px solid var(--color-neutral-300); border-radius:12px; padding:16px;}
+  .scene-card{border:1px solid var(--color-neutral-300); border-radius:10px; padding:16px;}
   .scene-time{font-size:11px; font-weight:600; color:var(--color-neutral-500); display:flex; align-items:center; gap:6px;}
   .scene-time .dot{width:7px; height:7px; border-radius:999px; background:var(--color-brand-primary);}
   .scene-guide{font-size:10.5px; color:var(--color-neutral-500); margin-bottom:12px;}
   .voice-section{border:1px solid var(--color-neutral-300); border-radius:10px; padding:14px; margin-bottom:14px; flex-shrink:0;}
   .voice-section-header{display:flex; align-items:center; justify-content:space-between; gap:10px;}
-  .voice-section-header .scene-section-label{margin-bottom:0;}
+  .voice-section-header .scene-desc-label{margin-bottom:0;}
   .voice-section-header-right{display:flex; align-items:center; gap:8px; flex-shrink:0;}
   .voice-mode-toggle{display:flex; gap:2px; background:var(--color-neutral-100); border-radius:999px; padding:3px; flex-shrink:0;}
   .voice-mode-btn{font-size:10.5px; font-weight:600; color:var(--color-neutral-600); padding:5px 10px; border-radius:999px; cursor:pointer;}
@@ -354,7 +397,7 @@
   .voice-cost-summary b{color:var(--color-neutral-700); font-weight:700;}
   .voice-script-text{width:100%; border:1px solid var(--color-neutral-300); border-radius:7px; padding:10px 12px; font-size:13px; font-family:var(--font-family-text); color:var(--color-neutral-900); line-height:1.5; resize:vertical; min-height:44px;}
   .voice-script-text.whole{min-height:72px;}
-  .voice-preview-btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; border:1px solid var(--color-neutral-400); background:#fff; border-radius:var(--radius-lg); padding:10px 14px; font-size:13px; font-weight:600; color:var(--color-neutral-900); cursor:pointer; font-family:var(--font-family-text); transition:border-color .15s, color .15s; flex-shrink:0;}
+  .voice-preview-btn{display:inline-flex; align-items:center; justify-content:center; gap:6px; border:1px solid var(--color-neutral-300); background:#fff; border-radius:999px; padding:6px 12px; font-size:11.5px; font-weight:600; color:var(--color-neutral-700); cursor:pointer; font-family:var(--font-family-text); transition:border-color .15s, color .15s; flex-shrink:0;}
   .voice-preview-btn:hover{border-color:var(--color-neutral-450);}
   .voice-preview-btn .vp-cost{color:var(--color-neutral-500); font-weight:700;}
   .voice-preview-btn.cached{border-color:var(--color-brand-primary-mid); color:var(--color-brand-primary);}
@@ -383,22 +426,15 @@
   .voice-acc-bottom{display:flex; align-items:center; justify-content:space-between; gap:10px;}
   .voice-acc-bottom .scene-guide{margin-bottom:0; flex:1; min-width:0;}
   .scene-desc-block{margin-bottom:12px;}
-  .scene-desc-label{font-size:13px; font-weight:500; color:var(--color-neutral-700); font-family:var(--font-family-text); display:flex; align-items:center; gap:4px; margin-bottom:6px;}
+  .scene-desc-label{font-size:10.5px; font-weight:600; color:var(--color-neutral-500); display:flex; align-items:center; gap:4px; margin-bottom:6px;}
   .scene-desc-box{border:1px solid var(--color-neutral-300); border-radius:7px; padding:10px 12px 32px; display:flex; flex-direction:column; gap:8px; position:relative; transition:border-color .15s, box-shadow .15s;}
   .scene-desc-box:focus-within{border-color:var(--color-brand-primary); box-shadow:0 0 0 3px rgba(79,109,230,.12);}
   .scene-desc{width:100%; border:none; padding:0; font-size:13px; font-family:var(--font-family-text); color:var(--color-neutral-900); line-height:1.5; resize:vertical; min-height:56px; background:transparent; outline:none; cursor:text;}
-  .scene-note{font-size:11.5px; color:var(--color-neutral-500);}
+  .scene-note{font-size:10.5px; color:var(--color-neutral-500);}
   .timeline-cta{display:flex; flex-direction:column; align-items:stretch; gap:8px; margin-top:14px; flex-shrink:0;}
   .timeline-cta .meta-text{text-align:left; line-height:1.4;}
   .timeline-cta .btn-dark{width:100%;}
 
-  .scene-prompt-block{margin-bottom:12px; display:none;}
-  .scene-prompt-block.visible{display:block;}
-  .scene-prompt-header-row{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:6px;}
-  .scene-prompt-header-row .scene-desc-label{margin-bottom:0;}
-  .prompt-regen-btn{display:inline-flex; align-items:center; gap:5px; border:1px solid var(--color-neutral-300); background:#fff; border-radius:999px; padding:5px 10px; font-size:11px; font-weight:600; color:var(--color-neutral-700); cursor:pointer; font-family:var(--font-family-text); flex-shrink:0;}
-  .prompt-regen-btn:hover{border-color:var(--color-neutral-450);}
-  .prompt-regen-btn .cost{color:var(--color-neutral-500); font-weight:700;}
   .scene-prompt-text{width:100%; border:1px solid var(--color-neutral-300); border-radius:7px; padding:10px 12px; font-size:12.5px; font-family:var(--font-family-text); color:var(--color-neutral-900); line-height:1.5; resize:vertical; min-height:70px; background:var(--color-neutral-50);}
   .scene-prompt-text:focus{background:#fff; border-color:var(--color-brand-primary); outline:none;}
 
@@ -407,7 +443,7 @@
   .video-tile{border:1.5px solid var(--color-neutral-300); border-radius:12px; overflow:hidden; cursor:pointer; background:#fff; transition:border-color 0.15s, box-shadow 0.15s;}
   .video-tile:hover{border-color:var(--color-neutral-450);}
   .video-tile.active{border-color:var(--color-brand-primary); box-shadow:0 0 0 3px rgba(79,109,230,0.12);}
-  .video-tile-preview{width:100%; aspect-ratio:9/16; max-height:294px; background:linear-gradient(135deg,var(--color-neutral-200),var(--color-neutral-150)); position:relative; display:flex; align-items:flex-end; padding:10px;}
+  .video-tile-preview{width:100%; aspect-ratio:9/16; max-height:294px; background:linear-gradient(135deg,var(--color-neutral-200),var(--color-neutral-150)); background-size:cover; background-position:center; background-repeat:no-repeat; position:relative; display:flex; align-items:flex-end; padding:10px;}
   .video-grid.single-row .video-tile-preview{max-height:none;}
   .video-tile.ready .video-tile-preview{background:linear-gradient(135deg,var(--color-brand-primary-mid),var(--color-brand-accent));}
   .video-tile-badge{font-size:11px; font-weight:600; color:#fff; background:rgba(15,23,41,0.55); padding:4px 8px; border-radius:6px; backdrop-filter:blur(2px);}
@@ -437,30 +473,31 @@
   .video-cta-row .meta-text{text-align:left; line-height:1.4;}
   .video-cta-row .btn-dark{width:100%;}
 
-  .combine-result-view{display:none; flex:1; min-height:0; flex-direction:column; gap:20px; max-width:1024px;}
-  .back-to-scenes-link{display:inline-flex; align-items:center; gap:6px; align-self:flex-start; background:none; border:none; color:var(--color-neutral-500); font-size:13px; font-family:var(--font-family-text); cursor:pointer; padding:0;}
-  .back-to-scenes-link:hover{color:var(--color-neutral-700);}
-  .combine-result-header{display:flex; align-items:flex-start; justify-content:space-between; gap:16px;}
-  .combine-result-header .stage-title{margin-bottom:4px;}
-  .combine-result-body{display:flex; gap:40px; align-items:flex-start; flex:1; min-height:0;}
-  .combine-player{position:relative; width:300px; flex-shrink:0; aspect-ratio:9/16; border-radius:14px; background:linear-gradient(135deg,var(--color-brand-primary-mid),var(--color-brand-accent)); display:flex; align-items:center; justify-content:center; overflow:hidden;}
+  .combine-result-view{display:none; flex:1; min-height:0;}
+  .combine-canvas{align-items:center; justify-content:flex-start; gap:16px;}
+  .combine-player{position:relative; width:300px; aspect-ratio:9/16; border-radius:14px; background:url('assets/video/scene1.png') center/cover no-repeat, linear-gradient(135deg,var(--color-brand-primary-mid),var(--color-brand-accent)); display:flex; align-items:center; justify-content:center;}
   .combine-player .video-play-btn{position:static; display:flex; transform:none;}
-  .combine-player-controls{position:absolute; left:0; right:0; bottom:0; display:flex; align-items:center; justify-content:space-between; padding:8px 10px; background:linear-gradient(0deg,rgba(15,23,41,0.55),transparent);}
-  .combine-player-time{font-size:11px; font-weight:600; color:#fff;}
-  .combine-player-icons{font-size:12px; color:#fff;}
-  .combine-info-panel{flex:1; min-width:0; border:1px solid var(--color-neutral-300); border-radius:12px; padding:16px;}
-  .combine-info-title-row{display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:8px;}
-  .combine-info-title{font-size:15px; font-weight:700; color:var(--color-neutral-900); line-height:1.35; margin:0; flex:1; min-width:0;}
-  .combine-info-title[contenteditable="true"]{outline:1px solid var(--color-brand-primary-mid); border-radius:6px; padding:2px 4px; margin:-2px -4px;}
-  .combine-title-edit-btn{flex-shrink:0; width:24px; height:24px; border-radius:999px; border:none; background:var(--color-neutral-50); display:flex; align-items:center; justify-content:center; font-size:11px; cursor:pointer; font-family:var(--font-family-text);}
+  .combine-player-duration{position:absolute; bottom:10px; left:10px; font-size:11px; font-weight:600; color:#fff; background:rgba(15,23,41,0.55); padding:4px 8px; border-radius:6px;}
+  .combine-timeline-ticks{position:relative; width:300px; height:6px; background:var(--color-neutral-200); border-radius:999px;}
+  .combine-tick{position:absolute; top:-2px; width:2px; height:10px; background:var(--color-neutral-900); border-radius:2px;}
+  .combine-summary-card{border:1px solid var(--color-neutral-300); border-radius:10px; padding:16px;}
+  .combine-summary-title-row{display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:8px;}
+  .combine-summary-title{font-size:14px; font-weight:700; color:var(--color-neutral-900); line-height:1.35; margin:0; flex:1; min-width:0;}
+  .combine-summary-title[contenteditable="true"]{outline:1px solid var(--color-brand-primary-mid); border-radius:6px; padding:2px 4px; margin:-2px -4px;}
+  .combine-title-edit-btn{flex-shrink:0; width:28px; height:28px; border-radius:999px; border:none; background:var(--color-neutral-50); display:flex; align-items:center; justify-content:center; font-size:12px; cursor:pointer; font-family:var(--font-family-text);}
   .combine-title-edit-btn:hover{background:var(--color-neutral-100);}
-  .combine-info-desc{font-size:12.5px; color:var(--color-neutral-700); line-height:1.5; margin:0 0 16px;}
-  .combine-info-specs{display:flex; flex-direction:column; gap:12px;}
-  .combine-spec-row{display:flex; align-items:center; gap:8px; font-size:12.5px; padding-bottom:12px; border-bottom:1px solid var(--color-neutral-100);}
-  .combine-spec-row:last-child{border-bottom:none; padding-bottom:0;}
+  .combine-summary-desc{font-size:12px; color:var(--color-neutral-700); line-height:1.5; margin:0 0 12px;}
+  .combine-summary-divider{height:1px; background:var(--color-neutral-200); margin:0 0 12px;}
+  .combine-summary-specs{display:flex; flex-direction:column; gap:10px; margin-bottom:12px;}
+  .combine-spec-row{display:flex; align-items:center; gap:8px; font-size:12px;}
   .combine-spec-row .spec-icon{width:16px; flex-shrink:0; text-align:center; color:var(--color-neutral-500); font-size:12px;}
-  .combine-spec-row .spec-label{color:var(--color-neutral-500); flex:1;}
-  .combine-spec-row .spec-value{color:var(--color-neutral-900); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:160px;}
+  .combine-spec-row .spec-label{color:var(--color-neutral-500); font-size:11px; font-weight:500;}
+  .combine-spec-row .spec-value{margin-left:auto; color:var(--color-neutral-900); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:140px;}
+  .combine-audio-note{font-size:11.5px; color:var(--color-neutral-500); line-height:1.5; margin:0;}
+  .combine-result-actions{display:flex; flex-direction:column; gap:10px; margin-top:14px; flex-shrink:0;}
+  .combine-result-actions .btn-dark, .combine-result-actions .btn-secondary{width:100%;}
+  .back-to-scenes-link{display:block; background:none; border:none; color:var(--color-neutral-500); font-size:12px; font-family:var(--font-family-text); cursor:pointer; text-decoration:underline; margin-top:10px; padding:0; text-align:left;}
+  .back-to-scenes-link:hover{color:var(--color-neutral-700);}
 
   /* ---- Queue panel (floating, shown while thumbnails generate) ---- */
   @keyframes queuePulse{0%,100%{opacity:1;} 50%{opacity:0.25;}}
@@ -481,7 +518,7 @@
   @keyframes spin{to{transform:rotate(360deg);}}
 
   /* ============ EDITOR VIEW (Edit & Publish canvas editor) ============ */
-  .editor-view{display:none; flex:1; min-width:0; flex-direction:column; background:#fff;}
+  .editor-view{display:none; flex:1; min-width:0; flex-direction:column; background:#fff; position:relative;}
   .editor-view.active{display:flex;}
 
   .ed-topbar{height:56px; flex-shrink:0; border-bottom:1px solid var(--color-neutral-300); display:flex; align-items:center; gap:24px; padding:0 24px;}
@@ -581,120 +618,62 @@
   .ed-ab-right{display:flex; align-items:center; gap:12px; flex-shrink:0;}
   .ed-publish-btn{display:flex; align-items:center; gap:8px; border:none; border-radius:8px; padding:9px 16px; background:linear-gradient(180deg,#323232,#222); color:#fff; font-size:14px; font-weight:600; font-family:var(--font-family-text); cursor:pointer; box-shadow:inset 0 -1px 1.2px rgba(18,18,18,0.6);}
 
-  /* ============ PUBLISH VIEW (Figma: FME_AI-Social-Media · Publish, node 6269-126410) ============ */
-  .pub-body{flex:1; min-height:0; overflow-y:auto; display:flex; justify-content:center; background:var(--color-neutral-50); padding-top:var(--spacing-4xl); padding-bottom:var(--spacing-7xl);}
-  .pub-container{width:100%; max-width:1024px; padding:0 var(--spacing-2xl);}
-  .pub-page-heading{margin-bottom:var(--spacing-2xl);}
-  .pub-title{font-size:var(--font-size-display-sm); line-height:var(--line-height-display-sm); font-weight:var(--font-weight-bold); color:var(--color-neutral-900); letter-spacing:-0.1px; margin:0;}
-  .pub-subtitle{font-size:var(--font-size-text-sm); line-height:var(--line-height-text-sm); color:var(--color-neutral-500); margin:6px 0 0;}
-  .pub-block{margin-bottom:var(--spacing-2xl);}
-  .pub-block-label{display:block; font-size:var(--font-size-text-md); line-height:var(--line-height-text-md); font-weight:var(--font-weight-semibold); color:var(--color-neutral-900); margin:0 0 var(--spacing-md);}
-  .pub-card{background:#fff; border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl); padding:var(--spacing-xl); display:flex; flex-direction:column; gap:var(--spacing-lg);}
-
-  /* -- Suggest hashtags & SEO keywords trigger -- */
-  .pub-suggest-btn{align-self:flex-start; display:inline-flex; align-items:center; gap:var(--spacing-sm); height:40px; border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); background:#fff; padding:9px 14px; cursor:pointer; font-family:var(--font-family-text);}
-  .pub-suggest-btn:hover{border-color:var(--color-brand-primary);}
-  .pub-suggest-btn:disabled{cursor:default; opacity:.7;}
-  .pub-suggest-btn .ic{width:16px; height:16px; flex-shrink:0; display:flex;}
-  .pub-suggest-btn .ic img{width:100%; height:100%; display:block;}
-  .pub-suggest-label{font-size:var(--font-size-text-md); line-height:var(--line-height-text-md); font-weight:var(--font-weight-semibold); background:linear-gradient(90deg,var(--color-brand-primary),var(--color-brand-accent)); -webkit-background-clip:text; background-clip:text; color:transparent;}
-
-  /* -- Hashtag / SEO suggestions panel (shown after "Suggest hashtags & SEO keywords" is clicked) -- */
-  .pub-hashtag-seo-result{display:flex; flex-direction:column; gap:var(--spacing-md); background:var(--color-neutral-75); border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl); padding:var(--spacing-md) var(--spacing-lg);}
-  .pub-hseo-head{display:flex; align-items:flex-end; justify-content:space-between; gap:var(--spacing-lg); flex-wrap:wrap;}
-  .pub-hseo-head-text{display:flex; align-items:flex-end; gap:var(--spacing-lg); flex:1; min-width:0; flex-wrap:wrap;}
-  .pub-hseo-head-title{font-size:var(--font-size-text-md); line-height:var(--line-height-text-md); font-weight:var(--font-weight-semibold); color:var(--color-neutral-900); white-space:nowrap;}
-  .pub-hseo-head-desc{font-size:var(--font-size-text-sm); line-height:var(--line-height-text-sm); color:var(--color-neutral-500); white-space:nowrap;}
-  .pub-hseo-head-actions{display:flex; align-items:center; gap:var(--spacing-md); flex-shrink:0;}
-  .pub-regenerate-btn{display:inline-flex; align-items:center; gap:var(--spacing-2); border:1px solid var(--color-neutral-400); border-radius:var(--radius-full); background:#fff; padding:6px 12px; font-size:11px; font-weight:500; color:var(--color-neutral-700); cursor:pointer; font-family:var(--font-family-text);}
-  .pub-regenerate-btn:hover{border-color:var(--color-neutral-500);}
-  .pub-regenerate-btn:disabled{cursor:default; opacity:.7;}
-  .pub-regenerate-btn .ic{width:16px; height:16px; display:flex; flex-shrink:0;}
-  .pub-regenerate-btn .ic img{width:100%; height:100%; display:block;}
-  .pub-close-btn{display:inline-flex; align-items:center; gap:var(--spacing-sm); border:none; border-radius:var(--radius-lg); padding:9px 12px; background:linear-gradient(180deg,#323232,#222); color:#fff; font-size:12px; font-weight:600; cursor:pointer; font-family:var(--font-family-text); box-shadow:inset 0 -1px 1.2px rgba(18,18,18,0.6);}
-  .pub-close-btn .ic{width:18px; height:18px; display:flex; flex-shrink:0;}
-  .pub-close-btn .ic img{width:100%; height:100%; display:block;}
-  .pub-hashtag-seo-summary{font-size:var(--font-size-text-xs); color:var(--color-neutral-600); line-height:1.5; margin:0;}
-  .pub-hashtag-seo-group{display:flex; flex-direction:column; gap:var(--spacing-sm);}
-  .pub-hashtag-seo-label{font-size:var(--font-size-text-md); line-height:var(--line-height-text-md); font-weight:var(--font-weight-semibold); color:var(--color-neutral-800);}
-  .pub-hashtag-seo-chips{display:flex; flex-wrap:wrap; gap:var(--spacing-sm);}
-  .pub-hashtag-chip{display:inline-flex; align-items:center; gap:4px; height:28px; border:1px solid var(--color-neutral-400); border-radius:var(--radius-full); padding:0 13px; font-size:12px; font-weight:500; color:var(--color-neutral-700); background:#fff; cursor:pointer; font-family:var(--font-family-text); transition:border-color .15s, background .15s, color .15s;}
+  /* ============ PUBLISH VIEW ============ */
+  .pub-body{flex:1; min-height:0; overflow-y:auto; display:flex; justify-content:center; background:var(--color-neutral-50);}
+  .pub-container{width:100%; max-width:640px; padding:40px 24px 60px;}
+  .pub-title{font-size:20px; font-weight:700; color:var(--color-neutral-900); margin:0 0 24px;}
+  .pub-section{background:#fff; border:1px solid var(--color-neutral-300); border-radius:12px; padding:20px; margin-bottom:16px;}
+  .pub-section-header{display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;}
+  .pub-section-label{font-size:13px; font-weight:700; color:var(--color-neutral-900);}
+  .pub-ai-draft-btn{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--color-neutral-400); border-radius:999px; background:#fff; padding:6px 12px; font-size:12px; font-weight:600; color:var(--color-neutral-700); cursor:pointer; font-family:var(--font-family-text);}
+  .pub-ai-draft-btn:hover{background:var(--color-neutral-50); border-color:var(--color-brand-primary);}
+  .pub-caption-input{width:100%; border:1px solid var(--color-neutral-300); border-radius:8px; padding:12px; font-size:13px; font-family:var(--font-family-text); color:var(--color-neutral-900); line-height:1.6; resize:vertical; min-height:90px;}
+  .pub-caption-input:focus{outline:none; border-color:var(--color-brand-primary);}
+  .pub-caption-hint{font-size:12px; color:var(--color-neutral-500); margin:0 0 10px;}
+  .pub-hashtag-seo{display:flex; flex-direction:column; gap:8px; margin-bottom:16px; padding-bottom:16px; border-bottom:1px solid var(--color-neutral-200);}
+  .pub-hashtag-seo #pubHashtagSeoBtn{align-self:flex-start;}
+  .pub-hashtag-seo-hint{font-size:11.5px; color:var(--color-neutral-500); margin:0;}
+  .pub-hashtag-seo-result{display:flex; flex-direction:column; gap:12px; margin-top:2px; padding-top:12px; border-top:1px solid var(--color-neutral-200);}
+  .pub-hashtag-seo-summary{font-size:12px; color:var(--color-neutral-600); line-height:1.5; margin:0;}
+  .pub-hashtag-seo-group{display:flex; flex-direction:column; gap:8px;}
+  .pub-hashtag-seo-label{font-size:11px; font-weight:700; color:var(--color-neutral-500); text-transform:uppercase; letter-spacing:.04em;}
+  .pub-hashtag-seo-chips{display:flex; flex-wrap:wrap; gap:6px;}
+  .pub-hashtag-chip{display:inline-flex; align-items:center; gap:5px; border:1px solid var(--color-neutral-300); border-radius:999px; padding:5px 12px; font-size:11.5px; font-weight:500; color:var(--color-neutral-700); background:#fff; cursor:pointer; font-family:var(--font-family-text); transition:border-color .15s, background .15s, color .15s;}
   .pub-hashtag-chip:hover{background:var(--color-neutral-50); border-color:var(--color-neutral-450);}
-  .pub-hashtag-chip.added{background:var(--color-neutral-150); border-color:var(--color-neutral-500); padding-left:10px;}
-  .pub-hashtag-chip .x{display:none; width:16px; height:16px;}
-  .pub-hashtag-chip .x img{width:100%; height:100%; display:block;}
-  .pub-hashtag-chip.added .x{display:inline-flex;}
-  .pub-hashtag-seo-divider{height:1px; background:var(--color-neutral-200);}
-  .pub-selected-tags-box{display:flex; flex-direction:column; gap:4px; background:#fff; border:1px solid var(--color-neutral-200); border-radius:var(--radius-lg); padding:10px 12px;}
+  .pub-hashtag-chip.added{background:var(--color-brand-primary-light); border-color:var(--color-brand-primary-mid); color:var(--color-brand-primary); font-weight:600;}
+  .pub-hashtag-chip .x{display:none; font-size:12px; line-height:1;}
+  .pub-hashtag-chip.added .x{display:inline;}
+  .pub-selected-tags-box{display:flex; flex-direction:column; gap:4px; background:var(--color-neutral-50); border:1px solid var(--color-neutral-200); border-radius:8px; padding:10px 12px;}
   .pub-selected-tags-label{font-size:10.5px; font-weight:700; color:var(--color-neutral-500); text-transform:uppercase; letter-spacing:.04em;}
   .pub-selected-tags-text{font-size:12.5px; color:var(--color-neutral-800); margin:0; line-height:1.5;}
-  .pub-caption-compose-row{display:flex; align-items:center; gap:10px;}
+  .pub-caption-compose-row{display:flex; align-items:center; gap:10px; margin-top:2px;}
   .pub-caption-compose-row .btn{padding:9px 16px; font-size:12.5px;}
-
-  /* -- Caption editor block -- */
-  .pub-caption-block{display:flex; flex-direction:column; gap:var(--spacing-sm); width:100%;}
-  .pub-caption-block-head{display:flex; align-items:flex-end; justify-content:space-between; gap:var(--spacing-md); width:100%; flex-wrap:wrap;}
-  .pub-caption-block-head-text{display:flex; align-items:flex-end; gap:var(--spacing-md); flex:1; min-width:0; flex-wrap:wrap;}
-  .pub-caption-block-title{font-size:var(--font-size-text-md); line-height:var(--line-height-text-md); font-weight:var(--font-weight-semibold); color:var(--color-neutral-900); white-space:nowrap;}
-  .pub-caption-hint{font-size:var(--font-size-text-sm); line-height:var(--line-height-text-sm); color:var(--color-neutral-500); margin:0;}
-  .pub-ai-draft-badge{flex-shrink:0; display:inline-flex; align-items:center; background:var(--color-neutral-150); border-radius:var(--radius-full); padding:2px var(--spacing-sm); font-size:var(--font-size-badge-md); font-weight:600; color:var(--color-neutral-900); white-space:nowrap;}
-  .pub-caption-input{width:100%; border:1px solid var(--color-neutral-400); border-radius:var(--radius-xl); padding:12px; font-size:14px; font-family:var(--font-family-text); color:var(--color-neutral-900); line-height:1.6; resize:vertical; min-height:100px;}
-  .pub-caption-input:focus{outline:none; border-color:var(--color-brand-primary);}
-  .pub-caption-refine-row{display:flex; align-items:center; justify-content:space-between; gap:var(--spacing-md); flex-wrap:wrap;}
-  .pub-refine-chips{display:flex; flex-wrap:wrap; gap:var(--spacing-sm);}
-  .pub-refine-chip{display:inline-flex; align-items:center; height:28px; border:1px solid var(--color-neutral-400); border-radius:var(--radius-full); background:#fff; padding:0 13px; font-size:12px; font-weight:500; color:var(--color-neutral-700); cursor:pointer; font-family:var(--font-family-text);}
-  .pub-refine-chip:hover{background:var(--color-neutral-50); border-color:var(--color-neutral-450);}
-  .pub-refine-ai-pill{display:inline-flex; align-items:center; gap:4px; border:none; border-radius:var(--radius-full); background:var(--color-brand-primary-light); padding:6px 11px; cursor:pointer; font-family:var(--font-family-text); box-shadow:0 1px 2px rgba(15,23,41,0.05);}
-  .pub-refine-ai-pill .ic{width:16px; height:16px; display:flex; flex-shrink:0;}
-  .pub-refine-ai-pill .ic img{width:100%; height:100%; display:block;}
-  .pub-refine-ai-pill .label{font-size:12px; font-weight:600; background:linear-gradient(90deg,var(--color-brand-primary),var(--color-brand-accent)); -webkit-background-clip:text; background-clip:text; color:transparent;}
-
-  .pub-divider-inner{height:1px; background:var(--color-neutral-200); width:100%;}
-
-  .pub-caption-custom-row{display:flex; align-items:center; gap:10px; font-size:12.5px; font-weight:500; color:var(--color-neutral-700); user-select:none;}
+  .pub-caption-custom-row{display:flex; align-items:center; gap:10px; margin-top:12px; font-size:12.5px; font-weight:500; color:var(--color-neutral-700); user-select:none;}
   .toggle-switch{position:relative; display:inline-block; width:34px; height:20px; flex-shrink:0; cursor:pointer;}
   .toggle-switch input{position:absolute; opacity:0; width:0; height:0;}
   .toggle-slider{position:absolute; inset:0; background:var(--color-neutral-300); border-radius:999px; transition:background .15s ease; cursor:pointer;}
   .toggle-slider::before{content:''; position:absolute; width:16px; height:16px; left:2px; top:2px; background:#fff; border-radius:50%; transition:transform .15s ease; box-shadow:0 1px 2px rgba(0,0,0,0.2);}
   .toggle-switch input:checked + .toggle-slider{background:var(--color-brand-primary);}
   .toggle-switch input:checked + .toggle-slider::before{transform:translateX(14px);}
-  .pub-caption-per-platform{display:flex; flex-direction:column; gap:14px; padding-top:14px; border-top:1px solid var(--color-neutral-200); width:100%;}
+  .pub-caption-per-platform{display:flex; flex-direction:column; gap:14px; margin-top:14px; padding-top:14px; border-top:1px solid var(--color-neutral-200);}
   .pub-caption-platform-row{display:flex; flex-direction:column; gap:6px;}
   .pub-caption-platform-head{display:flex; align-items:center; justify-content:space-between; font-size:12.5px; font-weight:600; color:var(--color-neutral-900);}
   .pub-caption-reset-btn{border:none; background:none; color:var(--color-brand-primary); font-size:11.5px; font-weight:600; cursor:pointer; padding:0; font-family:var(--font-family-text);}
   .pub-caption-per-platform-empty{font-size:12.5px; color:var(--color-neutral-500); margin:0;}
-
-  /* -- Destinations: each platform is its own bordered card in a 2-column grid -- */
-  .pub-destinations{display:grid; grid-template-columns:1fr 1fr; gap:var(--spacing-md);}
-  .pub-dest-row{display:flex; align-items:center; gap:var(--spacing-md); height:56px; padding:0 var(--spacing-lg); border:1px solid var(--color-neutral-400); border-radius:var(--radius-xl); background:#fff;}
-  .pub-dest-row.disconnected{background:var(--color-neutral-150);}
-  .pub-dest-checkbox{display:flex; align-items:center; flex-shrink:0; cursor:pointer;}
-  .pub-dest-checkbox.disabled{cursor:default;}
-  .pub-dest-icon{width:32px; height:32px; flex-shrink:0; display:flex;}
-  .pub-dest-icon img{width:100%; height:100%; display:block;}
-  .pub-dest-name{font-size:13px; font-weight:500; color:var(--color-neutral-900); white-space:nowrap;}
-  .pub-dest-row.disconnected .pub-dest-name{color:var(--color-neutral-500);}
-  .pub-dest-spacer{flex:1;}
-  .pub-dest-badge{flex-shrink:0; display:inline-flex; align-items:center; border-radius:var(--radius-lg); padding:2px var(--spacing-sm); font-size:11px; font-weight:600; white-space:nowrap;}
-  .pub-dest-badge.connected{background:var(--color-badge-green-bg); color:var(--color-badge-green-text);}
-  .pub-dest-badge.not-connected{background:var(--color-neutral-400); color:var(--color-neutral-700); border-radius:var(--radius-full);}
-  .pub-connect-btn{border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); background:#fff; padding:9px 14px; font-size:13px; font-weight:600; color:var(--color-neutral-700); cursor:pointer; font-family:var(--font-family-text); flex-shrink:0;}
+  .pub-destinations{display:flex; flex-direction:column; gap:10px;}
+  .pub-dest-row{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 12px; border:1px solid var(--color-neutral-200); border-radius:8px;}
+  .pub-dest-row.disconnected{background:var(--color-neutral-50);}
+  .pub-dest-checkbox{display:flex; align-items:center; gap:10px; font-size:13px; font-weight:500; color:var(--color-neutral-900); cursor:pointer;}
+  .pub-dest-checkbox input{width:16px; height:16px; accent-color:var(--color-brand-primary); cursor:pointer;}
+  .pub-dest-checkbox.disabled{color:var(--color-neutral-500); cursor:default;}
+  .pub-dest-checkbox.disabled input{cursor:not-allowed;}
+  .pub-dest-note{font-size:11.5px; color:var(--color-neutral-500); margin-left:4px;}
+  .pub-connect-btn{border:1px solid var(--color-neutral-400); border-radius:999px; background:#fff; padding:5px 12px; font-size:11.5px; font-weight:600; color:var(--color-neutral-700); cursor:pointer; font-family:var(--font-family-text); flex-shrink:0;}
   .pub-connect-btn:hover{background:var(--color-neutral-50); border-color:var(--color-brand-primary);}
-
-  /* -- When / schedule -- */
   .pub-when-options{display:flex; flex-direction:column; gap:12px;}
   .pub-radio-row{display:flex; align-items:center; gap:10px; font-size:13px; font-weight:500; color:var(--color-neutral-900); cursor:pointer;}
-  .pub-radio-row-schedule{display:flex; align-items:center; gap:var(--spacing-lg); flex-wrap:wrap;}
-  .pub-schedule-fields{margin-left:0;}
-
-  /* -- Shared custom radio / checkbox look (selected = neutral-900 fill + white check, per Figma) -- */
-  .pub-radio-row input[type="radio"],
-  .pub-dest-checkbox input[type="checkbox"]{appearance:none; -webkit-appearance:none; margin:0; flex-shrink:0; border:1.5px solid var(--color-neutral-400); background:var(--color-neutral-0); cursor:pointer; background-repeat:no-repeat; background-position:center;}
-  .pub-radio-row input[type="radio"]{width:20px; height:20px; border-radius:var(--radius-full);}
-  .pub-dest-checkbox input[type="checkbox"]{width:16px; height:16px; border-radius:var(--radius-sm); border-width:1px;}
-  .pub-radio-row input[type="radio"]:checked,
-  .pub-dest-checkbox input[type="checkbox"]:checked{background-color:var(--color-neutral-900); border-color:var(--color-neutral-900); background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgdmlld0JveD0iMCAwIDEyIDEyIiBmaWxsPSJub25lIj48cGF0aCBkPSJNMTAgM0w0LjUgOC41TDIgNiIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPg==");}
-  .pub-dest-checkbox input[type="checkbox"]:disabled{opacity:.5; background-color:var(--color-neutral-150); cursor:not-allowed;}
+  .pub-radio-row input{width:16px; height:16px; accent-color:var(--color-brand-primary); cursor:pointer;}
+  .pub-schedule-fields{margin-left:26px;}
 
   /* ---- Date & time picker (Figma: FME_Design-System · Date Picker, node 726:1969) ---- */
   .dt-picker-wrap{position:relative; display:inline-block;}
@@ -720,15 +699,46 @@
   .dt-time-sep{color:var(--color-neutral-500); font-weight:600;}
   .dt-picker-actions{display:flex; gap:12px;}
   .dt-picker-actions button{flex:1; padding:9px 14px; border-radius:var(--radius-lg); font-size:13px; font-weight:600; font-family:var(--font-family-text); cursor:pointer;}
-  .dt-cancel-btn{border:1px solid var(--color-neutral-400); background:#fff; color:var(--color-neutral-700);}
-  .dt-cancel-btn:hover{background:var(--color-neutral-50); border-color:var(--color-neutral-500);}
-  .dt-choose-btn{border:none; background:var(--color-neutral-900); color:#fff;}
-  .dt-choose-btn:hover{background:#1c2438;}
+  .dt-cancel-btn{border:1px solid var(--color-brand-primary); background:#fff; color:var(--color-brand-primary);}
+  .dt-cancel-btn:hover{background:var(--color-brand-primary-light);}
+  .dt-choose-btn{border:none; background:var(--color-brand-primary); color:#fff;}
+  .dt-choose-btn:hover{background:var(--color-brand-primary-dark, #1e5fd9);}
   .pub-warning-note{display:none; align-items:flex-start; gap:8px; margin-top:4px; padding:10px 12px; background:#fdf2f2; border:1px solid #f3c6c6; border-radius:8px; font-size:12px; color:#b23b3b; line-height:1.5;}
   .pub-warning-note.visible{display:flex;}
-  .pub-divider{height:1px; background:var(--color-neutral-200); margin:var(--spacing-2xl) 0;}
-  .pub-run-ad{display:flex; align-items:center; justify-content:space-between; gap:16px; background:#fff; border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl); padding:12px 16px;}
+  .pub-divider{height:1px; background:var(--color-neutral-200); margin:24px 0;}
+  .pub-run-ad{display:flex; align-items:center; justify-content:space-between; gap:16px;}
   .pub-run-ad-sub{font-size:12px; color:var(--color-neutral-500); margin:4px 0 0;}
+  .pub-dest-handle{color:var(--color-neutral-500); font-weight:400;}
+
+  /* ---- Publish confirmation modal — "type the handle to confirm" per destination, since
+       going live is not reversible the way saving a draft is. Built on the shared modal.css
+       shell (.modal-overlay/.modal/.modal__*), with custom content below for the tabs/preview/
+       warning box. ---- */
+  .pub-confirm-modal{gap:var(--spacing-2xl); max-width:520px;}
+  .pub-confirm-tabs{display:flex; gap:4px; background:var(--color-neutral-100); border-radius:var(--radius-lg); padding:4px;}
+  .pub-confirm-tab{flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:10px 12px; border:none; border-radius:var(--radius-md); background:transparent; font-size:13.5px; font-weight:600; color:var(--color-neutral-600); cursor:pointer; font-family:var(--font-family-text);}
+  .pub-confirm-tab:hover{color:var(--color-neutral-900);}
+  .pub-confirm-tab.active{background:#fff; color:var(--color-neutral-900); box-shadow:0 1px 2px rgba(15,23,41,.1);}
+  .pub-confirm-tab .check{color:var(--color-badge-green-text);}
+  .pub-confirm-body{display:flex; flex-direction:column; gap:var(--spacing-xl);}
+  .pub-confirm-preview-row{display:flex; gap:14px; align-items:center; border:1px solid var(--color-neutral-250); border-radius:var(--radius-lg); padding:14px;}
+  .pub-confirm-thumb{width:72px; height:72px; border-radius:var(--radius-md); background:linear-gradient(135deg,var(--color-brand-primary-mid),var(--color-brand-accent)); flex-shrink:0;}
+  .pub-confirm-platform-label{font-size:11.5px; font-weight:700; letter-spacing:.03em; text-transform:uppercase; color:var(--color-brand-primary); margin-bottom:4px;}
+  .pub-confirm-handle{color:var(--color-brand-primary); font-weight:600; text-transform:none;}
+  .pub-confirm-format{font-size:13px; color:var(--color-neutral-600);}
+  .pub-confirm-warning-box{background:var(--color-brand-primary-light); border:1px solid var(--color-brand-primary-mid); border-radius:var(--radius-lg); padding:18px; display:flex; flex-direction:column; gap:10px;}
+  .pub-confirm-warning-box.done{background:var(--color-badge-green-bg, #eafaf1); border-color:var(--color-badge-green-text);}
+  .pub-confirm-warning-title{display:flex; align-items:center; gap:8px; font-size:14px; font-weight:700; color:var(--color-brand-primary); margin:0;}
+  .pub-confirm-warning-title.done{color:var(--color-badge-green-text);}
+  .pub-confirm-warning-text{font-size:12.5px; color:var(--color-neutral-700); line-height:1.55; margin:0;}
+  .pub-confirm-input{width:100%; border:1px solid var(--color-neutral-300); border-radius:var(--radius-md); padding:10px 12px; font-size:13.5px; font-family:var(--font-family-text); outline:none; background:#fff; color:var(--color-neutral-900);}
+  .pub-confirm-input:focus{border-color:var(--color-brand-primary);}
+  .pub-confirm-publish-btn{width:100%; justify-content:center; display:flex; align-items:center; gap:6px;}
+  .pub-confirm-publish-btn:disabled{opacity:.5; cursor:not-allowed;}
+  .pub-confirm-success{text-align:center; display:flex; flex-direction:column; align-items:center; gap:6px; padding:8px 0 4px;}
+  .pub-confirm-success-icon{font-size:32px;}
+  .pub-confirm-success-title{font-size:16px; font-weight:700; color:var(--color-neutral-900); margin:0;}
+  .pub-confirm-success-sub{font-size:13px; color:var(--color-neutral-600); margin:0;}
 </style>
 </head>
 <body>
@@ -810,10 +820,10 @@
           </div>
           <div class="prompt-bottom">
             <div class="prompt-chips">
-              <div class="prompt-chip"><div class="ic"></div>9:16</div>
+              <div class="prompt-chip"><svg class="ic-svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="3.5" y="1.5" width="9" height="13" rx="1.6" stroke="#8A93A8" stroke-width="1.4"/><path d="M6.5 12.3H9.5" stroke="#8A93A8" stroke-width="1.4" stroke-linecap="round"/></svg>9:16</div>
               <div class="prompt-chip-wrap" id="durationChipWrap">
                 <div class="prompt-chip clickable" onclick="toggleDurationPopover(event)">
-                  <div class="ic"></div><span id="durationChipText">8s</span><span class="chevron">▾</span>
+                  <svg class="ic-svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.3" stroke="#8A93A8" stroke-width="1.4"/><path d="M8 4.7V8L10.2 9.6" stroke="#8A93A8" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="durationChipText">8s</span><span class="chevron">▾</span>
                 </div>
                 <div class="duration-popover" id="durationPopover" style="display:none;">
                   <div class="duration-popover-label">Duration</div>
@@ -847,11 +857,33 @@
             </div>
             <div class="char-grid" id="charGrid">
               <div class="char-card new"><div class="thumb">+</div><div class="name">Create New</div></div>
-              <div class="char-card selected" onclick="selectChar(this)"><div class="thumb"></div><div class="name">Elena</div></div>
-              <div class="char-card" onclick="selectChar(this)"><div class="thumb"></div><div class="name">Milo</div></div>
-              <div class="char-card" onclick="selectChar(this)"><div class="thumb"></div><div class="name">Priya</div></div>
-              <div class="char-card" onclick="selectChar(this)"><div class="thumb"></div><div class="name">Maya</div></div>
-              <div class="char-card" onclick="selectChar(this)"><div class="thumb"></div><div class="name">Sofia</div></div>
+              <div class="char-card selected" onclick="selectChar(this,'elena')"><div class="thumb" style="background-image:url('assets/characters/elena.png')"></div><div class="name">Elena</div></div>
+              <div class="char-card" onclick="selectChar(this,'milo')"><div class="thumb" style="background-image:url('assets/characters/milo.jpeg')"></div><div class="name">Milo</div></div>
+              <div class="char-card" onclick="selectChar(this,'priya')"><div class="thumb" style="background-image:url('assets/characters/priya.png')"></div><div class="name">Priya</div></div>
+              <div class="char-card" onclick="selectChar(this,'monster')"><div class="thumb" style="background-image:url('assets/characters/monster.jpeg')"></div><div class="name">Monster</div></div>
+              <div class="char-card" onclick="selectChar(this,'maya')"><div class="thumb" style="background-image:url('assets/characters/maya.png')"></div><div class="name">Maya</div></div>
+              <div class="char-card" onclick="selectChar(this,'sofia')"><div class="thumb" style="background-image:url('assets/characters/sofia.png')"></div><div class="name">Sofia</div></div>
+              <div class="char-card" onclick="selectChar(this,'esther')"><div class="thumb" style="background-image:url('assets/characters/esther.jpeg')"></div><div class="name">Esther</div></div>
+            </div>
+
+            <!-- Style variations for whichever character is selected — only Elena has a style
+                 set in this prototype, matching the Figma reference; other characters simply
+                 hide this row (see selectChar()). -->
+            <div class="char-styles-panel show" id="charStylesPanel">
+              <div class="char-styles-header">
+                <div class="char-styles-title"><span class="mini-avatar" id="charStylesAvatar" style="background-image:url('assets/characters/elena.png')"></span><span id="charStylesLabel">Elena's styles</span></div>
+                <div class="see-all-link">See all →</div>
+              </div>
+              <div class="char-grid" id="charStylesGrid">
+                <div class="char-card new"><div class="thumb tall">+</div><div class="name">Create New</div></div>
+                <div class="char-card selected" onclick="selectCharStyle(this)"><div class="thumb tall" style="background-image:url('assets/characters/elena-styles/headshot.png')"></div><div class="name">Headshot</div></div>
+                <div class="char-card" onclick="selectCharStyle(this)"><div class="thumb tall" style="background-image:url('assets/characters/elena-styles/studio-portrait.png')"></div><div class="name">Studio Portrait</div></div>
+                <div class="char-card" onclick="selectCharStyle(this)"><div class="thumb tall" style="background-image:url('assets/characters/elena-styles/armchair-library.png')"></div><div class="name">Armchair Library</div></div>
+                <div class="char-card" onclick="selectCharStyle(this)"><div class="thumb tall" style="background-image:url('assets/characters/elena-styles/autumn-park.png')"></div><div class="name">Autumn Park</div></div>
+                <div class="char-card" onclick="selectCharStyle(this)"><div class="thumb tall" style="background-image:url('assets/characters/elena-styles/balcony-plants.png')"></div><div class="name">Balcony Plants</div></div>
+                <div class="char-card" onclick="selectCharStyle(this)"><div class="thumb tall" style="background-image:url('assets/characters/elena-styles/beige-blazer.png')"></div><div class="name">Beige Blazer</div></div>
+                <div class="char-card" onclick="selectCharStyle(this)"><div class="thumb tall" style="background-image:url('assets/characters/elena-styles/bright-hallway.png')"></div><div class="name">Bright Hallway</div></div>
+              </div>
             </div>
 
             <!-- Voice/appearance only applies to motion content — hidden entirely for Image post -->
@@ -968,8 +1000,9 @@
             <div class="quick-chip" onclick="quickAction('looks-good')">Looks good → Timeline</div>
             <div class="quick-chip" onclick="quickAction('regenerate')">Regenerate</div>
           </div>
+          <div class="chat-hint">💬 Requests like "make it shorter" or "redo Seg 2 only" work here too</div>
           <div class="chat-input-box">
-            <textarea class="chat-input" id="chatInput" placeholder="Ask for changes" rows="1"></textarea>
+            <input class="chat-input" id="chatInput" placeholder="Type a message...">
             <div class="chat-input-bottom-row">
               <button class="chat-attach-btn" title="Attach">📎</button>
               <button class="chat-send" id="chatSend">↑</button>
@@ -1057,23 +1090,22 @@
             </div>
           </div>
 
-          <!-- SUB-STAGE: Timeline (thumbnail generation happens in-place here) -->
+          <!-- SUB-STAGE: Timeline (confirms per-segment dialogue + scene description only — video
+               generation happens directly on Video, grouped into 8s clips; see subStudio below) -->
           <div class="stage-sub" id="subTimeline" style="display:none;">
             <div class="stage-body">
             <div class="stage-body-inner">
               <h2 class="stage-title">Timeline</h2>
-              <p class="stage-sub" id="timelineStageSub">Confirm the dialogue and scene description for each segment, then generate thumbnails.</p>
+              <p class="stage-sub" id="timelineStageSub">Confirm the dialogue and scene description for each segment, then generate the video.</p>
 
               <div class="timeline-stage">
                 <div class="timeline-canvas">
                   <div class="scene-grid" id="sceneGrid"></div>
                 </div>
                 <div class="scene-editor-col">
-                  <div class="scene-nav" id="segmentNav"></div>
-                  <div class="scene-editor-panel" id="sceneEditorPanel"></div>
                   <div class="voice-section" id="voiceSection_tl">
                     <div class="voice-section-header">
-                      <label class="scene-section-label">Voice</label>
+                      <label class="scene-desc-label">🎙 Voice</label>
                       <div class="voice-section-header-right">
                         <div class="voice-mode-toggle" id="voiceModeToggle_tl">
                           <div class="voice-mode-btn" data-mode="whole" onclick="setVoiceMode('whole')">Whole take</div>
@@ -1085,9 +1117,11 @@
                     <div class="voice-cost-summary" id="voiceCostSummary_tl"></div>
                     <div class="voice-section-body" id="voiceSectionBody_tl"></div>
                   </div>
+                  <div class="scene-nav" id="segmentNav"></div>
+                  <div class="scene-editor-panel" id="sceneEditorPanel"></div>
                   <div class="timeline-cta">
-                    <button class="btn btn-dark" id="timelineCtaBtn" onclick="generateThumbnails()">Generate thumbnails</button>
-                    <span class="meta-text" id="timelineCtaMeta">Regenerating a thumbnail once it is made will use credits</span>
+                    <button class="btn btn-dark" id="timelineCtaBtn" onclick="proceedToStudio()">Generate video</button>
+                    <span class="meta-text" id="timelineCtaMeta"></span>
                   </div>
                 </div>
               </div>
@@ -1100,18 +1134,16 @@
             <div class="stage-body">
             <div class="stage-body-inner">
               <h2 class="stage-title">Video</h2>
-              <p class="stage-sub" id="studioStageSub">Generate a video clip for each scene, then combine them into the final cut. The narration audio from Timeline carries over automatically.</p>
+              <p class="stage-sub" id="studioStageSub">Generate an 8-second video clip for each part of the video, then combine them into the final cut. The narration audio from Timeline carries over automatically.</p>
 
               <div class="timeline-stage">
                 <div class="timeline-canvas">
                   <div class="video-grid" id="videoGrid"></div>
                 </div>
                 <div class="scene-editor-col">
-                  <div class="scene-nav" id="videoSegmentNav"></div>
-                  <div class="video-editor-panel" id="videoEditorPanel"></div>
                   <div class="voice-section" id="voiceSection_vid">
                     <div class="voice-section-header">
-                      <label class="scene-section-label">Voice</label>
+                      <label class="scene-desc-label">🎙 Voice</label>
                       <div class="voice-section-header-right">
                         <div class="voice-mode-toggle" id="voiceModeToggle_vid">
                           <div class="voice-mode-btn" data-mode="whole" onclick="setVoiceMode('whole')">Whole take</div>
@@ -1123,6 +1155,8 @@
                     <div class="voice-cost-summary" id="voiceCostSummary_vid"></div>
                     <div class="voice-section-body" id="voiceSectionBody_vid"></div>
                   </div>
+                  <div class="scene-nav" id="videoSegmentNav"></div>
+                  <div class="video-editor-panel" id="videoEditorPanel"></div>
                   <div class="combine-stale-banner" id="combineStaleBanner" style="display:none;">
                     <span>⚠️ This scene changed — recombine to reflect the latest state.</span>
                     <button class="btn btn-secondary" onclick="combineVideo()">Recombine</button>
@@ -1135,29 +1169,30 @@
               </div>
 
               <div class="combine-result-view" id="combineResultView" style="display:none;">
-                <button class="back-to-scenes-link" onclick="backToSceneVideos()">← Back to scene videos</button>
-                <div class="combine-result-header">
-                  <div>
-                    <h2 class="stage-title">Your Video is ready</h2>
-                    <p class="stage-sub">Your final video is ready. Edit it with our built-in tools, or publish it now.</p>
-                  </div>
-                  <button class="btn btn-secondary" onclick="downloadCombineResult()">⬇ Download</button>
-                </div>
-                <div class="combine-result-body">
-                  <div class="combine-player">
-                    <button class="video-play-btn" onclick="playCombineResult(this)" title="Play">▶</button>
-                    <div class="combine-player-controls">
-                      <span class="combine-player-time" id="combineResultTime">0:00 / 8s</span>
-                      <span class="combine-player-icons">🔊 ⛶</span>
+                <div class="timeline-stage">
+                  <div class="timeline-canvas combine-canvas">
+                    <div class="combine-player">
+                      <button class="video-play-btn" onclick="playCombineResult(this)" title="Play">▶</button>
+                      <span class="combine-player-duration" id="combineResultDuration">8s</span>
                     </div>
+                    <div class="combine-timeline-ticks" id="combineResultTicks"></div>
                   </div>
-                  <div class="combine-info-panel">
-                    <div class="combine-info-title-row">
-                      <h3 class="combine-info-title" id="combineVideoTitle"></h3>
-                      <button class="combine-title-edit-btn" onclick="editCombineTitle()" title="Edit title">✏️</button>
+                  <div class="scene-editor-col">
+                    <div class="combine-summary-card">
+                      <div class="combine-summary-title-row">
+                        <h3 class="combine-summary-title" id="combineVideoTitle"></h3>
+                        <button class="combine-title-edit-btn" onclick="editCombineTitle()" title="Edit title">✏️</button>
+                      </div>
+                      <p class="combine-summary-desc" id="combineVideoDesc"></p>
+                      <div class="combine-summary-divider"></div>
+                      <div class="combine-summary-specs" id="combineSummarySpecs"></div>
+                      <p class="combine-audio-note">🎙 Narration from Timeline is already mixed in — no extra steps needed.</p>
                     </div>
-                    <p class="combine-info-desc" id="combineVideoDesc"></p>
-                    <div class="combine-info-specs" id="combineInfoSpecs"></div>
+                    <div class="combine-result-actions">
+                      <button class="btn btn-dark" onclick="continueToEditing()">Continue to editing →</button>
+                      <button class="btn btn-secondary" onclick="skipToPublish()">Skip to publish</button>
+                    </div>
+                    <button class="back-to-scenes-link" onclick="backToSceneVideos()">← Back to scene videos</button>
                   </div>
                 </div>
               </div>
@@ -1362,45 +1397,25 @@
 
   <div class="pub-body">
     <div class="pub-container">
-      <div class="pub-page-heading">
-        <h2 class="pub-title">Publish</h2>
-        <p class="pub-subtitle">Describe your idea — AI handles everything else</p>
-      </div>
+      <h2 class="pub-title">Publish</h2>
 
-      <div class="pub-block">
-        <label class="pub-block-label">Caption</label>
-        <div class="pub-card">
-          <button type="button" class="pub-suggest-btn" id="pubHashtagSeoBtn" onclick="generateHashtagsSEO()">
-            <span class="ic"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gYWkgLyByZWZpbmUiIGNsaXAtcGF0aD0idXJsKCNjbGlwMF8wXzM3MykiPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNMTMuNTczMyAxLjU3MzMzTDE0LjQyNjcgMi40MjY2N0MxNC41MDMzIDIuNTAxMjEgMTQuNTY0MiAyLjU5MDM2IDE0LjYwNTcgMi42ODg4M0MxNC42NDczIDIuNzg3MyAxNC42Njg3IDIuODkzMTEgMTQuNjY4NyAzQzE0LjY2ODcgMy4xMDY4OSAxNC42NDczIDMuMjEyNyAxNC42MDU3IDMuMzExMTdDMTQuNTY0MiAzLjQwOTY0IDE0LjUwMzMgMy40OTg3OSAxNC40MjY3IDMuNTczMzNMMy41NzMzMyAxNC40MjY3QzMuNDk4NzkgMTQuNTAzMyAzLjQwOTY0IDE0LjU2NDIgMy4zMTExNyAxNC42MDU3QzMuMjEyNyAxNC42NDczIDMuMTA2ODkgMTQuNjY4NyAzIDE0LjY2ODdDMi44OTMxMSAxNC42Njg3IDIuNzg3MyAxNC42NDczIDIuNjg4ODMgMTQuNjA1N0MyLjU5MDM2IDE0LjU2NDIgMi41MDEyMSAxNC41MDMzIDIuNDI2NjcgMTQuNDI2N0wxLjU3MzMzIDEzLjU3MzNDMS40OTc1NCAxMy40OTgzIDEuNDM3MzggMTMuNDA5IDEuMzk2MzIgMTMuMzEwNkMxLjM1NTI2IDEzLjIxMjIgMS4zMzQxMiAxMy4xMDY2IDEuMzM0MTIgMTNDMS4zMzQxMiAxMi44OTM0IDEuMzU1MjYgMTIuNzg3OCAxLjM5NjMyIDEyLjY4OTRDMS40MzczOCAxMi41OTEgMS40OTc1NCAxMi41MDE3IDEuNTczMzMgMTIuNDI2N0wxMi40MjY3IDEuNTczMzNDMTIuNTAxNyAxLjQ5NzU0IDEyLjU5MSAxLjQzNzM4IDEyLjY4OTQgMS4zOTYzMkMxMi43ODc4IDEuMzU1MjYgMTIuODkzNCAxLjMzNDEyIDEzIDEuMzM0MTJDMTMuMTA2NiAxLjMzNDEyIDEzLjIxMjIgMS4zNTUyNiAxMy4zMTA2IDEuMzk2MzJDMTMuNDA5IDEuNDM3MzggMTMuNDk4MyAxLjQ5NzU0IDEzLjU3MzMgMS41NzMzM1oiIHN0cm9rZT0iIzRGNkRFNiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzIiIGQ9Ik05LjMzMzMzIDQuNjY2NjdMMTEuMzMzMyA2LjY2NjY3IiBzdHJva2U9IiM0RjZERTYiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggaWQ9IlZlY3Rvcl8zIiBkPSJNMy4zMzMzMyA0VjYuNjY2NjciIHN0cm9rZT0iIzRGNkRFNiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzQiIGQ9Ik0xMi42NjY3IDkuMzMzMzNWMTIiIHN0cm9rZT0iIzRGNkRFNiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzUiIGQ9Ik02LjY2NjY3IDEuMzMzMzNWMi42NjY2NyIgc3Ryb2tlPSIjNEY2REU2IiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxwYXRoIGlkPSJWZWN0b3JfNiIgZD0iTTQuNjY2NjcgNS4zMzMzM0gyIiBzdHJva2U9IiM0RjZERTYiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggaWQ9IlZlY3Rvcl83IiBkPSJNMTQgMTAuNjY2N0gxMS4zMzMzIiBzdHJva2U9IiM0RjZERTYiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggaWQ9IlZlY3Rvcl84IiBkPSJNNy4zMzMzMyAySDYiIHN0cm9rZT0iIzRGNkRFNiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L2c+CjxkZWZzPgo8Y2xpcFBhdGggaWQ9ImNsaXAwXzBfMzczIj4KPHJlY3Qgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPgo=" alt=""></span>
-            <span class="pub-suggest-label">Suggest hashtags &amp; SEO keywords</span>
-          </button>
-
+      <div class="pub-section">
+        <div class="pub-section-header">
+          <label class="pub-section-label">Caption</label>
+          <button class="pub-ai-draft-btn" onclick="generateCaptionDraft()">✨ AI draft</button>
+        </div>
+        <div class="pub-hashtag-seo" id="pubHashtagSeo">
+          <button type="button" class="pub-ai-draft-btn" id="pubHashtagSeoBtn" onclick="generateHashtagsSEO()">✨ Suggest hashtags &amp; SEO keywords</button>
+          <p class="pub-hashtag-seo-hint">Fill in details under Target audience, Goal, and Script/idea for more specific hashtags and SEO keywords.</p>
           <div class="pub-hashtag-seo-result" id="pubHashtagSeoResult" style="display:none;">
-            <div class="pub-hseo-head">
-              <div class="pub-hseo-head-text">
-                <span class="pub-hseo-head-title">Caption</span>
-                <span class="pub-hseo-head-desc">The same caption is used across all platforms.</span>
-              </div>
-              <div class="pub-hseo-head-actions">
-                <button type="button" class="pub-regenerate-btn" onclick="generateHashtagsSEO()">
-                  <span class="ic"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gcmVmcmVzaC1jY3ciPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNMiA1LjMzMzMzTDMuNTA2NjcgMy44MjY2N0M0LjcxMjY1IDIuNjYwODIgNi4zMjI2MyAyLjAwNjMxIDggMkM5LjU5MTMgMiAxMS4xMTc0IDIuNjMyMTQgMTIuMjQyNiAzLjc1NzM2QzEzLjE3NzYgNC42OTIzMiAxMy43NzIxIDUuOTA0MDYgMTMuOTQ2NSA3LjIiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzIiIGQ9Ik0yIDJWNS4zMzMzM0g1LjMzMzMzIiBzdHJva2U9IiM4QTkzQTgiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggaWQ9IlZlY3Rvcl8zIiBkPSJNMTQgMTAuNjY2N0wxMi40OTMzIDEyLjE3MzNDMTEuMjg3NCAxMy4zMzkyIDkuNjc3MzYgMTMuOTkzNyA4IDE0QzYuNDA4NyAxNCA0Ljg4MjU4IDEzLjM2NzkgMy43NTczNiAxMi4yNDI2QzIuODIyNCAxMS4zMDc3IDIuMjI3ODcgMTAuMDk1OSAyLjA1MzU1IDguOCIgc3Ryb2tlPSIjOEE5M0E4IiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxwYXRoIGlkPSJWZWN0b3JfNCIgZD0iTTEwLjY2NjcgMTAuNjY2N0gxNFYxNCIgc3Ryb2tlPSIjOEE5M0E4IiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjwvZz4KPC9zdmc+Cg==" alt=""></span>
-                  Regenerate
-                </button>
-                <button type="button" class="pub-close-btn" onclick="closeHashtagSeoPanel()">
-                  Close
-                  <span class="ic"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiB2aWV3Qm94PSIwIDAgMTggMTgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gY2hldnJvbi11cCI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik0xMy41IDExLjI1TDkgNi43NUw0LjUgMTEuMjUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMS42IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9nPgo8L3N2Zz4K" alt=""></span>
-                </button>
-              </div>
-            </div>
             <p class="pub-hashtag-seo-summary" id="pubHashtagSeoSummary"></p>
-            <div class="pub-hashtag-seo-group">
-              <span class="pub-hashtag-seo-label">SEO Keywords</span>
-              <div class="pub-hashtag-seo-chips" id="pubSeoChips"></div>
-            </div>
-            <div class="pub-hashtag-seo-divider"></div>
             <div class="pub-hashtag-seo-group">
               <span class="pub-hashtag-seo-label">Hashtags</span>
               <div class="pub-hashtag-seo-chips" id="pubHashtagChips"></div>
+            </div>
+            <div class="pub-hashtag-seo-group">
+              <span class="pub-hashtag-seo-label">SEO keywords</span>
+              <div class="pub-hashtag-seo-chips" id="pubSeoChips"></div>
             </div>
             <div class="pub-selected-tags-box" id="pubSelectedTagsBox" style="display:none;">
               <span class="pub-selected-tags-label">Selected for your caption</span>
@@ -1410,89 +1425,67 @@
               <button type="button" class="btn btn-dark" id="pubComposeCaptionBtn" onclick="generateCaptionFromSelection()">✨ Generate caption</button>
             </div>
           </div>
-
-          <div class="pub-caption-block">
-            <div class="pub-caption-block-head">
-              <div class="pub-caption-block-head-text">
-                <span class="pub-caption-block-title">Caption</span>
-                <span class="pub-caption-hint" id="pubCaptionHint">The same caption is used across all platforms.</span>
-              </div>
-              <span class="pub-ai-draft-badge" id="pubAiDraftBadge">AI draft</span>
-            </div>
-            <textarea class="pub-caption-input" id="pubCaption" placeholder="Write a caption for your post..." oninput="onSharedCaptionInput()"></textarea>
-            <div class="pub-caption-refine-row">
-              <div class="pub-refine-chips">
-                <button type="button" class="pub-refine-chip" onclick="refineCaptionWithAI('shorter')">Make it shorter</button>
-                <button type="button" class="pub-refine-chip" onclick="refineCaptionWithAI('punchier')">Make it punchier</button>
-                <button type="button" class="pub-refine-chip" onclick="refineCaptionWithAI('cta')">Add a call to action</button>
-              </div>
-              <button type="button" class="pub-refine-ai-pill" onclick="refineCaptionWithAI('ai')">
-                <span class="ic"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIiBjbGlwLXBhdGg9InVybCgjY2xpcDBfMF8zNDkpIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTEzLjU3MzMgMS41NzMzM0wxNC40MjY3IDIuNDI2NjdDMTQuNTAzMyAyLjUwMTIxIDE0LjU2NDIgMi41OTAzNiAxNC42MDU3IDIuNjg4ODNDMTQuNjQ3MyAyLjc4NzMgMTQuNjY4NyAyLjg5MzExIDE0LjY2ODcgM0MxNC42Njg3IDMuMTA2ODkgMTQuNjQ3MyAzLjIxMjcgMTQuNjA1NyAzLjMxMTE3QzE0LjU2NDIgMy40MDk2NCAxNC41MDMzIDMuNDk4NzkgMTQuNDI2NyAzLjU3MzMzTDMuNTczMzMgMTQuNDI2N0MzLjQ5ODc5IDE0LjUwMzMgMy40MDk2NCAxNC41NjQyIDMuMzExMTcgMTQuNjA1N0MzLjIxMjcgMTQuNjQ3MyAzLjEwNjg5IDE0LjY2ODcgMyAxNC42Njg3QzIuODkzMTEgMTQuNjY4NyAyLjc4NzMgMTQuNjQ3MyAyLjY4ODgzIDE0LjYwNTdDMi41OTAzNiAxNC41NjQyIDIuNTAxMjEgMTQuNTAzMyAyLjQyNjY3IDE0LjQyNjdMMS41NzMzMyAxMy41NzMzQzEuNDk3NTQgMTMuNDk4MyAxLjQzNzM4IDEzLjQwOSAxLjM5NjMyIDEzLjMxMDZDMS4zNTUyNiAxMy4yMTIyIDEuMzM0MTIgMTMuMTA2NiAxLjMzNDEyIDEzQzEuMzM0MTIgMTIuODkzNCAxLjM1NTI2IDEyLjc4NzggMS4zOTYzMiAxMi42ODk0QzEuNDM3MzggMTIuNTkxIDEuNDk3NTQgMTIuNTAxNyAxLjU3MzMzIDEyLjQyNjdMMTIuNDI2NyAxLjU3MzMzQzEyLjUwMTcgMS40OTc1NCAxMi41OTEgMS40MzczOCAxMi42ODk0IDEuMzk2MzJDMTIuNzg3OCAxLjM1NTI2IDEyLjg5MzQgMS4zMzQxMiAxMyAxLjMzNDEyQzEzLjEwNjYgMS4zMzQxMiAxMy4yMTIyIDEuMzU1MjYgMTMuMzEwNiAxLjM5NjMyQzEzLjQwOSAxLjQzNzM4IDEzLjQ5ODMgMS40OTc1NCAxMy41NzMzIDEuNTczMzNaIiBzdHJva2U9IiM0RjZERTYiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggaWQ9IlZlY3Rvcl8yIiBkPSJNOS4zMzMzNyA0LjY2Njk5TDExLjMzMzQgNi42NjY5OSIgc3Ryb2tlPSIjNEY2REU2IiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxwYXRoIGlkPSJWZWN0b3JfMyIgZD0iTTMuMzMzMzMgNFY2LjY2NjY3IiBzdHJva2U9IiM0RjZERTYiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggaWQ9IlZlY3Rvcl80IiBkPSJNMTIuNjY2NiA5LjMzMzAxVjExLjk5OTciIHN0cm9rZT0iIzRGNkRFNiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzUiIGQ9Ik02LjY2NjYzIDEuMzMzMDFWMi42NjYzNCIgc3Ryb2tlPSIjNEY2REU2IiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxwYXRoIGlkPSJWZWN0b3JfNiIgZD0iTTQuNjY2NjcgNS4zMzMwMUgyIiBzdHJva2U9IiM0RjZERTYiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggaWQ9IlZlY3Rvcl83IiBkPSJNMTQgMTAuNjY3SDExLjMzMzQiIHN0cm9rZT0iIzRGNkRFNiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzgiIGQ9Ik03LjMzMzMzIDJINiIgc3Ryb2tlPSIjNEY2REU2IiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjwvZz4KPGRlZnM+CjxjbGlwUGF0aCBpZD0iY2xpcDBfMF8zNDkiPgo8cmVjdCB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIGZpbGw9IndoaXRlIi8+CjwvY2xpcFBhdGg+CjwvZGVmcz4KPC9zdmc+Cg==" alt=""></span>
-                <span class="label">Refine with AI</span>
-              </button>
-            </div>
-          </div>
-
-          <div class="pub-divider-inner"></div>
-
-          <div class="pub-caption-custom-row">
-            <label class="toggle-switch">
-              <input type="checkbox" id="pubCaptionCustomToggle" onchange="toggleCaptionCustomize()">
-              <span class="toggle-slider"></span>
-            </label>
-            <span>Customize caption for each platform</span>
-          </div>
-          <div class="pub-caption-per-platform" id="pubCaptionPerPlatform" style="display:none;"></div>
         </div>
+
+        <p class="pub-caption-hint" id="pubCaptionHint">The same caption is used across all platforms.</p>
+        <textarea class="pub-caption-input" id="pubCaption" placeholder="Write a caption for your post..." oninput="onSharedCaptionInput()"></textarea>
+
+        <div class="pub-caption-custom-row">
+          <label class="toggle-switch">
+            <input type="checkbox" id="pubCaptionCustomToggle" onchange="toggleCaptionCustomize()">
+            <span class="toggle-slider"></span>
+          </label>
+          <span>Customize caption for each platform</span>
+        </div>
+        <div class="pub-caption-per-platform" id="pubCaptionPerPlatform" style="display:none;"></div>
       </div>
 
-      <div class="pub-block">
-        <label class="pub-block-label">Destinations</label>
-        <div class="pub-destinations" id="pubDestinations"></div>
+      <div class="pub-section">
+        <label class="pub-section-label">Destinations</label>
+        <div class="pub-destinations" id="pubDestinations" style="margin-top:10px;"></div>
       </div>
 
-      <div class="pub-block">
-        <label class="pub-block-label">When</label>
-        <div class="pub-card">
-        <div class="pub-when-options" id="pubWhenOptions">
+      <div class="pub-section">
+        <label class="pub-section-label">When</label>
+        <div class="pub-when-options" id="pubWhenOptions" style="margin-top:12px;">
           <label class="pub-radio-row">
             <input type="radio" name="pubWhen" value="now" checked onchange="updateWhenSelection()">
             <span>Publish now</span>
           </label>
-          <div class="pub-radio-row-schedule">
-            <label class="pub-radio-row">
-              <input type="radio" name="pubWhen" value="schedule" onchange="updateWhenSelection()">
-              <span>Schedule</span>
-            </label>
-            <div class="pub-schedule-fields" id="pubScheduleFields" style="display:none;">
-              <div class="dt-picker-wrap">
-                <button type="button" class="dt-trigger placeholder" id="dtTrigger" onclick="toggleDatePicker(event)">
-                  <span id="dtTriggerText">Choose date &amp; time</span>
-                  <span class="ic"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiB2aWV3Qm94PSIwIDAgMTggMTgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gY2FsZW5kYXIiPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNNiAxLjVWNC41IiBzdHJva2U9IiM0NzUwNjkiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggaWQ9IlZlY3Rvcl8yIiBkPSJNMTIgMS41VjQuNSIgc3Ryb2tlPSIjNDc1MDY5IiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxwYXRoIGlkPSJWZWN0b3JfMyIgZD0iTTE0LjI1IDNIMy43NUMyLjkyMTU3IDMgMi4yNSAzLjY3MTU3IDIuMjUgNC41VjE1QzIuMjUgMTUuODI4NCAyLjkyMTU3IDE2LjUgMy43NSAxNi41SDE0LjI1QzE1LjA3ODQgMTYuNSAxNS43NSAxNS44Mjg0IDE1Ljc1IDE1VjQuNUMxNS43NSAzLjY3MTU3IDE1LjA3ODQgMyAxNC4yNSAzWiIgc3Ryb2tlPSIjNDc1MDY5IiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxwYXRoIGlkPSJWZWN0b3JfNCIgZD0iTTIuMjUgNy41SDE1Ljc1IiBzdHJva2U9IiM0NzUwNjkiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9nPgo8L3N2Zz4K" alt=""></span>
-                </button>
-                <div class="dt-picker-popover" id="dtPopover" style="display:none;">
-                  <div class="dt-picker-header">
-                    <button type="button" class="dt-picker-nav-btn" onclick="dtChangeMonth(-1)">‹</button>
-                    <span class="dt-picker-month-label" id="dtMonthLabel"></span>
-                    <button type="button" class="dt-picker-nav-btn" onclick="dtChangeMonth(1)">›</button>
+          <label class="pub-radio-row">
+            <input type="radio" name="pubWhen" value="schedule" onchange="updateWhenSelection()">
+            <span>Schedule</span>
+          </label>
+          <div class="pub-schedule-fields" id="pubScheduleFields" style="display:none;">
+            <div class="dt-picker-wrap">
+              <button type="button" class="dt-trigger placeholder" id="dtTrigger" onclick="toggleDatePicker(event)">
+                <span id="dtTriggerText">Choose date &amp; time</span>
+                <span class="ic">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="3" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M2 6.5H14" stroke="currentColor" stroke-width="1.3"/><path d="M5 1.5V4M11 1.5V4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+                </span>
+              </button>
+              <div class="dt-picker-popover" id="dtPopover" style="display:none;">
+                <div class="dt-picker-header">
+                  <button type="button" class="dt-picker-nav-btn" onclick="dtChangeMonth(-1)">‹</button>
+                  <span class="dt-picker-month-label" id="dtMonthLabel"></span>
+                  <button type="button" class="dt-picker-nav-btn" onclick="dtChangeMonth(1)">›</button>
+                </div>
+                <div>
+                  <div class="dt-picker-weekdays">
+                    <span class="dt-picker-weekday">Mo</span><span class="dt-picker-weekday">Tu</span><span class="dt-picker-weekday">We</span><span class="dt-picker-weekday">Th</span><span class="dt-picker-weekday">Fr</span><span class="dt-picker-weekday">Sa</span><span class="dt-picker-weekday">Su</span>
                   </div>
-                  <div>
-                    <div class="dt-picker-weekdays">
-                      <span class="dt-picker-weekday">Mo</span><span class="dt-picker-weekday">Tu</span><span class="dt-picker-weekday">We</span><span class="dt-picker-weekday">Th</span><span class="dt-picker-weekday">Fr</span><span class="dt-picker-weekday">Sa</span><span class="dt-picker-weekday">Su</span>
-                    </div>
-                    <div class="dt-picker-grid" id="dtGrid"></div>
-                  </div>
-                  <div class="dt-time-row">
-                    <span class="dt-time-label">Time</span>
-                    <select class="dt-time-select" id="dtHour"></select>
-                    <span class="dt-time-sep">:</span>
-                    <select class="dt-time-select" id="dtMinute"></select>
-                    <select class="dt-time-select" id="dtPeriod"><option>AM</option><option>PM</option></select>
-                  </div>
-                  <div class="dt-picker-actions">
-                    <button type="button" class="dt-cancel-btn" onclick="closeDatePicker()">Cancel</button>
-                    <button type="button" class="dt-choose-btn" onclick="confirmDatePicker()">Save</button>
-                  </div>
+                  <div class="dt-picker-grid" id="dtGrid"></div>
+                </div>
+                <div class="dt-time-row">
+                  <span class="dt-time-label">Time</span>
+                  <select class="dt-time-select" id="dtHour"></select>
+                  <span class="dt-time-sep">:</span>
+                  <select class="dt-time-select" id="dtMinute"></select>
+                  <select class="dt-time-select" id="dtPeriod"><option>AM</option><option>PM</option></select>
+                </div>
+                <div class="dt-picker-actions">
+                  <button type="button" class="dt-cancel-btn" onclick="closeDatePicker()">Cancel</button>
+                  <button type="button" class="dt-choose-btn" onclick="confirmDatePicker()">Choose Date</button>
                 </div>
               </div>
             </div>
@@ -1503,14 +1496,13 @@
           </label>
         </div>
         <div class="pub-warning-note" id="pubWarningNote"></div>
-        </div>
       </div>
 
       <div class="pub-divider"></div>
 
-      <div class="pub-run-ad">
+      <div class="pub-section pub-run-ad">
         <div>
-          <div class="pub-block-label" style="margin:0;">Run as ad</div>
+          <div class="pub-section-label">Run as ad</div>
           <p class="pub-run-ad-sub">Turn this post into a Meta ad campaign (optional)</p>
         </div>
         <button class="btn btn-secondary" onclick="runAsAd()">Set up ad →</button>
@@ -1526,6 +1518,25 @@
       <button class="ed-publish-btn" id="pubMainBtn" onclick="handlePublishMainAction()">⬆ Publish →</button>
     </div>
   </div>
+
+  <!-- Publish confirmation modal: going live isn't reversible the way a draft is, so each
+       selected platform gets its own "type the handle to confirm" unlock before it actually
+       posts. One tab per selected destination; a check mark lands on a tab once it's done. -->
+  <div class="modal-overlay" id="pubConfirmOverlay" style="display:none;" onclick="if(event.target===this) closePublishConfirmModal()">
+    <div class="modal modal--form pub-confirm-modal">
+      <button type="button" class="modal__close" onclick="closePublishConfirmModal()">✕</button>
+      <div class="modal__content">
+        <h2 class="modal__title">Publish to social</h2>
+        <p class="modal__body" id="pubConfirmSubtitle">Preview is live. Publishing requires typing the handle to confirm.</p>
+      </div>
+      <div class="pub-confirm-tabs" id="pubConfirmTabs"></div>
+      <div class="pub-confirm-body" id="pubConfirmBody"></div>
+      <div class="modal__footer" id="pubConfirmFooter">
+        <button type="button" class="btn btn-secondary" onclick="handlePublishConfirmSaveDraft()">✓ Save as draft instead</button>
+        <button type="button" class="btn btn-secondary" onclick="closePublishConfirmModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
   </div>
 </div>
 
@@ -1536,18 +1547,6 @@
 </div>
 
 <script>
-// ---- Stage-aware chat input placeholder (matches Figma: the suggestion copy lives in the placeholder itself) ----
-const CHAT_PLACEHOLDERS = {
-  script: 'Requests like "make it 24s instead" or "add a scene" work here too',
-  timeline: 'Requests like "redo Scene 2" or "make the thumbnails brighter" work here too',
-  video: 'Requests like "regenerate Scene 1" or "make it more energetic" work here too',
-  done: 'Ask anything'
-};
-function setChatPlaceholder(stage){
-  const el = document.getElementById('chatInput');
-  if(el) el.placeholder = CHAT_PLACEHOLDERS[stage] || 'Ask for changes';
-}
-
 // ---- Brand setup awareness (demo preview toggle, bottom-right) ----
 function setBrandMode(mode){
   window.__brandMode = mode;
@@ -1567,11 +1566,8 @@ function setStep(active){
 setStep(1);
 
 // Reached directly from the image-post flow's "Skip to publish" — jump straight to Publish.
-// Deferred with setTimeout so it runs after the rest of the script (incl. PUBLISH_PLATFORMS,
-// declared further down) has finished evaluating — calling it synchronously here would hit
-// the const's temporal dead zone.
 if(new URLSearchParams(location.search).get('goto') === 'publish'){
-  setTimeout(skipToPublish, 0);
+  skipToPublish();
 }
 
 function goToBrief(){
@@ -1734,8 +1730,7 @@ function renderScriptProposalMessage(scriptText, introText){
   return `
     <div class="msg ai">
       ${introText ? `<span class="tag">AI</span>${escapeHtml(introText)}` : ''}
-      <div class="script-proposal-box chat-card" id="scriptProposal${id}">
-        <span class="chat-card-title">${introText ? 'Updated Script' : 'Generate Script'}</span>
+      <div class="script-proposal-box" id="scriptProposal${id}">
         <div class="script-proposal-text">"${escapeHtml(scriptText)}"</div>
         <span class="script-applied-note">✓ Applied to Script panel</span>
         <button class="btn btn-dark" data-draft-id="${id}" onclick="handleScriptProposalClick(this)">Use this script →</button>
@@ -1779,7 +1774,7 @@ function runBriefToScript(){
   const panel = document.getElementById('scriptPanel');
   if(panel) panel.style.display = 'none';
 
-  chatLog.innerHTML = `<div class="msg ai loading" id="loadingMsg"><span class="tag">AI</span><div class="chat-card chat-loading-card"><div class="chat-loading-spinner"></div><div class="chat-loading-text"><span class="chat-loading-title">Writing the script...</span><span class="chat-loading-sub">Preparing your script based on what you shared</span></div></div></div>`;
+  chatLog.innerHTML = `<div class="msg ai loading" id="loadingMsg"><span class="tag">AI</span>Writing the script for your 'lip tint promo' video based on what you shared<span class="dots"><span>.</span><span>.</span><span>.</span></span></div>`;
 
   setTimeout(() => {
     let refinedScript, introHTML;
@@ -1843,7 +1838,7 @@ function reviseScript(requestText){
   const log = document.getElementById('chatLog');
   const loadingEl = document.createElement('div');
   loadingEl.className = 'msg ai loading';
-  loadingEl.innerHTML = `<span class="tag">AI</span><div class="chat-card chat-loading-card"><div class="chat-loading-spinner"></div><div class="chat-loading-text"><span class="chat-loading-title">Refining the script...</span><span class="chat-loading-sub">Applying your note</span></div></div>`;
+  loadingEl.innerHTML = `<span class="tag">AI</span>Revising the script based on your note<span class="dots"><span>.</span><span>.</span><span>.</span></span>`;
   log.appendChild(loadingEl);
   log.scrollTop = log.scrollHeight;
 
@@ -1887,8 +1882,22 @@ function setCharMode(mode){
 function setCharAppear(mode){
   document.querySelectorAll('#charAppearToggle .seg-chip').forEach(c => c.classList.toggle('active', c.dataset.appear === mode));
 }
-function selectChar(el){
-  document.querySelectorAll('.char-card').forEach(c => c.classList.remove('selected'));
+// Only Elena has a downloaded style set in this prototype — selecting any other character
+// hides the styles sub-panel rather than showing empty/wrong photos.
+const CHAR_WITH_STYLES = { elena: { label: "Elena's styles", avatar: 'assets/characters/elena.png' } };
+function selectChar(el, charId){
+  document.querySelectorAll('#charGrid .char-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  const panel = document.getElementById('charStylesPanel');
+  const styles = CHAR_WITH_STYLES[charId];
+  panel.classList.toggle('show', !!styles);
+  if(styles){
+    document.getElementById('charStylesLabel').textContent = styles.label;
+    document.getElementById('charStylesAvatar').style.backgroundImage = `url('${styles.avatar}')`;
+  }
+}
+function selectCharStyle(el){
+  document.querySelectorAll('#charStylesGrid .char-card').forEach(c => c.classList.remove('selected'));
   el.classList.add('selected');
 }
 
@@ -1922,11 +1931,12 @@ function renderReferenceImages(){
       <span class="remove" onclick="removeReferenceImage(${n})">✕</span>
     </div>
   `).join('');
+  const refIcon = `<svg class="ic-svg" width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1.5" y="1.5" width="11" height="11" rx="1.6" stroke="currentColor" stroke-width="1.3"/><circle cx="5" cy="5.3" r="1.1" stroke="currentColor" stroke-width="1.1"/><path d="M2 10.3L5 7.6L7 9.2L9.5 6.6L12 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
   const fullHtml = chips + `
-    <div class="ref-image-add" onclick="addReferenceImage(this)"><div class="ic"></div><span>+ Reference</span></div>
+    <div class="ref-image-add" onclick="addReferenceImage(this)">${refIcon}<span>+ Reference</span></div>
   `;
   const compactHtml = chips + `
-    <div class="ref-image-add-compact" onclick="addReferenceImage(this)" title="Add reference image"><div class="ic"></div><span>+ Reference</span></div>
+    <div class="ref-image-add-compact" onclick="addReferenceImage(this)" title="Add reference image">${refIcon}<span>+ Reference</span></div>
   `;
   document.querySelectorAll('.reference-images-row').forEach(row => {
     row.innerHTML = row.classList.contains('compact') ? compactHtml : fullHtml;
@@ -2078,7 +2088,6 @@ function showSub(name){
   Object.values(subs).forEach(id => document.getElementById(id).style.display = 'none');
   document.getElementById(subs[name]).style.display = 'flex';
   if(name !== 'studio') document.getElementById('settingsBar').style.display = '';
-  setChatPlaceholder(name === 'studio' ? 'video' : name);
 }
 showSub('script');
 
@@ -2120,11 +2129,9 @@ function selectSettingVoice(el, label){
 }
 
 // Mirrors the main-panel stage CTAs inside the chat log, so the flow can be driven from either side.
-function appendChatCta(text, buttonsHtml, stacked){
+function appendChatCta(text, buttonsHtml){
   const log = document.getElementById('chatLog');
-  const textHtml = stacked ? `<span class="chat-card-title">${text}</span>` : text;
-  const rowClass = stacked ? 'chat-final-buttons' : 'chat-cta-row';
-  log.innerHTML += `<div class="msg ai"><span class="tag">AI</span>${textHtml}<div class="${rowClass}">${buttonsHtml}</div></div>`;
+  log.innerHTML += `<div class="msg ai"><span class="tag">AI</span>${text}<div class="chat-cta-row">${buttonsHtml}</div></div>`;
   log.scrollTop = log.scrollHeight;
 }
 
@@ -2137,8 +2144,15 @@ function confirmScript(){
   showSub('timeline');
   renderTimelineScenes();
   document.getElementById('chatQuick').style.display = 'none';
-  document.getElementById('chatLog').innerHTML += '<div class="msg ai"><span class="tag">AI</span>Script confirmed. I\'ll split the 8 seconds into two 4-second segments and design the scenes.</div>';
-  appendChatCta('Next, let\'s generate a thumbnail for each scene.', '<button class="btn btn-dark" onclick="generateThumbnails()">Generate thumbnails →</button>');
+  const durationSec = window.__videoDuration || 8;
+  const sceneCount = getSceneCount();
+  document.getElementById('chatLog').innerHTML += `<div class="msg ai"><span class="tag">AI</span>Script confirmed. I'll split the ${durationSec} seconds into ${sceneCount} 4-second segments and design the scenes.</div>`;
+  const unitCount = getVideoUnitCount();
+  const totalCost = unitCount * VIDEO_COST_PER_UNIT;
+  const videoMsg = unitCount > 1
+    ? `Once you're happy with the scenes, I'll generate ${unitCount} 8-second video clips — the current minimum length — and combine them into your final ${durationSec}s video.`
+    : `Once you're happy with the scenes, I'll generate your ${durationSec}-second video.`;
+  appendChatCta(videoMsg, `<button class="btn btn-dark" onclick="proceedToStudio()">Generate video ⚡${totalCost} →</button>`);
 }
 
 // Distributes the approved full-script sentences across `count` scene slots —
@@ -2173,6 +2187,31 @@ const SCENE_TEMPLATES = [
 function getSceneCount(){
   const seconds = window.__videoDuration || 8;
   return Math.min(6, Math.max(1, Math.round(seconds / 4)));
+}
+// AI video generation currently has an 8-second minimum clip length, so actual video
+// generation is grouped into 8s units (each covering 2 consecutive 4s Timeline scenes) —
+// e.g. a 16s video generates as 2 clips, which then get combined into the final cut.
+function getVideoUnitCount(){
+  const seconds = window.__videoDuration || 8;
+  return Math.max(1, Math.round(seconds / 8));
+}
+function getVideoUnitScenes(unit){
+  return [unit * 2 - 1, unit * 2];
+}
+function getVideoUnitTimeLabel(unit){
+  const [first, last] = getVideoUnitScenes(unit);
+  const start = SCENE_TEMPLATES[first - 1]?.time.split('–')[0] || '';
+  const end = SCENE_TEMPLATES[last - 1]?.time.split('–')[1] || SCENE_TEMPLATES[first - 1]?.time.split('–')[1] || '';
+  return `${start}–${end}`;
+}
+// Tells the user, right in Timeline, which 8s video clip this 4s scene will end up in —
+// since scenes stay 4s for narration pacing but video generation groups pairs of them.
+function timelineSceneNoteText(n){
+  const totalUnits = getVideoUnitCount();
+  if(totalUnits <= 1) return 'This scene will be generated as part of a single 8-second video.';
+  const unit = Math.ceil(n / 2);
+  const partner = n % 2 === 1 ? n + 1 : n - 1;
+  return `Paired with Scene ${partner} into one 8-second video (Video ${unit} of ${totalUnits}).`;
 }
 function toggleDurationPopover(e){
   e.stopPropagation();
@@ -2218,26 +2257,16 @@ function renderTimelineScenes(){
   document.getElementById('sceneGrid').innerHTML = scenes.map((s, i) => `
     <div class="scene-tile${i === 0 ? ' active' : ''}" data-scene="${i + 1}" id="sceneTile${i + 1}" onclick="selectScene(${i + 1})">
       <div class="scene-tile-preview">
-        <div class="scene-tile-overlay-top">
-          <span class="scene-tile-ready-badge">✓ Ready</span>
-          <div class="scene-tile-version-wrap">
-            <span class="scene-tile-version-pill" id="sceneVersionPill${i + 1}" onclick="event.stopPropagation(); toggleSceneVersionPopover(${i + 1})">v1</span>
-            <div class="scene-version-popover" id="sceneVersionPopover${i + 1}" style="display:none;" onclick="event.stopPropagation();"></div>
-          </div>
-          <button class="scene-tile-regen-btn" onclick="event.stopPropagation(); regenerateScene(${i + 1})" title="Regenerate · 1 credit">↻</button>
-        </div>
-        <div class="spinner-mini"></div>
         <span class="scene-tile-badge">Scene ${i + 1} · ${s.time}</span>
       </div>
       <div class="scene-tile-line" id="tileLine${i + 1}">${escapeHtml(getSceneScript(i + 1))}</div>
     </div>
   `).join('');
-  scenes.forEach((s, i) => updateSceneVersionPill(i + 1));
 
   document.getElementById('sceneEditorPanel').innerHTML = scenes.map((s, i) => `
     <div class="scene-card scene-editor" id="sceneEditor${i + 1}" style="${i === 0 ? '' : 'display:none;'}">
       <div class="scene-desc-block">
-        <label class="scene-desc-label">Scene &amp; character action description</label>
+        <label class="scene-desc-label">🎬 Scene &amp; character action description</label>
         <div class="scene-desc-box">
           <div class="reference-images-row compact"></div>
           <div class="mention-wrap">
@@ -2246,14 +2275,7 @@ function renderTimelineScenes(){
           </div>
         </div>
       </div>
-      <div class="scene-prompt-block" id="scenePromptBlock${i + 1}">
-        <div class="scene-prompt-header-row">
-          <label class="scene-desc-label">Image prompt</label>
-          <button class="prompt-regen-btn" onclick="regenerateScene(${i + 1})">↻ Regenerate <span class="cost">⚡15</span></button>
-        </div>
-        <textarea class="scene-prompt-text" id="scenePrompt${i + 1}"></textarea>
-      </div>
-      <div class="scene-note">Scene (designed) · AI automatically builds a scene to match this line</div>
+      <div class="scene-note">${escapeHtml(timelineSceneNoteText(i + 1))}</div>
     </div>
   `).join('');
 
@@ -2545,137 +2567,41 @@ function playVoiceButton(btn, justGenerated, onDone){
   }, 1300);
 }
 
-// ---- Thumbnail generation happens directly on the Timeline scene tiles ----
-// Turns the user's scene description into an image-generation prompt.
-function buildImagePrompt(desc){
-  desc = desc.trim().replace(/\.+$/, '');
-  return `${desc}. Realistic beauty UGC style — natural daylight, shallow depth of field, handheld camera feel, true-to-life skin texture and color.`;
-}
-
-function generateThumbnails(){
-  document.querySelectorAll('#subTimeline .scene-tile').forEach((t, i) => {
-    t.classList.add('generating');
-    t.classList.remove('ready');
-    const n = i + 1;
-    const descEl = document.querySelector(`#sceneEditor${n} .scene-desc`);
-    const promptBlock = document.getElementById(`scenePromptBlock${n}`);
-    const promptText = document.getElementById(`scenePrompt${n}`);
-    if(descEl && promptText && promptBlock){
-      promptText.value = buildImagePrompt(descEl.value);
-      promptBlock.classList.add('visible');
-    }
-  });
-  updateTimelineCta();
-  showQueuePanel('#subTimeline .scene-tile', 'thumbnail generation', () => {
-    document.querySelectorAll('#subTimeline .scene-tile').forEach(t => { t.classList.remove('generating'); t.classList.add('ready'); });
-    updateTimelineCta();
-    const total = document.querySelectorAll('#subTimeline .scene-tile').length * VIDEO_COST_PER_SCENE;
-    appendChatCta('All thumbnails are ready.', `<button class="btn btn-dark" onclick="proceedToStudio()">Generate video ⚡${total} →</button>`);
-  });
-}
-function regenerateScene(n){
-  const tile = document.getElementById('sceneTile' + n);
-  if(!tile) return;
-  tile.classList.remove('ready');
-  tile.classList.add('generating');
-  updateTimelineCta();
-  setTimeout(() => {
-    tile.classList.remove('generating');
-    tile.classList.add('ready');
-    ensureSceneThumbHistory(n);
-    window.__sceneThumbHistory[n].push({ label: 'v' + (window.__sceneThumbHistory[n].length + 1) });
-    window.__sceneThumbActive[n] = window.__sceneThumbHistory[n].length - 1;
-    updateSceneVersionPill(n);
-    updateTimelineCta();
-  }, 1400);
-}
-
-// ---- Per-scene thumbnail version history (each regenerate adds a version; pick any to make it active) ----
-window.__sceneThumbHistory = window.__sceneThumbHistory || {};
-window.__sceneThumbActive = window.__sceneThumbActive || {};
-
-function ensureSceneThumbHistory(n){
-  if(!window.__sceneThumbHistory[n]){
-    window.__sceneThumbHistory[n] = [{ label: 'v1' }];
-    window.__sceneThumbActive[n] = 0;
-  }
-}
-function updateSceneVersionPill(n){
-  ensureSceneThumbHistory(n);
-  const pill = document.getElementById('sceneVersionPill' + n);
-  if(!pill) return;
-  const hist = window.__sceneThumbHistory[n];
-  pill.classList.toggle('show', hist.length > 1);
-  pill.textContent = hist[window.__sceneThumbActive[n]].label;
-}
-function toggleSceneVersionPopover(n){
-  document.querySelectorAll('.scene-version-popover').forEach(p => { if(p.id !== 'sceneVersionPopover' + n) p.style.display = 'none'; });
-  renderSceneVersionPopover(n);
-  const pop = document.getElementById('sceneVersionPopover' + n);
-  pop.style.display = pop.style.display === 'block' ? 'none' : 'block';
-}
-document.addEventListener('click', (e) => {
-  if(!e.target.closest('.scene-tile-version-wrap')) document.querySelectorAll('.scene-version-popover').forEach(p => p.style.display = 'none');
-});
-function renderSceneVersionPopover(n){
-  const hist = window.__sceneThumbHistory[n];
-  const activeIdx = window.__sceneThumbActive[n];
-  document.getElementById('sceneVersionPopover' + n).innerHTML = hist.map((h, i) => `
-    <div class="scene-version-item${i === activeIdx ? ' active' : ''}" onclick="selectSceneThumbVersion(${n}, ${i})">
-      <span>${h.label}</span><span class="check">✓</span>
-    </div>
-  `).join('');
-}
-function selectSceneThumbVersion(n, i){
-  window.__sceneThumbActive[n] = i;
-  updateSceneVersionPill(n);
-  document.getElementById('sceneVersionPopover' + n).style.display = 'none';
-}
+// ---- Timeline CTA: no generation happens here anymore — confirming scene content moves
+// straight to Video, where actual generation runs in 8s units (see startVideoGeneration). ----
 function updateTimelineCta(){
-  const tiles = document.querySelectorAll('#subTimeline .scene-tile');
-  const readyTiles = document.querySelectorAll('#subTimeline .scene-tile.ready');
-  const generatingTiles = document.querySelectorAll('#subTimeline .scene-tile.generating');
   const btn = document.getElementById('timelineCtaBtn');
   const meta = document.getElementById('timelineCtaMeta');
   if(!btn) return;
-  if(tiles.length > 0 && readyTiles.length === tiles.length){
-    const total = tiles.length * VIDEO_COST_PER_SCENE;
-    btn.textContent = `Generate video ⚡${total}`;
-    btn.title = `${tiles.length} scene${tiles.length > 1 ? 's' : ''} × ⚡${VIDEO_COST_PER_SCENE}`;
-    btn.disabled = false;
-    btn.onclick = proceedToStudio;
-    meta.style.display = 'none';
-    document.getElementById('tabStudio').classList.remove('locked');
-  } else if(generatingTiles.length > 0){
-    btn.textContent = 'Generating…';
-    btn.title = '';
-    btn.disabled = true;
-    meta.style.display = '';
-    meta.textContent = 'Generating thumbnails…';
-  } else {
-    btn.textContent = 'Generate thumbnails';
-    btn.title = '';
-    btn.disabled = false;
-    btn.onclick = generateThumbnails;
-    meta.style.display = '';
-    meta.textContent = 'Regenerating a thumbnail once it is made will use credits';
-  }
+  const unitCount = getVideoUnitCount();
+  const total = unitCount * VIDEO_COST_PER_UNIT;
+  btn.textContent = `Generate video ⚡${total}`;
+  btn.title = unitCount > 1 ? `${unitCount} × 8s clips × ⚡${VIDEO_COST_PER_UNIT}` : `⚡${VIDEO_COST_PER_UNIT}`;
+  btn.disabled = false;
+  btn.onclick = proceedToStudio;
+  meta.style.display = '';
+  meta.textContent = unitCount > 1
+    ? `Generates ${unitCount} 8-second clips and combines them into your final video.`
+    : 'Generates your video.';
 }
 function proceedToStudio(){
   document.getElementById('tabTimeline').innerHTML = '<span class="check">✓</span> Timeline';
-  document.getElementById('chatLog').innerHTML += '<div class="msg ai"><span class="tag">AI</span>All scene thumbnails are ready. Generating your scene videos now.</div>';
+  document.getElementById('tabStudio').classList.remove('locked');
+  const unitCount = getVideoUnitCount();
+  document.getElementById('chatLog').innerHTML += `<div class="msg ai"><span class="tag">AI</span>${unitCount > 1 ? `Generating ${unitCount} 8-second video clips now.` : 'Generating your video now.'}</div>`;
   showSub('studio');
   startVideoGeneration();
 }
 
 // ---- Queue panel (simulates background generation jobs) ----
-function showQueuePanel(tileSelector, jobLabel, onDone){
+function showQueuePanel(tileSelector, jobLabel, onDone, itemName){
+  itemName = itemName || 'Scene';
   const scenes = document.querySelectorAll(tileSelector);
   const jobsHTML = [...scenes].map((c, i) => `
     <div class="queue-job" data-job="${i}">
       <div class="thumb"></div>
       <div class="queue-job-info">
-        <div class="queue-job-title">Scene ${i + 1} ${jobLabel}</div>
+        <div class="queue-job-title">${itemName} ${i + 1} ${jobLabel}</div>
         <div class="queue-job-status"><span class="spin"></span>WORKING</div>
       </div>
     </div>
@@ -2697,11 +2623,10 @@ function showQueuePanel(tileSelector, jobLabel, onDone){
 }
 
 // ---- Voice + Video stage: per-scene video generation, then free combine ----
-const VIDEO_COST_PER_SCENE = 175;
+const VIDEO_COST_PER_UNIT = 175;
 
 function startVideoGeneration(){
-  const count = getSceneCount();
-  const scenes = SCENE_TEMPLATES.slice(0, count);
+  const count = getVideoUnitCount();
 
   document.getElementById('combineResultView').style.display = 'none';
   document.querySelector('#subStudio .timeline-stage').style.display = 'flex';
@@ -2712,28 +2637,28 @@ function startVideoGeneration(){
   const grid = document.getElementById('videoGrid');
   grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
   grid.classList.toggle('single-row', rows <= 1);
-  grid.innerHTML = scenes.map((s, i) => `
+  grid.innerHTML = Array.from({ length: count }, (_, i) => `
     <div class="video-tile generating${i === 0 ? ' active' : ''}" data-scene="${i + 1}" id="videoTile${i + 1}" onclick="selectVideoScene(${i + 1})">
       <div class="video-tile-preview">
         <div class="video-tile-overlay-top">
           <span class="video-tile-ready-badge">✓ Ready</span>
-          <button class="video-tile-regen-btn" onclick="event.stopPropagation(); regenerateVideoScene(${i + 1})" title="Regenerate · ⚡${VIDEO_COST_PER_SCENE}">↻</button>
+          <button class="video-tile-regen-btn" onclick="event.stopPropagation(); regenerateVideoScene(${i + 1})" title="Regenerate · ⚡${VIDEO_COST_PER_UNIT}">↻</button>
         </div>
         <div class="spinner-mini"></div>
         <button class="video-play-btn" onclick="event.stopPropagation(); playVideoScene(${i + 1})" title="Play">▶</button>
-        <span class="video-tile-badge">Scene ${i + 1} · ${s.time}</span>
+        <span class="video-tile-badge">Video ${i + 1} · ${getVideoUnitTimeLabel(i + 1)}</span>
       </div>
     </div>
   `).join('');
 
-  document.getElementById('videoEditorPanel').innerHTML = scenes.map((s, i) => `
+  document.getElementById('videoEditorPanel').innerHTML = Array.from({ length: count }, (_, i) => `
     <div class="video-scene-card" id="videoSceneEditor${i + 1}" style="${i === 0 ? '' : 'display:none;'}">
       <div class="video-scene-header-row">
-        <div class="scene-time"><span class="dot"></span>${s.time}</div>
+        <div class="scene-time"><span class="dot"></span>${getVideoUnitTimeLabel(i + 1)} · Scenes ${getVideoUnitScenes(i + 1).join('–')}</div>
       </div>
       <label class="scene-desc-label">Video prompt</label>
       <textarea class="scene-prompt-text" id="videoPrompt${i + 1}">${escapeHtml(buildVideoPrompt(i + 1))}</textarea>
-      <button class="video-regen-btn" onclick="regenerateVideoScene(${i + 1})">🔁 Regenerate <span class="cost">⚡${VIDEO_COST_PER_SCENE}</span></button>
+      <button class="video-regen-btn" onclick="regenerateVideoScene(${i + 1})">🔁 Regenerate <span class="cost">⚡${VIDEO_COST_PER_UNIT}</span></button>
     </div>
   `).join('');
 
@@ -2750,19 +2675,28 @@ function startVideoGeneration(){
   updateVideoCta();
 
   showQueuePanel('#videoGrid .video-tile', 'video generation', () => {
-    document.querySelectorAll('#videoGrid .video-tile').forEach(t => { t.classList.remove('generating'); t.classList.add('ready'); });
+    document.querySelectorAll('#videoGrid .video-tile').forEach((t, i) => {
+      t.classList.remove('generating'); t.classList.add('ready');
+      applySampleVideoFrame(t, i);
+    });
     updateVideoCta();
-    appendChatCta('All scene videos are ready.', '<button class="btn btn-dark" onclick="combineVideo()">Combine into final video →</button>');
-  });
+    appendChatCta('All video clips are ready.', '<button class="btn btn-dark" onclick="combineVideo()">Combine into final video →</button>');
+  }, 'Video');
+}
+// Prototype stand-in for a real generated clip's first frame — cycles between the two sample
+// stills so every ready tile shows something instead of a flat gradient.
+function applySampleVideoFrame(tile, index){
+  const preview = tile.querySelector('.video-tile-preview');
+  if(preview) preview.style.backgroundImage = `url('assets/video/scene${(index % 2) + 1}.png')`;
 }
 
-function buildVideoPrompt(n){
-  const descEl = document.querySelector('#sceneEditor' + n + ' .scene-desc');
-  const imagePromptEl = document.getElementById('scenePrompt' + n);
-  const imagePrompt = imagePromptEl ? imagePromptEl.value.trim() : '';
-  if(imagePrompt) return `${imagePrompt} Animate naturally with subtle movement — keep framing and character consistent with the still image.`;
-  const desc = descEl ? descEl.value.trim() : '';
-  return desc;
+// A video unit spans 2 Timeline scenes (4s each) to reach the 8s minimum clip length —
+// combine both scene descriptions into one prompt for that clip.
+function buildVideoPrompt(unit){
+  const [a, b] = getVideoUnitScenes(unit);
+  const descA = document.querySelector('#sceneEditor' + a + ' .scene-desc')?.value.trim() || '';
+  const descB = document.querySelector('#sceneEditor' + b + ' .scene-desc')?.value.trim() || '';
+  return [descA, descB].filter(Boolean).join(' Then, ');
 }
 
 function buildVideoSegmentNav(){
@@ -2773,7 +2707,7 @@ function buildVideoSegmentNav(){
     const n = tile.dataset.scene;
     return `<div class="segment-nav-btn${n === '1' ? ' active' : ''}" data-target="${n}" onclick="selectVideoScene(${n})">${n}</div>`;
   }).join('');
-  nav.innerHTML = `<span class="scene-nav-label">Scene</span>${buttons}`;
+  nav.innerHTML = `<span class="scene-nav-label">Video</span>${buttons}`;
 }
 
 function selectVideoScene(n){
@@ -2796,6 +2730,7 @@ function regenerateVideoScene(n){
   setTimeout(() => {
     tile.classList.remove('generating');
     tile.classList.add('ready');
+    applySampleVideoFrame(tile, n - 1);
     if(window.__videoCombined) window.__videoCombineStale = true;
     updateVideoCta();
   }, 1400);
@@ -2815,17 +2750,21 @@ function combineVideo(){
   updateVideoCta();
   document.getElementById('tabStudio').innerHTML = '<span class="check">✓</span> Video';
   document.getElementById('chatLog').innerHTML += '<div class="msg ai"><span class="tag">AI</span>Combined all scenes into the final cut — free, no credits used. Your narration track from Timeline is already mixed in.</div>';
-  appendChatCta('Your video is ready. What\'s next?', '<button class="btn btn-dark" onclick="continueToEditing()">Continue to editing →</button><button class="btn btn-secondary" onclick="skipToPublish()">Skip to publish</button>', true);
-  setChatPlaceholder('done');
+  appendChatCta('Your video is ready. What\'s next?', '<button class="btn btn-dark" onclick="continueToEditing()">Continue to editing →</button><button class="btn btn-secondary" onclick="skipToPublish()">Skip to publish</button>');
   showCombineResult();
 }
 
 function showCombineResult(){
+  const count = getVideoUnitCount();
   document.querySelector('#subStudio .timeline-stage').style.display = 'none';
   document.getElementById('combineResultView').style.display = 'flex';
   document.getElementById('settingsBar').style.display = 'none';
-  document.getElementById('combineResultTime').textContent = `0:00 / ${window.__videoDuration || 8}s`;
-  renderCombineInfoPanel();
+  document.getElementById('combineResultDuration').textContent = `${window.__videoDuration || 8}s`;
+  document.getElementById('combineResultTicks').innerHTML = Array.from({ length: count - 1 }, (_, i) => {
+    const pct = ((i + 1) / count) * 100;
+    return `<div class="combine-tick" style="left:${pct}%"></div>`;
+  }).join('');
+  renderCombineSummaryCard();
 }
 
 function getAutoVideoTitle(){
@@ -2866,10 +2805,10 @@ function editCombineTitle(){
   el.addEventListener('keydown', onKey);
 }
 
-function renderCombineInfoPanel(){
+function renderCombineSummaryCard(){
   const titleEl = document.getElementById('combineVideoTitle');
   const descEl = document.getElementById('combineVideoDesc');
-  const specsEl = document.getElementById('combineInfoSpecs');
+  const specsEl = document.getElementById('combineSummarySpecs');
   if(!titleEl || !specsEl) return;
 
   titleEl.textContent = window.__videoTitle || getAutoVideoTitle();
@@ -2881,6 +2820,7 @@ function renderCombineInfoPanel(){
   const specs = [
     { icon: '⏱', label: 'Duration', value: duration },
     { icon: '▭', label: 'Ratio', value: '9:16' },
+    { icon: '🌐', label: 'Language', value: 'English' },
     { icon: '👤', label: 'Character', value: character },
     { icon: '🔊', label: 'Voice', value: voice },
   ];
@@ -2893,10 +2833,6 @@ function renderCombineInfoPanel(){
       <span class="spec-value">${escapeHtml(s.value)}</span>
     </div>
   `).join('');
-}
-
-function downloadCombineResult(){
-  alert('This would download the final video — outside this prototype\'s scope.');
 }
 
 function backToSceneVideos(){
@@ -2950,16 +2886,10 @@ function continueToPublish(){
 // ---- Publish view (Edit & Publish step — Caption / Destinations / When / Run as ad) ----
 window.__platformConnections = window.__platformConnections || { instagram: true, facebook: true, tiktok: false };
 
-const PUBLISH_PLATFORM_ICONS = {
-  instagram: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAHeElEQVR4nOWXXaxUVxXHf/vjfMzMnfsBF8pcUEBaSlJjIRiNVZtiSCxN1VK1rVof1NJgjPqkxo/0RWOiD2rTNFpbJalao+GhhWgK0lgVU60Qi9SGUjBY4F6+LnC/Zs7MOXtvs/e5d+YiNyQ+9cGd7Jwza/bZ67//67/WWUc45xxv4JC8wUPP/3HmQsF3fn6OY6faTDcNUWFQhUEbg8oNkSnvdW7Q1qALb7Noa9HOonFo55C2PJlEIpwAFHEtZtWGIbZ8fg2Dy5KuTzEXgjPjBdu+/TozMwZpLJEp0H7zYtaRtah8zlYEW+wskTVE+KsHAMpfBQjDLASJReGcxIiIuC9l2471DDSSKwF885GT/OXARDiBmjvpHAN++o1NyULpzANwRK4E4hnw9shZlAN/bmzJA1JjrMYITS5iGhuGue/Rm64MwYmD5xmaLpCe7uDQoTzN3lnY2ITNu47wIMurt5fTEdmiywaz9BcoDAm5jMiEY+Lopas1EI9NUAnx804cGn811GqKd314NavXL2JoWZXBZdVriqo5NkVrdIqzz7zKhV1HMAhymdCWlpY1COFoTS4gwsXtJtKLyE9/chxDyyrc8/B7GWhc2+n8UW3Uw1y8cYRs+0ZefuBpmqPNMiSizHhnxQIA8hZKOFSg2SCd476H30+9UaU5Osmh773A5NGLZKOXifyDIda2VLtzpQMPYGSQ6trFrPnyraQj/bz1ibs4dO+vYCoLwnDSK1QtAMDMhFMr509vWXXn9cF5NjrB3+5/EjeVUcFRnXPmwLpSZC5MFexLPnAjK7e/k9NPvcTwpjUBROP+mzn1wxfBtXHWP9orP3LuZkkxzXBxmevMRZbYcdbc8ZZgf/37z1JpjlOV06SySaKaRKpFpFvoKEPrNpHMUKKNECY492P5x9dz/Lt/DPcDG5d7vGgKUtchcu2rGRh0EwhpkKJACkd1ZCDYO8dPoGXm8zVs4kffhutpfGYzlbUNdD1l8uAJzv3mMOd2Hebkj/fzpgffw78f+yvTR8+H9clIvYz9HIiQnv8FQKsMGQBYBAVxY7B86OwYsZylXcCST29h6aduv0J4/RtXhZk26px+/PecfOxPpStXbu/D4OGLsIsXen41gEh1kCIPADyQnj3D68Y/2H/7LV3n4zt2c+HXfwjbDWx5B40v3M2KbbfR/PsxJg+cxHjnrldyZ/VfOp3Nhis0EPlYKj8zIpF1F8TeJlvEKmNwSxnf8UefYuLJp1HZZWTzIpM793J+x2/Df40HNiFVhlYdtOzFupuCfrqFAMiMSPZAdAHEGXHaIUoz0vXrgq393HNEUUYsM5Kwvs3kzj3hv+raEWLZQYs2et5BlOh0NTR/6C4AkaGUQcgCqeeFoM/nb1ncbXMGWa2h+7woM5yRuEKiCoWbBa36KiGcwmtJ2B4A5eMusdZXkQUY0FEHnbTR1Ta6r0edqmXoemmzJ48HW+2uO8JvXcnCelltU7/z3eG/7KUjgXrPZum0x4BPVZ9l85nQ3ZtqB6kLRFwg46K3oK+DkJ4BR3vPT9E3/oDa3Z9A5JNk+/eBUdRu20rfPR8L65v7nkfLTkjb+cODCQXL5fMJoAtApm1UWqDiAjEvBLqWhcoZ6Bx7kc6+x4k3b6N672fDnD9mdv6SbP/v0EkEnsTeNig6OOFfzSL0BlcBUNUOKsmRSYGMDPbSGHKoQbxiEW5ilNDmCIl74UfkzVOomz+IXLkRl01hTx+j9czPaL/8T3Q1wQjfmDj0suGwd2dsHCU9q+3g3L+grwaQdtBpjgwsGJg8DUMNxMobEP86E2p9WUccvLab4sguXEdgOwrbVtg8QVd6HZ5flqxbHu7N2RJAcC5znF3gZaSr3nmO8iBiiz19ELny7aj3fYn80mvYzsxsl+N3L5CFD1UnhExqi8+4wrcevvh4yaQ1BrZ/Muw99eyfyyInNdI/O6/Q6R4DRWBBpD75E4pXdiPfthXZ3yD6yE/IDzyBuXgCO3UGYQucB1B0kIWvlB0QpeLt0BKi4XWkH/0cangpxdnztPY+jxIJVuQoIbFigRDIpI1IHTZJIa5SSIfZ+xCV27+FrC8l2fQ1/tdRnD/H+DceQqocYTVSGEwo9W4BALGFJMXGVUir2KgKtsXknq8Sr76V+M23ICuLkJWhazp1l8ew42coXv0HM7t3wyUv6gRlCoxVJYiFREh9CCtmQSRViPy1go0qtC4cpjn+ShChb9mFzaHdQuUtZNZEtGdQ2TSyNY1rgmlF5NMJ5ClCJyGtfdx9a+p9RP3xAgAaN2HHj2JVgtUlCBvXsLEHkYCWQYDOGsjbIZZGCDAudNIuKrCFT+MW5BahXVlPlPE9W1nOpf9esNQ3rFqgFG/+OlSHsFGE1R5EJYTD+nCkNUw6gKnWMZW+ElxUAZVgohinI6yKQGuEFCjfV2j/XnEoBVJaxOxU9ZTrvrh1AQ30N0g/9AjZoV+QT5zCRWoWTIpN+7Da0yZQefnSsZ6JIkIVGqe1r7WzlU7iv0xC7+lP7b9SpEPWK1RW3MDwVx5ENxZ1AYj/+6/j/wAPhn1YLjniagAAAABJRU5ErkJggg==',
-  facebook: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAADzUlEQVR4nMVXW0hUQRj+ZvbifXe1O+paERmYihFBpdkNIroY+GKQFvTQ5bmnqLeIHhKiHuqheqqMoOhCBQWRYUERRGaBkJSrJSXUaqmp58zEnNuey5xtpcJvd5g5/8z/zzfzz/wzQzjnHNMIimlGcCqNn33luP8ZeDbI0D8KDE3o8mgYqIgSVMQINhcDq2aRjG2STFxw9QNDaxdHYiQzb5XmERyqIGhaSP+OQN8IR0u7irdJDkII3E1NmaxOJwLc3BjS8ikTaOtRcfQlw/Ak/grREHB6JcXmeCBzAvcSKnY/UvEvcaY2gKZFgT8T6PvJUH9zAsPGApOC2BaZqS5kaZZTNAt43BBGaT5NT6Dm6jgSP1ja0QifC5TkAfsrQ9hSRlFaoMuGxjn6fnLU3xj36C0tImhvzPbfhm3dCnqT/lNPKAFnHOIXL6C4vTWs5c6REi1xlTt0RP5mkKGtexI7y0NWe2pXPvF8Qu/AlSD+jIMpzJLd3u7t3AG3jqrrnXihyGeg45OC3mG/qddHY/qqtjgg7bzjk4qEYYOpek4MPTFrAokhFR39KmpLAk4Cd98rgCJfRG5pPN8b6Q4+GMOVd4pXlxJAzKLN1t0exUug84uqT3eGkc6Ny10+AUNis6NfEM1yEfiaOQEZpqL78VtqoQfNwtAI07axbDt7ZJLOuI/7ZDaStrZBy6axbWRmhOzctlRAr5rtjWhnt+RaZbHQjj/55bEhQ9AsiCM1OeY/il2VYd86d/2d7gkrDsgQzSZeAvECguSILQj9IbSmQ+eAAjDXlrbZq5ydin/ULNTFg1o9Z0bSAkfqeyp4PaA4dN32quakCATNwtYlYZx5OuoxRkC0ILLpQtKS7VqWheaaHEc7e33nwGRaF2wvz/ISWLMgjHiEGmeBGb/0CCZItPekDpe6+alYbkLUm2RlAzARLwygboHPWXBkfR4gmIswquV60kZjJZ89r7Vz6nllwJF1zusRtX80L8/R/KP5S0uG71TmKEvjgKVj6rllHPEIQctyp+uo29C1PTFEwsTWMfeUZZva2Rlz6XJEwsDDAzM8etQtmF8UROuOiH6EGkeqJ0m2p7SdLZ1viqGsKJDZu6BlRa52qdh76bs8OPnMgAyxXIrWxhgaqpxTn5aAQEN1DqqLQ9hwahAfvzmPWdkilMlqSkK4vm8mymb4v3+ob41wx8wgeo7Nw8XmQpQVUn2Uxg3JQ8C+2GIBTefl4blpOxfI6GVk4nH3L9x6NYbq0hD2rM635MlRhvUnv6B+cTYaanKwttx58fxnBPAfMO2v49/QJ28HrQ9A9QAAAABJRU5ErkJggg==',
-  tiktok: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAADKklEQVR4nMVXX0hTURj+tq7bnHebzDRXdJ2g1UMLk5oPm86sF7dAkEwKe1DyoSaDHkoSAimQfNQIpIdJ9CAIPhg03yonCvWQkJMKBfOmJqxWm5uhMhfn7u62pe5Pbu2Dw3b+ft/5/c7vd+4RhUKhELIIMbIMKrrCsiysVitcLhe8Xm/aycxmM3p6esAwjNAmiriAkJtMpowQR0OlUmF8fFwQIY50dHV1ZZycgHB0dHTstIBarU55MTGdB7rpolAPjL1EcNWdlBUWFhZ2noFUIVbkQdnWjDPyfK7u8/3C3PMxfNnaijsv2tIU0gB7aUX4zw0bet/NoJff3f8Pw8pKGCp4MVkRAMDY14eWW7bsCQBNo/9eN26/eY3CR/ezIIDH3fJTeNV0Hc/0ehzNyUFaBOSUlUJeXweZsWr3AdPTwOqqUD0skcFC02DiCKCSIZYZ9ci3tYHSFHH1Q4srcL+dxsouAmba26GqrQWj1wPl5YDfH3dtKhG5qrUZirZmaCS5uKY+gob8Yig23gNGI4o+uHaMd21swGq348rICCxKJRiJ5N8FyOvPceTHZDQGtRVQHEg+bQx5vVxJBCpep7I1vHOB3OEAJiYSmjUVUHt1SE+f5Hx+s7AkTG63c4UtKMDA7CwXbhkVICnTcsTE5xwcDrAlJTBNTYVzuccjHMqMCCA4IY3apd+PgUAg5iIht+F+Id6rY3P+rwvFbIZXLo9poi9ZYsfMz6fPAltzn7Hk+Q6U8g02G0wH1Rj54eZ2Lq8+C7m5Dg0q3kUkATmdYBOEXdICtv0BfHzyFJ/6q3Ccd8Xlqy34dqEaoz+/Ym07iPN0Ae5oysITyCEF8GJtLSUBokRfRA02Kwa7H8RfhY8QEvfW5eWkiD0eD/dLJRo42v8YM0Ua6BobgWLe3BGQfEDIh4fBSqV4uL6OVCFK9puwU6tFp8HwRwTxObl8FAoMLC6i1+2GNxhMmjhiAVFEgFarhc/nizuJ5HVDbq6Q30lUDC0tpUS8pwt0Oh0mJyfjTmI3N7myX1gslt0fJjU1NQmtkLGHCcMwcDqd3PMpU8QGgyGGnECwQLaQ9dfxb0DGJOiHEi3OAAAAAElFTkSuQmCC'
-};
-
 const PUBLISH_PLATFORMS = [
-  { key: 'instagram', label: 'Instagram' },
-  { key: 'facebook', label: 'Facebook' },
-  { key: 'tiktok', label: 'TikTok' }
+  { key: 'instagram', label: '📸 Instagram', handle: 'formee.education', format: 'Reel' },
+  { key: 'facebook', label: '📘 Facebook', handle: 'Formee.Education', format: 'Reel' },
+  { key: 'tiktok', label: '🎵 TikTok', handle: 'formee.education', format: 'Video' }
 ];
 
 function showPublishView(){
@@ -2981,6 +2911,109 @@ function populatePublishView(){
   const captionEl = document.getElementById('pubCaption');
   if(captionEl && !captionEl.value.trim()) captionEl.value = buildAutoCaption();
   if(document.getElementById('pubCaptionCustomToggle').checked) renderPerPlatformCaptions();
+}
+
+// ---- Hashtags & SEO keywords suggestion (Caption section) ----
+// Flow: generate suggestions -> user selects (multi-select, no direct caption edits) ->
+// "Generate caption from selection" composes one coherent caption from whatever's selected.
+const PUB_HASHTAGS = ['#liptint', '#glossylips', '#makeuptok', '#beautyfinds', '#formeeexpress', '#liptintreview', '#grwm'];
+const PUB_SEO_KEYWORDS = ['lip tint review', 'glossy lip tint', 'best lip tint 2026', 'Formee Express lip tint', 'everyday makeup lip color'];
+window.__pubSelectedTags = window.__pubSelectedTags || new Set();
+
+function generateHashtagsSEO(){
+  const btn = document.getElementById('pubHashtagSeoBtn');
+  const wasGenerated = btn.dataset.generated === 'true';
+  btn.disabled = true;
+  btn.textContent = wasGenerated ? '🔄 Regenerating…' : '✨ Generating…';
+  setTimeout(() => {
+    btn.disabled = false;
+    btn.dataset.generated = 'true';
+    btn.textContent = '🔄 Regenerate hashtags & SEO keywords';
+    document.getElementById('pubHashtagSeoResult').style.display = 'flex';
+    document.getElementById('pubHashtagSeoSummary').textContent = buildHashtagSeoSummary();
+    renderHashtagSeoChips();
+  }, 900);
+}
+
+function buildHashtagSeoSummary(){
+  const briefText = document.getElementById('briefSummary')?.value.trim() || '';
+  return briefText || 'Formee Express\'s new lip tint delivers instant color payoff with a lightweight, glide-on formula — perfect for effortless everyday makeup.';
+}
+
+function renderHashtagSeoChips(){
+  document.getElementById('pubHashtagChips').innerHTML = PUB_HASHTAGS.map(renderPubTagChip).join('');
+  document.getElementById('pubSeoChips').innerHTML = PUB_SEO_KEYWORDS.map(renderPubTagChip).join('');
+  updateCaptionComposeRow();
+}
+
+function renderPubTagChip(tag){
+  const selected = window.__pubSelectedTags.has(tag);
+  return `<button type="button" class="pub-hashtag-chip${selected ? ' added' : ''}" onclick="toggleHashtagSelection('${escapeHtml(tag)}', this)"><span class="x">×</span>${escapeHtml(tag)}</button>`;
+}
+
+// Tapping a chip only selects/deselects it — the caption itself is composed separately
+// once the user has picked the combination they want (see generateCaptionFromSelection).
+function toggleHashtagSelection(tag, btn){
+  if(window.__pubSelectedTags.has(tag)){
+    window.__pubSelectedTags.delete(tag);
+    btn.classList.remove('added');
+  } else {
+    window.__pubSelectedTags.add(tag);
+    btn.classList.add('added');
+  }
+  updateCaptionComposeRow();
+}
+
+// Shows exactly what's selected (as plain text, not just highlighted chips) so it's
+// clear what will feed into the caption before generating it.
+function updateCaptionComposeRow(){
+  const selected = [...PUB_HASHTAGS, ...PUB_SEO_KEYWORDS].filter(t => window.__pubSelectedTags.has(t));
+  const count = selected.length;
+  document.getElementById('pubSelectedTagsBox').style.display = count > 0 ? 'flex' : 'none';
+  document.getElementById('pubSelectedTagsText').textContent = selected.join('  ·  ');
+  document.getElementById('pubCaptionComposeRow').style.display = count > 0 ? 'flex' : 'none';
+}
+
+function generateCaptionFromSelection(){
+  const selectedHashtags = PUB_HASHTAGS.filter(t => window.__pubSelectedTags.has(t));
+  const selectedKeywords = PUB_SEO_KEYWORDS.filter(t => window.__pubSelectedTags.has(t));
+  if(!selectedHashtags.length && !selectedKeywords.length) return;
+
+  const btn = document.getElementById('pubComposeCaptionBtn');
+  const originalLabel = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = '✨ Composing…';
+  setTimeout(() => {
+    btn.disabled = false;
+    btn.textContent = originalLabel;
+    document.getElementById('pubCaption').value = composePubCaption(selectedKeywords, selectedHashtags);
+    onSharedCaptionInput();
+  }, 700);
+}
+
+// Pulls together everything already entered earlier in the flow — the brief, the
+// confirmed script, and the Advanced settings (Goal/Tone/Target audience/CTA) — the
+// same sources buildAutoCaption() draws from — then folds the selected hashtags and
+// SEO keywords into that instead of the generic tags buildAutoCaption() falls back to.
+function composePubCaption(selectedKeywords, selectedHashtags){
+  const briefText = document.getElementById('briefSummary')?.value.trim() || '';
+  const scriptText = (window.__latestScriptText || getSceneScript(1) || '').replace(/^"|"$/g, '').trim();
+  const details = getBriefDetails();
+  const brandOn = window.__brandMode === 'set';
+
+  const hook = scriptText || briefText || 'Check out our latest video!';
+  const parts = [hook];
+
+  const cta = details.cta || (brandOn ? 'Shop now — link in bio.' : 'Follow for more.');
+  parts.push(cta);
+
+  if(brandOn) parts.push(`— Formee Express${details.tone ? ` · ${details.tone}` : ''}`);
+  else if(details.tone) parts.push(`(${details.tone})`);
+
+  if(selectedKeywords.length) parts.push(`Searching for ${selectedKeywords.join(', ')}? This is it.`);
+  if(selectedHashtags.length) parts.push(selectedHashtags.join(' '));
+
+  return parts.filter(Boolean).join('\n\n');
 }
 
 // ---- Per-platform caption overrides: shared caption by default, opt in to customize per destination ----
@@ -3036,116 +3069,6 @@ function resetPlatformCaption(key){
   renderPerPlatformCaptions();
 }
 
-// ---- Hashtags & SEO keywords suggestion (Caption section) ----
-// Flow: generate suggestions -> user selects (multi-select, no direct caption edits) ->
-// "Generate caption from selection" composes one coherent caption from whatever's selected.
-const PUB_HASHTAGS = ['#liptint', '#glossylips', '#makeuptok', '#beautyfinds', '#formeeexpress', '#liptintreview', '#grwm'];
-const PUB_SEO_KEYWORDS = ['lip tint review', 'glossy lip tint', 'best lip tint 2026', 'Formee Express lip tint', 'everyday makeup lip color'];
-window.__pubSelectedTags = window.__pubSelectedTags || new Set();
-
-function generateHashtagsSEO(){
-  const btn = document.getElementById('pubHashtagSeoBtn');
-  const regenBtn = document.querySelector('.pub-regenerate-btn');
-  if(btn) btn.disabled = true;
-  if(regenBtn) regenBtn.disabled = true;
-  setTimeout(() => {
-    if(btn) btn.disabled = false;
-    if(regenBtn) regenBtn.disabled = false;
-    document.getElementById('pubHashtagSeoResult').style.display = 'flex';
-    document.getElementById('pubHashtagSeoSummary').textContent = buildHashtagSeoSummary();
-    renderHashtagSeoChips();
-  }, 900);
-}
-
-function closeHashtagSeoPanel(){
-  document.getElementById('pubHashtagSeoResult').style.display = 'none';
-}
-
-function buildHashtagSeoSummary(){
-  const briefText = document.getElementById('briefSummary')?.value.trim() || '';
-  return briefText || 'Formee Express\'s new lip tint delivers instant color payoff with a lightweight, glide-on formula — perfect for effortless everyday makeup.';
-}
-
-function renderHashtagSeoChips(){
-  document.getElementById('pubHashtagChips').innerHTML = PUB_HASHTAGS.map(renderPubTagChip).join('');
-  document.getElementById('pubSeoChips').innerHTML = PUB_SEO_KEYWORDS.map(renderPubTagChip).join('');
-  updateCaptionComposeRow();
-}
-
-const PUB_TAG_CHIP_X_ICON = 'data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gYnV0dG9uIC8geCI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik0xMiA0TDQgMTIiIHN0cm9rZT0iIzQ3NTA2OSIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzIiIGQ9Ik00IDRMMTIgMTIiIHN0cm9rZT0iIzQ3NTA2OSIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L2c+Cjwvc3ZnPgo=';
-
-function renderPubTagChip(tag){
-  const selected = window.__pubSelectedTags.has(tag);
-  return `<button type="button" class="pub-hashtag-chip${selected ? ' added' : ''}" onclick="toggleHashtagSelection('${escapeHtml(tag)}', this)"><span class="x"><img src="${PUB_TAG_CHIP_X_ICON}" alt=""></span>${escapeHtml(tag)}</button>`;
-}
-
-// Tapping a chip only selects/deselects it — the caption itself is composed separately
-// once the user has picked the combination they want (see generateCaptionFromSelection).
-function toggleHashtagSelection(tag, btn){
-  if(window.__pubSelectedTags.has(tag)){
-    window.__pubSelectedTags.delete(tag);
-    btn.classList.remove('added');
-  } else {
-    window.__pubSelectedTags.add(tag);
-    btn.classList.add('added');
-  }
-  updateCaptionComposeRow();
-}
-
-// Shows exactly what's selected (as plain text, not just highlighted chips) so it's
-// clear what will feed into the caption before generating it.
-function updateCaptionComposeRow(){
-  const selected = [...PUB_HASHTAGS, ...PUB_SEO_KEYWORDS].filter(t => window.__pubSelectedTags.has(t));
-  const count = selected.length;
-  document.getElementById('pubSelectedTagsBox').style.display = count > 0 ? 'flex' : 'none';
-  document.getElementById('pubSelectedTagsText').textContent = selected.join('  ·  ');
-  document.getElementById('pubCaptionComposeRow').style.display = count > 0 ? 'flex' : 'none';
-}
-
-function generateCaptionFromSelection(){
-  const selectedHashtags = PUB_HASHTAGS.filter(t => window.__pubSelectedTags.has(t));
-  const selectedKeywords = PUB_SEO_KEYWORDS.filter(t => window.__pubSelectedTags.has(t));
-  if(!selectedHashtags.length && !selectedKeywords.length) return;
-
-  const btn = document.getElementById('pubComposeCaptionBtn');
-  const originalLabel = btn.textContent;
-  btn.disabled = true;
-  btn.textContent = '✨ Composing…';
-  setTimeout(() => {
-    btn.disabled = false;
-    btn.textContent = originalLabel;
-    document.getElementById('pubCaption').value = composePubCaption(selectedKeywords, selectedHashtags);
-    onSharedCaptionInput();
-    const badge = document.getElementById('pubAiDraftBadge');
-    if(badge) badge.style.display = 'none';
-  }, 700);
-}
-
-// Pulls together everything already entered earlier in the flow — the brief, the
-// confirmed script, and the Advanced settings (Goal/Tone/Target audience/CTA) — the
-// same sources buildAutoCaption() draws from — then folds the selected hashtags and
-// SEO keywords into that instead of the generic tags buildAutoCaption() falls back to.
-function composePubCaption(selectedKeywords, selectedHashtags){
-  const briefText = document.getElementById('briefSummary')?.value.trim() || '';
-  const scriptText = (window.__latestScriptText || getSceneScript(1) || '').replace(/^"|"$/g, '').trim();
-  const details = getBriefDetails();
-  const brandOn = window.__brandMode === 'set';
-
-  const hook = scriptText || briefText || 'Check out our latest video!';
-  const parts = [hook];
-
-  const cta = details.cta || (brandOn ? 'Shop now — link in bio.' : 'Follow for more.');
-  parts.push(cta);
-
-  if(brandOn) parts.push(`— Formee Express${details.tone ? ` · ${details.tone}` : ''}`);
-  else if(details.tone) parts.push(`(${details.tone})`);
-
-  if(selectedKeywords.length) parts.push(`Searching for ${selectedKeywords.join(', ')}? This is it.`);
-  if(selectedHashtags.length) parts.push(selectedHashtags.join(' '));
-
-  return parts.filter(Boolean).join('\n\n');
-}
-
 function onSharedCaptionInput(){
   if(!document.getElementById('pubCaptionCustomToggle').checked) return;
   document.querySelectorAll('#pubCaptionPerPlatform [data-platform-caption]').forEach(ta => {
@@ -3164,17 +3087,13 @@ function renderPublishDestinations(){
   if(!el) return;
   el.innerHTML = PUBLISH_PLATFORMS.map(p => {
     const connected = window.__platformConnections[p.key];
-    const icon = `<span class="pub-dest-icon"><img src="${PUBLISH_PLATFORM_ICONS[p.key]}" alt=""></span>`;
     if(connected){
       return `
         <div class="pub-dest-row">
           <label class="pub-dest-checkbox">
             <input type="checkbox" data-platform="${p.key}" checked onchange="onDestinationToggle()">
+            <span>${p.label} <span class="pub-dest-handle">· @${p.handle}</span></span>
           </label>
-          ${icon}
-          <span class="pub-dest-name">${p.label}</span>
-          <span class="pub-dest-spacer"></span>
-          <span class="pub-dest-badge connected">Connected</span>
         </div>
       `;
     }
@@ -3182,11 +3101,8 @@ function renderPublishDestinations(){
       <div class="pub-dest-row disconnected">
         <label class="pub-dest-checkbox disabled">
           <input type="checkbox" data-platform="${p.key}" disabled>
+          <span>${p.label} <span class="pub-dest-note">Isn't connected</span></span>
         </label>
-        ${icon}
-        <span class="pub-dest-name">${p.label}</span>
-        <span class="pub-dest-spacer"></span>
-        <span class="pub-dest-badge not-connected">Not connected</span>
         <button class="pub-connect-btn" onclick="connectPlatform('${p.key}')">Connect</button>
       </div>
     `;
@@ -3234,32 +3150,6 @@ function buildAutoCaption(){
 function generateCaptionDraft(){
   document.getElementById('pubCaption').value = buildAutoCaption();
   onSharedCaptionInput();
-  const badge = document.getElementById('pubAiDraftBadge');
-  if(badge) badge.style.display = '';
-}
-
-// Quick AI-style refine actions for the caption textarea (mirrors the script's
-// refineScriptWithAI pattern) — "shorter"/"punchier"/"cta" are the three fixed
-// chips, "ai" is the general "Refine with AI" pill.
-function refineCaptionWithAI(mode){
-  const ta = document.getElementById('pubCaption');
-  if(!ta) return;
-  let text = ta.value.trim() || buildAutoCaption();
-  if(mode === 'shorter'){
-    const words = text.split(/\s+/).filter(Boolean);
-    const limit = Math.max(12, Math.round(words.length * 0.6));
-    text = words.slice(0, limit).join(' ');
-  } else if(mode === 'punchier'){
-    text = text.replace(/\.(\s|$)/g, '!$1').trim();
-  } else if(mode === 'cta'){
-    const details = getBriefDetails();
-    const cta = details.cta || (window.__brandMode === 'set' ? 'Shop now — link in bio.' : 'Follow for more.');
-    if(!text.includes(cta)) text = `${text}\n\n${cta}`;
-  }
-  ta.value = text;
-  onSharedCaptionInput();
-  const badge = document.getElementById('pubAiDraftBadge');
-  if(badge) badge.style.display = 'none';
 }
 
 function updateWhenSelection(){
@@ -3425,7 +3315,111 @@ function handlePublishMainAction(){
     return;
   }
   clearPublishWarning();
-  alert(`Published now to ${describeDestinations(destinations)}.`);
+  openPublishConfirmModal(destinations);
+}
+
+// ---- Publish confirmation modal — one "type the handle to confirm" tab per selected
+// destination. Publishing now isn't reversible, so nothing actually posts until each
+// platform's handle is typed exactly and its own "Publish live" button is clicked.
+window.__pubConfirmDestinations = window.__pubConfirmDestinations || [];
+window.__pubConfirmActiveTab = window.__pubConfirmActiveTab || null;
+window.__pubConfirmDone = window.__pubConfirmDone || new Set();
+
+function openPublishConfirmModal(destinations){
+  window.__pubConfirmDestinations = destinations;
+  window.__pubConfirmActiveTab = destinations[0];
+  window.__pubConfirmDone = new Set();
+  document.getElementById('pubConfirmOverlay').style.display = 'flex';
+  renderPublishConfirmModal();
+}
+
+function closePublishConfirmModal(){
+  document.getElementById('pubConfirmOverlay').style.display = 'none';
+}
+
+function selectPublishConfirmTab(key){
+  window.__pubConfirmActiveTab = key;
+  renderPublishConfirmModal();
+}
+
+function renderPublishConfirmModal(){
+  const allDone = window.__pubConfirmDestinations.length > 0
+    && window.__pubConfirmDestinations.every(key => window.__pubConfirmDone.has(key));
+
+  document.getElementById('pubConfirmTabs').style.display = allDone ? 'none' : 'flex';
+  document.getElementById('pubConfirmTabs').innerHTML = window.__pubConfirmDestinations.map(key => {
+    const platform = PUBLISH_PLATFORMS.find(p => p.key === key);
+    const active = key === window.__pubConfirmActiveTab;
+    const done = window.__pubConfirmDone.has(key);
+    return `<button type="button" class="pub-confirm-tab${active ? ' active' : ''}" onclick="selectPublishConfirmTab('${key}')">${platform.label}${done ? ' <span class="check">✓</span>' : ''}</button>`;
+  }).join('');
+
+  const body = document.getElementById('pubConfirmBody');
+  const footer = document.getElementById('pubConfirmFooter');
+  const subtitle = document.getElementById('pubConfirmSubtitle');
+
+  if(allDone){
+    subtitle.textContent = 'All set — your post is live.';
+    body.innerHTML = `
+      <div class="pub-confirm-success">
+        <span class="pub-confirm-success-icon">🎉</span>
+        <p class="pub-confirm-success-title">Published to ${describeDestinations(window.__pubConfirmDestinations)}</p>
+        <p class="pub-confirm-success-sub">You can find this post under each platform's activity log.</p>
+      </div>`;
+    footer.innerHTML = `<button type="button" class="btn btn-dark" style="flex:1; justify-content:center;" onclick="closePublishConfirmModal()">Done</button>`;
+    return;
+  }
+
+  subtitle.textContent = 'Preview is live. Publishing requires typing the handle to confirm.';
+  footer.innerHTML = `
+    <button type="button" class="btn btn-secondary" onclick="handlePublishConfirmSaveDraft()">✓ Save as draft instead</button>
+    <button type="button" class="btn btn-secondary" onclick="closePublishConfirmModal()">Cancel</button>`;
+
+  const key = window.__pubConfirmActiveTab;
+  const platform = PUBLISH_PLATFORMS.find(p => p.key === key);
+  const done = window.__pubConfirmDone.has(key);
+
+  body.innerHTML = `
+    <div class="pub-confirm-preview-row">
+      <div class="pub-confirm-thumb"></div>
+      <div>
+        <div class="pub-confirm-platform-label">${platform.label.replace(/^\S+\s*/, '')} · <span class="pub-confirm-handle">@${platform.handle}</span></div>
+        <div class="pub-confirm-format">Format: ${platform.format}</div>
+      </div>
+    </div>
+    ${done ? `
+      <div class="pub-confirm-warning-box done">
+        <p class="pub-confirm-warning-title done">✓ Published to @${platform.handle}</p>
+      </div>
+    ` : `
+      <div class="pub-confirm-warning-box">
+        <p class="pub-confirm-warning-title">⚠ This will post live to @${platform.handle}</p>
+        <p class="pub-confirm-warning-text">Heads up: this isn't a dry run. Clicking it posts the asset above straight to ${platform.label.replace(/^\S+\s*/, '')}. Type the handle below to unlock the button.</p>
+        <input type="text" class="pub-confirm-input" id="pubConfirmInput" placeholder='Type &quot;${platform.handle}&quot; to confirm' oninput="updatePublishConfirmButtonState()">
+        <button type="button" class="btn btn-dark pub-confirm-publish-btn" id="pubConfirmPublishBtn" disabled onclick="confirmPublishToPlatform('${key}')">✨ Publish live to ${platform.label.replace(/^\S+\s*/, '')}</button>
+      </div>
+    `}
+  `;
+}
+
+function updatePublishConfirmButtonState(){
+  const input = document.getElementById('pubConfirmInput');
+  const btn = document.getElementById('pubConfirmPublishBtn');
+  if(!input || !btn) return;
+  const platform = PUBLISH_PLATFORMS.find(p => p.key === window.__pubConfirmActiveTab);
+  btn.disabled = input.value.trim().toLowerCase() !== platform.handle.toLowerCase();
+}
+
+function confirmPublishToPlatform(key){
+  window.__pubConfirmDone.add(key);
+  const remaining = window.__pubConfirmDestinations.find(k => !window.__pubConfirmDone.has(k));
+  window.__pubConfirmActiveTab = remaining || key;
+  renderPublishConfirmModal();
+}
+
+function handlePublishConfirmSaveDraft(){
+  closePublishConfirmModal();
+  quickSaveDraft();
 }
 
 function runAsAd(){
@@ -3506,8 +3500,7 @@ function quickAction(action){
 }
 
 document.getElementById('chatSend').addEventListener('click', sendMsg);
-document.getElementById('chatInput').addEventListener('keydown', (e) => { if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); sendMsg(); } });
-document.getElementById('chatInput').addEventListener('input', function(){ this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 120) + 'px'; });
+document.getElementById('chatInput').addEventListener('keydown', (e) => { if(e.key === 'Enter') sendMsg(); });
 function sendMsg(){
   const input = document.getElementById('chatInput');
   const text = input.value.trim();
