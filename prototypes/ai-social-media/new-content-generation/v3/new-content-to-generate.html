@@ -858,7 +858,7 @@
   #stageAreaReel .stage-tab .check{color:var(--color-badge-green-text); font-weight:700;}
 
   /* settings bar — sits in normal flow right below the tab row, centered */
-  #stageAreaReel .settings-bar{display:flex; justify-content:center; gap:12px; flex-wrap:wrap; padding:24px 28px 0; flex-shrink:0;}
+  #stageAreaReel .settings-bar{position:static; display:flex; justify-content:center; gap:12px; flex-wrap:wrap; padding:24px 28px 0; flex-shrink:0;}
   .setting-chip .avatar-mini{width:16px; height:16px; border-radius:999px; background:var(--color-neutral-400);}
   .setting-chip .dot-sep{width:2px; height:2px; border-radius:999px; background:var(--color-neutral-400); flex-shrink:0;}
   .setting-chip .ratio-icon{width:16px; height:16px; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
@@ -1834,7 +1834,6 @@
           </div>
 
         </div>
-      </div>
         <div class="stage-area" id="stageAreaReel" style="display:none;">
           <div class="stage-tabs">
             <div class="stage-tab" id="tabReelScript" onclick="showSub('reelScript')">Script</div>
@@ -2032,6 +2031,8 @@
             <div class="queue-jobs" id="queueJobs"></div>
           </div>
         </div>
+
+      </div>
 
       <!-- Hidden credit-estimate strip kept only so confirmAndGenerate()'s existing cost-sync
            logic (imgUpdateBriefMeta) still has somewhere to write; the real bottom bar is
