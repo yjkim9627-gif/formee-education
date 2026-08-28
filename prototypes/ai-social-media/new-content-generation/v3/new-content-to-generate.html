@@ -3676,13 +3676,16 @@ goToBrief();
 // ratio — same technique as prototypes/ai-social-media/editing/image-editing.html, so this
 // prototype reads at the right size on both a large monitor and a laptop screen. ----
 function fitScreenToViewport(){
-  // Width-driven scale only — fitting height too made the frame shrink well below
-  // full-size on ordinary monitors, since 1162 is tall relative to most window heights.
-  // Sized off width instead (like brand-setup/index.html's own unscaled 1920-wide frame),
-  // reserving FRAME_MARGIN real screen pixels on the sides; the page scrolls vertically
-  // if the scaled frame ends up taller than the window, same as that reference file does.
+  // Fits BOTH width and height so the whole app — including the bottom action/feedback
+  // bar, which is position:absolute to the bottom of .main rather than truly sticky — is
+  // always 100% visible with no outer-page scroll. Internal panels (.view, .stage-body,
+  // etc.) already scroll on their own via overflow-y:auto regardless of this scale, so
+  // content never gets clipped — only the frame's overall size changes. Because the
+  // 1920x1162 design is proportionally taller than most widescreen monitors, height is
+  // usually the binding constraint, which leaves visible side margins — that trade-off
+  // is intentional so the action bar never ends up scrolled out of view.
   const FRAME_MARGIN = 40;
-  const scale = (window.innerWidth - FRAME_MARGIN * 2) / 1920;
+  const scale = Math.min((window.innerWidth - FRAME_MARGIN * 2) / 1920, (window.innerHeight - FRAME_MARGIN * 2) / 1162);
   const appEl = document.querySelector('.app');
   appEl.style.transform = `scale(${scale})`;
   document.body.style.width = (1920 * scale) + 'px';
