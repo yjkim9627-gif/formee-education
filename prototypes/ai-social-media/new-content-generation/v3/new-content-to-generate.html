@@ -16,11 +16,15 @@
 <link rel="stylesheet" href="../../../../components/ai-social-media/setting-chip.css">
 <style>
   *{box-sizing:border-box;}
-  body{margin:0; font-family:var(--font-family-text); background:var(--color-neutral-200); display:flex; align-items:flex-start; justify-content:flex-start; min-height:100vh; overflow:auto;}
+  /* Fixed 1920x1162 to match the shared reference frame size (brand-setup/index.html) —
+     scaled to fit whatever the actual browser window size is via fitScreenToViewport()
+     below, same technique as prototypes/ai-social-media/editing/image-editing.html. */
+  html{display:flex; align-items:center; justify-content:center; min-height:100vh; margin:0; background:var(--color-neutral-200);}
+  body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
 
   .app{
-    width:1920px; height:1080px; flex-shrink:0; background:#fff; overflow:hidden;
-    display:flex; border:1px solid var(--color-neutral-300);
+    width:1920px; height:1162px; flex-shrink:0; background:#fff; overflow:hidden;
+    display:flex; border:1px solid var(--color-neutral-300); transform-origin:top left;
   }
 
   /* ============ NAV SIDEBAR — components/ai-social-media/nav.css ============ */
@@ -3658,6 +3662,18 @@ setBrandMode('none');
 applyContentType();
 goToBrief();
 
+// ---- Scale the whole 1920x1162 .app to fit the real browser window, preserving aspect
+// ratio — same technique as prototypes/ai-social-media/editing/image-editing.html, so this
+// prototype reads at the right size on both a large monitor and a laptop screen. ----
+function fitScreenToViewport(){
+  const scale = Math.min(window.innerWidth / 1920, window.innerHeight / 1162);
+  const appEl = document.querySelector('.app');
+  appEl.style.transform = `scale(${scale})`;
+  document.body.style.width = (1920 * scale) + 'px';
+  document.body.style.height = (1162 * scale) + 'px';
+}
+window.addEventListener('resize', fitScreenToViewport);
+fitScreenToViewport();
 </script>
 </body>
 </html>

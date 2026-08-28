@@ -15,16 +15,17 @@
   p { margin: 0; }
   button { all: unset; box-sizing: border-box; cursor: pointer; font-family: inherit; }
 
-  /* Fixed 1920x1080 to match the Figma frame exactly — scaled to fit whatever the actual
-     browser window size is via fitScreenToViewport() below (transform-origin: top left keeps
-     the scale math simple). Without this, any UI positioned toward the right/bottom half of
-     the 1920-wide layout (e.g. the layers-panel toggle chip) renders past the edge of any
-     window narrower than 1920px and is literally unreachable — confirmed with a real
-     headless-browser click test after two earlier attempts at scoped per-element fixes. */
+  /* Fixed 1920x1162 to match the shared reference frame size (brand-setup/index.html) —
+     scaled to fit whatever the actual browser window size is via fitScreenToViewport()
+     below (transform-origin: top left keeps the scale math simple). Without this, any UI
+     positioned toward the right/bottom half of the 1920-wide layout (e.g. the layers-panel
+     toggle chip) renders past the edge of any window narrower than 1920px and is literally
+     unreachable — confirmed with a real headless-browser click test after two earlier
+     attempts at scoped per-element fixes. */
   html, body { overflow: hidden; }
   .screen {
     width: 1920px;
-    height: 1080px;
+    height: 1162px;
     display: flex;
     flex-direction: column;
     background: var(--color-neutral-0);
@@ -6716,7 +6717,7 @@
       }
     });
 
-    // Scales the whole 1920x1080 .screen down (or up) to exactly fit the real browser window,
+    // Scales the whole 1920x1162 .screen down (or up) to exactly fit the real browser window,
     // like Figma's own prototype "fit to window" preview — otherwise anything positioned in
     // the right/bottom portion of the fixed 1920-wide layout is off-screen on any window
     // narrower than that. Folded into every drag scale calc below (search PAGE_FIT_SCALE)
@@ -6938,11 +6939,11 @@
     }
 
     function fitScreenToViewport() {
-      PAGE_FIT_SCALE = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+      PAGE_FIT_SCALE = Math.min(window.innerWidth / 1920, window.innerHeight / 1162);
       var screenEl = document.querySelector('.screen');
       screenEl.style.transform = 'scale(' + PAGE_FIT_SCALE + ')';
       document.body.style.width = (1920 * PAGE_FIT_SCALE) + 'px';
-      document.body.style.height = (1080 * PAGE_FIT_SCALE) + 'px';
+      document.body.style.height = (1162 * PAGE_FIT_SCALE) + 'px';
       positionAiImproveUi();
     }
     window.addEventListener('resize', fitScreenToViewport);
