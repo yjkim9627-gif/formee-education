@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>Queue Job Row / Queue Panel — AI Social Media Component</title>
+<link rel="stylesheet" href="../../tokens/tokens.css" />
+<link rel="stylesheet" href="../demo-nav.css" />
+<link rel="stylesheet" href="queue-panel.css" />
+<style>
+  body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
+  .demo-main { padding: var(--spacing-4xl); }
+  h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-3xl); }
+  h2 { font-size: var(--font-size-text-md); font-weight: 700; margin: 0 0 var(--spacing-md); }
+  .demo-row { display: flex; flex-direction: column; gap: var(--spacing-sm); margin-bottom: var(--spacing-3xl); }
+  .demo-label { font-size: var(--font-size-text-xs); color: var(--color-neutral-500); }
+  .demo-grid { display: flex; flex-wrap: wrap; gap: var(--spacing-2xl); align-items: flex-start; }
+</style>
+</head>
+<body>
+<div class="demo-shell">
+  <nav class="demo-sidebar">
+    <a href="../../index.html" class="demo-sidebar-home">← Home</a>
+    <div class="demo-sidebar-group">
+      <div class="demo-sidebar-label">AI Social Media</div>
+      <a href="nav.html">Nav / Navigation</a>
+      <a href="topbar-stepper.html">Topbar + Stepper</a>
+      <a href="heading.html">Heading</a>
+      <a href="chat-panel.html">Chat Panel</a>
+      <a href="character-card.html">Character Card</a>
+      <a href="avatar.html">Avatar</a>
+      <a href="switch.html">Controls / Switch</a>
+      <a href="prompt-box.html">AI Prompt Box</a>
+      <a href="input.html">Input</a>
+      <a href="filter-chip.html">Controls / Filter / Toggle</a>
+      <a href="table-filter.html">Table / Filter</a>
+      <a href="setting-chip.html">Setting Chip</a>
+      <a href="actions-button.html">Actions / Button</a>
+      <a href="icons.html">Icons</a>
+      <a href="scene-tile.html">Scene Tile</a>
+      <a href="storyboard-card.html">Storyboard Card</a>
+      <a href="image-scene-card.html">Image Scene Card</a>
+      <a href="voice-accordion-row.html">Voice Accordion Row</a>
+      <a href="video-summary-card.html">Video Summary Card</a>
+      <a href="destination-account.html">Destination Account</a>
+      <a href="date-picker.html">Date Picker</a>
+      <a href="carousel-card-block.html">Carousel Card Block</a>
+      <a href="queue-panel.html" class="active">Queue Job Row / Panel</a>
+    </div>
+    <div class="demo-sidebar-group">
+      <div class="demo-sidebar-label">Shared</div>
+      <a href="../shared/button.html">Button</a>
+      <a href="../shared/modal-confirm.html">Modal / Confirm</a>
+      <a href="../shared/modal-form.html">Modal / Form</a>
+      <a href="../shared/modal-success.html">Modal / Success</a>
+    </div>
+  </nav>
+  <main class="demo-main">
+  <h1>Queue Job Row / Queue Panel</h1>
+
+  <div class="demo-row">
+    <h2>Queue Job Row</h2>
+    <span class="demo-label">State</span>
+    <div class="demo-grid">
+      <div class="queue-job-row" data-state="working">
+        <div class="queue-job-thumb"></div>
+        <div class="queue-job-info">
+          <span class="queue-job-title">Scene 1 thumbnail generation</span>
+          <span class="queue-job-status"><span class="queue-job-status-dot"></span><span class="queue-job-status-label">WORKING</span></span>
+        </div>
+      </div>
+      <div class="queue-job-row ready" data-state="ready">
+        <div class="queue-job-thumb"></div>
+        <div class="queue-job-info">
+          <span class="queue-job-title">Scene 1 thumbnail generation</span>
+          <span class="queue-job-status"><span class="queue-job-status-dot"></span><span class="queue-job-status-label">READY</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-row">
+    <h2>Queue Panel</h2>
+    <span class="demo-label">State</span>
+    <div class="demo-grid">
+      <div class="queue-panel" data-state="active">
+        <div class="queue-panel-header">
+          <span class="queue-panel-title">Queue</span>
+          <span class="queue-badge orange"><img src="icons/badge-dot.svg" alt="">2 ACTIVE</span>
+        </div>
+        <div class="queue-panel-jobs">
+          <div class="queue-job-row">
+            <div class="queue-job-thumb"></div>
+            <div class="queue-job-info">
+              <span class="queue-job-title">Scene 1 thumbnail generation</span>
+              <span class="queue-job-status"><span class="queue-job-status-dot"></span><span class="queue-job-status-label">WORKING</span></span>
+            </div>
+          </div>
+          <div class="queue-job-row">
+            <div class="queue-job-thumb"></div>
+            <div class="queue-job-info">
+              <span class="queue-job-title">Scene 2 thumbnail generation</span>
+              <span class="queue-job-status"><span class="queue-job-status-dot"></span><span class="queue-job-status-label">WORKING</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="queue-panel" data-state="done">
+        <div class="queue-panel-header">
+          <span class="queue-panel-title">Queue</span>
+          <span class="queue-badge green"><img src="icons/circle-check.svg" alt="">DONE</span>
+        </div>
+        <div class="queue-panel-jobs">
+          <div class="queue-job-row ready">
+            <div class="queue-job-thumb"></div>
+            <div class="queue-job-info">
+              <span class="queue-job-title">Scene 1 thumbnail generation</span>
+              <span class="queue-job-status"><span class="queue-job-status-dot"></span><span class="queue-job-status-label">READY</span></span>
+            </div>
+          </div>
+          <div class="queue-job-row ready">
+            <div class="queue-job-thumb"></div>
+            <div class="queue-job-info">
+              <span class="queue-job-title">Scene 2 thumbnail generation</span>
+              <span class="queue-job-status"><span class="queue-job-status-dot"></span><span class="queue-job-status-label">READY</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </main>
+</div>
+</body>
+</html>

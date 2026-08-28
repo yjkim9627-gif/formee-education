@@ -2,17 +2,18 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
-<title>Heading — Shared Component</title>
+<title>Voice Accordion Row — AI Social Media Component</title>
 <link rel="stylesheet" href="../../tokens/tokens.css" />
 <link rel="stylesheet" href="../demo-nav.css" />
-<link rel="stylesheet" href="heading.css" />
+<link rel="stylesheet" href="actions-button.css" />
+<link rel="stylesheet" href="voice-accordion-row.css" />
 <style>
   body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
   .demo-main { padding: var(--spacing-4xl); }
   h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-3xl); }
-  .demo-row { display: flex; flex-direction: column; gap: var(--spacing-sm); margin-bottom: var(--spacing-3xl); max-width: 640px; }
+  .demo-row { display: flex; flex-direction: column; gap: var(--spacing-sm); margin-bottom: var(--spacing-3xl); }
   .demo-label { font-size: var(--font-size-text-xs); color: var(--color-neutral-500); }
-  .demo-card { background: var(--color-neutral-0); border: 1px solid var(--color-neutral-200); border-radius: 12px; padding: var(--spacing-xl); }
+  .demo-grid { display: flex; flex-wrap: wrap; gap: var(--spacing-2xl); align-items: flex-start; }
 </style>
 </head>
 <body>
@@ -23,7 +24,7 @@
       <div class="demo-sidebar-label">AI Social Media</div>
       <a href="nav.html">Nav / Navigation</a>
       <a href="topbar-stepper.html">Topbar + Stepper</a>
-      <a href="heading.html" class="active">Heading</a>
+      <a href="heading.html">Heading</a>
       <a href="chat-panel.html">Chat Panel</a>
       <a href="character-card.html">Character Card</a>
       <a href="avatar.html">Avatar</a>
@@ -38,12 +39,12 @@
       <a href="scene-tile.html">Scene Tile</a>
       <a href="storyboard-card.html">Storyboard Card</a>
       <a href="image-scene-card.html">Image Scene Card</a>
-      <a href="voice-accordion-row.html">Voice Accordion Row</a>
       <a href="queue-panel.html">Queue Job Row / Panel</a>
       <a href="video-summary-card.html">Video Summary Card</a>
       <a href="destination-account.html">Destination Account</a>
       <a href="date-picker.html">Date Picker</a>
       <a href="carousel-card-block.html">Carousel Card Block</a>
+      <a href="voice-accordion-row.html" class="active">Voice Accordion Row</a>
     </div>
     <div class="demo-sidebar-group">
       <div class="demo-sidebar-label">Shared</div>
@@ -54,49 +55,46 @@
     </div>
   </nav>
   <main class="demo-main">
-  <h1>Heading</h1>
+  <h1>Voice Accordion Row</h1>
 
   <div class="demo-row">
-    <span class="demo-label">base — title + subtitle</span>
-    <div class="demo-card">
-      <div class="ai-heading">
-        <div class="ai-heading-text">
-          <p class="ai-heading-title">Full script</p>
-          <p class="ai-heading-sub">Confirm the full script first. You'll then break it down and refine it by time segment.</p>
+    <span class="demo-label">State</span>
+    <div class="demo-grid">
+
+      <div class="voice-accordion-row" data-state="collapsed">
+        <button class="voice-acc-header" type="button">
+          <span class="voice-acc-time">0:00–0:08</span>
+          <span class="voice-acc-summary">Okay wait, you guys have to see this new lip tint — I'm already obsessed...</span>
+          <span class="voice-credit-pill"><span class="cost"><img src="icons/zap-sm.svg" alt="">5</span></span>
+          <img class="voice-acc-caret" src="icons/caret-down-filled.svg" alt="">
+        </button>
+      </div>
+
+      <div class="voice-accordion-row expanded" data-state="expanded">
+        <button class="voice-acc-header" type="button">
+          <span class="voice-acc-time">0:00–0:08</span>
+          <span class="voice-acc-summary">Okay wait, you guys ha...</span>
+          <span class="voice-credit-pill"><span class="cost"><img src="icons/zap-sm.svg" alt="">5</span></span>
+          <img class="voice-acc-caret" src="icons/caret-down-filled.svg" alt="">
+        </button>
+        <div class="voice-acc-body">
+          <div class="voice-acc-script-wrap">
+            <div class="voice-script-text">Okay wait, you guys have to see this new lip tint — I'm already obsessed...</div>
+            <span class="voice-acc-wordcount">9 / 15 words</span>
+          </div>
+          <div class="voice-acc-bottom">
+            <button class="actions-btn" type="button"><span class="play-icon"></span><span>Preview</span></button>
+          </div>
         </div>
       </div>
+
     </div>
   </div>
 
   <div class="demo-row">
-    <span class="demo-label">with AI / Refine Pill accessory</span>
-    <div class="demo-card">
-      <div class="ai-heading">
-        <div class="ai-heading-text">
-          <p class="ai-heading-title">Full script</p>
-          <p class="ai-heading-sub">Confirm the full script first. You'll then break it down and refine it by time segment.</p>
-        </div>
-        <button class="ai-heading-refine-pill">
-          <svg class="icon" viewBox="0 0 16 16" fill="none"><path d="M8 1.5l1.2 3.3L12.5 6l-3.3 1.2L8 10.5l-1.2-3.3L3.5 6l3.3-1.2L8 1.5z" fill="url(#g)"/><defs><linearGradient id="g" x1="0" y1="0" x2="16" y2="0"><stop stop-color="#4f6de6"/><stop offset="1" stop-color="#ed7797"/></linearGradient></defs></svg>
-          <span>Refine with AI</span>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <div class="demo-row">
-    <span class="demo-label">with Download accessory</span>
-    <div class="demo-card">
-      <div class="ai-heading">
-        <div class="ai-heading-text">
-          <p class="ai-heading-title">Your Video is ready</p>
-          <p class="ai-heading-sub">Your final video is ready. Edit it with our built-in tools, or publish it now.</p>
-        </div>
-        <button class="ai-heading-download-btn">
-          <svg class="icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M8 2v8m0 0l-3-3m3 3l3-3M3 13h10"/></svg>
-          <span>Download</span>
-        </button>
-      </div>
+    <span class="demo-label">Credit pill — with "Regenerate" label (used once a script has been edited)</span>
+    <div class="demo-grid">
+      <span class="voice-credit-pill"><span class="label">Regenerate</span><span class="cost"><img src="icons/zap-sm.svg" alt="">5</span></span>
     </div>
   </div>
   </main>

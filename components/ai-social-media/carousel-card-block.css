@@ -1,0 +1,33 @@
+/* Carousel + script-card-msg — Figma nodes 6585:119877 / 6585:119911
+   Carousel = the per-card block on the Carousel content type's Script screen: header
+   ("Card N" + "Include character" switch, reuses .field-switch from switch.css) wrapping
+   one script-card-msg text field.
+   script-card-msg on its own (Default / Focused) is the plain editable-text row used
+   wherever a single line needs the same look outside the full card block.
+*/
+
+.carousel-card-block{
+  width:100%; box-sizing:border-box;
+  display:flex; flex-direction:column; gap:var(--spacing-sm); align-items:flex-start;
+  background:var(--color-neutral-0); border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl);
+  padding:12px 16px 14px;
+}
+.carousel-card-block.focused{border-color:var(--color-neutral-500);}
+
+.carousel-card-block-header{display:flex; align-items:center; justify-content:space-between; width:100%;}
+.carousel-card-block-title{font-family:var(--font-family-text); font-size:14px; font-weight:600; line-height:22px; color:var(--color-neutral-900);}
+.carousel-card-char-toggle{display:flex; align-items:center; gap:8px;}
+.carousel-card-char-toggle span{font-family:var(--font-family-text); font-size:13px; font-weight:500; line-height:20px; color:var(--color-neutral-600);}
+
+.script-card-msg{
+  width:100%; box-sizing:border-box;
+  display:flex; align-items:center;
+  background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg);
+  padding:12px;
+}
+.script-card-msg.focused{border-color:var(--color-brand-primary);}
+.script-card-msg[contenteditable], .script-card-msg span{
+  flex:1 0 0; min-width:0;
+  font-family:var(--font-family-text); font-size:14px; font-weight:400; line-height:22px; color:var(--color-neutral-900);
+}
+.script-card-msg[contenteditable]{outline:none;}

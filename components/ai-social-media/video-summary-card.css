@@ -1,0 +1,38 @@
+/* Video / Summary Card — Figma node 6171:9
+   Single variant (no states) — the spec summary panel shown after a video finishes
+   generating: title + description, then Duration / Ratio / Character / Voice rows.
+
+   The Ratio row's icon is a CSS-drawn aspect-ratio box, matching the existing
+   .ratio-box-ic::after pattern in prompt-box.css (same "border box repesents the
+   frame shape" convention, sized 8x14 here to match this card's 9:16 spec row —
+   prompt-box.css's own box is a different size for its own chip, so this is kept
+   as its own local rule rather than a shared class).
+*/
+
+.video-summary-card{
+  width:100%; max-width:358px; box-sizing:border-box;
+  display:flex; flex-direction:column; gap:16px; align-items:flex-start;
+  background:var(--color-neutral-0); border:1px solid var(--color-neutral-300); border-radius:12px;
+  padding:16px;
+}
+
+.video-summary-card-head{display:flex; flex-direction:column; gap:12px; align-items:flex-start; width:100%;}
+.video-summary-card-name{display:flex; align-items:center; gap:var(--spacing-sm);}
+.video-summary-card-name span{font-family:var(--font-family-text); font-size:14px; font-weight:600; line-height:22px; color:var(--color-neutral-700);}
+.video-summary-card-name img{width:14px; height:14px; display:block; cursor:pointer;}
+.video-summary-card-desc{margin:0; width:100%; font-family:var(--font-family-text); font-size:13px; font-weight:400; line-height:20px; color:var(--color-neutral-700);}
+
+.video-summary-card-divider{width:100%; height:1px; background:var(--color-neutral-200); flex-shrink:0;}
+
+.video-summary-card-row{
+  display:flex; align-items:flex-start; justify-content:space-between; width:100%;
+  padding-bottom:12px; border-bottom:1px solid var(--color-neutral-150);
+}
+.video-summary-card-row:last-child{padding-bottom:0; border-bottom:none;}
+.video-summary-card-row-label{display:flex; align-items:center; gap:var(--spacing-sm);}
+.video-summary-card-row-label img{width:16px; height:16px; display:block;}
+.video-summary-card-row-label span{font-family:var(--font-family-text); font-size:13px; font-weight:600; line-height:20px; color:var(--color-neutral-700);}
+.video-summary-card-row-value{font-family:var(--font-family-text); font-size:13px; font-weight:400; line-height:20px; color:var(--color-neutral-700);}
+
+.spec-ratio-box{width:16px; height:16px; flex-shrink:0; display:flex; align-items:center; justify-content:center;}
+.spec-ratio-box::after{content:''; display:block; width:8px; height:14px; border:1.2px solid var(--color-neutral-500); border-radius:2px;}

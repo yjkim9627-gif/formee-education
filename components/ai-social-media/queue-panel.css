@@ -1,0 +1,47 @@
+/* Queue Job Row + Queue Panel — Figma nodes 6091:88216 / 6093:49
+   Queue Job Row: State = Working / Ready — a single generation job with a gradient
+   thumbnail placeholder, title, and a tiny status dot + label.
+   Queue Panel: State = Active (orange "N ACTIVE" badge, jobs Working) / Done (green
+   "DONE" badge, jobs Ready) — wraps 1+ Queue Job Rows.
+
+   Thumbnail uses the same diagonal gradient placeholder convention as scene-tile.css /
+   image-scene-card.css (no real generated-image asset to download).
+*/
+
+.queue-job-row{
+  display:flex; align-items:center; gap:10px; width:100%; max-width:280px; box-sizing:border-box;
+  background:var(--color-neutral-25); border-radius:var(--radius-md); padding:8px;
+}
+.queue-job-thumb{
+  width:32px; height:32px; flex-shrink:0; border-radius:var(--radius-sm);
+  background:linear-gradient(135deg,#a8cbff 14%,#ed7897 86%);
+}
+.queue-job-info{display:flex; flex-direction:column; gap:2px; align-items:flex-start; flex:1 0 0; min-width:0; overflow:hidden;}
+.queue-job-title{
+  width:100%; font-family:var(--font-family-text); font-size:12px; font-weight:600; line-height:18px; color:var(--color-neutral-900);
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.queue-job-status{display:flex; align-items:center; gap:5px;}
+.queue-job-status-dot{width:4px; height:4px; border-radius:999px; flex-shrink:0; background:var(--color-warning-text);}
+.queue-job-row.ready .queue-job-status-dot{background:var(--color-badge-green-text);}
+.queue-job-status-label{font-family:var(--font-family-text); font-size:10px; font-weight:500; line-height:14px; color:var(--color-neutral-500); letter-spacing:.02em;}
+
+.queue-panel{
+  display:flex; flex-direction:column; gap:10px; align-items:flex-start;
+  width:100%; max-width:280px; box-sizing:border-box;
+  background:var(--color-neutral-0); border:1px solid var(--color-neutral-200); border-radius:var(--radius-lg);
+  padding:12px;
+  box-shadow:0 2px 4px rgba(15,23,41,.05),0 4px 8px rgba(15,23,41,.08);
+}
+.queue-panel-header{display:flex; align-items:center; gap:8px; width:100%;}
+.queue-panel-title{flex:1 0 0; font-family:var(--font-family-text); font-size:13px; font-weight:600; line-height:20px; color:var(--color-neutral-900);}
+.queue-panel-jobs{display:flex; flex-direction:column; gap:6px; align-items:flex-start; width:100%;}
+
+.queue-badge{
+  display:inline-flex; align-items:center; border-radius:999px; flex-shrink:0;
+  font-family:var(--font-family-text); font-size:10px; font-weight:600; line-height:14px;
+}
+.queue-badge.orange{gap:0; padding:3px 8px 3px 4px; background:var(--color-badge-orange-bg); color:var(--color-badge-orange-text);}
+.queue-badge.orange img{width:16px; height:16px; margin-right:0;}
+.queue-badge.green{gap:4px; height:22px; padding:3px 8px; background:var(--color-badge-green-bg); color:var(--color-badge-green-text);}
+.queue-badge.green img{width:14px; height:14px;}

@@ -2,15 +2,18 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
-<title>Character Card — Shared Component</title>
+<title>Carousel Card Block — AI Social Media Component</title>
 <link rel="stylesheet" href="../../tokens/tokens.css" />
 <link rel="stylesheet" href="../demo-nav.css" />
-<link rel="stylesheet" href="filter-chip.css" />
-<link rel="stylesheet" href="character-card.css" />
+<link rel="stylesheet" href="switch.css" />
+<link rel="stylesheet" href="carousel-card-block.css" />
 <style>
   body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
   .demo-main { padding: var(--spacing-4xl); }
   h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-3xl); }
+  h2 { font-size: var(--font-size-text-md); font-weight: 700; margin: 0 0 var(--spacing-md); }
+  .demo-row { display: flex; flex-direction: column; gap: var(--spacing-md); margin-bottom: var(--spacing-3xl); max-width: 1024px; }
+  .demo-label { font-size: var(--font-size-text-xs); color: var(--color-neutral-500); }
 </style>
 </head>
 <body>
@@ -23,7 +26,7 @@
       <a href="topbar-stepper.html">Topbar + Stepper</a>
       <a href="heading.html">Heading</a>
       <a href="chat-panel.html">Chat Panel</a>
-      <a href="character-card.html" class="active">Character Card</a>
+      <a href="character-card.html">Character Card</a>
       <a href="avatar.html">Avatar</a>
       <a href="switch.html">Controls / Switch</a>
       <a href="prompt-box.html">AI Prompt Box</a>
@@ -41,7 +44,7 @@
       <a href="video-summary-card.html">Video Summary Card</a>
       <a href="destination-account.html">Destination Account</a>
       <a href="date-picker.html">Date Picker</a>
-      <a href="carousel-card-block.html">Carousel Card Block</a>
+      <a href="carousel-card-block.html" class="active">Carousel Card Block</a>
     </div>
     <div class="demo-sidebar-group">
       <div class="demo-sidebar-label">Shared</div>
@@ -52,19 +55,34 @@
     </div>
   </nav>
   <main class="demo-main">
-  <h1>Character Card</h1>
+  <h1>Carousel Card Block</h1>
 
-  <div class="char-panel" style="max-width:640px;">
-    <div class="char-filters">
-      <div class="filter-chip active">Favorites ★</div>
-      <div class="filter-chip">Age <span class="chevron">▾</span></div>
+  <div class="demo-row">
+    <h2>Carousel (card block, wraps a script-card-msg)</h2>
+    <span class="demo-label">State = Default</span>
+    <div class="carousel-card-block">
+      <div class="carousel-card-block-header">
+        <span class="carousel-card-block-title">Card 1</span>
+        <span class="carousel-card-char-toggle"><span>Include character</span><button class="field-switch on" type="button"><span class="knob"></span></button></span>
+      </div>
+      <div class="script-card-msg"><span>Ever wondered what it's really like to study abroad?</span></div>
     </div>
-    <div class="char-grid">
-      <div class="char-card new"><div class="thumb">+</div><div class="name">Create New</div></div>
-      <div class="char-card selected"><div class="thumb"></div><div class="name">Elena</div><div class="char-check">✓</div></div>
-      <div class="char-card"><div class="thumb"></div><div class="name">Milo</div></div>
-      <div class="char-card disabled"><div class="thumb"></div><div class="name">Priya (disabled)</div></div>
+
+    <span class="demo-label">State = Focused</span>
+    <div class="carousel-card-block focused">
+      <div class="carousel-card-block-header">
+        <span class="carousel-card-block-title">Card 1</span>
+        <span class="carousel-card-char-toggle"><span>Include character</span><button class="field-switch on" type="button"><span class="knob"></span></button></span>
+      </div>
+      <div class="script-card-msg"><span>Ever wondered what it's really like to study abroad?</span></div>
     </div>
+  </div>
+
+  <div class="demo-row">
+    <h2>script-card-msg (standalone)</h2>
+    <span class="demo-label">State</span>
+    <div class="script-card-msg"><span>Ever wondered what it's really like to study abroad?</span></div>
+    <div class="script-card-msg focused"><span>Ever wondered what it's really like to study abroad?</span></div>
   </div>
   </main>
 </div>

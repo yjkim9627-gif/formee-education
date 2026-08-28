@@ -2,15 +2,16 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
-<title>Character Card — Shared Component</title>
+<title>Video Summary Card — AI Social Media Component</title>
 <link rel="stylesheet" href="../../tokens/tokens.css" />
 <link rel="stylesheet" href="../demo-nav.css" />
-<link rel="stylesheet" href="filter-chip.css" />
-<link rel="stylesheet" href="character-card.css" />
+<link rel="stylesheet" href="video-summary-card.css" />
 <style>
   body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
   .demo-main { padding: var(--spacing-4xl); }
   h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-3xl); }
+  .demo-row { display: flex; flex-direction: column; gap: var(--spacing-sm); margin-bottom: var(--spacing-3xl); }
+  .demo-label { font-size: var(--font-size-text-xs); color: var(--color-neutral-500); }
 </style>
 </head>
 <body>
@@ -23,7 +24,7 @@
       <a href="topbar-stepper.html">Topbar + Stepper</a>
       <a href="heading.html">Heading</a>
       <a href="chat-panel.html">Chat Panel</a>
-      <a href="character-card.html" class="active">Character Card</a>
+      <a href="character-card.html">Character Card</a>
       <a href="avatar.html">Avatar</a>
       <a href="switch.html">Controls / Switch</a>
       <a href="prompt-box.html">AI Prompt Box</a>
@@ -38,10 +39,10 @@
       <a href="image-scene-card.html">Image Scene Card</a>
       <a href="voice-accordion-row.html">Voice Accordion Row</a>
       <a href="queue-panel.html">Queue Job Row / Panel</a>
-      <a href="video-summary-card.html">Video Summary Card</a>
       <a href="destination-account.html">Destination Account</a>
       <a href="date-picker.html">Date Picker</a>
       <a href="carousel-card-block.html">Carousel Card Block</a>
+      <a href="video-summary-card.html" class="active">Video Summary Card</a>
     </div>
     <div class="demo-sidebar-group">
       <div class="demo-sidebar-label">Shared</div>
@@ -52,18 +53,35 @@
     </div>
   </nav>
   <main class="demo-main">
-  <h1>Character Card</h1>
+  <h1>Video Summary Card</h1>
 
-  <div class="char-panel" style="max-width:640px;">
-    <div class="char-filters">
-      <div class="filter-chip active">Favorites ★</div>
-      <div class="filter-chip">Age <span class="chevron">▾</span></div>
-    </div>
-    <div class="char-grid">
-      <div class="char-card new"><div class="thumb">+</div><div class="name">Create New</div></div>
-      <div class="char-card selected"><div class="thumb"></div><div class="name">Elena</div><div class="char-check">✓</div></div>
-      <div class="char-card"><div class="thumb"></div><div class="name">Milo</div></div>
-      <div class="char-card disabled"><div class="thumb"></div><div class="name">Priya (disabled)</div></div>
+  <div class="demo-row">
+    <span class="demo-label">Default (no state variants)</span>
+    <div class="video-summary-card">
+      <div class="video-summary-card-head">
+        <div class="video-summary-card-name">
+          <span>Lip Tint Intro</span>
+          <img src="icons/edit-pencil.svg" alt="Edit">
+        </div>
+        <p class="video-summary-card-desc">A short intro video showcasing the new lip tint's color payoff and texture.</p>
+      </div>
+      <div class="video-summary-card-divider"></div>
+      <div class="video-summary-card-row">
+        <span class="video-summary-card-row-label"><img src="icons/spec-duration.svg" alt=""><span>Duration</span></span>
+        <span class="video-summary-card-row-value">16s</span>
+      </div>
+      <div class="video-summary-card-row">
+        <span class="video-summary-card-row-label"><span class="spec-ratio-box"></span><span>Ratio</span></span>
+        <span class="video-summary-card-row-value">9:16</span>
+      </div>
+      <div class="video-summary-card-row">
+        <span class="video-summary-card-row-label"><img src="icons/circle-user-round.svg" alt=""><span>Character</span></span>
+        <span class="video-summary-card-row-value">Elena</span>
+      </div>
+      <div class="video-summary-card-row">
+        <span class="video-summary-card-row-label"><img src="icons/nav-voices.svg" alt=""><span>Voice</span></span>
+        <span class="video-summary-card-row-value">Ivanna</span>
+      </div>
     </div>
   </div>
   </main>
