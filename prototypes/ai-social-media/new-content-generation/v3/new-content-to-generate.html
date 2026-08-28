@@ -633,7 +633,24 @@
   .pub-caption-reset-btn{border:none; background:none; color:var(--color-brand-primary); font-size:11.5px; font-weight:600; cursor:pointer; padding:0; font-family:var(--font-family-text);}
   .pub-caption-per-platform-empty{font-size:12.5px; color:var(--color-neutral-500); margin:0;}
 
+  /* -- Per-platform schedule override — same "shared by default, opt in per platform"
+     pattern as the caption customization above -- */
+  .pub-schedule-custom-row{display:flex; align-items:center; gap:10px; font-size:12.5px; font-weight:500; color:var(--color-neutral-700); user-select:none; margin-top:14px;}
+  .pub-schedule-per-platform{display:flex; flex-direction:column; gap:10px; padding-top:14px; border-top:1px solid var(--color-neutral-200); width:100%;}
+  .pub-schedule-platform-row{display:flex; align-items:center; gap:12px;}
+  .pub-schedule-platform-label{font-size:12.5px; font-weight:600; color:var(--color-neutral-900); width:70px; flex-shrink:0;}
+  .pub-schedule-per-platform-empty{font-size:12.5px; color:var(--color-neutral-500); margin:0;}
+
   /* -- Destinations: each platform is its own bordered card in a 2-column grid -- */
+  /* -- Format (Post/Story) — Image can publish as both at once; Carousel and Reel/Short
+     are feed-post-only formats on every platform, so they get a fixed, non-interactive
+     label instead of a choice. -- */
+  .pub-format-options{display:flex; align-items:center; gap:var(--spacing-xl);}
+  .pub-format-checkbox{display:flex; align-items:center; gap:8px; font-size:13px; font-weight:500; color:var(--color-neutral-900); cursor:pointer; user-select:none;}
+  .pub-format-checkbox input{width:16px; height:16px; accent-color:var(--color-neutral-900); cursor:pointer;}
+  .pub-format-fixed{font-size:13px; font-weight:500; color:var(--color-neutral-900);}
+  .pub-format-fixed-note{font-size:12px; font-weight:400; color:var(--color-neutral-500);}
+
   .pub-destinations{display:grid; grid-template-columns:1fr 1fr; gap:var(--spacing-md);}
   .pub-dest-row{display:flex; align-items:center; gap:var(--spacing-md); height:56px; padding:0 var(--spacing-lg); border:1px solid var(--color-neutral-400); border-radius:var(--radius-xl); background:#fff;}
   .pub-dest-row.disconnected{background:var(--color-neutral-150);}
@@ -698,6 +715,29 @@
   .pub-divider{height:1px; background:var(--color-neutral-200); margin:var(--spacing-2xl) 0;}
   .pub-run-ad{display:flex; align-items:center; justify-content:space-between; gap:16px; background:#fff; border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl); padding:12px 16px;}
   .pub-run-ad-sub{font-size:12px; color:var(--color-neutral-500); margin:4px 0 0;}
+
+  /* -- "Publish to social" modal — reuses the shared modal shell (components/shared/modal.css)
+     for the overlay/close/title/footer, with product-specific inner content below. The
+     overlay is position:fixed (not the shared class's position:absolute) so it covers the
+     whole viewport regardless of the app frame's current zoom scale, matching how the
+     Brand-setup role-switch/home-fab overlays already behave in this file. -- */
+  .pub-social-modal-overlay{position:fixed;}
+  .pub-social-modal{max-width:640px;}
+  .pub-social-modal .modal__footer{justify-content:space-between;}
+  .pub-social-preview-card{display:flex; gap:16px; border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl); padding:16px;}
+  .pub-social-preview-thumb{width:96px; height:96px; border-radius:var(--radius-lg); background:linear-gradient(135deg,var(--color-brand-primary-mid),var(--color-brand-accent)); flex-shrink:0;}
+  .pub-social-preview-meta{display:flex; flex-direction:column; gap:6px; justify-content:center; min-width:0;}
+  .pub-social-preview-handle{font-size:13px; font-weight:700; color:var(--color-neutral-900);}
+  .pub-social-preview-handle a{color:var(--color-brand-primary); text-decoration:underline;}
+  .pub-social-preview-format, .pub-social-preview-when{font-size:12.5px; color:var(--color-neutral-500);}
+  .pub-social-confirm-box{display:flex; flex-direction:column; gap:10px; background:var(--color-neutral-75); border-radius:var(--radius-xl); padding:16px; margin-top:16px;}
+  .pub-social-confirm-warning{font-size:13px; font-weight:700; color:var(--color-brand-primary);}
+  .pub-social-confirm-note{font-size:12.5px; color:var(--color-neutral-700); line-height:1.5; margin:0;}
+  .pub-social-confirm-input{width:100%; border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); padding:9px 12px; font-size:13px; font-family:var(--font-family-text); color:var(--color-neutral-900);}
+  .pub-social-confirm-input:focus{outline:none; border-color:var(--color-brand-primary);}
+  .pub-social-confirm-btn{align-self:flex-start;}
+  .pub-social-confirm-btn:disabled{opacity:.5; cursor:default;}
+  .pub-social-confirmed-note{display:flex; align-items:center; gap:8px; background:var(--color-badge-green-bg); color:var(--color-badge-green-text); border-radius:var(--radius-lg); padding:12px 16px; font-size:13px; font-weight:600;}
 
   /* =====================================================================
      REEL/SHORT (Script/Timeline/Video) — ported from
@@ -2132,6 +2172,13 @@
       </div>
 
       <div class="pub-block">
+        <label class="pub-block-label">Format</label>
+        <div class="pub-card">
+          <div class="pub-format-options" id="pubFormatOptions"></div>
+        </div>
+      </div>
+
+      <div class="pub-block">
         <label class="pub-block-label">Destinations</label>
         <div class="pub-destinations" id="pubDestinations"></div>
       </div>
@@ -2151,7 +2198,7 @@
             </label>
             <div class="pub-schedule-fields" id="pubScheduleFields" style="display:none;">
               <div class="dt-picker-wrap">
-                <button type="button" class="dt-trigger placeholder" id="dtTrigger" onclick="toggleDatePicker(event)">
+                <button type="button" class="dt-trigger placeholder" id="dtTrigger" onclick="toggleDatePicker(event,'shared')">
                   <span id="dtTriggerText">Choose date &amp; time</span>
                   <span class="ic"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiB2aWV3Qm94PSIwIDAgMTggMTgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gY2FsZW5kYXIiPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNNiAxLjVWNC41IiBzdHJva2U9IiM0NzUwNjkiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggaWQ9IlZlY3Rvcl8yIiBkPSJNMTIgMS41VjQuNSIgc3Ryb2tlPSIjNDc1MDY5IiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxwYXRoIGlkPSJWZWN0b3JfMyIgZD0iTTE0LjI1IDNIMy43NUMyLjkyMTU3IDMgMi4yNSAzLjY3MTU3IDIuMjUgNC41VjE1QzIuMjUgMTUuODI4NCAyLjkyMTU3IDE2LjUgMy43NSAxNi41SDE0LjI1QzE1LjA3ODQgMTYuNSAxNS43NSAxNS44Mjg0IDE1Ljc1IDE1VjQuNUMxNS43NSAzLjY3MTU3IDE1LjA3ODQgMyAxNC4yNSAzWiIgc3Ryb2tlPSIjNDc1MDY5IiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxwYXRoIGlkPSJWZWN0b3JfNCIgZD0iTTIuMjUgNy41SDE1Ljc1IiBzdHJva2U9IiM0NzUwNjkiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9nPgo8L3N2Zz4K" alt=""></span>
                 </button>
@@ -2180,6 +2227,14 @@
                   </div>
                 </div>
               </div>
+              <div class="pub-schedule-custom-row">
+                <label class="toggle-switch">
+                  <input type="checkbox" id="pubScheduleCustomToggle" onchange="toggleScheduleCustomize()">
+                  <span class="toggle-slider"></span>
+                </label>
+                <span>Customize schedule for each platform</span>
+              </div>
+              <div class="pub-schedule-per-platform" id="pubSchedulePerPlatform" style="display:none;"></div>
             </div>
           </div>
           <label class="pub-radio-row">
@@ -2213,6 +2268,22 @@
   </div>
   </div>
 
+</div>
+
+<div class="modal-overlay pub-social-modal-overlay" id="pubSocialModalOverlay" style="display:none;">
+  <div class="modal modal--form pub-social-modal">
+    <button type="button" class="modal__close" onclick="closePublishSocialModal()">✕</button>
+    <div class="modal__content">
+      <h2 class="modal__title">Publish to social</h2>
+      <p class="modal__body" id="pubSocialModalSubtitle">Preview is live. Publishing requires typing the handle to confirm.</p>
+      <div class="seg-control" id="pubSocialTabs"></div>
+      <div id="pubSocialTabContent"></div>
+    </div>
+    <div class="modal__footer">
+      <button type="button" class="btn btn-secondary" onclick="quickSaveDraftFromModal()">✓ Save as draft instead</button>
+      <button type="button" class="btn btn-secondary" onclick="closePublishSocialModal()">Cancel</button>
+    </div>
+  </div>
 </div>
 
 <a class="home-fab" href="../../../../index.html" title="Back to all screens">
@@ -5078,8 +5149,50 @@ const PUBLISH_PLATFORMS = [
 function populatePublishView(){
   document.getElementById('pubProjectName').textContent = window.__contentType === 'carousel' ? 'New Carousel · Draft' : window.__contentType === 'reel' ? 'New Reel/Short · Draft' : 'New Image Post · Draft';
   renderPublishDestinations();
+  renderPublishFormatOptions();
   updateWhenSelection();
   if(document.getElementById('pubCaptionCustomToggle').checked) renderPerPlatformCaptions();
+}
+
+// Image can go out as a feed Post and/or a Story at once; Carousel and Reel/Short only
+// ever publish as a feed Post, so they get a fixed label instead of a real choice.
+function renderPublishFormatOptions(){
+  const el = document.getElementById('pubFormatOptions');
+  if(!el) return;
+  if(window.__contentType === 'image'){
+    el.innerHTML = `
+      <label class="pub-format-checkbox">
+        <input type="checkbox" id="pubFormatPost" checked onchange="onFormatToggle()">
+        <span>Post</span>
+      </label>
+      <label class="pub-format-checkbox">
+        <input type="checkbox" id="pubFormatStory" onchange="onFormatToggle()">
+        <span>Story</span>
+      </label>
+    `;
+  } else {
+    const note = window.__contentType === 'carousel' ? 'Carousels' : 'Reels/Shorts';
+    el.innerHTML = `<span class="pub-format-fixed">Post <span class="pub-format-fixed-note">— ${note} publish as a feed post only</span></span>`;
+  }
+}
+
+function onFormatToggle(){
+  const postEl = document.getElementById('pubFormatPost');
+  const storyEl = document.getElementById('pubFormatStory');
+  if(!postEl.checked && !storyEl.checked){
+    postEl.checked = true; // at least one format must stay selected
+    showPublishWarning('Select at least one format — Post or Story.');
+  } else {
+    clearPublishWarning();
+  }
+}
+
+function getSelectedFormats(){
+  if(window.__contentType !== 'image') return ['Post'];
+  const formats = [];
+  if(document.getElementById('pubFormatPost')?.checked) formats.push('Post');
+  if(document.getElementById('pubFormatStory')?.checked) formats.push('Story');
+  return formats.length ? formats : ['Post'];
 }
 
 // ---- Per-platform caption overrides: shared caption by default, opt in to customize per destination ----
@@ -5091,6 +5204,7 @@ function getCheckedDestinations(){
 
 function onDestinationToggle(){
   if(document.getElementById('pubCaptionCustomToggle').checked) renderPerPlatformCaptions();
+  if(document.getElementById('pubScheduleCustomToggle').checked) renderSchedulePerPlatform();
 }
 
 function toggleCaptionCustomize(){
@@ -5448,25 +5562,39 @@ function showPublishWarning(message){
 // ---- Date & time picker (Publish · Schedule) ----
 // Calendar layout follows the Figma Date Picker component; time is picked in the same
 // popover (hour/minute/AM-PM) rather than as a separate step, then both are confirmed together.
+// A single popover instance is reused for every trigger (the shared "When" schedule and
+// each per-platform override) — it's moved into whichever .dt-picker-wrap owns the trigger
+// that was clicked, and __dtActiveTarget tracks which one is currently being edited so
+// Confirm writes its result to the right place.
 const DT_MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DT_CALENDAR_ICON = '<img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiB2aWV3Qm94PSIwIDAgMTggMTgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gY2FsZW5kYXIiPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNNiAxLjVWNC41IiBzdHJva2U9IiM0NzUwNjkiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggaWQ9IlZlY3Rvcl8yIiBkPSJNMTIgMS41VjQuNSIgc3Ryb2tlPSIjNDc1MDY5IiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxwYXRoIGlkPSJWZWN0b3JfMyIgZD0iTTE0LjI1IDNIMy43NUMyLjkyMTU3IDMgMi4yNSAzLjY3MTU3IDIuMjUgNC41VjE1QzIuMjUgMTUuODI4NCAyLjkyMTU3IDE2LjUgMy43NSAxNi41SDE0LjI1QzE1LjA3ODQgMTYuNSAxNS43NSAxNS44Mjg0IDE1Ljc1IDE1VjQuNUMxNS43NSAzLjY3MTU3IDE1LjA3ODQgMyAxNC4yNSAzWiIgc3Ryb2tlPSIjNDc1MDY5IiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxwYXRoIGlkPSJWZWN0b3JfNCIgZD0iTTIuMjUgNy41SDE1Ljc1IiBzdHJva2U9IiM0NzUwNjkiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9nPgo8L3N2Zz4K" alt="">';
 window.__dtViewDate = new Date();
-window.__dtSelectedDate = null; // Date | null — the day picked in the calendar
+window.__dtSelectedDate = null; // Date | null — the day picked in the calendar, for whichever target is active
 window.__dtHour = 3; window.__dtMinute = 0; window.__dtPeriod = 'PM'; // sensible default
-window.__dtConfirmedValue = null; // formatted "DD/MM/YYYY, hh:mm AM/PM" once "Choose Date" is clicked
+window.__dtValues = window.__dtValues || {}; // target ('shared' | platform key) -> {date, hour, minute, period, formatted}
+window.__dtActiveTarget = 'shared';
 window.__dtSelectsPopulated = false;
 
-function toggleDatePicker(e){
+function toggleDatePicker(e, target){
   e.stopPropagation();
   const pop = document.getElementById('dtPopover');
-  const willOpen = pop.style.display !== 'block';
-  if(willOpen){
-    if(!window.__dtSelectsPopulated) populateDtTimeSelects();
-    window.__dtViewDate = window.__dtSelectedDate ? new Date(window.__dtSelectedDate) : new Date();
-    renderDtGrid();
-    pop.style.display = 'block';
-  } else {
+  if(pop.style.display === 'block' && window.__dtActiveTarget === target){
     pop.style.display = 'none';
+    return;
   }
+  window.__dtActiveTarget = target;
+  const wrap = e.currentTarget.closest('.dt-picker-wrap');
+  if(pop.parentElement !== wrap) wrap.appendChild(pop);
+  if(!window.__dtSelectsPopulated) populateDtTimeSelects();
+  const existing = window.__dtValues[target];
+  window.__dtSelectedDate = existing ? new Date(existing.date) : null;
+  window.__dtViewDate = existing ? new Date(existing.date) : new Date();
+  window.__dtHour = existing ? existing.hour : 3;
+  window.__dtMinute = existing ? existing.minute : 0;
+  window.__dtPeriod = existing ? existing.period : 'PM';
+  syncDtTimeSelects();
+  renderDtGrid();
+  pop.style.display = 'block';
 }
 function closeDatePicker(){
   document.getElementById('dtPopover').style.display = 'none';
@@ -5476,18 +5604,22 @@ document.addEventListener('click', (e) => {
   if(pop && pop.style.display === 'block' && !e.target.closest('.dt-picker-wrap')) pop.style.display = 'none';
 });
 
+// Builds the hour/minute options and wires their onchange handlers — done once. Values are
+// re-synced separately (syncDtTimeSelects) every time the popover opens for a new target.
 function populateDtTimeSelects(){
   const hourSel = document.getElementById('dtHour');
   const minuteSel = document.getElementById('dtMinute');
   hourSel.innerHTML = Array.from({length: 12}, (_, i) => i + 1).map(h => `<option value="${h}">${String(h).padStart(2,'0')}</option>`).join('');
   minuteSel.innerHTML = ['00','15','30','45'].map(m => `<option value="${m}">${m}</option>`).join('');
-  hourSel.value = window.__dtHour;
-  minuteSel.value = String(window.__dtMinute).padStart(2,'0');
-  document.getElementById('dtPeriod').value = window.__dtPeriod;
   hourSel.onchange = () => window.__dtHour = Number(hourSel.value);
   minuteSel.onchange = () => window.__dtMinute = Number(minuteSel.value);
   document.getElementById('dtPeriod').onchange = (e) => window.__dtPeriod = e.target.value;
   window.__dtSelectsPopulated = true;
+}
+function syncDtTimeSelects(){
+  document.getElementById('dtHour').value = window.__dtHour;
+  document.getElementById('dtMinute').value = String(window.__dtMinute).padStart(2,'0');
+  document.getElementById('dtPeriod').value = window.__dtPeriod;
 }
 
 function dtChangeMonth(delta){
@@ -5542,12 +5674,55 @@ function confirmDatePicker(){
   const yyyy = d.getFullYear();
   const hh = String(window.__dtHour).padStart(2,'0');
   const min = String(window.__dtMinute).padStart(2,'0');
-  window.__dtConfirmedValue = `${dd}/${mm}/${yyyy}, ${hh}:${min} ${window.__dtPeriod}`;
-  const trigger = document.getElementById('dtTrigger');
-  document.getElementById('dtTriggerText').textContent = window.__dtConfirmedValue;
-  trigger.classList.remove('placeholder');
+  const formatted = `${dd}/${mm}/${yyyy}, ${hh}:${min} ${window.__dtPeriod}`;
+  const target = window.__dtActiveTarget;
+  window.__dtValues[target] = { date: new Date(d), hour: window.__dtHour, minute: window.__dtMinute, period: window.__dtPeriod, formatted };
+
+  const isShared = target === 'shared';
+  const trigger = document.getElementById(isShared ? 'dtTrigger' : `dtTrigger_${target}`);
+  const textEl = document.getElementById(isShared ? 'dtTriggerText' : `dtTriggerText_${target}`);
+  if(textEl) textEl.textContent = formatted;
+  if(trigger) trigger.classList.remove('placeholder');
   clearPublishWarning();
   closeDatePicker();
+}
+
+// Resolves what a given platform will actually be scheduled at: its own override if
+// per-platform scheduling is on and one was set, otherwise the shared "When" value.
+function getScheduleForPlatform(key){
+  if(document.getElementById('pubScheduleCustomToggle').checked && window.__dtValues[key]) return window.__dtValues[key].formatted;
+  return window.__dtValues.shared ? window.__dtValues.shared.formatted : null;
+}
+
+function toggleScheduleCustomize(){
+  const on = document.getElementById('pubScheduleCustomToggle').checked;
+  document.getElementById('pubSchedulePerPlatform').style.display = on ? 'flex' : 'none';
+  if(on) renderSchedulePerPlatform();
+}
+
+function renderSchedulePerPlatform(){
+  const wrap = document.getElementById('pubSchedulePerPlatform');
+  const checked = getCheckedDestinations();
+  if(checked.length === 0){
+    wrap.innerHTML = '<p class="pub-schedule-per-platform-empty">Select a destination below to customize its schedule.</p>';
+    return;
+  }
+  wrap.innerHTML = checked.map(key => {
+    const platform = PUBLISH_PLATFORMS.find(p => p.key === key);
+    const val = window.__dtValues[key];
+    const label = val ? val.formatted : 'Choose date &amp; time';
+    return `
+      <div class="pub-schedule-platform-row">
+        <span class="pub-schedule-platform-label">${platform.label}</span>
+        <div class="dt-picker-wrap">
+          <button type="button" class="dt-trigger${val ? '' : ' placeholder'}" id="dtTrigger_${key}" onclick="toggleDatePicker(event,'${key}')">
+            <span id="dtTriggerText_${key}">${label}</span>
+            <span class="ic">${DT_CALENDAR_ICON}</span>
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
 function quickSaveDraft(){
@@ -5576,16 +5751,126 @@ function handlePublishMainAction(){
     return;
   }
   if(selected === 'schedule'){
-    if(!window.__dtConfirmedValue){
+    const missing = destinations.filter(key => !getScheduleForPlatform(key));
+    if(missing.length){
       showPublishWarning('Choose a publish date and time before scheduling.');
       return;
     }
     clearPublishWarning();
-    alert(`Scheduled for ${window.__dtConfirmedValue} on ${describeDestinations(destinations)}.`);
+    openPublishSocialModal('schedule');
     return;
   }
   clearPublishWarning();
-  alert(`Published now to ${describeDestinations(destinations)}.`);
+  openPublishSocialModal('now');
+}
+
+// ---- "Publish to social" confirmation modal — one tab per selected destination, each
+// gated behind typing the (fake, prototype-only) handle before its own publish button
+// unlocks. Mirrors the reviewed staging pattern: a final, per-platform review right
+// before the irreversible action, rather than confirming inline as destinations are
+// checked. ----
+const PUBLISH_FAKE_HANDLE = 'formeeexpress';
+window.__socialModalPlatforms = [];
+window.__socialModalActive = null;
+window.__socialModalConfirmed = {};
+window.__socialModalMode = 'now';
+
+function openPublishSocialModal(mode){
+  const destinations = getCheckedDestinations();
+  if(!destinations.length) return;
+  window.__socialModalPlatforms = destinations;
+  window.__socialModalActive = destinations[0];
+  window.__socialModalConfirmed = {};
+  window.__socialModalMode = mode;
+  document.getElementById('pubSocialModalSubtitle').textContent = mode === 'schedule'
+    ? 'Preview is live. Scheduling requires typing the handle to confirm.'
+    : 'Preview is live. Publishing requires typing the handle to confirm.';
+  renderSocialTabs();
+  renderSocialTabContent();
+  document.getElementById('pubSocialModalOverlay').style.display = 'flex';
+}
+
+function closePublishSocialModal(){
+  document.getElementById('pubSocialModalOverlay').style.display = 'none';
+}
+
+function renderSocialTabs(){
+  const wrap = document.getElementById('pubSocialTabs');
+  wrap.innerHTML = window.__socialModalPlatforms.map(key => {
+    const platform = PUBLISH_PLATFORMS.find(p => p.key === key);
+    const active = key === window.__socialModalActive;
+    const done = window.__socialModalConfirmed[key];
+    return `<button type="button" class="seg-chip${active ? ' active' : ''}" onclick="switchSocialTab('${key}')">${done ? '✓ ' : ''}${platform.label}</button>`;
+  }).join('');
+}
+
+function switchSocialTab(key){
+  window.__socialModalActive = key;
+  renderSocialTabs();
+  renderSocialTabContent();
+}
+
+function renderSocialTabContent(){
+  const key = window.__socialModalActive;
+  const platform = PUBLISH_PLATFORMS.find(p => p.key === key);
+  const wrap = document.getElementById('pubSocialTabContent');
+  const done = window.__socialModalConfirmed[key];
+
+  if(done){
+    wrap.innerHTML = `<div class="pub-social-confirmed-note">✓ Confirmed — ${platform.label} will ${window.__socialModalMode === 'schedule' ? 'be scheduled' : 'publish'}.</div>`;
+    return;
+  }
+
+  const formats = getSelectedFormats().join(' + ');
+  const whenText = window.__socialModalMode === 'schedule'
+    ? `Scheduled for ${getScheduleForPlatform(key) || '—'}`
+    : 'Publishing now';
+  const verb = window.__socialModalMode === 'schedule' ? 'schedules' : 'publishes';
+  const actionLabel = window.__socialModalMode === 'schedule' ? 'Schedule' : 'Publish';
+
+  wrap.innerHTML = `
+    <div class="pub-social-preview-card">
+      <div class="pub-social-preview-thumb"></div>
+      <div class="pub-social-preview-meta">
+        <div class="pub-social-preview-handle">${platform.label.toUpperCase()} · @${PUBLISH_FAKE_HANDLE}</div>
+        <div class="pub-social-preview-format">Format: ${formats}</div>
+        <div class="pub-social-preview-when">${whenText}</div>
+      </div>
+    </div>
+    <div class="pub-social-confirm-box">
+      <div class="pub-social-confirm-warning">⚠ This will post live to @${PUBLISH_FAKE_HANDLE}</div>
+      <p class="pub-social-confirm-note">Heads up: this isn't a dry run. Confirming ${verb} the content above straight to ${platform.label}. Type the handle below to unlock the button.</p>
+      <input type="text" class="pub-social-confirm-input" id="pubSocialConfirmInput" placeholder='Type &quot;${PUBLISH_FAKE_HANDLE}&quot; to confirm' oninput="onSocialConfirmInput(this.value)">
+      <button type="button" class="btn btn-dark pub-social-confirm-btn" id="pubSocialConfirmBtn" disabled onclick="confirmPublishPlatform('${key}')">✨ ${actionLabel} live to ${platform.label}</button>
+    </div>
+  `;
+}
+
+function onSocialConfirmInput(value){
+  document.getElementById('pubSocialConfirmBtn').disabled = value.trim() !== PUBLISH_FAKE_HANDLE;
+}
+
+function confirmPublishPlatform(key){
+  window.__socialModalConfirmed[key] = true;
+  const remaining = window.__socialModalPlatforms.filter(k => !window.__socialModalConfirmed[k]);
+  if(remaining.length){
+    window.__socialModalActive = remaining[0];
+    renderSocialTabs();
+    renderSocialTabContent();
+  } else {
+    renderSocialTabs();
+    renderSocialTabContent();
+    const label = window.__socialModalMode === 'schedule' ? 'Scheduled' : 'Published';
+    setTimeout(() => {
+      closePublishSocialModal();
+      alert(`${label} to ${describeDestinations(window.__socialModalPlatforms)}.`);
+    }, 500);
+  }
+}
+
+function quickSaveDraftFromModal(){
+  closePublishSocialModal();
+  quickSaveDraft();
 }
 
 function runAsAd(){
