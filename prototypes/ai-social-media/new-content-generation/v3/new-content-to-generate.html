@@ -291,25 +291,31 @@
   .storyboard-stage{display:flex; gap:20px; flex:1; min-height:0;}
   .storyboard-canvas{flex:1; min-width:0; min-height:0; display:flex; flex-direction:column;}
   .storyboard-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); grid-auto-rows:min-content; gap:14px; align-content:start; flex:1; min-height:0; overflow-y:auto;}
-  .storyboard-tile{border:1.5px solid var(--color-neutral-300); border-radius:12px; overflow:hidden; cursor:pointer; background:#fff; transition:border-color 0.15s, box-shadow 0.15s;}
+  /* Not a full component-class swap (unlike Scene Tile/Video Summary Card/etc.) — this
+     tile transitions IN PLACE between the shared component's two Figma types
+     (copy-overlay while "pending", generated-image once "ready"/"generating"), plus real
+     product states (regenerate button, version-history pager) the static Figma export
+     never needed. Values below are aligned to storyboard-card.css's verified spec even
+     though the class names stay local. */
+  .storyboard-tile{border:1px solid var(--color-neutral-400); border-radius:var(--radius-xl); overflow:hidden; cursor:pointer; background:var(--color-neutral-0); transition:border-color 0.15s;}
   .storyboard-tile:hover{border-color:var(--color-neutral-450);}
-  .storyboard-tile.active{border-color:var(--color-brand-primary); box-shadow:0 0 0 3px rgba(79,109,230,0.12);}
-  .storyboard-tile-preview{position:relative; width:100%; aspect-ratio:4/5; overflow:hidden; background:linear-gradient(135deg,var(--color-neutral-200),var(--color-neutral-150));}
-  .storyboard-tile.pending .storyboard-tile-preview{background:linear-gradient(135deg,var(--color-neutral-100),var(--color-neutral-50));}
-  .storyboard-tile.ready .storyboard-tile-preview{background:linear-gradient(135deg,var(--color-brand-primary-mid),var(--color-brand-accent));}
+  .storyboard-tile.active{border-color:var(--color-neutral-500);}
+  .storyboard-tile-preview{position:relative; width:100%; aspect-ratio:4/5; overflow:hidden; background:var(--color-neutral-100);}
+  .storyboard-tile.ready .storyboard-tile-preview,
+  .storyboard-tile.generating .storyboard-tile-preview{background:var(--color-neutral-200);}
   .storyboard-tile.generating .storyboard-tile-badge{display:none;}
   .storyboard-tile.generating .spinner-mini{display:block;}
   .storyboard-tile-preview .spinner-mini{position:absolute; top:50%; left:50%; margin:-11px 0 0 -11px;}
-  .storyboard-tile-badge{font-size:11px; font-weight:600; color:#fff; background:rgba(15,23,41,0.55); padding:4px 8px; border-radius:6px; backdrop-filter:blur(2px);}
-  .storyboard-tile-char-badge{font-size:10px; font-weight:600; color:#fff; background:rgba(15,23,41,0.55); padding:4px 7px; border-radius:6px; backdrop-filter:blur(2px); white-space:nowrap;}
-  .storyboard-tile-char-badge.off{background:rgba(15,23,41,0.28); color:rgba(255,255,255,0.8);}
+  .storyboard-tile-badge{font-size:11px; font-weight:600; line-height:16px; color:var(--color-neutral-0); background:rgba(71,80,105,.6); padding:4px 8px; border-radius:var(--radius-sm);}
+  .storyboard-tile-char-badge{font-size:10px; font-weight:600; color:var(--color-neutral-0); background:rgba(71,80,105,.6); padding:4px 7px; border-radius:var(--radius-sm); white-space:nowrap;}
+  .storyboard-tile-char-badge.off{background:rgba(71,80,105,.3); color:rgba(255,255,255,0.8);}
   .storyboard-tile-overlay-top{position:absolute; top:8px; left:8px; right:8px; display:flex; align-items:center; justify-content:space-between; gap:6px;}
   .storyboard-tile-bottom-row{position:absolute; left:10px; right:10px; bottom:10px; display:flex; align-items:center; justify-content:space-between; gap:6px; z-index:2;}
   .storyboard-tile-copy{position:absolute; inset:0; padding:14px 12px 40px; display:flex; flex-direction:column; gap:6px; overflow:hidden;}
-  .storyboard-tile-copy-headline{font-size:12.5px; font-weight:800; color:var(--color-neutral-800); line-height:1.35;}
-  .storyboard-tile-copy-subhead{font-size:11px; font-weight:600; color:var(--color-neutral-600); line-height:1.4;}
-  .storyboard-tile-copy-cta{align-self:flex-start; margin-top:2px; font-size:10px; font-weight:700; color:#fff; background:var(--color-neutral-900); padding:4px 10px; border-radius:999px; white-space:nowrap;}
-  .storyboard-tile-ready-badge{display:none; align-items:center; gap:3px; font-size:10px; font-weight:700; color:var(--color-badge-green-text); background:#fff; padding:3px 7px; border-radius:999px;}
+  .storyboard-tile-copy-headline{font-size:13px; font-weight:600; color:var(--color-neutral-800); line-height:20px;}
+  .storyboard-tile-copy-subhead{font-size:12px; font-weight:500; color:var(--color-neutral-700); line-height:18px;}
+  .storyboard-tile-copy-cta{align-self:flex-start; margin-top:2px; font-size:10px; font-weight:500; color:var(--color-neutral-0); background:var(--color-neutral-700); padding:4px 8px; border-radius:var(--radius-md); white-space:nowrap;}
+  .storyboard-tile-ready-badge{display:none; align-items:center; gap:3px; font-size:10px; font-weight:600; line-height:14px; color:var(--color-badge-green-text); background:var(--color-badge-green-bg); padding:4px 8px; border-radius:999px; box-shadow:0 4px 4px rgba(15,23,41,.08),0 2px 2px rgba(15,23,41,.05);}
   .storyboard-tile.ready .storyboard-tile-ready-badge{display:inline-flex;}
   .storyboard-tile-regen-btn{display:none; width:24px; height:24px; border-radius:999px; border:none; background:rgba(255,255,255,0.92); align-items:center; justify-content:center; font-size:12px; color:var(--color-neutral-700); cursor:pointer; margin-left:auto;}
   .storyboard-tile-regen-btn:hover{background:#fff; color:var(--color-neutral-900);}
@@ -3405,7 +3411,7 @@ function renderStoryboardTile(n){
     <div class="storyboard-tile ${stateClass}${isActive ? ' active' : ''}" data-card="${n}" id="storyboardTile${n}" onclick="selectStoryboardCard(${n})">
       <div class="storyboard-tile-preview">
         <div class="storyboard-tile-overlay-top">
-          <span class="storyboard-tile-ready-badge">✓ Ready</span>
+          <span class="storyboard-tile-ready-badge">Ready</span>
           <button type="button" class="storyboard-tile-regen-btn" onclick="event.stopPropagation(); regenerateCard(${n})" title="Regenerate this card only · ⚡${CARD_REGEN_CREDIT}"><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt=""></button>
         </div>
         <div class="spinner-mini"></div>
