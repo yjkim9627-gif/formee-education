@@ -1754,7 +1754,11 @@ goToBrief();
 // ratio — same technique as prototypes/ai-social-media/editing/image-editing.html, so this
 // prototype reads at the right size on both a large monitor and a laptop screen. ----
 function fitScreenToViewport(){
-  const scale = Math.min(window.innerWidth / 1920, window.innerHeight / 1162);
+  // FRAME_MARGIN reserves real screen pixels (not scaled) on every side, matching
+  // brand-setup/index.html's own body{padding:40px 0} — otherwise the constraining
+  // dimension scales to exactly 100% of the window and the frame touches the edge.
+  const FRAME_MARGIN = 40;
+  const scale = Math.min((window.innerWidth - FRAME_MARGIN * 2) / 1920, (window.innerHeight - FRAME_MARGIN * 2) / 1162);
   const appEl = document.querySelector('.app');
   appEl.style.transform = `scale(${scale})`;
   document.body.style.width = (1920 * scale) + 'px';
