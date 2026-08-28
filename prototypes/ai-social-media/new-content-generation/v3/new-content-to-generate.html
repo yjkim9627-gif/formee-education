@@ -19,6 +19,7 @@
 <link rel="stylesheet" href="../../../../components/ai-social-media/table-filter.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/avatar.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/actions-button.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/scene-tile.css">
 <style>
   *{box-sizing:border-box;}
   /* Real Figma icons (components/ai-social-media/icons/), replacing emoji/ad-hoc glyphs. See
@@ -981,17 +982,19 @@
   .detail-import-empty-note{font-size:11.5px; color:var(--color-neutral-500);}
   .detail-import-empty-note a{color:var(--color-brand-primary); font-weight:600; cursor:pointer; text-decoration:underline;}
 
-  /* ---- Timeline stage: canvas grid + selected-scene editor panel ---- */
+  /* ---- Timeline stage: canvas grid + selected-scene editor panel ----
+     .scene-tile* base rules now come from components/ai-social-media/scene-tile.css
+     (linked in <head>) — this used to be a local, not-quite-matching copy (blue
+     selection ring instead of the neutral-400->500 border rule every other card in
+     this product uses, translucent-blur badge instead of Figma's solid neutral-700,
+     6px badge radius instead of 4px). Only the grid-specific sizing that scene-tile.css
+     can't know about (fitting a responsive 2-col grid instead of a fixed 303px card)
+     stays local. */
   .timeline-stage{display:flex; gap:20px; max-width:960px; flex:1; min-height:0;}
   .timeline-canvas{flex:1; min-width:0; min-height:0; display:flex; flex-direction:column;}
   .scene-grid{display:grid; grid-template-columns:1fr 1fr; grid-auto-rows:min-content; gap:14px; align-content:start; justify-items:start; flex:1; min-height:0; overflow-y:auto;}
-  .scene-tile{width:100%; max-width:303px; border:1.5px solid var(--color-neutral-300); border-radius:12px; overflow:hidden; cursor:pointer; background:#fff; transition:border-color 0.15s, box-shadow 0.15s;}
-  .scene-tile:hover{border-color:var(--color-neutral-450);}
-  .scene-tile.active{border-color:var(--color-brand-primary); box-shadow:0 0 0 3px rgba(79,109,230,0.12);}
-  .scene-tile-preview{width:100%; aspect-ratio:9/16; max-height:294px; background:linear-gradient(135deg,var(--color-neutral-200),var(--color-neutral-150)); position:relative; display:flex; align-items:flex-end; padding:10px;}
+  .scene-grid .scene-tile-preview{max-height:294px;}
   .scene-grid.single-row .scene-tile-preview{max-height:none;}
-  .scene-tile-badge{font-size:11px; font-weight:600; color:#fff; background:rgba(15,23,41,0.55); padding:4px 8px; border-radius:6px; backdrop-filter:blur(2px);}
-  .scene-tile-line{padding:10px 12px; font-size:12.5px; color:var(--color-neutral-700); line-height:1.4; border-top:1px solid var(--color-neutral-200);}
   .spinner-mini{display:none; width:26px; height:26px; border-radius:999px; border:2.5px solid rgba(255,255,255,0.35); border-top-color:#fff; animation:spin .8s linear infinite; position:absolute; top:50%; left:50%; margin:-13px 0 0 -13px;}
 
   .scene-editor-col{width:320px; flex-shrink:0; display:flex; flex-direction:column;}
@@ -4508,9 +4511,9 @@ function renderTimelineScenes(){
   sceneGridEl.classList.toggle('single-row', rows <= 1);
 
   document.getElementById('sceneGrid').innerHTML = scenes.map((s, i) => `
-    <div class="scene-tile${i === 0 ? ' active' : ''}" data-scene="${i + 1}" id="sceneTile${i + 1}" onclick="selectScene(${i + 1})">
+    <div class="scene-tile${i === 0 ? ' selected' : ''}" data-scene="${i + 1}" id="sceneTile${i + 1}" onclick="selectScene(${i + 1})">
       <div class="scene-tile-preview">
-        <span class="scene-tile-badge">Scene ${i + 1} · ${s.time}</span>
+        <span class="scene-tile-badge">Scene ${i + 1}<span class="dot"></span>${s.time}</span>
       </div>
       <div class="scene-tile-line" id="tileLine${i + 1}">${escapeHtml(getSceneScript(i + 1))}</div>
     </div>
@@ -4551,7 +4554,7 @@ function buildSegmentNav(){
 }
 function selectScene(n){
   n = Number(n);
-  document.querySelectorAll('#subReelTimeline .scene-tile').forEach(t => t.classList.toggle('active', Number(t.dataset.scene) === n));
+  document.querySelectorAll('#subReelTimeline .scene-tile').forEach(t => t.classList.toggle('selected', Number(t.dataset.scene) === n));
   document.querySelectorAll('.scene-editor').forEach(e => e.style.display = 'none');
   const editor = document.getElementById('sceneEditor' + n);
   if(editor) editor.style.display = 'block';
