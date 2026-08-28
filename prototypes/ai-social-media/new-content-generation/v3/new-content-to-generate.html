@@ -599,9 +599,6 @@
   .pub-hashtag-chip .x img{width:100%; height:100%; display:block;}
   .pub-hashtag-chip.added .x{display:inline-flex;}
   .pub-hashtag-seo-divider{height:1px; background:var(--color-neutral-200);}
-  .pub-selected-tags-box{display:flex; flex-direction:column; gap:4px; background:#fff; border:1px solid var(--color-neutral-200); border-radius:var(--radius-lg); padding:10px 12px;}
-  .pub-selected-tags-label{font-size:10.5px; font-weight:700; color:var(--color-neutral-500); text-transform:uppercase; letter-spacing:.04em;}
-  .pub-selected-tags-text{font-size:12.5px; color:var(--color-neutral-800); margin:0; line-height:1.5;}
   .pub-caption-compose-row{display:flex; align-items:center; gap:10px;}
   .pub-caption-compose-row .btn{padding:9px 16px; font-size:12.5px;}
 
@@ -2109,16 +2106,12 @@
               <span class="pub-hashtag-seo-label">Hashtags</span>
               <div class="pub-hashtag-seo-chips" id="pubHashtagChips"></div>
             </div>
-            <div class="pub-selected-tags-box" id="pubSelectedTagsBox" style="display:none;">
-              <span class="pub-selected-tags-label">Selected for your caption</span>
-              <p class="pub-selected-tags-text" id="pubSelectedTagsText"></p>
-            </div>
-            <div class="pub-caption-compose-row" id="pubCaptionComposeRow" style="display:none;">
-              <button type="button" class="btn btn-dark" id="pubComposeCaptionBtn" onclick="generateCaptionFromSelection()">✨ Generate caption</button>
-            </div>
           </div>
 
           <textarea class="pub-caption-input" id="pubCaption" placeholder="Write a caption for your post..." oninput="onSharedCaptionInput()"></textarea>
+          <div class="pub-caption-compose-row" id="pubCaptionComposeRow" style="display:none;">
+            <button type="button" class="btn btn-dark" id="pubComposeCaptionBtn" onclick="generateCaptionFromSelection()">✨ Generate caption</button>
+          </div>
           <div class="pub-caption-refine-row">
             <div class="pub-refine-chips">
               <button type="button" class="pub-refine-chip" onclick="refineCaptionWithAI('shorter')">Make it shorter</button>
@@ -5273,26 +5266,27 @@ function renderPubTagChip(tag){
   return `<button type="button" class="pub-hashtag-chip${selected ? ' added' : ''}" onclick="toggleHashtagSelection('${escapeHtml(tag)}', this)"><span class="x"><img src="${PUB_TAG_CHIP_X_ICON}" alt=""></span>${escapeHtml(tag)}</button>`;
 }
 
-// Tapping a chip only selects/deselects it — the caption itself is composed separately
-// once the user has picked the combination they want (see generateCaptionFromSelection).
+// Tapping a chip drops the raw tag straight into the caption textarea (immediate,
+// visible feedback), on top of tracking selection so "Generate caption" can later
+// weave everything selected into one coherent caption rather than a raw tag dump.
 function toggleHashtagSelection(tag, btn){
+  const textarea = document.getElementById('pubCaption');
   if(window.__pubSelectedTags.has(tag)){
     window.__pubSelectedTags.delete(tag);
     btn.classList.remove('added');
+    // Plain substring removal — a no-op if the user already edited it away by hand.
+    textarea.value = textarea.value.split(tag).join('').replace(/[ \t]{2,}/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
   } else {
     window.__pubSelectedTags.add(tag);
     btn.classList.add('added');
+    textarea.value = textarea.value.trim() ? textarea.value.trim() + ' ' + tag : tag;
   }
+  onSharedCaptionInput();
   updateCaptionComposeRow();
 }
 
-// Shows exactly what's selected (as plain text, not just highlighted chips) so it's
-// clear what will feed into the caption before generating it.
 function updateCaptionComposeRow(){
-  const selected = [...PUB_HASHTAGS, ...PUB_SEO_KEYWORDS].filter(t => window.__pubSelectedTags.has(t));
-  const count = selected.length;
-  document.getElementById('pubSelectedTagsBox').style.display = count > 0 ? 'flex' : 'none';
-  document.getElementById('pubSelectedTagsText').textContent = selected.join('  ·  ');
+  const count = [...PUB_HASHTAGS, ...PUB_SEO_KEYWORDS].filter(t => window.__pubSelectedTags.has(t)).length;
   document.getElementById('pubCaptionComposeRow').style.display = count > 0 ? 'flex' : 'none';
 }
 
