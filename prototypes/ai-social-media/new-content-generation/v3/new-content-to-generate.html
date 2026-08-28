@@ -704,6 +704,338 @@
   .pub-divider{height:1px; background:var(--color-neutral-200); margin:var(--spacing-2xl) 0;}
   .pub-run-ad{display:flex; align-items:center; justify-content:space-between; gap:16px; background:#fff; border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl); padding:12px 16px;}
   .pub-run-ad-sub{font-size:12px; color:var(--color-neutral-500); margin:4px 0 0;}
+
+  /* =====================================================================
+     REEL/SHORT (Script/Timeline/Video) — ported from
+     new-content-brief-to-generate.html as a third native content type,
+     alongside Image post and Carousel above. Only genuinely Reel-specific
+     classes are included here — anything already covered by the shared
+     shell (app/topbar/stepper/chat/prompt-box/character-card/setting-chip)
+     is intentionally left out to avoid overriding those shared rules.
+     ===================================================================== */
+  .mention-wrap{position:relative;}
+  .mention-popover{position:absolute; top:calc(100% + 4px); left:0; min-width:160px; background:#fff; border:1px solid var(--color-neutral-300); border-radius:8px; box-shadow:0 8px 20px rgba(15,23,41,0.14); z-index:30; padding:4px; max-height:160px; overflow-y:auto;}
+  .mention-option{padding:7px 10px; font-size:12.5px; color:var(--color-neutral-900); border-radius:6px; cursor:pointer;}
+  .mention-option:hover, .mention-option.active{background:var(--color-neutral-100);}
+  .ic-svg{flex-shrink:0; display:inline-block;}
+  .duration-popover{position:absolute; top:calc(100% + 6px); left:0; min-width:160px; background:#fff; border:1px solid var(--color-neutral-400); border-radius:8px; box-shadow:0 0 3px var(--color-neutral-150); padding:8px; z-index:40;}
+  .duration-popover-label{font-size:12px; font-weight:600; color:var(--color-neutral-700); padding:7px 8px;}
+  .duration-option{display:flex; align-items:center; justify-content:space-between; gap:16px; padding:8px; border-radius:6px; font-size:14px; font-weight:500; color:var(--color-neutral-700); cursor:pointer;}
+  .duration-option:hover{background:var(--color-neutral-50);}
+  .duration-option.selected{background:var(--color-neutral-100);}
+  .duration-option .check{display:none; color:var(--color-brand-primary); font-size:13px;}
+  .duration-option.selected .check{display:inline;}
+
+  /* ---- Character section (Reel-specific bits not covered by character-card.css) ---- */
+  .filter-select{display:flex; align-items:center; gap:4px; height:28px; padding:0 10px 0 12px; border-radius:999px; background:#fff; border:1px solid var(--color-neutral-400); font-size:12px; font-weight:500; color:var(--color-neutral-700); cursor:pointer;}
+  .filter-select .chevron{font-size:9px; color:var(--color-neutral-500);}
+  .see-all-link{display:flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:var(--color-neutral-600); cursor:pointer; padding:0 12px; height:28px;}
+  .see-all-link:hover{color:var(--color-neutral-900);}
+  .char-styles-panel{margin-top:16px; display:none;}
+  .char-styles-panel.show{display:block;}
+  .char-styles-header{display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;}
+  .char-styles-title{display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:var(--color-neutral-800);}
+  .char-styles-title .mini-avatar{width:20px; height:20px; border-radius:999px; background:var(--color-neutral-300) center/cover;}
+  .char-divider{height:1px; background:var(--color-neutral-200); width:100%; margin:32px 0;}
+  .appear-label{font-size:14px; font-weight:600; color:var(--color-neutral-800); margin:0 0 12px;}
+  .appear-label .sub{font-weight:400; color:var(--color-neutral-500);}
+  #charAppearToggle{margin-bottom:12px;}
+
+  /* ---- Voice picker (Character section) — "My voices" card row + Browse ElevenLabs library ---- */
+  .voice-section-label-row{display:flex; align-items:center; justify-content:space-between; margin-top:0; margin-bottom:12px;}
+  .my-voices-label{font-size:13px; font-weight:700; color:var(--color-neutral-900);}
+  .voice-item{display:flex; align-items:center; gap:10px; padding:7px 8px; border-radius:8px; cursor:pointer;}
+  .voice-item:hover{background:var(--color-neutral-100);}
+  .voice-item.selected{background:var(--color-brand-primary-light);}
+  .voice-play{width:24px; height:24px; border-radius:999px; border:1px solid var(--color-neutral-400); background:#fff; color:var(--color-neutral-700); font-size:9px; flex-shrink:0; display:flex; align-items:center; justify-content:center; cursor:pointer;}
+  .voice-play.playing{background:var(--color-brand-primary); border-color:var(--color-brand-primary); color:#fff;}
+  .voice-item-info{flex:1; min-width:0; display:flex; flex-direction:column; gap:1px;}
+  .voice-item-name{font-size:12px; font-weight:600; color:var(--color-neutral-900); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .voice-item-tag{font-size:10.5px; color:var(--color-neutral-500);}
+  .voice-check{color:var(--color-brand-primary); font-size:13px; font-weight:700; flex-shrink:0; visibility:hidden;}
+  .voice-item.selected .voice-check{visibility:visible;}
+  .voice-lib-search{flex:1; min-width:0; border:1px solid var(--color-neutral-300); border-radius:7px; padding:6px 10px; font-size:12px; font-family:var(--font-family-text); outline:none; background:#fff;}
+  .voice-lib-search:focus{border-color:var(--color-brand-primary);}
+  .voice-lib-filter-btn{border:1px solid var(--color-neutral-300); border-radius:7px; padding:6px 9px; font-size:11px; color:var(--color-neutral-700); background:#fff; cursor:pointer; display:flex; align-items:center; gap:4px; flex-shrink:0; font-family:var(--font-family-text);}
+  .voice-lib-row{display:flex; align-items:center; gap:9px; padding:6px 6px; border-radius:7px;}
+  .voice-lib-row:hover{background:var(--color-neutral-50);}
+  .voice-lib-row.hidden{display:none;}
+  .voice-lib-add{border:1px solid var(--color-neutral-300); background:#fff; border-radius:999px; padding:3px 10px; font-size:10.5px; font-weight:600; color:var(--color-neutral-700); cursor:pointer; flex-shrink:0; font-family:var(--font-family-text);}
+  .voice-lib-add:hover{border-color:var(--color-brand-primary); color:var(--color-brand-primary);}
+  .voice-card-row{display:flex; gap:10px; overflow-x:auto; padding-bottom:4px;}
+  .voice-item.row-card{flex-shrink:0; min-width:210px; border:1.5px solid var(--color-neutral-300); border-radius:10px;}
+  .voice-item.row-card:hover{background:#fff; border-color:var(--color-neutral-450);}
+  .voice-item.row-card.selected{border-color:var(--color-brand-primary); background:var(--color-brand-primary-light);}
+  .voice-new-card{flex-shrink:0; display:flex; align-items:center; justify-content:center; gap:6px; min-width:120px; border:1.5px dashed var(--color-neutral-300); border-radius:10px; font-size:12.5px; font-weight:600; color:var(--color-neutral-500); cursor:pointer; padding:7px 16px;}
+  .voice-new-card:hover{border-color:var(--color-neutral-450); color:var(--color-neutral-700);}
+  .voice-browse-btn{width:100%; border:1px solid var(--color-neutral-400); background:#fff; border-radius:10px; padding:11px 16px; font-size:13.5px; font-weight:600; color:var(--color-neutral-900); font-family:var(--font-family-text); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; margin-top:16px;}
+  .voice-browse-btn:hover{border-color:var(--color-neutral-500); background:var(--color-neutral-50);}
+  .voice-browse-panel{border:1px solid var(--color-neutral-300); border-radius:12px; padding:20px; margin-top:16px;}
+  .voice-browse-panel-header{display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:16px;}
+  .voice-browse-panel-title{font-size:15px; font-weight:700; color:var(--color-neutral-900); margin-bottom:4px;}
+  .voice-browse-panel-sub{font-size:12px; color:var(--color-neutral-500);}
+  .voice-browse-close-btn{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--color-neutral-300); background:#fff; border-radius:999px; padding:6px 12px; font-size:12px; font-weight:600; color:var(--color-neutral-700); cursor:pointer; flex-shrink:0; font-family:var(--font-family-text);}
+  .voice-browse-close-btn:hover{border-color:var(--color-neutral-450);}
+  .voice-browse-search-row{display:flex; gap:8px; margin-bottom:16px;}
+  .voice-browse-search-row .voice-lib-search{flex:1;}
+  .voice-browse-chips{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:16px;}
+  .voice-browse-chip{border:1px solid var(--color-neutral-300); border-radius:999px; padding:5px 12px; font-size:11.5px; font-weight:600; color:var(--color-neutral-700); cursor:pointer; background:#fff; white-space:nowrap;}
+  .voice-browse-chip.active{background:var(--color-neutral-900); border-color:var(--color-neutral-900); color:#fff;}
+  .voice-lib-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; max-height:340px; overflow-y:auto;}
+  .voice-lib-grid .voice-lib-row{border:1px solid var(--color-neutral-200); border-radius:8px; padding:8px;}
+
+  /* ---- Chat attachments (not covered by chat-panel.css) ---- */
+  .chat-attachments{padding:12px 16px 0; border-bottom:1px solid var(--color-neutral-200); display:flex; flex-direction:column; gap:8px;}
+  .chat-attachments-label{font-size:10.5px; font-weight:600; color:var(--color-neutral-500);}
+  .chat-attachments-row{display:flex; gap:8px; flex-wrap:wrap; padding-bottom:12px;}
+  .chat-attachment{flex:0 0 56px; display:flex; flex-direction:column; align-items:center; gap:4px;}
+  .chat-attachment .thumb{width:100%; aspect-ratio:1; border-radius:7px; background:linear-gradient(135deg,var(--color-brand-primary-mid),var(--color-brand-accent)); position:relative;}
+  .chat-attachment .thumb::after{content:'🖼'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:14px;}
+  .chat-attachment span{font-size:10px; color:var(--color-neutral-500); font-weight:500;}
+  .brand-applied-box{margin-top:8px; background:var(--color-brand-primary-light); border:1px solid var(--color-brand-primary-mid); border-radius:8px; padding:8px 10px; display:flex; flex-direction:column; gap:3px;}
+  .brand-applied-title{font-size:10.5px; font-weight:700; color:var(--color-neutral-900); margin-bottom:2px;}
+  .brand-applied-item{font-size:11px; color:var(--color-neutral-700);}
+  .brand-applied-item b{color:var(--color-neutral-900);}
+  .brand-applied-item s{color:var(--color-neutral-500);}
+  .script-proposal-box{margin-top:8px; background:#fff; border:1px solid var(--color-neutral-300); border-radius:8px; padding:10px 11px; display:flex; flex-direction:column; gap:8px;}
+  .script-proposal-text{font-size:12.5px; font-style:italic; color:var(--color-neutral-900); line-height:1.5;}
+  .script-proposal-box .btn-dark{width:100%; padding:8px 10px; font-size:12px;}
+  .script-applied-note{display:none; align-items:center; gap:8px; font-size:12px; font-weight:600; color:var(--color-brand-primary); background:var(--color-badge-blue-bg); border:1px solid var(--color-brand-primary-mid); border-radius:var(--radius-lg); padding:6px 8px;}
+  .script-proposal-box.applied .script-applied-note{display:flex;}
+  .script-proposal-box.applied{border-color:var(--color-brand-primary-mid);}
+
+  #stageAreaReel .stage-tabs{display:flex; padding:48px 24px 0; border-bottom:1px solid var(--color-neutral-300); flex-shrink:0;}
+  #stageAreaReel .stage-tab{flex:1; text-align:center; font-size:14px; font-weight:500; color:var(--color-neutral-500); padding:5px 16px 9px; border-bottom:2px solid transparent;}
+  #stageAreaReel .stage-tab.active{color:var(--color-neutral-800); font-weight:700; border-bottom-color:var(--color-neutral-800);}
+  #stageAreaReel .stage-tab.locked{color:var(--color-neutral-400);}
+  #stageAreaReel .stage-tab .check{color:var(--color-badge-green-text); font-weight:700;}
+
+  /* settings bar — sits in normal flow right below the tab row, centered */
+  #stageAreaReel .settings-bar{display:flex; justify-content:center; gap:12px; flex-wrap:wrap; padding:24px 28px 0; flex-shrink:0;}
+  .setting-chip .avatar-mini{width:16px; height:16px; border-radius:999px; background:var(--color-neutral-400);}
+  .setting-chip .dot-sep{width:2px; height:2px; border-radius:999px; background:var(--color-neutral-400); flex-shrink:0;}
+  .setting-chip .ratio-icon{width:16px; height:16px; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+  .setting-chip .ratio-icon i{width:8px; height:14px; border:1.2px solid var(--color-neutral-500); border-radius:2px; display:block;}
+  .setting-chip-wrap{position:relative;}
+  .setting-popover{position:absolute; top:calc(100% + 6px); left:0; min-width:230px; background:#fff; border:1px solid var(--color-neutral-300); border-radius:10px; box-shadow:0 10px 28px rgba(15,23,41,0.14); z-index:40; padding:8px;}
+  .char-mini-grid{display:flex; gap:12px; padding:4px 4px 2px;}
+  .char-mini-opt{display:flex; flex-direction:column; align-items:center; gap:5px; cursor:pointer;}
+  .char-mini-opt .circle{width:40px; height:40px; border-radius:999px; background:linear-gradient(135deg,var(--color-neutral-300),var(--color-neutral-200)); border:2px solid transparent;}
+  .char-mini-opt.selected .circle{border-color:var(--color-brand-primary);}
+  .char-mini-opt span{font-size:10.5px; color:var(--color-neutral-700);}
+  .setting-popover-footer{margin-top:8px; padding-top:8px; border-top:1px solid var(--color-neutral-200); font-size:11.5px; color:var(--color-neutral-600); text-align:center; cursor:pointer;}
+  .setting-popover-footer:hover{color:var(--color-neutral-900);}
+
+  #subReelScript, #subReelTimeline, #subReelVideo{display:flex; flex-direction:column; flex:1; min-height:0;}
+  #stageAreaReel .stage-body{flex:1; min-height:0; padding:32px 28px 14px; overflow-y:auto; display:flex; flex-direction:column;}
+  #stageAreaReel .stage-body-inner{max-width:960px; margin:0 auto; width:100%; flex:1; min-height:0; display:flex; flex-direction:column;}
+  #stageAreaReel .stage-sub-text{font-size:12px; color:var(--color-neutral-500); margin:0 0 6px;}
+
+  .scene-nav{display:flex; align-items:center; gap:6px; flex-shrink:0; margin-bottom:10px;}
+  .scene-nav-label{font-size:11px; font-weight:600; color:var(--color-neutral-500); margin-right:2px;}
+  .segment-nav-btn{width:24px; height:24px; border-radius:6px; border:1px solid var(--color-neutral-300); background:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; color:var(--color-neutral-700); cursor:pointer;}
+  .segment-nav-btn:hover{border-color:var(--color-neutral-450);}
+  .segment-nav-btn.active{background:var(--color-brand-primary-light); border-color:var(--color-brand-primary); color:var(--color-neutral-900);}
+
+  /* ---- Script stage ---- */
+  #subReelScript .stage-title, #subReelScript .stage-sub-text{text-align:center;}
+  .script-panel{border:1px solid var(--color-neutral-300); border-radius:12px; padding:20px; width:100%;}
+  .script-panel-header{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:8px;}
+  .script-label{font-size:12px; font-weight:600; color:var(--color-neutral-700); margin-bottom:8px;}
+  .script-panel-header .script-label{margin-bottom:0;}
+  .script-refine-btn-fixed{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--color-neutral-400); border-radius:999px; background:#fff; padding:7px 14px; font-size:12px; font-weight:600; color:var(--color-neutral-700); cursor:pointer; font-family:var(--font-family-text); flex-shrink:0;}
+  .script-refine-btn-fixed:hover{background:var(--color-neutral-50); border-color:var(--color-brand-primary);}
+  .script-text{width:100%; border:1px solid var(--color-neutral-300); border-radius:8px; padding:14px; font-size:14px; font-family:var(--font-family-text); font-style:italic; color:var(--color-neutral-900); line-height:1.6; resize:vertical; min-height:80px;}
+  .script-text.error{border-color:#d64545; box-shadow:0 0 0 3px rgba(214,69,69,0.12);}
+  .script-limit-row{display:flex; flex-direction:column; align-items:flex-start; gap:8px; margin-top:10px; padding:0; background:none; border:1px solid transparent; border-radius:8px; transition:padding .15s, background-color .15s, border-color .15s;}
+  .script-limit-row.over{padding:10px 12px; background:#fdf2f2; border-color:#f3c6c6;}
+  .script-limit-error{font-size:12px; color:var(--color-neutral-500); line-height:1.5;}
+  .script-limit-row.over .script-limit-error{color:#b23b3b;}
+  .script-shorten-chip{display:none; align-items:center; gap:6px; border:1px solid #d64545; background:#fff; border-radius:999px; padding:6px 12px; font-size:11.5px; font-weight:600; color:#b23b3b; cursor:pointer; font-family:var(--font-family-text); flex-shrink:0;}
+  .script-limit-row.over .script-shorten-chip{display:inline-flex;}
+  .script-shorten-chip:hover{background:#fdf2f2;}
+  .voice-row{margin-top:20px; display:flex; gap:10px; align-items:center;}
+  .play-sample{border:1px solid var(--color-neutral-400); border-radius:8px; padding:9px 14px; font-size:13px; color:var(--color-neutral-700); background:#fff; display:flex; align-items:center; gap:6px;}
+  .stage-cta-row{display:flex; justify-content:flex-end; margin-top:20px;}
+
+  .detail-section{margin-top:24px;}
+  .detail-section-toggle{display:flex; align-items:center; justify-content:space-between; gap:12px; cursor:pointer; user-select:none; border:1px solid var(--color-neutral-300); border-radius:10px; background:#fff; padding:14px 16px; transition:background .15s, border-color .15s;}
+  .detail-section-toggle:hover{background:var(--color-neutral-50); border-color:var(--color-neutral-400);}
+  .detail-section-toggle.open{border-radius:10px 10px 0 0;}
+  .detail-section-toggle-text{display:flex; flex-direction:column; gap:3px; min-width:0;}
+  .detail-section-toggle-label{font-size:13.5px; font-weight:700; color:var(--color-neutral-900);}
+  .detail-section-toggle-sub{font-size:12px; color:var(--color-neutral-500);}
+  .detail-section-toggle .chevron{font-size:14px; color:var(--color-neutral-500); transition:transform .15s; flex-shrink:0;}
+  .detail-section-toggle.open .chevron{transform:rotate(180deg);}
+  .detail-fields{display:flex; flex-direction:column; gap:16px; border:1px solid var(--color-neutral-300); border-top:none; border-radius:0 0 10px 10px; padding:16px;}
+  .detail-fields-grid{display:grid; grid-template-columns:1fr 1fr; gap:24px 16px;}
+  .detail-field-label{font-size:12px; font-weight:600; color:var(--color-neutral-700); margin-bottom:6px; display:block;}
+  .detail-input{width:100%; border:1px solid var(--color-neutral-300); border-radius:8px; padding:10px 12px; font-size:13px; font-family:var(--font-family-text); color:var(--color-neutral-900); background:#fff;}
+  .detail-input:focus{outline:none; border-color:var(--color-brand-primary);}
+  select.detail-input{appearance:none; cursor:pointer; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238a93a8' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 12px center; padding-right:32px;}
+  .detail-import-row{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+  .detail-import-btn{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--color-neutral-400); border-radius:999px; background:#fff; padding:8px 14px; font-size:12.5px; font-weight:600; color:var(--color-neutral-700); cursor:pointer; font-family:var(--font-family-text);}
+  .detail-import-btn:hover{background:var(--color-neutral-50);}
+  .detail-import-btn.imported{border-color:var(--color-badge-green-text); color:var(--color-badge-green-text); background:#ecfdf3;}
+  .detail-import-empty-note{font-size:11.5px; color:var(--color-neutral-500);}
+  .detail-import-empty-note a{color:var(--color-brand-primary); font-weight:600; cursor:pointer; text-decoration:underline;}
+
+  /* ---- Timeline stage: canvas grid + selected-scene editor panel ---- */
+  .timeline-stage{display:flex; gap:20px; max-width:960px; flex:1; min-height:0;}
+  .timeline-canvas{flex:1; min-width:0; min-height:0; display:flex; flex-direction:column;}
+  .scene-grid{display:grid; grid-template-columns:1fr 1fr; grid-auto-rows:min-content; gap:14px; align-content:start; justify-items:start; flex:1; min-height:0; overflow-y:auto;}
+  .scene-tile{width:100%; max-width:303px; border:1.5px solid var(--color-neutral-300); border-radius:12px; overflow:hidden; cursor:pointer; background:#fff; transition:border-color 0.15s, box-shadow 0.15s;}
+  .scene-tile:hover{border-color:var(--color-neutral-450);}
+  .scene-tile.active{border-color:var(--color-brand-primary); box-shadow:0 0 0 3px rgba(79,109,230,0.12);}
+  .scene-tile-preview{width:100%; aspect-ratio:9/16; max-height:294px; background:linear-gradient(135deg,var(--color-neutral-200),var(--color-neutral-150)); position:relative; display:flex; align-items:flex-end; padding:10px;}
+  .scene-grid.single-row .scene-tile-preview{max-height:none;}
+  .scene-tile-badge{font-size:11px; font-weight:600; color:#fff; background:rgba(15,23,41,0.55); padding:4px 8px; border-radius:6px; backdrop-filter:blur(2px);}
+  .scene-tile-line{padding:10px 12px; font-size:12.5px; color:var(--color-neutral-700); line-height:1.4; border-top:1px solid var(--color-neutral-200);}
+  .spinner-mini{display:none; width:26px; height:26px; border-radius:999px; border:2.5px solid rgba(255,255,255,0.35); border-top-color:#fff; animation:spin .8s linear infinite; position:absolute; top:50%; left:50%; margin:-13px 0 0 -13px;}
+
+  .scene-editor-col{width:320px; flex-shrink:0; display:flex; flex-direction:column;}
+  .scene-editor-panel{width:100%; margin-bottom:14px;}
+  .scene-card{border:1px solid var(--color-neutral-300); border-radius:10px; padding:16px;}
+  .scene-time{font-size:11px; font-weight:600; color:var(--color-neutral-500); display:flex; align-items:center; gap:6px;}
+  .scene-time .dot{width:7px; height:7px; border-radius:999px; background:var(--color-brand-primary);}
+  .scene-guide{font-size:10.5px; color:var(--color-neutral-500); margin-bottom:12px;}
+  .voice-section{border:1px solid var(--color-neutral-300); border-radius:10px; padding:14px; margin-bottom:14px; flex-shrink:0;}
+  .voice-section-header{display:flex; align-items:center; justify-content:space-between; gap:10px;}
+  .voice-section-header .scene-desc-label-reel{margin-bottom:0;}
+  .voice-section-header-right{display:flex; align-items:center; gap:8px; flex-shrink:0;}
+  .voice-mode-toggle{display:flex; gap:2px; background:var(--color-neutral-100); border-radius:999px; padding:3px; flex-shrink:0;}
+  .voice-mode-btn{font-size:10.5px; font-weight:600; color:var(--color-neutral-600); padding:5px 10px; border-radius:999px; cursor:pointer;}
+  .voice-mode-btn.active{background:#fff; color:var(--color-neutral-900); box-shadow:0 1px 2px rgba(15,23,41,0.08);}
+  .voice-section-collapse-btn{width:22px; height:22px; border:none; background:transparent; color:var(--color-neutral-500); font-size:11px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:transform .15s, color .15s; font-family:var(--font-family-text);}
+  .voice-section-collapse-btn:hover{color:var(--color-neutral-900);}
+  .voice-section.collapsed .voice-section-collapse-btn{transform:rotate(-90deg);}
+  .voice-section .voice-cost-summary, .voice-section .voice-section-body{margin-top:10px;}
+  .voice-section.collapsed .voice-cost-summary, .voice-section.collapsed .voice-section-body{display:none;}
+  .voice-section-body{display:flex; flex-direction:column; gap:14px;}
+  .voice-section-body > .voice-preview-btn{width:100%; justify-content:center;}
+  .voice-cost-summary{font-size:10.5px; color:var(--color-neutral-500); line-height:1.45; margin:-4px 0 12px;}
+  .voice-cost-summary b{color:var(--color-neutral-700); font-weight:700;}
+  .voice-script-text{width:100%; border:1px solid var(--color-neutral-300); border-radius:7px; padding:10px 12px; font-size:13px; font-family:var(--font-family-text); color:var(--color-neutral-900); line-height:1.5; resize:vertical; min-height:44px;}
+  .voice-script-text.whole{min-height:72px;}
+  .voice-preview-btn{display:inline-flex; align-items:center; justify-content:center; gap:6px; border:1px solid var(--color-neutral-300); background:#fff; border-radius:999px; padding:6px 12px; font-size:11.5px; font-weight:600; color:var(--color-neutral-700); cursor:pointer; font-family:var(--font-family-text); transition:border-color .15s, color .15s; flex-shrink:0;}
+  .voice-preview-btn:hover{border-color:var(--color-neutral-450);}
+  .voice-preview-btn .vp-cost{color:var(--color-neutral-500); font-weight:700;}
+  .voice-preview-btn.cached{border-color:var(--color-brand-primary-mid); color:var(--color-brand-primary);}
+  .voice-preview-btn.cached .vp-cost{display:none;}
+  .voice-preview-btn.stale{border-color:var(--color-warning-text); color:var(--color-warning-text);}
+  .voice-preview-btn.loading, .voice-preview-btn.playing{border-color:var(--color-brand-primary-mid); color:var(--color-brand-primary); cursor:default;}
+  .voice-preview-btn:disabled{cursor:default;}
+  .vp-spinner{width:9px; height:9px; border-radius:999px; border:2px solid var(--color-neutral-300); border-top-color:var(--color-brand-primary); display:inline-block; animation:spin .7s linear infinite;}
+
+  /* ---- Split-by-scene accordion ---- */
+  .voice-acc-list{display:flex; flex-direction:column; gap:6px;}
+  .voice-acc-row{border:1px solid var(--color-neutral-200); border-radius:8px; overflow:hidden;}
+  .voice-acc-row.expanded{border-color:var(--color-neutral-300);}
+  .voice-acc-header{display:flex; align-items:center; gap:8px; padding:9px 10px; cursor:pointer; background:var(--color-neutral-50);}
+  .voice-acc-row.expanded .voice-acc-header{background:var(--color-neutral-100); border-bottom:1px solid var(--color-neutral-200);}
+  .voice-acc-status{flex-shrink:0; font-size:11px; line-height:1;}
+  .voice-acc-status.ready{color:var(--color-badge-green-text);}
+  .voice-acc-status.pending{color:var(--color-warning-text);}
+  .voice-acc-time{flex-shrink:0; font-size:10.5px; font-weight:700; color:var(--color-neutral-700);}
+  .voice-acc-summary{flex:1; min-width:0; font-size:12px; color:var(--color-neutral-700); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .voice-acc-cost{flex-shrink:0; font-size:10.5px; font-weight:700; color:var(--color-neutral-500);}
+  .voice-acc-chevron{flex-shrink:0; font-size:9px; color:var(--color-neutral-500); transition:transform .15s;}
+  .voice-acc-row.expanded .voice-acc-chevron{transform:rotate(180deg);}
+  .voice-acc-body{display:none; flex-direction:column; gap:8px; padding:12px 10px 14px;}
+  .voice-acc-row.expanded .voice-acc-body{display:flex;}
+  .voice-acc-bottom{display:flex; align-items:center; justify-content:space-between; gap:10px;}
+  .voice-acc-bottom .scene-guide{margin-bottom:0; flex:1; min-width:0;}
+  .scene-desc-block{margin-bottom:12px;}
+  .scene-desc-label-reel{font-size:10.5px; font-weight:600; color:var(--color-neutral-500); display:flex; align-items:center; gap:4px; margin-bottom:6px;}
+  .scene-desc-box{border:1px solid var(--color-neutral-300); border-radius:7px; padding:10px 12px 32px; display:flex; flex-direction:column; gap:8px; position:relative; transition:border-color .15s, box-shadow .15s;}
+  .scene-desc-box:focus-within{border-color:var(--color-brand-primary); box-shadow:0 0 0 3px rgba(79,109,230,.12);}
+  .scene-desc{width:100%; border:none; padding:0; font-size:13px; font-family:var(--font-family-text); color:var(--color-neutral-900); line-height:1.5; resize:vertical; min-height:56px; background:transparent; outline:none; cursor:text;}
+  .scene-note{font-size:10.5px; color:var(--color-neutral-500);}
+  .timeline-cta{display:flex; flex-direction:column; align-items:stretch; gap:8px; margin-top:14px; flex-shrink:0;}
+  .timeline-cta .meta-text{text-align:left; line-height:1.4;}
+  .timeline-cta .btn-dark{width:100%;}
+
+  .scene-prompt-text{width:100%; border:1px solid var(--color-neutral-300); border-radius:7px; padding:10px 12px; font-size:12.5px; font-family:var(--font-family-text); color:var(--color-neutral-900); line-height:1.5; resize:vertical; min-height:70px; background:var(--color-neutral-50);}
+  .scene-prompt-text:focus{background:#fff; border-color:var(--color-brand-primary); outline:none;}
+
+  /* ---- Video stage: per-scene video generation + free combine (mirrors Timeline's layout) ---- */
+  .video-grid{display:grid; grid-template-columns:1fr 1fr; grid-auto-rows:min-content; gap:14px; align-content:start; justify-items:start; flex:1; min-height:0; overflow-y:auto;}
+  .video-tile{width:100%; max-width:303px; border:1.5px solid var(--color-neutral-300); border-radius:12px; overflow:hidden; cursor:pointer; background:#fff; transition:border-color 0.15s, box-shadow 0.15s;}
+  .video-tile:hover{border-color:var(--color-neutral-450);}
+  .video-tile.active{border-color:var(--color-brand-primary); box-shadow:0 0 0 3px rgba(79,109,230,0.12);}
+  .video-tile-preview{width:100%; aspect-ratio:9/16; max-height:294px; background:linear-gradient(135deg,var(--color-neutral-200),var(--color-neutral-150)); background-size:cover; background-position:center; background-repeat:no-repeat; position:relative; display:flex; align-items:flex-end; padding:10px;}
+  .video-grid.single-row .video-tile-preview{max-height:none;}
+  .video-tile.ready .video-tile-preview{background:linear-gradient(135deg,var(--color-brand-primary-mid),var(--color-brand-accent));}
+  .video-tile-badge{font-size:11px; font-weight:600; color:#fff; background:rgba(15,23,41,0.55); padding:4px 8px; border-radius:6px; backdrop-filter:blur(2px);}
+  .video-tile-overlay-top{position:absolute; top:8px; left:8px; right:8px; display:flex; align-items:center; justify-content:space-between; gap:6px;}
+  .video-tile-ready-badge{display:none; align-items:center; gap:3px; font-size:10px; font-weight:700; color:var(--color-badge-green-text); background:#fff; padding:3px 7px; border-radius:999px;}
+  .video-tile.ready .video-tile-ready-badge{display:inline-flex;}
+  .video-tile-regen-btn{display:none; width:24px; height:24px; border-radius:999px; border:none; background:rgba(255,255,255,0.92); align-items:center; justify-content:center; font-size:12px; color:var(--color-neutral-700); cursor:pointer; margin-left:auto;}
+  .video-tile-regen-btn:hover{background:#fff; color:var(--color-neutral-900);}
+  .video-tile.ready .video-tile-regen-btn{display:flex;}
+  .video-tile.generating .video-tile-badge{display:none;}
+  .video-play-btn{display:none; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:40px; height:40px; border-radius:999px; border:none; background:rgba(255,255,255,0.92); align-items:center; justify-content:center; font-size:15px; color:var(--color-neutral-900); cursor:pointer;}
+  .video-play-btn:hover{background:#fff;}
+  .video-tile.ready .video-play-btn{display:flex;}
+  .video-tile.generating .spinner-mini{display:block;}
+
+  .video-editor-panel{width:100%;}
+  .video-scene-card{border:1px solid var(--color-neutral-300); border-radius:10px; padding:16px;}
+  .video-scene-header-row{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:14px;}
+  .video-scene-card .scene-prompt-text{margin-bottom:14px;}
+  .video-regen-btn{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--color-neutral-300); background:#fff; border-radius:999px; padding:8px 14px; font-size:12px; font-weight:600; color:var(--color-neutral-700); cursor:pointer; font-family:var(--font-family-text);}
+  .video-regen-btn:hover{border-color:var(--color-neutral-450);}
+  .video-regen-btn .cost{color:var(--color-neutral-500); font-weight:700;}
+
+  .combine-stale-banner{display:none; flex-direction:column; align-items:stretch; gap:8px; background:var(--color-brand-primary-light); border:1px solid var(--color-brand-primary-mid); border-radius:10px; padding:10px 14px; margin-top:14px; font-size:12px; color:var(--color-neutral-900); flex-shrink:0;}
+  .combine-stale-banner .btn-secondary{width:100%;}
+  .video-cta-row{display:flex; flex-direction:column; align-items:stretch; gap:8px; margin-top:14px; flex-shrink:0;}
+  .video-cta-row .meta-text{text-align:left; line-height:1.4;}
+  .video-cta-row .btn-dark{width:100%;}
+
+  .combine-result-view{display:none; flex:1; min-height:0;}
+  .combine-canvas{align-items:center; justify-content:flex-start; gap:16px;}
+  .combine-player{position:relative; width:300px; aspect-ratio:9/16; border-radius:14px; background:url('assets/video/scene1.png') center/cover no-repeat, linear-gradient(135deg,var(--color-brand-primary-mid),var(--color-brand-accent)); display:flex; align-items:center; justify-content:center;}
+  .combine-player .video-play-btn{position:static; display:flex; transform:none;}
+  .combine-player-duration{position:absolute; bottom:10px; left:10px; font-size:11px; font-weight:600; color:#fff; background:rgba(15,23,41,0.55); padding:4px 8px; border-radius:6px;}
+  .combine-timeline-ticks{position:relative; width:300px; height:6px; background:var(--color-neutral-200); border-radius:999px;}
+  .combine-tick{position:absolute; top:-2px; width:2px; height:10px; background:var(--color-neutral-900); border-radius:2px;}
+  .combine-summary-card{border:1px solid var(--color-neutral-300); border-radius:10px; padding:16px;}
+  .combine-summary-title-row{display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:8px;}
+  .combine-summary-title{font-size:14px; font-weight:700; color:var(--color-neutral-900); line-height:1.35; margin:0; flex:1; min-width:0;}
+  .combine-summary-title[contenteditable="true"]{outline:1px solid var(--color-brand-primary-mid); border-radius:6px; padding:2px 4px; margin:-2px -4px;}
+  .combine-title-edit-btn{flex-shrink:0; width:28px; height:28px; border-radius:999px; border:none; background:var(--color-neutral-50); display:flex; align-items:center; justify-content:center; font-size:12px; cursor:pointer; font-family:var(--font-family-text);}
+  .combine-title-edit-btn:hover{background:var(--color-neutral-100);}
+  .combine-summary-desc{font-size:12px; color:var(--color-neutral-700); line-height:1.5; margin:0 0 12px;}
+  .combine-summary-divider{height:1px; background:var(--color-neutral-200); margin:0 0 12px;}
+  .combine-summary-specs{display:flex; flex-direction:column; gap:10px; margin-bottom:12px;}
+  .combine-spec-row{display:flex; align-items:center; gap:8px; font-size:12px;}
+  .combine-spec-row .spec-icon{width:16px; flex-shrink:0; text-align:center; color:var(--color-neutral-500); font-size:12px;}
+  .combine-spec-row .spec-label{color:var(--color-neutral-500); font-size:11px; font-weight:500;}
+  .combine-spec-row .spec-value{margin-left:auto; color:var(--color-neutral-900); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:140px;}
+  .combine-audio-note{font-size:11.5px; color:var(--color-neutral-500); line-height:1.5; margin:0;}
+  .combine-result-actions{display:flex; flex-direction:column; gap:10px; margin-top:14px; flex-shrink:0;}
+  .combine-result-actions .btn-dark, .combine-result-actions .btn-secondary{width:100%;}
+  .back-to-scenes-link{display:block; background:none; border:none; color:var(--color-neutral-500); font-size:12px; font-family:var(--font-family-text); cursor:pointer; text-decoration:underline; margin-top:10px; padding:0; text-align:left;}
+  .back-to-scenes-link:hover{color:var(--color-neutral-700);}
+
+  /* ---- Queue panel (floating, shown while video clips generate) ---- */
+  @keyframes queuePulse{0%,100%{opacity:1;} 50%{opacity:0.25;}}
+  .queue-panel{position:absolute; top:76px; right:24px; z-index:9998; width:280px; background:#fff; border-radius:12px; box-shadow:0 20px 50px rgba(15,23,41,0.18); border:1px solid var(--color-neutral-200); padding:16px;}
+  .queue-header{display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;}
+  .queue-title{font-size:13px; font-weight:700; color:var(--color-neutral-900);}
+  .queue-badge{font-size:10.5px; font-weight:600; color:var(--color-neutral-700); background:var(--color-neutral-100); padding:3px 8px; border-radius:999px;}
+  .queue-sub{font-size:11px; color:var(--color-neutral-500); margin-bottom:12px;}
+  .queue-jobs{display:flex; flex-direction:column; gap:8px;}
+  .queue-job{display:flex; align-items:center; gap:10px; padding:8px; border-radius:8px; background:var(--color-neutral-50);}
+  .queue-job .thumb{width:32px; height:32px; border-radius:6px; background:linear-gradient(135deg,var(--color-brand-primary-mid),var(--color-brand-accent)); flex-shrink:0;}
+  .queue-job-info{flex:1; min-width:0;}
+  .queue-job-title{font-size:11.5px; font-weight:600; color:var(--color-neutral-900); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .queue-job-status{font-size:10px; color:var(--color-neutral-500); display:flex; align-items:center; gap:5px; margin-top:2px;}
+  .queue-job-status .spin{width:6px; height:6px; border-radius:999px; background:var(--color-warning-text); animation:queuePulse 1s infinite;}
+  .queue-job.done .queue-job-status .spin{background:var(--color-badge-green-text); animation:none;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
 </style>
 <body>
 
@@ -875,6 +1207,166 @@
           </div>
         </div>
 </div>
+<div id="briefContentReel" style="display:none;">
+        <div class="prompt-box">
+          <div class="prompt-top">
+            <div class="reference-images-row" id="referenceImagesRow"></div>
+            <div class="mention-wrap">
+              <textarea class="prompt-summary" id="briefSummary">Create a bright, energetic UGC-style video promoting a new lip tint, filmed casually at home with soft lighting. Show the model swatching the tint on her hand first, then applying it to her lips to show the final colour.</textarea>
+              <div class="mention-popover" id="mentionPopover" style="display:none;"></div>
+            </div>
+          </div>
+          <div class="prompt-bottom">
+            <div class="prompt-chips">
+              <div class="prompt-chip"><svg class="ic-svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="3.5" y="1.5" width="9" height="13" rx="1.6" stroke="#8A93A8" stroke-width="1.4"/><path d="M6.5 12.3H9.5" stroke="#8A93A8" stroke-width="1.4" stroke-linecap="round"/></svg>9:16</div>
+              <div class="prompt-chip-wrap" id="durationChipWrap">
+                <div class="prompt-chip clickable" onclick="toggleDurationPopover(event)">
+                  <svg class="ic-svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.3" stroke="#8A93A8" stroke-width="1.4"/><path d="M8 4.7V8L10.2 9.6" stroke="#8A93A8" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="durationChipText">16s</span><span class="chevron">▾</span>
+                </div>
+                <div class="duration-popover" id="durationPopover" style="display:none;">
+                  <div class="duration-popover-label">Duration</div>
+                  <div class="duration-option" data-seconds="8" onclick="selectDuration(8)"><span>8 seconds</span><span class="check">✓</span></div>
+                  <div class="duration-option selected" data-seconds="16" onclick="selectDuration(16)"><span>16 seconds</span><span class="check">✓</span></div>
+                  <div class="duration-option" data-seconds="24" onclick="selectDuration(24)"><span>24 seconds</span><span class="check">✓</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="refine-btn" id="refineBtn">↑</div>
+          </div>
+        </div>
+
+        <div class="char-section">
+          <div class="char-section-label">Character</div>
+          <div class="char-section-sub">All optional — defaults to your brand design system.</div>
+          <div class="char-panel">
+          <div class="seg-control" id="charModeToggle">
+            <div class="seg-chip active" data-mode="with" onclick="reelSetCharMode('with')">With Character</div>
+            <div class="seg-chip" data-mode="none" onclick="reelSetCharMode('none')">No Character</div>
+          </div>
+
+          <div id="charWithSection">
+            <div class="char-filter-row">
+              <div class="char-filters">
+                <div class="filter-chip">Favorites ★</div>
+                <div class="filter-select">Age<span class="chevron">▾</span></div>
+                <div class="filter-select">Gender<span class="chevron">▾</span></div>
+              </div>
+              <div class="see-all-link">See all →</div>
+            </div>
+            <div class="char-grid" id="charGrid">
+              <div class="char-card-reel new"><div class="thumb">+</div><div class="name">Create New</div></div>
+              <div class="char-card-reel selected" onclick="reelSelectChar(this,'elena')"><div class="thumb" style="background-image:url('assets/characters/elena.png')"></div><div class="name">Elena</div></div>
+              <div class="char-card-reel" onclick="reelSelectChar(this,'milo')"><div class="thumb" style="background-image:url('assets/characters/milo.jpeg')"></div><div class="name">Milo</div></div>
+              <div class="char-card-reel" onclick="reelSelectChar(this,'priya')"><div class="thumb" style="background-image:url('assets/characters/priya.png')"></div><div class="name">Priya</div></div>
+              <div class="char-card-reel" onclick="reelSelectChar(this,'monster')"><div class="thumb" style="background-image:url('assets/characters/monster.jpeg')"></div><div class="name">Monster</div></div>
+              <div class="char-card-reel" onclick="reelSelectChar(this,'maya')"><div class="thumb" style="background-image:url('assets/characters/maya.png')"></div><div class="name">Maya</div></div>
+              <div class="char-card-reel" onclick="reelSelectChar(this,'sofia')"><div class="thumb" style="background-image:url('assets/characters/sofia.png')"></div><div class="name">Sofia</div></div>
+              <div class="char-card-reel" onclick="reelSelectChar(this,'esther')"><div class="thumb" style="background-image:url('assets/characters/esther.jpeg')"></div><div class="name">Esther</div></div>
+            </div>
+
+            <!-- Style variations for whichever character is selected — only Elena has a style
+                 set in this prototype, matching the Figma reference; other characters simply
+                 hide this row (see reelSelectChar()). -->
+            <div class="char-styles-panel show" id="charStylesPanelReel">
+              <div class="char-styles-header">
+                <div class="char-styles-title"><span class="mini-avatar" id="charStylesAvatarReel" style="background-image:url('assets/characters/elena.png')"></span><span id="charStylesLabelReel">Elena's styles</span></div>
+                <div class="see-all-link">See all →</div>
+              </div>
+              <div class="char-grid" id="charStylesGridReel">
+                <div class="char-card-reel new"><div class="thumb tall">+</div><div class="name">Create New</div></div>
+                <div class="char-card-reel selected" onclick="reelSelectCharStyle(this)"><div class="thumb tall" style="background-image:url('assets/characters/elena-styles/headshot.png')"></div><div class="name">Headshot</div></div>
+                <div class="char-card-reel" onclick="reelSelectCharStyle(this)"><div class="thumb tall" style="background-image:url('assets/characters/elena-styles/studio-portrait.png')"></div><div class="name">Studio Portrait</div></div>
+                <div class="char-card-reel" onclick="reelSelectCharStyle(this)"><div class="thumb tall" style="background-image:url('assets/characters/elena-styles/armchair-library.png')"></div><div class="name">Armchair Library</div></div>
+                <div class="char-card-reel" onclick="reelSelectCharStyle(this)"><div class="thumb tall" style="background-image:url('assets/characters/elena-styles/autumn-park.png')"></div><div class="name">Autumn Park</div></div>
+                <div class="char-card-reel" onclick="reelSelectCharStyle(this)"><div class="thumb tall" style="background-image:url('assets/characters/elena-styles/balcony-plants.png')"></div><div class="name">Balcony Plants</div></div>
+                <div class="char-card-reel" onclick="reelSelectCharStyle(this)"><div class="thumb tall" style="background-image:url('assets/characters/elena-styles/beige-blazer.png')"></div><div class="name">Beige Blazer</div></div>
+                <div class="char-card-reel" onclick="reelSelectCharStyle(this)"><div class="thumb tall" style="background-image:url('assets/characters/elena-styles/bright-hallway.png')"></div><div class="name">Bright Hallway</div></div>
+              </div>
+            </div>
+
+            <!-- Voice/appearance only applies to motion content — hidden entirely for Image post -->
+            <div id="charVoiceSection">
+            <div class="char-divider"></div>
+            <div class="appear-label">How does character appear in this video?</div>
+            <div class="seg-control" id="charAppearToggle">
+              <div class="seg-chip active" data-appear="lipsync" onclick="reelSetCharAppear('lipsync')">Talking (lip-sync)</div>
+              <div class="seg-chip" data-appear="acting" onclick="reelSetCharAppear('acting')">Acting only (voiceover)</div>
+            </div>
+            <div class="voice-section-label-row">
+              <span class="my-voices-label">My voices</span>
+              <div class="see-all-link">See all →</div>
+            </div>
+            <div class="voice-card-row" id="myVoicesCardRow"></div>
+            <button type="button" class="voice-browse-btn" id="voiceBrowseBtn" onclick="reelToggleVoiceBrowsePanel()">Browse ElevenLabs Voice Library <span class="chevron">▾</span></button>
+            <div class="voice-browse-panel" id="voiceBrowsePanel" style="display:none;">
+              <div class="voice-browse-panel-header">
+                <div>
+                  <div class="voice-browse-panel-title">ElevenLabs voice library</div>
+                  <div class="voice-browse-panel-sub">Search thousands of community voices. Adding one imports it into your ElevenLabs account.</div>
+                </div>
+                <button type="button" class="voice-browse-close-btn" onclick="reelToggleVoiceBrowsePanel()">Close ✕</button>
+              </div>
+              <div class="voice-browse-search-row">
+                <input type="text" class="voice-lib-search" placeholder="Search voice…" oninput="filterVoiceLib(this.value,'voiceLibGrid')">
+                <button type="button" class="voice-lib-filter-btn">⚙ Filter</button>
+              </div>
+              <div class="voice-browse-chips">
+                <span class="voice-browse-chip active">All</span>
+                <span class="voice-browse-chip">Social Media</span>
+                <span class="voice-browse-chip">Advertisement</span>
+                <span class="voice-browse-chip">Character Animation</span>
+                <span class="voice-browse-chip">Conversational</span>
+                <span class="voice-browse-chip">Entertainment</span>
+              </div>
+              <div class="voice-lib-grid" id="voiceLibGrid"></div>
+            </div>
+            </div>
+          </div>
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <div class="detail-section-toggle" id="advancedSettingsToggle" onclick="reelToggleAdvancedSettings()">
+            <div class="detail-section-toggle-text">
+              <span class="detail-section-toggle-label">Advanced settings</span>
+              <span class="detail-section-toggle-sub">Goal, Tone, Target audience, Call to action</span>
+            </div>
+            <span class="chevron">⌄</span>
+          </div>
+          <div class="detail-fields" id="advancedSettingsBody" style="display:none;">
+            <div class="detail-import-row">
+              <button class="detail-import-btn" id="importBrandBtn" onclick="reelImportFromBrandSetup()">⤓ Import from Brand Setup</button>
+              <span class="detail-import-empty-note" id="importEmptyNote" style="display:none;">No Brand Setup values yet — <a onclick="event.stopPropagation(); reelGoSetUpBrandFromBrief()">set up your brand</a></span>
+            </div>
+            <div class="detail-fields-grid">
+              <div>
+                <label class="detail-field-label">Goal</label>
+                <input type="text" class="detail-input" id="briefGoal" placeholder="e.g. Launch online course">
+              </div>
+              <div>
+                <label class="detail-field-label">Tone</label>
+                <select class="detail-input" id="briefTone">
+                  <option value="" disabled selected>Select a tone</option>
+                  <option>Playful and confident</option>
+                  <option>Clear and authoritative</option>
+                  <option>Warm and reassuring</option>
+                  <option>Bold and energetic</option>
+                  <option>Calm and informative</option>
+                </select>
+              </div>
+              <div>
+                <label class="detail-field-label">Target audience</label>
+                <input type="text" class="detail-input" id="briefAudience" placeholder="e.g. Entrepreneurs 25-40">
+              </div>
+              <div>
+                <label class="detail-field-label">Call to action</label>
+                <input type="text" class="detail-input" id="briefCta" placeholder="e.g. Follow for daily tips">
+              </div>
+            </div>
+          </div>
+        </div>
+</div>
+
 <div id="briefContentCarousel" style="display:none;">
         <div class="prompt-box">
           <div class="prompt-top">
@@ -1003,6 +1495,19 @@
         <button class="btn btn-dark" id="continueBtnCarousel" onclick="goToGenerate()">Continue</button>
       </div>
     </div>
+
+        <div class="action-bar" id="briefActionBarReel" style="display:none;">
+      <div class="readiness">
+        <div class="readiness-top"><span>Brief readiness</span><span>79%</span></div>
+        <div class="readiness-bar"><div class="readiness-fill" style="width:79%"></div></div>
+      </div>
+      <div class="meta-text">Reel / Short · 9:16 · <span id="briefMetaDurationReel">16s</span></div>
+      <div class="bar-actions">
+        <button class="btn btn-secondary">Save as draft</button>
+        <button class="btn btn-dark" id="continueBtnReel" onclick="goToGenerate()">Continue</button>
+      </div>
+    </div>
+
 
     <!-- VIEW: Generate — shared chat, per-type stage area -->
     <div class="view" id="generateView">
@@ -1283,6 +1788,204 @@
 
         </div>
       </div>
+        <div class="stage-area" id="stageAreaReel" style="display:none;">
+          <div class="stage-tabs">
+            <div class="stage-tab" id="tabReelScript" onclick="showSub('reelScript')">Script</div>
+            <div class="stage-tab locked" id="tabReelTimeline" onclick="showSub('reelTimeline')">Timeline</div>
+            <div class="stage-tab locked" id="tabReelVideo" onclick="showSub('reelVideo')">Video</div>
+          </div>
+
+          <!-- persistent settings bar -->
+          <div class="settings-bar" id="settingsBar">
+            <div class="setting-chip"><span class="ratio-icon"><i></i></span>9:16</div>
+            <div class="setting-chip">⏱ <span id="genSettingDuration">16s</span></div>
+            <div class="setting-chip">🌐 English</div>
+
+            <div class="setting-chip-wrap" id="characterChipWrap">
+              <div class="setting-chip clickable" onclick="toggleSettingPopover(event,'character')">
+                <span class="avatar-mini"></span>Character<span class="dot-sep"></span><b id="settingCharacter">Minji</b><span class="chevron">▾</span>
+              </div>
+              <div class="setting-popover" id="characterPopover" style="display:none;">
+                <div class="char-mini-grid">
+                  <div class="char-mini-opt selected" onclick="selectSettingCharacter(this,'Minji')"><div class="circle"></div><span>Minji</span></div>
+                  <div class="char-mini-opt" onclick="selectSettingCharacter(this,'Hyunwoo')"><div class="circle"></div><span>Hyunwoo</span></div>
+                  <div class="char-mini-opt" onclick="selectSettingCharacter(this,'Soyul')"><div class="circle"></div><span>Soyul</span></div>
+                </div>
+                <div class="setting-popover-footer">+68 more characters</div>
+              </div>
+            </div>
+
+            <div class="setting-chip-wrap" id="voiceChipWrap">
+              <div class="setting-chip clickable" onclick="toggleSettingPopover(event,'voice')">
+                🔊 Voice<span class="dot-sep"></span><b id="settingVoice">Minji — bright, upbeat tone</b><span class="chevron">▾</span>
+              </div>
+              <div class="setting-popover" id="voiceSettingPopover" style="display:none;">
+                <div class="voice-item selected" onclick="selectSettingVoice(this,'Minji — bright, upbeat tone')">
+                  <div class="voice-play" onclick="togglePreview(event,this)">▶</div>
+                  <div class="voice-item-info"><span class="voice-item-name">Minji — bright, upbeat tone</span><span class="voice-item-tag">Female · Bright</span></div>
+                  <span class="voice-check">✓</span>
+                </div>
+                <div class="voice-item" onclick="selectSettingVoice(this,'Hyunwoo — calm, steady tone')">
+                  <div class="voice-play" onclick="togglePreview(event,this)">▶</div>
+                  <div class="voice-item-info"><span class="voice-item-name">Hyunwoo — calm, steady tone</span><span class="voice-item-tag">Male · Calm</span></div>
+                  <span class="voice-check">✓</span>
+                </div>
+                <div class="voice-item" onclick="selectSettingVoice(this,'Soyul — playful, bubbly tone')">
+                  <div class="voice-play" onclick="togglePreview(event,this)">▶</div>
+                  <div class="voice-item-info"><span class="voice-item-name">Soyul — playful, bubbly tone</span><span class="voice-item-tag">Female · Playful</span></div>
+                  <span class="voice-check">✓</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="setting-chip brand-chip-setting" id="brandSettingChip" style="display:none;">🏷 Brand: <b>Formee Express</b></div>
+          </div>
+
+          <!-- SUB-STAGE: Script -->
+          <div class="stage-sub" id="subReelScript">
+            <div class="stage-body">
+            <div class="stage-body-inner">
+              <h2 class="stage-title">Script</h2>
+              <p class="stage-sub" id="scriptStageSub">Confirm the full script first. You'll then break it down and refine it by time segment.</p>
+
+              <div class="script-panel" id="scriptPanel">
+                <div class="script-panel-header">
+                  <div class="script-label" id="scriptLabel">Full script (16s)</div>
+                  <button class="script-refine-btn-fixed" onclick="refineScriptWithAI()">✨ Refine with AI</button>
+                </div>
+                <textarea class="script-text" id="fullScript" oninput="validateScriptLength()"></textarea>
+                <div class="script-limit-row" id="scriptLimitRow">
+                  <span class="script-limit-error" id="scriptLimitError"></span>
+                  <button class="script-shorten-chip" id="scriptShortenChip" onclick="refineScriptWithAI()">Make it shorter</button>
+                </div>
+
+                <div class="stage-cta-row">
+                  <button class="btn btn-dark" onclick="reelConfirmScript()">Continue to Timeline</button>
+                </div>
+              </div>
+            </div>
+            </div>
+          </div>
+
+          <!-- SUB-STAGE: Timeline (confirms per-segment dialogue + scene description only — video
+               generation happens directly on Video, grouped into 8s clips; see subReelVideo below) -->
+          <div class="stage-sub" id="subReelTimeline" style="display:none;">
+            <div class="stage-body">
+            <div class="stage-body-inner">
+              <h2 class="stage-title">Timeline</h2>
+              <p class="stage-sub" id="timelineStageSub">Confirm the dialogue and scene description for each segment, then generate the video.</p>
+
+              <div class="timeline-stage">
+                <div class="timeline-canvas">
+                  <div class="scene-grid" id="sceneGrid"></div>
+                </div>
+                <div class="scene-editor-col">
+                  <div class="scene-nav" id="segmentNav"></div>
+                  <div class="scene-editor-panel" id="sceneEditorPanel"></div>
+                  <div class="voice-section" id="voiceSection_tl">
+                    <div class="voice-section-header">
+                      <label class="scene-desc-label">🎙 Voice</label>
+                      <div class="voice-section-header-right">
+                        <div class="voice-mode-toggle" id="voiceModeToggle_tl">
+                          <div class="voice-mode-btn" data-mode="whole" onclick="setVoiceMode('whole')">Whole take</div>
+                          <div class="voice-mode-btn" data-mode="split" onclick="setVoiceMode('split')">Split by scene</div>
+                        </div>
+                        <button class="voice-section-collapse-btn" onclick="toggleVoiceSectionCollapse('tl')" title="Collapse">▾</button>
+                      </div>
+                    </div>
+                    <div class="voice-cost-summary" id="voiceCostSummary_tl"></div>
+                    <div class="voice-section-body" id="voiceSectionBody_tl"></div>
+                  </div>
+                  <div class="timeline-cta">
+                    <button class="btn btn-dark" id="timelineCtaBtn" onclick="proceedToStudio()">Generate video</button>
+                    <span class="meta-text" id="timelineCtaMeta"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            </div>
+          </div>
+
+          <!-- SUB-STAGE: Voice + Video (per-scene video generation, then free combine) -->
+          <div class="stage-sub" id="subReelVideo" style="display:none;">
+            <div class="stage-body">
+            <div class="stage-body-inner">
+              <h2 class="stage-title">Video</h2>
+              <p class="stage-sub" id="studioStageSub">Generate an 8-second video clip for each part of the video, then combine them into the final cut. The narration audio from Timeline carries over automatically.</p>
+
+              <div class="timeline-stage">
+                <div class="timeline-canvas">
+                  <div class="video-grid" id="videoGrid"></div>
+                </div>
+                <div class="scene-editor-col">
+                  <div class="voice-section" id="voiceSection_vid">
+                    <div class="voice-section-header">
+                      <label class="scene-desc-label">🎙 Voice</label>
+                      <div class="voice-section-header-right">
+                        <div class="voice-mode-toggle" id="voiceModeToggle_vid">
+                          <div class="voice-mode-btn" data-mode="whole" onclick="setVoiceMode('whole')">Whole take</div>
+                          <div class="voice-mode-btn" data-mode="split" onclick="setVoiceMode('split')">Split by scene</div>
+                        </div>
+                        <button class="voice-section-collapse-btn" onclick="toggleVoiceSectionCollapse('vid')" title="Collapse">▾</button>
+                      </div>
+                    </div>
+                    <div class="voice-cost-summary" id="voiceCostSummary_vid"></div>
+                    <div class="voice-section-body" id="voiceSectionBody_vid"></div>
+                  </div>
+                  <div class="scene-nav" id="videoSegmentNav"></div>
+                  <div class="video-editor-panel" id="videoEditorPanel"></div>
+                  <div class="combine-stale-banner" id="combineStaleBanner" style="display:none;">
+                    <span>⚠️ This scene changed — recombine to reflect the latest state.</span>
+                    <button class="btn btn-secondary" onclick="combineVideo()">Recombine</button>
+                  </div>
+                  <div class="video-cta-row" id="videoCtaRow" style="display:none;">
+                    <button class="btn btn-dark" id="videoCtaBtn" onclick="combineVideo()">Combine into final video</button>
+                    <span class="meta-text" id="videoCtaMeta">Combining is free — no credits used</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="combine-result-view" id="combineResultView" style="display:none;">
+                <div class="timeline-stage">
+                  <div class="timeline-canvas combine-canvas">
+                    <div class="combine-player">
+                      <button class="video-play-btn" onclick="playCombineResult(this)" title="Play">▶</button>
+                      <span class="combine-player-duration" id="combineResultDuration">8s</span>
+                    </div>
+                    <div class="combine-timeline-ticks" id="combineResultTicks"></div>
+                  </div>
+                  <div class="scene-editor-col">
+                    <div class="combine-summary-card">
+                      <div class="combine-summary-title-row">
+                        <h3 class="combine-summary-title" id="combineVideoTitle"></h3>
+                        <button class="combine-title-edit-btn" onclick="editCombineTitle()" title="Edit title">✏️</button>
+                      </div>
+                      <p class="combine-summary-desc" id="combineVideoDesc"></p>
+                      <div class="combine-summary-divider"></div>
+                      <div class="combine-summary-specs" id="combineSummarySpecs"></div>
+                      <p class="combine-audio-note">🎙 Narration from Timeline is already mixed in — no extra steps needed.</p>
+                    </div>
+                    <div class="combine-result-actions">
+                      <button class="btn btn-dark" onclick="goToDevelop()">Continue to editing →</button>
+                      <button class="btn btn-secondary" onclick="goToPublish()">Skip to publish</button>
+                    </div>
+                    <button class="back-to-scenes-link" onclick="backToSceneVideos()">← Back to scene videos</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            </div>
+          </div>
+
+          <!-- anchored inside stageAreaReel (position:relative) so it stays inside the app
+               frame instead of floating over the viewport -->
+          <div class="queue-panel" id="queuePanel" style="display:none;">
+            <div class="queue-header"><span class="queue-title">Queue</span><span class="queue-badge" id="queueBadge">● 2 ACTIVE</span></div>
+            <div class="queue-sub">We keep working even if you leave this page.</div>
+            <div class="queue-jobs" id="queueJobs"></div>
+          </div>
+        </div>
+
       <!-- Hidden credit-estimate strip kept only so confirmAndGenerate()'s existing cost-sync
            logic (imgUpdateBriefMeta) still has somewhere to write; the real bottom bar is
            genActionBarV3 below, which mirrors whichever CTA is live on the current sub-stage. -->
@@ -1328,6 +2031,16 @@
           <p class="stage-sub-text" style="margin-bottom:14px;">Your carousel is ready to fine-tune.</p>
           <button class="btn btn-dark" onclick="goToPublish()">⬆ Publish →</button>
           <div class="develop-note">Full Develop editing (per-card layer controls, text overlay, etc.) reuses the existing Edit &amp; Publish canvas from the video/image flow — wiring that up is the next piece of this prototype.</div>
+        </div>
+      </div>
+      <div class="develop-body" id="developBodyReel" style="display:none;">
+        <div class="develop-preview"></div>
+        <div class="develop-side">
+          <button class="btn btn-secondary" onclick="backToSceneVideos(); showSub('reelVideo')" style="margin-bottom:16px;">← Back to scene videos</button>
+          <h2 class="stage-title">Develop</h2>
+          <p class="stage-sub-text" style="margin-bottom:14px;">Your video is ready to fine-tune.</p>
+          <button class="btn btn-dark" onclick="goToPublish()">⬆ Publish →</button>
+          <div class="develop-note">Full Develop editing (timeline tracks, clip trimming, captions, etc.) reuses the existing Edit &amp; Publish canvas — wiring that up is the next piece of this prototype.</div>
         </div>
       </div>
     </div>
@@ -1924,6 +2637,10 @@ function quickAction(action){
   if(action === 'rework'){
     addChatMsg('user', 'Rework');
     addChatMsg('ai', '<span class="tag">AI</span>Sure — tell me what to change (e.g. "make the headline shorter" or "try a warmer tone"), or adjust the fields directly on the right.');
+  } else if(action === 'regen-all-scenes'){
+    regenerateAllScenesFromChat();
+  } else if(action === 'add-scene'){
+    addSceneFromChat();
   }
 }
 
@@ -3077,18 +3794,1289 @@ carSetCharMode('with'); // matches the "With Character" chip that's active by de
 carApplyBrandMode('none');
 carGoToBrief();
 
+// ---- Reel/Short (Script/Timeline/Video) — ported from v2/new-content-brief-to-generate.html ----
+// ---- Duration default: 16s so Generate Video produces 2 clips (min unit is 8s) right out of the box ----
+window.__videoDuration = 16;
+
+// ---- Brand setup awareness (demo preview toggle, bottom-right) ----
+
+// ---- Brief → Script generation (loading → reveal as an in-chat proposal) ----
+let scriptDraftCounter = 0;
+window.__scriptDrafts = {};
+window.__latestScriptText = '';
+
+// ---- Script word-count cap: scales with duration so the narration fits the video (~1.875 words/sec) ----
+function getMaxScriptWords(){
+  return Math.round(((window.__videoDuration || 8) / 8) * 15);
+}
+function countScriptWords(text){
+  return text.trim().replace(/^"|"$/g, '').replace(/[!?.,]/g, '').trim().split(/\s+/).filter(Boolean).length;
+}
+// Greedily keeps whole sentences until the next one would exceed the limit; falls back to a hard word-cut only if a single sentence is already over.
+function fitScriptToWordLimit(text, maxWords){
+  const bare = text.trim().replace(/^"|"$/g, '');
+  if(countScriptWords(bare) <= maxWords) return bare;
+  const sentences = bare.split(/(?<=[.!?])\s+/);
+  let result = '';
+  for(const s of sentences){
+    const candidate = result ? `${result} ${s}` : s;
+    if(countScriptWords(candidate) > maxWords) break;
+    result = candidate;
+  }
+  if(!result){
+    const words = bare.split(/\s+/);
+    result = words.slice(0, maxWords).join(' ');
+  }
+  return result;
+}
+function validateScriptLength(){
+  const ta = document.getElementById('fullScript');
+  const row = document.getElementById('scriptLimitRow');
+  const errEl = document.getElementById('scriptLimitError');
+  if(!ta || !row || !errEl) return;
+  const max = getMaxScriptWords();
+  const count = countScriptWords(ta.value);
+  const over = count > max;
+  ta.classList.toggle('error', over);
+  row.classList.toggle('over', over);
+  errEl.textContent = over
+    ? `⚠ You've gone over the word limit (${count}/${max} words). For a ${window.__videoDuration || 8}s video, up to ${max} words is safe. Tap Make it shorter and we'll trim what you wrote down to ${max} words.`
+    : `${count}/${max} words`;
+}
+function refineScriptWithAI(){
+  const ta = document.getElementById('fullScript');
+  if(!ta) return;
+  const fitted = fitScriptToWordLimit(ta.value, getMaxScriptWords());
+  ta.value = `"${fitted}"`;
+  validateScriptLength();
+}
+
+// ---- Advanced settings (Goal / Tone / Target audience / Call to action) ----
+function reelToggleAdvancedSettings(){
+  const body = document.getElementById('advancedSettingsBody');
+  const toggle = document.getElementById('advancedSettingsToggle');
+  const open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : 'flex';
+  toggle.classList.toggle('open', !open);
+}
+
+// Brand Setup has no "call to action" concept, so only these three fields have a source to import from.
+function reelImportFromBrandSetup(){
+  const btn = document.getElementById('importBrandBtn');
+  const note = document.getElementById('importEmptyNote');
+  if(window.__brandMode !== 'set'){
+    note.style.display = 'inline';
+    return;
+  }
+  note.style.display = 'none';
+  document.getElementById('briefGoal').value = 'Education';
+  document.getElementById('briefTone').value = 'Clear and authoritative';
+  document.getElementById('briefAudience').value = '18–24 study-abroad students';
+  btn.textContent = '✓ Imported';
+  btn.classList.add('imported');
+}
+
+function reelGoSetUpBrandFromBrief(){
+  setBrandMode('set');
+  reelImportFromBrandSetup();
+}
+
+function renderScriptProposalMessage(scriptText, introText){
+  scriptDraftCounter++;
+  const id = scriptDraftCounter;
+  window.__scriptDrafts[id] = scriptText;
+  window.__latestScriptText = scriptText;
+  return `
+    <div class="msg ai">
+      ${introText ? `<span class="tag">AI</span>${escapeHtml(introText)}` : ''}
+      <div class="script-proposal-box" id="scriptProposal${id}">
+        <div class="script-proposal-text">"${escapeHtml(scriptText)}"</div>
+        <span class="script-applied-note">✓ Applied to Script panel</span>
+        <button class="btn btn-dark" data-draft-id="${id}" onclick="handleScriptProposalClick(this)">Use this script</button>
+      </div>
+      <span class="chat-edit-hint">Want changes? Type them below (e.g. "make it shorter") and I'll revise it.</span>
+    </div>
+  `;
+}
+
+function handleScriptProposalClick(btn){
+  const box = btn.closest('.script-proposal-box');
+  if(box.classList.contains('applied')){
+    btn.disabled = true;
+    reelConfirmScript();
+    return;
+  }
+  applyScriptDraft(Number(btn.dataset.draftId), btn);
+}
+
+function applyScriptDraft(id, btn){
+  const text = window.__scriptDrafts[id];
+  if(text === undefined) return;
+  document.getElementById('fullScript').value = `"${text}"`;
+  validateScriptLength();
+  document.querySelectorAll('.script-proposal-box').forEach(box => {
+    box.classList.remove('applied');
+    const b = box.querySelector('.btn-dark');
+    if(b) b.textContent = 'Use this script';
+  });
+  const box = document.getElementById('scriptProposal' + id);
+  box.classList.add('applied');
+  btn.textContent = 'Continue to timeline';
+}
+
+function runBriefToScript(){
+  const briefText = document.getElementById('briefSummary').value.trim();
+  const chatLog = document.getElementById('chatLog');
+
+  document.getElementById('fullScript').value = '';
+
+  chatLog.innerHTML = `<div class="msg ai loading" id="loadingMsg"><span class="tag">AI</span>Writing the script for your 'lip tint promo' video based on what you shared<span class="dots"><span>.</span><span>.</span><span>.</span></span></div>`;
+
+  setTimeout(() => {
+    let refinedScript, introHTML;
+    if(window.__brandMode === 'set'){
+      refinedScript = "Watch how this lip tint performs — swatched on the hand first, then applied for the true finish. See the color, see the difference.";
+      introHTML = `Tuned the tone to match your Formee Express brand voice (Clear and authoritative · Less jargon). Swapped the casual slang for clear, confident phrasing.
+        <div class="brand-applied-box">
+          <div class="brand-applied-title">🏷 Applied from your Brand Setup</div>
+          <div class="brand-applied-item">✓ Brand voice — <b>Clear and authoritative</b></div>
+          <div class="brand-applied-item">✓ Tone — <b>Less jargon</b></div>
+          <div class="brand-applied-item">✓ Never use — <s>"cheap"</s> avoided</div>
+        </div>`;
+    } else {
+      refinedScript = "Okay wait, you guys have to see this new lip tint... watch — first on my hand, then on my lips. Look at that color!";
+      introHTML = `Prepared an 8-second script in a bright, upbeat UGC style. It's structured to show the color on the hand first, then on the lips for the final look.`;
+    }
+
+    refinedScript = fitScriptToWordLimit(refinedScript, getMaxScriptWords());
+
+    const details = getBriefDetails();
+    const detailParts = [];
+    if(details.goal) detailParts.push(`goal: <b>${escapeHtml(details.goal)}</b>`);
+    if(details.tone) detailParts.push(`tone: <b>${escapeHtml(details.tone)}</b>`);
+    if(details.audience) detailParts.push(`audience: <b>${escapeHtml(details.audience)}</b>`);
+    if(details.cta) detailParts.push(`call to action: <b>${escapeHtml(details.cta)}</b>`);
+    if(detailParts.length) introHTML += ` Written with your ${detailParts.join(', ')} in mind.`;
+
+    chatLog.innerHTML = `
+      <div class="msg user"><div class="bubble">${escapeHtml(briefText)}</div><div class="avatar">DV</div></div>
+      <div class="msg-status"><span class="worked-label">Worked</span> <span class="worked-time">for 2s</span></div>
+      <div class="msg ai">${introHTML}</div>
+    `;
+    chatLog.scrollTop = chatLog.scrollHeight;
+
+    setTimeout(() => {
+      const wrap = document.createElement('div');
+      wrap.innerHTML = renderScriptProposalMessage(refinedScript).trim();
+      chatLog.appendChild(wrap.firstElementChild);
+      chatLog.scrollTop = chatLog.scrollHeight;
+    }, 900);
+  }, 1500);
+}
+
+// ---- Chat-driven script revision (available while Script is still unconfirmed) ----
+function buildRevisedScript(base, requestText){
+  const req = requestText.toLowerCase();
+  if(req.includes('short') || req.includes('짧') || req.includes('줄여')){
+    const sentences = base.split(/(?<=[.!?])\s+/);
+    return sentences.slice(0, Math.max(1, Math.ceil(sentences.length / 2))).join(' ');
+  }
+  if(req.includes('formal') || req.includes('격식') || req.includes('정중')){
+    return base.replace(/!/g, '.').replace(/you guys/gi, 'everyone').replace(/^okay wait,\s*/i, '');
+  }
+  if(req.includes('fun') || req.includes('energetic') || req.includes('신나')){
+    return base.replace(/\.$/, '!') + ' ✨';
+  }
+  return base.replace(/[.!]$/, '') + ` — ${requestText.charAt(0).toUpperCase()}${requestText.slice(1)}.`;
+}
+
+function reviseScript(requestText){
+  const log = document.getElementById('chatLog');
+  const loadingEl = document.createElement('div');
+  loadingEl.className = 'msg ai loading';
+  loadingEl.innerHTML = `<span class="tag">AI</span>Revising the script based on your note<span class="dots"><span>.</span><span>.</span><span>.</span></span>`;
+  log.appendChild(loadingEl);
+  log.scrollTop = log.scrollHeight;
+
+  setTimeout(() => {
+    const base = window.__latestScriptText || document.getElementById('fullScript').value.replace(/^"|"$/g, '');
+    const revised = fitScriptToWordLimit(buildRevisedScript(base, requestText), getMaxScriptWords());
+    loadingEl.remove();
+
+    const status = document.createElement('div');
+    status.className = 'msg-status';
+    status.innerHTML = '<span class="worked-label">Worked</span> <span class="worked-time">for 1s</span>';
+    log.appendChild(status);
+
+    const wrap = document.createElement('div');
+    wrap.innerHTML = renderScriptProposalMessage(revised, 'Updated the script based on your note.').trim();
+    log.appendChild(wrap.firstElementChild);
+    log.scrollTop = log.scrollHeight;
+  }, 1200);
+}
+
+// ---- Character section (Brief & Style) ----
+function reelSetCharMode(mode){
+  document.querySelectorAll('#charModeToggle .seg-chip').forEach(c => c.classList.toggle('active', c.dataset.mode === mode));
+  document.getElementById('charWithSection').style.display = mode === 'with' ? 'block' : 'none';
+}
+function reelSetCharAppear(mode){
+  document.querySelectorAll('#charAppearToggle .seg-chip').forEach(c => c.classList.toggle('active', c.dataset.appear === mode));
+}
+// Only Elena has a downloaded style set in this prototype — selecting any other character
+// hides the styles sub-panel rather than showing empty/wrong photos.
+const CHAR_WITH_STYLES = { elena: { label: "Elena's styles", avatar: 'assets/characters/elena.png' } };
+function reelSelectChar(el, charId){
+  document.querySelectorAll('#charGrid .char-card-reel').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  const panel = document.getElementById('charStylesPanelReel');
+  const styles = CHAR_WITH_STYLES[charId];
+  panel.classList.toggle('show', !!styles);
+  if(styles){
+    document.getElementById('charStylesLabelReel').textContent = styles.label;
+    document.getElementById('charStylesAvatarReel').style.backgroundImage = `url('${styles.avatar}')`;
+  }
+}
+function reelSelectCharStyle(el){
+  document.querySelectorAll('#charStylesGridReel .char-card-reel').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// ---- Reference image attach + @mention tagging (Brief & Style) ----
+let referenceImages = [];
+let refImageCounter = 0;
+
+function addReferenceImage(btn){
+  let guideTarget = null;
+  if(btn){
+    const container = btn.closest('.prompt-top') || btn.closest('.scene-desc-block');
+    if(container) guideTarget = container.querySelector('textarea');
+  }
+  refImageCounter++;
+  referenceImages.push(refImageCounter);
+  const isFirstImage = referenceImages.length === 1;
+  renderReferenceImages();
+  if(isFirstImage && guideTarget){
+    guideTarget.value += (guideTarget.value.trim() ? '\n' : '') + 'e.g. @Image 3, please reference the color payoff and texture.';
+  }
+}
+function removeReferenceImage(num){
+  referenceImages = referenceImages.filter(n => n !== num);
+  renderReferenceImages();
+}
+function renderReferenceImages(){
+  const chips = referenceImages.map(n => `
+    <div class="ref-image-chip">
+      <div class="thumb"></div>
+      <span class="label">Image ${n}</span>
+      <span class="remove" onclick="removeReferenceImage(${n})">✕</span>
+    </div>
+  `).join('');
+  const refIcon = `<svg class="ic-svg" width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1.5" y="1.5" width="11" height="11" rx="1.6" stroke="currentColor" stroke-width="1.3"/><circle cx="5" cy="5.3" r="1.1" stroke="currentColor" stroke-width="1.1"/><path d="M2 10.3L5 7.6L7 9.2L9.5 6.6L12 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  const fullHtml = chips + `
+    <div class="ref-image-add" onclick="addReferenceImage(this)">${refIcon}<span>+ Reference</span></div>
+  `;
+  const compactHtml = chips + `
+    <div class="ref-image-add-compact" onclick="addReferenceImage(this)" title="Add reference image">${refIcon}<span>+ Reference</span></div>
+  `;
+  document.querySelectorAll('.reference-images-row').forEach(row => {
+    row.innerHTML = row.classList.contains('compact') ? compactHtml : fullHtml;
+  });
+}
+renderReferenceImages();
+
+let activeMentionEl = null;
+let activeMentionPop = null;
+
+function handleMentionInput(e){
+  const el = e.target;
+  const pop = el.closest('.mention-wrap').querySelector('.mention-popover');
+  const cursor = el.selectionStart;
+  const match = el.value.slice(0, cursor).match(/@(\w*)$/);
+  if(match && referenceImages.length > 0){
+    const query = match[1].toLowerCase();
+    const options = referenceImages
+      .map(n => `Image ${n}`)
+      .filter(label => label.toLowerCase().includes(query));
+    if(options.length){
+      activeMentionEl = el;
+      activeMentionPop = pop;
+      showMentionPopover(pop, options);
+      return;
+    }
+  }
+  hideMentionPopover(pop);
+}
+function showMentionPopover(pop, options){
+  pop.innerHTML = options.map(label => `<div class="mention-option" onmousedown="event.preventDefault(); insertMention('${label}')">${label}</div>`).join('');
+  pop.style.display = 'block';
+}
+function hideMentionPopover(pop){
+  (pop || activeMentionPop)?.style && ((pop || activeMentionPop).style.display = 'none');
+}
+function insertMention(label){
+  const el = activeMentionEl;
+  if(!el) return;
+  const cursor = el.selectionStart;
+  const before = el.value.slice(0, cursor);
+  const after = el.value.slice(cursor);
+  const newBefore = before.replace(/@(\w*)$/, '@' + label + ' ');
+  el.value = newBefore + after;
+  el.focus();
+  el.setSelectionRange(newBefore.length, newBefore.length);
+  hideMentionPopover(activeMentionPop);
+}
+function bindMentionTextarea(el){
+  el.addEventListener('input', handleMentionInput);
+  el.addEventListener('blur', () => setTimeout(() => hideMentionPopover(el.closest('.mention-wrap').querySelector('.mention-popover')), 150));
+}
+document.querySelectorAll('.mention-wrap textarea').forEach(bindMentionTextarea);
+
+// ---- Voice picker (Character section) — "My voices" card row + Browse ElevenLabs library modal ----
+function togglePreview(e, btn){
+  e.stopPropagation();
+  const wasPlaying = btn.classList.contains('playing');
+  document.querySelectorAll('.voice-play.playing').forEach(b => { b.classList.remove('playing'); b.textContent = '▶'; });
+  if(!wasPlaying){
+    btn.classList.add('playing');
+    btn.textContent = '⏸';
+    setTimeout(() => { btn.classList.remove('playing'); btn.textContent = '▶'; }, 2000);
+  }
+}
+
+const YOUR_VOICES_DATA = [
+  {id:'mina', name:'Mina — calm', tag:"Female · Warm · Elena's default"},
+  {id:'bunty', name:'Bunty — Funny Best Friend', tag:'Male · Standard'},
+  {id:'sora', name:'Sora — Bright & Playful', tag:'Female · Energetic'},
+  {id:'jun', name:'Jun — Deep & Confident', tag:'Male · Warm'},
+  {id:'yuna', name:'Yuna — Soft ASMR', tag:'Female · Soft'},
+  {id:'chris', name:'Chris — Casual Narrator', tag:'Male · Standard'}
+];
+let selectedVoiceId = 'mina';
+
+function renderMyVoicesCardRow(){
+  const el = document.getElementById('myVoicesCardRow');
+  if(!el) return;
+  el.innerHTML = `<div class="voice-new-card" onclick="alert('Create Voice — flow TBD')">+ Create New</div>` +
+    YOUR_VOICES_DATA.map(v => `
+    <div class="voice-item row-card ${v.id === selectedVoiceId ? 'selected' : ''}" onclick="selectVoiceById('${v.id}')">
+      <div class="voice-play" onclick="togglePreview(event,this)">▶</div>
+      <div class="voice-item-info"><span class="voice-item-name">${v.name}</span><span class="voice-item-tag">${v.tag}</span></div>
+      <span class="voice-check">✓</span>
+    </div>`).join('');
+}
+function selectVoiceById(id){
+  selectedVoiceId = id;
+  renderMyVoicesCardRow();
+}
+
+// -- Browse ElevenLabs voice library data + rendering (inline expand panel) --
+const VOICE_LIBRARY_DATA = [
+  {name:'Adam – Engaging, Friendly and Bright', tag:'Male · American'},
+  {name:'Peter Baker – Deep, Clear and Mature', tag:'Male · British'},
+  {name:'Vanessa – Beach Girl', tag:'Female · American'},
+  {name:'Hannah – All-American, bright, natural', tag:'Female · American'},
+  {name:'Russ – Deep, Smooth and Articulate', tag:'Male · American'},
+  {name:'Hope – Natural, Clear and Calm', tag:'Female · American'},
+  {name:'Arjun – Gentle Audiobook Narrator', tag:'Male · Standard'},
+  {name:'Anjali – Warm, Cheerful and Clear', tag:'Female · Standard'},
+  {name:'Davis – Casual Deeper American Male', tag:'Male · American'},
+  {name:'Emma', tag:'Female · Australian'},
+  {name:'Raquel – Expressive and Energetic', tag:'Female · Brazilian'},
+  {name:'Henry – Deep, Professional, and Soothing', tag:'Male · American'}
+];
+function renderVoiceLibRows(containerId){
+  const container = document.getElementById(containerId);
+  if(container.dataset.rendered) return;
+  container.dataset.rendered = '1';
+  container.innerHTML = VOICE_LIBRARY_DATA.map(v => `
+    <div class="voice-lib-row" data-name="${v.name.toLowerCase()}">
+      <div class="voice-play" onclick="togglePreview(event,this)">▶</div>
+      <div class="voice-item-info"><span class="voice-item-name">${v.name}</span><span class="voice-item-tag">${v.tag}</span></div>
+      <button type="button" class="voice-lib-add" onclick="event.stopPropagation(); addVoiceFromLibrary(this)">+ Add</button>
+    </div>`).join('');
+}
+function filterVoiceLib(query, containerId){
+  const q = query.trim().toLowerCase();
+  document.querySelectorAll('#'+containerId+' .voice-lib-row').forEach(row => {
+    row.classList.toggle('hidden', !!q && !row.dataset.name.includes(q));
+  });
+}
+function addVoiceFromLibrary(btn){
+  const original = btn.textContent;
+  btn.textContent = '✓ Added';
+  btn.disabled = true;
+  setTimeout(() => { btn.textContent = original; btn.disabled = false; }, 1500);
+}
+function reelToggleVoiceBrowsePanel(){
+  const panel = document.getElementById('voiceBrowsePanel');
+  const btn = document.getElementById('voiceBrowseBtn');
+  const isOpen = panel.style.display === 'block';
+  panel.style.display = isOpen ? 'none' : 'block';
+  btn.style.display = isOpen ? 'flex' : 'none';
+  if(!isOpen) renderVoiceLibRows('voiceLibGrid');
+}
+renderMyVoicesCardRow();
+
+// ---- Settings bar: Character / Voice popovers ----
+function toggleSettingPopover(e, which){
+  e.stopPropagation();
+  const ids = {character:'characterPopover', voice:'voiceSettingPopover'};
+  Object.entries(ids).forEach(([key, id]) => {
+    const pop = document.getElementById(id);
+    if(key === which){
+      pop.style.display = pop.style.display === 'block' ? 'none' : 'block';
+    } else {
+      pop.style.display = 'none';
+    }
+  });
+}
+document.addEventListener('click', (e) => {
+  if(!e.target.closest('#characterChipWrap')) document.getElementById('characterPopover').style.display = 'none';
+  if(!e.target.closest('#voiceChipWrap')) document.getElementById('voiceSettingPopover').style.display = 'none';
+});
+function selectSettingCharacter(el, name){
+  document.querySelectorAll('.char-mini-opt').forEach(a => a.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('settingCharacter').textContent = name;
+  document.getElementById('characterPopover').style.display = 'none';
+}
+function selectSettingVoice(el, label){
+  document.querySelectorAll('#voiceSettingPopover .voice-item').forEach(v => v.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('settingVoice').textContent = label;
+  document.getElementById('voiceSettingPopover').style.display = 'none';
+  ['tl', 'vid'].forEach(scope => {
+    if(window.__voiceMode === 'split'){
+      for(let i = 1; i <= getSceneCount(); i++) updateVoicePreviewButton(scope, i);
+    } else {
+      updateWholeVoiceButton(scope);
+    }
+  });
+}
+
+// Mirrors the main-panel stage CTAs inside the chat log, so the flow can be driven from either side.
+// Rendered as a bordered "AI proposal card" (title + desc + full-width button), matching Figma's
+// Generate Script / Generate Video / Ready to Generate card pattern.
+function appendChatCta(title, desc, buttonsHtml){
+  const log = document.getElementById('chatLog');
+  log.innerHTML += `<div class="msg ai"><div class="ai-cta-card"><div class="ai-cta-card-title">${escapeHtml(title)}</div>${desc ? `<p class="ai-cta-card-desc">${escapeHtml(desc)}</p>` : ''}${buttonsHtml}</div></div>`;
+  log.scrollTop = log.scrollHeight;
+}
+
+function reelConfirmScript(){
+  if(window.__scriptConfirmed) return;
+  window.__scriptConfirmed = true;
+  document.getElementById('tabReelScript').innerHTML = '<span class="check">✓</span> Script';
+  document.getElementById('tabReelTimeline').classList.remove('locked');
+  window.__approvedFullScript = document.getElementById('fullScript').value.trim().replace(/^"|"$/g, '');
+  showSub('reelTimeline');
+  renderTimelineScenes();
+  const durationSec = window.__videoDuration || 8;
+  const sceneCount = getSceneCount();
+  document.getElementById('chatLog').innerHTML += `<div class="msg ai"><span class="tag">AI</span>Script confirmed. I'll split the ${durationSec} seconds into ${sceneCount} 4-second segments and design the scenes.</div>`;
+  const unitCount = getVideoUnitCount();
+  const totalCost = unitCount * VIDEO_COST_PER_UNIT;
+  const videoMsg = unitCount > 1
+    ? `Once you're happy with the scenes, I'll generate ${unitCount} 8-second video clips — the current minimum length — and combine them into your final ${durationSec}s video.`
+    : `Once you're happy with the scenes, I'll generate your ${durationSec}-second video.`;
+  appendChatCta('Generate Video', videoMsg, `<button class="btn btn-dark" onclick="this.disabled=true; proceedToStudio()">Generate video ⚡${totalCost} →</button>`);
+  renderChatQuickChips([
+    { label: 'Regenerate all', direct: () => quickAction('regen-all-scenes') },
+    { label: 'Add a scene', direct: () => quickAction('add-scene') }
+  ]);
+}
+
+// Distributes the approved full-script sentences across `count` scene slots —
+// evenly grouped if there are more sentences than scenes, one-per-scene otherwise.
+function splitScriptIntoScenes(text, count){
+  const sentences = text.split(/(?<=[.!?])\s+/).map(s => s.trim()).filter(Boolean);
+  if(sentences.length === 0) return Array(count).fill('');
+  if(sentences.length <= count){
+    return Array.from({ length: count }, (_, i) => sentences[i] || '');
+  }
+  const perBucket = Math.floor(sentences.length / count);
+  const remainder = sentences.length % count;
+  const result = [];
+  let idx = 0;
+  for(let i = 0; i < count; i++){
+    const bucketSize = perBucket + (i < remainder ? 1 : 0);
+    result.push(sentences.slice(idx, idx + bucketSize).join(' '));
+    idx += bucketSize;
+  }
+  return result;
+}
+
+// ---- Duration (drives scene count: 8s→2, 16s→4, 24s→6) ----
+const SCENE_TEMPLATES = [
+  { time:'0:00–0:04', script:'This one serum changes your skin!', desc:'Bright studio, close-up — holding up the product with a big smile' },
+  { time:'0:04–0:08', script:'See for yourself right now!', desc:'Close-up on the product packaging — reaching it toward the camera' },
+  { time:'0:08–0:12', script:'Works for every skin type', desc:'Close-up of the product being applied and absorbed on the back of the hand' },
+  { time:'0:12–0:16', script:'This ingredient is the key', desc:'Ingredient text graphic overlay, product shown from the side' },
+  { time:'0:16–0:20', script:'Skin texture transformed in two weeks', desc:'Touching skin in front of a mirror with a satisfied expression' },
+  { time:'0:20–0:24', script:'Discover it for yourself now', desc:'Closing shot — lifting the product straight to the camera' }
+];
+function getSceneCount(){
+  const seconds = window.__videoDuration || 8;
+  return Math.min(6, Math.max(1, Math.round(seconds / 4)));
+}
+// AI video generation currently has an 8-second minimum clip length, so actual video
+// generation is grouped into 8s units (each covering 2 consecutive 4s Timeline scenes) —
+// e.g. a 16s video generates as 2 clips, which then get combined into the final cut.
+function getVideoUnitCount(){
+  const seconds = window.__videoDuration || 8;
+  return Math.max(1, Math.round(seconds / 8));
+}
+function getVideoUnitScenes(unit){
+  return [unit * 2 - 1, unit * 2];
+}
+function getVideoUnitTimeLabel(unit){
+  const [first, last] = getVideoUnitScenes(unit);
+  const start = SCENE_TEMPLATES[first - 1]?.time.split('–')[0] || '';
+  const end = SCENE_TEMPLATES[last - 1]?.time.split('–')[1] || SCENE_TEMPLATES[first - 1]?.time.split('–')[1] || '';
+  return `${start}–${end}`;
+}
+// Tells the user, right in Timeline, which 8s video clip this 4s scene will end up in —
+// since scenes stay 4s for narration pacing but video generation groups pairs of them.
+function timelineSceneNoteText(n){
+  const totalUnits = getVideoUnitCount();
+  if(totalUnits <= 1) return 'This scene will be generated as part of a single 8-second video.';
+  const unit = Math.ceil(n / 2);
+  const partner = n % 2 === 1 ? n + 1 : n - 1;
+  return `Paired with Scene ${partner} into one 8-second video (Video ${unit} of ${totalUnits}).`;
+}
+function toggleDurationPopover(e){
+  e.stopPropagation();
+  const pop = document.getElementById('durationPopover');
+  pop.style.display = pop.style.display === 'block' ? 'none' : 'block';
+}
+document.addEventListener('click', (e) => {
+  const pop = document.getElementById('durationPopover');
+  if(pop && pop.style.display === 'block' && !e.target.closest('#durationChipWrap')) pop.style.display = 'none';
+});
+function selectDuration(seconds){
+  window.__videoDuration = seconds;
+  document.getElementById('durationChipText').textContent = seconds + 's';
+  document.querySelectorAll('.duration-option').forEach(o => o.classList.toggle('selected', Number(o.dataset.seconds) === seconds));
+  document.getElementById('durationPopover').style.display = 'none';
+  document.getElementById('briefMetaDurationReel').textContent = seconds + 's';
+  document.getElementById('genSettingDuration').textContent = seconds + 's';
+  document.getElementById('scriptLabel').textContent = `Full script (${seconds}s)`;
+}
+
+// ---- Timeline: scene grid + selected-scene editor (rebuilt per duration) ----
+function wordCountGuideText(script){
+  const n = script.replace(/[!?.,]/g, '').trim().split(/\s+/).length;
+  return `💡 4-second pacing guide · about 8–10 words (currently ${n} words)`;
+}
+function renderTimelineScenes(){
+  const count = getSceneCount();
+  const scenes = SCENE_TEMPLATES.slice(0, count).map(s => ({ ...s }));
+  if(window.__approvedFullScript){
+    const splitScripts = splitScriptIntoScenes(window.__approvedFullScript, count);
+    scenes.forEach((s, i) => { s.script = splitScripts[i] || s.script; });
+  }
+  window.__sceneScripts = {}; // re-derive per-scene text from the (possibly re-approved) script on every fresh confirm
+  scenes.forEach((s, i) => { window.__sceneScripts[i + 1] = s.script; });
+  window.__wholeScriptText = null;
+
+  const cols = Math.min(count, 3);
+  const rows = Math.ceil(count / cols);
+  const sceneGridEl = document.getElementById('sceneGrid');
+  sceneGridEl.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+  sceneGridEl.classList.toggle('single-row', rows <= 1);
+
+  document.getElementById('sceneGrid').innerHTML = scenes.map((s, i) => `
+    <div class="scene-tile${i === 0 ? ' active' : ''}" data-scene="${i + 1}" id="sceneTile${i + 1}" onclick="selectScene(${i + 1})">
+      <div class="scene-tile-preview">
+        <span class="scene-tile-badge">Scene ${i + 1} · ${s.time}</span>
+      </div>
+      <div class="scene-tile-line" id="tileLine${i + 1}">${escapeHtml(getSceneScript(i + 1))}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('sceneEditorPanel').innerHTML = scenes.map((s, i) => `
+    <div class="scene-card scene-editor" id="sceneEditor${i + 1}" style="${i === 0 ? '' : 'display:none;'}">
+      <div class="scene-desc-block">
+        <label class="scene-desc-label-reel">🎬 Scene &amp; character action description</label>
+        <div class="scene-desc-box">
+          <div class="reference-images-row compact"></div>
+          <div class="mention-wrap">
+            <textarea class="scene-desc">${escapeHtml(s.desc)}</textarea>
+            <div class="mention-popover" style="display:none;"></div>
+          </div>
+        </div>
+      </div>
+      <div class="scene-note">${escapeHtml(timelineSceneNoteText(i + 1))}</div>
+    </div>
+  `).join('');
+
+  renderReferenceImages();
+  document.querySelectorAll('#sceneEditorPanel .mention-wrap textarea').forEach(bindMentionTextarea);
+  buildSegmentNav();
+  selectScene(1);
+  updateTimelineCta();
+  renderVoiceSection('tl');
+}
+function buildSegmentNav(){
+  const tiles = document.querySelectorAll('#subReelTimeline .scene-tile');
+  const nav = document.getElementById('segmentNav');
+  if(!nav || !tiles.length) return;
+  const buttons = [...tiles].map((tile) => {
+    const n = tile.dataset.scene;
+    return `<div class="segment-nav-btn${n === '1' ? ' active' : ''}" data-target="${n}" onclick="selectScene(${n})">${n}</div>`;
+  }).join('');
+  nav.innerHTML = `<span class="scene-nav-label">Scene</span>${buttons}`;
+}
+function selectScene(n){
+  n = Number(n);
+  document.querySelectorAll('#subReelTimeline .scene-tile').forEach(t => t.classList.toggle('active', Number(t.dataset.scene) === n));
+  document.querySelectorAll('.scene-editor').forEach(e => e.style.display = 'none');
+  const editor = document.getElementById('sceneEditor' + n);
+  if(editor) editor.style.display = 'block';
+  document.querySelectorAll('.segment-nav-btn').forEach(b => b.classList.toggle('active', Number(b.dataset.target) === n));
+  const tile = document.getElementById('sceneTile' + n);
+  if(tile) tile.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+}
+// ---- Voice: one narration for the whole video, or split per scene — both TTS-cached ----
+window.__voiceMode = window.__voiceMode || 'whole';
+window.__voicePreviewCache = window.__voicePreviewCache || {}; // split mode, keyed by scene id
+window.__wholeVoiceCache = window.__wholeVoiceCache || null;   // whole mode, single cache
+window.__sceneScripts = window.__sceneScripts || null;         // per-scene narration text, source of truth
+window.__wholeScriptText = window.__wholeScriptText ?? null;   // merged narration text (whole mode)
+window.__voiceAccOpen = window.__voiceAccOpen || { tl: null, vid: null }; // which segment's accordion row is expanded, per scope
+window.__voiceSectionCollapsed = window.__voiceSectionCollapsed || { tl: false, vid: false }; // whether the whole Voice card is collapsed, per scope
+
+function toggleVoiceSectionCollapse(scope){
+  window.__voiceSectionCollapsed[scope] = !window.__voiceSectionCollapsed[scope];
+  const el = document.getElementById('voiceSection_' + scope);
+  if(el) el.classList.toggle('collapsed', window.__voiceSectionCollapsed[scope]);
+}
+
+// ---- Voice credit estimates (dummy placeholders — real numbers land once TTS provider pricing is confirmed) ----
+const SEGMENT_VOICE_CREDIT = 5;
+const WHOLE_CREDIT_PER_SEC = 1.5;
+function estimateWholeVoiceCredits(){
+  return Math.round((window.__videoDuration || 8) * WHOLE_CREDIT_PER_SEC);
+}
+function estimateSplitVoiceCredits(count){
+  return count * SEGMENT_VOICE_CREDIT;
+}
+function renderVoiceCostSummary(scope){
+  const el = document.getElementById('voiceCostSummary_' + scope);
+  if(!el) return;
+  if(window.__voiceMode === 'whole'){
+    el.innerHTML = `Whole take · ~${window.__videoDuration || 8}s`;
+  } else {
+    const count = getSceneCount();
+    el.innerHTML = `Split by scene · ${count} segment${count > 1 ? 's' : ''} · <b>⚡${estimateSplitVoiceCredits(count)}</b> total`;
+  }
+}
+
+function ensureSceneScripts(count){
+  if(!window.__sceneScripts) window.__sceneScripts = {};
+  for(let i = 1; i <= count; i++){
+    if(window.__sceneScripts[i] === undefined) window.__sceneScripts[i] = SCENE_TEMPLATES[i - 1]?.script || '';
+  }
+}
+
+function getSceneScript(n){
+  return (window.__sceneScripts && window.__sceneScripts[n] !== undefined) ? window.__sceneScripts[n] : (SCENE_TEMPLATES[n - 1]?.script || '');
+}
+
+function getAllSceneScriptsJoined(){
+  const count = getSceneCount();
+  ensureSceneScripts(count);
+  return Array.from({ length: count }, (_, i) => getSceneScript(i + 1)).join(' ');
+}
+
+function updateSceneScript(n, value){
+  ensureSceneScripts(getSceneCount());
+  window.__sceneScripts[n] = value;
+  window.__wholeScriptText = null; // merged view is now stale — recompute next time whole mode renders
+
+  const tileLine = document.getElementById('tileLine' + n);
+  if(tileLine) tileLine.textContent = value;
+  document.querySelectorAll(`.voice-guide-${n}`).forEach(g => { g.textContent = wordCountGuideText(value); });
+  document.querySelectorAll(`.voice-script-text[data-scene="${n}"]`).forEach(ta => { if(ta.value !== value) ta.value = value; });
+  document.querySelectorAll(`[data-summary-scene="${n}"]`).forEach(el => { el.textContent = value; });
+
+  if(window.__voiceMode === 'split'){
+    updateVoicePreviewButton('tl', n);
+    updateVoicePreviewButton('vid', n);
+  } else {
+    updateWholeVoiceButton('tl');
+    updateWholeVoiceButton('vid');
+  }
+}
+
+function getCurrentVoiceLabel(){
+  const el = document.getElementById('settingVoice');
+  return el ? el.textContent.trim() : '';
+}
+
+function setVoiceMode(mode){
+  window.__voiceMode = mode;
+  renderVoiceSection('tl');
+  renderVoiceSection('vid');
+}
+
+function renderVoiceSection(scope){
+  const body = document.getElementById('voiceSectionBody_' + scope);
+  if(!body) return;
+  const toggle = document.getElementById('voiceModeToggle_' + scope);
+  if(toggle){
+    toggle.querySelectorAll('.voice-mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === window.__voiceMode));
+  }
+  const count = getSceneCount();
+  ensureSceneScripts(count);
+
+  if(window.__voiceMode === 'split'){
+    if(window.__voiceAccOpen[scope] !== null && window.__voiceAccOpen[scope] > count) window.__voiceAccOpen[scope] = null;
+    const openN = window.__voiceAccOpen[scope];
+    body.innerHTML = `<div class="voice-acc-list">` + Array.from({ length: count }, (_, i) => {
+      const n = i + 1;
+      const time = SCENE_TEMPLATES[i]?.time || '';
+      const script = getSceneScript(n);
+      const cached = isVoicePreviewCached(n);
+      const isOpen = openN === n;
+      return `
+        <div class="voice-acc-row${isOpen ? ' expanded' : ''}" data-acc-scene="${n}">
+          <div class="voice-acc-header" onclick="toggleVoiceAccordion('${scope}', ${n})">
+            <span class="voice-acc-status ${cached ? 'ready' : 'pending'}" data-status-scene="${n}" data-status-scope="${scope}" title="${cached ? 'Ready' : 'Needs generation'}">${cached ? '✓' : '○'}</span>
+            <span class="voice-acc-time">${time}</span>
+            <span class="voice-acc-summary" data-summary-scene="${n}">${escapeHtml(script)}</span>
+            <span class="voice-acc-cost">⚡${SEGMENT_VOICE_CREDIT}</span>
+            <span class="voice-acc-chevron">▾</span>
+          </div>
+          <div class="voice-acc-body">
+            <textarea class="voice-script-text" data-scene="${n}" oninput="updateSceneScript(${n}, this.value)">${escapeHtml(script)}</textarea>
+            <div class="voice-acc-bottom">
+              <span class="scene-guide voice-guide-${n}">${wordCountGuideText(script)}</span>
+              <button class="voice-preview-btn" id="voicePreviewBtn_${scope}_${n}" onclick="previewSceneVoice('${scope}', ${n})">
+                <span class="vp-icon">▶</span> Preview <span class="vp-cost">⚡${SEGMENT_VOICE_CREDIT}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('') + `</div>`;
+    for(let i = 1; i <= count; i++) updateVoicePreviewButton(scope, i);
+  } else {
+    if(window.__wholeScriptText === null) window.__wholeScriptText = getAllSceneScriptsJoined();
+    body.innerHTML = `
+      <textarea class="voice-script-text whole" oninput="window.__wholeScriptText = this.value; updateWholeVoiceButton('tl'); updateWholeVoiceButton('vid');">${escapeHtml(window.__wholeScriptText)}</textarea>
+      <button class="voice-preview-btn" id="voicePreviewBtnWhole_${scope}" onclick="previewWholeVoice('${scope}')">
+        <span class="vp-icon">▶</span> Preview <span class="vp-cost">⚡${estimateWholeVoiceCredits()}</span>
+      </button>
+    `;
+    updateWholeVoiceButton(scope);
+  }
+  renderVoiceCostSummary(scope);
+}
+
+function toggleVoiceAccordion(scope, n){
+  window.__voiceAccOpen[scope] = (window.__voiceAccOpen[scope] === n) ? null : n;
+  renderVoiceSection(scope);
+}
+
+function isVoicePreviewCached(n){
+  const cache = window.__voicePreviewCache[n];
+  return !!cache && cache.script === getSceneScript(n) && cache.voice === getCurrentVoiceLabel();
+}
+
+function updateVoicePreviewButton(scope, n){
+  const cached = isVoicePreviewCached(n);
+  const hasCache = !!window.__voicePreviewCache[n];
+  const stale = hasCache && !cached;
+
+  const statusEl = document.querySelector(`[data-status-scene="${n}"][data-status-scope="${scope}"]`);
+  if(statusEl){
+    statusEl.textContent = cached ? '✓' : '○';
+    statusEl.className = 'voice-acc-status ' + (cached ? 'ready' : 'pending');
+    statusEl.title = cached ? 'Ready' : 'Needs generation';
+  }
+  const btn = document.getElementById(`voicePreviewBtn_${scope}_${n}`);
+  if(!btn || btn.classList.contains('loading') || btn.classList.contains('playing')) return;
+  btn.classList.toggle('cached', cached);
+  btn.classList.toggle('stale', stale);
+  if(cached){
+    btn.innerHTML = `<span class="vp-icon">🔁</span> Preview`;
+    btn.title = 'Replay the cached preview — no extra cost';
+  } else if(stale){
+    btn.innerHTML = `<span class="vp-icon">↻</span> Regenerate <span class="vp-cost">⚡${SEGMENT_VOICE_CREDIT}</span>`;
+    btn.title = `Text changed since the last generation · ${SEGMENT_VOICE_CREDIT} credits to regenerate`;
+  } else {
+    btn.innerHTML = `<span class="vp-icon">▶</span> Preview <span class="vp-cost">⚡${SEGMENT_VOICE_CREDIT}</span>`;
+    btn.title = `Generate a voice preview · ${SEGMENT_VOICE_CREDIT} credits`;
+  }
+}
+
+function previewSceneVoice(scope, n){
+  const btn = document.getElementById(`voicePreviewBtn_${scope}_${n}`);
+  if(!btn || btn.disabled) return;
+
+  if(isVoicePreviewCached(n)){
+    playVoiceButton(btn, false, () => updateVoicePreviewButton(scope, n));
+    return;
+  }
+
+  const scriptText = getSceneScript(n);
+  const voice = getCurrentVoiceLabel();
+
+  btn.disabled = true;
+  btn.classList.add('loading');
+  btn.innerHTML = `<span class="vp-spinner"></span> Generating voice…`;
+
+  setTimeout(() => {
+    window.__voicePreviewCache[n] = { script: scriptText, voice };
+    btn.classList.remove('loading');
+    btn.disabled = false;
+    playVoiceButton(btn, true, () => updateVoicePreviewButton(scope, n));
+    updateVoicePreviewButton(scope === 'tl' ? 'vid' : 'tl', n);
+  }, 1100);
+}
+
+function isWholeVoiceCached(){
+  const cache = window.__wholeVoiceCache;
+  const currentText = window.__wholeScriptText !== null ? window.__wholeScriptText : getAllSceneScriptsJoined();
+  return !!cache && cache.text === currentText && cache.voice === getCurrentVoiceLabel();
+}
+
+function updateWholeVoiceButton(scope){
+  const cached = isWholeVoiceCached();
+  const hasCache = !!window.__wholeVoiceCache;
+  const stale = hasCache && !cached;
+  const wholeCredits = estimateWholeVoiceCredits();
+
+  const btn = document.getElementById('voicePreviewBtnWhole_' + scope);
+  if(!btn || btn.classList.contains('loading') || btn.classList.contains('playing')) return;
+  btn.classList.toggle('cached', cached);
+  btn.classList.toggle('stale', stale);
+  if(cached){
+    btn.innerHTML = `<span class="vp-icon">🔁</span> Preview`;
+    btn.title = 'Replay the cached preview — no extra cost';
+  } else if(stale){
+    btn.innerHTML = `<span class="vp-icon">↻</span> Regenerate <span class="vp-cost">⚡${wholeCredits}</span>`;
+    btn.title = `Text changed since the last generation · ${wholeCredits} credits to regenerate`;
+  } else {
+    btn.innerHTML = `<span class="vp-icon">▶</span> Preview <span class="vp-cost">⚡${wholeCredits}</span>`;
+    btn.title = `Generate the full narration · ${wholeCredits} credits`;
+  }
+}
+
+function previewWholeVoice(scope){
+  const btn = document.getElementById('voicePreviewBtnWhole_' + scope);
+  if(!btn || btn.disabled) return;
+
+  if(isWholeVoiceCached()){
+    playVoiceButton(btn, false, () => updateWholeVoiceButton(scope));
+    return;
+  }
+
+  const text = window.__wholeScriptText !== null ? window.__wholeScriptText : getAllSceneScriptsJoined();
+  const voice = getCurrentVoiceLabel();
+
+  btn.disabled = true;
+  btn.classList.add('loading');
+  btn.innerHTML = `<span class="vp-spinner"></span> Generating voice…`;
+
+  setTimeout(() => {
+    window.__wholeVoiceCache = { text, voice };
+    btn.classList.remove('loading');
+    btn.disabled = false;
+    playVoiceButton(btn, true, () => updateWholeVoiceButton(scope));
+    updateWholeVoiceButton(scope === 'tl' ? 'vid' : 'tl');
+  }, 1100);
+}
+
+function playVoiceButton(btn, justGenerated, onDone){
+  btn.classList.add('playing');
+  btn.innerHTML = `<span class="vp-icon">🔊</span> ${justGenerated ? 'Playing…' : 'Replaying…'}`;
+  setTimeout(() => {
+    btn.classList.remove('playing');
+    onDone();
+  }, 1300);
+}
+
+// ---- Timeline CTA: no generation happens here anymore — confirming scene content moves
+// straight to Video, where actual generation runs in 8s units (see startVideoGeneration). ----
+function updateTimelineCta(){
+  const btn = document.getElementById('timelineCtaBtn');
+  const meta = document.getElementById('timelineCtaMeta');
+  if(!btn) return;
+  const unitCount = getVideoUnitCount();
+  const total = unitCount * VIDEO_COST_PER_UNIT;
+  btn.textContent = `Generate video ⚡${total}`;
+  btn.title = unitCount > 1 ? `${unitCount} × 8s clips × ⚡${VIDEO_COST_PER_UNIT}` : `⚡${VIDEO_COST_PER_UNIT}`;
+  btn.disabled = false;
+  btn.onclick = proceedToStudio;
+  meta.style.display = '';
+  meta.textContent = unitCount > 1
+    ? `Generates ${unitCount} 8-second clips and combines them into your final video.`
+    : 'Generates your video.';
+}
+function proceedToStudio(){
+  document.getElementById('tabReelTimeline').innerHTML = '<span class="check">✓</span> Timeline';
+  document.getElementById('tabReelVideo').classList.remove('locked');
+  const unitCount = getVideoUnitCount();
+  const log = document.getElementById('chatLog');
+  log.innerHTML += `<div class="msg ai"><span class="tag">AI</span>${unitCount > 1 ? `Generating ${unitCount} 8-second video clips now.` : 'Generating your video now.'}</div>`;
+  log.scrollTop = log.scrollHeight;
+  showSub('reelVideo');
+  startVideoGeneration();
+}
+
+// ---- Queue panel (simulates background generation jobs) ----
+function showQueuePanel(tileSelector, jobLabel, onDone, itemName){
+  itemName = itemName || 'Scene';
+  const scenes = document.querySelectorAll(tileSelector);
+  const jobsHTML = [...scenes].map((c, i) => `
+    <div class="queue-job" data-job="${i}">
+      <div class="thumb"></div>
+      <div class="queue-job-info">
+        <div class="queue-job-title">${itemName} ${i + 1} ${jobLabel}</div>
+        <div class="queue-job-status"><span class="spin"></span>WORKING</div>
+      </div>
+    </div>
+  `).join('');
+  document.getElementById('queueJobs').innerHTML = jobsHTML;
+  document.getElementById('queueBadge').textContent = `● ${scenes.length} ACTIVE`;
+  document.getElementById('queuePanel').style.display = 'block';
+  setTimeout(() => {
+    document.querySelectorAll('.queue-job').forEach(j => {
+      j.classList.add('done');
+      j.querySelector('.queue-job-status').innerHTML = '<span class="spin"></span>READY';
+    });
+    document.getElementById('queueBadge').textContent = '✓ DONE';
+  }, 1400);
+  setTimeout(() => {
+    document.getElementById('queuePanel').style.display = 'none';
+    if(onDone) onDone();
+  }, 2200);
+}
+
+// ---- Voice + Video stage: per-scene video generation, then free combine ----
+const VIDEO_COST_PER_UNIT = 175;
+
+function updateVideoCta(){
+  const tiles = document.querySelectorAll('#videoGrid .video-tile');
+  const readyTiles = document.querySelectorAll('#videoGrid .video-tile.ready');
+  const generatingTiles = document.querySelectorAll('#videoGrid .video-tile.generating');
+  const ctaRow = document.getElementById('videoCtaRow');
+  const btn = document.getElementById('videoCtaBtn');
+  const meta = document.getElementById('videoCtaMeta');
+  const staleBanner = document.getElementById('combineStaleBanner');
+  if(!btn || tiles.length === 0) return;
+
+  ctaRow.style.display = 'flex';
+  staleBanner.style.display = (window.__videoCombined && window.__videoCombineStale) ? 'flex' : 'none';
+
+  if(generatingTiles.length > 0){
+    btn.textContent = 'Generating…';
+    btn.disabled = true;
+    meta.textContent = 'Generating scene videos…';
+  } else if(readyTiles.length < tiles.length){
+    btn.textContent = 'Combine into final video';
+    btn.disabled = true;
+    meta.textContent = 'Waiting for all scenes to finish generating';
+  } else if(!window.__videoCombined){
+    btn.textContent = 'Combine into final video';
+    btn.disabled = false;
+    btn.onclick = combineVideo;
+    meta.textContent = 'Combining is free — no credits used';
+  } else if(window.__videoCombineStale){
+    btn.textContent = 'Recombine';
+    btn.disabled = false;
+    btn.onclick = combineVideo;
+    meta.textContent = 'A scene changed since the last combine — recombining is free';
+  } else {
+    btn.textContent = 'View combined video →';
+    btn.disabled = false;
+    btn.onclick = showCombineResult;
+    meta.textContent = 'Combined and up to date';
+  }
+  syncGenActionBarV3();
+}
+
+function startVideoGeneration(){
+  const count = getVideoUnitCount();
+
+  document.getElementById('combineResultView').style.display = 'none';
+  document.querySelector('#subReelVideo .timeline-stage').style.display = 'flex';
+  document.getElementById('settingsBar').style.display = '';
+
+  const cols = Math.min(count, 3);
+  const rows = Math.ceil(count / cols);
+  const grid = document.getElementById('videoGrid');
+  grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+  grid.classList.toggle('single-row', rows <= 1);
+  grid.innerHTML = Array.from({ length: count }, (_, i) => `
+    <div class="video-tile generating${i === 0 ? ' active' : ''}" data-scene="${i + 1}" id="videoTile${i + 1}" onclick="selectVideoScene(${i + 1})">
+      <div class="video-tile-preview">
+        <div class="video-tile-overlay-top">
+          <span class="video-tile-ready-badge">✓ Ready</span>
+          <button class="video-tile-regen-btn" onclick="event.stopPropagation(); regenerateVideoScene(${i + 1})" title="Regenerate · ⚡${VIDEO_COST_PER_UNIT}">↻</button>
+        </div>
+        <div class="spinner-mini"></div>
+        <button class="video-play-btn" onclick="event.stopPropagation(); playVideoScene(${i + 1})" title="Play">▶</button>
+        <span class="video-tile-badge">Video ${i + 1} · ${getVideoUnitTimeLabel(i + 1)}</span>
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('videoEditorPanel').innerHTML = Array.from({ length: count }, (_, i) => `
+    <div class="video-scene-card" id="videoSceneEditor${i + 1}" style="${i === 0 ? '' : 'display:none;'}">
+      <div class="video-scene-header-row">
+        <div class="scene-time"><span class="dot"></span>${getVideoUnitTimeLabel(i + 1)} · Scenes ${getVideoUnitScenes(i + 1).join('–')}</div>
+      </div>
+      <label class="scene-desc-label-reel">Video prompt</label>
+      <textarea class="scene-prompt-text" id="videoPrompt${i + 1}">${escapeHtml(buildVideoPrompt(i + 1))}</textarea>
+      <button class="video-regen-btn" onclick="regenerateVideoScene(${i + 1})">🔁 Regenerate <span class="cost">⚡${VIDEO_COST_PER_UNIT}</span></button>
+    </div>
+  `).join('');
+
+  buildVideoSegmentNav();
+  selectVideoScene(1);
+  window.__voiceSectionCollapsed.vid = true;
+  document.getElementById('voiceSection_vid')?.classList.add('collapsed');
+  renderVoiceSection('vid');
+
+  document.getElementById('videoCtaRow').style.display = 'none';
+  document.getElementById('combineStaleBanner').style.display = 'none';
+  window.__videoCombined = false;
+  window.__videoCombineStale = false;
+  updateVideoCta();
+
+  showQueuePanel('#videoGrid .video-tile', 'video generation', () => {
+    document.querySelectorAll('#videoGrid .video-tile').forEach((t, i) => {
+      t.classList.remove('generating'); t.classList.add('ready');
+      applySampleVideoFrame(t, i);
+    });
+    updateVideoCta();
+    appendChatCta('Combine into Final Video', 'Combine your scene clips into one final video. This step is free — no credits used.', '<button class="btn btn-dark" onclick="this.disabled=true; combineVideo()">Combine into final video →</button>');
+  }, 'Video');
+}
+// Prototype stand-in for a real generated clip's first frame — cycles between the two sample
+// stills so every ready tile shows something instead of a flat gradient.
+function applySampleVideoFrame(tile, index){
+  const preview = tile.querySelector('.video-tile-preview');
+  if(preview) preview.style.backgroundImage = `url('assets/video/scene${(index % 2) + 1}.png')`;
+}
+
+// A video unit spans 2 Timeline scenes (4s each) to reach the 8s minimum clip length —
+// combine both scene descriptions into one prompt for that clip.
+function buildVideoPrompt(unit){
+  const [a, b] = getVideoUnitScenes(unit);
+  const descA = document.querySelector('#sceneEditor' + a + ' .scene-desc')?.value.trim() || '';
+  const descB = document.querySelector('#sceneEditor' + b + ' .scene-desc')?.value.trim() || '';
+  return [descA, descB].filter(Boolean).join(' Then, ');
+}
+
+function buildVideoSegmentNav(){
+  const tiles = document.querySelectorAll('#subReelVideo .video-tile');
+  const nav = document.getElementById('videoSegmentNav');
+  if(!nav || !tiles.length) return;
+  const buttons = [...tiles].map((tile) => {
+    const n = tile.dataset.scene;
+    return `<div class="segment-nav-btn${n === '1' ? ' active' : ''}" data-target="${n}" onclick="selectVideoScene(${n})">${n}</div>`;
+  }).join('');
+  nav.innerHTML = `<span class="scene-nav-label">Video</span>${buttons}`;
+}
+
+function selectVideoScene(n){
+  n = Number(n);
+  document.querySelectorAll('#subReelVideo .video-tile').forEach(t => t.classList.toggle('active', Number(t.dataset.scene) === n));
+  document.querySelectorAll('.video-scene-card').forEach(e => e.style.display = 'none');
+  const editor = document.getElementById('videoSceneEditor' + n);
+  if(editor) editor.style.display = 'block';
+  document.querySelectorAll('#videoSegmentNav .segment-nav-btn').forEach(b => b.classList.toggle('active', Number(b.dataset.target) === n));
+  const tile = document.getElementById('videoTile' + n);
+  if(tile) tile.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+}
+
+function regenerateVideoScene(n){
+  const tile = document.getElementById('videoTile' + n);
+  if(!tile) return;
+  tile.classList.remove('ready');
+  tile.classList.add('generating');
+  updateVideoCta();
+  setTimeout(() => {
+    tile.classList.remove('generating');
+    tile.classList.add('ready');
+    applySampleVideoFrame(tile, n - 1);
+    if(window.__videoCombined) window.__videoCombineStale = true;
+    updateVideoCta();
+  }, 1400);
+}
+
+function playVideoScene(n){
+  const tile = document.getElementById('videoTile' + n);
+  if(!tile || !tile.classList.contains('ready')) return;
+  const btn = tile.querySelector('.video-play-btn');
+  btn.textContent = '⏸';
+  setTimeout(() => { btn.textContent = '▶'; }, 1400);
+}
+
+function combineVideo(){
+  window.__videoCombined = true;
+  window.__videoCombineStale = false;
+  updateVideoCta();
+  document.getElementById('tabReelVideo').innerHTML = '<span class="check">✓</span> Video';
+  document.getElementById('chatLog').innerHTML += '<div class="msg ai"><span class="tag">AI</span>Combined all scenes into the final cut — free, no credits used. Your narration track from Timeline is already mixed in.</div>';
+  appendChatCta('Your video is ready. What\'s next?', '', '<button class="btn btn-dark" onclick="this.parentElement.querySelectorAll(\'button\').forEach(b => b.disabled = true); goToDevelop()">Continue to editing →</button><button class="btn btn-secondary" onclick="this.parentElement.querySelectorAll(\'button\').forEach(b => b.disabled = true); goToPublish()">Skip to publish</button>');
+  showCombineResult();
+}
+
+function showCombineResult(){
+  const count = getVideoUnitCount();
+  document.querySelector('#subReelVideo .timeline-stage').style.display = 'none';
+  document.getElementById('combineResultView').style.display = 'flex';
+  document.getElementById('settingsBar').style.display = 'none';
+  document.getElementById('combineResultDuration').textContent = `${window.__videoDuration || 8}s`;
+  document.getElementById('combineResultTicks').innerHTML = Array.from({ length: count - 1 }, (_, i) => {
+    const pct = ((i + 1) / count) * 100;
+    return `<div class="combine-tick" style="left:${pct}%"></div>`;
+  }).join('');
+  renderCombineSummaryCard();
+  syncGenActionBarV3();
+}
+
+function getAutoVideoTitle(){
+  const script = getSceneScript(1) || '';
+  const briefText = document.getElementById('briefSummary')?.value.trim() || '';
+  const source = script.replace(/^"|"$/g, '').trim() || briefText;
+  if(!source) return 'Untitled video';
+  const words = source.split(/\s+/);
+  const title = words.slice(0, 8).join(' ');
+  return title.charAt(0).toUpperCase() + title.slice(1) + (words.length > 8 ? '…' : '');
+}
+
+function getAutoVideoDesc(){
+  const briefText = document.getElementById('briefSummary')?.value.trim() || '';
+  const base = briefText || getSceneScript(1) || 'A short-form video generated from your brief.';
+  return base.length > 140 ? base.slice(0, 140).trim() + '…' : base;
+}
+
+function editCombineTitle(){
+  const el = document.getElementById('combineVideoTitle');
+  if(!el) return;
+  el.setAttribute('contenteditable', 'true');
+  el.focus();
+  document.execCommand('selectAll', false, null);
+
+  function save(){
+    el.removeAttribute('contenteditable');
+    window.__videoTitle = el.textContent.trim() || getAutoVideoTitle();
+    el.textContent = window.__videoTitle;
+    el.removeEventListener('blur', save);
+    el.removeEventListener('keydown', onKey);
+  }
+  function onKey(e){
+    if(e.key === 'Enter'){ e.preventDefault(); el.blur(); }
+    if(e.key === 'Escape'){ el.textContent = window.__videoTitle || getAutoVideoTitle(); el.blur(); }
+  }
+  el.addEventListener('blur', save);
+  el.addEventListener('keydown', onKey);
+}
+
+function renderCombineSummaryCard(){
+  const titleEl = document.getElementById('combineVideoTitle');
+  const descEl = document.getElementById('combineVideoDesc');
+  const specsEl = document.getElementById('combineSummarySpecs');
+  if(!titleEl || !specsEl) return;
+
+  titleEl.textContent = window.__videoTitle || getAutoVideoTitle();
+  descEl.textContent = getAutoVideoDesc();
+
+  const duration = document.getElementById('genSettingDuration')?.textContent || '8s';
+  const character = document.getElementById('settingCharacter')?.textContent || '';
+  const voice = document.getElementById('settingVoice')?.textContent || '';
+  const specs = [
+    { icon: '⏱', label: 'Duration', value: duration },
+    { icon: '▭', label: 'Ratio', value: '9:16' },
+    { icon: '🌐', label: 'Language', value: 'English' },
+    { icon: '👤', label: 'Character', value: character },
+    { icon: '🔊', label: 'Voice', value: voice },
+  ];
+  if(window.__brandMode === 'set') specs.push({ icon: '🏷', label: 'Brand', value: 'Formee Express' });
+
+  specsEl.innerHTML = specs.map(s => `
+    <div class="combine-spec-row">
+      <span class="spec-icon">${s.icon}</span>
+      <span class="spec-label">${s.label}</span>
+      <span class="spec-value">${escapeHtml(s.value)}</span>
+    </div>
+  `).join('');
+}
+
+function backToSceneVideos(){
+  document.getElementById('combineResultView').style.display = 'none';
+  document.querySelector('#subReelVideo .timeline-stage').style.display = 'flex';
+  document.getElementById('settingsBar').style.display = '';
+  syncGenActionBarV3();
+}
+
+function playCombineResult(btn){
+  btn.textContent = '⏸';
+  setTimeout(() => { btn.textContent = '▶'; }, 1400);
+}
+
+
+
+
+function regenerateAllScenesFromChat(){
+  const log = document.getElementById('chatLog');
+  const loadingEl = document.createElement('div');
+  loadingEl.className = 'msg ai loading';
+  loadingEl.innerHTML = `<span class="tag">AI</span>Regenerating scene descriptions<span class="dots"><span>.</span><span>.</span><span>.</span></span>`;
+  log.appendChild(loadingEl);
+  log.scrollTop = log.scrollHeight;
+  setTimeout(() => {
+    loadingEl.remove();
+    renderTimelineScenes();
+    const status = document.createElement('div');
+    status.className = 'msg-status';
+    status.innerHTML = '<span class="worked-label">Worked</span> <span class="worked-time">for 2s</span>';
+    log.appendChild(status);
+    const msg = document.createElement('div');
+    msg.className = 'msg ai';
+    msg.textContent = `Refreshed the scene descriptions for all ${getSceneCount()} scenes.`;
+    log.appendChild(msg);
+    log.scrollTop = log.scrollHeight;
+  }, 1000);
+}
+
+function addSceneFromChat(){
+  const log = document.getElementById('chatLog');
+  const msg = document.createElement('div');
+  msg.className = 'msg ai';
+  msg.textContent = `Adding extra scenes isn't supported in this preview yet — scene count is currently derived from your video's duration.`;
+  log.appendChild(msg);
+  log.scrollTop = log.scrollHeight;
+}
+
+
 // ---- Publish view (Edit & Publish step — Caption / Destinations / When / Run as ad) ----
 
-// getBriefDetails/getPublishHookText: v3 replacements for the Reel/Short flow's
-// getBriefDetails()/getSceneScript()/#briefSummary, none of which exist in the Image/Carousel
-// flows this file merges — Publish itself doesn't differ by content type, but the caption
-// auto-draft needs *some* source text, so it reads from whichever content type is active.
+// getPublishHookText: v3 replacement for the Reel/Short flow's #briefSummary, which doesn't
+// exist in the Image/Carousel flows this file merges — Publish itself doesn't differ by
+// content type, but the caption auto-draft needs *some* source text, so it reads from
+// whichever content type is active.
 function getBriefDetails(){
-  return { goal: '', tone: '', audience: '', cta: '' };
+  return {
+    goal: document.getElementById('briefGoal')?.value.trim() || '',
+    tone: document.getElementById('briefTone')?.value.trim() || '',
+    audience: document.getElementById('briefAudience')?.value.trim() || '',
+    cta: document.getElementById('briefCta')?.value.trim() || ''
+  };
 }
 function getPublishHookText(){
   if(window.__contentType === 'carousel'){
     return (window.__cardScripts && window.__cardScripts[1]) || document.getElementById('briefPromptCarousel')?.value.trim() || '';
+  }
+  if(window.__contentType === 'reel'){
+    return getSceneScript(1) || document.getElementById('briefSummary')?.value.trim() || '';
   }
   const headline = (typeof copyFields !== 'undefined') ? copyFields.find(f => f.key === 'headline') : null;
   return (headline && headline.text) || document.getElementById('briefPromptImage')?.value.trim() || '';
@@ -3108,7 +5096,7 @@ const PUBLISH_PLATFORMS = [
 ];
 
 function populatePublishView(){
-  document.getElementById('pubProjectName').textContent = window.__contentType === 'carousel' ? 'New Carousel · Draft' : 'New Image Post · Draft';
+  document.getElementById('pubProjectName').textContent = window.__contentType === 'carousel' ? 'New Carousel · Draft' : window.__contentType === 'reel' ? 'New Reel/Short · Draft' : 'New Image Post · Draft';
   renderPublishDestinations();
   updateWhenSelection();
   const captionEl = document.getElementById('pubCaption');
@@ -3602,10 +5590,6 @@ function setStep(active){
 function selectContentType(el){
   const type = el.dataset.type;
   if(type === 'story') return; // no Story image implementation exists in this repo
-  if(type === 'reel'){
-    window.location.href = '../v2/new-content-brief-to-generate.html';
-    return;
-  }
   document.querySelectorAll('#contentTypeToggle .seg-chip').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
   window.__contentType = type;
@@ -3613,17 +5597,23 @@ function selectContentType(el){
 }
 
 function applyContentType(){
-  const isCarousel = window.__contentType === 'carousel';
-  document.getElementById('briefContentImage').style.display = isCarousel ? 'none' : '';
-  document.getElementById('briefContentCarousel').style.display = isCarousel ? '' : 'none';
-  document.getElementById('briefActionBarImage').style.display = isCarousel ? 'none' : 'flex';
-  document.getElementById('briefActionBarCarousel').style.display = isCarousel ? 'flex' : 'none';
-  document.getElementById('stageAreaImage').style.display = isCarousel ? 'none' : 'flex';
-  document.getElementById('stageAreaCarousel').style.display = isCarousel ? 'flex' : 'none';
-  document.getElementById('developBodyImage').style.display = isCarousel ? 'none' : 'flex';
-  document.getElementById('developBodyCarousel').style.display = isCarousel ? 'flex' : 'none';
-  document.getElementById('chatHint').textContent = isCarousel
+  const type = window.__contentType;
+  document.getElementById('briefContentImage').style.display = type === 'image' ? '' : 'none';
+  document.getElementById('briefContentCarousel').style.display = type === 'carousel' ? '' : 'none';
+  document.getElementById('briefContentReel').style.display = type === 'reel' ? '' : 'none';
+  document.getElementById('briefActionBarImage').style.display = type === 'image' ? 'flex' : 'none';
+  document.getElementById('briefActionBarCarousel').style.display = type === 'carousel' ? 'flex' : 'none';
+  document.getElementById('briefActionBarReel').style.display = type === 'reel' ? 'flex' : 'none';
+  document.getElementById('stageAreaImage').style.display = type === 'image' ? 'flex' : 'none';
+  document.getElementById('stageAreaCarousel').style.display = type === 'carousel' ? 'flex' : 'none';
+  document.getElementById('stageAreaReel').style.display = type === 'reel' ? 'flex' : 'none';
+  document.getElementById('developBodyImage').style.display = type === 'image' ? 'flex' : 'none';
+  document.getElementById('developBodyCarousel').style.display = type === 'carousel' ? 'flex' : 'none';
+  document.getElementById('developBodyReel').style.display = type === 'reel' ? 'flex' : 'none';
+  document.getElementById('chatHint').textContent = type === 'carousel'
     ? '💬 Requests like "make card 2 shorter" or "try a warmer tone" work here too'
+    : type === 'reel'
+    ? '💬 Requests like "make the script shorter" or "try a warmer tone" work here too'
     : '💬 Requests like "make the headline shorter" or "try a warmer tone" work here too';
 }
 
@@ -3639,17 +5629,43 @@ function restoreMainChrome(){
 function goToBrief(){
   restoreMainChrome();
   applyContentType();
-  if(window.__contentType === 'carousel') carGoToBrief(); else imgGoToBrief();
+  if(window.__contentType === 'carousel') carGoToBrief();
+  else if(window.__contentType === 'reel') reelGoToBrief();
+  else imgGoToBrief();
 }
 function goToGenerate(){
   restoreMainChrome();
   applyContentType();
-  if(window.__contentType === 'carousel') carGoToGenerate(); else imgGoToGenerate();
+  if(window.__contentType === 'carousel') carGoToGenerate();
+  else if(window.__contentType === 'reel') reelGoToGenerate();
+  else imgGoToGenerate();
 }
 function goToDevelop(){
   restoreMainChrome();
   applyContentType();
-  if(window.__contentType === 'carousel') carGoToDevelop(); else imgGoToDevelop();
+  if(window.__contentType === 'carousel') carGoToDevelop();
+  else if(window.__contentType === 'reel') reelGoToDevelop();
+  else imgGoToDevelop();
+}
+
+// ---- Reel/Short entry points (mirrors img*/car* pattern) ----
+let reelScriptDraftStarted = false;
+function reelGoToBrief(){
+  showView('briefView'); setStep('stepBrief');
+  document.getElementById('briefActionBarReel').style.display = 'flex';
+}
+function reelGoToGenerate(){
+  showView('generateView'); setStep('stepGenerate'); showSub('reelScript');
+  document.getElementById('briefActionBarReel').style.display = 'none';
+  if(!reelScriptDraftStarted){
+    reelScriptDraftStarted = true;
+    runBriefToScript();
+  }
+}
+function reelGoToDevelop(){
+  showView('developView');
+  setStep('stepEdit');
+  document.getElementById('briefActionBarReel').style.display = 'none';
 }
 
 // Publish doesn't differ by content type (verified: the only content-type-specific bits
@@ -3668,14 +5684,22 @@ function goToPublish(){
 function setBrandMode(mode){
   imgApplyBrandMode(mode);
   carApplyBrandMode(mode);
+  reelApplyBrandMode(mode);
+}
+
+function reelApplyBrandMode(mode){
+  window.__brandMode = mode;
+  const brandSettingChip = document.getElementById('brandSettingChip');
+  if(brandSettingChip) brandSettingChip.style.display = mode === 'set' ? 'flex' : 'none';
+  document.querySelectorAll('#roleSwitch .role-btn').forEach(b => b.classList.toggle('on', b.dataset.brand === mode));
 }
 
 // ---- Draft/Versions <-> Script/Storyboard/Preview sub-stage tabs — combined tab/sub map
 // (the two source files' id sets don't overlap, so one implementation covers both). ----
 function showSub(name){
-  const tabs = {draft:'tabDraft', versions:'tabVersions', previewImage:'tabPreviewImage', script:'tabScript', storyboard:'tabStoryboard', preview:'tabPreview'};
-  const subs = {draft:'subDraft', versions:'subVersions', previewImage:'subPreviewImage', script:'subScript', storyboard:'subStoryboard', preview:'subPreview'};
-  const displays = {draft:'flex', versions:'flex', previewImage:'flex', script:'block', storyboard:'block', preview:'block'};
+  const tabs = {draft:'tabDraft', versions:'tabVersions', previewImage:'tabPreviewImage', script:'tabScript', storyboard:'tabStoryboard', preview:'tabPreview', reelScript:'tabReelScript', reelTimeline:'tabReelTimeline', reelVideo:'tabReelVideo'};
+  const subs = {draft:'subDraft', versions:'subVersions', previewImage:'subPreviewImage', script:'subScript', storyboard:'subStoryboard', preview:'subPreview', reelScript:'subReelScript', reelTimeline:'subReelTimeline', reelVideo:'subReelVideo'};
+  const displays = {draft:'flex', versions:'flex', previewImage:'flex', script:'block', storyboard:'block', preview:'block', reelScript:'block', reelTimeline:'block', reelVideo:'block'};
   const tabEl = document.getElementById(tabs[name]);
   if(!tabEl || tabEl.classList.contains('locked')) return;
   Object.values(tabs).forEach(id => { const el = document.getElementById(id); if(el) el.classList.remove('active'); });
@@ -3721,6 +5745,21 @@ function syncGenActionBarV3(){
       secondaryBtn.onclick = () => goToPublish();
       sourceBtn = document.getElementById('continueToEditingBtn');
     }
+  } else if(window.__contentType === 'reel'){
+    document.getElementById('genMetaV3').textContent = `Reel/Short · 9:16 · ${window.__videoDuration || 16}s`;
+    if(document.getElementById('subReelScript').style.display !== 'none'){
+      sourceBtn = document.querySelector('#scriptPanel .stage-cta-row .btn-dark');
+    } else if(document.getElementById('subReelTimeline').style.display !== 'none'){
+      sourceBtn = document.getElementById('timelineCtaBtn');
+    } else if(document.getElementById('subReelVideo').style.display !== 'none'){
+      if(document.getElementById('combineResultView').style.display !== 'none'){
+        secondaryBtn.textContent = 'Skip to publish';
+        secondaryBtn.onclick = () => goToPublish();
+        sourceBtn = document.querySelector('#combineResultView .combine-result-actions .btn-dark');
+      } else {
+        sourceBtn = document.getElementById('videoCtaBtn');
+      }
+    }
   }
   if(sourceBtn){
     btn.textContent = sourceBtn.textContent;
@@ -3741,7 +5780,18 @@ function sendChatMessage(){
   if(!text) return;
   addChatMsg('user', text);
   input.value = '';
-  if(window.__contentType === 'carousel') carHandleChatSend(text); else imgHandleChatSend(text);
+  if(window.__contentType === 'carousel') carHandleChatSend(text);
+  else if(window.__contentType === 'reel') reelHandleChatSend(text);
+  else imgHandleChatSend(text);
+}
+
+function reelHandleChatSend(text){
+  const timelineTab = document.getElementById('tabReelTimeline');
+  if(timelineTab && timelineTab.classList.contains('locked')){
+    reviseScript(text);
+  } else {
+    setTimeout(() => addChatMsg('ai', '<span class="tag">AI</span>Got it — this is a prototype, so I won\'t actually revise this, but in the real flow this is where that request would land.'), 500);
+  }
 }
 
 // ---- init ----
