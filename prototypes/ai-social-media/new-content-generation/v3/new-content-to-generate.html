@@ -23,6 +23,7 @@
 <link rel="stylesheet" href="../../../../components/ai-social-media/voice-accordion-row.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/queue-panel.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/video-summary-card.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/destination-account.css">
 <style>
   *{box-sizing:border-box;}
   /* Real Figma icons (components/ai-social-media/icons/), replacing emoji/ad-hoc glyphs. See
@@ -674,21 +675,16 @@
   .pub-format-fixed{font-size:13px; font-weight:500; color:var(--color-neutral-900);}
   .pub-format-fixed-note{font-size:12px; font-weight:400; color:var(--color-neutral-500);}
 
+  /* .destination-account* base look (row height per state, icon, name, spacer, status
+     badge, connect button) now comes from components/ai-social-media/destination-account.css.
+     .pub-dest-checkbox is kept local and NOT renamed to the shared demo's span-based
+     .destination-checkbox — this uses a real <input type="checkbox"> (better a11y) with
+     appearance:none custom styling that's shared with .pub-radio-row's radio buttons
+     elsewhere on this same Publish screen, so it stays a v3-wide pattern rather than
+     being folded into one single-purpose component file. */
   .pub-destinations{display:grid; grid-template-columns:1fr 1fr; gap:var(--spacing-md);}
-  .pub-dest-row{display:flex; align-items:center; gap:var(--spacing-md); height:56px; padding:0 var(--spacing-lg); border:1px solid var(--color-neutral-400); border-radius:var(--radius-xl); background:#fff;}
-  .pub-dest-row.disconnected{background:var(--color-neutral-150);}
   .pub-dest-checkbox{display:flex; align-items:center; flex-shrink:0; cursor:pointer;}
   .pub-dest-checkbox.disabled{cursor:default;}
-  .pub-dest-icon{width:32px; height:32px; flex-shrink:0; display:flex;}
-  .pub-dest-icon img{width:100%; height:100%; display:block;}
-  .pub-dest-name{font-size:13px; font-weight:500; color:var(--color-neutral-900); white-space:nowrap;}
-  .pub-dest-row.disconnected .pub-dest-name{color:var(--color-neutral-500);}
-  .pub-dest-spacer{flex:1;}
-  .pub-dest-badge{flex-shrink:0; display:inline-flex; align-items:center; border-radius:var(--radius-lg); padding:2px var(--spacing-sm); font-size:11px; font-weight:600; white-space:nowrap;}
-  .pub-dest-badge.connected{background:var(--color-badge-green-bg); color:var(--color-badge-green-text);}
-  .pub-dest-badge.not-connected{background:var(--color-neutral-400); color:var(--color-neutral-700); border-radius:var(--radius-full);}
-  .pub-connect-btn{border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); background:#fff; padding:9px 14px; font-size:13px; font-weight:600; color:var(--color-neutral-700); cursor:pointer; font-family:var(--font-family-text); flex-shrink:0;}
-  .pub-connect-btn:hover{background:var(--color-neutral-50); border-color:var(--color-brand-primary);}
 
   /* -- When / schedule -- */
   .pub-when-options{display:flex; flex-direction:column; gap:12px;}
@@ -5530,30 +5526,34 @@ function renderPublishDestinations(){
   if(!el) return;
   el.innerHTML = PUBLISH_PLATFORMS.map(p => {
     const connected = window.__platformConnections[p.key];
-    const icon = `<span class="pub-dest-icon"><img src="${PUBLISH_PLATFORM_ICONS[p.key]}" alt=""></span>`;
+    const icon = `<img class="destination-account-icon" src="${PUBLISH_PLATFORM_ICONS[p.key]}" alt="">`;
     if(connected){
       return `
-        <div class="pub-dest-row">
-          <label class="pub-dest-checkbox">
-            <input type="checkbox" data-platform="${p.key}" checked onchange="onDestinationToggle()">
-          </label>
-          ${icon}
-          <span class="pub-dest-name">${p.label}</span>
-          <span class="pub-dest-spacer"></span>
-          <span class="pub-dest-badge connected">Connected</span>
+        <div class="destination-account connected">
+          <div class="destination-account-row">
+            <label class="pub-dest-checkbox">
+              <input type="checkbox" data-platform="${p.key}" checked onchange="onDestinationToggle()">
+            </label>
+            ${icon}
+            <span class="destination-account-name">${p.label}</span>
+            <span class="destination-account-spacer"></span>
+            <span class="destination-account-status connected">Connected</span>
+          </div>
         </div>
       `;
     }
     return `
-      <div class="pub-dest-row disconnected">
-        <label class="pub-dest-checkbox disabled">
-          <input type="checkbox" data-platform="${p.key}" disabled>
-        </label>
-        ${icon}
-        <span class="pub-dest-name">${p.label}</span>
-        <span class="pub-dest-spacer"></span>
-        <span class="pub-dest-badge not-connected">Not connected</span>
-        <button class="pub-connect-btn" onclick="connectPlatform('${p.key}')">Connect</button>
+      <div class="destination-account not-connected">
+        <div class="destination-account-row">
+          <label class="pub-dest-checkbox disabled">
+            <input type="checkbox" data-platform="${p.key}" disabled>
+          </label>
+          ${icon}
+          <span class="destination-account-name">${p.label}</span>
+          <span class="destination-account-spacer"></span>
+          <span class="destination-account-status not-connected">Not connected</span>
+          <button class="destination-account-connect-btn" onclick="connectPlatform('${p.key}')">Connect</button>
+        </div>
       </div>
     `;
   }).join('');
