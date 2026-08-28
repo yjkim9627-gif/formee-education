@@ -20,6 +20,7 @@
 <link rel="stylesheet" href="../../../../components/ai-social-media/avatar.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/actions-button.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/scene-tile.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/voice-accordion-row.css">
 <style>
   *{box-sizing:border-box;}
   /* Real Figma icons (components/ai-social-media/icons/), replacing emoji/ad-hoc glyphs. See
@@ -1019,7 +1020,9 @@
   .voice-section-body > .voice-preview-btn{width:100%; justify-content:center;}
   .voice-cost-summary{font-size:10.5px; color:var(--color-neutral-500); line-height:1.45; margin:-4px 0 12px;}
   .voice-cost-summary b{color:var(--color-neutral-700); font-weight:700;}
-  .voice-script-text{width:100%; border:1px solid var(--color-neutral-300); border-radius:7px; padding:10px 12px; font-size:13px; font-family:var(--font-family-text); color:var(--color-neutral-900); line-height:1.5; resize:vertical; min-height:44px;}
+  /* base look now from voice-accordion-row.css — resize/min-height are v3-only (the
+     static Figma box isn't user-resizable, this one needs to be for longer scripts). */
+  .voice-script-text{resize:vertical; min-height:44px;}
   .voice-script-text.whole{min-height:72px;}
   .voice-preview-btn{display:inline-flex; align-items:center; justify-content:center; gap:6px; border:1px solid var(--color-neutral-300); background:#fff; border-radius:999px; padding:6px 12px; font-size:11.5px; font-weight:600; color:var(--color-neutral-700); cursor:pointer; font-family:var(--font-family-text); transition:border-color .15s, color .15s; flex-shrink:0;}
   .voice-preview-btn:hover{border-color:var(--color-neutral-450);}
@@ -1031,22 +1034,22 @@
   .voice-preview-btn:disabled{cursor:default;}
   .vp-spinner{width:9px; height:9px; border-radius:999px; border:2px solid var(--color-neutral-300); border-top-color:var(--color-brand-primary); display:inline-block; animation:spin .7s linear infinite;}
 
-  /* ---- Split-by-scene accordion ---- */
+  /* ---- Split-by-scene accordion ----
+     Base row (.voice-accordion-row, header, time/summary/caret text, expanded body
+     padding) now comes from components/ai-social-media/voice-accordion-row.css. Local
+     rules here are only the pieces that component genuinely can't know about: the list
+     wrapper, the ready/pending status dot (a live-generation-state indicator with no
+     equivalent in the static Figma export), the collapsed/expanded body toggle (Figma
+     shows two separate static frames for this; a real accordion needs actual show/hide),
+     and the word-count-guide+Preview-button row inside the body (v3 puts them side by
+     side to save vertical space — Figma's static capture only showed the Preview button
+     stacked full-width below the script box, no guide text next to it). */
   .voice-acc-list{display:flex; flex-direction:column; gap:6px;}
-  .voice-acc-row{border:1px solid var(--color-neutral-200); border-radius:8px; overflow:hidden;}
-  .voice-acc-row.expanded{border-color:var(--color-neutral-300);}
-  .voice-acc-header{display:flex; align-items:center; gap:8px; padding:9px 10px; cursor:pointer; background:var(--color-neutral-50);}
-  .voice-acc-row.expanded .voice-acc-header{background:var(--color-neutral-100); border-bottom:1px solid var(--color-neutral-200);}
   .voice-acc-status{flex-shrink:0; font-size:11px; line-height:1;}
   .voice-acc-status.ready{color:var(--color-badge-green-text);}
   .voice-acc-status.pending{color:var(--color-warning-text);}
-  .voice-acc-time{flex-shrink:0; font-size:10.5px; font-weight:700; color:var(--color-neutral-700);}
-  .voice-acc-summary{flex:1; min-width:0; font-size:12px; color:var(--color-neutral-700); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-  .voice-acc-cost{flex-shrink:0; font-size:10.5px; font-weight:700; color:var(--color-neutral-500);}
-  .voice-acc-chevron{flex-shrink:0; font-size:9px; color:var(--color-neutral-500); transition:transform .15s;}
-  .voice-acc-row.expanded .voice-acc-chevron{transform:rotate(180deg);}
-  .voice-acc-body{display:none; flex-direction:column; gap:8px; padding:12px 10px 14px;}
-  .voice-acc-row.expanded .voice-acc-body{display:flex;}
+  .voice-accordion-row .voice-acc-body{display:none;}
+  .voice-accordion-row.expanded .voice-acc-body{display:flex;}
   .voice-acc-bottom{display:flex; align-items:center; justify-content:space-between; gap:10px;}
   .voice-acc-bottom .scene-guide{margin-bottom:0; flex:1; min-width:0;}
   .scene-desc-block{margin-bottom:12px;}
@@ -4665,13 +4668,13 @@ function renderVoiceSection(scope){
       const cached = isVoicePreviewCached(n);
       const isOpen = openN === n;
       return `
-        <div class="voice-acc-row${isOpen ? ' expanded' : ''}" data-acc-scene="${n}">
+        <div class="voice-accordion-row${isOpen ? ' expanded' : ''}" data-acc-scene="${n}">
           <div class="voice-acc-header" onclick="toggleVoiceAccordion('${scope}', ${n})">
             <span class="voice-acc-status ${cached ? 'ready' : 'pending'}" data-status-scene="${n}" data-status-scope="${scope}" title="${cached ? 'Ready' : 'Needs generation'}">${cached ? '✓' : '○'}</span>
             <span class="voice-acc-time">${time}</span>
             <span class="voice-acc-summary" data-summary-scene="${n}">${escapeHtml(script)}</span>
-            <span class="voice-acc-cost"><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">${SEGMENT_VOICE_CREDIT}</span>
-            <span class="voice-acc-chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span>
+            <span class="voice-credit-pill"><span class="cost"><img src="../../../../components/ai-social-media/icons/zap-sm.svg" alt=""><span>${SEGMENT_VOICE_CREDIT}</span></span></span>
+            <img class="voice-acc-caret" src="../../../../components/ai-social-media/icons/caret-down-filled.svg" alt="">
           </div>
           <div class="voice-acc-body">
             <textarea class="voice-script-text" data-scene="${n}" oninput="updateSceneScript(${n}, this.value)">${escapeHtml(script)}</textarea>
