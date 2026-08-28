@@ -1,0 +1,64 @@
+/* Topbar + Stepper — shared component (components/ai-social-media/topbar-stepper.html 참고)
+   Figma: FME_AI-Social-Media, TopBar(56px 고정, node 카테고리 "04 Navigation") + 화면 상단의
+   3-step 진행 표시(Brief & Style → Generate → Edit & Publish).
+
+   컴포넌트 추출 직후 dev-1 이 new-carousel-to-generate.html/new-content-brief-to-generate.html의
+   brand-primary(active) + badge-green(done) 조합을 "2/3 다수"로 채택해 image 파일 쪽을 맞췄으나(harmonize),
+   이후 live Figma 데이터(get_design_context, Publish 화면 Stepper 인스턴스 node 6300:580)로 직접
+   재검증한 결과 실제 디자인은 뉴트럴 톤이 맞다: done = neutral-400 테두리 + neutral-500 체크/라벨,
+   active(현재 단계) = neutral-900 채움 원 + 흰 숫자 + neutral-900 라벨. brand-primary/badge-green은
+   전혀 쓰이지 않음 — style-reference.md의 "브랜드 블루는 on/off·AI-active·CTA 전용" 규칙과도 일치.
+   아래는 그 다수결 판단을 되돌리고 실제 Figma 값으로 고친 버전이다. */
+
+.topbar{
+  height:56px; border-bottom:1px solid var(--color-neutral-300); background:var(--color-neutral-0);
+  display:flex; align-items:center; gap:20px; padding:0 24px; flex-shrink:0;
+}
+
+/* ---------- Stepper ---------- */
+.stepper{display:flex; align-items:center; gap:8px;}
+.step{display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:var(--color-neutral-400); cursor:pointer;}
+.step .num{
+  width:20px; height:20px; border-radius:10px; border:1px solid var(--color-neutral-400); display:flex;
+  align-items:center; justify-content:center; font-size:12px; font-weight:600; color:var(--color-neutral-400);
+  background:var(--color-neutral-0); transition:background .15s ease, border-color .15s ease, color .15s ease;
+}
+
+/* state: active (current step) — Figma: neutral-900 채움 원 + 흰 숫자, neutral-900 라벨 (브랜드 블루 아님) */
+.step.active{color:var(--color-neutral-900);}
+.step.active .num{background:var(--color-neutral-900); border-color:var(--color-neutral-900); color:var(--color-neutral-0);}
+
+/* state: done (completed step, num shows ✓) — Figma: neutral-400 테두리 + neutral-500 체크/라벨 (배지 그린 아님) */
+.step.done{color:var(--color-neutral-500); cursor:pointer;}
+.step.done .num{background:var(--color-neutral-0); border-color:var(--color-neutral-400); color:var(--color-neutral-500);}
+.step.done:hover{color:var(--color-neutral-900);}
+.step.done:hover .num{border-color:var(--color-neutral-500); color:var(--color-neutral-700);}
+
+/* state: upcoming/disabled (documented for completeness — default un-clickable state used by
+   later steps before they're reachable; no dedicated class in current markup, selector kept as
+   the implicit default :not(.active):not(.done)) */
+.step:not(.active):not(.done){color:var(--color-neutral-400); cursor:default;}
+
+.connector{width:30px; height:2px; background:var(--color-neutral-200); flex-shrink:0;}
+
+.topbar-spacer{flex:1;}
+.topbar-actions{display:flex; align-items:center; gap:16px;}
+
+/* ---------- Icon buttons (search / notifications) ---------- */
+.topbar-icon-btn{
+  width:36px; height:36px; border-radius:8px; border:none; background:transparent; display:flex;
+  align-items:center; justify-content:center; color:var(--color-neutral-700); position:relative;
+  cursor:pointer; flex-shrink:0; transition:background .15s ease;
+}
+.topbar-icon-btn:hover{background:var(--color-neutral-100);}
+.topbar-icon-btn:focus-visible{outline:2px solid var(--color-brand-primary); outline-offset:1px;}
+.topbar-icon-btn:disabled{color:var(--color-neutral-400); cursor:not-allowed; pointer-events:none;}
+/* new-notification dot — 브랜드 accent(핑크) 색은 알림/뱃지류에만 국한(style-reference.md §3) */
+.topbar-icon-btn .dot{position:absolute; top:8px; right:9px; width:4px; height:4px; border-radius:2px; background:var(--color-brand-accent);}
+
+/* ---------- Avatar ---------- */
+.topbar-avatar{
+  width:32px; height:32px; border-radius:999px; background:var(--color-brand-primary-mid); display:flex;
+  align-items:center; justify-content:center; font-size:11px; font-weight:700; color:var(--color-neutral-800);
+  flex-shrink:0;
+}

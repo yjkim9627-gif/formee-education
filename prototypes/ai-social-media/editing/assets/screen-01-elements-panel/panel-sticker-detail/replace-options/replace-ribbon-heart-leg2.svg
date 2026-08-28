@@ -1,0 +1,22 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="5.85466" height="7.87329" viewBox="0 0 5.85466 7.87329" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Ribbon Leg 2">
+<path d="M3.50894 0L0 1.27715L2.31698 7.64299C2.42584 7.94209 2.84506 7.95239 2.96849 7.65901L3.42403 6.57614C3.5581 6.25742 3.93311 6.11769 4.24306 6.27097L5.34857 6.81768C5.63155 6.95763 5.94059 6.68091 5.83261 6.38424L3.50894 0Z" fill="url(#paint0_linear_0_1070)"/>
+<path d="M3.50894 0L0 1.27715L2.31698 7.64299C2.42584 7.94209 2.84506 7.95239 2.96849 7.65901L3.42403 6.57614C3.5581 6.25742 3.93311 6.11769 4.24306 6.27097L5.34857 6.81768C5.63155 6.95763 5.94059 6.68091 5.83261 6.38424L3.50894 0Z" fill="url(#paint1_linear_0_1070)"/>
+<path d="M3.50894 0L0 1.27715L2.31698 7.64299C2.42584 7.94209 2.84506 7.95239 2.96849 7.65901L3.42403 6.57614C3.5581 6.25742 3.93311 6.11769 4.24306 6.27097L5.34857 6.81768C5.63155 6.95763 5.94059 6.68091 5.83261 6.38424L3.50894 0Z" fill="url(#paint2_linear_0_1070)"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_0_1070" x1="2.38721" y1="9.83198" x2="3.54346" y2="0.331985" gradientUnits="userSpaceOnUse">
+<stop offset="0.140625" stop-color="#F8EC1D"/>
+<stop offset="0.625" stop-color="#F89C20"/>
+<stop offset="0.848958" stop-color="#C13A24"/>
+</linearGradient>
+<linearGradient id="paint1_linear_0_1070" x1="1.37158" y1="5.28511" x2="1.62158" y2="5.19917" gradientUnits="userSpaceOnUse">
+<stop stop-color="#D06400"/>
+<stop offset="1" stop-color="#D06400" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint2_linear_0_1070" x1="5.55908" y1="6.12886" x2="5.88721" y2="6.00386" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FFE601" stop-opacity="0"/>
+<stop offset="1" stop-color="#FFF101"/>
+</linearGradient>
+</defs>
+</svg>

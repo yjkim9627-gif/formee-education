@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>Chat Panel — Shared Component</title>
+<link rel="stylesheet" href="../../tokens/tokens.css" />
+<link rel="stylesheet" href="../demo-nav.css" />
+<link rel="stylesheet" href="../shared/button.css" />
+<link rel="stylesheet" href="chat-panel.css" />
+<style>
+  body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
+  .demo-main { padding: var(--spacing-4xl); display: flex; gap: var(--spacing-3xl); flex-wrap: wrap; }
+  h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-lg); width: 100%; }
+  .frame { border: 1px solid var(--color-neutral-300); height: 640px; }
+</style>
+</head>
+<body>
+<div class="demo-shell">
+  <nav class="demo-sidebar">
+    <a href="../../index.html" class="demo-sidebar-home">← Home</a>
+    <div class="demo-sidebar-group">
+      <div class="demo-sidebar-label">AI Social Media</div>
+      <a href="nav.html">Nav / Navigation</a>
+      <a href="topbar-stepper.html">Topbar + Stepper</a>
+      <a href="chat-panel.html" class="active">Chat Panel</a>
+      <a href="character-card.html">Character Card</a>
+      <a href="switch.html">Controls / Switch</a>
+      <a href="prompt-box.html">AI Prompt Box</a>
+      <a href="filter-chip.html">Controls / Filter / Toggle</a>
+      <a href="setting-chip.html">Setting Chip</a>
+    </div>
+    <div class="demo-sidebar-group">
+      <div class="demo-sidebar-label">Shared</div>
+      <a href="../shared/button.html">Button</a>
+      <a href="../shared/modal-confirm.html">Modal / Confirm</a>
+      <a href="../shared/modal-form.html">Modal / Form</a>
+      <a href="../shared/modal-success.html">Modal / Success</a>
+    </div>
+  </nav>
+  <main class="demo-main">
+  <h1>Chat Panel</h1>
+
+  <div class="frame">
+    <div class="chat">
+      <div class="chat-header">
+        <div class="chat-header-title">AI Assistant</div>
+        <button class="chat-new-btn" aria-label="New chat">+</button>
+      </div>
+      <div class="chat-log">
+        <div class="msg user"><div class="bubble">에너지 넘치는 UGC 스타일 립틴트 영상 만들어줘</div><div class="avatar">DV</div></div>
+        <div class="msg ai"><span class="tag">AI</span>브랜드 톤에 맞춰 초안을 준비했어요.
+          <div class="chat-cta-row"><button class="btn btn-secondary">수정 요청</button><button class="btn btn-dark">이대로 진행</button></div>
+        </div>
+        <div class="msg ai loading">작업 중<span class="dots"><span>.</span><span>.</span><span>.</span></span></div>
+      </div>
+      <div class="chat-hint">Enter로 전송 · Shift+Enter로 줄바꿈</div>
+      <div class="chat-input-box">
+        <textarea class="chat-input" placeholder="AI에게 요청하기..."></textarea>
+        <div class="chat-input-bottom-row">
+          <button class="chat-attach-btn" aria-label="첨부">📎</button>
+          <button class="chat-send" aria-label="전송"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiB2aWV3Qm94PSIwIDAgMjAgMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gdWkgLyBhcnJvdy11cCI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik0xNS44MzY3IDEwLjAwMzNMMTAuMDAzMyA0LjE3TDQuMTcgMTAuMDAzM00xMC4wMDMzIDQuMTdWMTUuODM2NyIgc3Ryb2tlPSIjOEE5M0E4IiBzdHJva2Utd2lkdGg9IjEuNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjwvZz4KPC9zdmc+Cg==" alt="" width="14" height="14" style="filter:invert(1);"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="frame" style="width:324px;">
+    <div class="chat">
+      <div class="chat-header">
+        <div class="chat-header-title">AI Assistant</div>
+        <button class="chat-new-btn" aria-label="New chat">+</button>
+      </div>
+      <div class="chat-log"></div>
+      <div class="chat-input-box">
+        <textarea class="chat-input" disabled placeholder="전송 중에는 입력할 수 없어요"></textarea>
+        <div class="chat-input-bottom-row">
+          <button class="chat-attach-btn" aria-label="첨부">📎</button>
+          <button class="chat-send" disabled aria-label="전송"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiB2aWV3Qm94PSIwIDAgMjAgMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gdWkgLyBhcnJvdy11cCI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik0xNS44MzY3IDEwLjAwMzNMMTAuMDAzMyA0LjE3TDQuMTcgMTAuMDAzM00xMC4wMDMzIDQuMTdWMTUuODM2NyIgc3Ryb2tlPSIjOEE5M0E4IiBzdHJva2Utd2lkdGg9IjEuNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjwvZz4KPC9zdmc+Cg==" alt="" width="14" height="14" style="filter:invert(1);"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  </main>
+</div>
+</body>
+</html>

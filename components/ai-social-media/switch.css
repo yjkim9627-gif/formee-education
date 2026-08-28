@@ -1,0 +1,31 @@
+/* Controls / Switch — shared component (components/ai-social-media/switch.html 참고)
+   Figma: FME_Design-System, "[DS] Controls / Switch" — 40×23, radius 12.
+   style-reference.md §2: "off일 때 neutral-300 트랙, on일 때 brand/primary 트랙" — Figma 컴포넌트
+   설명이 별도로 달려 있을 만큼 스펙이 명확한 컴포넌트. new-image-to-generate.html /
+   new-carousel-to-generate.html 2곳에서 byte-identical하게 중복돼 있던 .field-switch를 그대로
+   추출했다. new-content-brief-to-generate.html은 이 [DS] Switch를 전혀 쓰지 않고, Publish 화면에서만
+   input[type=checkbox] 기반의 별도 .toggle-switch를 쓴다 — 그 화면 전용 변형이라 포함하지 않음. */
+
+.field-switch{
+  width:40px; height:23px; border-radius:12px; border:none; background:var(--color-neutral-300);
+  position:relative; cursor:pointer; flex-shrink:0; margin-top:2px; transition:background .15s;
+}
+.field-switch .knob{
+  position:absolute; top:2px; left:2px; width:19px; height:19px; border-radius:999px; background:var(--color-neutral-0);
+  box-shadow:0 1px 2px rgba(0,0,0,.2); transition:transform .15s;
+}
+
+/* state: on */
+.field-switch.on{background:var(--color-brand-primary);}
+.field-switch.on .knob{transform:translateX(17px);}
+
+/* state: hover (documented for completeness — not previously exercised) */
+.field-switch:hover:not(.disabled){background:var(--color-neutral-380);}
+.field-switch.on:hover:not(.disabled){background:var(--color-brand-primary-dark);}
+
+/* state: focus-visible (documented for completeness) */
+.field-switch:focus-visible{outline:2px solid var(--color-brand-primary); outline-offset:2px;}
+
+/* state: disabled */
+.field-switch.disabled{background:var(--color-neutral-200); cursor:not-allowed;}
+.field-switch.disabled .knob{background:var(--color-neutral-100);}

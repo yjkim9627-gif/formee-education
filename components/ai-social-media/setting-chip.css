@@ -1,0 +1,34 @@
+/* Setting Chip — shared component (components/ai-social-media/setting-chip.html 참고)
+   Figma: FME_AI-Social-Media — Generate 단계 캔버스 상단에 떠 있는 "현재 설정값" 표시 pill
+   (예: 비율, 캐릭터, 브랜드 킷 적용 여부). Filter Chip과는 달리 클릭으로 값을 바꾸는 토글이 아니라
+   읽기 전용 컨텍스트 배지라 별도 Figma 컴포넌트로 취급했다(과제 지시대로 강제 병합하지 않음).
+
+   추출 전 new-carousel-to-generate.html과 new-content-brief-to-generate.html은 서로 동일했지만
+   (radius-full pill, padding 5px 12px, font-size 11.5px, neutral-50 배경, brand 변형은
+   brand-primary-light 틴트) new-image-to-generate.html은 radius-lg에 padding 7px 12px,
+   font-size 14px, neutral-0 배경이었고 결정적으로 .brand-chip-setting이 브랜드 틴트를 전혀
+   적용하지 않는 상태였다(사실상 미완성 variant). 2/3 다수이자 실제로 "브랜드 적용됨"을 시각적으로
+   구분하는 carousel/brief 쪽을 표준으로 채택 — image의 setting-chip 크기/색이 이 공유 CSS로
+   바뀐다(harmonize). */
+
+.setting-chip{
+  display:flex; align-items:center; gap:6px; border:1px solid var(--color-neutral-300); border-radius:999px;
+  padding:5px 12px; font-size:11.5px; color:var(--color-neutral-700); background:var(--color-neutral-50);
+}
+.setting-chip b{color:var(--color-neutral-900); font-weight:600;}
+.setting-chip .chip-ic{width:16px; height:16px; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+.setting-chip .chip-ic img{width:16px; height:16px; display:block;}
+/* 비율(ratio) 칩 아이콘 — Figma에 별도 아이콘 에셋이 없고 세로 직사각형 테두리만 그려서 표현한다 */
+.setting-chip .ratio-box-ic::after{content:''; display:block; width:11px; height:14px; border:1.2px solid var(--color-neutral-500); border-radius:2px;}
+
+/* variant: brand-applied context (브랜드 킷/캐릭터 등이 적용된 상태를 알리는 강조) */
+.brand-chip-setting{background:var(--color-brand-primary-light); border-color:var(--color-brand-primary-mid);}
+
+/* state: clickable (일부 화면에서만 값 변경 팝오버를 여는 용도로 씀) */
+.setting-chip.clickable{cursor:pointer; transition:border-color .15s ease, background .15s ease;}
+.setting-chip.clickable:hover{border-color:var(--color-neutral-400); background:var(--color-neutral-0);}
+.setting-chip.clickable:focus-visible{outline:2px solid var(--color-brand-primary); outline-offset:1px;}
+.setting-chip .chevron{color:var(--color-neutral-500); font-size:9px; margin-left:1px;}
+
+/* state: disabled (documented for completeness — not currently used) */
+.setting-chip.disabled{opacity:.5; pointer-events:none;}

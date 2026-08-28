@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>Controls / Switch — Shared Component</title>
+<link rel="stylesheet" href="../../tokens/tokens.css" />
+<link rel="stylesheet" href="../demo-nav.css" />
+<link rel="stylesheet" href="switch.css" />
+<style>
+  body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
+  .demo-main { padding: var(--spacing-4xl); }
+  h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-3xl); }
+  .row { display: flex; align-items: center; gap: var(--spacing-2xl); }
+  .row div { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-sm); font-size: var(--font-size-text-xs); color: var(--color-neutral-700); }
+</style>
+</head>
+<body>
+<div class="demo-shell">
+  <nav class="demo-sidebar">
+    <a href="../../index.html" class="demo-sidebar-home">← Home</a>
+    <div class="demo-sidebar-group">
+      <div class="demo-sidebar-label">AI Social Media</div>
+      <a href="nav.html">Nav / Navigation</a>
+      <a href="topbar-stepper.html">Topbar + Stepper</a>
+      <a href="chat-panel.html">Chat Panel</a>
+      <a href="character-card.html">Character Card</a>
+      <a href="switch.html" class="active">Controls / Switch</a>
+      <a href="prompt-box.html">AI Prompt Box</a>
+      <a href="filter-chip.html">Controls / Filter / Toggle</a>
+      <a href="setting-chip.html">Setting Chip</a>
+    </div>
+    <div class="demo-sidebar-group">
+      <div class="demo-sidebar-label">Shared</div>
+      <a href="../shared/button.html">Button</a>
+      <a href="../shared/modal-confirm.html">Modal / Confirm</a>
+      <a href="../shared/modal-form.html">Modal / Form</a>
+      <a href="../shared/modal-success.html">Modal / Success</a>
+    </div>
+  </nav>
+  <main class="demo-main">
+  <h1>Controls / Switch</h1>
+  <div class="row">
+    <div><div class="field-switch"><div class="knob"></div></div>off</div>
+    <div><div class="field-switch on"><div class="knob"></div></div>on</div>
+    <div><div class="field-switch disabled"><div class="knob"></div></div>disabled (off)</div>
+    <div><div class="field-switch on disabled"><div class="knob"></div></div>disabled (on)</div>
+  </div>
+  </main>
+</div>
+</body>
+</html>
