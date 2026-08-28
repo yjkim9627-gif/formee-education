@@ -21,6 +21,7 @@
 <link rel="stylesheet" href="../../../../components/ai-social-media/actions-button.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/scene-tile.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/voice-accordion-row.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/queue-panel.css">
 <style>
   *{box-sizing:border-box;}
   /* Real Figma icons (components/ai-social-media/icons/), replacing emoji/ad-hoc glyphs. See
@@ -1126,21 +1127,18 @@
   .back-to-scenes-link{display:block; background:none; border:none; color:var(--color-neutral-500); font-size:12px; font-family:var(--font-family-text); cursor:pointer; text-decoration:underline; margin-top:10px; padding:0; text-align:left;}
   .back-to-scenes-link:hover{color:var(--color-neutral-700);}
 
-  /* ---- Queue panel (floating, shown while video clips generate) ---- */
+  /* ---- Queue panel (floating, shown while video clips generate) ----
+     Base look (card bg/border/radius/padding, header, badge, job row, thumb, title,
+     status dot/label) now comes from components/ai-social-media/queue-panel.css.
+     Kept local: the floating-popover positioning (Figma's own Queue Panel is a static
+     inline card, not an overlay — this one needs to float over the canvas while clips
+     generate), its bigger popover-appropriate shadow, the "We keep working..." sub-
+     caption (no equivalent in the base component), and the pulse animation on the
+     status dot while a job is still working (Figma's dot is static). */
   @keyframes queuePulse{0%,100%{opacity:1;} 50%{opacity:0.25;}}
-  .queue-panel{position:absolute; top:76px; right:24px; z-index:9998; width:280px; background:#fff; border-radius:12px; box-shadow:0 20px 50px rgba(15,23,41,0.18); border:1px solid var(--color-neutral-200); padding:16px;}
-  .queue-header{display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;}
-  .queue-title{font-size:13px; font-weight:700; color:var(--color-neutral-900);}
-  .queue-badge{font-size:10.5px; font-weight:600; color:var(--color-neutral-700); background:var(--color-neutral-100); padding:3px 8px; border-radius:999px;}
-  .queue-sub{font-size:11px; color:var(--color-neutral-500); margin-bottom:12px;}
-  .queue-jobs{display:flex; flex-direction:column; gap:8px;}
-  .queue-job{display:flex; align-items:center; gap:10px; padding:8px; border-radius:8px; background:var(--color-neutral-50);}
-  .queue-job .thumb{width:32px; height:32px; border-radius:6px; background:linear-gradient(135deg,var(--color-brand-primary-mid),var(--color-brand-accent)); flex-shrink:0;}
-  .queue-job-info{flex:1; min-width:0;}
-  .queue-job-title{font-size:11.5px; font-weight:600; color:var(--color-neutral-900); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-  .queue-job-status{font-size:10px; color:var(--color-neutral-500); display:flex; align-items:center; gap:5px; margin-top:2px;}
-  .queue-job-status .spin{width:6px; height:6px; border-radius:999px; background:var(--color-warning-text); animation:queuePulse 1s infinite;}
-  .queue-job.done .queue-job-status .spin{background:var(--color-badge-green-text); animation:none;}
+  .queue-panel{position:absolute; top:76px; right:24px; z-index:9998; box-shadow:0 20px 50px rgba(15,23,41,0.18);}
+  .queue-sub{font-size:11px; color:var(--color-neutral-500); margin:-4px 0 4px;}
+  .queue-job-row:not(.ready) .queue-job-status-dot{animation:queuePulse 1s infinite;}
   @keyframes spin{to{transform:rotate(360deg);}}
 
 </style>
@@ -2087,9 +2085,12 @@
           <!-- anchored inside stageAreaReel (position:relative) so it stays inside the app
                frame instead of floating over the viewport -->
           <div class="queue-panel" id="queuePanel" style="display:none;">
-            <div class="queue-header"><span class="queue-title">Queue</span><span class="queue-badge" id="queueBadge">● 2 ACTIVE</span></div>
+            <div class="queue-panel-header">
+              <span class="queue-panel-title">Queue</span>
+              <span class="queue-badge orange" id="queueBadge"><img src="../../../../components/ai-social-media/icons/badge-dot.svg" alt="">2 ACTIVE</span>
+            </div>
             <div class="queue-sub">We keep working even if you leave this page.</div>
-            <div class="queue-jobs" id="queueJobs"></div>
+            <div class="queue-panel-jobs" id="queueJobs"></div>
           </div>
         </div>
 
@@ -4859,23 +4860,26 @@ function showQueuePanel(tileSelector, jobLabel, onDone, itemName){
   itemName = itemName || 'Scene';
   const scenes = document.querySelectorAll(tileSelector);
   const jobsHTML = [...scenes].map((c, i) => `
-    <div class="queue-job" data-job="${i}">
-      <div class="thumb"></div>
+    <div class="queue-job-row" data-job="${i}">
+      <div class="queue-job-thumb"></div>
       <div class="queue-job-info">
         <div class="queue-job-title">${itemName} ${i + 1} ${jobLabel}</div>
-        <div class="queue-job-status"><span class="spin"></span>WORKING</div>
+        <div class="queue-job-status"><span class="queue-job-status-dot"></span><span class="queue-job-status-label">WORKING</span></div>
       </div>
     </div>
   `).join('');
   document.getElementById('queueJobs').innerHTML = jobsHTML;
-  document.getElementById('queueBadge').textContent = `● ${scenes.length} ACTIVE`;
+  const badge = document.getElementById('queueBadge');
+  badge.className = 'queue-badge orange';
+  badge.innerHTML = `<img src="../../../../components/ai-social-media/icons/badge-dot.svg" alt="">${scenes.length} ACTIVE`;
   document.getElementById('queuePanel').style.display = 'block';
   setTimeout(() => {
-    document.querySelectorAll('.queue-job').forEach(j => {
-      j.classList.add('done');
-      j.querySelector('.queue-job-status').innerHTML = '<span class="spin"></span>READY';
+    document.querySelectorAll('.queue-job-row').forEach(j => {
+      j.classList.add('ready');
+      j.querySelector('.queue-job-status-label').textContent = 'READY';
     });
-    document.getElementById('queueBadge').textContent = '✓ DONE';
+    badge.className = 'queue-badge green';
+    badge.innerHTML = `<img src="../../../../components/ai-social-media/icons/circle-check.svg" alt="">DONE`;
   }, 1400);
   setTimeout(() => {
     document.getElementById('queuePanel').style.display = 'none';
