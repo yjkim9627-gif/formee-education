@@ -760,7 +760,20 @@
   .duration-option .check{display:none; color:var(--color-brand-primary); font-size:13px;}
   .duration-option.selected .check{display:inline;}
 
-  /* ---- Character section (Reel-specific bits not covered by character-card.css) ---- */
+  /* ---- Character section (Reel-specific bits not covered by character-card.css) ----
+     .char-card-reel is its own variant, not the shared .char-card — Reel's card layout
+     (padding-first, background-image thumb) differs from Image/Carousel's card structure,
+     which is why it was kept as a separate, renamed class instead of unifying with the
+     shared component (see character-card.css's own header comment). ---- */
+  .char-card-reel{flex-shrink:0; border:1px solid var(--color-neutral-400); border-radius:8px; cursor:pointer; background:#fff; padding:8px 8px 4px;}
+  .char-card-reel.selected{border-color:var(--color-neutral-500); background:var(--color-neutral-100);}
+  .char-card-reel .thumb{width:88px; height:88px; border-radius:6px; background:linear-gradient(135deg,var(--color-neutral-300),var(--color-neutral-150)) center/cover;}
+  .char-card-reel .thumb.tall{height:108px;}
+  .char-card-reel.new{border-style:dashed;}
+  .char-card-reel.new .thumb{display:flex; align-items:center; justify-content:center; font-size:20px; color:var(--color-neutral-400); background:var(--color-neutral-75); border:1px solid var(--color-neutral-300); border-style:solid;}
+  .char-card-reel .name{padding:6px 4px 0; font-size:13px; text-align:center; color:var(--color-neutral-700); font-weight:500;}
+  .char-card-reel.selected .name{color:var(--color-neutral-900);}
+  .char-filter-row{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px;}
   .filter-select{display:flex; align-items:center; gap:4px; height:28px; padding:0 10px 0 12px; border-radius:999px; background:#fff; border:1px solid var(--color-neutral-400); font-size:12px; font-weight:500; color:var(--color-neutral-700); cursor:pointer;}
   .filter-select .chevron{font-size:9px; color:var(--color-neutral-500);}
   .see-all-link{display:flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:var(--color-neutral-600); cursor:pointer; padding:0 12px; height:28px;}
@@ -1879,7 +1892,7 @@
             <div class="stage-body">
             <div class="stage-body-inner">
               <h2 class="stage-title">Script</h2>
-              <p class="stage-sub" id="scriptStageSub">Confirm the full script first. You'll then break it down and refine it by time segment.</p>
+              <p class="stage-sub-text" id="scriptStageSub">Confirm the full script first. You'll then break it down and refine it by time segment.</p>
 
               <div class="script-panel" id="scriptPanel">
                 <div class="script-panel-header">
@@ -1906,7 +1919,7 @@
             <div class="stage-body">
             <div class="stage-body-inner">
               <h2 class="stage-title">Timeline</h2>
-              <p class="stage-sub" id="timelineStageSub">Confirm the dialogue and scene description for each segment, then generate the video.</p>
+              <p class="stage-sub-text" id="timelineStageSub">Confirm the dialogue and scene description for each segment, then generate the video.</p>
 
               <div class="timeline-stage">
                 <div class="timeline-canvas">
@@ -1944,7 +1957,7 @@
             <div class="stage-body">
             <div class="stage-body-inner">
               <h2 class="stage-title">Video</h2>
-              <p class="stage-sub" id="studioStageSub">Generate an 8-second video clip for each part of the video, then combine them into the final cut. The narration audio from Timeline carries over automatically.</p>
+              <p class="stage-sub-text" id="studioStageSub">Generate an 8-second video clip for each part of the video, then combine them into the final cut. The narration audio from Timeline carries over automatically.</p>
 
               <div class="timeline-stage">
                 <div class="timeline-canvas">
