@@ -14,6 +14,11 @@
 <link rel="stylesheet" href="../../../../components/ai-social-media/character-card.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/filter-chip.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/setting-chip.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/heading.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/input.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/table-filter.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/avatar.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/actions-button.css">
 <style>
   *{box-sizing:border-box;}
   /* Fixed 1920x1162 to match the shared reference frame size (brand-setup/index.html) —
@@ -108,7 +113,7 @@
 
   .stage-area{flex:1; display:flex; flex-direction:column; min-width:0; min-height:0; position:relative;}
   .stage-body{flex:1; min-height:0; padding:52px 28px 14px; overflow-y:auto; display:flex; flex-direction:column;}
-  .stage-title{font-size:15px; font-weight:700; margin:0 0 4px;}
+  .stage-title{font-size:20px; font-weight:600; line-height:28px; color:var(--color-neutral-900); margin:0 0 4px;}
   .stage-cta-row{display:flex; justify-content:flex-end; align-items:center; gap:12px; margin-top:24px;}
   #subDraft, #subVersions{display:flex; flex-direction:column; flex:1; min-height:0;}
   #subDraft .stage-body{padding-bottom:90px;}
@@ -850,6 +855,21 @@
   .script-applied-note{display:none; align-items:center; gap:8px; font-size:12px; font-weight:600; color:var(--color-brand-primary); background:var(--color-badge-blue-bg); border:1px solid var(--color-brand-primary-mid); border-radius:var(--radius-lg); padding:6px 8px;}
   .script-proposal-box.applied .script-applied-note{display:flex;}
   .script-proposal-box.applied{border-color:var(--color-brand-primary-mid);}
+  .script-proposal-title{font-size:13.5px; font-weight:700; color:var(--color-neutral-900); font-family:var(--font-family-text);}
+
+  /* -- Chat "next action" card (Generate Script/Video, Combine, etc.) — matches Figma's AI Assistant panel states -- */
+  .ai-cta-card{background:var(--color-neutral-50); border:1px solid var(--color-neutral-200); border-radius:10px; padding:14px; display:flex; flex-direction:column; gap:8px; margin-top:8px;}
+  .ai-cta-card-title{font-size:13.5px; font-weight:700; color:var(--color-neutral-900); font-family:var(--font-family-text);}
+  .ai-cta-card-desc{font-size:12.5px; color:var(--color-neutral-700); line-height:1.5; margin:0;}
+  .ai-cta-card .btn{width:100%; margin-top:4px;}
+
+  /* -- Chat loading state — spinner + title + subtitle card, replaces the old inline "..." dots -- */
+  .chat-loading-card{display:flex; align-items:flex-start; gap:10px; background:var(--color-neutral-50); border:1px solid var(--color-neutral-200); border-radius:10px; padding:14px;}
+  .chat-loading-spinner{width:16px; height:16px; border-radius:999px; border:2px solid var(--color-neutral-300); border-top-color:var(--color-neutral-600); animation:spin .8s linear infinite; flex-shrink:0; margin-top:2px;}
+  .chat-loading-text{display:flex; flex-direction:column; gap:2px;}
+  .chat-loading-title{font-size:13.5px; font-weight:700; color:var(--color-neutral-900); font-family:var(--font-family-text);}
+  .chat-loading-sub{font-size:12px; color:var(--color-neutral-500);}
+  @keyframes spin{to{transform:rotate(360deg);}}
 
   #stageAreaReel .stage-tabs{display:flex; max-width:1024px; margin:0 auto; width:100%; padding:12px 24px 0; border-bottom:1px solid var(--color-neutral-300); flex-shrink:0;}
   #stageAreaReel .stage-tab{flex:1; text-align:center; font-size:14px; font-weight:500; color:var(--color-neutral-500); padding:5px 16px 9px; border-bottom:2px solid transparent;}
@@ -886,15 +906,14 @@
 
   /* ---- Script stage ---- */
   #subReelScript .stage-title, #subReelScript .stage-sub-text{text-align:center;}
-  .script-panel{border:1px solid var(--color-neutral-300); border-radius:12px; padding:20px; width:100%;}
+  .script-panel{width:100%;}
   .script-panel-header{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:8px;}
   .script-label{font-size:12px; font-weight:600; color:var(--color-neutral-700); margin-bottom:8px;}
   .script-panel-header .script-label{margin-bottom:0;}
-  .script-refine-btn-fixed{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--color-neutral-400); border-radius:999px; background:#fff; padding:7px 14px; font-size:12px; font-weight:600; color:var(--color-neutral-700); cursor:pointer; font-family:var(--font-family-text); flex-shrink:0;}
-  .script-refine-btn-fixed:hover{background:var(--color-neutral-50); border-color:var(--color-brand-primary);}
   .script-text{width:100%; border:1px solid var(--color-neutral-300); border-radius:8px; padding:14px; font-size:14px; font-family:var(--font-family-text); font-style:italic; color:var(--color-neutral-900); line-height:1.6; resize:vertical; min-height:80px;}
   .script-text.error{border-color:#d64545; box-shadow:0 0 0 3px rgba(214,69,69,0.12);}
-  .script-limit-row{display:flex; flex-direction:column; align-items:flex-start; gap:8px; margin-top:10px; padding:0; background:none; border:1px solid transparent; border-radius:8px; transition:padding .15s, background-color .15s, border-color .15s;}
+  .script-limit-row{display:flex; flex-direction:column; align-items:flex-end; gap:8px; margin-top:8px; padding:0; background:none; border:1px solid transparent; border-radius:8px; transition:padding .15s, background-color .15s, border-color .15s;}
+  .script-limit-row.over{align-items:flex-start;}
   .script-limit-row.over{padding:10px 12px; background:#fdf2f2; border-color:#f3c6c6;}
   .script-limit-error{font-size:12px; color:var(--color-neutral-500); line-height:1.5;}
   .script-limit-row.over .script-limit-error{color:#b23b3b;}
@@ -1891,18 +1910,19 @@
           <div class="stage-sub" id="subReelScript">
             <div class="stage-body">
             <div class="stage-body-inner">
-              <h2 class="stage-title">Script</h2>
-              <p class="stage-sub-text" id="scriptStageSub">Confirm the full script first. You'll then break it down and refine it by time segment.</p>
-
               <div class="script-panel" id="scriptPanel">
-                <div class="script-panel-header">
-                  <div class="script-label" id="scriptLabel">Full script (16s)</div>
-                  <button class="script-refine-btn-fixed" onclick="refineScriptWithAI()">✨ Refine with AI</button>
+                <div class="ai-heading" style="margin-bottom:16px;">
+                  <div class="ai-heading-text">
+                    <p class="ai-heading-title" id="scriptLabel">Full script</p>
+                    <p class="ai-heading-sub">Confirm the full script first. You'll then break it down and refine it by time segment.</p>
+                  </div>
                 </div>
-                <textarea class="script-text" id="fullScript" oninput="validateScriptLength()"></textarea>
-                <div class="script-limit-row" id="scriptLimitRow">
-                  <span class="script-limit-error" id="scriptLimitError"></span>
-                  <button class="script-shorten-chip" id="scriptShortenChip" onclick="refineScriptWithAI()">Make it shorter</button>
+                <div class="ai-input-wrap">
+                  <textarea class="ai-input script-text" id="fullScript" oninput="validateScriptLength()"></textarea>
+                  <div class="script-limit-row" id="scriptLimitRow">
+                    <span class="script-limit-error ai-input-wordcount" id="scriptLimitError"></span>
+                    <button class="script-shorten-chip" id="scriptShortenChip" onclick="refineScriptWithAI()">Make it shorter</button>
+                  </div>
                 </div>
 
                 <div class="stage-cta-row">
@@ -3955,6 +3975,7 @@ function renderScriptProposalMessage(scriptText, introText){
     <div class="msg ai">
       ${introText ? `<span class="tag">AI</span>${escapeHtml(introText)}` : ''}
       <div class="script-proposal-box" id="scriptProposal${id}">
+        <span class="script-proposal-title">${introText ? 'Updated Script' : 'Generate Script'}</span>
         <div class="script-proposal-text">"${escapeHtml(scriptText)}"</div>
         <span class="script-applied-note">✓ Applied to Script panel</span>
         <button class="btn btn-dark" data-draft-id="${id}" onclick="handleScriptProposalClick(this)">Use this script</button>
@@ -3995,7 +4016,7 @@ function runBriefToScript(){
 
   document.getElementById('fullScript').value = '';
 
-  chatLog.innerHTML = `<div class="msg ai loading" id="loadingMsg"><span class="tag">AI</span>Writing the script for your 'lip tint promo' video based on what you shared<span class="dots"><span>.</span><span>.</span><span>.</span></span></div>`;
+  chatLog.innerHTML = `<div class="msg ai loading" id="loadingMsg"><div class="chat-loading-card"><div class="chat-loading-spinner"></div><div class="chat-loading-text"><span class="chat-loading-title">Writing the script...</span><span class="chat-loading-sub">Preparing your script based on what you shared</span></div></div></div>`;
 
   setTimeout(() => {
     let refinedScript, introHTML;
@@ -4059,7 +4080,7 @@ function reviseScript(requestText){
   const log = document.getElementById('chatLog');
   const loadingEl = document.createElement('div');
   loadingEl.className = 'msg ai loading';
-  loadingEl.innerHTML = `<span class="tag">AI</span>Revising the script based on your note<span class="dots"><span>.</span><span>.</span><span>.</span></span>`;
+  loadingEl.innerHTML = `<div class="chat-loading-card"><div class="chat-loading-spinner"></div><div class="chat-loading-text"><span class="chat-loading-title">Refining the script...</span><span class="chat-loading-sub">Applying your note</span></div></div>`;
   log.appendChild(loadingEl);
   log.scrollTop = log.scrollHeight;
 
@@ -4426,7 +4447,7 @@ function selectDuration(seconds){
   document.getElementById('durationPopover').style.display = 'none';
   document.getElementById('briefMetaDurationReel').textContent = seconds + 's';
   document.getElementById('genSettingDuration').textContent = seconds + 's';
-  document.getElementById('scriptLabel').textContent = `Full script (${seconds}s)`;
+  
 }
 
 // ---- Timeline: scene grid + selected-scene editor (rebuilt per duration) ----
