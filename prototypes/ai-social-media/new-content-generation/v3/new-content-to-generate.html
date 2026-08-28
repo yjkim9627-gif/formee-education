@@ -22,6 +22,7 @@
 <link rel="stylesheet" href="../../../../components/ai-social-media/scene-tile.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/voice-accordion-row.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/queue-panel.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/video-summary-card.css">
 <style>
   *{box-sizing:border-box;}
   /* Real Figma icons (components/ai-social-media/icons/), replacing emoji/ad-hoc glyphs. See
@@ -1108,19 +1109,16 @@
   .combine-player-duration{position:absolute; bottom:10px; left:10px; font-size:11px; font-weight:600; color:#fff; background:rgba(15,23,41,0.55); padding:4px 8px; border-radius:6px;}
   .combine-timeline-ticks{position:relative; width:300px; height:6px; background:var(--color-neutral-200); border-radius:999px;}
   .combine-tick{position:absolute; top:-2px; width:2px; height:10px; background:var(--color-neutral-900); border-radius:2px;}
-  .combine-summary-card{border:1px solid var(--color-neutral-300); border-radius:10px; padding:16px;}
-  .combine-summary-title-row{display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:8px;}
-  .combine-summary-title{font-size:14px; font-weight:700; color:var(--color-neutral-900); line-height:1.35; margin:0; flex:1; min-width:0;}
+  /* Base card (border/radius/padding/gap, head, name, desc, divider, spec rows) now
+     comes from components/ai-social-media/video-summary-card.css. Kept local: the
+     inline-editable title behavior (Figma's static card has no edit-in-place affordance
+     of its own beyond the pencil icon) and the audio-mix note line, which has no
+     equivalent in the base component. */
+  /* h3, not the span video-summary-card.css's own name text uses — same look, explicit here */
+  .combine-summary-title{margin:0; font-family:var(--font-family-text); font-size:14px; font-weight:600; line-height:22px; color:var(--color-neutral-700);}
   .combine-summary-title[contenteditable="true"]{outline:1px solid var(--color-brand-primary-mid); border-radius:6px; padding:2px 4px; margin:-2px -4px;}
-  .combine-title-edit-btn{flex-shrink:0; width:28px; height:28px; border-radius:999px; border:none; background:var(--color-neutral-50); display:flex; align-items:center; justify-content:center; font-size:12px; cursor:pointer; font-family:var(--font-family-text);}
-  .combine-title-edit-btn:hover{background:var(--color-neutral-100);}
-  .combine-summary-desc{font-size:12px; color:var(--color-neutral-700); line-height:1.5; margin:0 0 12px;}
-  .combine-summary-divider{height:1px; background:var(--color-neutral-200); margin:0 0 12px;}
-  .combine-summary-specs{display:flex; flex-direction:column; gap:10px; margin-bottom:12px;}
-  .combine-spec-row{display:flex; align-items:center; gap:8px; font-size:12px;}
-  .combine-spec-row .spec-icon{width:16px; flex-shrink:0; text-align:center; color:var(--color-neutral-500); font-size:12px;}
-  .combine-spec-row .spec-label{color:var(--color-neutral-500); font-size:11px; font-weight:500;}
-  .combine-spec-row .spec-value{margin-left:auto; color:var(--color-neutral-900); font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:140px;}
+  .combine-title-edit-btn{background:none; border:none; padding:0; cursor:pointer; display:inline-flex; flex-shrink:0;}
+  .combine-title-edit-btn img{width:14px; height:14px; display:block;}
   .combine-audio-note{font-size:11.5px; color:var(--color-neutral-500); line-height:1.5; margin:0;}
   .combine-result-actions{display:flex; flex-direction:column; gap:10px; margin-top:14px; flex-shrink:0;}
   .combine-result-actions .btn-dark, .combine-result-actions .btn-secondary{width:100%;}
@@ -2060,14 +2058,16 @@
                     <div class="combine-timeline-ticks" id="combineResultTicks"></div>
                   </div>
                   <div class="scene-editor-col">
-                    <div class="combine-summary-card">
-                      <div class="combine-summary-title-row">
-                        <h3 class="combine-summary-title" id="combineVideoTitle"></h3>
-                        <button class="combine-title-edit-btn" onclick="editCombineTitle()" title="Edit title">✏️</button>
+                    <div class="video-summary-card">
+                      <div class="video-summary-card-head">
+                        <div class="video-summary-card-name">
+                          <h3 class="combine-summary-title" id="combineVideoTitle"></h3>
+                          <button class="combine-title-edit-btn" onclick="editCombineTitle()" title="Edit title"><img src="../../../../components/ai-social-media/icons/edit-pencil.svg" alt=""></button>
+                        </div>
+                        <p class="video-summary-card-desc" id="combineVideoDesc"></p>
                       </div>
-                      <p class="combine-summary-desc" id="combineVideoDesc"></p>
-                      <div class="combine-summary-divider"></div>
-                      <div class="combine-summary-specs" id="combineSummarySpecs"></div>
+                      <div class="video-summary-card-divider"></div>
+                      <div id="combineSummarySpecs" style="display:contents;"></div>
                       <p class="combine-audio-note"><img src="../../../../components/ai-social-media/icons/nav-voices.svg" class="icon-inline" alt=""> Narration from Timeline is already mixed in — no extra steps needed.</p>
                     </div>
                     <div class="combine-result-actions">
@@ -5125,19 +5125,18 @@ function renderCombineSummaryCard(){
   const voice = document.getElementById('settingVoice')?.textContent || '';
   const ICON_PATH = '../../../../components/ai-social-media/icons/';
   const specs = [
-    { icon: `<img src="${ICON_PATH}spec-duration.svg" class="icon-inline" alt="">`, label: 'Duration', value: duration },
-    { icon: '▭', label: 'Ratio', value: '9:16' },
+    { icon: `<img src="${ICON_PATH}spec-duration.svg" alt="">`, label: 'Duration', value: duration },
+    { icon: `<span class="spec-ratio-box"></span>`, label: 'Ratio', value: '9:16' },
     { icon: '🌐', label: 'Language', value: 'English' },
-    { icon: `<img src="${ICON_PATH}nav-characters.svg" class="icon-inline" alt="">`, label: 'Character', value: character },
-    { icon: `<img src="${ICON_PATH}nav-voices.svg" class="icon-inline" alt="">`, label: 'Voice', value: voice },
+    { icon: `<img src="${ICON_PATH}nav-characters.svg" alt="">`, label: 'Character', value: character },
+    { icon: `<img src="${ICON_PATH}nav-voices.svg" alt="">`, label: 'Voice', value: voice },
   ];
   if(window.__brandMode === 'set') specs.push({ icon: '🏷', label: 'Brand', value: 'Formee Express' });
 
   specsEl.innerHTML = specs.map(s => `
-    <div class="combine-spec-row">
-      <span class="spec-icon">${s.icon}</span>
-      <span class="spec-label">${s.label}</span>
-      <span class="spec-value">${escapeHtml(s.value)}</span>
+    <div class="video-summary-card-row">
+      <span class="video-summary-card-row-label">${s.icon}<span>${s.label}</span></span>
+      <span class="video-summary-card-row-value">${escapeHtml(s.value)}</span>
     </div>
   `).join('');
 }
