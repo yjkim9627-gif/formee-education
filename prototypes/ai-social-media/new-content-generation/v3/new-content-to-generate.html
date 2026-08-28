@@ -59,7 +59,7 @@
   .btn-dark{background:linear-gradient(180deg, var(--color-action-primary-dark-gradient-start), var(--color-action-primary-dark-gradient-end)); border-color:transparent; color:var(--color-neutral-0); box-shadow:0 1px 2px rgba(13,13,13,0.1);}
   .btn-dark:hover:not(:disabled){filter:brightness(1.1);}
   .btn-dark:active:not(:disabled){filter:brightness(0.92);}
-  .btn-dark:disabled{background:var(--color-neutral-300); color:var(--color-neutral-500); box-shadow:none;}
+  .btn-dark:disabled{background:var(--color-neutral-300); color:var(--color-neutral-450); box-shadow:none;}
 
   .action-bar{position:absolute; left:0; right:0; bottom:0; background:#fff; border-top:1px solid var(--color-neutral-200); padding:12px 64px; display:flex; align-items:center; justify-content:center; gap:32px;}
   .meta-text{font-size:12px; color:var(--color-neutral-500); flex-shrink:0;}
@@ -1009,6 +1009,7 @@
             <button class="chat-new-btn" title="New chat" onclick="startNewChat()">+</button>
           </div>
           <div class="chat-log" id="chatLog"></div>
+          <div class="chat-quick-chips" id="chatQuickChips"></div>
           <div class="chat-hint" id="chatHint">💬 Requests like "make the headline shorter" or "try a warmer tone" work here too</div>
           <div class="chat-input-box">
             <input class="chat-input" id="chatInput" placeholder="Type a message...">
@@ -1559,6 +1560,40 @@ function escapeHtml(str){
   return div.innerHTML;
 }
 
+// Quick-action chips shown above the chat input, contextual to whatever stage/state just
+// finished (e.g. copy drafted, visual concept applied) — mirrors the Copilot-style chip
+// pattern already used in new-carousel-to-generate.html. Each chip is either
+// {label, direct: fn} (runs fn immediately) or just {label} (sent through the normal chat
+// pipeline, same as if the user had typed it).
+function renderChatQuickChips(chips){
+  window.__chatQuickChips = chips || [];
+  const wrap = document.getElementById('chatQuickChips');
+  if(!wrap) return;
+  if(!chips || !chips.length){
+    wrap.style.display = 'none';
+    wrap.innerHTML = '';
+    return;
+  }
+  wrap.style.display = 'flex';
+  wrap.innerHTML = chips.map((c, i) => `<button type="button" class="chat-chip" onclick="handleQuickChipClick(${i})">${escapeHtml(c.label)}</button>`).join('');
+}
+function handleQuickChipClick(i){
+  const chip = (window.__chatQuickChips || [])[i];
+  if(!chip) return;
+  if(chip.direct){
+    addChatMsg('user', chip.label);
+    chip.direct();
+  } else {
+    const input = document.getElementById('chatInput');
+    input.value = chip.label;
+    sendChatMessage();
+  }
+}
+function setChatGuideHint(text){
+  const hint = document.getElementById('chatHint');
+  if(hint) hint.textContent = text;
+}
+
 // Copy fills in directly (no propose/apply step) — the chat just narrates what changed.
 // Visual concept, drafted right after, keeps the propose -> apply pattern (see draftVisualConcept below).
 function buildRevisedCopy(requestText){
@@ -1583,7 +1618,10 @@ function buildRevisedCopy(requestText){
   return { headline, subhead, cta };
 }
 
-// First-draft copy — fills in directly once drafted, then auto-chains into the visual concept draft.
+// First-draft copy — the chat announces completion first (copy panel still blank), then the
+// fields themselves fill in a beat later. Real generation always has some visible delay filling
+// the panel in anyway, so this narrates the result first rather than making the user stare at an
+// empty panel with no feedback while it "catches up".
 function draftCopy(){
   const log = document.getElementById('chatLog');
   const loadingEl = document.createElement('div');
@@ -1593,20 +1631,30 @@ function draftCopy(){
   log.scrollTop = log.scrollHeight;
 
   setTimeout(() => {
-    copyFields.find(f => f.key === 'headline').text = 'Study in the UK — Applications open for 2026';
-    copyFields.find(f => f.key === 'subhead').text = 'Applications open for the January intake';
-    copyFields.find(f => f.key === 'cta').text = 'Apply Now';
-    renderCopyFields();
     loadingEl.remove();
     const status2s = document.createElement('div');
     status2s.className = 'msg-status';
     status2s.innerHTML = '<span class="worked-label">Worked</span> <span class="worked-time">for 2s</span>';
     log.appendChild(status2s);
     addChatMsg('ai', 'I\'ve refined it and filled in the Headline, Subhead, and Call to action on the right. Want something different? Just tell me here anytime.');
-    if(!visualConceptDraftStarted){
-      visualConceptDraftStarted = true;
-      draftVisualConcept();
-    }
+    log.scrollTop = log.scrollHeight;
+
+    setTimeout(() => {
+      copyFields.find(f => f.key === 'headline').text = 'Study in the UK — Applications open for 2026';
+      copyFields.find(f => f.key === 'subhead').text = 'Applications open for the January intake';
+      copyFields.find(f => f.key === 'cta').text = 'Apply Now';
+      renderCopyFields();
+      addChatMsg('ai', '<span class="tag">AI</span>Great — the Headline, Subhead, and Call to action are generated based on your script and filled in on the right. Want changes? Send them here anytime.');
+      renderChatQuickChips([
+        { label: 'Shorten headline' },
+        { label: 'Make headline more hooking' }
+      ]);
+      setChatGuideHint('Tweak the copy: "make it more formal" or "shorten it" →');
+      if(!visualConceptDraftStarted){
+        visualConceptDraftStarted = true;
+        draftVisualConcept();
+      }
+    }, 600);
   }, 1400);
 }
 
@@ -1648,7 +1696,7 @@ function renderVisualProposalMessage(promptText, introText){
         <div class="visual-proposal-heading">Visual Concept</div>
         <div class="visual-proposal-text">"${escapeHtml(promptText)}"</div>
         <span class="copy-applied-note">✓ Applied to Visual concept</span>
-        <button class="btn btn-dark" data-draft-id="${id}" onclick="handleVisualProposalClick(this)">Apply to draft →</button>
+        <button class="btn btn-dark" data-draft-id="${id}" onclick="handleVisualProposalClick(this)">Apply to draft</button>
       </div>
       <span class="chat-edit-hint">Want a different direction? Type it below and I'll redraft.</span>
     </div>
@@ -1667,14 +1715,24 @@ function applyVisualDraft(id, btn){
   document.querySelectorAll('.visual-proposal-box').forEach(box => {
     box.classList.remove('applied');
     const b = box.querySelector('.btn-dark');
-    if(b){ b.textContent = 'Apply to draft →'; b.disabled = false; }
+    if(b){ b.textContent = 'Apply to draft'; b.disabled = false; }
   });
   const box = document.getElementById('visualProposal' + id);
   box.classList.add('applied');
   btn.textContent = '✓ Applied';
   btn.disabled = true;
+
+  // Quick edits to the visual itself — kept generic since the prototype doesn't read the
+  // actual script content yet; a real implementation would tailor these to what's in the shot.
+  renderChatQuickChips([
+    { label: 'Change model to female' },
+    { label: 'Try a different background' }
+  ]);
+  setChatGuideHint('Tweak the visual: "make it brighter" or "zoom in more" →');
+  addChatMsg('ai', '<span class="tag">AI</span>If you\'d like your brand colors and fonts applied to the image, turn on the toggle below.');
+
   const vn = window.__versionCount || 2;
-  imgAppendChatCta('Ready to Generate', `Your copy and visual concept are set — generate ${vn} version${vn > 1 ? 's' : ''} whenever you're ready.`, `<button class="btn btn-dark" onclick="confirmAndGenerate()">Confirm & generate ${vn} version${vn > 1 ? 's' : ''} →</button>`);
+  imgAppendChatCta('Ready to Generate', `Your copy and visual concept are set — generate ${vn} version${vn > 1 ? 's' : ''} whenever you're ready.`, `<button class="btn btn-dark" onclick="confirmAndGenerate(this)">Confirm & generate ${vn} version${vn > 1 ? 's' : ''} →</button>`);
 }
 
 function draftVisualConcept(){
@@ -1851,7 +1909,9 @@ function quickAction(action){
 
 // ---- Confirm & generate N versions (parallel, individually regenerable) ----
 let versionState = [];
-function confirmAndGenerate(){
+function confirmAndGenerate(btn){
+  if(btn){ btn.disabled = true; }
+  renderChatQuickChips([]);
   const n = window.__versionCount || 2;
   document.getElementById('tabVersions').classList.remove('locked');
   showSub('versions');
@@ -1869,12 +1929,16 @@ function confirmAndGenerate(){
     }, 1400 + i * 900);
   });
 }
+// Version pills mirror the ones on the canvas tiles — lets you pick a version right from the
+// chat too (onclick reuses selectVersion(), same action as the tile's "Use this" button), so
+// picking a favorite doesn't mean leaving the conversation to go find the right tile.
 function checkAllVersionsReady(){
   if(versionState.every(v => v.ready)){
     const n = versionState.length;
     const label = `${n} version${n > 1 ? 's' : ''}`;
     document.getElementById('versionsStatus').textContent = `All ${label} ready — pick one to continue.`;
-    addChatMsg('ai', `<span class="tag">AI</span>All ${label} are ready. Pick your favorite to move into Develop, or regenerate any one individually.`);
+    const pills = versionState.map(v => `<button type="button" class="version-pill" onclick="selectVersion(${v.id})">V${v.id}</button>`).join('');
+    addChatMsg('ai', `<span class="tag">AI</span>All ${label} are ready. Pick your favorite to move into Develop, or regenerate any one individually.<div class="chat-cta-row">${pills}</div>`);
   }
 }
 function renderVersionGrid(){

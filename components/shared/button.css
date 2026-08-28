@@ -43,7 +43,7 @@
 
 .btn-primary:disabled {
   background: var(--color-neutral-300);
-  color: var(--color-neutral-500);
+  color: var(--color-neutral-450);
 }
 
 /* ---------- Button / Secondary ---------- */
