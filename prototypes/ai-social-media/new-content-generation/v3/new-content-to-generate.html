@@ -569,7 +569,7 @@
   /* -- Suggest hashtags & SEO keywords trigger + Generate caption — a persistent pair of
      entry points into the caption below, both available from the very first screen
      (matching Figma) rather than "Generate caption" only appearing once tags are picked. -- */
-  .pub-caption-actions-row{display:flex; align-items:center; gap:var(--spacing-md);}
+  .pub-caption-actions-row{display:flex; align-items:stretch; gap:var(--spacing-lg);}
   .pub-suggest-btn{align-self:flex-start; display:inline-flex; align-items:center; gap:var(--spacing-sm); height:40px; border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); background:#fff; padding:9px 14px; cursor:pointer; font-family:var(--font-family-text);}
   .pub-suggest-btn:hover{border-color:var(--color-brand-primary);}
   .pub-suggest-btn:disabled{cursor:default; opacity:.7;}
@@ -580,8 +580,11 @@
   /* -- Hashtag / SEO suggestions panel (shown after "Suggest hashtags & SEO keywords" is clicked) --
      No border/title of its own — it's an inline-expanding section of the same Caption card
      (not a nested card), so a subtle bg tint is enough to group it visually. -- */
-  .pub-hashtag-seo-result{display:flex; flex-direction:column; gap:var(--spacing-md); background:var(--color-neutral-75); border-radius:var(--radius-xl); padding:var(--spacing-md) var(--spacing-lg);}
-  .pub-hseo-head{display:flex; align-items:center; justify-content:flex-end; gap:var(--spacing-lg); flex-wrap:wrap;}
+  .pub-hashtag-seo-result{display:flex; flex-direction:column; gap:var(--spacing-lg); background:var(--color-neutral-75); border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl); padding:var(--spacing-md) var(--spacing-lg);}
+  .pub-hseo-head{display:flex; align-items:center; justify-content:space-between; gap:var(--spacing-lg); flex-wrap:wrap;}
+  .pub-hseo-head-text{display:flex; align-items:flex-end; gap:var(--spacing-lg); flex:1; min-width:0; flex-wrap:wrap;}
+  .pub-hseo-head-title{font-size:var(--font-size-text-md); line-height:var(--line-height-text-md); font-weight:var(--font-weight-semibold); color:var(--color-neutral-900); white-space:nowrap;}
+  .pub-hseo-head-desc{font-size:var(--font-size-text-sm); line-height:var(--line-height-text-sm); color:var(--color-neutral-500); white-space:nowrap;}
   .pub-hseo-head-actions{display:flex; align-items:center; gap:var(--spacing-md); flex-shrink:0;}
   .pub-regenerate-btn{display:inline-flex; align-items:center; gap:var(--spacing-2); border:1px solid var(--color-neutral-400); border-radius:var(--radius-full); background:#fff; padding:6px 12px; font-size:11px; font-weight:500; color:var(--color-neutral-700); cursor:pointer; font-family:var(--font-family-text);}
   .pub-regenerate-btn:hover{border-color:var(--color-neutral-500);}
@@ -603,13 +606,7 @@
   .pub-hashtag-chip.added .x{display:inline-flex;}
   .pub-hashtag-seo-divider{height:1px; background:var(--color-neutral-200);}
 
-  /* -- Caption editor block (header shared by the whole card — hashtag/SEO suggestion above
-     and the textarea below both belong to this one "Caption" block) -- */
-  .pub-caption-block-head{display:flex; align-items:flex-end; justify-content:space-between; gap:var(--spacing-md); width:100%; flex-wrap:wrap;}
-  .pub-caption-block-head-text{display:flex; align-items:flex-end; gap:var(--spacing-md); flex:1; min-width:0; flex-wrap:wrap;}
-  .pub-caption-block-title{font-size:var(--font-size-text-md); line-height:var(--line-height-text-md); font-weight:var(--font-weight-semibold); color:var(--color-neutral-900); white-space:nowrap;}
-  .pub-caption-hint{font-size:var(--font-size-text-sm); line-height:var(--line-height-text-sm); color:var(--color-neutral-500); margin:0;}
-  .pub-ai-draft-badge{flex-shrink:0; display:inline-flex; align-items:center; background:var(--color-neutral-150); border-radius:var(--radius-full); padding:2px var(--spacing-sm); font-size:var(--font-size-badge-md); font-weight:600; color:var(--color-neutral-900); white-space:nowrap;}
+  /* -- Caption textarea + refine row -- */
   .pub-caption-input{width:100%; border:1px solid var(--color-neutral-400); border-radius:var(--radius-xl); padding:12px; font-size:14px; font-family:var(--font-family-text); color:var(--color-neutral-900); line-height:1.6; resize:vertical; min-height:100px;}
   .pub-caption-input:focus{outline:none; border-color:var(--color-brand-primary);}
   .pub-caption-refine-row{display:flex; align-items:center; justify-content:space-between; gap:var(--spacing-md); flex-wrap:wrap;}
@@ -2071,14 +2068,6 @@
       <div class="pub-block">
         <label class="pub-block-label">Caption</label>
         <div class="pub-card">
-          <div class="pub-caption-block-head">
-            <div class="pub-caption-block-head-text">
-              <span class="pub-caption-block-title">Caption</span>
-              <span class="pub-caption-hint" id="pubCaptionHint">The same caption is used across all platforms.</span>
-            </div>
-            <span class="pub-ai-draft-badge" id="pubAiDraftBadge" style="display:none;">AI draft</span>
-          </div>
-
           <div class="pub-caption-actions-row">
             <button type="button" class="pub-suggest-btn" id="pubHashtagSeoBtn" onclick="generateHashtagsSEO()">
               <span class="ic"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gYWkgLyByZWZpbmUiIGNsaXAtcGF0aD0idXJsKCNjbGlwMF8wXzM3MykiPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNMTMuNTczMyAxLjU3MzMzTDE0LjQyNjcgMi40MjY2N0MxNC41MDMzIDIuNTAxMjEgMTQuNTY0MiAyLjU5MDM2IDE0LjYwNTcgMi42ODg4M0MxNC42NDczIDIuNzg3MyAxNC42Njg3IDIuODkzMTEgMTQuNjY4NyAzQzE0LjY2ODcgMy4xMDY4OSAxNC42NDczIDMuMjEyNyAxNC42MDU3IDMuMzExMTdDMTQuNTY0MiAzLjQwOTY0IDE0LjUwMzMgMy40OTg3OSAxNC40MjY3IDMuNTczMzNMMy41NzMzMyAxNC40MjY3QzMuNDk4NzkgMTQuNTAzMyAzLjQwOTY0IDE0LjU2NDIgMy4zMTExNyAxNC42MDU3QzMuMjEyNyAxNC42NDczIDMuMTA2ODkgMTQuNjY4NyAzIDE0LjY2ODdDMi44OTMxMSAxNC42Njg3IDIuNzg3MyAxNC42NDczIDIuNjg4ODMgMTQuNjA1N0MyLjU5MDM2IDE0LjU2NDIgMi41MDEyMSAxNC41MDMzIDIuNDI2NjcgMTQuNDI2N0wxLjU3MzMzIDEzLjU3MzNDMS40OTc1NCAxMy40OTgzIDEuNDM3MzggMTMuNDA5IDEuMzk2MzIgMTMuMzEwNkMxLjM1NTI2IDEzLjIxMjIgMS4zMzQxMiAxMy4xMDY2IDEuMzM0MTIgMTNDMS4zMzQxMiAxMi44OTM0IDEuMzU1MjYgMTIuNzg3OCAxLjM5NjMyIDEyLjY4OTRDMS40MzczOCAxMi41OTEgMS40OTc1NCAxMi41MDE3IDEuNTczMzMgMTIuNDI2N0wxMi40MjY3IDEuNTczMzNDMTIuNTAxNyAxLjQ5NzU0IDEyLjU5MSAxLjQzNzM4IDEyLjY4OTQgMS4zOTYzMkMxMi43ODc4IDEuMzU1MjYgMTIuODkzNCAxLjMzNDEyIDEzIDEuMzM0MTJDMTMuMTA2NiAxLjMzNDEyIDEzLjIxMjIgMS4zNTUyNiAxMy4zMTA2IDEuMzk2MzJDMTMuNDA5IDEuNDM3MzggMTMuNDk4MyAxLjQ5NzU0IDEzLjU3MzMgMS41NzMzM1oiIHN0cm9rZT0iIzRGNkRFNiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzIiIGQ9Ik05LjMzMzMzIDQuNjY2NjdMMTEuMzMzMyA2LjY2NjY3IiBzdHJva2U9IiM0RjZERTYiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggaWQ9IlZlY3Rvcl8zIiBkPSJNMy4zMzMzMyA0VjYuNjY2NjciIHN0cm9rZT0iIzRGNkRFNiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzQiIGQ9Ik0xMi42NjY3IDkuMzMzMzNWMTIiIHN0cm9rZT0iIzRGNkRFNiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzUiIGQ9Ik02LjY2NjY3IDEuMzMzMzNWMi42NjY2NyIgc3Ryb2tlPSIjNEY2REU2IiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxwYXRoIGlkPSJWZWN0b3JfNiIgZD0iTTQuNjY2NjcgNS4zMzMzM0gyIiBzdHJva2U9IiM0RjZERTYiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggaWQ9IlZlY3Rvcl83IiBkPSJNMTQgMTAuNjY2N0gxMS4zMzMzIiBzdHJva2U9IiM0RjZERTYiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggaWQ9IlZlY3Rvcl84IiBkPSJNNy4zMzMzMyAySDYiIHN0cm9rZT0iIzRGNkRFNiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L2c+CjxkZWZzPgo8Y2xpcFBhdGggaWQ9ImNsaXAwXzBfMzczIj4KPHJlY3Qgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPgo=" alt=""></span>
@@ -2089,6 +2078,10 @@
 
           <div class="pub-hashtag-seo-result" id="pubHashtagSeoResult" style="display:none;">
             <div class="pub-hseo-head">
+              <div class="pub-hseo-head-text">
+                <span class="pub-hseo-head-title">Caption</span>
+                <span class="pub-hseo-head-desc">The same caption is used across all platforms.</span>
+              </div>
               <div class="pub-hseo-head-actions">
                 <button type="button" class="pub-regenerate-btn" onclick="generateHashtagsSEO()">
                   <span class="ic"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gcmVmcmVzaC1jY3ciPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNMiA1LjMzMzMzTDMuNTA2NjcgMy44MjY2N0M0LjcxMjY1IDIuNjYwODIgNi4zMjI2MyAyLjAwNjMxIDggMkM5LjU5MTMgMiAxMS4xMTc0IDIuNjMyMTQgMTIuMjQyNiAzLjc1NzM2QzEzLjE3NzYgNC42OTIzMiAxMy43NzIxIDUuOTA0MDYgMTMuOTQ2NSA3LjIiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzIiIGQ9Ik0yIDJWNS4zMzMzM0g1LjMzMzMzIiBzdHJva2U9IiM4QTkzQTgiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggaWQ9IlZlY3Rvcl8zIiBkPSJNMTQgMTAuNjY2N0wxMi40OTMzIDEyLjE3MzNDMTEuMjg3NCAxMy4zMzkyIDkuNjc3MzYgMTMuOTkzNyA4IDE0QzYuNDA4NyAxNCA0Ljg4MjU4IDEzLjM2NzkgMy43NTczNiAxMi4yNDI2QzIuODIyNCAxMS4zMDc3IDIuMjI3ODcgMTAuMDk1OSAyLjA1MzU1IDguOCIgc3Ryb2tlPSIjOEE5M0E4IiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxwYXRoIGlkPSJWZWN0b3JfNCIgZD0iTTEwLjY2NjcgMTAuNjY2N0gxNFYxNCIgc3Ryb2tlPSIjOEE5M0E4IiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjwvZz4KPC9zdmc+Cg==" alt=""></span>
@@ -5103,9 +5096,6 @@ function onDestinationToggle(){
 function toggleCaptionCustomize(){
   const on = document.getElementById('pubCaptionCustomToggle').checked;
   document.getElementById('pubCaptionPerPlatform').style.display = on ? 'flex' : 'none';
-  document.getElementById('pubCaptionHint').textContent = on
-    ? 'Each platform can have its own caption below.'
-    : 'The same caption is used across all platforms.';
   if(on) renderPerPlatformCaptions();
 }
 
@@ -5290,16 +5280,13 @@ function generateCaptionFromSelection(){
   const selectedKeywords = PUB_SEO_KEYWORDS.filter(t => window.__pubSelectedTags.has(t));
 
   const btn = document.getElementById('pubComposeCaptionBtn');
-  const originalLabel = btn.textContent;
   btn.disabled = true;
   btn.textContent = '✨ Composing…';
   setTimeout(() => {
     btn.disabled = false;
-    btn.textContent = originalLabel;
+    btn.textContent = '✨ Regenerate caption'; // every click after the first is a regenerate
     document.getElementById('pubCaption').value = composePubCaption(selectedKeywords, selectedHashtags);
     onSharedCaptionInput();
-    const badge = document.getElementById('pubAiDraftBadge');
-    if(badge) badge.style.display = '';
   }, 700);
 }
 
@@ -5325,7 +5312,7 @@ function composePubCaption(selectedKeywords, selectedHashtags){
   if(selectedKeywords.length) parts.push(`Searching for ${selectedKeywords.join(', ')}? This is it.`);
   if(selectedHashtags.length) parts.push(selectedHashtags.join(' '));
 
-  return parts.filter(Boolean).join('\n\n');
+  return parts.filter(Boolean).join('\n');
 }
 
 function onSharedCaptionInput(){
@@ -5410,7 +5397,7 @@ function buildAutoCaption(){
   buildDynamicHashtagsSEO().hashtags.forEach(t => { if(!tags.includes(t)) tags.push(t); });
   parts.push(tags.slice(0, 5).join(' '));
 
-  return parts.filter(Boolean).join('\n\n');
+  return parts.filter(Boolean).join('\n');
 }
 
 // Quick AI-style refine actions for the caption textarea (mirrors the script's
@@ -5429,12 +5416,10 @@ function refineCaptionWithAI(mode){
   } else if(mode === 'cta'){
     const details = getBriefDetails();
     const cta = details.cta || (window.__brandMode === 'set' ? 'Shop now — link in bio.' : 'Follow for more.');
-    if(!text.includes(cta)) text = `${text}\n\n${cta}`;
+    if(!text.includes(cta)) text = `${text}\n${cta}`;
   }
   ta.value = text;
   onSharedCaptionInput();
-  const badge = document.getElementById('pubAiDraftBadge');
-  if(badge) badge.style.display = 'none';
 }
 
 function updateWhenSelection(){
