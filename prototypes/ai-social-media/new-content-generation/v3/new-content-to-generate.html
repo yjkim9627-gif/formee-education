@@ -475,14 +475,35 @@
   #stageAreaCarousel .draft-section{margin-top:18px; margin-bottom:28px;}
   #stageAreaCarousel .draft-section-label{font-size:13px; font-weight:700; color:var(--color-neutral-900); margin-bottom:2px;}
   #stageAreaCarousel .draft-section-hint{font-size:12px; color:var(--color-neutral-500); margin:0 0 10px;}
-  #stageAreaCarousel .brand-kit-row{display:flex; align-items:center; gap:10px; margin-top:12px;}
-  #stageAreaCarousel .brand-kit-label{font-size:13px; font-weight:600; color:var(--color-neutral-900);}
-  #stageAreaCarousel .brand-kit-summary{margin-top:8px; padding:12px; background:var(--color-neutral-50); border:1px solid var(--color-neutral-200); border-radius:8px; display:flex; align-items:center; gap:10px;}
-  #stageAreaCarousel .brand-kit-summary-label{font-size:12.5px; font-weight:700; color:var(--color-neutral-900); flex-shrink:0;}
-  #stageAreaCarousel .brand-kit-swatch-row{display:flex; height:22px; width:120px; border:1px solid var(--color-neutral-300); border-radius:6px; overflow:hidden; flex-shrink:0;}
+  /* Brand-kit-on card: identical to the Image flow's Draft screen (components/ai-social-media
+     brand-kit-summary pattern, see #stageAreaImage rules above) — same bordered card, Colour
+     column with a continuous swatch strip, Fonts column with live font-preview tags. Reuses
+     the exact same class names so both flows stay visually identical by construction. */
+  #stageAreaCarousel .brand-kit-row{display:flex; align-items:center; gap:16px; margin-top:14px;}
+  #stageAreaCarousel .brand-kit-label{font-size:14px; line-height:22px; font-weight:600; color:var(--color-neutral-900);}
+  #stageAreaCarousel .brand-kit-summary{margin-top:12px; padding:16px; background:#fff; border:1px solid var(--color-neutral-200); border-radius:var(--radius-xl); display:flex; align-items:flex-start; gap:20px;}
+  #stageAreaCarousel .brand-kit-summary-col{flex:1; min-width:0; display:flex; flex-direction:column; gap:12px;}
+  #stageAreaCarousel .brand-kit-divider{align-self:stretch; width:1px; background:var(--color-neutral-200); flex-shrink:0;}
+  #stageAreaCarousel .brand-kit-summary-label{display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:500; color:var(--color-neutral-700); border:1px solid var(--color-neutral-400); border-radius:999px; padding:5px 10px 5px 12px; width:fit-content;}
+  #stageAreaCarousel .brand-kit-summary-label .chevron{width:16px; height:16px; display:flex;}
+  #stageAreaCarousel .brand-kit-fonts-title{font-size:14px; line-height:22px; font-weight:600; color:var(--color-neutral-900);}
+  #stageAreaCarousel .brand-kit-swatch-row{display:flex; height:38px; border:1px solid var(--color-neutral-300); border-radius:var(--radius-lg); overflow:hidden;}
   #stageAreaCarousel .brand-kit-swatch-row span{flex:1;}
-  #stageAreaCarousel .brand-kit-empty{margin-top:8px; padding:10px 12px; background:var(--color-neutral-50); border:1px dashed var(--color-neutral-400); border-radius:8px; font-size:12px; color:var(--color-neutral-500);}
+  #stageAreaCarousel .brand-kit-fonts{display:grid; grid-template-columns:repeat(2, auto); gap:8px; align-items:start;}
+  #stageAreaCarousel .brand-kit-font-row{display:flex; align-items:center; gap:8px; border:1px solid var(--color-neutral-300); border-radius:var(--radius-lg); padding:6px 8px 6px 6px; width:fit-content;}
+  #stageAreaCarousel .brand-kit-font-tag{display:flex; align-items:center; justify-content:center; background:var(--color-neutral-150); border-radius:var(--radius-md); padding:4px 8px; color:var(--color-neutral-900); white-space:nowrap;}
+  #stageAreaCarousel .brand-kit-font-meta{display:flex; align-items:center; gap:6px; font-size:12px; font-weight:500; color:var(--color-neutral-500); white-space:nowrap;}
+  #stageAreaCarousel .brand-kit-font-meta .dot{width:2px; height:2px; border-radius:999px; background:var(--color-neutral-500);}
+  #stageAreaCarousel .brand-kit-empty{margin-top:8px; padding:12px 16px; background:#fff; border:1px dashed var(--color-neutral-400); border-radius:var(--radius-xl); font-size:14px; color:var(--color-neutral-500); display:flex; align-items:center; justify-content:space-between; gap:16px;}
   #stageAreaCarousel .brand-kit-empty a{color:var(--color-brand-primary); font-weight:600; cursor:pointer; text-decoration:underline;}
+  /* Top settings-bar chips: real "Controls" component (white/radius-lg/14px/border-400), same
+     fix already applied to Reel/Short's spec row — not the neutral-50/pill/11.5px default. */
+  #stageAreaCarousel .setting-chip{
+    background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg);
+    padding:7px 12px 7px 10px; gap:5px; font-size:14px; line-height:22px; color:var(--color-neutral-700);
+  }
+  #stageAreaCarousel .setting-chip b{font-weight:500; color:var(--color-neutral-700);}
+  #stageAreaCarousel .setting-chip img.icon-inline{width:16px; height:16px;}
   #stageAreaCarousel .baked-in-warning{display:none; align-items:flex-start; gap:8px; font-size:12px; color:var(--color-warning-text); background:var(--color-badge-yellow-bg); border:1px solid var(--color-badge-yellow-text); border-radius:8px; padding:10px 12px; margin-top:12px; line-height:1.5;}
   #stageAreaCarousel .baked-in-warning.show{display:flex;}
 
@@ -1820,11 +1841,14 @@
             <div class="stage-tab locked" id="tabPreview" onclick="showSub('preview')">Preview</div>
           </div>
 
+          <!-- Figma: Carousel · Script (node 6390-106611) Frame 1410117506 — same 3-chip
+               "Controls" pattern as Image post's Draft/Versions/Preview settings-bar: Ratio,
+               Cards count, Character. No type-label or language chip (Figma doesn't show them
+               here); Brand chip stays conditional, matching the Image flow's convention. -->
           <div class="settings-bar" id="settingsBarCarousel">
-            <div class="setting-chip">▭ <b>Carousel</b></div>
-            <div class="setting-chip">⬛ <b id="genSettingRatioCarousel">4:5</b></div>
-            <div class="setting-chip">🔢 <b id="genSettingCards">5 cards</b></div>
-            <div class="setting-chip">🌐 <b>English</b></div>
+            <div class="setting-chip"><span class="ratio-icon"><i></i></span><b id="genSettingRatioCarousel">4:5</b></div>
+            <div class="setting-chip"><img src="../../../../components/ai-social-media/icons/spec-versions.svg" class="icon-inline" alt=""><b id="genSettingCards">5 cards</b></div>
+            <div class="setting-chip" id="carouselCharacterChip" style="display:none;"><span class="avatar-mini"></span>Character<span class="dot-sep"></span><b>Elena</b></div>
             <div class="setting-chip brand-chip-setting" id="brandSettingChipCarousel" style="display:none;">🏷 Brand: <b>Formee Express</b></div>
           </div>
 
@@ -1838,10 +1862,29 @@
                   <button type="button" class="field-switch" id="globalBrandKitSwitch" onclick="toggleGlobalBrandKit()"><span class="knob"></span></button>
                   <span class="brand-kit-label">Use brand kit</span>
                 </div>
+                <!-- Same card as the Image flow's Draft screen (identical markup/classes — see
+                     #stageAreaImage's brand-kit-summary, node 6236-205 "Brand kit on"). -->
                 <div class="brand-kit-summary" id="globalBrandKitSummary" style="display:none;">
-                  <span class="brand-kit-summary-label">Formee Express</span>
-                  <div class="brand-kit-swatch-row">
-                    <span style="background:#2b6a6c"></span><span style="background:#b80d48"></span><span style="background:#f29724"></span><span style="background:#444444"></span>
+                  <div class="brand-kit-summary-col">
+                    <div class="brand-kit-summary-label">Palette · Formee Express <span class="chevron"><img src="../../../../components/ai-social-media/icons/caret-down-filled.svg" class="icon-inline" alt=""></span></div>
+                    <div class="brand-kit-swatch-row">
+                      <span style="background:#2b6a6c"></span>
+                      <span style="background:#b80d48"></span>
+                      <span style="background:#f29724"></span>
+                      <span style="background:#444444"></span>
+                      <span style="background:#6d9697"></span>
+                      <span style="background:#aa5a77"></span>
+                      <span style="background:#ffffff; border:1px solid var(--color-neutral-200);"></span>
+                    </div>
+                  </div>
+                  <div class="brand-kit-divider"></div>
+                  <div class="brand-kit-summary-col">
+                    <div class="brand-kit-fonts-title">Fonts</div>
+                    <div class="brand-kit-fonts">
+                      <div class="brand-kit-font-row"><span class="brand-kit-font-tag" style="font-family:'Playfair Display',Georgia,serif; font-weight:700; font-size:18px;">Heading</span><span class="brand-kit-font-meta">Playfair<span class="dot"></span>Bold</span></div>
+                      <div class="brand-kit-font-row"><span class="brand-kit-font-tag" style="font-family:Georgia,serif; font-weight:700; font-size:16px;">Subheading</span><span class="brand-kit-font-meta">Georgia<span class="dot"></span>SemiBold</span></div>
+                      <div class="brand-kit-font-row"><span class="brand-kit-font-tag" style="font-family:Georgia,serif; font-weight:400; font-size:16px;">Body</span><span class="brand-kit-font-meta">Georgia<span class="dot"></span>Regular</span></div>
+                    </div>
                   </div>
                 </div>
                 <div class="brand-kit-empty" id="globalBrandKitEmpty" style="display:none;">
@@ -3247,6 +3290,11 @@ function carSetCharMode(mode){
   window.__charMode = mode;
   document.querySelectorAll('#charModeToggleCarousel .seg-chip').forEach(c => c.classList.toggle('active', c.dataset.mode === mode));
   document.getElementById('charWithSectionCarousel').style.display = mode === 'with' ? 'block' : 'none';
+  syncCarouselCharacterChip();
+}
+function syncCarouselCharacterChip(){
+  const chip = document.getElementById('carouselCharacterChip');
+  if(chip) chip.style.display = window.__charMode === 'with' ? 'flex' : 'none';
 }
 function carSelectChar(el){
   document.querySelectorAll('#charGridCarousel .char-card').forEach(c => c.classList.remove('selected'));
@@ -3291,6 +3339,7 @@ let scriptDraftStarted = false;
 function carGoToGenerate(){
   showView('generateView'); setStep('stepGenerate'); showSub('script');
   document.getElementById('briefActionBarCarousel').style.display = 'none';
+  syncCarouselCharacterChip();
   if(!scriptDraftStarted){
     scriptDraftStarted = true;
     draftScript();
