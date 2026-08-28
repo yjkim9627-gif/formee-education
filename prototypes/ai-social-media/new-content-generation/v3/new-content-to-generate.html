@@ -77,20 +77,25 @@
 
   /* ---- VIEW: Generate (shared shell: chat + stage area) — chat panel base rules now in
      components/ai-social-media/chat-panel.css; only screen-specific additions stay here. ---- */
-  .gen-body{display:flex; height:100%;}
+  #generateView{display:flex; flex-direction:column;}
+  .gen-body{display:flex; flex:1; min-height:0;}
+  /* Feedback bar sits as a normal flex-shrink:0 row below .gen-body (not an absolute overlay)
+     so it never covers the chat panel's own pinned input box, and stays visible on every
+     Generate sub-stage (Draft/Versions/Preview, Script/Storyboard/Preview) for both content types. */
+  #genActionBarV3{position:static; flex-shrink:0;}
   .msg-status{font-size:13px; font-family:var(--font-family-text);}
   .msg-status .worked-label{font-weight:600; color:var(--color-neutral-700);}
   .msg-status .worked-time{font-weight:400; color:var(--color-neutral-500);}
 
-  /* Chat CTA row has two visual variants depending on which content type produced the message —
-     both can appear in the SAME shared #chatLog, so they need distinct classes (not one shared
-     .chat-cta-row like the pre-merge per-file versions had). .chat-cta-row = plain flex-wrap
-     (carousel-originated messages); .chat-cta-card = bordered card w/ title+text (image-originated). */
+  /* .chat-cta-row = plain flex-wrap row, used only for the version-pill picker (not a proposal
+     card). Every stage-progress CTA (Script Drafted / Ready to Generate / Storyboard Ready / etc.,
+     for reel-short, image post AND carousel alike) renders as the bordered .chat-cta-card instead —
+     Figma's "AI Assistant" proposal-card pattern: neutral/75 bg, neutral/400 border, title+desc+button. */
   .chat-cta-row{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;}
   .chat-cta-row .btn-dark, .chat-cta-row .btn-secondary{padding:8px 14px; font-size:12px;}
-  .chat-cta-card{display:flex; flex-direction:column; gap:10px; margin-top:10px; border:1px solid var(--color-neutral-300); border-radius:var(--radius-lg); padding:14px;}
-  .chat-cta-title{font-size:13px; font-weight:700; color:var(--color-neutral-900);}
-  .chat-cta-text{font-size:12.5px; color:var(--color-neutral-500); line-height:1.5;}
+  .chat-cta-card{display:flex; flex-direction:column; gap:12px; margin-top:10px; background:var(--color-neutral-75); border:1px solid var(--color-neutral-400); border-radius:var(--radius-xl); padding:12px;}
+  .chat-cta-title{font-size:14px; font-weight:700; color:var(--color-neutral-900);}
+  .chat-cta-text{font-size:14px; color:var(--color-neutral-700); line-height:1.57;}
   .chat-cta-card .btn-dark, .chat-cta-card .btn-secondary{width:100%; justify-content:center; padding:9px 14px; font-size:13px;}
 
   .visual-proposal-box{margin-top:8px; background:#fff; border:1px solid var(--color-neutral-300); border-radius:var(--radius-lg); padding:14px; display:flex; flex-direction:column; gap:10px;}
@@ -1024,7 +1029,7 @@
           <div class="stage-tabs">
             <div class="stage-tab active" id="tabDraft" onclick="showSub('draft')">Draft</div>
             <div class="stage-tab locked" id="tabVersions" onclick="showSub('versions')">Versions</div>
-            <div class="stage-tab locked" id="tabPreviewLockedImage" title="Not available in this prototype">Preview</div>
+            <div class="stage-tab locked" id="tabPreviewImage" onclick="showSub('previewImage')">Preview</div>
           </div>
 
           <div class="settings-bar" id="settingsBarImage">
@@ -1110,9 +1115,14 @@
                 <div class="version-grid" id="versionGrid"></div>
                 <div class="versions-status" id="versionsStatus">Generating 4 versions…</div>
               </div>
+            </div></div>
+          </div>
 
-              <!-- Shown after "Use this" — Draft/Versions tabs above stay visible so you can navigate back -->
-              <div class="version-result-view" id="versionResultView" style="display:none;">
+          <!-- SUB-STAGE: Preview — reached once a version is picked ("Use this"); size variations
+               are intentionally not offered here. -->
+          <div class="stage-sub" id="subPreviewImage" style="display:none;">
+            <div class="stage-body"><div class="stage-body-inner" style="max-width:640px;">
+              <div class="version-result-view" id="versionResultView">
                 <div class="refine-preview-col">
                   <div class="version-result-preview" id="versionResultPreview">
                     <button type="button" class="image-download-btn" onclick="event.stopPropagation(); downloadImage('main')" title="Download image">⬇</button>
@@ -1127,14 +1137,9 @@
                   <div class="refine-edit-box">
                     <div class="refine-edit-box-head">
                       <label class="refine-label">✏️ Edit with a prompt</label>
-                      <button type="button" class="btn btn-secondary refine-regen-btn" id="refineRegenBtn" onclick="regenerateWithPrompt()">↻ Regenerate <span class="cost">⚡8</span></button>
+                      <button type="button" class="btn btn-secondary refine-regen-btn" id="refineRegenBtn" onclick="regenerateWithPrompt()" disabled>↻ Regenerate <span class="cost">⚡8</span></button>
                     </div>
-                    <textarea class="refine-edit-input" id="refineEditInput" placeholder="e.g. Make the lighting warmer, add more students in the background..."></textarea>
-                  </div>
-
-                  <div class="refine-size-box">
-                    <label class="refine-label">📐 Size variations</label>
-                    <div class="refine-size-row" id="refineSizeRow"></div>
+                    <textarea class="refine-edit-input" id="refineEditInput" placeholder="e.g. Make the lighting warmer, add more students in the background..." oninput="onRefinePromptEdited()"></textarea>
                   </div>
 
                   <div class="version-result-actions">
@@ -1278,27 +1283,23 @@
 
         </div>
       </div>
-      <div class="action-bar" id="draftActionBarImage">
-        <div class="credit-est">
-          <span class="credit-label">Estimated cost</span>
-          <span class="credit-value" id="creditEstValue">~6 credits <span class="credit-sub">(2 versions)</span></span>
+      <!-- Hidden credit-estimate strip kept only so confirmAndGenerate()'s existing cost-sync
+           logic (imgUpdateBriefMeta) still has somewhere to write; the real bottom bar is
+           genActionBarV3 below, which mirrors whichever CTA is live on the current sub-stage. -->
+      <div class="credit-est" id="creditEstStrip" style="display:none;">
+        <span class="credit-label">Estimated cost</span>
+        <span class="credit-value" id="creditEstValue">~6 credits <span class="credit-sub">(2 versions)</span></span>
+      </div>
+      <div class="action-bar" id="genActionBarV3">
+        <div class="readiness">
+          <div class="readiness-top"><span>Brief readiness</span><span>79%</span></div>
+          <div class="readiness-bar"><div class="readiness-fill" style="width:79%"></div></div>
         </div>
-        <div class="meta-text" id="draftMetaText">Image post · 4:5 · English</div>
+        <div class="meta-text" id="genMetaV3">Image post · 4:5 · English</div>
         <div class="bar-actions">
-          <button class="btn btn-secondary" onclick="quickAction('rework')">Rework</button>
-          <button class="btn btn-dark" id="confirmGenerateBtn" onclick="confirmAndGenerate()">Confirm & generate 2 versions →</button>
+          <button class="btn btn-secondary" onclick="quickAction('rework')" id="genSecondaryBtnV3">Save as draft</button>
+          <button class="btn btn-dark" id="genActionBtnV3">Continue</button>
         </div>
-      </div>
-    </div>
-    <div class="action-bar" id="previewActionBar" style="display:none;">
-      <div class="readiness">
-        <div class="readiness-top"><span>Brief readiness</span><span>79%</span></div>
-        <div class="readiness-bar"><div class="readiness-fill" style="width:79%"></div></div>
-      </div>
-      <div class="meta-text">Carousel · 4:5 · 5 cards</div>
-      <div class="bar-actions">
-        <button class="btn btn-secondary" onclick="goToPublish()">Skip to publish</button>
-        <button class="btn btn-dark" onclick="goToDevelop()">Continue to editing →</button>
       </div>
     </div>
 
@@ -1729,10 +1730,31 @@ function applyVisualDraft(id, btn){
     { label: 'Try a different background' }
   ]);
   setChatGuideHint('Tweak the visual: "make it brighter" or "zoom in more" →');
-  addChatMsg('ai', '<span class="tag">AI</span>If you\'d like your brand colors and fonts applied to the image, turn on the toggle below.');
 
+  if(window.__brandMode === 'set'){
+    // Brand kit exists — let the choice happen right in chat instead of only via the panel
+    // toggle; either answer reveals the Ready to Generate card once a choice is made.
+    addChatMsg('ai', `<span class="tag">AI</span>Want your brand colors and fonts applied to the image? You can also just flip the toggle in the panel.
+      <div class="chat-cta-row" id="brandChoiceRow" style="margin-top:8px;">
+        <button class="btn btn-secondary" onclick="chatChooseBrandKit(true, this)">Yes, use brand kit</button>
+        <button class="btn btn-secondary" onclick="chatChooseBrandKit(false, this)">No, keep as is</button>
+      </div>`);
+  } else {
+    appendReadyToGenerateCard();
+  }
+}
+
+function chatChooseBrandKit(useBrandKit, btn){
+  brandKitOn = useBrandKit;
+  document.getElementById('brandKitSwitch').classList.toggle('on', useBrandKit);
+  updateVisualConceptPrompt();
+  btn.closest('#brandChoiceRow').querySelectorAll('button').forEach(b => b.disabled = true);
+  appendReadyToGenerateCard();
+}
+
+function appendReadyToGenerateCard(){
   const vn = window.__versionCount || 2;
-  imgAppendChatCta('Ready to Generate', `Your copy and visual concept are set — generate ${vn} version${vn > 1 ? 's' : ''} whenever you're ready.`, `<button class="btn btn-dark" onclick="confirmAndGenerate(this)">Confirm & generate ${vn} version${vn > 1 ? 's' : ''} →</button>`);
+  imgAppendChatCta('Ready to Generate', `Your copy and visual concept are set — generate ${vn} version${vn > 1 ? 's' : ''} whenever you're ready.`, `<button class="btn btn-dark" onclick="confirmAndGenerate(this)">Confirm & generate ${vn} version${vn > 1 ? 's' : ''}</button>`);
 }
 
 function draftVisualConcept(){
@@ -1791,7 +1813,7 @@ function reviseVisualConcept(requestText){
 // Mirrors the video flow's stage-progress CTA row appended inline in chat messages.
 function imgAppendChatCta(title, text, buttonsHtml){
   const log = document.getElementById('chatLog');
-  log.innerHTML += `<div class="msg ai"><div class="chat-cta-row"><div class="chat-cta-title">${escapeHtml(title)}</div><div class="chat-cta-text">${escapeHtml(text)}</div>${buttonsHtml}</div></div>`;
+  log.innerHTML += `<div class="msg ai"><div class="chat-cta-card"><div class="chat-cta-title">${escapeHtml(title)}</div><div class="chat-cta-text">${escapeHtml(text)}</div>${buttonsHtml}</div></div>`;
   log.scrollTop = log.scrollHeight;
 }
 
@@ -1976,32 +1998,25 @@ function selectVersion(id){
   document.getElementById('tabVersions').innerHTML = '<span class="check">✓</span> Versions';
   window.__editHistory = [{ label: 'V' + id, ready: true }];
   window.__activeEditIndex = 0;
-  window.__sizeVariants = {};
   showVersionResult(id);
 }
 
 function showVersionResult(id){
-  document.getElementById('versionsChooser').style.display = 'none';
-  document.getElementById('versionResultView').style.display = 'flex';
-  document.getElementById('draftActionBarImage').style.display = 'none';
+  document.getElementById('tabPreviewImage').classList.remove('locked');
+  showSub('previewImage');
   applyPreviewAspect(window.__imageRatio);
   renderRefineHistory();
-  renderSizeVariants();
 }
 
 function backToVersions(){
-  document.getElementById('versionResultView').style.display = 'none';
-  document.getElementById('versionsChooser').style.display = '';
+  showSub('versions');
 }
 
-// ---- Refine the picked version: prompt-edit history + size variations ----
+// ---- Refine the picked version: prompt-edit history ----
 const REGEN_EDIT_CREDIT = 8;
-const SIZE_VARIANT_CREDIT = 4;
-const ALL_IMAGE_RATIOS = ['9:16', '1:1', '4:5'];
 
 window.__editHistory = [];
 window.__activeEditIndex = 0;
-window.__sizeVariants = {};
 
 function currentEditEntry(){
   return window.__editHistory[window.__activeEditIndex];
@@ -2022,19 +2037,25 @@ function renderRefineHistory(){
       ${h.ready ? '' : '<span class="mini-spinner"></span>'}${h.label}
     </div>
   `).join('');
-  const regenBtn = document.getElementById('refineRegenBtn');
   const input = document.getElementById('refineEditInput');
-  regenBtn.disabled = !entry.ready;
   input.disabled = !entry.ready;
+  syncRefineRegenBtn();
+}
+
+// Regenerate stays disabled until the prompt has actually been edited (and the current
+// version isn't already mid-regeneration) — nothing to regenerate from an untouched prompt.
+function onRefinePromptEdited(){ syncRefineRegenBtn(); }
+function syncRefineRegenBtn(){
+  const entry = currentEditEntry();
+  const input = document.getElementById('refineEditInput');
+  document.getElementById('refineRegenBtn').disabled = !entry.ready || input.value.trim().length === 0;
 }
 
 function selectHistoryEntry(i){
   if(!window.__editHistory[i].ready) return;
   window.__activeEditIndex = i;
-  window.__sizeVariants = {};
   renderRefineHistory();
   applyPreviewAspect(window.__imageRatio);
-  renderSizeVariants();
 }
 
 function regenerateWithPrompt(){
@@ -2045,64 +2066,12 @@ function regenerateWithPrompt(){
   const newLabel = `${rootLabel}.${window.__editHistory.length}`;
   window.__editHistory.push({ label: newLabel, ready: false, promptEdit: promptText });
   window.__activeEditIndex = window.__editHistory.length - 1;
-  window.__sizeVariants = {};
   input.value = '';
   renderRefineHistory();
-  renderSizeVariants();
   setTimeout(() => {
     currentEditEntry().ready = true;
     renderRefineHistory();
   }, 1400);
-}
-
-function updateResultSub(){
-  document.getElementById('versionResultSub').textContent = `Image post · ${window.__imageRatio} · English`;
-}
-
-// Size variations are additive: the original image stays put in the main preview,
-// and each generated variation shows up as its own thumbnail alongside it — nothing gets replaced.
-function renderSizeVariants(){
-  const originalRatio = window.__imageRatio;
-  updateResultSub();
-  document.getElementById('refineSizeRow').innerHTML = ALL_IMAGE_RATIOS.map(r => {
-    if(r === originalRatio){
-      return `
-        <div class="size-variant-card">
-          <div class="size-variant-thumb" style="aspect-ratio:${r.replace(':', '/')};"></div>
-          <span class="size-variant-label original">${r} · original</span>
-        </div>`;
-    }
-    const v = window.__sizeVariants[r];
-    if(v && v.ready){
-      return `
-        <div class="size-variant-card">
-          <div class="size-variant-thumb" style="aspect-ratio:${r.replace(':', '/')};">
-            <button type="button" class="image-download-btn" onclick="event.stopPropagation(); downloadImage('${r}')" title="Download image">⬇</button>
-          </div>
-          <span class="size-variant-label">${r}</span>
-        </div>`;
-    }
-    if(v && v.generating){
-      return `
-        <div class="size-variant-card">
-          <div class="size-variant-thumb generating" style="aspect-ratio:${r.replace(':', '/')}; display:flex; align-items:center; justify-content:center;"><span class="mini-spinner"></span></div>
-          <span class="size-variant-label">${r}</span>
-        </div>`;
-    }
-    return `
-      <button type="button" class="size-variant-placeholder" style="aspect-ratio:${r.replace(':', '/')};" onclick="generateSizeVariant('${r}')">
-        <span>+ ${r}</span><span class="cost">⚡${SIZE_VARIANT_CREDIT}</span>
-      </button>`;
-  }).join('');
-}
-
-function generateSizeVariant(ratio){
-  window.__sizeVariants[ratio] = { generating: true };
-  renderSizeVariants();
-  setTimeout(() => {
-    window.__sizeVariants[ratio] = { ready: true };
-    renderSizeVariants();
-  }, 1300);
 }
 
 function downloadImage(which){
@@ -2194,10 +2163,9 @@ function imgUpdateBriefMeta(){
   const credits = n * CREDIT_PER_VERSION;
   document.getElementById('briefMetaTextImage').textContent = `Image post · ${ratio} · ${n} version${n > 1 ? 's' : ''}`;
   document.getElementById('genSettingRatioImage').textContent = ratio;
-  document.getElementById('draftMetaText').textContent = `Image post · ${ratio} · English`;
   document.getElementById('versionResultSub').textContent = `Image post · ${ratio} · English`;
   document.getElementById('creditEstValue').innerHTML = `~${credits} credits <span class="credit-sub">(${n} version${n > 1 ? 's' : ''})</span>`;
-  document.getElementById('confirmGenerateBtn').textContent = `Confirm & generate ${n} version${n > 1 ? 's' : ''} →`;
+  syncGenActionBarV3();
 }
 
 // ---- Character section (Brief & Style) ----
@@ -2260,7 +2228,7 @@ imgGoToBrief();
 
 
 // ---- Top-level stepper / view navigation ----
-function carGoToBrief(){ showView('briefView'); setStep('stepBrief'); document.getElementById('briefActionBarCarousel').style.display = 'flex'; document.getElementById('previewActionBar').style.display = 'none'; }
+function carGoToBrief(){ showView('briefView'); setStep('stepBrief'); document.getElementById('briefActionBarCarousel').style.display = 'flex'; }
 
 // ---- Reference image attach (Brief prompt box) ----
 let carReferenceImages = [];
@@ -2362,11 +2330,11 @@ function carGoToBrandSetup(){
 }
 
 // ---- Chat ----
-// Appends an AI message with an inline button row, so the next stage can be
-// triggered right from the chat (mirrors the video flow's stage-progress CTA).
-function carAppendChatCta(text, buttonsHtml){
+// Appends an AI proposal card so the next stage can be triggered right from the chat
+// (shared .chat-cta-card design — same as the image-post/reel-short stage-progress cards).
+function carAppendChatCta(title, text, buttonsHtml){
   const log = document.getElementById('chatLog');
-  log.innerHTML += `<div class="msg ai"><span class="tag">AI</span>${text}<div class="chat-cta-row">${buttonsHtml}</div></div>`;
+  log.innerHTML += `<div class="msg ai"><div class="chat-cta-card"><div class="chat-cta-title">${escapeHtml(title)}</div><div class="chat-cta-text">${escapeHtml(text)}</div>${buttonsHtml}</div></div>`;
   log.scrollTop = log.scrollHeight;
 }
 
@@ -2387,7 +2355,6 @@ function carGoToGenerate(){
 function carGoToDevelop(){
   showView('developView');
   setStep('stepEdit');
-  document.getElementById('previewActionBar').style.display = 'none';
 }
 function backToStoryboard(){
   showView('generateView');
@@ -2428,8 +2395,9 @@ function draftScript(){
     for(let i = 1; i <= n; i++) window.__cardScripts[i] = SCRIPT_TEMPLATES[i - 1] || `Card ${i} — key message goes here.`;
     log.innerHTML = '<div class="msg-status"><span class="worked-label">Worked</span> <span class="worked-time">for 2s</span></div>';
     carAppendChatCta(
-      `I've drafted the script for all ${n} cards based on your brief. Send a message here if you'd like any changes, or continue when you're ready.`,
-      '<button class="btn btn-dark" onclick="confirmScript()">Continue to Storyboard →</button>'
+      'Script Drafted',
+      `Each card's text is ready — see Card 1-${n} on the right. Edit any card directly, or tell me here for a different angle.`,
+      '<button class="btn btn-dark" onclick="confirmScript()">Continue to Storyboard</button>'
     );
     renderScriptCards();
     document.getElementById('confirmScriptBtn').disabled = false;
@@ -2473,8 +2441,9 @@ function confirmScript(){
     document.getElementById('storyboardLoadingMsg')?.remove();
     renderStoryboard();
     carAppendChatCta(
-      'I\'ve built the storyboard from your script — headline, subhead/body, call to action, and a scene &amp; background description are filled in for each card. Edit anything you like, or hit Generate images when you\'re ready.',
-      '<button class="btn btn-dark" onclick="startCardGeneration()">Generate images →</button>'
+      'Storyboard Ready',
+      'Headline, subhead/body, call to action, and a scene & background description are filled in for each card. Edit anything you like, or generate images when you\'re ready.',
+      '<button class="btn btn-dark" onclick="startCardGeneration()">Generate images</button>'
     );
   }, 1200);
 }
@@ -2825,8 +2794,9 @@ function checkAllCardsReady(){
         `All ${n} cards are generated and ready to go — download them, or head back to Storyboard if anything needs another pass.`;
       renderPreview();
       carAppendChatCta(
+        'Images Ready',
         `All ${n} images are generated and ready to review. Head back to Storyboard for more edits, or continue when you're happy with how it looks.`,
-        '<button class="btn btn-dark" onclick="showSub(\'preview\')">Continue to editing →</button>'
+        '<button class="btn btn-dark" onclick="showSub(\'preview\')">Continue to editing</button>'
       );
       showSub('preview');
     }
@@ -3609,6 +3579,7 @@ window.__contentType = 'image';
 function showView(name){
   ['briefView','generateView','developView'].forEach(id => document.getElementById(id).classList.add('hidden'));
   document.getElementById(name).classList.remove('hidden');
+  document.getElementById('genActionBarV3').style.display = name === 'generateView' ? 'flex' : 'none';
 }
 function setStep(active){
   const order = ['stepBrief','stepGenerate','stepEdit'];
@@ -3702,9 +3673,9 @@ function setBrandMode(mode){
 // ---- Draft/Versions <-> Script/Storyboard/Preview sub-stage tabs — combined tab/sub map
 // (the two source files' id sets don't overlap, so one implementation covers both). ----
 function showSub(name){
-  const tabs = {draft:'tabDraft', versions:'tabVersions', script:'tabScript', storyboard:'tabStoryboard', preview:'tabPreview'};
-  const subs = {draft:'subDraft', versions:'subVersions', script:'subScript', storyboard:'subStoryboard', preview:'subPreview'};
-  const displays = {draft:'flex', versions:'flex', script:'block', storyboard:'block', preview:'block'};
+  const tabs = {draft:'tabDraft', versions:'tabVersions', previewImage:'tabPreviewImage', script:'tabScript', storyboard:'tabStoryboard', preview:'tabPreview'};
+  const subs = {draft:'subDraft', versions:'subVersions', previewImage:'subPreviewImage', script:'subScript', storyboard:'subStoryboard', preview:'subPreview'};
+  const displays = {draft:'flex', versions:'flex', previewImage:'flex', script:'block', storyboard:'block', preview:'block'};
   const tabEl = document.getElementById(tabs[name]);
   if(!tabEl || tabEl.classList.contains('locked')) return;
   Object.values(tabs).forEach(id => { const el = document.getElementById(id); if(el) el.classList.remove('active'); });
@@ -3712,8 +3683,53 @@ function showSub(name){
   Object.values(subs).forEach(id => { const el = document.getElementById(id); if(el) el.style.display = 'none'; });
   const subEl = document.getElementById(subs[name]);
   if(subEl) subEl.style.display = displays[name];
-  document.getElementById('draftActionBarImage').style.display = (window.__contentType === 'image' && name === 'draft') ? 'flex' : 'none';
-  document.getElementById('previewActionBar').style.display = (window.__contentType === 'carousel' && name === 'preview') ? 'flex' : 'none';
+  syncGenActionBarV3();
+}
+
+// ---- Bottom Feedback bar (persistent across every Generate sub-stage, both content types) —
+// mirrors whichever primary CTA is currently the "next step" in the main panel. Reset the
+// secondary button back to its "Save as draft" default on every call so a stale "Skip to
+// publish" handler from a previous sub-stage never lingers. ----
+function syncGenActionBarV3(){
+  const btn = document.getElementById('genActionBtnV3');
+  const secondaryBtn = document.getElementById('genSecondaryBtnV3');
+  if(!btn) return;
+  secondaryBtn.textContent = 'Save as draft';
+  secondaryBtn.onclick = () => quickAction('rework');
+  secondaryBtn.style.display = '';
+  let sourceBtn = null;
+  if(window.__contentType === 'image'){
+    document.getElementById('genMetaV3').textContent = `Image post · ${window.__imageRatio || '4:5'} · English`;
+    if(document.getElementById('subDraft').style.display !== 'none'){
+      const n = window.__versionCount || 2;
+      sourceBtn = { textContent: `Confirm & generate ${n} version${n > 1 ? 's' : ''}`, disabled: false, click: () => confirmAndGenerate() };
+    } else if(document.getElementById('subVersions').style.display !== 'none'){
+      sourceBtn = { textContent: 'Choose a version to continue', disabled: true, click: () => {} };
+    } else if(document.getElementById('subPreviewImage').style.display !== 'none'){
+      sourceBtn = document.querySelector('#versionResultView .version-result-actions .btn-dark');
+      secondaryBtn.textContent = 'Skip to publish';
+      secondaryBtn.onclick = () => skipToPublish();
+    }
+  } else if(window.__contentType === 'carousel'){
+    document.getElementById('genMetaV3').textContent = `Carousel · ${window.__imageRatio || '4:5'} · ${window.__cardCount || 5} cards`;
+    if(document.getElementById('subScript').style.display !== 'none'){
+      sourceBtn = document.getElementById('confirmScriptBtn');
+    } else if(document.getElementById('subStoryboard').style.display !== 'none'){
+      sourceBtn = document.getElementById('storyboardGenerateBtn');
+    } else if(document.getElementById('subPreview').style.display !== 'none'){
+      secondaryBtn.textContent = 'Skip to publish';
+      secondaryBtn.onclick = () => goToPublish();
+      sourceBtn = document.getElementById('continueToEditingBtn');
+    }
+  }
+  if(sourceBtn){
+    btn.textContent = sourceBtn.textContent;
+    btn.disabled = sourceBtn.disabled;
+    btn.onclick = () => { if(sourceBtn.click) sourceBtn.click(); };
+    btn.style.display = '';
+  } else {
+    btn.style.display = 'none';
+  }
 }
 
 // ---- Chat send — shared input/log, dispatches the "what happens next" half to whichever

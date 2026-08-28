@@ -57,7 +57,7 @@
   .btn-dark{background:linear-gradient(180deg, var(--color-action-primary-dark-gradient-start), var(--color-action-primary-dark-gradient-end)); border-color:transparent; color:var(--color-neutral-0); box-shadow:0 1px 2px rgba(13,13,13,0.1);}
   .btn-dark:hover:not(:disabled){filter:brightness(1.1);}
   .btn-dark:active:not(:disabled){filter:brightness(0.92);}
-  .btn-dark:disabled{background:var(--color-neutral-300); color:var(--color-neutral-500); box-shadow:none;}
+  .btn-dark:disabled{background:var(--color-neutral-300); color:var(--color-neutral-450); box-shadow:none;}
 
   .action-bar{position:absolute; left:0; right:0; bottom:0; background:#fff; border-top:1px solid var(--color-neutral-200); padding:12px 64px; display:flex; align-items:center; justify-content:center; gap:32px;}
   .meta-text{font-size:12px; color:var(--color-neutral-500); flex-shrink:0;}
@@ -546,6 +546,8 @@
             <div class="stage-body"><div class="stage-body-inner">
               <h2 class="stage-title">Script</h2>
               <p class="stage-sub-text">AI drafted text for each card based on your brief — edit any card directly, choose whether the brand kit and character apply, then confirm to move on.</p>
+              <div class="script-card-list" id="scriptCardList"></div>
+
               <div class="script-global-brand" id="scriptGlobalBrand">
                 <div class="brand-kit-row" style="margin-top:0;">
                   <button type="button" class="field-switch" id="globalBrandKitSwitch" onclick="toggleGlobalBrandKit()"><span class="knob"></span></button>
@@ -574,7 +576,6 @@
                 </div>
               </div>
 
-              <div class="script-card-list" id="scriptCardList"></div>
               <div class="stage-cta-row">
                 <button class="btn btn-dark" id="confirmScriptBtn" onclick="confirmScript()">Confirm & continue to Storyboard →</button>
               </div>

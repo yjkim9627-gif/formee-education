@@ -119,7 +119,7 @@
   .prompt-chip.clickable{cursor:pointer;}
   .prompt-chip.clickable .chevron{font-size:9px; color:var(--color-neutral-500); margin-left:1px;}
   .prompt-chip-wrap{position:relative;}
-  .duration-popover{position:absolute; bottom:calc(100% + 6px); left:0; min-width:160px; background:#fff; border:1px solid var(--color-neutral-400); border-radius:8px; box-shadow:0 0 3px var(--color-neutral-150); padding:8px; z-index:40;}
+  .duration-popover{position:absolute; top:calc(100% + 6px); left:0; min-width:160px; background:#fff; border:1px solid var(--color-neutral-400); border-radius:8px; box-shadow:0 0 3px var(--color-neutral-150); padding:8px; z-index:40;}
   .duration-popover-label{font-size:12px; font-weight:600; color:var(--color-neutral-700); padding:7px 8px;}
   .duration-option{display:flex; align-items:center; justify-content:space-between; gap:16px; padding:8px; border-radius:6px; font-size:14px; font-weight:500; color:var(--color-neutral-700); cursor:pointer;}
   .duration-option:hover{background:var(--color-neutral-50);}
@@ -222,10 +222,14 @@
   .btn-dark{background:linear-gradient(180deg, var(--color-action-primary-dark-gradient-start), var(--color-action-primary-dark-gradient-end)); border-color:transparent; color:var(--color-neutral-0); box-shadow:0 1px 2px rgba(13,13,13,0.1);}
   .btn-dark:hover:not(:disabled){filter:brightness(1.1);}
   .btn-dark:active:not(:disabled){filter:brightness(0.92);}
-  .btn-dark:disabled{background:var(--color-neutral-300); color:var(--color-neutral-500); box-shadow:none;}
+  .btn-dark:disabled{background:var(--color-neutral-300); color:var(--color-neutral-450); box-shadow:none;}
 
   /* ---- VIEW: Generate (shared shell: chat + stage area) ---- */
-  .gen-body{display:flex; height:100%;}
+  #generateView{display:flex; flex-direction:column;}
+  .gen-body{display:flex; flex:1; min-height:0;}
+  /* Feedback bar sits as a normal flex-shrink:0 row below .gen-body (not an absolute overlay like
+     .action-bar's default) so it never covers the chat panel's own pinned input box. */
+  #genActionBar{position:static; flex-shrink:0;}
   .chat{width:324px; flex-shrink:0; min-height:0; background:var(--color-neutral-0); border-right:1px solid var(--color-neutral-200); display:flex; flex-direction:column;}
   .chat-header{flex-shrink:0; padding:20px 16px 0; display:flex; align-items:center; justify-content:space-between;}
   .chat-header-title{font-size:16px; font-weight:700; color:var(--color-neutral-900); font-family:var(--font-family-text);}
@@ -238,7 +242,7 @@
   .chat-attachment .thumb{width:100%; aspect-ratio:1; border-radius:7px; background:linear-gradient(135deg,var(--color-brand-primary-mid),var(--color-brand-accent)); position:relative;}
   .chat-attachment .thumb::after{content:'🖼'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:14px;}
   .chat-attachment span{font-size:10px; color:var(--color-neutral-500); font-weight:500;}
-  .chat-log{flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:12px;}
+  .chat-log{flex:1; min-height:0; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:12px;}
   .msg{font-size:14px; line-height:20px; max-width:92%; white-space:pre-wrap; font-family:var(--font-family-text);}
   .msg.user{align-self:flex-end; display:flex; align-items:flex-end; gap:8px; max-width:100%;}
   .msg.user .bubble{background:var(--color-brand-primary-light); color:var(--color-neutral-900); padding:12px 14px; border-radius:16px 16px 4px 16px; max-width:224px;}
@@ -253,6 +257,12 @@
   .msg.ai hr{border:none; border-top:1px solid var(--color-neutral-200); margin:0; width:100%;}
   .msg.ai .section-heading{font-weight:700; color:var(--color-neutral-900); font-size:14px;}
   .chat-cta-row{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;}
+  /* AI proposal-card pattern shared across every stage CTA in chat (Generate Script/Video/Combine/etc.) —
+     Figma "AI Assistant" cards: neutral/75 bg, neutral/400 border, 12px radius, title + desc + full-width button. */
+  .ai-cta-card{background:var(--color-neutral-75); border:1px solid var(--color-neutral-400); border-radius:var(--radius-xl); padding:12px; display:flex; flex-direction:column; gap:12px; margin-top:8px;}
+  .ai-cta-card-title{font-size:14px; font-weight:700; color:var(--color-neutral-900);}
+  .ai-cta-card-desc{font-size:14px; color:var(--color-neutral-700); line-height:1.57; margin:0;}
+  .ai-cta-card .btn{width:100%;}
   .chat-cta-row .btn-dark, .chat-cta-row .btn-secondary{padding:8px 14px; font-size:12px;}
   .brand-applied-box{margin-top:8px; background:var(--color-brand-primary-light); border:1px solid var(--color-brand-primary-mid); border-radius:8px; padding:8px 10px; display:flex; flex-direction:column; gap:3px;}
   .brand-applied-title{font-size:10.5px; font-weight:700; color:var(--color-neutral-900); margin-bottom:2px;}
@@ -831,12 +841,12 @@
               <div class="prompt-chip"><svg class="ic-svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="3.5" y="1.5" width="9" height="13" rx="1.6" stroke="#8A93A8" stroke-width="1.4"/><path d="M6.5 12.3H9.5" stroke="#8A93A8" stroke-width="1.4" stroke-linecap="round"/></svg>9:16</div>
               <div class="prompt-chip-wrap" id="durationChipWrap">
                 <div class="prompt-chip clickable" onclick="toggleDurationPopover(event)">
-                  <svg class="ic-svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.3" stroke="#8A93A8" stroke-width="1.4"/><path d="M8 4.7V8L10.2 9.6" stroke="#8A93A8" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="durationChipText">8s</span><span class="chevron">▾</span>
+                  <svg class="ic-svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.3" stroke="#8A93A8" stroke-width="1.4"/><path d="M8 4.7V8L10.2 9.6" stroke="#8A93A8" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="durationChipText">16s</span><span class="chevron">▾</span>
                 </div>
                 <div class="duration-popover" id="durationPopover" style="display:none;">
                   <div class="duration-popover-label">Duration</div>
-                  <div class="duration-option selected" data-seconds="8" onclick="selectDuration(8)"><span>8 seconds</span><span class="check">✓</span></div>
-                  <div class="duration-option" data-seconds="16" onclick="selectDuration(16)"><span>16 seconds</span><span class="check">✓</span></div>
+                  <div class="duration-option" data-seconds="8" onclick="selectDuration(8)"><span>8 seconds</span><span class="check">✓</span></div>
+                  <div class="duration-option selected" data-seconds="16" onclick="selectDuration(16)"><span>16 seconds</span><span class="check">✓</span></div>
                   <div class="duration-option" data-seconds="24" onclick="selectDuration(24)"><span>24 seconds</span><span class="check">✓</span></div>
                 </div>
               </div>
@@ -1029,7 +1039,7 @@
           <!-- persistent settings bar -->
           <div class="settings-bar" id="settingsBar">
             <div class="setting-chip"><span class="ratio-icon"><i></i></span>9:16</div>
-            <div class="setting-chip">⏱ <span id="genSettingDuration">8s</span></div>
+            <div class="setting-chip">⏱ <span id="genSettingDuration">16s</span></div>
             <div class="setting-chip">🌐 English</div>
 
             <div class="setting-chip-wrap" id="characterChipWrap">
@@ -1081,7 +1091,7 @@
 
               <div class="script-panel" id="scriptPanel">
                 <div class="script-panel-header">
-                  <div class="script-label" id="scriptLabel">Full script (8s)</div>
+                  <div class="script-label" id="scriptLabel">Full script (16s)</div>
                   <button class="script-refine-btn-fixed" onclick="refineScriptWithAI()">✨ Refine with AI</button>
                 </div>
                 <textarea class="script-text" id="fullScript" oninput="validateScriptLength()"></textarea>
@@ -1208,6 +1218,17 @@
             </div>
           </div>
 
+        </div>
+      </div>
+      <div class="action-bar" id="genActionBar" style="display:none;">
+        <div class="readiness">
+          <div class="readiness-top"><span>Brief readiness</span><span>79%</span></div>
+          <div class="readiness-bar"><div class="readiness-fill" style="width:79%"></div></div>
+        </div>
+        <div class="meta-text">Reel / Short · 9:16 · <span id="genMetaDuration">16s</span></div>
+        <div class="bar-actions">
+          <button class="btn btn-secondary">Save as draft</button>
+          <button class="btn btn-dark" id="genActionBtn">Continue to Timeline</button>
         </div>
       </div>
     </div>
@@ -1560,6 +1581,9 @@
 </div>
 
 <script>
+// ---- Duration default: 16s so Generate Video produces 2 clips (min unit is 8s) right out of the box ----
+window.__videoDuration = 16;
+
 // ---- Brand setup awareness (demo preview toggle, bottom-right) ----
 function setBrandMode(mode){
   window.__brandMode = mode;
@@ -1597,6 +1621,7 @@ function jumpToGenerate(){
   document.getElementById('briefView').classList.add('hidden');
   document.getElementById('generateView').classList.remove('hidden');
   document.getElementById('briefActionBar').style.display = 'none';
+  document.getElementById('genActionBar').style.display = 'flex';
   document.getElementById('tabTimeline').classList.remove('locked');
   document.getElementById('tabStudio').classList.remove('locked');
   setStep(2);
@@ -1623,6 +1648,7 @@ function proceedToGenerate(){
   document.getElementById('briefView').classList.add('hidden');
   document.getElementById('generateView').classList.remove('hidden');
   document.getElementById('briefActionBar').style.display = 'none';
+  document.getElementById('genActionBar').style.display = 'flex';
 
   const hasImages = referenceImages.length > 0;
   document.getElementById('chatAttachments').style.display = hasImages ? 'flex' : 'none';
@@ -1756,6 +1782,7 @@ function renderScriptProposalMessage(scriptText, introText){
 function handleScriptProposalClick(btn){
   const box = btn.closest('.script-proposal-box');
   if(box.classList.contains('applied')){
+    btn.disabled = true;
     confirmScript();
     return;
   }
@@ -2097,8 +2124,34 @@ function showSub(name){
   Object.values(subs).forEach(id => document.getElementById(id).style.display = 'none');
   document.getElementById(subs[name]).style.display = 'flex';
   if(name !== 'studio') document.getElementById('settingsBar').style.display = '';
+  syncGenActionBar();
 }
 showSub('script');
+
+// ---- Bottom Feedback bar (persistent across Script/Timeline/Video) — mirrors whichever
+// primary CTA is currently visible in the main panel, so there's always a way to advance
+// without scrolling up, matching Figma's Feedback component on every Generate sub-stage. ----
+function syncGenActionBar(){
+  const btn = document.getElementById('genActionBtn');
+  if(!btn) return;
+  let sourceBtn = null;
+  if(document.getElementById('subScript').style.display !== 'none'){
+    sourceBtn = document.querySelector('#subScript .stage-cta-row .btn-dark');
+  } else if(document.getElementById('subTimeline').style.display !== 'none'){
+    sourceBtn = document.getElementById('timelineCtaBtn');
+  } else if(document.getElementById('subStudio').style.display !== 'none'){
+    sourceBtn = document.getElementById('combineResultView').style.display !== 'none'
+      ? document.querySelector('#combineResultView .combine-result-actions .btn-dark')
+      : document.getElementById('videoCtaBtn');
+  }
+  if(sourceBtn){
+    btn.textContent = sourceBtn.textContent;
+    btn.disabled = sourceBtn.disabled;
+    btn.onclick = () => sourceBtn.click();
+  }
+  const durEl = document.getElementById('genMetaDuration');
+  if(durEl) durEl.textContent = (window.__videoDuration || 16) + 's';
+}
 
 // ---- Settings bar: Character / Voice popovers ----
 function toggleSettingPopover(e, which){
@@ -2138,9 +2191,11 @@ function selectSettingVoice(el, label){
 }
 
 // Mirrors the main-panel stage CTAs inside the chat log, so the flow can be driven from either side.
-function appendChatCta(text, buttonsHtml){
+// Rendered as a bordered "AI proposal card" (title + desc + full-width button), matching Figma's
+// Generate Script / Generate Video / Ready to Generate card pattern.
+function appendChatCta(title, desc, buttonsHtml){
   const log = document.getElementById('chatLog');
-  log.innerHTML += `<div class="msg ai"><span class="tag">AI</span>${text}<div class="chat-cta-row">${buttonsHtml}</div></div>`;
+  log.innerHTML += `<div class="msg ai"><div class="ai-cta-card"><div class="ai-cta-card-title">${escapeHtml(title)}</div>${desc ? `<p class="ai-cta-card-desc">${escapeHtml(desc)}</p>` : ''}${buttonsHtml}</div></div>`;
   log.scrollTop = log.scrollHeight;
 }
 
@@ -2160,7 +2215,7 @@ function confirmScript(){
   const videoMsg = unitCount > 1
     ? `Once you're happy with the scenes, I'll generate ${unitCount} 8-second video clips — the current minimum length — and combine them into your final ${durationSec}s video.`
     : `Once you're happy with the scenes, I'll generate your ${durationSec}-second video.`;
-  appendChatCta(videoMsg, `<button class="btn btn-dark" onclick="proceedToStudio()">Generate video ⚡${totalCost} →</button>`);
+  appendChatCta('Generate Video', videoMsg, `<button class="btn btn-dark" onclick="this.disabled=true; proceedToStudio()">Generate video ⚡${totalCost} →</button>`);
   document.getElementById('chatQuick').innerHTML = `
     <div class="quick-chip" onclick="quickAction('regen-all-scenes')">Regenerate all</div>
     <div class="quick-chip" onclick="quickAction('add-scene')">Add a scene</div>
@@ -2693,7 +2748,7 @@ function startVideoGeneration(){
       applySampleVideoFrame(t, i);
     });
     updateVideoCta();
-    appendChatCta('All video clips are ready.', '<button class="btn btn-dark" onclick="combineVideo()">Combine into final video →</button>');
+    appendChatCta('Combine into Final Video', 'Combine your scene clips into one final video. This step is free — no credits used.', '<button class="btn btn-dark" onclick="this.disabled=true; combineVideo()">Combine into final video →</button>');
   }, 'Video');
 }
 // Prototype stand-in for a real generated clip's first frame — cycles between the two sample
@@ -2763,7 +2818,7 @@ function combineVideo(){
   updateVideoCta();
   document.getElementById('tabStudio').innerHTML = '<span class="check">✓</span> Video';
   document.getElementById('chatLog').innerHTML += '<div class="msg ai"><span class="tag">AI</span>Combined all scenes into the final cut — free, no credits used. Your narration track from Timeline is already mixed in.</div>';
-  appendChatCta('Your video is ready. What\'s next?', '<button class="btn btn-dark" onclick="continueToEditing()">Continue to editing →</button><button class="btn btn-secondary" onclick="skipToPublish()">Skip to publish</button>');
+  appendChatCta('Your video is ready. What\'s next?', '', '<button class="btn btn-dark" onclick="this.parentElement.querySelectorAll(\'button\').forEach(b => b.disabled = true); continueToEditing()">Continue to editing →</button><button class="btn btn-secondary" onclick="this.parentElement.querySelectorAll(\'button\').forEach(b => b.disabled = true); skipToPublish()">Skip to publish</button>');
   showCombineResult();
 }
 
@@ -2778,6 +2833,7 @@ function showCombineResult(){
     return `<div class="combine-tick" style="left:${pct}%"></div>`;
   }).join('');
   renderCombineSummaryCard();
+  syncGenActionBar();
 }
 
 function getAutoVideoTitle(){
@@ -2852,6 +2908,7 @@ function backToSceneVideos(){
   document.getElementById('combineResultView').style.display = 'none';
   document.querySelector('#subStudio .timeline-stage').style.display = 'flex';
   document.getElementById('settingsBar').style.display = '';
+  syncGenActionBar();
 }
 
 function playCombineResult(btn){
@@ -3506,6 +3563,7 @@ function updateVideoCta(){
     btn.onclick = showCombineResult;
     meta.textContent = 'Combined and up to date';
   }
+  syncGenActionBar();
 }
 
 function quickAction(action){
