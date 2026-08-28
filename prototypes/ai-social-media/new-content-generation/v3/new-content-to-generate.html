@@ -27,6 +27,7 @@
 <link rel="stylesheet" href="../../../../components/ai-social-media/date-picker.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/carousel-card-block.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/image-scene-card.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/storyboard-card.css">
 <!-- Playfair Display: only used live for the Draft screen's brand-kit font-preview tags (Formee
      Express's Heading face, matching brand-setup-kit-character-library.html's own import). -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap">
@@ -207,8 +208,6 @@
   .visual-concept-text:focus{border-color:var(--color-brand-primary);}
 
   .scene-desc-label{font-size:11px; font-weight:700; color:var(--color-neutral-500); text-transform:uppercase; letter-spacing:.04em; display:block; margin-bottom:6px;}
-  .story-desc-input{width:100%; min-height:70px; border:1px solid var(--color-neutral-300); border-radius:8px; padding:10px 12px; font-size:13px; font-family:var(--font-family-text); color:var(--color-neutral-900); line-height:1.5; resize:vertical; outline:none;}
-  .story-desc-input:focus{border-color:var(--color-brand-primary);}
 
   /* ---- Versions + Preview stages (Image) ----
      Figma: Image post · Versions (6269-124021) + the same screen's Preview tab (6269-124472).
@@ -285,59 +284,55 @@
   .script-card-msg{min-height:44px; resize:vertical; outline:none;}
   .script-card-msg:focus{border-color:var(--color-brand-primary);}
 
-  /* ---- Storyboard stage (Carousel): canvas grid (mirrors the video Timeline) + selected-card editor sidebar ---- */
+  /* ---- Storyboard stage (Carousel): canvas grid (mirrors the video Timeline) + selected-card editor sidebar ----
+     Figma: Carousel · storyboard (node 6484-112481). Cards now use the real
+     components/ai-social-media/storyboard-card.css component — data-type="storyboard" while a
+     card has no image yet (headline/subhead/body/CTA preview + Card N badge), data-type="image"
+     once generation has started (icon row + placeholder/generated image + a version-chip row
+     once a card has more than one version) — instead of a local .storyboard-tile
+     reimplementation. Only the generating-spinner state below is a scoped addition on top of
+     that shared file (the static Figma capture has no "AI is working" state to derive one from). */
   .storyboard-stage{display:flex; gap:20px; flex:1; min-height:0;}
   .storyboard-canvas{flex:1; min-width:0; min-height:0; display:flex; flex-direction:column;}
-  .storyboard-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); grid-auto-rows:min-content; gap:14px; align-content:start; flex:1; min-height:0; overflow-y:auto;}
-  /* Not a full component-class swap (unlike Scene Tile/Video Summary Card/etc.) — this
-     tile transitions IN PLACE between the shared component's two Figma types
-     (copy-overlay while "pending", generated-image once "ready"/"generating"), plus real
-     product states (regenerate button, version-history pager) the static Figma export
-     never needed. Values below are aligned to storyboard-card.css's verified spec even
-     though the class names stay local. */
-  .storyboard-tile{border:1px solid var(--color-neutral-400); border-radius:var(--radius-xl); overflow:hidden; cursor:pointer; background:var(--color-neutral-0); transition:border-color 0.15s;}
-  .storyboard-tile:hover{border-color:var(--color-neutral-450);}
-  .storyboard-tile.active{border-color:var(--color-neutral-500);}
-  .storyboard-tile-preview{position:relative; width:100%; aspect-ratio:4/5; overflow:hidden; background:var(--color-neutral-100);}
-  .storyboard-tile.ready .storyboard-tile-preview,
-  .storyboard-tile.generating .storyboard-tile-preview{background:var(--color-neutral-200);}
-  .storyboard-tile.generating .storyboard-tile-badge{display:none;}
-  .storyboard-tile.generating .spinner-mini{display:block;}
-  .storyboard-tile-preview .spinner-mini{position:absolute; top:50%; left:50%; margin:-11px 0 0 -11px;}
-  .storyboard-tile-badge{font-size:11px; font-weight:600; line-height:16px; color:var(--color-neutral-0); background:rgba(71,80,105,.6); padding:4px 8px; border-radius:var(--radius-sm);}
-  .storyboard-tile-char-badge{font-size:10px; font-weight:600; color:var(--color-neutral-0); background:rgba(71,80,105,.6); padding:4px 7px; border-radius:var(--radius-sm); white-space:nowrap;}
-  .storyboard-tile-char-badge.off{background:rgba(71,80,105,.3); color:rgba(255,255,255,0.8);}
-  .storyboard-tile-overlay-top{position:absolute; top:8px; left:8px; right:8px; display:flex; align-items:center; justify-content:space-between; gap:6px;}
-  .storyboard-tile-bottom-row{position:absolute; left:10px; right:10px; bottom:10px; display:flex; align-items:center; justify-content:space-between; gap:6px; z-index:2;}
-  .storyboard-tile-copy{position:absolute; inset:0; padding:14px 12px 40px; display:flex; flex-direction:column; gap:6px; overflow:hidden;}
-  .storyboard-tile-copy-headline{font-size:13px; font-weight:600; color:var(--color-neutral-800); line-height:20px;}
-  .storyboard-tile-copy-subhead{font-size:12px; font-weight:500; color:var(--color-neutral-700); line-height:18px;}
-  .storyboard-tile-copy-cta{align-self:flex-start; margin-top:2px; font-size:10px; font-weight:500; color:var(--color-neutral-0); background:var(--color-neutral-700); padding:4px 8px; border-radius:var(--radius-md); white-space:nowrap;}
-  .storyboard-tile-ready-badge{display:none; align-items:center; gap:3px; font-size:10px; font-weight:600; line-height:14px; color:var(--color-badge-green-text); background:var(--color-badge-green-bg); padding:4px 8px; border-radius:999px; box-shadow:0 4px 4px rgba(15,23,41,.08),0 2px 2px rgba(15,23,41,.05);}
-  .storyboard-tile.ready .storyboard-tile-ready-badge{display:inline-flex;}
-  .storyboard-tile-regen-btn{display:none; width:24px; height:24px; border-radius:999px; border:none; background:rgba(255,255,255,0.92); align-items:center; justify-content:center; font-size:12px; color:var(--color-neutral-700); cursor:pointer; margin-left:auto;}
-  .storyboard-tile-regen-btn:hover{background:#fff; color:var(--color-neutral-900);}
-  .storyboard-tile.ready .storyboard-tile-regen-btn{display:flex;}
-  .storyboard-tile-pager{display:none; align-items:center; justify-content:center; gap:6px; padding:6px 8px; border-top:1px solid var(--color-neutral-200); font-size:11px; font-weight:600; color:var(--color-neutral-700); background:#fff;}
-  .storyboard-tile.has-history .storyboard-tile-pager{display:flex;}
-  .storyboard-tile-pager button{width:18px; height:18px; border-radius:999px; border:1px solid var(--color-neutral-300); background:#fff; color:var(--color-neutral-700); font-size:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;}
-  .storyboard-tile-pager button:hover{border-color:var(--color-neutral-450);}
-  .storyboard-tile-pager button:disabled{opacity:.35; cursor:default;}
+  .storyboard-grid{display:grid; grid-template-columns:repeat(3, 1fr); grid-auto-rows:min-content; gap:var(--spacing-xl); align-content:start; flex:1; min-height:0; overflow-y:auto;}
+  .storyboard-card{cursor:pointer;}
+  .storyboard-card-preview{position:relative;}
+  .storyboard-card .storyboard-card-preview .spinner-mini{position:absolute; top:50%; left:50%; margin:-11px 0 0 -11px; display:none;}
+  .storyboard-card.generating .storyboard-card-preview{opacity:.55;}
+  .storyboard-card.generating .storyboard-card-preview .spinner-mini{display:block;}
+  .storyboard-card-char-badge{position:absolute; left:16px; bottom:16px; font-size:10px; font-weight:600; color:var(--color-neutral-0); background:rgba(71,80,105,.6); padding:4px 7px; border-radius:var(--radius-sm); white-space:nowrap;}
+  .storyboard-card-char-badge.off{background:rgba(71,80,105,.3); color:rgba(255,255,255,0.8);}
 
-  .storyboard-editor-col{width:320px; flex-shrink:0; display:flex; flex-direction:column;}
-  .storyboard-nav{display:flex; align-items:center; gap:6px; flex-shrink:0; margin-bottom:10px; flex-wrap:wrap;}
-  .storyboard-nav-label{font-size:11px; font-weight:600; color:var(--color-neutral-500); margin-right:2px;}
-  .card-nav-btn{width:24px; height:24px; border-radius:6px; border:1px solid var(--color-neutral-300); background:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; color:var(--color-neutral-700); cursor:pointer;}
-  .card-nav-btn:hover{border-color:var(--color-neutral-450);}
-  .card-nav-btn.active{background:var(--color-brand-primary-light); border-color:var(--color-brand-primary); color:var(--color-neutral-900);}
-  .storyboard-editor-panel{width:100%;}
-  .storyboard-card-editor{border:1px solid var(--color-neutral-300); border-radius:10px; padding:16px;}
-  .regen-pill-btn{display:inline-flex; align-items:center; gap:8px; margin-top:14px; padding:10px 18px; border-radius:999px; border:1px solid var(--color-neutral-300); background:#fff; font-size:13px; font-weight:700; color:var(--color-neutral-900); font-family:var(--font-family-text); cursor:pointer;}
-  .regen-pill-btn:hover:not(:disabled){border-color:var(--color-neutral-450);}
-  .regen-pill-btn:disabled{opacity:.4; cursor:not-allowed;}
-  .regen-pill-cost{color:var(--color-neutral-500); font-weight:700;}
-  .storyboard-generate-cta{margin-top:14px;}
-  .storyboard-generate-cta .meta-text{display:block; margin-top:8px;}
+  /* Editor column — same scene-nav (28px segment-nav-btn)/copy-field-list/scene-card pattern as
+     the Reel/Short Timeline and Image post Versions panels (Figma names this "storyboard-editor-col"
+     but it's structurally identical, so it reuses those exact shared classes for consistency). */
+  .storyboard-editor-col{width:320px; flex-shrink:0; display:flex; flex-direction:column; gap:var(--spacing-2xl); overflow-y:auto;}
+  .storyboard-nav{display:flex; align-items:center; gap:var(--spacing-xl); flex-shrink:0; flex-wrap:wrap;}
+  #stageAreaCarousel .storyboard-nav .segment-nav-btn{width:28px; height:28px; border-radius:6px;}
+  #stageAreaCarousel .storyboard-nav .segment-nav-btn.active{background:var(--color-neutral-150); border-color:var(--color-neutral-500); color:var(--color-neutral-900); font-weight:600;}
+  .storyboard-editor-panel{width:100%; display:flex; flex-direction:column; gap:var(--spacing-2xl);}
+  .storyboard-card-editor{display:flex; flex-direction:column; gap:var(--spacing-sm);}
+  .scene-section-title{font-size:14px; line-height:22px; font-weight:600; color:var(--color-neutral-900); margin:0;}
+  .scene-card{border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl); background:#fff; padding:16px; display:flex; flex-direction:column; gap:var(--spacing-sm);}
+  .scene-desc-box-reference{display:inline-flex; align-items:center; gap:6px; width:fit-content; background:var(--color-neutral-100); border-radius:8px; padding:8px 12px;}
+  .scene-desc-box-reference img{width:20px; height:20px; display:block;}
+  .scene-desc-box-reference span{font-size:13px; font-weight:500; color:var(--color-neutral-450); font-family:var(--font-family-text);}
+  .storyboard-generate-cta{margin-top:0;}
+  .storyboard-generate-cta .meta-text{display:block; margin-top:8px; font-size:12px; color:var(--color-neutral-500);}
+
+  /* ---- Preview stage (Carousel): read-only until "Edit" is clicked ----
+     Figma: same screen, "Preview" tab (nodes 6566-115391 default / 6676-124531 edited-and-
+     regenerate-enabled). Fields stay visually muted and non-interactive until Edit is clicked;
+     Regenerate Card N only lights up once something has actually changed since the last
+     generated image (see captureCardBaseline/syncPreviewRegenGate). */
+  .copy-field-list.readonly{pointer-events:none;}
+  .copy-field-list.readonly .copy-field-input{color:var(--color-neutral-500);}
+  .copy-field-list.readonly .field-switch{opacity:.5;}
+  .scene-desc[disabled]{color:var(--color-neutral-500); background:var(--color-neutral-50); cursor:default;}
+  .preview-edit-btn{height:28px; padding:0 14px; font-size:12px;}
+  .preview-undo-redo{display:flex; gap:6px;}
+  #stageAreaCarousel .preview-undo-redo .segment-nav-btn{width:28px; height:28px; border-radius:6px; padding:0;}
+  .preview-cta-row{display:flex; gap:10px; margin-top:4px;}
 
   /* ---- Size variations panel (Carousel Storyboard) ---- */
   .storyboard-header-row{display:flex; align-items:flex-start; justify-content:space-between; gap:16px;}
@@ -378,23 +373,13 @@
   .preview-heading-row h2{margin:0 0 4px;}
   .preview-download-all{display:flex; align-items:center; gap:4px;}
   .preview-download-all img{width:16px; height:16px;}
-  .preview-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:20px; align-content:start; flex:1; min-height:0; overflow-y:auto;}
-  .preview-tile{cursor:pointer;}
-  .preview-tile-frame{position:relative; width:100%; aspect-ratio:303/379; border:1px solid var(--color-neutral-400); border-radius:var(--radius-xl); background:var(--color-neutral-200); display:flex; flex-direction:column; justify-content:space-between; padding:16px; overflow:hidden; transition:border-color .15s; margin-bottom:8px;}
-  .preview-tile.active .preview-tile-frame{border-color:var(--color-neutral-500);}
-  .preview-tile-top-row{display:flex; justify-content:flex-end; gap:8px;}
-  .preview-icon-btn{width:24px; height:24px; border-radius:var(--radius-md); border:1px solid var(--color-neutral-400); background:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 1px 1.5px rgba(15,23,41,0.1),0 1px 0.5px rgba(15,23,41,0.04); padding:0;}
-  .preview-icon-btn img{width:14px; height:14px; display:block;}
-  .preview-icon-btn.ghost{background:rgba(255,255,255,0.35); border:none; backdrop-filter:blur(5px); box-shadow:none;}
-  .preview-icon-btn.ghost img{width:16px; height:16px;}
-  .preview-tile-image{flex:1; display:flex; align-items:center; justify-content:center;}
-  .preview-tile-image img{width:72px; height:72px; opacity:.6;}
-  .preview-version-pills{display:flex; gap:8px; flex-wrap:wrap;}
-  .version-pill{height:28px; padding:0 13px; border-radius:999px; border:1px solid var(--color-neutral-400); background:#fff; font-size:12px; font-weight:500; color:var(--color-neutral-700); cursor:pointer; font-family:var(--font-family-text);}
-  .version-pill.active{background:var(--color-neutral-150); border-color:var(--color-neutral-500); font-weight:600; color:var(--color-neutral-900);}
-  .preview-editor-col{width:358px; flex-shrink:0; display:flex; flex-direction:column;}
-  .preview-undo-redo{display:flex; gap:6px; margin-left:auto;}
-  .card-nav-btn.icon img{width:14px; height:14px; display:block;}
+  /* Preview's grid/editor-col are visually identical to Storyboard's (same real components,
+     see the "Storyboard stage" block above) — just re-declared under their own class names
+     since the HTML keeps separate ids for the two tabs' containers. */
+  .preview-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:var(--spacing-xl); align-content:start; flex:1; min-height:0; overflow-y:auto;}
+  .preview-editor-col{width:358px; flex-shrink:0; display:flex; flex-direction:column; gap:var(--spacing-2xl); overflow-y:auto;}
+  /* .version-pill/.version-pill.active is also used by the Image flow's chat CTA pills
+     (checkAllVersionsReady()) — kept as a bare shared class, not redefined here. */
   .preview-cta-row{display:flex; gap:14px; margin-top:14px;}
   .preview-cta-row .btn{flex:1;}
 
@@ -3522,83 +3507,77 @@ function renderStoryboardGrid(){
   // Keep the Preview tab's grid (finished-carousel review) in sync — it reads the same
   // __cardImageHistory data, just rendered with download/expand actions instead of a regen badge.
   renderPreviewGrid();
-  for(let i = 1; i <= n; i++) updatePreviewCardRegenBtn(i);
+  for(let i = 1; i <= n; i++) syncPreviewRegenGate(i);
 }
 function storyboardTileCharBadgeHtml(n){
   if(window.__charMode !== 'with') return '';
-  return `<span class="storyboard-tile-char-badge ${window.__cardCharacterOn[n] ? '' : 'off'}">${window.__cardCharacterOn[n] ? '<img src="../../../../components/ai-social-media/icons/nav-characters.svg" class="icon-inline" alt=""> Character' : 'No character'}</span>`;
+  return `<span class="storyboard-card-char-badge ${window.__cardCharacterOn[n] ? '' : 'off'}">${window.__cardCharacterOn[n] ? '<img src="../../../../components/ai-social-media/icons/nav-characters.svg" class="icon-inline" alt=""> Character' : 'No character'}</span>`;
 }
+// Real Storyboard Card component (components/ai-social-media/storyboard-card.css, Figma node
+// 6566-115735): data-type="storyboard" (copy preview) before a card has an image, data-type="image"
+// (icon row + placeholder/generated image + version chips) once generation has started.
 function renderStoryboardTile(n){
   const hist = window.__cardImageHistory[n];
-  const isActive = n === window.__storyboardSelectedCard;
+  const isSelected = n === window.__storyboardSelectedCard;
 
-  // Not generated yet — preview the on-card copy as plain text, inside the same fixed 4:5 box
-  // and bottom badge row the generated states use, so nothing shifts once the image appears.
   if(!hist){
+    const fields = ensureCardCopyFields(n);
+    const headline = fields.find(f => f.key === 'headline');
+    const subhead = fields.find(f => f.key === 'subhead');
+    const cta = fields.find(f => f.key === 'cta');
     return `
-      <div class="storyboard-tile pending${isActive ? ' active' : ''}" data-card="${n}" id="storyboardTile${n}" onclick="selectStoryboardCard(${n})">
-        <div class="storyboard-tile-preview">
-          <div class="storyboard-tile-copy" id="storyboardTileCopy${n}">${storyboardTileCopyHtml(n)}</div>
-          <div class="storyboard-tile-bottom-row">
-            <span class="storyboard-tile-badge">Card ${n}</span>
-            ${storyboardTileCharBadgeHtml(n)}
-          </div>
+      <div class="storyboard-card${isSelected ? ' selected' : ''}" data-type="storyboard" data-card="${n}" id="storyboardTile${n}" onclick="selectStoryboardCard(${n})">
+        <div class="storyboard-card-preview">
+          ${headline && headline.on && headline.text ? `<p class="storyboard-card-headline">${escapeHtml(headline.text)}</p>` : ''}
+          ${subhead && subhead.on && subhead.text ? `<p class="storyboard-card-subhead">${escapeHtml(subhead.text)}</p>` : ''}
+          ${cta && cta.on && cta.text ? `<span class="storyboard-card-cta">${escapeHtml(cta.text)}</span>` : ''}
+          <div class="storyboard-card-spacer"></div>
+          <span class="storyboard-card-badge">Card ${n}</span>
+          ${storyboardTileCharBadgeHtml(n)}
         </div>
       </div>`;
   }
 
   const idx = window.__cardImageActiveIndex[n];
-  let stateClass = hist[idx].ready ? 'ready' : 'generating';
-  let pagerHtml = '';
-  if(hist.length > 1){
-    stateClass += ' has-history';
-    pagerHtml = `
-      <div class="storyboard-tile-pager">
-        <button onclick="event.stopPropagation(); cardHistoryPrev(${n})" ${idx === 0 ? 'disabled' : ''}>‹</button>
-        <span>${idx + 1}/${hist.length}</span>
-        <button onclick="event.stopPropagation(); cardHistoryNext(${n})" ${idx === hist.length - 1 ? 'disabled' : ''}>›</button>
-      </div>`;
-  }
+  const ready = hist[idx].ready;
+  const chipsHtml = hist.length > 1
+    ? `<div class="storyboard-card-version-row">${hist.map((h, i) => `<button type="button" class="storyboard-version-chip${i === idx ? ' selected' : ''}" onclick="event.stopPropagation(); selectCardHistoryVersion(${n}, ${i})">${h.ready ? '' : '<span class="mini-spinner"></span>'}V${i === 0 ? '1' : '1.' + i}</button>`).join('')}</div>`
+    : '';
   return `
-    <div class="storyboard-tile ${stateClass}${isActive ? ' active' : ''}" data-card="${n}" id="storyboardTile${n}" onclick="selectStoryboardCard(${n})">
-      <div class="storyboard-tile-preview">
-        <div class="storyboard-tile-overlay-top">
-          <span class="storyboard-tile-ready-badge">Ready</span>
-          <button type="button" class="storyboard-tile-regen-btn" onclick="event.stopPropagation(); regenerateCard(${n})" title="Regenerate this card only · ⚡${CARD_REGEN_CREDIT}"><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt=""></button>
+    <div class="storyboard-card${isSelected ? ' selected' : ''}${ready ? '' : ' generating'}" data-type="image" data-card="${n}" id="storyboardTile${n}" onclick="selectStoryboardCard(${n})">
+      <div class="storyboard-card-preview">
+        <div class="storyboard-card-top-row">
+          <button class="storyboard-card-icon-btn download" type="button" onclick="event.stopPropagation(); downloadCard(${n})"><img src="../../../../components/ai-social-media/icons/download-ui.svg" alt=""></button>
+          <button class="storyboard-card-icon-btn maximize" type="button" onclick="event.stopPropagation(); expandCard(${n})"><img src="../../../../components/ai-social-media/icons/maximize.svg" alt=""></button>
         </div>
+        <div class="storyboard-card-image-empty"><img src="../../../../components/ai-social-media/icons/content-image.svg" alt=""></div>
         <div class="spinner-mini"></div>
-        <div class="storyboard-tile-bottom-row">
-          <span class="storyboard-tile-badge">Card ${n}</span>
-          ${storyboardTileCharBadgeHtml(n)}
-        </div>
+        ${storyboardTileCharBadgeHtml(n)}
       </div>
-      ${pagerHtml}
+      ${chipsHtml}
     </div>`;
 }
-// Only rendered while a card is pending (before "Generate images"): once that card's real
-// image exists, it will already carry this text, so the plain-text preview is no longer needed.
-function storyboardTileCopyHtml(n){
-  const fields = ensureCardCopyFields(n);
-  const headline = fields.find(f => f.key === 'headline');
-  const subhead = fields.find(f => f.key === 'subhead');
-  const cta = fields.find(f => f.key === 'cta');
-  const parts = [];
-  if(headline && headline.on && headline.text) parts.push(`<div class="storyboard-tile-copy-headline">${escapeHtml(headline.text)}</div>`);
-  if(subhead && subhead.on && subhead.text) parts.push(`<div class="storyboard-tile-copy-subhead">${escapeHtml(subhead.text)}</div>`);
-  if(cta && cta.on && cta.text) parts.push(`<div class="storyboard-tile-copy-cta">${escapeHtml(cta.text)}</div>`);
-  return parts.join('');
-}
+// Re-renders just one tile in place — called after a copy-field edit (headline/subhead/CTA live
+// in the separate copy-field-list, not this tile, so this never risks losing input focus).
 function updateStoryboardTileCopyOverlay(n){
-  const el = document.getElementById('storyboardTileCopy' + n);
-  if(el) el.innerHTML = storyboardTileCopyHtml(n);
+  const tile = document.getElementById('storyboardTile' + n);
+  if(tile && tile.dataset.type === 'storyboard') tile.outerHTML = renderStoryboardTile(n);
 }
 function buildStoryboardCardNav(){
   const n = window.__cardCount;
   const buttons = Array.from({length: n}, (_, i) => {
     const num = i + 1;
-    return `<div class="card-nav-btn${num === window.__storyboardSelectedCard ? ' active' : ''}" data-target="${num}" onclick="selectStoryboardCard(${num})">${num}</div>`;
+    return `<div class="segment-nav-btn${num === window.__storyboardSelectedCard ? ' active' : ''}" data-target="${num}" onclick="selectStoryboardCard(${num})">${num}</div>`;
   }).join('');
   document.getElementById('storyboardCardNav').innerHTML = `<span class="storyboard-nav-label">Card</span>${buttons}`;
+}
+function sceneDescBoxHtml({id, card, field, value, onInput, showReference, disabled}){
+  return `
+    <div class="scene-desc-box">
+      ${showReference ? `<div class="scene-desc-box-reference"><img src="../../../../components/ai-social-media/icons/content-image-plus.svg" alt="">
+      <span>Reference</span></div>` : ''}
+      <textarea class="scene-desc" id="${id}" data-card="${card}" data-field="${field}" oninput="${onInput}" ${disabled ? 'disabled' : ''}>${escapeHtml(value || '')}</textarea>
+    </div>`;
 }
 function renderStoryboardEditorPanels(){
   const n = window.__cardCount;
@@ -3607,11 +3586,13 @@ function renderStoryboardEditorPanels(){
     return `
       <div class="storyboard-card-editor" id="storyboardCardEditor${num}" style="${num === 1 ? '' : 'display:none;'}">
         <div class="copy-field-list" id="copyFieldList${num}"></div>
-        <label class="scene-desc-label">Scene &amp; background description</label>
-        <textarea class="story-desc-input" data-card="${num}" oninput="updateCardDescription(${num}, this.value)">${escapeHtml(window.__cardDescriptions[num] || '')}</textarea>
-        <button type="button" class="regen-pill-btn" id="storyboardCardRegenBtn${num}" onclick="regenerateCard(${num})" disabled>
-          <span><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt=""></span> Regenerate <span class="regen-pill-cost"><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">${CARD_REGEN_CREDIT}</span>
-        </button>
+        <div>
+          <p class="scene-section-title">Scene &amp; background description</p>
+          <div class="scene-card" style="margin-top:8px;">
+            ${sceneDescBoxHtml({id:'storyDesc' + num, card:num, field:'desc', value:window.__cardDescriptions[num], onInput:`updateCardDescription(${num}, this.value)`, showReference:true})}
+          </div>
+        </div>
+        <button type="button" class="img-prompt-regen-btn" id="storyboardCardRegenBtn${num}" onclick="regenerateCard(${num})" disabled><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt="">Regenerate <span class="cost"><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">${CARD_REGEN_CREDIT}</span></button>
       </div>`;
   }).join('');
   for(let i = 1; i <= n; i++){
@@ -3635,6 +3616,10 @@ function renderCardCopyFieldsInto(n, listId){
   const list = document.getElementById(listId);
   if(!list) return;
   const fields = ensureCardCopyFields(n);
+  // Preview's copy fields stay read-only until "Edit" is clicked for that card (Figma:
+  // node 6566-115391 default vs 6676-124531 edited) — Storyboard's own list is always live.
+  const isPreviewList = listId.indexOf('previewCopyFieldList') === 0;
+  list.classList.toggle('readonly', isPreviewList && !window.__previewEditMode[n]);
   list.innerHTML = fields.map((f, i) => `
     <div class="copy-field ${f.on ? '' : 'off'}" data-key="${f.key}">
       <div class="copy-field-body">
@@ -3649,6 +3634,7 @@ function toggleCardCopyField(n, i){
   fields[i].on = !fields[i].on;
   renderCardCopyFields(n);
   updateStoryboardTileCopyOverlay(n);
+  syncPreviewRegenGate(n);
 }
 function onCardCopyFieldInput(n, i, value){
   const fields = ensureCardCopyFields(n);
@@ -3662,6 +3648,7 @@ function onCardCopyFieldInput(n, i, value){
     const input = list.querySelectorAll('.copy-field-input')[i];
     if(input && input.value !== value) input.value = value;
   });
+  syncPreviewRegenGate(n);
 }
 function toggleCardCharacter(n){
   window.__cardCharacterOn[n] = !window.__cardCharacterOn[n];
@@ -3672,25 +3659,71 @@ function updateCardDescription(n, value){
   window.__cardDescriptions[n] = value;
   // Mirror into the other tab's textarea for the same card (Storyboard <-> Preview) without
   // touching the one currently focused, so typing never loses cursor position.
-  document.querySelectorAll(`.story-desc-input[data-card="${n}"]`).forEach(el => {
+  document.querySelectorAll(`.scene-desc[data-card="${n}"][data-field="desc"]`).forEach(el => {
     if(el.value !== value) el.value = value;
   });
+  syncPreviewRegenGate(n);
+}
+
+// ---- Preview's "Image prompt" field (Figma: node 6566-115391/6676-124531 only — Storyboard
+// itself has no second box) — auto-composed once from the scene description + on-card copy,
+// then independently editable. ----
+window.__cardImagePrompts = {};
+function ensureCardImagePrompt(n){
+  if(window.__cardImagePrompts[n] === undefined){
+    const fields = ensureCardCopyFields(n);
+    const onParts = fields.filter(f => f.on && f.text).map(f => `${f.label}: "${f.text}"`);
+    window.__cardImagePrompts[n] = `${window.__cardDescriptions[n] || ''} On-card text — ${onParts.join('. ')}.`;
+  }
+  return window.__cardImagePrompts[n];
+}
+function updateCardImagePrompt(n, value){
+  window.__cardImagePrompts[n] = value;
+  document.querySelectorAll(`.scene-desc[data-card="${n}"][data-field="prompt"]`).forEach(el => {
+    if(el.value !== value) el.value = value;
+  });
+  syncPreviewRegenGate(n);
+}
+
+// ---- Preview dirty-check: "Regenerate Card N" only lights up once the copy, description, or
+// image prompt has actually changed since that card's image was last (re)generated. ----
+window.__cardEditBaseline = {};
+window.__previewEditMode = {};
+function cardEditSnapshot(n){
+  const fields = ensureCardCopyFields(n);
+  return JSON.stringify({ h: fields.map(f => f.on + '|' + f.text), d: window.__cardDescriptions[n] || '', p: ensureCardImagePrompt(n) });
+}
+function captureCardBaseline(n){
+  window.__cardEditBaseline[n] = cardEditSnapshot(n);
+}
+function syncPreviewRegenGate(n){
+  const btn = document.getElementById('previewCardRegenBtn' + n);
+  if(!btn) return;
+  const hist = window.__cardImageHistory[n];
+  const ready = !!(hist && hist[window.__cardImageActiveIndex[n]] && hist[window.__cardImageActiveIndex[n]].ready);
+  const dirty = window.__cardEditBaseline[n] !== undefined && cardEditSnapshot(n) !== window.__cardEditBaseline[n];
+  btn.disabled = !(ready && window.__previewEditMode[n] && dirty);
+}
+function togglePreviewEditMode(n){
+  window.__previewEditMode[n] = !window.__previewEditMode[n];
+  renderPreviewEditorPanels();
+  buildPreviewCardNav();
 }
 function selectStoryboardCard(n){
   n = Number(n);
   window.__storyboardSelectedCard = n;
-  document.querySelectorAll('#storyboardGrid .storyboard-tile').forEach(t => t.classList.toggle('active', Number(t.dataset.card) === n));
-  document.querySelectorAll('#storyboardCardNav .card-nav-btn, #previewCardNav .card-nav-btn').forEach(b => b.classList.toggle('active', Number(b.dataset.target) === n));
+  document.querySelectorAll('#storyboardGrid .storyboard-card').forEach(t => t.classList.toggle('selected', Number(t.dataset.card) === n));
+  document.querySelectorAll('#storyboardCardNav .segment-nav-btn, #previewCardNav .segment-nav-btn').forEach(b => b.classList.toggle('active', Number(b.dataset.target) === n));
   document.querySelectorAll('.storyboard-card-editor').forEach(e => e.style.display = 'none');
   const editor = document.getElementById('storyboardCardEditor' + n);
-  if(editor) editor.style.display = 'block';
+  if(editor) editor.style.display = 'flex';
   const tile = document.getElementById('storyboardTile' + n);
   if(tile) tile.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
   // Keep the Preview tab's grid/editor selection pointed at the same card.
-  document.querySelectorAll('#previewGrid .preview-tile').forEach(t => t.classList.toggle('active', Number(t.dataset.card) === n));
+  document.querySelectorAll('#previewGrid .storyboard-card').forEach(t => t.classList.toggle('selected', Number(t.dataset.card) === n));
   document.querySelectorAll('.preview-card-editor').forEach(e => e.style.display = 'none');
   const previewEditor = document.getElementById('previewCardEditor' + n);
-  if(previewEditor) previewEditor.style.display = 'block';
+  if(previewEditor) previewEditor.style.display = 'flex';
 }
 function toggleGlobalBrandKit(){
   if(window.__brandMode !== 'set') return; // disabled until brand is set up
@@ -3738,6 +3771,7 @@ function startCardGeneration(){
   for(let i = 1; i <= n; i++){
     setTimeout(() => {
       window.__cardImageHistory[i][0].ready = true;
+      captureCardBaseline(i);
       renderStoryboardGrid();
       checkAllCardsReady();
     }, 1200 + i * 700);
@@ -3753,9 +3787,45 @@ function regenerateCard(n){
   document.getElementById('generateCtaMeta').style.display = '';
   setTimeout(() => {
     hist[hist.length - 1].ready = true;
+    captureCardBaseline(n);
+    window.__previewEditMode[n] = false; // the new image now matches the edited copy/prompt
     renderStoryboardGrid();
+    renderPreviewEditorPanels();
+    buildPreviewCardNav();
     checkAllCardsReady();
   }, 1300);
+}
+// "Regenerate All" — pushes a new history entry for every card (unlike the very first
+// "Generate images" call, which starts each card's history from scratch), so every card ends
+// up with its own V1/V1.1 version chips afterward. Figma: node 6676-124531.
+function regenerateAllCards(){
+  const n = window.__cardCount;
+  for(let i = 1; i <= n; i++){
+    const hist = window.__cardImageHistory[i];
+    if(!hist){ window.__cardImageHistory[i] = [{ ready: false }]; window.__cardImageActiveIndex[i] = 0; continue; }
+    hist.push({ ready: false });
+    window.__cardImageActiveIndex[i] = hist.length - 1;
+  }
+  renderStoryboardGrid();
+  document.getElementById('storyboardGenerateBtn').disabled = true;
+  document.getElementById('storyboardGenerateBtn').textContent = 'Generating…';
+  document.getElementById('skipToPublishBtn').style.display = 'none';
+  document.getElementById('continueToEditingBtn').style.display = 'none';
+  document.getElementById('generateCtaMeta').style.display = '';
+  document.getElementById('generateCtaMeta').textContent = 'Waiting for all cards to finish generating';
+  addChatMsg('ai', '<span class="tag">AI</span>Regenerating an image for each card now.');
+  for(let i = 1; i <= n; i++){
+    setTimeout(() => {
+      const hist = window.__cardImageHistory[i];
+      hist[hist.length - 1].ready = true;
+      captureCardBaseline(i);
+      window.__previewEditMode[i] = false;
+      renderStoryboardGrid();
+      renderPreviewEditorPanels();
+      buildPreviewCardNav();
+      checkAllCardsReady();
+    }, 1200 + i * 700);
+  }
 }
 function cardHistoryPrev(n){
   if(window.__cardImageActiveIndex[n] > 0) window.__cardImageActiveIndex[n]--;
@@ -3814,18 +3884,23 @@ function renderPreview(){
   renderPreviewGrid();
   renderPreviewEditorPanels();
 }
+// "Card" nav + Edit control — Figma: default state shows a small "Edit" button after the
+// segment-nav-btns (node 6566-115391); once clicked, that becomes an undo/redo icon pair for
+// browsing this card's regeneration history instead (node 6676-124531).
 function buildPreviewCardNav(){
   const n = window.__cardCount;
+  const cur = window.__storyboardSelectedCard;
   const buttons = Array.from({length: n}, (_, i) => {
     const num = i + 1;
-    return `<div class="card-nav-btn${num === window.__storyboardSelectedCard ? ' active' : ''}" data-target="${num}" onclick="selectPreviewCard(${num})">${num}</div>`;
+    return `<div class="segment-nav-btn${num === cur ? ' active' : ''}" data-target="${num}" onclick="selectPreviewCard(${num})">${num}</div>`;
   }).join('');
-  const undoRedo = `
-    <div class="preview-undo-redo">
-      <button type="button" class="card-nav-btn icon" onclick="cardHistoryPrev(window.__storyboardSelectedCard)" title="Previous version"><img src="${PREVIEW_ICON_UNDO}" alt=""></button>
-      <button type="button" class="card-nav-btn icon" onclick="cardHistoryNext(window.__storyboardSelectedCard)" title="Next version"><img src="${PREVIEW_ICON_REDO}" alt=""></button>
-    </div>`;
-  document.getElementById('previewCardNav').innerHTML = `<span class="storyboard-nav-label">Card</span>${buttons}${undoRedo}`;
+  const editControl = window.__previewEditMode[cur]
+    ? `<div class="preview-undo-redo">
+         <button type="button" class="segment-nav-btn" onclick="cardHistoryPrev(${cur})" title="Previous version"><img src="${PREVIEW_ICON_UNDO}" alt=""></button>
+         <button type="button" class="segment-nav-btn" onclick="cardHistoryNext(${cur})" title="Next version"><img src="${PREVIEW_ICON_REDO}" alt=""></button>
+       </div>`
+    : `<button type="button" class="btn btn-secondary preview-edit-btn" onclick="togglePreviewEditMode(${cur})">Edit</button>`;
+  document.getElementById('previewCardNav').innerHTML = `<span class="storyboard-nav-label">Card</span>${buttons}${editControl}`;
 }
 function renderPreviewGrid(){
   const grid = document.getElementById('previewGrid');
@@ -3833,24 +3908,27 @@ function renderPreviewGrid(){
   const n = window.__cardCount;
   grid.innerHTML = Array.from({length: n}, (_, i) => renderPreviewTile(i + 1)).join('');
 }
+// Same real Storyboard Card component as the grid, data-type="image" — no Ready badge or
+// "Use this" footer here (Figma's Preview tiles show only the icon row + version chips).
 function renderPreviewTile(n){
   const hist = window.__cardImageHistory[n];
   const idx = window.__cardImageActiveIndex[n] || 0;
   const ready = !!(hist && hist[idx] && hist[idx].ready);
-  const isActive = n === window.__storyboardSelectedCard;
-  const pills = hist && hist.length > 1
-    ? hist.map((h, i) => `<button type="button" class="version-pill ${i === idx ? 'active' : ''}" onclick="event.stopPropagation(); selectCardHistoryVersion(${n}, ${i})">V${i === 0 ? '1' : '1.' + i}</button>`).join('')
-    : `<span class="version-pill active">V1</span>`;
+  const isSelected = n === window.__storyboardSelectedCard;
+  const chips = hist && hist.length > 1
+    ? hist.map((h, i) => `<button type="button" class="storyboard-version-chip${i === idx ? ' selected' : ''}" onclick="event.stopPropagation(); selectCardHistoryVersion(${n}, ${i})">${h.ready ? '' : '<span class="mini-spinner"></span>'}V${i === 0 ? '1' : '1.' + i}</button>`).join('')
+    : `<span class="storyboard-version-chip selected">V1</span>`;
   return `
-    <div class="preview-tile${isActive ? ' active' : ''}" data-card="${n}" onclick="selectPreviewCard(${n})">
-      <div class="preview-tile-frame">
-        <div class="preview-tile-top-row">
-          <button type="button" class="preview-icon-btn" onclick="event.stopPropagation(); downloadCard(${n})" title="Download this card"><img src="${PREVIEW_ICON_DOWNLOAD}" alt=""></button>
-          <button type="button" class="preview-icon-btn ghost" onclick="event.stopPropagation(); expandCard(${n})" title="Expand"><img src="${PREVIEW_ICON_MAXIMIZE}" alt=""></button>
+    <div class="storyboard-card${isSelected ? ' selected' : ''}${ready ? '' : ' generating'}" data-type="image" data-card="${n}" onclick="selectPreviewCard(${n})">
+      <div class="storyboard-card-preview">
+        <div class="storyboard-card-top-row">
+          <button class="storyboard-card-icon-btn download" type="button" onclick="event.stopPropagation(); downloadCard(${n})"><img src="../../../../components/ai-social-media/icons/download-ui.svg" alt=""></button>
+          <button class="storyboard-card-icon-btn maximize" type="button" onclick="event.stopPropagation(); expandCard(${n})"><img src="../../../../components/ai-social-media/icons/maximize.svg" alt=""></button>
         </div>
-        <div class="preview-tile-image">${ready ? `<img src="${PREVIEW_ICON_IMAGE}" alt="">` : '<div class="spinner-mini" style="display:block;"></div>'}</div>
+        <div class="storyboard-card-image-empty"><img src="../../../../components/ai-social-media/icons/content-image.svg" alt=""></div>
+        <div class="spinner-mini"></div>
       </div>
-      <div class="preview-version-pills">${pills}</div>
+      <div class="storyboard-card-version-row">${chips}</div>
     </div>`;
 }
 function selectCardHistoryVersion(n, idx){
@@ -3860,32 +3938,39 @@ function selectCardHistoryVersion(n, idx){
 function selectPreviewCard(n){
   n = Number(n);
   selectStoryboardCard(n);
+  buildPreviewCardNav();
 }
+// Two boxes per Figma's Preview editor (node 6566-115391): "Scene & background description"
+// (with the Reference chip, same as Storyboard) plus a second "Image prompt" box below it —
+// Storyboard alone has no image-prompt field. Both stay read-only until "Edit" is clicked.
 function renderPreviewEditorPanels(){
   const n = window.__cardCount;
   document.getElementById('previewEditorPanel').innerHTML = Array.from({length: n}, (_, i) => {
     const num = i + 1;
+    const editing = !!window.__previewEditMode[num];
     return `
       <div class="preview-card-editor storyboard-card-editor" id="previewCardEditor${num}" style="${num === 1 ? '' : 'display:none;'}">
         <div class="copy-field-list" id="previewCopyFieldList${num}"></div>
-        <label class="scene-desc-label">Scene &amp; background description</label>
-        <textarea class="story-desc-input" data-card="${num}" oninput="updateCardDescription(${num}, this.value)">${escapeHtml(window.__cardDescriptions[num] || '')}</textarea>
+        <div>
+          <p class="scene-section-title">Scene &amp; background description</p>
+          <div class="scene-card" style="margin-top:8px;">
+            ${sceneDescBoxHtml({id:'previewDesc' + num, card:num, field:'desc', value:window.__cardDescriptions[num], onInput:`updateCardDescription(${num}, this.value)`, showReference:true, disabled:!editing})}
+            <div>
+              <p class="scene-card-head-label" style="margin-bottom:8px;">Image prompt</p>
+              ${sceneDescBoxHtml({id:'previewPrompt' + num, card:num, field:'prompt', value:ensureCardImagePrompt(num), onInput:`updateCardImagePrompt(${num}, this.value)`, showReference:false, disabled:!editing})}
+            </div>
+          </div>
+        </div>
         <div class="preview-cta-row">
-          <button type="button" class="btn btn-secondary" onclick="startCardGeneration()">Regenerate All</button>
+          <button type="button" class="btn btn-secondary" onclick="regenerateAllCards()">Regenerate All</button>
           <button type="button" class="btn btn-dark" id="previewCardRegenBtn${num}" onclick="regenerateCard(${num})" disabled>Regenerate Card ${num}</button>
         </div>
       </div>`;
   }).join('');
   for(let i = 1; i <= n; i++){
     renderCardCopyFields(i);
-    updatePreviewCardRegenBtn(i);
+    syncPreviewRegenGate(i);
   }
-}
-function updatePreviewCardRegenBtn(n){
-  const btn = document.getElementById('previewCardRegenBtn' + n);
-  if(!btn) return;
-  const hist = window.__cardImageHistory[n];
-  btn.disabled = !(hist && hist[window.__cardImageActiveIndex[n]].ready);
 }
 // Prototype only — no real files exist to save, so these are visual no-ops.
 function downloadCard(n){}
