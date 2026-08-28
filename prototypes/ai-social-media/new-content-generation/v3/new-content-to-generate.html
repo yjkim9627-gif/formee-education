@@ -1147,8 +1147,9 @@
           <p>Describe your idea — AI handles everything else</p>
         </div>
         <div class="seg-control" id="contentTypeToggle" style="margin-bottom:16px;">
-          <div class="seg-chip" data-type="reel" onclick="selectContentType(this)">Reel / Short</div>
-          <div class="seg-chip active" data-type="image" onclick="selectContentType(this)">Image post</div>
+          <div class="seg-chip active" data-type="reel" onclick="selectContentType(this)">Reel / Short</div>
+          <div class="seg-chip" data-type="story" onclick="selectContentType(this)">Story Video</div>
+          <div class="seg-chip" data-type="image" onclick="selectContentType(this)">Image post</div>
           <div class="seg-chip" data-type="carousel" onclick="selectContentType(this)">Carousel</div>
         </div>
 <div id="briefContentImage">
@@ -1467,13 +1468,13 @@
               </div>
               <div class="char-grid" id="charGridCarousel">
                 <div class="char-card new"><div class="thumb">+</div><div class="name">Create New</div></div>
-                <div class="char-card selected" onclick="carSelectChar(this)"><div class="thumb"></div><div class="name">Elena</div></div>
-                <div class="char-card" onclick="carSelectChar(this)"><div class="thumb"></div><div class="name">Milo</div></div>
-                <div class="char-card" onclick="carSelectChar(this)"><div class="thumb"></div><div class="name">Priya</div></div>
-                <div class="char-card" onclick="carSelectChar(this)"><div class="thumb"></div><div class="name">Monster</div></div>
-                <div class="char-card" onclick="carSelectChar(this)"><div class="thumb"></div><div class="name">Maya</div></div>
-                <div class="char-card" onclick="carSelectChar(this)"><div class="thumb"></div><div class="name">Sofia</div></div>
-                <div class="char-card" onclick="carSelectChar(this)"><div class="thumb"></div><div class="name">Esther</div></div>
+                <div class="char-card selected" onclick="carSelectChar(this)"><div class="thumb"><img src="assets/characters/elena.png" alt=""></div><div class="name">Elena</div></div>
+                <div class="char-card" onclick="carSelectChar(this)"><div class="thumb"><img src="assets/characters/milo.jpeg" alt=""></div><div class="name">Milo</div></div>
+                <div class="char-card" onclick="carSelectChar(this)"><div class="thumb"><img src="assets/characters/priya.png" alt=""></div><div class="name">Priya</div></div>
+                <div class="char-card" onclick="carSelectChar(this)"><div class="thumb"><img src="assets/characters/monster.jpeg" alt=""></div><div class="name">Monster</div></div>
+                <div class="char-card" onclick="carSelectChar(this)"><div class="thumb"><img src="assets/characters/maya.png" alt=""></div><div class="name">Maya</div></div>
+                <div class="char-card" onclick="carSelectChar(this)"><div class="thumb"><img src="assets/characters/sofia.png" alt=""></div><div class="name">Sofia</div></div>
+                <div class="char-card" onclick="carSelectChar(this)"><div class="thumb"><img src="assets/characters/esther.jpeg" alt=""></div><div class="name">Esther</div></div>
               </div>
               <p class="char-per-card-note">This character is included on every card by default — you'll be able to turn it off for individual cards in the next step (Script).</p>
 
@@ -1488,13 +1489,13 @@
                 </div>
                 <div class="char-grid" id="charStylesGrid">
                   <div class="char-card new"><div class="thumb">+</div><div class="name">Create New</div></div>
-                  <div class="char-card selected" onclick="selectCharStyle(this)"><div class="thumb"></div><div class="name">Headshot</div></div>
-                  <div class="char-card" onclick="selectCharStyle(this)"><div class="thumb"></div><div class="name">Studio Portrait</div></div>
-                  <div class="char-card" onclick="selectCharStyle(this)"><div class="thumb"></div><div class="name">Armchair Library</div></div>
-                  <div class="char-card" onclick="selectCharStyle(this)"><div class="thumb"></div><div class="name">Autumn Park</div></div>
-                  <div class="char-card" onclick="selectCharStyle(this)"><div class="thumb"></div><div class="name">Balcony Plants</div></div>
-                  <div class="char-card" onclick="selectCharStyle(this)"><div class="thumb"></div><div class="name">Beige Blazer</div></div>
-                  <div class="char-card" onclick="selectCharStyle(this)"><div class="thumb"></div><div class="name">Bright Hallway</div></div>
+                  <div class="char-card selected" onclick="selectCharStyle(this)"><div class="thumb"><img src="assets/characters/elena-styles/headshot.png" alt=""></div><div class="name">Headshot</div></div>
+                  <div class="char-card" onclick="selectCharStyle(this)"><div class="thumb"><img src="assets/characters/elena-styles/studio-portrait.png" alt=""></div><div class="name">Studio Portrait</div></div>
+                  <div class="char-card" onclick="selectCharStyle(this)"><div class="thumb"><img src="assets/characters/elena-styles/armchair-library.png" alt=""></div><div class="name">Armchair Library</div></div>
+                  <div class="char-card" onclick="selectCharStyle(this)"><div class="thumb"><img src="assets/characters/elena-styles/autumn-park.png" alt=""></div><div class="name">Autumn Park</div></div>
+                  <div class="char-card" onclick="selectCharStyle(this)"><div class="thumb"><img src="assets/characters/elena-styles/balcony-plants.png" alt=""></div><div class="name">Balcony Plants</div></div>
+                  <div class="char-card" onclick="selectCharStyle(this)"><div class="thumb"><img src="assets/characters/elena-styles/beige-blazer.png" alt=""></div><div class="name">Beige Blazer</div></div>
+                  <div class="char-card" onclick="selectCharStyle(this)"><div class="thumb"><img src="assets/characters/elena-styles/bright-hallway.png" alt=""></div><div class="name">Bright Hallway</div></div>
                 </div>
               </div>
             </div>
@@ -2974,7 +2975,6 @@ function imgGoToGenerate(){
   }
 }
 function imgGoToDevelop(){
-  if(!versionState.some(v => v.ready)) return; // nothing to develop yet
   imgUpdateDevelopPreview();
   showView('developView');
   setStep('stepEdit');
@@ -5183,6 +5183,8 @@ function renderPublishFormatOptions(){
         <span>Story</span>
       </label>
     `;
+  } else if(window.__isStoryVideo){
+    el.innerHTML = `<span class="pub-format-fixed">Story <span class="pub-format-fixed-note">— Story Video publishes to Stories only</span></span>`;
   } else {
     const note = window.__contentType === 'carousel' ? 'Carousels' : 'Reels/Shorts';
     el.innerHTML = `<span class="pub-format-fixed">Post <span class="pub-format-fixed-note">— ${note} publish as a feed post only</span></span>`;
@@ -5201,6 +5203,7 @@ function onFormatToggle(){
 }
 
 function getSelectedFormats(){
+  if(window.__isStoryVideo) return ['Story'];
   if(window.__contentType !== 'image') return ['Post'];
   const formats = [];
   if(document.getElementById('pubFormatPost')?.checked) formats.push('Post');
@@ -5898,7 +5901,14 @@ function runAsAd(){
 // new-content-brief-to-generate.html).
 // =====================================================================
 
-window.__contentType = 'image';
+window.__contentType = 'reel';
+// Story Video is not a distinct flow — it reuses the Reel/Short Brief/Generate/Develop
+// screens verbatim (same DOM, same functions) via window.__contentType === 'reel', and
+// only diverges in Publish, where the format is fixed to Story instead of Post. Tracking
+// it as a flag alongside __contentType (rather than a real fourth content type) keeps the
+// two flows structurally identical forever, instead of risking the copy/paste drift that
+// caused the Reel/Short merge regressions this file just had fixed.
+window.__isStoryVideo = false;
 
 // ---- Top-level stepper / view navigation (identical in both source files, kept once) ----
 function showView(name){
@@ -5928,7 +5938,8 @@ function selectContentType(el){
   const type = el.dataset.type;
   document.querySelectorAll('#contentTypeToggle .seg-chip').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
-  window.__contentType = type;
+  window.__isStoryVideo = (type === 'story');
+  window.__contentType = (type === 'story') ? 'reel' : type;
   applyContentType();
 }
 
