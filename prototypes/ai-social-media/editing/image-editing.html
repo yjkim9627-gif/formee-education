@@ -277,6 +277,13 @@
   .prop-stepper.is-disabled { opacity: 0.4; pointer-events: none; }
   .prop-stepper__btn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
   .prop-stepper__val { width: 44px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: var(--font-size-text-sm); line-height: var(--line-height-text-sm); font-weight: var(--font-weight-medium); color: var(--color-neutral-900); }
+  /* Editable value boxes (rotation stepper's centre value, and the Adjust sliders' number
+     boxes) — same look as the plain <span> they replace, but a real <input> so the value can
+     be typed directly instead of only nudged via -/+ buttons or the slider. */
+  input.prop-stepper__val, input.opacity-value-box__input { border: none; outline: none; background: transparent; padding: 0; font: inherit; color: inherit; text-align: center; appearance: textfield; -moz-appearance: textfield; }
+  input.prop-stepper__val::-webkit-outer-spin-button, input.prop-stepper__val::-webkit-inner-spin-button,
+  input.opacity-value-box__input::-webkit-outer-spin-button, input.opacity-value-box__input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  input.opacity-value-box__input { width: 100%; }
 
   .action-tile-row { display: flex; gap: var(--spacing-sm); width: 100%; }
   .action-tile { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--spacing-xs); padding: var(--spacing-md) 0; background: var(--color-neutral-0); border: var(--border-width-1) solid var(--color-neutral-400); border-radius: var(--radius-lg); cursor: pointer; }
@@ -2948,26 +2955,29 @@
         </div>
 
         <div class="panel-section">
-          <div class="section-header"><p class="section-header__title">Adjust</p></div>
+          <div class="section-header">
+            <p class="section-header__title">Adjust</p>
+            <p class="section-header__seeall section-header__seeall--darker" style="cursor:pointer;" onclick="switchPanel('image-adjust-all')">See all</p>
+          </div>
           <div class="image-adjust-row">
             <p class="image-adjust-row__label">Brightness</p>
             <div class="opacity-row">
               <input type="range" class="opacity-slider" id="imageBrightnessSlider" min="-100" max="100" step="1" value="0" oninput="applyImageAdjust('brightness', this.value)" aria-label="밝기" />
-              <div class="opacity-value-box"><span id="imageBrightnessVal">0</span></div>
+              <div class="opacity-value-box"><input type="text" inputmode="numeric" class="opacity-value-box__input" id="imageBrightnessVal" value="0" onchange="applyImageAdjust('brightness', this.value)" onkeydown="if(event.key==='Enter'){this.blur();}" aria-label="밝기 값 입력" /></div>
             </div>
           </div>
           <div class="image-adjust-row">
             <p class="image-adjust-row__label">Contrast</p>
             <div class="opacity-row">
               <input type="range" class="opacity-slider" id="imageContrastSlider" min="-100" max="100" step="1" value="0" oninput="applyImageAdjust('contrast', this.value)" aria-label="대비" />
-              <div class="opacity-value-box"><span id="imageContrastVal">0</span></div>
+              <div class="opacity-value-box"><input type="text" inputmode="numeric" class="opacity-value-box__input" id="imageContrastVal" value="0" onchange="applyImageAdjust('contrast', this.value)" onkeydown="if(event.key==='Enter'){this.blur();}" aria-label="대비 값 입력" /></div>
             </div>
           </div>
           <div class="image-adjust-row">
             <p class="image-adjust-row__label">Saturation</p>
             <div class="opacity-row">
               <input type="range" class="opacity-slider" id="imageSaturationSlider" min="-100" max="100" step="1" value="0" oninput="applyImageAdjust('saturation', this.value)" aria-label="채도" />
-              <div class="opacity-value-box"><span id="imageSaturationVal">0</span></div>
+              <div class="opacity-value-box"><input type="text" inputmode="numeric" class="opacity-value-box__input" id="imageSaturationVal" value="0" onchange="applyImageAdjust('saturation', this.value)" onkeydown="if(event.key==='Enter'){this.blur();}" aria-label="채도 값 입력" /></div>
             </div>
           </div>
         </div>
@@ -2980,7 +2990,7 @@
               <span class="prop-stepper__btn" onclick="stepImageRotation(-15)">
                 <span class="icon" style="width:16px;height:16px"><span class="icon__frag" style="inset:calc(50% - 0.6px) 20.83% calc(50% - 0.6px) 20.83%"><img src="assets/screen-01-elements-panel/panel-sticker-detail/stepper-minus.svg" alt="" /></span></span>
               </span>
-              <span class="prop-stepper__val" id="imageRotationStepperVal">0</span>
+              <input type="text" inputmode="numeric" class="prop-stepper__val" id="imageRotationStepperVal" value="0" onchange="applyImageRotation(parseFloat(this.value) || 0)" onkeydown="if(event.key==='Enter'){this.blur();}" aria-label="회전 값 입력" />
               <span class="prop-stepper__btn" onclick="stepImageRotation(15)">
                 <span class="icon" style="width:16px;height:16px">
                   <span class="icon__frag" style="inset:calc(50% - 0.8px) 20.83% calc(50% - 0.8px) 20.83%"><img src="assets/screen-01-elements-panel/toolpanel/cta-plus-1.svg" alt="" /></span>
@@ -3012,6 +3022,85 @@
             <div class="opacity-row">
               <input type="range" class="opacity-slider" id="imageOpacitySlider" min="0" max="100" step="1" value="100" oninput="applyElementOpacity(this.value)" aria-label="투명도" />
               <div class="opacity-value-box"><span id="imageOpacityVal">100</span>%</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ============ W:ToolPanel (Adjust — "See all" from Image panel's Adjust section,
+           Figma node 4554:126804) ============
+           Brightness/Contrast/Saturation are the exact same state as the Image panel's own
+           three sliders (applyImageAdjust()) — this screen just adds Highlights/Shadows/
+           Temperature/Tint alongside them. Those four have no real per-tonal-range image
+           model to draw on in a static prototype (same spirit as the Remove-background
+           checkerboard elsewhere in this file), so they're wired to a plausible CSS filter
+           approximation — good enough to visibly do *something* sensible, not a real
+           highlights/shadows/white-balance engine. -->
+      <aside class="toolpanel" id="panel-image-adjust-all" data-panel="image-adjust-all" hidden>
+        <div class="panel-section">
+          <div class="panel-header">
+            <div class="panel-header__row">
+              <div style="display:flex; align-items:center; gap:var(--spacing-sm);">
+                <span class="icon panel-header__back" style="width:16px;height:16px" onclick="switchPanel('image-detail')" role="button" aria-label="뒤로">
+                  <span class="icon__frag" style="inset:20.83% 50% 20.83% 20.83%"><img src="assets/screen-01-elements-panel/topbar/back-1.svg" alt="" /></span>
+                  <span class="icon__frag" style="inset:calc(50% - 0.8px) 20.83% calc(50% - 0.8px) 20.83%"><img src="assets/screen-01-elements-panel/topbar/download-3-back-2.svg" alt="" /></span>
+                </span>
+                <p class="panel-header__title">Adjust</p>
+              </div>
+              <span class="icon panel-header__close" style="width:20px;height:20px" onclick="deselectImage()" role="button" aria-label="패널 닫기">
+                <span class="icon__frag" style="inset:25%"><img src="assets/screen-01-elements-panel/panel-text/panel-close.svg" alt="" /></span>
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="panel-section">
+          <div class="image-adjust-row">
+            <p class="image-adjust-row__label">Brightness</p>
+            <div class="opacity-row">
+              <input type="range" class="opacity-slider" id="imageBrightnessSliderAll" min="-100" max="100" step="1" value="0" oninput="applyImageAdjust('brightness', this.value)" aria-label="밝기" />
+              <div class="opacity-value-box"><input type="text" inputmode="numeric" class="opacity-value-box__input" id="imageBrightnessValAll" value="0" onchange="applyImageAdjust('brightness', this.value)" onkeydown="if(event.key==='Enter'){this.blur();}" aria-label="밝기 값 입력" /></div>
+            </div>
+          </div>
+          <div class="image-adjust-row">
+            <p class="image-adjust-row__label">Contrast</p>
+            <div class="opacity-row">
+              <input type="range" class="opacity-slider" id="imageContrastSliderAll" min="-100" max="100" step="1" value="0" oninput="applyImageAdjust('contrast', this.value)" aria-label="대비" />
+              <div class="opacity-value-box"><input type="text" inputmode="numeric" class="opacity-value-box__input" id="imageContrastValAll" value="0" onchange="applyImageAdjust('contrast', this.value)" onkeydown="if(event.key==='Enter'){this.blur();}" aria-label="대비 값 입력" /></div>
+            </div>
+          </div>
+          <div class="image-adjust-row">
+            <p class="image-adjust-row__label">Highlights</p>
+            <div class="opacity-row">
+              <input type="range" class="opacity-slider" id="imageHighlightsSlider" min="-100" max="100" step="1" value="0" oninput="applyImageAdjust('highlights', this.value)" aria-label="하이라이트" />
+              <div class="opacity-value-box"><input type="text" inputmode="numeric" class="opacity-value-box__input" id="imageHighlightsVal" value="0" onchange="applyImageAdjust('highlights', this.value)" onkeydown="if(event.key==='Enter'){this.blur();}" aria-label="하이라이트 값 입력" /></div>
+            </div>
+          </div>
+          <div class="image-adjust-row">
+            <p class="image-adjust-row__label">Shadows</p>
+            <div class="opacity-row">
+              <input type="range" class="opacity-slider" id="imageShadowsSlider" min="-100" max="100" step="1" value="0" oninput="applyImageAdjust('shadows', this.value)" aria-label="그림자" />
+              <div class="opacity-value-box"><input type="text" inputmode="numeric" class="opacity-value-box__input" id="imageShadowsVal" value="0" onchange="applyImageAdjust('shadows', this.value)" onkeydown="if(event.key==='Enter'){this.blur();}" aria-label="그림자 값 입력" /></div>
+            </div>
+          </div>
+          <div class="image-adjust-row">
+            <p class="image-adjust-row__label">Saturation</p>
+            <div class="opacity-row">
+              <input type="range" class="opacity-slider" id="imageSaturationSliderAll" min="-100" max="100" step="1" value="0" oninput="applyImageAdjust('saturation', this.value)" aria-label="채도" />
+              <div class="opacity-value-box"><input type="text" inputmode="numeric" class="opacity-value-box__input" id="imageSaturationValAll" value="0" onchange="applyImageAdjust('saturation', this.value)" onkeydown="if(event.key==='Enter'){this.blur();}" aria-label="채도 값 입력" /></div>
+            </div>
+          </div>
+          <div class="image-adjust-row">
+            <p class="image-adjust-row__label">Temperature</p>
+            <div class="opacity-row">
+              <input type="range" class="opacity-slider" id="imageTemperatureSlider" min="-100" max="100" step="1" value="0" oninput="applyImageAdjust('temperature', this.value)" aria-label="색온도" />
+              <div class="opacity-value-box"><input type="text" inputmode="numeric" class="opacity-value-box__input" id="imageTemperatureVal" value="0" onchange="applyImageAdjust('temperature', this.value)" onkeydown="if(event.key==='Enter'){this.blur();}" aria-label="색온도 값 입력" /></div>
+            </div>
+          </div>
+          <div class="image-adjust-row">
+            <p class="image-adjust-row__label">Tint</p>
+            <div class="opacity-row">
+              <input type="range" class="opacity-slider" id="imageTintSlider" min="-100" max="100" step="1" value="0" oninput="applyImageAdjust('tint', this.value)" aria-label="색조" />
+              <div class="opacity-value-box"><input type="text" inputmode="numeric" class="opacity-value-box__input" id="imageTintVal" value="0" onchange="applyImageAdjust('tint', this.value)" onkeydown="if(event.key==='Enter'){this.blur();}" aria-label="색조 값 입력" /></div>
             </div>
           </div>
         </div>
@@ -3416,7 +3505,7 @@
                 </div>
               </div>
             </div>
-            <div class="toolbar-item">
+            <div class="toolbar-item" id="deleteToolbarItem" style="cursor:pointer;" onclick="event.stopPropagation(); deleteSelectedElement();" role="button" aria-label="삭제">
               <span class="icon" style="width:20px;height:20px">
                 <span class="icon__frag" style="inset:45.83% calc(58.33% - 0.8px) 29.17% calc(41.67% - 0.8px)"><img src="assets/screen-01-elements-panel/canvas/duplicate-1.svg" alt="" /></span>
                 <span class="icon__frag" style="inset:45.83% calc(41.67% - 0.8px) 29.17% calc(58.33% - 0.8px)"><img src="assets/screen-01-elements-panel/canvas/duplicate-1.svg" alt="" /></span>
@@ -4365,8 +4454,18 @@
     // lands scaled-up and miles from where it should be. offsetLeft/offsetTop-based positioning
     // (see toggleAddMenu/toggleReplaceMenu/toggleToolbarPopover) is already in this same local
     // space and needs no conversion — only raw getBoundingClientRect() results do.
-    function toScreenLocalPx(viewportPx) {
-      return viewportPx / PAGE_FIT_SCALE;
+    //
+    // Dividing by PAGE_FIT_SCALE alone isn't enough, though: <html> centers <body> (and so
+    // .screen) with flex align/justify-center, so .screen's own top-left almost never sits at
+    // real viewport (0,0) — only when the window's aspect ratio happens to exactly match
+    // 1920:1162. Skipping that offset is exactly why the layers-panel popover used to land far
+    // from the button that opened it at any other window size. Subtract .screen's own
+    // getBoundingClientRect() origin (already in real viewport px, same as the input) before
+    // dividing, so the result is truly relative to .screen's local (unscaled) coordinate space.
+    function toScreenLocalPx(viewportPx, axis) {
+      var screenRect = document.querySelector('.screen').getBoundingClientRect();
+      var origin = axis === 'y' ? screenRect.top : screenRect.left;
+      return (viewportPx - origin) / PAGE_FIT_SCALE;
     }
 
     // Replace is available for every selectable element type (sticker and shape both show it —
@@ -4513,6 +4612,10 @@
     var imageBrightness = 0;
     var imageContrast = 0;
     var imageSaturation = 0;
+    var imageHighlights = 0;
+    var imageShadows = 0;
+    var imageTemperature = 0;
+    var imageTint = 0;
     var imageBgRemoved = false;
     var currentImageCropKey = 'freeform';
 
@@ -4521,7 +4624,7 @@
     }
 
     function makeImageState() {
-      return { cropKey: 'freeform', brightness: 0, contrast: 0, saturation: 0, bgRemoved: false, rotationDeg: 0, flipX: 1, flipY: 1 };
+      return { cropKey: 'freeform', brightness: 0, contrast: 0, saturation: 0, highlights: 0, shadows: 0, temperature: 0, tint: 0, bgRemoved: false, rotationDeg: 0, flipX: 1, flipY: 1 };
     }
 
     function saveImageState(el) {
@@ -4531,6 +4634,10 @@
         brightness: imageBrightness,
         contrast: imageContrast,
         saturation: imageSaturation,
+        highlights: imageHighlights,
+        shadows: imageShadows,
+        temperature: imageTemperature,
+        tint: imageTint,
         bgRemoved: imageBgRemoved,
         rotationDeg: imageRotationDeg,
         flipX: imageFlipX,
@@ -4544,6 +4651,10 @@
       imageBrightness = s.brightness;
       imageContrast = s.contrast;
       imageSaturation = s.saturation;
+      imageHighlights = s.highlights || 0;
+      imageShadows = s.shadows || 0;
+      imageTemperature = s.temperature || 0;
+      imageTint = s.tint || 0;
       imageBgRemoved = s.bgRemoved;
       imageRotationDeg = s.rotationDeg;
       imageFlipX = s.flipX;
@@ -4558,14 +4669,34 @@
       addImageToCanvas(src);
     }
 
+    // Sizes the placed box to the image's own aspect ratio instead of a hardcoded 267:229 box
+    // — that fixed ratio used to get forced onto every image regardless of its real
+    // proportions, and since .canvas-image__img is width:100%/height:100% with no object-fit,
+    // a mismatched box visibly stretched/squished the photo. Loads the image first (async) so
+    // naturalWidth/naturalHeight are known before the box is ever sized; the longer side is
+    // capped at 160px (matching the previous default's larger dimension) so the placed size
+    // stays consistent regardless of the source image's actual resolution.
     function addImageToCanvas(src) {
+      var probe = new Image();
+      probe.onload = function () {
+        placeImageOnCanvas(src, probe.naturalWidth, probe.naturalHeight);
+      };
+      probe.onerror = function () {
+        placeImageOnCanvas(src, 267, 229); // fallback to the old default ratio if it fails to load
+      };
+      probe.src = src;
+    }
+
+    function placeImageOnCanvas(src, naturalWidth, naturalHeight) {
       var template = document.getElementById('imageTemplate');
       var el = document.importNode(template.content, true).firstElementChild;
       imageInstanceCounter++;
       el.id = 'canvasImage-' + imageInstanceCounter;
 
-      var width = 160;
-      var height = Math.round(width * 229 / 267);
+      var maxSide = 160;
+      var ratio = naturalWidth / naturalHeight;
+      var width = ratio >= 1 ? maxSide : Math.round(maxSide * ratio);
+      var height = ratio >= 1 ? Math.round(maxSide / ratio) : maxSide;
       var cascade = ((imageInstanceCounter - 1) % 6) * 24;
       el.style.width = width + 'px';
       el.style.height = height + 'px';
@@ -4598,7 +4729,7 @@
       renderImageAdjust();
       renderImageBgRemoved();
       updateImageTransform();
-      document.getElementById('imageRotationStepperVal').textContent = Math.round(imageRotationDeg % 360);
+      document.getElementById('imageRotationStepperVal').value = Math.round(imageRotationDeg % 360);
 
       setFloatingToolbarMode('image');
       document.querySelector('.floating-toolbar').classList.add('floating-toolbar--visible');
@@ -4739,7 +4870,7 @@
       imageRotationDeg = deg;
       updateImageTransform();
       var normalized = Math.round(((deg % 360) + 540) % 360 - 180);
-      document.getElementById('imageRotationStepperVal').textContent = normalized;
+      document.getElementById('imageRotationStepperVal').value = normalized;
     }
 
     function stepImageRotation(delta) {
@@ -4787,28 +4918,54 @@
     }
 
     // Adjust sliders are centred at 0 (-100..100) and drive a real CSS filter on the image.
+    // Brightness/Contrast/Saturation each have two live controls (the Image panel's own three
+    // sliders, and the same three repeated at the top of "Adjust" → See all) sharing this one
+    // piece of state; renderImageAdjust() keeps every pair in sync regardless of which one was
+    // just touched. Highlights/Shadows/Temperature/Tint only exist on the "See all" screen.
     function applyImageAdjust(type, val) {
       if (!getSelectedImageEl()) { return; }
       val = Math.max(-100, Math.min(100, Math.round(parseFloat(val) || 0)));
       if (type === 'brightness') { imageBrightness = val; }
       else if (type === 'contrast') { imageContrast = val; }
       else if (type === 'saturation') { imageSaturation = val; }
+      else if (type === 'highlights') { imageHighlights = val; }
+      else if (type === 'shadows') { imageShadows = val; }
+      else if (type === 'temperature') { imageTemperature = val; }
+      else if (type === 'tint') { imageTint = val; }
       renderImageAdjust();
     }
 
+    // No per-tonal-range engine exists in a static prototype (CSS filter() has no concept of
+    // "just the highlights" or "just the shadows"), so Highlights/Shadows fold into
+    // brightness/contrast at half strength, and Temperature/Tint approximate a warm/cool +
+    // green/magenta push via hue-rotate (+ a touch of sepia on the warm end) — a plausible
+    // visible reaction to each slider, not a colour-accurate white-balance model.
     function renderImageAdjust() {
       var el = getSelectedImageEl();
       if (!el) { return; }
       var img = el.querySelector('.canvas-image__img');
-      img.style.filter = 'brightness(' + (1 + imageBrightness / 100) + ') contrast(' + (1 + imageContrast / 100) + ') saturate(' + (1 + imageSaturation / 100) + ')';
+      var brightnessAmt = 1 + (imageBrightness + imageShadows * 0.5) / 100;
+      var contrastAmt = 1 + (imageContrast + imageHighlights * 0.5) / 100;
+      var saturateAmt = 1 + imageSaturation / 100;
+      var hueRotateDeg = (imageTint - imageTemperature) * 0.3;
+      var sepiaAmt = imageTemperature > 0 ? imageTemperature / 250 : 0;
+      img.style.filter = 'brightness(' + brightnessAmt + ') contrast(' + contrastAmt + ') saturate(' + saturateAmt + ') hue-rotate(' + hueRotateDeg + 'deg)' + (sepiaAmt ? ' sepia(' + sepiaAmt + ')' : '');
 
       [['imageBrightnessSlider', 'imageBrightnessVal', imageBrightness],
+       ['imageBrightnessSliderAll', 'imageBrightnessValAll', imageBrightness],
        ['imageContrastSlider', 'imageContrastVal', imageContrast],
-       ['imageSaturationSlider', 'imageSaturationVal', imageSaturation]].forEach(function (row) {
+       ['imageContrastSliderAll', 'imageContrastValAll', imageContrast],
+       ['imageSaturationSlider', 'imageSaturationVal', imageSaturation],
+       ['imageSaturationSliderAll', 'imageSaturationValAll', imageSaturation],
+       ['imageHighlightsSlider', 'imageHighlightsVal', imageHighlights],
+       ['imageShadowsSlider', 'imageShadowsVal', imageShadows],
+       ['imageTemperatureSlider', 'imageTemperatureVal', imageTemperature],
+       ['imageTintSlider', 'imageTintVal', imageTint]].forEach(function (row) {
         var slider = document.getElementById(row[0]);
+        if (!slider) { return; }
         slider.value = row[2];
         slider.style.setProperty('--fill-end', ((row[2] + 100) / 2) + '%');
-        document.getElementById(row[1]).textContent = row[2];
+        document.getElementById(row[1]).value = row[2];
       });
     }
 
@@ -6301,6 +6458,53 @@
       return textEl ? textEl.id : null;
     }
 
+    // ---- Delete selected element — floating toolbar's trash icon (previously unwired: the
+    // button existed with no onclick) + the Delete/Backspace key. ----
+    // Generic across every type Align/Flip/Layer already treat uniformly via
+    // currentlySelectedLayerId() — image, shape, sticker, and any text box added from the
+    // Elements panel. The poster's built-in headline/subhead (#canvasText-title /
+    // #canvasText-subtitle) are excluded, same as they're excluded from layerOrder itself:
+    // they're core slide content, not a decorative element someone placed and might remove
+    // entirely. The sticker is a single fixed canvas slot (see placeSticker()), not a
+    // removable DOM node, so "deleting" it clears the slot instead of removing #canvasSticker.
+    function deleteSelectedElement() {
+      var id = currentlySelectedLayerId();
+      if (!id || id === 'canvasText-title' || id === 'canvasText-subtitle') { return; }
+
+      if (id === 'canvasSticker') {
+        deselectSticker();
+        var sticker = document.getElementById('canvasSticker');
+        sticker.classList.remove('is-visible');
+        document.querySelectorAll('#canvasStickerIcon .sticker-frag, #stickerDetailPreviewIcon .sticker-frag').forEach(function (frag) {
+          frag.classList.remove('is-active');
+        });
+      } else {
+        var el = document.getElementById(id);
+        if (!el) { return; }
+        if (el.classList.contains('canvas-image')) { deselectImage(); }
+        else if (el.classList.contains('canvas-shape')) { deselectShape(); }
+        else if (el.classList.contains('canvas-text')) { deselectText(); }
+        el.remove();
+        var idx = layerOrder.indexOf(id);
+        if (idx > -1) { layerOrder.splice(idx, 1); }
+      }
+
+      if (document.getElementById('layersPanel').classList.contains('is-visible')) { renderLayersPanel(); }
+    }
+
+    // Ignored while typing anywhere (an input/textarea, a contenteditable, or a canvas text
+    // box mid-edit) so Delete/Backspace still edits text as expected instead of nuking the
+    // selected element out from under the cursor.
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Delete' && e.key !== 'Backspace') { return; }
+      var active = document.activeElement;
+      if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable)) { return; }
+      if (document.querySelector('.canvas-text.is-editing')) { return; }
+      if (!currentlySelectedLayerId()) { return; }
+      e.preventDefault();
+      deleteSelectedElement();
+    });
+
     // Quick Add menu (Figma node 4554:127175) — a shortcut into the same tools the left nav
     // rail already exposes, plus a real local file upload straight onto the poster.
     function toggleAddMenu() {
@@ -6457,7 +6661,7 @@
         // block (see toScreenLocalPx() for why raw getBoundingClientRect() px can't be used as-is).
         var btnRect = toggleBtn.getBoundingClientRect();
         var btnRight = toScreenLocalPx(btnRect.right);
-        var btnBottom = toScreenLocalPx(btnRect.bottom);
+        var btnBottom = toScreenLocalPx(btnRect.bottom, 'y');
         var maxLeft = toScreenLocalPx(window.innerWidth) - panel.offsetWidth - 8;
         var left = Math.min(btnRight - panel.offsetWidth, maxLeft);
         panel.style.left = Math.max(8, left) + 'px';
@@ -6813,7 +7017,7 @@
       var sparkBtn = document.getElementById('ctaSparkBtn');
       // Vertically centered on the selection box, 4px past its right edge.
       var sparkLeft = toScreenLocalPx(rect.right) + 4;
-      var sparkTop = toScreenLocalPx(rect.top + rect.height / 2) - 15;
+      var sparkTop = toScreenLocalPx(rect.top + rect.height / 2, 'y') - 15;
       sparkBtn.style.left = sparkLeft + 'px';
       sparkBtn.style.top = sparkTop + 'px';
 
@@ -6822,7 +7026,7 @@
         var maxLeft = toScreenLocalPx(window.innerWidth) - popover.offsetWidth - 8;
         var left = Math.min(sparkLeft + 20, maxLeft);
         popover.style.left = Math.max(8, left) + 'px';
-        popover.style.bottom = (toScreenLocalPx(window.innerHeight) - sparkTop + 12) + 'px';
+        popover.style.bottom = (toScreenLocalPx(window.innerHeight, 'y') - sparkTop + 12) + 'px';
       }
     }
 
