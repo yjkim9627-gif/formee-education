@@ -1895,6 +1895,9 @@
             <div class="stage-body"><div class="stage-body-inner">
               <h2 class="stage-title">Script</h2>
               <p class="stage-sub-text">AI drafted text for each card based on your brief — edit any card directly, choose whether the brand kit and character apply, then confirm to move on.</p>
+
+              <div class="script-card-list" id="scriptCardList"></div>
+
               <div class="script-global-brand" id="scriptGlobalBrand">
                 <div class="brand-kit-row" style="margin-top:0;">
                   <button type="button" class="field-switch" id="globalBrandKitSwitch" onclick="toggleGlobalBrandKit()"><span class="knob"></span></button>
@@ -1934,15 +1937,14 @@
                 <div class="draft-section-label">Text placement</div>
                 <p class="draft-section-hint">How the headline, subhead/body, and call to action should appear on each card.</p>
                 <div class="seg-control" id="textPlacementToggleCarousel">
-                  <div class="seg-chip active" data-mode="overlay" onclick="carSetDraftMode('overlay')">Editable overlay</div>
                   <div class="seg-chip" data-mode="baked" onclick="carSetDraftMode('baked')">Baked into image</div>
+                  <div class="seg-chip active" data-mode="overlay" onclick="carSetDraftMode('overlay')">Editable overlay</div>
                 </div>
                 <div class="baked-in-warning" id="bakedInWarningCarousel">
                   <img src="../../../../components/ai-social-media/icons/alert-sm.svg" class="icon-inline" alt=""> If you edit the copy later, that card's image will need to be regenerated — and your brand font may not be reproduced exactly.
                 </div>
               </div>
 
-              <div class="script-card-list" id="scriptCardList"></div>
               <!-- Hidden — per Figma (that CTA lives only in the persistent bottom action bar,
                    like every other Generate sub-stage's forward-progress action; the only page
                    CTA Figma actually draws inside a Generate work area is Carousel Preview's
