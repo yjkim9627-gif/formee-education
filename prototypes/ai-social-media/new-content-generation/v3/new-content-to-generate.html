@@ -1030,19 +1030,26 @@
   .scene-time{font-size:11px; font-weight:600; color:var(--color-neutral-500); display:flex; align-items:center; gap:6px;}
   .scene-time .dot{width:7px; height:7px; border-radius:999px; background:var(--color-brand-primary);}
   .scene-guide{font-size:10.5px; color:var(--color-neutral-500); margin-bottom:12px;}
-  .voice-section{border:1px solid var(--color-neutral-300); border-radius:10px; padding:14px; margin-bottom:14px; flex-shrink:0;}
-  .voice-section-header{display:flex; align-items:center; justify-content:space-between; gap:10px;}
+  /* Matches the real "Voice Section" Figma component (Components section, node 7148-115284)
+     exactly — bg white, border neutral-300, radius-xl(12), padding 12/16, "Voice" label with
+     no icon, Editor/Segmented-Toggle-style mode toggle. Interactive bits (accordion caching,
+     per-scene preview state) stay local JS — the static Figma export has no such states. */
+  .voice-section{background:#fff; border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl); padding:12px 16px; margin-bottom:16px; flex-shrink:0;}
+  .voice-section-header{display:flex; align-items:center; justify-content:space-between; gap:12px;}
   .voice-section-header .scene-desc-label-reel{margin-bottom:0;}
-  .voice-section-header-right{display:flex; align-items:center; gap:8px; flex-shrink:0;}
-  .voice-mode-toggle{display:flex; gap:2px; background:var(--color-neutral-100); border-radius:999px; padding:3px; flex-shrink:0;}
-  .voice-mode-btn{font-size:10.5px; font-weight:600; color:var(--color-neutral-600); padding:5px 10px; border-radius:999px; cursor:pointer;}
-  .voice-mode-btn.active{background:#fff; color:var(--color-neutral-900); box-shadow:0 1px 2px rgba(15,23,41,0.08);}
-  .voice-section-collapse-btn{width:22px; height:22px; border:none; background:transparent; color:var(--color-neutral-500); font-size:11px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:transform .15s, color .15s; font-family:var(--font-family-text);}
-  .voice-section-collapse-btn:hover{color:var(--color-neutral-900);}
-  .voice-section.collapsed .voice-section-collapse-btn{transform:rotate(-90deg);}
-  .voice-section .voice-cost-summary, .voice-section .voice-section-body{margin-top:10px;}
+  .voice-label{font-size:14px; font-weight:600; color:var(--color-neutral-900); font-family:var(--font-family-text);}
+  .voice-section-header-right{display:flex; align-items:center; gap:12px; flex-shrink:0;}
+  .voice-mode-toggle{display:flex; background:var(--color-neutral-100); border-radius:var(--radius-lg); padding:3px; flex-shrink:0;}
+  .voice-mode-btn{font-size:13px; font-weight:500; line-height:20px; color:var(--color-neutral-500); padding:7px 12px; border-radius:var(--radius-lg); cursor:pointer; font-family:var(--font-family-text);}
+  .voice-mode-btn.active{background:#fff; color:var(--color-neutral-900); font-weight:600;}
+  .voice-section-collapse-btn{width:20px; height:20px; border:none; background:transparent; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:transform .15s;}
+  .voice-section-collapse-btn img{width:20px; height:20px; display:block;}
+  /* Figma shows chevron-down while collapsed, chevron-up while expanded — same asset,
+     rotated 180° when expanded, rather than swapping the icon source. */
+  .voice-section:not(.collapsed) .voice-section-collapse-btn{transform:rotate(180deg);}
+  .voice-section .voice-cost-summary, .voice-section .voice-section-body{margin-top:16px;}
   .voice-section.collapsed .voice-cost-summary, .voice-section.collapsed .voice-section-body{display:none;}
-  .voice-section-body{display:flex; flex-direction:column; gap:14px;}
+  .voice-section-body{display:flex; flex-direction:column; gap:10px;}
   .voice-section-body > .voice-preview-btn{width:100%; justify-content:center;}
   .voice-cost-summary{font-size:10.5px; color:var(--color-neutral-500); line-height:1.45; margin:-4px 0 12px;}
   .voice-cost-summary b{color:var(--color-neutral-700); font-weight:700;}
@@ -1050,7 +1057,7 @@
      static Figma box isn't user-resizable, this one needs to be for longer scripts). */
   .voice-script-text{resize:vertical; min-height:44px;}
   .voice-script-text.whole{min-height:72px;}
-  .voice-preview-btn{display:inline-flex; align-items:center; justify-content:center; gap:6px; border:1px solid var(--color-neutral-300); background:#fff; border-radius:999px; padding:6px 12px; font-size:11.5px; font-weight:600; color:var(--color-neutral-700); cursor:pointer; font-family:var(--font-family-text); transition:border-color .15s, color .15s; flex-shrink:0;}
+  .voice-preview-btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; border:1px solid var(--color-neutral-400); background:#fff; border-radius:var(--radius-lg); padding:9px 14px; font-size:13px; font-weight:600; color:var(--color-neutral-900); cursor:pointer; font-family:var(--font-family-text); transition:border-color .15s, color .15s; flex-shrink:0;}
   .voice-preview-btn:hover{border-color:var(--color-neutral-450);}
   .voice-preview-btn .vp-cost{color:var(--color-neutral-500); font-weight:700;}
   .voice-preview-btn.cached{border-color:var(--color-brand-primary-mid); color:var(--color-brand-primary);}
@@ -1112,13 +1119,14 @@
   .video-tile.ready .video-play-btn{display:flex;}
   .video-tile.generating .spinner-mini{display:block;}
 
-  .video-editor-panel{width:100%;}
-  .video-scene-card{border:1px solid var(--color-neutral-300); border-radius:10px; padding:16px;}
-  .video-scene-header-row{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:14px;}
-  .video-scene-card .scene-prompt-text{margin-bottom:14px;}
-  .video-regen-btn{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--color-neutral-300); background:#fff; border-radius:999px; padding:8px 14px; font-size:12px; font-weight:600; color:var(--color-neutral-700); cursor:pointer; font-family:var(--font-family-text);}
-  .video-regen-btn:hover{border-color:var(--color-neutral-450);}
-  .video-regen-btn .cost{color:var(--color-neutral-500); font-weight:700;}
+  .video-editor-panel{width:100%; display:flex; flex-direction:column; gap:8px;}
+  /* Figma: Reel/Short · Timeline - Video (node 6077-107146), scene-editor-col — the "Video
+     prompt" box is the same real .scene-card/.scene-desc-box pattern Timeline's own "Scene &
+     character action description" uses, with the same small Regenerate pill the Image flow's
+     Versions/Preview screens use (.img-prompt-regen-btn). The time/scene-range caption above
+     the card is a real product need the static Figma capture doesn't show — kept as a plain
+     label outside the bordered card rather than folded into it. */
+  .video-scene-header-row{margin-bottom:8px;}
 
   .combine-stale-banner{display:none; flex-direction:column; align-items:stretch; gap:8px; background:var(--color-brand-primary-light); border:1px solid var(--color-brand-primary-mid); border-radius:10px; padding:10px 14px; margin-top:14px; font-size:12px; color:var(--color-neutral-900); flex-shrink:0;}
   .combine-stale-banner .btn-secondary{width:100%;}
@@ -2084,7 +2092,7 @@
                   <div class="scene-editor-panel" id="sceneEditorPanel"></div>
                   <div class="voice-section" id="voiceSection_tl">
                     <div class="voice-section-header">
-                      <label class="scene-desc-label"><img src="../../../../components/ai-social-media/icons/nav-voices.svg" class="icon-inline" alt=""> Voice</label>
+                      <label class="voice-label">Voice</label>
                       <div class="voice-section-header-right">
                         <div class="voice-mode-toggle" id="voiceModeToggle_tl">
                           <div class="voice-mode-btn" data-mode="whole" onclick="setVoiceMode('whole')">Whole take</div>
@@ -2118,9 +2126,11 @@
                   <div class="video-grid" id="videoGrid"></div>
                 </div>
                 <div class="scene-editor-col">
+                  <div class="scene-nav" id="videoSegmentNav"></div>
+                  <div class="video-editor-panel" id="videoEditorPanel"></div>
                   <div class="voice-section" id="voiceSection_vid">
                     <div class="voice-section-header">
-                      <label class="scene-desc-label"><img src="../../../../components/ai-social-media/icons/nav-voices.svg" class="icon-inline" alt=""> Voice</label>
+                      <label class="voice-label">Voice</label>
                       <div class="voice-section-header-right">
                         <div class="voice-mode-toggle" id="voiceModeToggle_vid">
                           <div class="voice-mode-btn" data-mode="whole" onclick="setVoiceMode('whole')">Whole take</div>
@@ -2132,8 +2142,6 @@
                     <div class="voice-cost-summary" id="voiceCostSummary_vid"></div>
                     <div class="voice-section-body" id="voiceSectionBody_vid"></div>
                   </div>
-                  <div class="scene-nav" id="videoSegmentNav"></div>
-                  <div class="video-editor-panel" id="videoEditorPanel"></div>
                   <div class="combine-stale-banner" id="combineStaleBanner" style="display:none;">
                     <span><img src="../../../../components/ai-social-media/icons/alert-sm.svg" class="icon-inline" alt=""> This scene changed — recombine to reflect the latest state.</span>
                     <button class="btn btn-secondary" onclick="combineVideo()">Recombine</button>
@@ -4753,6 +4761,17 @@ function wordCountGuideText(script){
   const n = script.replace(/[!?.,]/g, '').trim().split(/\s+/).length;
   return `💡 4-second pacing guide · about 8–10 words (currently ${n} words)`;
 }
+// Whole-take word count — same "N / 30 words" convention as the Image/Carousel prompt fields.
+function wholeWordCountText(text){
+  const n = text.replace(/[!?.,]/g, '').trim().split(/\s+/).filter(Boolean).length;
+  return `${n} / 30 words`;
+}
+function updateWholeScriptText(value){
+  window.__wholeScriptText = value;
+  document.querySelectorAll('[id^="wholeWordCount_"]').forEach(el => { el.textContent = wholeWordCountText(value); });
+  updateWholeVoiceButton('tl');
+  updateWholeVoiceButton('vid');
+}
 function renderTimelineScenes(){
   const count = getSceneCount();
   const scenes = SCENE_TEMPLATES.slice(0, count).map(s => ({ ...s }));
@@ -4795,7 +4814,7 @@ function renderTimelineScenes(){
     return `
     <div class="scene-card scene-editor" id="sceneEditor${unit}" style="${u === 0 ? '' : 'display:none;'}">
       <div class="scene-desc-block">
-        <label class="scene-desc-label-reel">🎬 Scene &amp; character action description</label>
+        <label class="scene-desc-label-reel">Scene &amp; character action description</label>
         <div class="scene-desc-box">
           <div class="reference-images-row compact"></div>
           <div class="mention-wrap">
@@ -4803,6 +4822,7 @@ function renderTimelineScenes(){
             <div class="mention-popover" style="display:none;"></div>
           </div>
         </div>
+        <p class="scene-note">AI automatically builds a scene to match this line</p>
       </div>
     </div>
   `;
@@ -4970,7 +4990,10 @@ function renderVoiceSection(scope){
   } else {
     if(window.__wholeScriptText === null) window.__wholeScriptText = getAllSceneScriptsJoined();
     body.innerHTML = `
-      <textarea class="voice-script-text whole" oninput="window.__wholeScriptText = this.value; updateWholeVoiceButton('tl'); updateWholeVoiceButton('vid');">${escapeHtml(window.__wholeScriptText)}</textarea>
+      <div class="voice-acc-script-wrap">
+        <textarea class="voice-script-text whole" oninput="updateWholeScriptText(this.value)">${escapeHtml(window.__wholeScriptText)}</textarea>
+        <span class="voice-acc-wordcount" id="wholeWordCount_${scope}">${wholeWordCountText(window.__wholeScriptText)}</span>
+      </div>
       <button class="voice-preview-btn" id="voicePreviewBtnWhole_${scope}" onclick="previewWholeVoice('${scope}')">
         <span class="vp-icon"><img src="../../../../components/ai-social-media/icons/audio-play.svg" class="icon-inline icon-16" alt=""></span> Preview <span class="vp-cost"><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">${estimateWholeVoiceCredits()}</span>
       </button>
@@ -5234,13 +5257,17 @@ function startVideoGeneration(){
   `).join('');
 
   document.getElementById('videoEditorPanel').innerHTML = Array.from({ length: count }, (_, i) => `
-    <div class="video-scene-card" id="videoSceneEditor${i + 1}" style="${i === 0 ? '' : 'display:none;'}">
+    <div class="video-scene-editor" id="videoSceneEditor${i + 1}" style="${i === 0 ? '' : 'display:none;'}">
       <div class="video-scene-header-row">
         <div class="scene-time"><span class="dot"></span>${getVideoUnitTimeLabel(i + 1)} · Scenes ${getVideoUnitScenes(i + 1).join('–')}</div>
       </div>
-      <label class="scene-desc-label-reel">Video prompt</label>
-      <textarea class="scene-prompt-text" id="videoPrompt${i + 1}">${escapeHtml(buildVideoPrompt(i + 1))}</textarea>
-      <button class="video-regen-btn" onclick="regenerateVideoScene(${i + 1})"><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt=""> Regenerate <span class="cost"><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">${VIDEO_COST_PER_UNIT}</span></button>
+      <div class="scene-card">
+        <div class="scene-card-head-row">
+          <span class="scene-card-head-label">Video prompt</span>
+          <button type="button" class="img-prompt-regen-btn used" onclick="regenerateVideoScene(${i + 1})"><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt="">Regenerate <span class="cost"><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">${VIDEO_COST_PER_UNIT}</span></button>
+        </div>
+        <div class="scene-desc-box"><textarea class="scene-desc" id="videoPrompt${i + 1}">${escapeHtml(buildVideoPrompt(i + 1))}</textarea></div>
+      </div>
     </div>
   `).join('');
 
@@ -5272,15 +5299,16 @@ function applySampleVideoFrame(tile, index){
   if(preview) preview.style.backgroundImage = `url('assets/video/scene${(index % 2) + 1}.png')`;
 }
 
-// A video unit spans 2 Timeline scenes (4s each) to reach the 8s minimum clip length —
-// combine both scene descriptions into one prompt for that clip.
+// A video unit's prompt is its Timeline description (see getVideoUnitDesc) plus a fixed
+// cinematography/motion suffix — turning a still-image action description into an actual
+// video-generation prompt. Figma: node 6077-107146's Video prompt box.
+const VIDEO_PROMPT_MOTION_SUFFIX = ' Realistic beauty UGC style — natural daylight, shallow depth of field, handheld camera feel, true-to-life skin texture and color. Animate naturally with subtle movement — keep framing and character consistent with the still image.';
 function buildVideoPrompt(unit){
-  const [a, b] = getVideoUnitScenes(unit);
-  const descA = document.querySelector('#sceneEditor' + a + ' .scene-desc')?.value.trim() || '';
-  const descB = document.querySelector('#sceneEditor' + b + ' .scene-desc')?.value.trim() || '';
-  return [descA, descB].filter(Boolean).join(' Then, ');
+  return getVideoUnitDesc(unit) + VIDEO_PROMPT_MOTION_SUFFIX;
 }
 
+// Nav label is "Scene" (not "Video") on this tab too — matches Timeline's own nav exactly,
+// even though what's being edited here is called "Video prompt" (Figma: node 6077-107146).
 function buildVideoSegmentNav(){
   const tiles = document.querySelectorAll('#subReelVideo .video-tile');
   const nav = document.getElementById('videoSegmentNav');
@@ -5289,13 +5317,13 @@ function buildVideoSegmentNav(){
     const n = tile.dataset.scene;
     return `<div class="segment-nav-btn${n === '1' ? ' active' : ''}" data-target="${n}" onclick="selectVideoScene(${n})">${n}</div>`;
   }).join('');
-  nav.innerHTML = `<span class="scene-nav-label">Video</span>${buttons}`;
+  nav.innerHTML = `<span class="scene-nav-label">Scene</span>${buttons}`;
 }
 
 function selectVideoScene(n){
   n = Number(n);
   document.querySelectorAll('#subReelVideo .video-tile').forEach(t => t.classList.toggle('active', Number(t.dataset.scene) === n));
-  document.querySelectorAll('.video-scene-card').forEach(e => e.style.display = 'none');
+  document.querySelectorAll('.video-scene-editor').forEach(e => e.style.display = 'none');
   const editor = document.getElementById('videoSceneEditor' + n);
   if(editor) editor.style.display = 'block';
   document.querySelectorAll('#videoSegmentNav .segment-nav-btn').forEach(b => b.classList.toggle('active', Number(b.dataset.target) === n));
