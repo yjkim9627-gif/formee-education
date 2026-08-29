@@ -1912,7 +1912,12 @@
               </div>
 
               <div class="script-card-list" id="scriptCardList"></div>
-              <div class="stage-cta-row">
+              <!-- Hidden — per Figma (that CTA lives only in the persistent bottom action bar,
+                   like every other Generate sub-stage's forward-progress action; the only page
+                   CTA Figma actually draws inside a Generate work area is Carousel Preview's
+                   Regenerate All/Regenerate Card N — node 6566-115391), but kept in the DOM as
+                   the hidden source syncGenActionBarV3() mirrors text/onclick from. -->
+              <div class="stage-cta-row" style="display:none;">
                 <button class="btn btn-dark" id="confirmScriptBtn" onclick="confirmScript()">Confirm & continue to Storyboard →</button>
               </div>
             </div></div>
@@ -1935,7 +1940,12 @@
                 <div class="storyboard-editor-col">
                   <div class="storyboard-nav" id="storyboardCardNav"></div>
                   <div class="storyboard-editor-panel" id="storyboardEditorPanel"></div>
-                  <div class="storyboard-generate-cta">
+                  <!-- Hidden — the right-side work area only ever gets a page CTA for Carousel
+                       Preview's per-card Regenerate All/Regenerate Card N (Figma node
+                       6566-115391); Storyboard's own generate/regenerate action stays out of
+                       this column and lives only in the persistent bottom action bar, which
+                       syncGenActionBarV3() drives from this hidden button as its source. -->
+                  <div class="storyboard-generate-cta" style="display:none;">
                     <button class="btn btn-dark" id="storyboardGenerateBtn" onclick="startCardGeneration()">Generate images</button>
                     <span class="meta-text" id="storyboardGenerateMeta">Regenerating an image once it is made will use credits</span>
                   </div>
@@ -2103,7 +2113,13 @@
                     <div class="voice-cost-summary" id="voiceCostSummary_tl"></div>
                     <div class="voice-section-body" id="voiceSectionBody_tl"></div>
                   </div>
-                  <div class="timeline-cta">
+                  <!-- Hidden — per Figma, "Generate video" doesn't live in this right-side work
+                       area (it's already offered as a chat CTA — see appendChatCta('Generate
+                       Video', ...) below — and in the persistent bottom action bar); the only
+                       page CTA Figma actually draws inside a Generate work area is Carousel
+                       Preview's Regenerate All/Regenerate Card N (node 6566-115391). Kept in the
+                       DOM as the hidden source syncGenActionBarV3() mirrors text/onclick from. -->
+                  <div class="timeline-cta" style="display:none;">
                     <button class="btn btn-dark" id="timelineCtaBtn" onclick="proceedToStudio()">Generate video</button>
                     <span class="meta-text" id="timelineCtaMeta"></span>
                   </div>
@@ -2141,10 +2157,19 @@
                     <div class="voice-cost-summary" id="voiceCostSummary_vid"></div>
                     <div class="voice-section-body" id="voiceSectionBody_vid"></div>
                   </div>
+                  <!-- Informational notice only — the actual "Recombine" action is the same
+                       mirrored button as everything below, reachable from the bottom action bar. -->
                   <div class="combine-stale-banner" id="combineStaleBanner" style="display:none;">
                     <span><img src="../../../../components/ai-social-media/icons/alert-sm.svg" class="icon-inline" alt=""> This scene changed — recombine to reflect the latest state.</span>
-                    <button class="btn btn-secondary" onclick="combineVideo()">Recombine</button>
                   </div>
+                  <!-- Hidden — per Figma, this row's whole "Generating…/Combine into final
+                       video/Recombine/View combined video →" cycle doesn't live in this
+                       right-side work area (it's already offered as a chat CTA — see
+                       appendChatCta('Combine into Final Video', ...) below — and in the
+                       persistent bottom action bar); the only page CTA Figma actually draws
+                       inside a Generate work area is Carousel Preview's Regenerate All/
+                       Regenerate Card N (node 6566-115391). Kept in the DOM as the hidden source
+                       syncGenActionBarV3()/updateVideoCta() drive text/onclick from. -->
                   <div class="video-cta-row" id="videoCtaRow" style="display:none;">
                     <button class="btn btn-dark" id="videoCtaBtn" onclick="combineVideo()">Combine into final video</button>
                     <span class="meta-text" id="videoCtaMeta">Combining is free — no credits used</span>
@@ -2174,7 +2199,14 @@
                       <div id="combineSummarySpecs" style="display:contents;"></div>
                       <p class="combine-audio-note"><img src="../../../../components/ai-social-media/icons/nav-voices.svg" class="icon-inline" alt=""> Narration from Timeline is already mixed in — no extra steps needed.</p>
                     </div>
-                    <div class="combine-result-actions">
+                    <!-- Hidden — per Figma, "Continue to editing"/"Skip to publish" don't live in
+                         this right-side work area (it's already offered as a chat CTA — see
+                         appendChatCta('Your video is ready...', ...) below — and in the
+                         persistent bottom action bar); the only page CTA Figma actually draws
+                         inside a Generate work area is Carousel Preview's Regenerate All/
+                         Regenerate Card N (node 6566-115391). Kept in the DOM as the hidden
+                         source syncGenActionBarV3() mirrors text/onclick from. -->
+                    <div class="combine-result-actions" style="display:none;">
                       <button class="btn btn-dark" onclick="goToDevelop()">Continue to editing →</button>
                       <button class="btn btn-secondary" onclick="goToPublish()">Skip to publish</button>
                     </div>
@@ -3896,8 +3928,11 @@ function checkAllCardsReady(){
     return hist && hist[window.__cardImageActiveIndex[num]].ready;
   });
   document.getElementById('generateCtaMeta').style.display = allReady ? 'none' : '';
-  document.getElementById('skipToPublishBtn').style.display = allReady ? '' : 'none';
-  document.getElementById('continueToEditingBtn').style.display = allReady ? '' : 'none';
+  // skipToPublishBtn/continueToEditingBtn intentionally never get shown here — per Figma, the
+  // right-side work area only carries a page CTA for the Preview tab's Regenerate All/Regenerate
+  // Card N (node 6566-115391); "move to next step" stays out of this column everywhere else and
+  // lives only in the persistent bottom action bar (see syncGenActionBarV3(), which reads these
+  // two buttons' text/onclick as its hidden source regardless of their display state).
   if(allReady){
     document.getElementById('storyboardGenerateBtn').disabled = false;
     document.getElementById('storyboardGenerateBtn').textContent = 'Regenerate all';
@@ -4456,6 +4491,18 @@ function reelSelectCharStyle(el){
   document.querySelectorAll('#charStylesGridReel .char-card-reel').forEach(c => c.classList.remove('selected'));
   el.classList.add('selected');
 }
+
+// The "[Character]'s styles" sub-panel behaves like a transient popover, not a sticky
+// section: clicking a character reveals it (see img/car/reelSelectChar above), but clicking
+// anywhere outside that flow's Character section closes it again, matching the existing
+// outside-click-to-close pattern used for the ratio/versions/duration/date-time popovers
+// elsewhere in this file. The character card itself stays selected — only the styles
+// sub-panel hides.
+document.addEventListener('click', (e) => {
+  if(!e.target.closest('#charWithSectionImage')) document.getElementById('charStylesPanelImage').classList.remove('show');
+  if(!e.target.closest('#charWithSectionCarousel')) document.getElementById('charStylesPanelCarousel').classList.remove('show');
+  if(!e.target.closest('#charWithSection')) document.getElementById('charStylesPanelReel').classList.remove('show');
+});
 
 // ---- Reference image attach + @mention tagging (Brief & Style) ----
 let referenceImages = [];
@@ -5224,13 +5271,13 @@ function updateVideoCta(){
   const tiles = document.querySelectorAll('#videoGrid .video-tile');
   const readyTiles = document.querySelectorAll('#videoGrid .video-tile.ready');
   const generatingTiles = document.querySelectorAll('#videoGrid .video-tile.generating');
-  const ctaRow = document.getElementById('videoCtaRow');
   const btn = document.getElementById('videoCtaBtn');
   const meta = document.getElementById('videoCtaMeta');
   const staleBanner = document.getElementById('combineStaleBanner');
   if(!btn || tiles.length === 0) return;
 
-  ctaRow.style.display = 'flex';
+  // ctaRow stays hidden (see the HTML comment above it) — btn/meta below are still kept fully
+  // up to date as syncGenActionBarV3()'s mirrored source for the bottom action bar.
   staleBanner.style.display = (window.__videoCombined && window.__videoCombineStale) ? 'flex' : 'none';
 
   if(generatingTiles.length > 0){
