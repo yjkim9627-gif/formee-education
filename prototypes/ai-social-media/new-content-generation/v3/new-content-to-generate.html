@@ -23,7 +23,6 @@
 <link rel="stylesheet" href="../../../../components/ai-social-media/voice-accordion-row.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/queue-panel.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/video-summary-card.css">
-<link rel="stylesheet" href="../../../../components/ai-social-media/destination-account.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/date-picker.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/carousel-card-block.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/image-scene-card.css">
@@ -620,6 +619,10 @@
   .pub-subtitle{font-size:var(--font-size-text-sm); line-height:var(--line-height-text-sm); color:var(--color-neutral-500); margin:6px 0 0;}
   .pub-block{margin-bottom:var(--spacing-2xl);}
   .pub-block-label{display:block; font-size:var(--font-size-text-md); line-height:var(--line-height-text-md); font-weight:var(--font-weight-semibold); color:var(--color-neutral-900); margin:0 0 var(--spacing-md);}
+  /* Destinations is the only pub-block with a subtitle under its heading (Figma node
+     7175-117702) — pull the heading's own bottom margin in so the pair reads as one unit. */
+  .pub-block-label:has(+ .pub-block-sub){margin-bottom:2px;}
+  .pub-block-sub{font-size:13px; font-weight:400; color:var(--color-neutral-500); margin:0 0 var(--spacing-md);}
   .pub-card{background:#fff; border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl); padding:var(--spacing-xl); display:flex; flex-direction:column; gap:var(--spacing-lg);}
 
   /* -- Suggest hashtags & SEO keywords trigger + Generate caption — a persistent pair of
@@ -692,31 +695,37 @@
   /* -- Per-platform schedule override — same "shared by default, opt in per platform"
      pattern as the caption customization above -- */
   .pub-schedule-custom-row{display:flex; align-items:center; gap:10px; font-size:12.5px; font-weight:500; color:var(--color-neutral-700); user-select:none; margin-top:14px;}
-  .pub-schedule-per-platform{display:flex; flex-direction:column; gap:10px; padding-top:14px; border-top:1px solid var(--color-neutral-200); width:100%;}
-  .pub-schedule-platform-row{display:flex; align-items:center; gap:12px;}
-  .pub-schedule-platform-label{font-size:12.5px; font-weight:600; color:var(--color-neutral-900); width:70px; flex-shrink:0;}
-  .pub-schedule-per-platform-empty{font-size:12.5px; color:var(--color-neutral-500); margin:0;}
 
-  /* -- Destinations: each platform is its own bordered card in a 2-column grid -- */
-  /* -- Format (Post/Story) — Image can publish as both at once; Carousel and Reel/Short
-     are feed-post-only formats on every platform, so they get a fixed, non-interactive
-     label instead of a choice. -- */
-  .pub-format-options{display:flex; align-items:center; gap:var(--spacing-xl);}
-  .pub-format-checkbox{display:flex; align-items:center; gap:8px; font-size:13px; font-weight:500; color:var(--color-neutral-900); cursor:pointer; user-select:none;}
-  .pub-format-checkbox input{width:16px; height:16px; accent-color:var(--color-neutral-900); cursor:pointer;}
-  .pub-format-fixed{font-size:13px; font-weight:500; color:var(--color-neutral-900);}
-  .pub-format-fixed-note{font-size:12px; font-weight:400; color:var(--color-neutral-500);}
-
-  /* .destination-account* base look (row height per state, icon, name, spacer, status
-     badge, connect button) now comes from components/ai-social-media/destination-account.css.
-     .pub-dest-checkbox is kept local and NOT renamed to the shared demo's span-based
-     .destination-checkbox — this uses a real <input type="checkbox"> (better a11y) with
-     appearance:none custom styling that's shared with .pub-radio-row's radio buttons
-     elsewhere on this same Publish screen, so it stays a v3-wide pattern rather than
-     being folded into one single-purpose component file. */
-  .pub-destinations{display:grid; grid-template-columns:1fr 1fr; gap:var(--spacing-md);}
-  .pub-dest-checkbox{display:flex; align-items:center; flex-shrink:0; cursor:pointer;}
-  .pub-dest-checkbox.disabled{cursor:default;}
+  /* -- Destinations — Figma node 7175-117702 (Image post case): one unified table instead
+     of the old bordered-card grid + a separate global "Format" block. Post/Story are now
+     per-platform columns (a platform can go out as either, both, or neither) instead of one
+     Post/Story choice applied uniformly to every checked destination — Image shows both
+     columns; Reel/Short and Carousel show Post only; Story Video shows Story only (see
+     renderPublishDestinations()). Checked = brand-primary fill (not the neutral-900 used by
+     every other checkbox/radio on this screen) to match the Figma "Destination Table Row"
+     component exactly. -- */
+  .pub-dest-table{width:100%; box-sizing:border-box; background:var(--color-neutral-0); border:1.2px solid var(--color-neutral-400); border-radius:var(--radius-xl); overflow:hidden;}
+  .pub-dest-table-header{display:flex; align-items:center; padding:12px 16px; border-bottom:1px solid var(--color-neutral-200);}
+  .pub-dest-col-head{width:56px; flex-shrink:0; text-align:center; font-size:13px; font-weight:600; color:var(--color-neutral-700);}
+  .pub-dest-row{display:flex; align-items:center; gap:0; padding:16px; border-bottom:1px solid var(--color-neutral-200);}
+  .pub-dest-row:last-child{border-bottom:none;}
+  .pub-dest-meta{display:flex; align-items:center; gap:10px; width:240px; flex-shrink:0; min-width:0;}
+  .pub-dest-icon{width:32px; height:32px; flex-shrink:0; border-radius:var(--radius-sm); display:block;}
+  .pub-dest-name-col{display:flex; flex-direction:column; gap:2px; min-width:0;}
+  .pub-dest-name{font-size:14px; font-weight:600; color:var(--color-neutral-900); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .pub-dest-row.not-connected .pub-dest-name{color:var(--color-neutral-500);}
+  .pub-dest-handle{font-size:12px; font-weight:400; color:var(--color-neutral-500); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .pub-dest-gap{flex:1 0 0; min-width:12px;}
+  .pub-dest-col{width:56px; flex-shrink:0; display:flex; align-items:center; justify-content:center;}
+  .pub-dest-status-col{width:240px; flex-shrink:0; display:flex; align-items:center; justify-content:flex-end; gap:10px;}
+  .pub-dest-status{flex-shrink:0; font-family:var(--font-family-text); font-size:11px; font-weight:600; line-height:14px; white-space:nowrap;}
+  .pub-dest-status.connected{background:var(--color-badge-green-bg); color:var(--color-badge-green-text); border-radius:var(--radius-lg); padding:2px 8px;}
+  .pub-dest-status.not-connected{background:var(--color-neutral-400); color:var(--color-neutral-700); border-radius:999px; padding:2px 8px;}
+  .pub-dest-connect-btn{flex-shrink:0; display:inline-flex; align-items:center; justify-content:center; padding:9px 14px; background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); font-family:var(--font-family-text); font-size:13px; font-weight:600; line-height:20px; color:var(--color-neutral-700); cursor:pointer;}
+  .pub-dest-connect-btn:hover{border-color:var(--color-neutral-450);}
+  .pub-dest-checkbox{width:16px; height:16px; flex-shrink:0; border-radius:var(--radius-sm); appearance:none; -webkit-appearance:none; margin:0; border:1px solid var(--color-neutral-400); background:var(--color-neutral-0); cursor:pointer; background-repeat:no-repeat; background-position:center;}
+  .pub-dest-checkbox:checked{background-color:var(--color-brand-primary); border-color:var(--color-brand-primary); background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgdmlld0JveD0iMCAwIDEyIDEyIiBmaWxsPSJub25lIj48cGF0aCBkPSJNMTAgM0w0LjUgOC41TDIgNiIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPg==");}
+  .pub-dest-checkbox:disabled{opacity:.5; background-color:var(--color-neutral-150); cursor:not-allowed;}
 
   /* -- When / schedule -- */
   .pub-when-options{display:flex; flex-direction:column; gap:12px;}
@@ -724,14 +733,30 @@
   .pub-radio-row-schedule{display:flex; align-items:center; gap:var(--spacing-lg); flex-wrap:wrap;}
   .pub-schedule-fields{margin-left:0;}
 
-  /* -- Shared custom radio / checkbox look (selected = neutral-900 fill + white check, per Figma) -- */
+  /* -- Shared custom radio look (selected = neutral-900 fill + white check, per Figma).
+     .pub-when-platform-mode's "Save as draft (all platforms)" is a real checkbox (it's a
+     standalone on/off, not mutually exclusive with anything in its own group) but reuses
+     this exact circle styling so it reads identically to every other radio on this screen. -- */
   .pub-radio-row input[type="radio"],
-  .pub-dest-checkbox input[type="checkbox"]{appearance:none; -webkit-appearance:none; margin:0; flex-shrink:0; border:1.5px solid var(--color-neutral-400); background:var(--color-neutral-0); cursor:pointer; background-repeat:no-repeat; background-position:center;}
-  .pub-radio-row input[type="radio"]{width:20px; height:20px; border-radius:var(--radius-full);}
-  .pub-dest-checkbox input[type="checkbox"]{width:16px; height:16px; border-radius:var(--radius-sm); border-width:1px;}
+  .pub-when-platform-mode input[type="checkbox"]{appearance:none; -webkit-appearance:none; margin:0; flex-shrink:0; border:1.5px solid var(--color-neutral-400); background:var(--color-neutral-0); cursor:pointer; background-repeat:no-repeat; background-position:center; width:20px; height:20px; border-radius:var(--radius-full);}
   .pub-radio-row input[type="radio"]:checked,
-  .pub-dest-checkbox input[type="checkbox"]:checked{background-color:var(--color-neutral-900); border-color:var(--color-neutral-900); background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgdmlld0JveD0iMCAwIDEyIDEyIiBmaWxsPSJub25lIj48cGF0aCBkPSJNMTAgM0w0LjUgOC41TDIgNiIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPg==");}
-  .pub-dest-checkbox input[type="checkbox"]:disabled{opacity:.5; background-color:var(--color-neutral-150); cursor:not-allowed;}
+  .pub-when-platform-mode input[type="checkbox"]:checked{background-color:var(--color-neutral-900); border-color:var(--color-neutral-900); background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgdmlld0JveD0iMCAwIDEyIDEyIiBmaWxsPSJub25lIj48cGF0aCBkPSJNMTAgM0w0LjUgOC41TDIgNiIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPg==");}
+
+  /* -- "Customize timing for each platform" toggle (Figma node 7228-149845) — same visual
+     pattern as .pub-caption-custom-row above; when on, replaces the 3 global radios with
+     a "Save as draft (all platforms)" override + one Publish now/Schedule row per checked
+     destination (superseding the narrower old "customize schedule time only" feature). -- */
+  .pub-when-toggle-row{display:flex; align-items:center; gap:10px; font-size:13px; font-weight:400; color:var(--color-neutral-900); user-select:none; padding-bottom:12px; border-bottom:1px solid var(--color-neutral-200); margin-bottom:12px;}
+  .pub-when-platform-list{display:flex; flex-direction:column; gap:16px;}
+  .pub-when-platform-row{display:flex; align-items:center; gap:0;}
+  .pub-when-platform-meta{display:flex; align-items:center; gap:10px; width:200px; flex-shrink:0; min-width:0;}
+  .pub-when-platform-icon{width:24px; height:24px; flex-shrink:0; border-radius:var(--radius-sm); display:block;}
+  .pub-when-platform-name{font-size:13px; font-weight:600; color:var(--color-neutral-900); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .pub-when-mode-choice{display:flex; align-items:center; gap:8px; font-size:13px; font-weight:500; color:var(--color-neutral-900); cursor:pointer; flex-shrink:0;}
+  .pub-when-mode-choice input[type="radio"]{appearance:none; -webkit-appearance:none; margin:0; flex-shrink:0; width:20px; height:20px; border-radius:var(--radius-full); border:1.5px solid var(--color-neutral-400); background:var(--color-neutral-0); cursor:pointer; background-repeat:no-repeat; background-position:center;}
+  .pub-when-mode-choice input[type="radio"]:checked{background-color:var(--color-neutral-900); border-color:var(--color-neutral-900); background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgdmlld0JveD0iMCAwIDEyIDEyIiBmaWxsPSJub25lIj48cGF0aCBkPSJNMTAgM0w0LjUgOC41TDIgNiIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPg==");}
+  .pub-when-platform-gap{width:40px; flex-shrink:0;}
+  .pub-when-platform-empty{font-size:12.5px; color:var(--color-neutral-500); margin:0;}
 
   /* ---- Date & time picker (Figma: FME_Design-System · Date Picker, node 726:1969) ---- */
   .dt-picker-wrap{position:relative; display:inline-block;}
@@ -2385,20 +2410,21 @@
       </div>
 
       <div class="pub-block">
-        <label class="pub-block-label">Format</label>
-        <div class="pub-card">
-          <div class="pub-format-options" id="pubFormatOptions"></div>
-        </div>
-      </div>
-
-      <div class="pub-block">
         <label class="pub-block-label">Destinations</label>
-        <div class="pub-destinations" id="pubDestinations"></div>
+        <p class="pub-block-sub">Choose where and how you want to publish.</p>
+        <div class="pub-dest-table" id="pubDestinations"></div>
       </div>
 
       <div class="pub-block">
         <label class="pub-block-label">When</label>
         <div class="pub-card">
+        <div class="pub-when-toggle-row">
+          <label class="toggle-switch">
+            <input type="checkbox" id="pubWhenCustomToggle" onchange="toggleWhenCustomize()">
+            <span class="toggle-slider"></span>
+          </label>
+          <span>Customize timing for each platform</span>
+        </div>
         <div class="pub-when-options" id="pubWhenOptions">
           <label class="pub-radio-row">
             <input type="radio" name="pubWhen" value="now" checked onchange="updateWhenSelection()">
@@ -2440,20 +2466,22 @@
                   </div>
                 </div>
               </div>
-              <div class="pub-schedule-custom-row">
-                <label class="toggle-switch">
-                  <input type="checkbox" id="pubScheduleCustomToggle" onchange="toggleScheduleCustomize()">
-                  <span class="toggle-slider"></span>
-                </label>
-                <span>Customize schedule for each platform</span>
-              </div>
-              <div class="pub-schedule-per-platform" id="pubSchedulePerPlatform" style="display:none;"></div>
             </div>
           </div>
           <label class="pub-radio-row">
             <input type="radio" name="pubWhen" value="draft" onchange="updateWhenSelection()">
             <span>Save as draft</span>
           </label>
+        </div>
+        <!-- Per-platform mode: "Save as draft" stays a single global override; Publish now/
+             Schedule become one row per checked destination (Figma node 7228-149845). -->
+        <div class="pub-when-platform-mode" id="pubWhenPlatformMode" style="display:none;">
+          <label class="pub-radio-row">
+            <input type="checkbox" id="pubWhenPlatformDraftAll" onchange="updateWhenSelection()">
+            <span>Save as draft (all platforms)</span>
+          </label>
+          <div class="pub-divider-inner"></div>
+          <div class="pub-when-platform-list" id="pubWhenPlatformList"></div>
         </div>
         <div class="pub-warning-note" id="pubWarningNote"></div>
         </div>
@@ -5594,82 +5622,87 @@ function getPublishHookText(){
   const headline = (typeof copyFields !== 'undefined') ? copyFields.find(f => f.key === 'headline') : null;
   return (headline && headline.text) || document.getElementById('briefPromptImage')?.value.trim() || '';
 }
-window.__platformConnections = window.__platformConnections || { instagram: true, facebook: true, tiktok: false };
+window.__platformConnections = window.__platformConnections || { instagram: true, tiktok: true, facebook: true, youtube: false, linkedin: false };
 
 const PUBLISH_PLATFORM_ICONS = {
   instagram: 'data:image/png;base64,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',
   facebook: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAADzUlEQVR4nMVXW0hUQRj+ZvbifXe1O+paERmYihFBpdkNIroY+GKQFvTQ5bmnqLeIHhKiHuqheqqMoOhCBQWRYUERRGaBkJSrJSXUaqmp58zEnNuey5xtpcJvd5g5/8z/zzfzz/wzQzjnHNMIimlGcCqNn33luP8ZeDbI0D8KDE3o8mgYqIgSVMQINhcDq2aRjG2STFxw9QNDaxdHYiQzb5XmERyqIGhaSP+OQN8IR0u7irdJDkII3E1NmaxOJwLc3BjS8ikTaOtRcfQlw/Ak/grREHB6JcXmeCBzAvcSKnY/UvEvcaY2gKZFgT8T6PvJUH9zAsPGApOC2BaZqS5kaZZTNAt43BBGaT5NT6Dm6jgSP1ja0QifC5TkAfsrQ9hSRlFaoMuGxjn6fnLU3xj36C0tImhvzPbfhm3dCnqT/lNPKAFnHOIXL6C4vTWs5c6REi1xlTt0RP5mkKGtexI7y0NWe2pXPvF8Qu/AlSD+jIMpzJLd3u7t3AG3jqrrnXihyGeg45OC3mG/qddHY/qqtjgg7bzjk4qEYYOpek4MPTFrAokhFR39KmpLAk4Cd98rgCJfRG5pPN8b6Q4+GMOVd4pXlxJAzKLN1t0exUug84uqT3eGkc6Ny10+AUNis6NfEM1yEfiaOQEZpqL78VtqoQfNwtAI07axbDt7ZJLOuI/7ZDaStrZBy6axbWRmhOzctlRAr5rtjWhnt+RaZbHQjj/55bEhQ9AsiCM1OeY/il2VYd86d/2d7gkrDsgQzSZeAvECguSILQj9IbSmQ+eAAjDXlrbZq5ydin/ULNTFg1o9Z0bSAkfqeyp4PaA4dN32quakCATNwtYlYZx5OuoxRkC0ILLpQtKS7VqWheaaHEc7e33nwGRaF2wvz/ISWLMgjHiEGmeBGb/0CCZItPekDpe6+alYbkLUm2RlAzARLwygboHPWXBkfR4gmIswquV60kZjJZ89r7Vz6nllwJF1zusRtX80L8/R/KP5S0uG71TmKEvjgKVj6rllHPEIQctyp+uo29C1PTFEwsTWMfeUZZva2Rlz6XJEwsDDAzM8etQtmF8UROuOiH6EGkeqJ0m2p7SdLZ1viqGsKJDZu6BlRa52qdh76bs8OPnMgAyxXIrWxhgaqpxTn5aAQEN1DqqLQ9hwahAfvzmPWdkilMlqSkK4vm8mymb4v3+ob41wx8wgeo7Nw8XmQpQVUn2Uxg3JQ8C+2GIBTefl4blpOxfI6GVk4nH3L9x6NYbq0hD2rM635MlRhvUnv6B+cTYaanKwttx58fxnBPAfMO2v49/QJ28HrQ9A9QAAAABJRU5ErkJggg==',
-  tiktok: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAADKklEQVR4nMVXX0hTURj+tq7bnHebzDRXdJ2g1UMLk5oPm86sF7dAkEwKe1DyoSaDHkoSAimQfNQIpIdJ9CAIPhg03yonCvWQkJMKBfOmJqxWm5uhMhfn7u62pe5Pbu2Dw3b+ft/5/c7vd+4RhUKhELIIMbIMKrrCsiysVitcLhe8Xm/aycxmM3p6esAwjNAmiriAkJtMpowQR0OlUmF8fFwQIY50dHV1ZZycgHB0dHTstIBarU55MTGdB7rpolAPjL1EcNWdlBUWFhZ2noFUIVbkQdnWjDPyfK7u8/3C3PMxfNnaijsv2tIU0gB7aUX4zw0bet/NoJff3f8Pw8pKGCp4MVkRAMDY14eWW7bsCQBNo/9eN26/eY3CR/ezIIDH3fJTeNV0Hc/0ehzNyUFaBOSUlUJeXweZsWr3AdPTwOqqUD0skcFC02DiCKCSIZYZ9ci3tYHSFHH1Q4srcL+dxsouAmba26GqrQWj1wPl5YDfH3dtKhG5qrUZirZmaCS5uKY+gob8Yig23gNGI4o+uHaMd21swGq348rICCxKJRiJ5N8FyOvPceTHZDQGtRVQHEg+bQx5vVxJBCpep7I1vHOB3OEAJiYSmjUVUHt1SE+f5Hx+s7AkTG63c4UtKMDA7CwXbhkVICnTcsTE5xwcDrAlJTBNTYVzuccjHMqMCCA4IY3apd+PgUAg5iIht+F+Id6rY3P+rwvFbIZXLo9poi9ZYsfMz6fPAltzn7Hk+Q6U8g02G0wH1Rj54eZ2Lq8+C7m5Dg0q3kUkATmdYBOEXdICtv0BfHzyFJ/6q3Ccd8Xlqy34dqEaoz+/Ym07iPN0Ae5oysITyCEF8GJtLSUBokRfRA02Kwa7H8RfhY8QEvfW5eWkiD0eD/dLJRo42v8YM0Ua6BobgWLe3BGQfEDIh4fBSqV4uL6OVCFK9puwU6tFp8HwRwTxObl8FAoMLC6i1+2GNxhMmjhiAVFEgFarhc/nizuJ5HVDbq6Q30lUDC0tpUS8pwt0Oh0mJyfjTmI3N7myX1gslt0fJjU1NQmtkLGHCcMwcDqd3PMpU8QGgyGGnECwQLaQ9dfxb0DGJOiHEi3OAAAAAElFTkSuQmCC'
+  tiktok: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAADKklEQVR4nMVXX0hTURj+tq7bnHebzDRXdJ2g1UMLk5oPm86sF7dAkEwKe1DyoSaDHkoSAimQfNQIpIdJ9CAIPhg03yonCvWQkJMKBfOmJqxWm5uhMhfn7u62pe5Pbu2Dw3b+ft/5/c7vd+4RhUKhELIIMbIMKrrCsiysVitcLhe8Xm/aycxmM3p6esAwjNAmiriAkJtMpowQR0OlUmF8fFwQIY50dHV1ZZycgHB0dHTstIBarU55MTGdB7rpolAPjL1EcNWdlBUWFhZ2noFUIVbkQdnWjDPyfK7u8/3C3PMxfNnaijsv2tIU0gB7aUX4zw0bet/NoJff3f8Pw8pKGCp4MVkRAMDY14eWW7bsCQBNo/9eN26/eY3CR/ezIIDH3fJTeNV0Hc/0ehzNyUFaBOSUlUJeXweZsWr3AdPTwOqqUD0skcFC02DiCKCSIZYZ9ci3tYHSFHH1Q4srcL+dxsouAmba26GqrQWj1wPl5YDfH3dtKhG5qrUZirZmaCS5uKY+gob8Yig23gNGI4o+uHaMd21swGq348rICCxKJRiJ5N8FyOvPceTHZDQGtRVQHEg+bQx5vVxJBCpep7I1vHOB3OEAJiYSmjUVUHt1SE+f5Hx+s7AkTG63c4UtKMDA7CwXbhkVICnTcsTE5xwcDrAlJTBNTYVzuccjHMqMCCA4IY3apd+PgUAg5iIht+F+Id6rY3P+rwvFbIZXLo9poi9ZYsfMz6fPAltzn7Hk+Q6U8g02G0wH1Rj54eZ2Lq8+C7m5Dg0q3kUkATmdYBOEXdICtv0BfHzyFJ/6q3Ccd8Xlqy34dqEaoz+/Ym07iPN0Ae5oysITyCEF8GJtLSUBokRfRA02Kwa7H8RfhY8QEvfW5eWkiD0eD/dLJRo42v8YM0Ua6BobgWLe3BGQfEDIh4fBSqV4uL6OVCFK9puwU6tFp8HwRwTxObl8FAoMLC6i1+2GNxhMmjhiAVFEgFarhc/nizuJ5HVDbq6Q30lUDC0tpUS8pwt0Oh0mJyfjTmI3N7myX1gslt0fJjU1NQmtkLGHCcMwcDqd3PMpU8QGgyGGnECwQLaQ9dfxb0DGJOiHEi3OAAAAAElFTkSuQmCC',
+  youtube: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAOdEVYdFNvZnR3YXJlAEZpZ21hnrGWYwAAASBJREFUeAHtl8ENgjAUhv8aj3pXt9CzC+gAMgVrMAADwJkF4M4AMAbc4a6+EGxLkaSU0gtfQtI2JO+jvJfXsvcXOGQHx2wCm8BeWSlLIE2Buu7mbds9PU0jz4ecz3x8Osnj2w14PKTXmVSGQdAFt4nnAb7/m/JfQIFtByeSBMiyEQFh0Tp5DlVgTfr8kgSqCqtBiawI6BCGwPWKJeBlOFVaQ6ic6CkKII670tVBiDVPwFRkVMAEgx1ZtgoYgy7L7AB9cRTp54IkcDjo58HcwBTLSMDgi/8L6CA0E1N4EgpW1hFaNhe4XOACLnC/YzWeT6gCtPh6wToURzgVMeViQocSym6hZUrjqa55PMq5RON+TkcyCj5oYmy7GcExm4BzgQ9Q12mViqZ3vgAAAABJRU5ErkJggg==',
+  linkedin: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAOdEVYdFNvZnR3YXJlAEZpZ21hnrGWYwAAAbBJREFUeAHtlz9IAlEcx7+W0B8HBZ0kMwhySoRoKHCppeBcW2vKoJYmQWh0aailIjdba8yxGjKo0ZQGjaJImzK6KAsq6v0OfDxKuAve3RX4gePufry735f33u/73nN8MmAjbbAZp/hydfeKua0yCpU61PobZKNEvFie6kfQ28FjjsYQUPLRVN6UxCLurnYcLw1xEXwIEjuXpicn1JcPzGZK/J0LyOZrsIrizRN+CLAS6gVbBYgYEjA/7kd1dQRnqWEEfZ2QiSEBVDqebif6WPKkEoBMDAnIlR7482FJhUycRhpNrBQ1E1Hr78iVbRBAyclA6KI5cM1MqxEjjs4fQX4Wi/i0GM3y7GlNaydFwMKYH9GQR3uOZ8raj8XYLvOQGBMkklR6Mcl6riDUfDOklOH35ARNWhKhhxQBtI74F0/giuewvnfL4+GAS/dbKQI29qt8HVk7qPB40KvvGVIEiNb6W/6HFbcEmAnfklEJWclzOqrdW0PwdwSQd9sqYLBH37dloQiLFxewOT1gSS+4WQ7a4jVwiIdTWtUS2xdsM3EP2VDiMOvl9Eyo+dHMLmyvgi/Fy5Nml0vBSgAAAABJRU5ErkJggg=='
 };
 
 const PUBLISH_PLATFORMS = [
-  { key: 'instagram', label: 'Instagram' },
-  { key: 'facebook', label: 'Facebook' },
-  { key: 'tiktok', label: 'TikTok' }
+  { key: 'instagram', label: 'Instagram', handle: '@formee.express' },
+  { key: 'tiktok', label: 'TikTok', handle: '@formee.express' },
+  { key: 'facebook', label: 'Facebook', handle: 'Formee Express' },
+  { key: 'youtube', label: 'YouTube', handle: '' },
+  { key: 'linkedin', label: 'LinkedIn', handle: '' }
 ];
+
+// Which surfaces the Destinations table even offers a column for, by content type — Image
+// can publish either or both at once; Reel/Short and Carousel are feed-post-only; Story
+// Video publishes to Stories only. Mirrors the Figma "Destination Table Row" component's
+// Show Post/Show Story properties.
+function getDestinationSurfaces(){
+  if(window.__isStoryVideo) return ['story'];
+  if(window.__contentType !== 'image') return ['post'];
+  return ['post', 'story'];
+}
+
+// key -> {post: bool, story: bool}. Connected platforms default to every surface the
+// content type offers; not-connected platforms start with nothing checked.
+window.__platformFormats = window.__platformFormats || {};
+function ensurePlatformFormatDefaults(){
+  const surfaces = getDestinationSurfaces();
+  PUBLISH_PLATFORMS.forEach(p => {
+    if(window.__platformFormats[p.key]) return;
+    const connected = window.__platformConnections[p.key];
+    window.__platformFormats[p.key] = { post: connected && surfaces.includes('post'), story: connected && surfaces.includes('story') };
+  });
+}
 
 function populatePublishView(){
   document.getElementById('pubProjectName').textContent = window.__contentType === 'carousel' ? 'New Carousel · Draft' : window.__contentType === 'reel' ? 'New Reel/Short · Draft' : 'New Image Post · Draft';
+  ensurePlatformFormatDefaults();
   renderPublishDestinations();
-  renderPublishFormatOptions();
   updateWhenSelection();
   if(document.getElementById('pubCaptionCustomToggle').checked) renderPerPlatformCaptions();
+  if(document.getElementById('pubWhenCustomToggle').checked) renderWhenPlatformList();
 }
 
-// Image can go out as a feed Post and/or a Story at once; Carousel and Reel/Short only
-// ever publish as a feed Post, so they get a fixed label instead of a real choice.
-function renderPublishFormatOptions(){
-  const el = document.getElementById('pubFormatOptions');
-  if(!el) return;
-  if(window.__contentType === 'image'){
-    el.innerHTML = `
-      <label class="pub-format-checkbox">
-        <input type="checkbox" id="pubFormatPost" checked onchange="onFormatToggle()">
-        <span>Post</span>
-      </label>
-      <label class="pub-format-checkbox">
-        <input type="checkbox" id="pubFormatStory" onchange="onFormatToggle()">
-        <span>Story</span>
-      </label>
-    `;
-  } else if(window.__isStoryVideo){
-    el.innerHTML = `<span class="pub-format-fixed">Story <span class="pub-format-fixed-note">— Story Video publishes to Stories only</span></span>`;
-  } else {
-    const note = window.__contentType === 'carousel' ? 'Carousels' : 'Reels/Shorts';
-    el.innerHTML = `<span class="pub-format-fixed">Post <span class="pub-format-fixed-note">— ${note} publish as a feed post only</span></span>`;
-  }
+function toggleDestinationFormat(key, surface){
+  window.__platformFormats[key][surface] = !window.__platformFormats[key][surface];
+  onDestinationToggle();
 }
 
-function onFormatToggle(){
-  const postEl = document.getElementById('pubFormatPost');
-  const storyEl = document.getElementById('pubFormatStory');
-  if(!postEl.checked && !storyEl.checked){
-    postEl.checked = true; // at least one format must stay selected
-    showPublishWarning('Select at least one format — Post or Story.');
-  } else {
-    clearPublishWarning();
-  }
+// A platform counts as a selected destination once at least one of its surface checkboxes
+// is on — replaces the old single flat checkbox per platform.
+function getCheckedDestinations(){
+  ensurePlatformFormatDefaults();
+  return PUBLISH_PLATFORMS.filter(p => {
+    const f = window.__platformFormats[p.key];
+    return f && (f.post || f.story);
+  }).map(p => p.key);
 }
 
-function getSelectedFormats(){
-  if(window.__isStoryVideo) return ['Story'];
-  if(window.__contentType !== 'image') return ['Post'];
-  const formats = [];
-  if(document.getElementById('pubFormatPost')?.checked) formats.push('Post');
-  if(document.getElementById('pubFormatStory')?.checked) formats.push('Story');
-  return formats.length ? formats : ['Post'];
+// Figma's "Format" summary line in the publish-confirmation modal, now per platform since
+// a platform can go out as Post, Story, or both independently of every other platform.
+function getSelectedFormatsForPlatform(key){
+  const f = window.__platformFormats[key];
+  if(!f) return [];
+  const out = [];
+  if(f.post) out.push('Post');
+  if(f.story) out.push('Story');
+  return out;
 }
 
 // ---- Per-platform caption overrides: shared caption by default, opt in to customize per destination ----
 window.__customCaptions = window.__customCaptions || {};
 
-function getCheckedDestinations(){
-  return Array.from(document.querySelectorAll('.pub-dest-checkbox input:checked')).map(i => i.dataset.platform);
-}
-
 function onDestinationToggle(){
   if(document.getElementById('pubCaptionCustomToggle').checked) renderPerPlatformCaptions();
-  if(document.getElementById('pubScheduleCustomToggle').checked) renderSchedulePerPlatform();
+  if(document.getElementById('pubWhenCustomToggle').checked) renderWhenPlatformList();
 }
 
 function toggleCaptionCustomize(){
@@ -5907,46 +5940,62 @@ function getCaptionForPlatform(key){
   return document.getElementById('pubCaption').value;
 }
 
+// Figma node 7175-117702 (Image post case) — one table instead of a bordered-card grid,
+// with a Post/Story column per surface the current content type actually offers (see
+// getDestinationSurfaces()). Reel/Short and Carousel render a single "Post" column; Story
+// Video renders a single "Story" column — same markup either way, just fewer <th>/cells.
 function renderPublishDestinations(){
   const el = document.getElementById('pubDestinations');
   if(!el) return;
-  el.innerHTML = PUBLISH_PLATFORMS.map(p => {
+  ensurePlatformFormatDefaults();
+  const surfaces = getDestinationSurfaces();
+  const gap = '<div class="pub-dest-gap"></div>';
+  // A flexible gap between every slot (meta, each surface column, status) — not just one
+  // gap on either side of the whole column block — so Post and Story headers/checkboxes
+  // spread apart the same way Figma's "Destination Table Row" does, however many columns
+  // this content type actually shows.
+  const colHeads = surfaces.map(s => `<div class="pub-dest-col-head">${s === 'post' ? 'Post' : 'Story'}</div>`).join(gap);
+
+  const rows = PUBLISH_PLATFORMS.map(p => {
     const connected = window.__platformConnections[p.key];
-    const icon = `<img class="destination-account-icon" src="${PUBLISH_PLATFORM_ICONS[p.key]}" alt="">`;
-    if(connected){
-      return `
-        <div class="destination-account connected">
-          <div class="destination-account-row">
-            <label class="pub-dest-checkbox">
-              <input type="checkbox" data-platform="${p.key}" checked onchange="onDestinationToggle()">
-            </label>
-            ${icon}
-            <span class="destination-account-name">${p.label}</span>
-            <span class="destination-account-spacer"></span>
-            <span class="destination-account-status connected">Connected</span>
+    const icon = `<img class="pub-dest-icon" src="${PUBLISH_PLATFORM_ICONS[p.key]}" alt="">`;
+    const formats = window.__platformFormats[p.key];
+    const cols = surfaces.map(s => `
+      <div class="pub-dest-col">
+        <input type="checkbox" class="pub-dest-checkbox" ${formats[s] ? 'checked' : ''} ${connected ? '' : 'disabled'} onchange="toggleDestinationFormat('${p.key}','${s}')">
+      </div>
+    `).join(gap);
+    const status = connected
+      ? `<span class="pub-dest-status connected">Connected</span>`
+      : `<span class="pub-dest-status not-connected">Not connected</span><button class="pub-dest-connect-btn" onclick="connectPlatform('${p.key}')">Connect</button>`;
+    return `
+      <div class="pub-dest-row${connected ? '' : ' not-connected'}">
+        <div class="pub-dest-meta">
+          ${icon}
+          <div class="pub-dest-name-col">
+            <span class="pub-dest-name">${p.label}</span>
+            <span class="pub-dest-handle">${connected ? p.handle : 'Not connected'}</span>
           </div>
         </div>
-      `;
-    }
-    return `
-      <div class="destination-account not-connected">
-        <div class="destination-account-row">
-          <label class="pub-dest-checkbox disabled">
-            <input type="checkbox" data-platform="${p.key}" disabled>
-          </label>
-          ${icon}
-          <span class="destination-account-name">${p.label}</span>
-          <span class="destination-account-spacer"></span>
-          <span class="destination-account-status not-connected">Not connected</span>
-          <button class="destination-account-connect-btn" onclick="connectPlatform('${p.key}')">Connect</button>
-        </div>
+        ${gap}
+        ${cols}
+        ${gap}
+        <div class="pub-dest-status-col">${status}</div>
       </div>
     `;
   }).join('');
+
+  el.innerHTML = `<div class="pub-dest-table-header"><div class="pub-dest-meta"></div>${gap}${colHeads}${gap}<div class="pub-dest-status-col"></div></div>${rows}`;
 }
 
 function connectPlatform(key){
   window.__platformConnections[key] = true;
+  ensurePlatformFormatDefaults();
+  // Connecting doesn't retroactively check surfaces that defaulted to unchecked while
+  // disconnected — turn on every surface this content type offers, same as a freshly
+  // connected platform would start.
+  const surfaces = getDestinationSurfaces();
+  window.__platformFormats[key] = { post: surfaces.includes('post'), story: surfaces.includes('story') };
   renderPublishDestinations();
   onDestinationToggle();
 }
@@ -6005,12 +6054,80 @@ function refineCaptionWithAI(mode){
   onSharedCaptionInput();
 }
 
+// "Customize timing for each platform" (Figma node 7228-149845) — off: the original 3
+// global radios apply to every destination. On: "Save as draft (all platforms)" stays a
+// single override, but Publish now/Schedule become one choice per checked destination
+// (see renderWhenPlatformList()), superseding the narrower old "same mode, different times"
+// per-platform schedule customization.
+window.__whenPlatformCustom = window.__whenPlatformCustom || false;
+
+function toggleWhenCustomize(){
+  window.__whenPlatformCustom = document.getElementById('pubWhenCustomToggle').checked;
+  document.getElementById('pubWhenOptions').style.display = window.__whenPlatformCustom ? 'none' : 'flex';
+  document.getElementById('pubWhenPlatformMode').style.display = window.__whenPlatformCustom ? 'block' : 'none';
+  if(window.__whenPlatformCustom) renderWhenPlatformList();
+  updateWhenSelection();
+}
+
+window.__platformTimingMode = window.__platformTimingMode || {}; // key -> 'now' | 'schedule'
+function setPlatformTimingMode(key, mode){
+  window.__platformTimingMode[key] = mode;
+  renderWhenPlatformList();
+}
+
+function renderWhenPlatformList(){
+  const wrap = document.getElementById('pubWhenPlatformList');
+  // The shared #dtPopover gets reparented into whichever .dt-picker-wrap last opened it
+  // (see toggleDatePicker()) — rescue it back to <body> first so overwriting this list's
+  // innerHTML below doesn't delete the popover along with the row that was hosting it.
+  const pop = document.getElementById('dtPopover');
+  if(pop && wrap.contains(pop)) document.body.appendChild(pop);
+  const checked = getCheckedDestinations();
+  if(checked.length === 0){
+    wrap.innerHTML = '<p class="pub-when-platform-empty">Select a destination above to set its timing.</p>';
+    return;
+  }
+  wrap.innerHTML = checked.map(key => {
+    const platform = PUBLISH_PLATFORMS.find(p => p.key === key);
+    const mode = window.__platformTimingMode[key] || 'now';
+    const val = window.__dtValues[key];
+    const label = val ? val.formatted : 'Choose date &amp; time';
+    return `
+      <div class="pub-when-platform-row">
+        <div class="pub-when-platform-meta">
+          <img class="pub-when-platform-icon" src="${PUBLISH_PLATFORM_ICONS[key]}" alt="">
+          <span class="pub-when-platform-name">${platform.label}</span>
+        </div>
+        <label class="pub-when-mode-choice">
+          <input type="radio" name="pubWhenMode_${key}" ${mode === 'now' ? 'checked' : ''} onchange="setPlatformTimingMode('${key}','now')">
+          <span>Publish now</span>
+        </label>
+        <div class="pub-when-platform-gap"></div>
+        <label class="pub-when-mode-choice">
+          <input type="radio" name="pubWhenMode_${key}" ${mode === 'schedule' ? 'checked' : ''} onchange="setPlatformTimingMode('${key}','schedule')">
+          <span>Schedule</span>
+        </label>
+        <div class="dt-picker-wrap">
+          <button type="button" class="dt-trigger${val ? '' : ' placeholder'}" id="dtTrigger_${key}" onclick="toggleDatePicker(event,'${key}')">
+            <span id="dtTriggerText_${key}">${label}</span>
+            <span class="ic">${DT_CALENDAR_ICON}</span>
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
 function updateWhenSelection(){
+  clearPublishWarning();
+  const btn = document.getElementById('pubMainBtn');
+  if(window.__whenPlatformCustom){
+    btn.innerHTML = document.getElementById('pubWhenPlatformDraftAll').checked ? '📝 Save as draft →' : '⬆ Publish / Schedule →';
+    return;
+  }
   const selected = document.querySelector('input[name="pubWhen"]:checked')?.value || 'now';
   document.getElementById('pubScheduleFields').style.display = selected === 'schedule' ? 'block' : 'none';
   if(selected !== 'schedule') closeDatePicker();
-  clearPublishWarning();
-  const btn = document.getElementById('pubMainBtn');
   if(selected === 'now') btn.innerHTML = '⬆ Publish →';
   else if(selected === 'schedule') btn.innerHTML = '🕐 Schedule →';
   else btn.innerHTML = '📝 Save as draft →';
@@ -6066,7 +6183,8 @@ function toggleDatePicker(e, target){
   pop.style.display = 'flex';
 }
 function closeDatePicker(){
-  document.getElementById('dtPopover').style.display = 'none';
+  const pop = document.getElementById('dtPopover');
+  if(pop) pop.style.display = 'none';
 }
 document.addEventListener('click', (e) => {
   const pop = document.getElementById('dtPopover');
@@ -6156,42 +6274,19 @@ function confirmDatePicker(){
   closeDatePicker();
 }
 
-// Resolves what a given platform will actually be scheduled at: its own override if
-// per-platform scheduling is on and one was set, otherwise the shared "When" value.
+// Resolves what a given platform will actually be scheduled at: its own date-time value if
+// per-platform timing is on, otherwise the shared "When" value.
 function getScheduleForPlatform(key){
-  if(document.getElementById('pubScheduleCustomToggle').checked && window.__dtValues[key]) return window.__dtValues[key].formatted;
+  if(window.__whenPlatformCustom && window.__dtValues[key]) return window.__dtValues[key].formatted;
   return window.__dtValues.shared ? window.__dtValues.shared.formatted : null;
 }
 
-function toggleScheduleCustomize(){
-  const on = document.getElementById('pubScheduleCustomToggle').checked;
-  document.getElementById('pubSchedulePerPlatform').style.display = on ? 'flex' : 'none';
-  if(on) renderSchedulePerPlatform();
-}
-
-function renderSchedulePerPlatform(){
-  const wrap = document.getElementById('pubSchedulePerPlatform');
-  const checked = getCheckedDestinations();
-  if(checked.length === 0){
-    wrap.innerHTML = '<p class="pub-schedule-per-platform-empty">Select a destination below to customize its schedule.</p>';
-    return;
-  }
-  wrap.innerHTML = checked.map(key => {
-    const platform = PUBLISH_PLATFORMS.find(p => p.key === key);
-    const val = window.__dtValues[key];
-    const label = val ? val.formatted : 'Choose date &amp; time';
-    return `
-      <div class="pub-schedule-platform-row">
-        <span class="pub-schedule-platform-label">${platform.label}</span>
-        <div class="dt-picker-wrap">
-          <button type="button" class="dt-trigger${val ? '' : ' placeholder'}" id="dtTrigger_${key}" onclick="toggleDatePicker(event,'${key}')">
-            <span id="dtTriggerText_${key}">${label}</span>
-            <span class="ic">${DT_CALENDAR_ICON}</span>
-          </button>
-        </div>
-      </div>
-    `;
-  }).join('');
+// Effective now/schedule mode for one destination — its own radio choice when per-platform
+// timing is on, otherwise the shared "When" radio (should only be called for the
+// publish/schedule path; "draft" is handled as its own branch before this is ever needed).
+function getPlatformTimingMode(key){
+  if(window.__whenPlatformCustom) return window.__platformTimingMode[key] || 'now';
+  return document.querySelector('input[name="pubWhen"]:checked')?.value === 'schedule' ? 'schedule' : 'now';
 }
 
 function quickSaveDraft(){
@@ -6208,9 +6303,30 @@ function describeDestinations(destinations){
 }
 
 function handlePublishMainAction(){
-  const selected = document.querySelector('input[name="pubWhen"]:checked')?.value || 'now';
   const destinations = getCheckedDestinations();
 
+  if(window.__whenPlatformCustom){
+    if(document.getElementById('pubWhenPlatformDraftAll').checked){
+      quickSaveDraft();
+      return;
+    }
+    if(destinations.length === 0){
+      showPublishWarning('Select at least one destination before publishing.');
+      return;
+    }
+    const missing = destinations.filter(key => getPlatformTimingMode(key) === 'schedule' && !getScheduleForPlatform(key));
+    if(missing.length){
+      showPublishWarning('Choose a publish date and time for every platform set to Schedule.');
+      return;
+    }
+    clearPublishWarning();
+    // "mixed" — renderSocialTabContent()/confirmPublishPlatform() resolve each tab's own
+    // now/schedule state via getPlatformTimingMode() instead of one shared modal-wide mode.
+    openPublishSocialModal('mixed');
+    return;
+  }
+
+  const selected = document.querySelector('input[name="pubWhen"]:checked')?.value || 'now';
   if(selected === 'draft'){
     quickSaveDraft();
     return;
@@ -6244,6 +6360,9 @@ window.__socialModalActive = null;
 window.__socialModalConfirmed = {};
 window.__socialModalMode = 'now';
 
+// mode === 'mixed' happens when "Customize timing for each platform" is on — each tab then
+// resolves its own now/schedule state via getPlatformTimingMode() instead of sharing one
+// modal-wide mode; see getEffectiveTabMode() below.
 function openPublishSocialModal(mode){
   const destinations = getCheckedDestinations();
   if(!destinations.length) return;
@@ -6257,6 +6376,10 @@ function openPublishSocialModal(mode){
   renderSocialTabs();
   renderSocialTabContent();
   document.getElementById('pubSocialModalOverlay').style.display = 'flex';
+}
+
+function getEffectiveTabMode(key){
+  return window.__socialModalMode === 'mixed' ? getPlatformTimingMode(key) : window.__socialModalMode;
 }
 
 function closePublishSocialModal(){
@@ -6284,18 +6407,19 @@ function renderSocialTabContent(){
   const platform = PUBLISH_PLATFORMS.find(p => p.key === key);
   const wrap = document.getElementById('pubSocialTabContent');
   const done = window.__socialModalConfirmed[key];
+  const tabMode = getEffectiveTabMode(key);
 
   if(done){
-    wrap.innerHTML = `<div class="pub-social-confirmed-note">✓ Confirmed — ${platform.label} will ${window.__socialModalMode === 'schedule' ? 'be scheduled' : 'publish'}.</div>`;
+    wrap.innerHTML = `<div class="pub-social-confirmed-note">✓ Confirmed — ${platform.label} will ${tabMode === 'schedule' ? 'be scheduled' : 'publish'}.</div>`;
     return;
   }
 
-  const formats = getSelectedFormats().join(' + ');
-  const whenText = window.__socialModalMode === 'schedule'
+  const formats = getSelectedFormatsForPlatform(key).join(' + ');
+  const whenText = tabMode === 'schedule'
     ? `Scheduled for ${getScheduleForPlatform(key) || '—'}`
     : 'Publishing now';
-  const verb = window.__socialModalMode === 'schedule' ? 'schedules' : 'publishes';
-  const actionLabel = window.__socialModalMode === 'schedule' ? 'Schedule' : 'Publish';
+  const verb = tabMode === 'schedule' ? 'schedules' : 'publishes';
+  const actionLabel = tabMode === 'schedule' ? 'Schedule' : 'Publish';
 
   wrap.innerHTML = `
     <div class="pub-social-preview-card">
@@ -6329,7 +6453,7 @@ function confirmPublishPlatform(key){
   } else {
     renderSocialTabs();
     renderSocialTabContent();
-    const label = window.__socialModalMode === 'schedule' ? 'Scheduled' : 'Published';
+    const label = window.__socialModalMode === 'mixed' ? 'Published/scheduled' : window.__socialModalMode === 'schedule' ? 'Scheduled' : 'Published';
     setTimeout(() => {
       closePublishSocialModal();
       alert(`${label} to ${describeDestinations(window.__socialModalPlatforms)}.`);
