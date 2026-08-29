@@ -119,13 +119,27 @@
   /* .chat-cta-row = plain flex-wrap row, used only for the version-pill picker (not a proposal
      card). Every stage-progress CTA (Script Drafted / Ready to Generate / Storyboard Ready / etc.,
      for reel-short, image post AND carousel alike) renders as the bordered .chat-cta-card instead —
-     Figma's "AI Assistant" proposal-card pattern: neutral/75 bg, neutral/400 border, title+desc+button. */
+     now a genuine Figma component, "AI / Response Card" (Components section, node 7164-15),
+     combining every ad hoc version of this card that used to be scattered across the file's
+     screens. Its "State" variant covers 6 looks; .chat-cta-card only needs to support whichever
+     pieces a given state uses (checklist row / 1 button / 2 buttons) since callers already
+     compose the title+text+buttonsHtml themselves. */
   .chat-cta-row{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;}
   .chat-cta-row .btn-dark, .chat-cta-row .btn-secondary{padding:8px 14px; font-size:12px;}
   .chat-cta-card{display:flex; flex-direction:column; gap:12px; margin-top:10px; background:var(--color-neutral-75); border:1px solid var(--color-neutral-400); border-radius:var(--radius-xl); padding:12px;}
   .chat-cta-title{font-size:14px; font-weight:700; color:var(--color-neutral-900);}
   .chat-cta-text{font-size:14px; color:var(--color-neutral-700); line-height:1.57;}
   .chat-cta-card .btn-dark, .chat-cta-card .btn-secondary{width:100%; justify-content:center; padding:9px 14px; font-size:13px;}
+  /* State = "1 Button + Checklist(, Disabled)" — the confirmation badge row (e.g. "Applied to
+     Script panel") shown above that state's button. */
+  .chat-cta-checklist{display:flex; align-items:center; gap:8px; width:100%; box-sizing:border-box; background:var(--color-badge-blue-bg); border:1px solid var(--color-brand-primary-mid); border-radius:var(--radius-lg); padding:6px 8px;}
+  .chat-cta-checklist img{width:16px; height:16px; flex-shrink:0;}
+  .chat-cta-checklist span{font-size:13px; font-weight:600; color:var(--color-brand-primary); font-family:var(--font-family-text);}
+  /* State = "2 Buttons" — side-by-side equal-width buttons (e.g. picking V1/V2), as opposed to
+     "Title Only + 2 Buttons"'s stacked full-width pair (already covered by the default
+     width:100% rule above). */
+  .chat-cta-buttons-row{display:flex; gap:12px; width:100%;}
+  .chat-cta-buttons-row .btn-dark, .chat-cta-buttons-row .btn-secondary{flex:1; width:auto;}
 
   .visual-proposal-box{margin-top:8px; background:#fff; border:1px solid var(--color-neutral-300); border-radius:var(--radius-lg); padding:14px; display:flex; flex-direction:column; gap:10px;}
   .visual-proposal-heading{font-size:13px; font-weight:700; color:var(--color-neutral-900);}
@@ -876,9 +890,10 @@
   .brand-applied-item{font-size:11px; color:var(--color-neutral-700);}
   .brand-applied-item b{color:var(--color-neutral-900);}
   .brand-applied-item s{color:var(--color-neutral-500);}
-  /* Same "Generate Script" proposal card as Figma's ai-response > Frame 1410117517 —
-     matches .chat-cta-card's values exactly (kept as its own class since JS toggles an
-     "applied" state/note this specific card needs that appendChatCta()'s cards don't). */
+  /* Same card as the "AI / Response Card" component now (Components section, node 7164-15,
+     State = "1 Button + Checklist") — matches .chat-cta-card's values exactly (kept as its own
+     class since JS toggles an "applied" state/note this specific card needs that
+     appendChatCta()'s cards don't). .script-applied-note is that state's checklist row. */
   .script-proposal-box{margin-top:12px; background:var(--color-neutral-75); border:1px solid var(--color-neutral-400); border-radius:var(--radius-xl); padding:12px; display:flex; flex-direction:column; gap:12px;}
   .script-proposal-text{font-size:14px; color:var(--color-neutral-700); line-height:1.57;}
   .script-proposal-box .btn-dark{width:100%; justify-content:center; padding:9px 14px; font-size:13px;}
