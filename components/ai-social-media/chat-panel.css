@@ -23,6 +23,23 @@
 .chat-new-btn:hover{background:var(--color-neutral-50);}
 .chat-new-btn:focus-visible{outline:2px solid var(--color-brand-primary); outline-offset:1px;}
 
+/* ---------- Minimized state ("Quick Add", Figma node 7254-138186) ----------
+   Shown in place of .chat once its own header button (.chat-new-btn, now the
+   arrow-up-left icon) minimizes the panel; clicking this restores it. Positioned
+   by whichever screen renders it (new-content-to-generate.html anchors it inside
+   .gen-body, top-left, where the panel used to sit) — this rule only owns the
+   button's own look, not its placement. */
+.chat-quick-add{
+  display:none; align-items:center; gap:8px; height:36px; padding:0 12px;
+  border-radius:var(--radius-lg); background:var(--color-neutral-0); border:1px solid var(--color-neutral-400);
+  cursor:pointer; transition:border-color .15s ease;
+}
+.chat-quick-add.visible{display:inline-flex;}
+.chat-quick-add img{width:16px; height:16px; display:block; flex-shrink:0;}
+.chat-quick-add span{font-size:14px; font-weight:600; color:var(--color-brand-primary); font-family:var(--font-family-text); white-space:nowrap;}
+.chat-quick-add:hover{border-color:var(--color-neutral-500);}
+.chat-quick-add:focus-visible{outline:2px solid var(--color-brand-primary); outline-offset:1px;}
+
 /* ---------- Log / messages ---------- */
 .chat-log{flex:1; min-height:0; overflow-y:auto; scroll-behavior:smooth; padding:16px; display:flex; flex-direction:column; gap:12px;}
 .msg{font-size:14px; line-height:20px; max-width:92%; white-space:pre-wrap; font-family:var(--font-family-text);}

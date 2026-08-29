@@ -111,7 +111,8 @@
   /* ---- VIEW: Generate (shared shell: chat + stage area) — chat panel base rules now in
      components/ai-social-media/chat-panel.css; only screen-specific additions stay here. ---- */
   #generateView{display:flex; flex-direction:column;}
-  .gen-body{display:flex; flex:1; min-height:0;}
+  .gen-body{display:flex; flex:1; min-height:0; position:relative;}
+  .gen-body .chat-quick-add{position:absolute; left:16px; top:16px; z-index:5;}
   /* Feedback bar sits as a normal flex-shrink:0 row below .gen-body (not an absolute overlay)
      so it never covers the chat panel's own pinned input box, and stays visible on every
      Generate sub-stage (Draft/Versions/Preview, Script/Storyboard/Preview) for both content types. */
@@ -1672,10 +1673,10 @@
     <div class="view" id="generateView">
       <div class="gen-body">
 
-        <div class="chat">
+        <div class="chat" id="chatPanel">
           <div class="chat-header">
             <div class="chat-header-title">AI Assistant</div>
-            <button class="chat-new-btn" title="New chat" onclick="startNewChat()"><img src="../../../../components/ai-social-media/icons/pagebar-plus.svg" class="icon-inline" alt=""></button>
+            <button class="chat-new-btn" title="Minimize" onclick="minimizeChat()"><img src="../../../../components/ai-social-media/icons/arrow-up-left.svg" class="icon-inline" alt=""></button>
           </div>
           <div class="chat-log" id="chatLog"></div>
           <div class="chat-quick-chips" id="chatQuickChips"></div>
@@ -1687,6 +1688,11 @@
             </div>
           </div>
         </div>
+
+        <button class="chat-quick-add" id="chatQuickAdd" title="Open AI Assistant" onclick="restoreChat()">
+          <img src="../../../../components/ai-social-media/icons/sparkle-multi.svg" class="icon-inline" alt="">
+          <span>AI Assistant</span>
+        </button>
 
         <div class="stage-area" id="stageAreaImage">
           <div class="stage-tabs">
@@ -2924,6 +2930,15 @@ function startNewChat(){
   if(log) log.innerHTML = '';
   const input = document.getElementById('chatInput');
   if(input) input.value = '';
+}
+// ---- Chat minimize / restore (Figma node 7254-138186 "Quick Add") ----
+function minimizeChat(){
+  document.getElementById('chatPanel').style.display = 'none';
+  document.getElementById('chatQuickAdd').classList.add('visible');
+}
+function restoreChat(){
+  document.getElementById('chatPanel').style.display = '';
+  document.getElementById('chatQuickAdd').classList.remove('visible');
 }
 function quickAction(action){
   if(action === 'rework'){
