@@ -4713,14 +4713,21 @@ function getVideoUnitTimeLabel(unit){
   const end = SCENE_TEMPLATES[last - 1]?.time.split('–')[1] || SCENE_TEMPLATES[first - 1]?.time.split('–')[1] || '';
   return `${start}–${end}`;
 }
-// Tells the user, right in Timeline, which 8s video clip this 4s scene will end up in —
-// since scenes stay 4s for narration pacing but video generation groups pairs of them.
-function timelineSceneNoteText(n){
-  const totalUnits = getVideoUnitCount();
-  if(totalUnits <= 1) return 'This scene will be generated as part of a single 8-second video.';
-  const unit = Math.ceil(n / 2);
-  const partner = n % 2 === 1 ? n + 1 : n - 1;
-  return `Paired with Scene ${partner} into one 8-second video (Video ${unit} of ${totalUnits}).`;
+// Scene & character action description is edited per 8s video unit (matching what actually
+// gets generated), not per 4s dialogue scene — narration keeps its own finer granularity in
+// the Voice section below, but the action/blocking direction only needs to be set once per
+// clip. Defaults to the first paired scene's description; independently editable after that.
+function getVideoUnitDesc(unit){
+  if(!window.__unitDescriptions) window.__unitDescriptions = {};
+  if(window.__unitDescriptions[unit] === undefined){
+    const [first] = getVideoUnitScenes(unit);
+    window.__unitDescriptions[unit] = SCENE_TEMPLATES[first - 1]?.desc || '';
+  }
+  return window.__unitDescriptions[unit];
+}
+function updateVideoUnitDesc(unit, value){
+  if(!window.__unitDescriptions) window.__unitDescriptions = {};
+  window.__unitDescriptions[unit] = value;
 }
 function toggleDurationPopover(e){
   e.stopPropagation();
@@ -4773,7 +4780,7 @@ function renderTimelineScenes(){
     const unitScenes = getVideoUnitScenes(unit).filter(n => n <= count);
     const caption = unitScenes.map(n => getSceneScript(n)).join(' ');
     return `
-    <div class="scene-tile${u === 0 ? ' selected' : ''}" data-scene-start="${unitScenes[0]}" data-scene-end="${unitScenes[unitScenes.length - 1]}" id="sceneTile${unit}" onclick="selectScene(${unitScenes[0]})">
+    <div class="scene-tile${u === 0 ? ' selected' : ''}" id="sceneTile${unit}" onclick="selectScene(${unit})">
       <div class="scene-tile-preview">
         <span class="scene-tile-badge">Video ${unit}<span class="dot"></span>${getVideoUnitTimeLabel(unit)}</span>
       </div>
@@ -4781,32 +4788,37 @@ function renderTimelineScenes(){
     </div>`;
   }).join('');
 
-  document.getElementById('sceneEditorPanel').innerHTML = scenes.map((s, i) => `
-    <div class="scene-card scene-editor" id="sceneEditor${i + 1}" style="${i === 0 ? '' : 'display:none;'}">
+  // One description card per video unit (2 for a 16s video) — matching the canvas above,
+  // not one per 4s dialogue scene (see getVideoUnitDesc's comment).
+  document.getElementById('sceneEditorPanel').innerHTML = Array.from({ length: unitCount }, (_, u) => {
+    const unit = u + 1;
+    return `
+    <div class="scene-card scene-editor" id="sceneEditor${unit}" style="${u === 0 ? '' : 'display:none;'}">
       <div class="scene-desc-block">
         <label class="scene-desc-label-reel">🎬 Scene &amp; character action description</label>
         <div class="scene-desc-box">
           <div class="reference-images-row compact"></div>
           <div class="mention-wrap">
-            <textarea class="scene-desc">${escapeHtml(s.desc)}</textarea>
+            <textarea class="scene-desc" oninput="updateVideoUnitDesc(${unit}, this.value)">${escapeHtml(getVideoUnitDesc(unit))}</textarea>
             <div class="mention-popover" style="display:none;"></div>
           </div>
         </div>
       </div>
-      <div class="scene-note">${escapeHtml(timelineSceneNoteText(i + 1))}</div>
     </div>
-  `).join('');
+  `;
+  }).join('');
 
   renderReferenceImages();
   document.querySelectorAll('#sceneEditorPanel .mention-wrap textarea').forEach(bindMentionTextarea);
-  buildSegmentNav(count);
+  buildSegmentNav(unitCount);
   selectScene(1);
   updateTimelineCta();
   renderVoiceSection('tl');
 }
-// Segment nav stays one button per 4s scene (dialogue-editing granularity) even though
-// the canvas above now groups tiles by 8s video unit — pass the scene count explicitly
-// instead of deriving it from .scene-tile elements, since those no longer map 1:1 to scenes.
+// Segment nav is one button per video unit now (2 for a 16s video) — matching the canvas
+// tiles and the description cards 1:1, so "Scene" here just means "Scene ≈ Video unit".
+// Dialogue/narration keeps its own finer 4s-scene granularity, entirely inside the Voice
+// section below (renderVoiceSection), which this nav doesn't touch.
 function buildSegmentNav(count){
   const nav = document.getElementById('segmentNav');
   if(!nav || !count) return;
@@ -4819,14 +4831,13 @@ function buildSegmentNav(count){
 function selectScene(n){
   n = Number(n);
   document.querySelectorAll('#subReelTimeline .scene-tile').forEach(t => {
-    const start = Number(t.dataset.sceneStart), end = Number(t.dataset.sceneEnd);
-    t.classList.toggle('selected', n >= start && n <= end);
+    t.classList.toggle('selected', t.id === 'sceneTile' + n);
   });
   document.querySelectorAll('.scene-editor').forEach(e => e.style.display = 'none');
   const editor = document.getElementById('sceneEditor' + n);
   if(editor) editor.style.display = 'block';
   document.querySelectorAll('.segment-nav-btn').forEach(b => b.classList.toggle('active', Number(b.dataset.target) === n));
-  const tile = [...document.querySelectorAll('#subReelTimeline .scene-tile')].find(t => n >= Number(t.dataset.sceneStart) && n <= Number(t.dataset.sceneEnd));
+  const tile = document.getElementById('sceneTile' + n);
   if(tile) tile.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
 }
 // ---- Voice: one narration for the whole video, or split per scene — both TTS-cached ----
