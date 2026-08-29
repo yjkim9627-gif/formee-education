@@ -160,9 +160,18 @@
   .stage-body{flex:1; min-height:0; padding:52px 28px 14px; overflow-y:auto; display:flex; flex-direction:column;}
   .stage-title{font-size:20px; font-weight:600; line-height:28px; color:var(--color-neutral-900); margin:0 0 4px;}
   .stage-cta-row{display:flex; justify-content:flex-end; align-items:center; gap:12px; margin-top:24px;}
-  #subDraft, #subVersions{display:flex; flex-direction:column; flex:1; min-height:0;}
+  #subDraft, #subVersions, #subScript{display:flex; flex-direction:column; flex:1; min-height:0;}
   #subDraft .stage-body{padding-bottom:90px;}
   #subDraft .stage-body-inner{display:block; flex:none;}
+  /* Script (5 card blocks + brand kit + text placement, in that order per Figma node
+     6390-106611) is the one Carousel sub-stage with no scrollable content of its own
+     (Storyboard/Preview each scroll inside their own grid instead) — it depends on
+     .stage-body's own overflow-y:auto, which only takes effect once #subScript is a
+     properly height-bounded flex child (showSub() must set its display to 'flex', not
+     'block', for the #subDraft/#subVersions rule above to actually apply to it too).
+     Same reserved-space padding as #subDraft, so Text placement's tail end scrolls
+     clear of the absolutely-positioned .action-bar instead of rendering underneath it. */
+  #subScript .stage-body{padding-bottom:90px;}
 
   .settings-bar{position:absolute; top:56px; left:28px; right:28px; z-index:15; display:flex; justify-content:center; gap:8px; flex-wrap:wrap; pointer-events:none;}
   .settings-bar > *{pointer-events:auto;}
@@ -6640,7 +6649,7 @@ function reelApplyBrandMode(mode){
 function showSub(name){
   const tabs = {draft:'tabDraft', versions:'tabVersions', previewImage:'tabPreviewImage', script:'tabScript', storyboard:'tabStoryboard', preview:'tabPreview', reelScript:'tabReelScript', reelTimeline:'tabReelTimeline', reelVideo:'tabReelVideo'};
   const subs = {draft:'subDraft', versions:'subVersions', previewImage:'subPreviewImage', script:'subScript', storyboard:'subStoryboard', preview:'subPreview', reelScript:'subReelScript', reelTimeline:'subReelTimeline', reelVideo:'subReelVideo'};
-  const displays = {draft:'flex', versions:'flex', previewImage:'flex', script:'block', storyboard:'block', preview:'block', reelScript:'block', reelTimeline:'block', reelVideo:'block'};
+  const displays = {draft:'flex', versions:'flex', previewImage:'flex', script:'flex', storyboard:'block', preview:'block', reelScript:'block', reelTimeline:'block', reelVideo:'block'};
   const tabEl = document.getElementById(tabs[name]);
   if(!tabEl || tabEl.classList.contains('locked')) return;
   Object.values(tabs).forEach(id => { const el = document.getElementById(id); if(el) el.classList.remove('active'); });
