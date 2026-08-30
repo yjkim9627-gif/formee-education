@@ -789,6 +789,31 @@
   .pub-social-confirm-btn:disabled{opacity:.5; cursor:default;}
   .pub-social-confirmed-note{display:flex; align-items:center; gap:8px; background:var(--color-badge-green-bg); color:var(--color-badge-green-text); border-radius:var(--radius-lg); padding:12px 16px; font-size:13px; font-weight:600;}
 
+  /* ---- Image lightbox — Figma node 7351-139160 ("Image post · Versions — Image lightbox").
+     Opens from any Image Scene Card's maximize button (Versions grid + the picked-version
+     Preview card); same modal/modal-overlay shell as pub-social-modal above. Reuses the
+     card's own gradient placeholder for the enlarged image (image-scene-card.css's own
+     comment: this prototype never downloads real stock photography, so the "photo" here is
+     the same neutral gradient, just bigger) — Figma's reference used a real photo asset that
+     doesn't exist in this codebase. ---- */
+  .img-lightbox-overlay{position:fixed;}
+  .img-lightbox-modal{max-width:480px; padding:24px; gap:16px; align-items:center;}
+  .img-lightbox-header{display:flex; align-items:center; justify-content:flex-end; gap:8px; width:100%;}
+  .img-lightbox-icon-btn{width:32px; height:32px; border:none; border-radius:999px; background:var(--color-neutral-100); display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0;}
+  .img-lightbox-icon-btn:hover{background:var(--color-neutral-150);}
+  .img-lightbox-icon-btn img{width:16px; height:16px; display:block;}
+  .img-lightbox-stage{position:relative; width:100%;}
+  .img-lightbox-image{width:100%; aspect-ratio:400/500; border-radius:var(--radius-lg); background:linear-gradient(129deg,var(--color-neutral-200) 14%,var(--color-neutral-150) 86%);}
+  .img-lightbox-nav{position:absolute; top:50%; transform:translateY(-50%); width:36px; height:36px; border-radius:999px; border:1px solid var(--color-neutral-300); background:var(--color-neutral-0); display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 4px 10px rgba(15,23,41,.12);}
+  .img-lightbox-nav.prev{left:-18px;}
+  .img-lightbox-nav.next{right:-18px;}
+  .img-lightbox-nav:disabled{opacity:.35; cursor:default; box-shadow:none;}
+  .img-lightbox-nav img{width:16px; height:16px; display:block;}
+  .img-lightbox-pills{display:flex; gap:8px; flex-wrap:wrap; justify-content:center;}
+  .img-lightbox-pill{border:none; border-radius:999px; padding:6px 14px; font-size:13px; font-weight:600; color:var(--color-neutral-700); background:var(--color-neutral-100); cursor:pointer; font-family:var(--font-family-text);}
+  .img-lightbox-pill:disabled{color:var(--color-neutral-400); cursor:default;}
+  .img-lightbox-pill.active{background:var(--color-neutral-900); color:var(--color-neutral-0);}
+
   /* =====================================================================
      REEL/SHORT (Script/Timeline/Video) — ported from
      new-content-brief-to-generate.html as a third native content type,
@@ -1813,7 +1838,7 @@
                         <div class="image-scene-card-top-row">
                           <div class="image-scene-card-icon-row">
                             <button class="image-scene-card-icon-btn download" type="button" onclick="downloadImage('main')"><img src="../../../../components/ai-social-media/icons/download-ui.svg" alt=""></button>
-                            <button class="image-scene-card-icon-btn maximize" type="button"><img src="../../../../components/ai-social-media/icons/maximize.svg" alt=""></button>
+                            <button class="image-scene-card-icon-btn maximize" type="button" onclick="openImageLightbox(window.__editHistory, window.__activeEditIndex, 'main', selectHistoryEntry)"><img src="../../../../components/ai-social-media/icons/maximize.svg" alt=""></button>
                           </div>
                         </div>
                       </div>
@@ -2520,6 +2545,21 @@
   </div>
 </div>
 
+<div class="modal-overlay img-lightbox-overlay" id="imgLightboxOverlay" style="display:none;" onclick="if(event.target===this) closeImageLightbox();">
+  <div class="modal img-lightbox-modal">
+    <div class="img-lightbox-header">
+      <button type="button" class="img-lightbox-icon-btn" onclick="downloadImage(window.__lightboxDownloadId)"><img src="../../../../components/ai-social-media/icons/download-ui.svg" alt="Download"></button>
+      <button type="button" class="img-lightbox-icon-btn" onclick="closeImageLightbox()"><img src="../../../../components/ai-social-media/icons/close-x.svg" alt="Close"></button>
+    </div>
+    <div class="img-lightbox-stage">
+      <button type="button" class="img-lightbox-nav prev" id="imgLightboxPrev" onclick="lightboxPrev()"><img src="../../../../components/ai-social-media/icons/chevron-left.svg" alt="Previous version"></button>
+      <div class="img-lightbox-image"></div>
+      <button type="button" class="img-lightbox-nav next" id="imgLightboxNext" onclick="lightboxNext()"><img src="../../../../components/ai-social-media/icons/chevron-right.svg" alt="Next version"></button>
+    </div>
+    <div class="img-lightbox-pills" id="imgLightboxPills"></div>
+  </div>
+</div>
+
 <a class="home-fab" href="../../../../index.html" title="Back to all screens">
   <svg viewBox="0 0 16 16" fill="none"><path d="M2 7.2 8 2l6 5.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.3 6.2V13a.8.8 0 0 0 .8.8h3V10h1.8v3.8h3a.8.8 0 0 0 .8-.8V6.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
   <span>Home</span>
@@ -3000,7 +3040,7 @@ function renderVersionGrid(){
             <span class="image-scene-card-ready-badge" style="${v.ready ? '' : 'display:none;'}">Ready</span>
             <div class="image-scene-card-icon-row">
               <button class="image-scene-card-icon-btn download" type="button" onclick="event.stopPropagation(); downloadImage(${v.id})"><img src="../../../../components/ai-social-media/icons/download-ui.svg" alt=""></button>
-              <button class="image-scene-card-icon-btn maximize" type="button" onclick="event.stopPropagation();"><img src="../../../../components/ai-social-media/icons/maximize.svg" alt=""></button>
+              <button class="image-scene-card-icon-btn maximize" type="button" onclick="event.stopPropagation(); if(${v.ready}) openImageLightbox([{label:'Version ${v.id}', ready:true}], 0, ${v.id});"><img src="../../../../components/ai-social-media/icons/maximize.svg" alt=""></button>
             </div>
           </div>
           <div class="spinner-mini" style="${v.ready ? '' : 'display:block;'}"></div>
@@ -3115,6 +3155,44 @@ function selectHistoryEntry(i){
   window.__activeEditIndex = i;
   renderRefineHistory();
 }
+
+// ---- Image lightbox (Figma node 7351-139160) — opens from any Image Scene Card's maximize
+// button. entries = [{label, ready}]; downloadId is whatever downloadImage() already expects
+// for that image; onSelect(i), if given, is called when the user pages so the underlying
+// screen (e.g. the Preview step's edit history) stays in sync with what the lightbox shows. ----
+window.__lightboxEntries = [];
+window.__lightboxIndex = 0;
+window.__lightboxOnSelect = null;
+window.__lightboxDownloadId = 'main';
+
+function openImageLightbox(entries, activeIndex, downloadId, onSelect){
+  window.__lightboxEntries = entries;
+  window.__lightboxIndex = activeIndex;
+  window.__lightboxDownloadId = downloadId;
+  window.__lightboxOnSelect = onSelect || null;
+  renderImageLightbox();
+  document.getElementById('imgLightboxOverlay').style.display = 'flex';
+}
+function closeImageLightbox(){
+  document.getElementById('imgLightboxOverlay').style.display = 'none';
+}
+function renderImageLightbox(){
+  const entries = window.__lightboxEntries;
+  const i = window.__lightboxIndex;
+  document.getElementById('imgLightboxPills').innerHTML = entries.map((e, idx) => `
+    <button type="button" class="img-lightbox-pill${idx === i ? ' active' : ''}" ${e.ready ? '' : 'disabled'} onclick="lightboxGoTo(${idx})">${e.ready ? '' : '<span class="mini-spinner"></span>'}${escapeHtml(e.label)}</button>
+  `).join('');
+  document.getElementById('imgLightboxPrev').disabled = i <= 0;
+  document.getElementById('imgLightboxNext').disabled = i >= entries.length - 1;
+}
+function lightboxGoTo(i){
+  if(!window.__lightboxEntries[i] || !window.__lightboxEntries[i].ready) return;
+  window.__lightboxIndex = i;
+  if(window.__lightboxOnSelect) window.__lightboxOnSelect(i);
+  renderImageLightbox();
+}
+function lightboxPrev(){ lightboxGoTo(window.__lightboxIndex - 1); }
+function lightboxNext(){ lightboxGoTo(window.__lightboxIndex + 1); }
 
 function regenerateWithPrompt(){
   const input = document.getElementById('refineEditInput');
