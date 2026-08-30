@@ -579,7 +579,12 @@
   .ed-clip.wave{background:var(--color-brand-primary-light); color:var(--color-brand-primary); border:1px solid var(--color-brand-primary-mid);}
   .ed-scene-badge{background:rgba(15,23,41,0.6); color:#fff; font-size:9.5px; font-weight:700; padding:2px 6px; border-radius:4px;}
 
-  .ed-actionbar{height:68px; flex-shrink:0; border-top:1px solid var(--color-neutral-400); display:flex; align-items:center; justify-content:space-between; padding:0 24px; gap:24px;}
+  /* Pinned to the bottom of #publishView (a plain .view, position:absolute/inset:56px 0 0 0 —
+     not a flex column anymore now that Publish shares the normal view shell), same pattern as
+     .action-bar elsewhere in this file — was flex-shrink:0 inside .editor-view's own flex
+     column before Publish moved out of that shell, which no longer pins it to anything. */
+  .ed-actionbar{position:absolute; left:0; right:0; bottom:0; height:68px; background:var(--color-neutral-0); border-top:1px solid var(--color-neutral-400); display:flex; align-items:center; justify-content:space-between; padding:0 24px; gap:24px;}
+  #publishView .pub-body{padding-bottom:calc(var(--spacing-7xl) + 68px);}
   .ed-ab-left{display:flex; align-items:center; gap:16px; flex-shrink:0;}
   .ed-readiness{width:220px;}
   .ed-readiness-top{display:flex; align-items:center; justify-content:space-between; font-size:13px; color:var(--color-neutral-700); margin-bottom:4px;}
@@ -2334,27 +2339,12 @@
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- PUBLISH (Edit & Publish step — publish settings; shared across content types) -->
-  <div class="editor-view" id="publishView">
-  <div class="ed-topbar">
-    <div class="ed-logo"></div>
-    <div class="ed-project-field">
-      <span id="pubProjectName">New content · Draft</span>
-      <span class="pencil">✎</span>
-    </div>
-    <div class="ed-stepper">
-      <div class="ed-step done" onclick="goToBrief()"><span class="ed-step-icon">✓</span>Brief &amp; Style</div>
-      <div class="ed-step-connector"></div>
-      <div class="ed-step done" onclick="goToGenerate()"><span class="ed-step-icon">✓</span>Generate</div>
-      <div class="ed-step-connector"></div>
-      <div class="ed-step current"><span class="ed-step-icon">3</span>Edit &amp; Publish</div>
-    </div>
-    <div class="ed-spacer"></div>
-    <button class="ed-text-btn" onclick="goToDevelop()"><img src="../../../../components/ai-social-media/icons/back.svg" class="icon-inline" alt="" style="margin-right:4px;"> Back to Develop</button>
-  </div>
-
+    <!-- VIEW: Publish — now a normal sibling view sharing the persistent nav/topbar shell
+         (see goToPublish()) instead of its own separate editor-style chrome; Figma's actual
+         Publish screen (e.g. node 6329-99000) uses the exact same nav+topbar as every other
+         step, it never had a standalone "ed-topbar". -->
+    <div class="view hidden" id="publishView">
   <div class="pub-body">
     <div class="pub-container">
       <div class="pub-page-heading">
@@ -2519,13 +2509,19 @@
   </div>
 
   <div class="ed-actionbar">
-    <div class="ed-ab-left"></div>
-    <div class="ed-ab-center"></div>
+    <div class="ed-ab-left">
+      <div class="readiness" style="width:180px;">
+        <div class="readiness-top"><span>Brief readiness</span><span id="pubReadinessPct">100%</span></div>
+        <div class="readiness-bar"><div class="readiness-fill" id="pubReadinessFill" style="width:100%"></div></div>
+      </div>
+    </div>
+    <div class="ed-ab-center"><span class="meta-text" id="pubMetaText"></span></div>
     <div class="ed-ab-right">
       <button class="btn btn-secondary" onclick="quickSaveDraft()">Save as draft</button>
       <button class="ed-publish-btn" id="pubMainBtn" onclick="handlePublishMainAction()">⬆ Publish →</button>
     </div>
   </div>
+    </div>
   </div>
 
 </div>
@@ -5775,6 +5771,16 @@ function getDestinationSubtitle(){
   return 'Choose which accounts to publish this Reel/Short post to.';
 }
 
+// Publish's own bottom-bar meta text — same values as genMetaV3 (syncGenActionBarV3) with one
+// addition: Story video needs its own label here (Figma has a dedicated Story Video · Publish
+// frame, 7330-582), which the Generate-step meta never bothered to special-case.
+function getPublishMetaText(){
+  if(window.__contentType === 'image') return `Image post · ${window.__imageRatio || '4:5'}`;
+  if(window.__contentType === 'carousel') return `Carousel · ${window.__imageRatio || '4:5'} · ${window.__cardCount || 5} cards`;
+  if(window.__isStoryVideo) return `Story Video · 9:16 · ${window.__videoDuration || 16}s`;
+  return `Reel/Short · 9:16 · ${window.__videoDuration || 16}s`;
+}
+
 // key -> {post: bool, story: bool}. Connected platforms default to every surface the
 // content type offers; not-connected platforms start with nothing checked.
 window.__platformFormats = window.__platformFormats || {};
@@ -5788,7 +5794,7 @@ function ensurePlatformFormatDefaults(){
 }
 
 function populatePublishView(){
-  document.getElementById('pubProjectName').textContent = window.__contentType === 'carousel' ? 'New Carousel · Draft' : window.__contentType === 'reel' ? 'New Reel/Short · Draft' : 'New Image Post · Draft';
+  document.getElementById('pubMetaText').textContent = getPublishMetaText();
   document.getElementById('pubDestSubtitle').textContent = getDestinationSubtitle();
   ensurePlatformFormatDefaults();
   renderPublishDestinations();
@@ -6615,7 +6621,7 @@ window.__isStoryVideo = false;
 
 // ---- Top-level stepper / view navigation (identical in both source files, kept once) ----
 function showView(name){
-  ['briefView','generateView','developView'].forEach(id => document.getElementById(id).classList.add('hidden'));
+  ['briefView','generateView','developView','publishView'].forEach(id => document.getElementById(id).classList.add('hidden'));
   document.getElementById(name).classList.remove('hidden');
   document.getElementById('genActionBarV3').style.display = name === 'generateView' ? 'flex' : 'none';
 }
@@ -6673,7 +6679,6 @@ function applyContentType(){
 function restoreMainChrome(){
   document.getElementById('sideNav').style.display = '';
   document.getElementById('mainArea').style.display = '';
-  document.getElementById('publishView').classList.remove('active');
 }
 
 function goToBrief(){
@@ -6722,10 +6727,8 @@ function reelGoToDevelop(){
 // were the caption auto-draft's source text, handled by getPublishHookText() below), so
 // there's a single implementation shared by both Develop screens' "Publish →" buttons.
 function goToPublish(){
+  showView('publishView');
   setStep('stepEdit');
-  document.getElementById('sideNav').style.display = 'none';
-  document.getElementById('mainArea').style.display = 'none';
-  document.getElementById('publishView').classList.add('active');
   populatePublishView();
 }
 
