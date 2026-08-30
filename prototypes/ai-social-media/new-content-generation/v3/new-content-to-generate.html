@@ -2404,7 +2404,7 @@
 
       <div class="pub-block">
         <label class="pub-block-label">Destinations</label>
-        <p class="pub-block-sub">Choose where and how you want to publish.</p>
+        <p class="pub-block-sub" id="pubDestSubtitle">Choose where and how you want to publish.</p>
         <div class="pub-dest-table" id="pubDestinations"></div>
       </div>
 
@@ -5686,6 +5686,16 @@ function getDestinationSurfaces(){
   return ['post', 'story'];
 }
 
+// Image genuinely offers a Post/Story choice per platform, so it keeps the generic subtitle;
+// every other content type only ever goes out one fixed way, so Destinations collapses to a
+// single sentence naming it directly (Figma: Publish section, Reel/Short · Publish etc.).
+function getDestinationSubtitle(){
+  if(window.__contentType === 'image') return 'Choose where and how you want to publish.';
+  if(window.__isStoryVideo) return 'Choose which accounts to publish this Story video to.';
+  if(window.__contentType === 'carousel') return 'Choose which accounts to publish this Carousel post to.';
+  return 'Choose which accounts to publish this Reel/Short post to.';
+}
+
 // key -> {post: bool, story: bool}. Connected platforms default to every surface the
 // content type offers; not-connected platforms start with nothing checked.
 window.__platformFormats = window.__platformFormats || {};
@@ -5700,6 +5710,7 @@ function ensurePlatformFormatDefaults(){
 
 function populatePublishView(){
   document.getElementById('pubProjectName').textContent = window.__contentType === 'carousel' ? 'New Carousel · Draft' : window.__contentType === 'reel' ? 'New Reel/Short · Draft' : 'New Image Post · Draft';
+  document.getElementById('pubDestSubtitle').textContent = getDestinationSubtitle();
   ensurePlatformFormatDefaults();
   renderPublishDestinations();
   updateWhenSelection();
