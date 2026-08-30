@@ -25,6 +25,7 @@
 <link rel="stylesheet" href="../../../../components/ai-social-media/video-summary-card.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/date-picker.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/carousel-card-block.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/brand-kit-summary.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/image-scene-card.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/storyboard-card.css">
 <!-- Playfair Display: only used live for the Draft screen's brand-kit font-preview tags (Formee
@@ -462,22 +463,9 @@
   /* Text placement's title+hint pair sits closer together (gap 4) than the generic label→content gap (12) used everywhere else */
   #stageAreaImage .draft-section-placement .draft-section-label{margin-bottom:4px;}
   #stageAreaImage .draft-section-placement .draft-section-hint{margin:0 0 12px;}
-  #stageAreaImage .brand-kit-row{display:flex; align-items:center; gap:16px; margin-top:14px;}
-  #stageAreaImage .brand-kit-label{font-size:14px; line-height:22px; font-weight:600; color:var(--color-neutral-900);}
-  #stageAreaImage .brand-kit-summary{margin-top:12px; padding:16px; background:#fff; border:1px solid var(--color-neutral-200); border-radius:var(--radius-xl); display:flex; align-items:flex-start; gap:20px;}
-  #stageAreaImage .brand-kit-summary-col{flex:1; min-width:0; display:flex; flex-direction:column; gap:12px;}
-  #stageAreaImage .brand-kit-divider{align-self:stretch; width:1px; background:var(--color-neutral-200); flex-shrink:0;}
-  #stageAreaImage .brand-kit-summary-label{display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:500; color:var(--color-neutral-700); border:1px solid var(--color-neutral-400); border-radius:999px; padding:5px 10px 5px 12px; width:fit-content;}
-  #stageAreaImage .brand-kit-summary-label .chevron{width:16px; height:16px; display:flex;}
-  #stageAreaImage .brand-kit-fonts-title{font-size:14px; line-height:22px; font-weight:600; color:var(--color-neutral-900);}
-  #stageAreaImage .brand-kit-swatch-row{display:flex; height:38px; border:1px solid var(--color-neutral-300); border-radius:var(--radius-lg); overflow:hidden;}
-  #stageAreaImage .brand-kit-swatch-row span{flex:1;}
-  #stageAreaImage .brand-kit-fonts{display:grid; grid-template-columns:repeat(2, auto); gap:8px; align-items:start;}
-  #stageAreaImage .brand-kit-font-row{display:flex; align-items:center; gap:8px; border:1px solid var(--color-neutral-300); border-radius:var(--radius-lg); padding:6px 8px 6px 6px; width:fit-content;}
-  #stageAreaImage .brand-kit-font-tag{display:flex; align-items:center; justify-content:center; background:var(--color-neutral-150); border-radius:var(--radius-md); padding:4px 8px; color:var(--color-neutral-900); white-space:nowrap;}
-  #stageAreaImage .brand-kit-font-meta{display:flex; align-items:center; gap:6px; font-size:12px; font-weight:500; color:var(--color-neutral-500); white-space:nowrap;}
-  #stageAreaImage .brand-kit-font-meta .dot{width:2px; height:2px; border-radius:999px; background:var(--color-neutral-500);}
-  #stageAreaImage .brand-kit-empty{margin-top:8px; padding:12px 16px; background:#fff; border:1px dashed var(--color-neutral-400); border-radius:var(--radius-xl); font-size:14px; color:var(--color-neutral-500); display:flex; align-items:center; justify-content:space-between; gap:16px;}
+  /* .brand-kit-row/.brand-kit-summary/.brand-kit-empty etc. now come from the shared
+     components/ai-social-media/brand-kit-summary.css (was duplicated byte-identically
+     under #stageAreaImage and #stageAreaCarousel here). */
   #stageAreaImage .baked-in-warning{display:none; align-items:center; gap:12px; font-size:12px; color:var(--color-warning-text); background:var(--color-badge-yellow-bg); border:1px solid var(--color-badge-yellow-text); border-radius:10px; padding:10px 16px; margin-top:12px; line-height:1.5;}
   #stageAreaImage .baked-in-warning.show{display:flex;}
   #stageAreaImage .baked-in-warning img{width:20px; height:20px; flex-shrink:0;}
@@ -485,27 +473,6 @@
   #stageAreaCarousel .draft-section{margin-top:18px; margin-bottom:28px;}
   #stageAreaCarousel .draft-section-label{font-size:13px; font-weight:700; color:var(--color-neutral-900); margin-bottom:2px;}
   #stageAreaCarousel .draft-section-hint{font-size:12px; color:var(--color-neutral-500); margin:0 0 10px;}
-  /* Brand-kit-on card: identical to the Image flow's Draft screen (components/ai-social-media
-     brand-kit-summary pattern, see #stageAreaImage rules above) — same bordered card, Colour
-     column with a continuous swatch strip, Fonts column with live font-preview tags. Reuses
-     the exact same class names so both flows stay visually identical by construction. */
-  #stageAreaCarousel .brand-kit-row{display:flex; align-items:center; gap:16px; margin-top:14px;}
-  #stageAreaCarousel .brand-kit-label{font-size:14px; line-height:22px; font-weight:600; color:var(--color-neutral-900);}
-  #stageAreaCarousel .brand-kit-summary{margin-top:12px; padding:16px; background:#fff; border:1px solid var(--color-neutral-200); border-radius:var(--radius-xl); display:flex; align-items:flex-start; gap:20px;}
-  #stageAreaCarousel .brand-kit-summary-col{flex:1; min-width:0; display:flex; flex-direction:column; gap:12px;}
-  #stageAreaCarousel .brand-kit-divider{align-self:stretch; width:1px; background:var(--color-neutral-200); flex-shrink:0;}
-  #stageAreaCarousel .brand-kit-summary-label{display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:500; color:var(--color-neutral-700); border:1px solid var(--color-neutral-400); border-radius:999px; padding:5px 10px 5px 12px; width:fit-content;}
-  #stageAreaCarousel .brand-kit-summary-label .chevron{width:16px; height:16px; display:flex;}
-  #stageAreaCarousel .brand-kit-fonts-title{font-size:14px; line-height:22px; font-weight:600; color:var(--color-neutral-900);}
-  #stageAreaCarousel .brand-kit-swatch-row{display:flex; height:38px; border:1px solid var(--color-neutral-300); border-radius:var(--radius-lg); overflow:hidden;}
-  #stageAreaCarousel .brand-kit-swatch-row span{flex:1;}
-  #stageAreaCarousel .brand-kit-fonts{display:grid; grid-template-columns:repeat(2, auto); gap:8px; align-items:start;}
-  #stageAreaCarousel .brand-kit-font-row{display:flex; align-items:center; gap:8px; border:1px solid var(--color-neutral-300); border-radius:var(--radius-lg); padding:6px 8px 6px 6px; width:fit-content;}
-  #stageAreaCarousel .brand-kit-font-tag{display:flex; align-items:center; justify-content:center; background:var(--color-neutral-150); border-radius:var(--radius-md); padding:4px 8px; color:var(--color-neutral-900); white-space:nowrap;}
-  #stageAreaCarousel .brand-kit-font-meta{display:flex; align-items:center; gap:6px; font-size:12px; font-weight:500; color:var(--color-neutral-500); white-space:nowrap;}
-  #stageAreaCarousel .brand-kit-font-meta .dot{width:2px; height:2px; border-radius:999px; background:var(--color-neutral-500);}
-  #stageAreaCarousel .brand-kit-empty{margin-top:8px; padding:12px 16px; background:#fff; border:1px dashed var(--color-neutral-400); border-radius:var(--radius-xl); font-size:14px; color:var(--color-neutral-500); display:flex; align-items:center; justify-content:space-between; gap:16px;}
-  #stageAreaCarousel .brand-kit-empty a{color:var(--color-brand-primary); font-weight:600; cursor:pointer; text-decoration:underline;}
   /* Top settings-bar chips: real "Controls" component (white/radius-lg/14px/border-400), same
      fix already applied to Reel/Short's spec row — not the neutral-50/pill/11.5px default. */
   #stageAreaCarousel .setting-chip{
@@ -3443,6 +3410,12 @@ function carApplyBrandMode(mode){
   window.__brandMode = mode;
   document.querySelectorAll('#roleSwitch .role-btn').forEach(b => b.classList.toggle('on', b.dataset.brand === mode));
   document.getElementById('brandSettingChipCarousel').style.display = mode === 'set' ? 'flex' : 'none';
+  // Matches imgApplyBrandMode()'s own behaviour: switching the demo "Brand set up" state
+  // always drives the switch directly (on the moment a brand kit exists, off the moment it
+  // doesn't) instead of leaving whatever __globalBrandKitOn happened to default to earlier —
+  // otherwise turning "Brand set up" on while already on the Script screen looked like the
+  // switch was just broken, since it stayed off until clicked separately.
+  window.__globalBrandKitOn = (mode === 'set');
   updateGlobalBrandKitUI();
 }
 function carGoToBrandSetup(){
