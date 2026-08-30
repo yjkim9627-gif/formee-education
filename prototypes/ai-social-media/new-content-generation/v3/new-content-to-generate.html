@@ -311,6 +311,10 @@
   .carousel-card-char-toggle .field-switch{margin-top:0;}
   .script-card-msg{min-height:44px; resize:vertical; outline:none;}
   .script-card-msg:focus{border-color:var(--color-brand-primary);}
+  /* Locked placeholder state while draftScript() is still "writing" (see renderScriptCards) —
+     same muted-disabled look as the Adjust panel's other disabled text fields (.scene-desc[disabled]). */
+  .script-card-msg:disabled{color:var(--color-neutral-500); background:var(--color-neutral-50); cursor:default; resize:none;}
+  .script-card-msg:disabled::placeholder{color:var(--color-neutral-500);}
 
   /* ---- Storyboard stage (Carousel): canvas grid (mirrors the video Timeline) + selected-card editor sidebar ----
      Figma: Carousel · storyboard (node 6484-112481). Cards now use the real
@@ -3505,12 +3509,23 @@ function carSetDraftMode(mode){
 function draftScript(){
   const n = window.__cardCount;
   const log = document.getElementById('chatLog');
-  log.innerHTML = `<div class="msg ai loading" id="scriptLoadingMsg"><span class="tag">AI</span>Writing text for ${n} cards based on your brief<span class="dots"><span>.</span><span>.</span><span>.</span></span></div>`;
+  const briefText = document.getElementById('briefPromptCarousel')?.value.trim() || '';
+
+  // Figma (node 6390-106611): the brief you sent shows first, as a normal sent message —
+  // not held back until the draft finishes — with the "AI is working" status right under it.
+  log.innerHTML = `
+    <div class="msg user"><div class="bubble">${escapeHtml(briefText)}</div><div class="avatar">DV</div></div>
+    <div class="msg ai loading" id="scriptLoadingMsg"><span class="tag">AI</span>Writing text for ${n} cards based on your brief<span class="dots"><span>.</span><span>.</span><span>.</span></span></div>
+  `;
   document.getElementById('confirmScriptBtn').disabled = true;
+  renderScriptCards(); // cards render now too, as locked per-card placeholders (see renderScriptCards)
 
   setTimeout(() => {
     for(let i = 1; i <= n; i++) window.__cardScripts[i] = SCRIPT_TEMPLATES[i - 1] || `Card ${i} — key message goes here.`;
-    log.innerHTML = '<div class="msg-status"><span class="worked-label">Worked</span> <span class="worked-time">for 2s</span></div>';
+    log.innerHTML = `
+      <div class="msg user"><div class="bubble">${escapeHtml(briefText)}</div><div class="avatar">DV</div></div>
+      <div class="msg-status"><span class="worked-label">Worked</span> <span class="worked-time">for 2s</span></div>
+    `;
     carAppendChatCta(
       'Script Drafted',
       `Each card's text is ready — see Card 1-${n} on the right. Edit any card directly, or tell me here for a different angle.`,
@@ -3529,6 +3544,11 @@ function renderScriptCards(){
   }
   document.getElementById('scriptCardList').innerHTML = Array.from({length: n}, (_, i) => {
     const num = i + 1;
+    const scriptText = window.__cardScripts[num];
+    // While draftScript()'s "AI is writing" delay is still running, cards render before any
+    // text exists — rather than a blank box, show a muted per-card placeholder (locked, so it
+    // doesn't get mistaken for an already-empty real card) so it's clear text is still coming.
+    const drafting = scriptText === undefined;
     return `
       <div class="carousel-card-block">
         <div class="carousel-card-block-header">
@@ -3539,7 +3559,7 @@ function renderScriptCards(){
             <button type="button" class="field-switch ${window.__cardCharacterOn[num] ? 'on' : ''}" onclick="toggleCardCharacter(${num})"><span class="knob"></span></button>
           </div>` : ''}
         </div>
-        <textarea class="script-card-msg" data-card="${num}" oninput="updateCardScript(${num}, this.value)">${escapeHtml(window.__cardScripts[num] || '')}</textarea>
+        <textarea class="script-card-msg" data-card="${num}" oninput="updateCardScript(${num}, this.value)" ${drafting ? 'disabled placeholder="Still writing this card’s line — hang tight."' : ''}>${escapeHtml(scriptText || '')}</textarea>
       </div>`;
   }).join('');
   updateGlobalBrandKitUI();
