@@ -3311,7 +3311,9 @@ function aiCardHTML(m, o){
        · kept 상태의 AI / Panel Card 는 hidden — 'updated' 배지와 undo/redo 가 그 역할을 한다
      기존 두 호스트는 이 옵션을 안 넘기므로 예전 모양 그대로다. */
   const panel = !!o.panelStates;
-  const idle  = !m.turns.length && !m.accepted.length;
+  /* AI refine flow (6738:107609): the suggestion chips stay under the refine
+     input in every state — open, typing, generating and result — instead of
+     disappearing once a turn starts. */
 
   const headBtns = !panel ? '' : `<span class="ai-headbtns">
       <button type="button" class="ai-hb" data-modal="applied-undo"
@@ -3360,7 +3362,9 @@ function aiCardHTML(m, o){
     ${applied}${thread}
     <div class="ai-label tight">${ICONS.mAiSparkle16}<p class="ai-grad">Refine the ${noun}</p>
       ${o.hint ? `<p class="ai-sub" id="refineHint"${o.disabled ? '' : ' hidden'}>${o.hint}</p>` : ''}</div>
-    <div class="ai-box refine${panel ? ' tall' : ''}">
+    <!-- the panel used a taller box with the arrow parked bottom-right; the refine
+         flow now draws the same 56px row everywhere, arrow centred -->
+    <div class="ai-box refine">
       <input id="refineInput" type="text" placeholder="${esc(refinePh)}"
              value="${esc(m.refineDraft || '')}" autocomplete="off"${st === 'generating' || o.disabled ? ' disabled' : ''}>
       ${panel || o.sendArrow
@@ -3373,7 +3377,7 @@ function aiCardHTML(m, o){
                    aria-label="${(m.refineDraft || '').trim() ? 'Send refinement' : 'Clear'}"
              >${(m.refineDraft || '').trim() ? ICONS.mRefine : ICONS.mUndo}</button>`}
     </div>
-    ${o.chipsOut || (panel && !idle) ? '' : refineChipsHTML(o, st)}
+    ${o.chipsOut ? '' : refineChipsHTML(o, panel ? 'base' : st)}
   </div>`;
 }
 
