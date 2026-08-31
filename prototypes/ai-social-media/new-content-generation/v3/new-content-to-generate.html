@@ -1756,7 +1756,7 @@
             <textarea class="chat-input" id="chatInput" rows="2" placeholder="Requests like &quot;make the script shorter&quot; or &quot;try a warmer tone&quot; work here too"></textarea>
             <div class="chat-input-bottom-row">
               <button class="chat-attach-btn" title="Attach"><img src="../../../../components/ai-social-media/icons/attach.svg" class="icon-inline icon-16" alt=""></button>
-              <button class="chat-send" id="chatSend" onclick="sendChatMessage()"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiB2aWV3Qm94PSIwIDAgMjAgMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gdWkgLyBhcnJvdy11cCI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik0xNS44MzY3IDEwLjAwMzNMMTAuMDAzMyA0LjE3TDQuMTcgMTAuMDAzM00xMC4wMDMzIDQuMTdWMTUuODM2NyIgc3Ryb2tlPSIjOEE5M0E4IiBzdHJva2Utd2lkdGg9IjEuNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjwvZz4KPC9zdmc+Cg==" alt="" width="14" height="14" style="filter:invert(1);"></button>
+              <button class="chat-send" id="chatSend" onclick="sendChatMessage()"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15.8367 10.0033L10.0033 4.17L4.17 10.0033M10.0033 4.17V15.8367" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
             </div>
           </div>
         </div>
@@ -2675,7 +2675,7 @@ function renderChatQuickChips(chips){
     return;
   }
   wrap.style.display = 'flex';
-  wrap.innerHTML = chips.map((c, i) => `<button type="button" class="chat-chip" onclick="handleQuickChipClick(${i})">${escapeHtml(c.label)}</button>`).join('');
+  wrap.innerHTML = chips.map((c, i) => `<button type="button" class="chat-chip${c.aiSweep ? ' ai-sweep' : ''}" onclick="handleQuickChipClick(${i})">${escapeHtml(c.label)}</button>`).join('');
 }
 function handleQuickChipClick(i){
   const chip = (window.__chatQuickChips || [])[i];
@@ -4501,7 +4501,7 @@ function validateScriptLength(){
   // surface it as a chat quick-chip (only while actually over the limit) instead of a second
   // button glued to the field.
   if(over && !wasOver){
-    renderChatQuickChips([{ label: 'Make it shorter', direct: refineScriptWithAI }]);
+    renderChatQuickChips([{ label: 'Make it shorter', direct: refineScriptWithAI, aiSweep: true }]);
   } else if(!over && wasOver){
     renderChatQuickChips([]);
   }

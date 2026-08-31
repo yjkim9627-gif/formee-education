@@ -80,8 +80,8 @@
 .chat-chip:hover{border-color:var(--color-neutral-450);}
 
 /* ---------- Input box ----------
-   Figma "AI Prompt Box"의 3 타입(readonly/input/ai) 중 이 채팅 입력창은 항상 "ai" 타입
-   (brand-primary 1.5px 보더로 "AI가 개입 중" 신호, style-reference.md §9).
+   Figma node 6058-88210 (Reel/Short · Timeline — AI Assistant panel states): 항상 뉴트럴 그레이 보더,
+   포커스 시에만 brand-primary로 강조 (다른 prompt-box류와 동일한 패턴, prompt-box.css 참고).
    Figma's box is a fixed 292x100 — that only works out (14 top pad + ~34px of text + 12
    gap + 28px icon row + 12 bottom pad = 100) because there's no separate empty input
    line reserved below the hint text: the hint IS the placeholder, wrapping up to 2 lines,
@@ -90,9 +90,11 @@
    ~50% taller than Figma — swapped the markup to a 2-row <textarea> so the placeholder
    wraps in place instead of needing a separate label + reserved input row above it. */
 .chat-input-box{
-  margin:0 16px 16px; border:1.5px solid var(--color-brand-primary); border-radius:12px;
+  margin:0 16px 16px; border:1.2px solid var(--color-neutral-400); border-radius:12px;
   background:var(--color-neutral-0); padding:14px 14px 12px; display:flex; flex-direction:column; gap:12px;
+  transition:border-color .15s ease;
 }
+.chat-input-box:focus-within{border-color:var(--color-brand-primary);}
 .chat-input{
   border:none; outline:none; background:transparent; width:100%; font-size:13px; color:var(--color-neutral-900);
   font-family:var(--font-family-text); resize:none; max-height:120px; line-height:1.3;
