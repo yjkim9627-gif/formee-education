@@ -199,6 +199,8 @@
   --shadow-popover: 0px 4px 8px 0px rgba(15, 23, 41, 0.05), 0px 12px 20px 0px rgba(15, 23, 41, 0.1);
   /* Figma: ContextBar action popovers (Layer/Align/Flip/Opacity) elevation */
   --shadow-context-popover: 0px 12px 10px 0px rgba(15, 23, 41, 0.1), 0px 4px 4px 0px rgba(15, 23, 41, 0.05);
+  /* Figma Effect Style: shadow/md — floating circular controls (e.g. Character grid scroll arrow) */
+  --shadow-md: 0px 2px 4px 0px rgba(15, 23, 41, 0.05), 0px 4px 8px 0px rgba(15, 23, 41, 0.08);
 
   /* ---------- Border width ---------- */
   --border-width-1: 1px;

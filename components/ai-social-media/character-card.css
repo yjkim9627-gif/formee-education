@@ -55,3 +55,19 @@
 .char-filters{display:flex; align-items:center; gap:8px; margin-bottom:12px;}
 .char-see-all{margin-left:auto; font-size:12.5px; font-weight:600; color:var(--color-neutral-700); cursor:pointer; white-space:nowrap;}
 .char-see-all:hover{color:var(--color-brand-primary);}
+
+/* ---------- Scrollable-row affordance — fade mask always visible, arrow appears on hover
+   (Figma node 5834-114329: "fade-mask" + "Carousel Arrow") ---------- */
+.char-grid-wrap{position:relative;}
+.char-grid-fade{
+  position:absolute; top:0; right:4px; width:48px; height:100%;
+  background:linear-gradient(to right, rgba(255,255,255,0), var(--color-neutral-0) 90%);
+  pointer-events:none;
+}
+.char-grid-arrow{
+  position:absolute; top:50%; right:0; transform:translateY(-50%); width:32px; height:32px;
+  border:1px solid var(--color-neutral-400); border-radius:var(--radius-full); background:var(--color-neutral-0);
+  box-shadow:var(--shadow-md); display:flex; align-items:center; justify-content:center; padding:0; cursor:pointer;
+  opacity:0; transition:opacity .15s ease;
+}
+.char-grid-wrap:hover .char-grid-arrow{opacity:1;}
