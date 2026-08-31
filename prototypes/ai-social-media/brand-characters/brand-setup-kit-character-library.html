@@ -4960,8 +4960,10 @@ function bsAIBlock(o){
      패널을 펼쳐야만 보이는 게 아니라 항상 보인다(펼치기 전에 뭘 시킬 수 있는지
      읽히는 게 요점). 칩은 펼치면서 요청까지 채운다 — data-ask. */
   const chips = (o.suggestions || []).slice(0, 3);
-  const H = o.updated ? bsFieldHist(o.f) : null;
-  const hist  = o.updated
+  /* 초안 생성으로 통째로 채워졌거나(h.drafted), 이 필드를 Use this 로 확정했거나 */
+  const updated = !!o.updated || !!(h.refined || {})[o.key];
+  const H = updated ? bsFieldHist(o.f) : null;
+  const hist  = updated
     ? `<span class="bs-hist">
          <button type="button" class="bs-hbtn" data-bshist="undo" data-bsfld="${o.f}"
                  ${H.past.length ? '' : 'disabled '}aria-label="Undo">${ICONS.mUndo}</button>
@@ -4972,7 +4974,7 @@ function bsAIBlock(o){
   return `<div class="bs-field bs-descai${open ? ' open' : ''}">
     <div class="bs-lblrow bs-ailbl">
       <p class="bs-lbl">${esc(o.label)}</p>
-      ${o.updated ? '<span class="bs-upd">updated</span>' : ''}
+      ${updated ? '<span class="bs-upd">updated</span>' : ''}
       ${bsFromChip(o.from)}
       <span class="bs-ailbl-sp"></span>
       ${hist}
@@ -5266,6 +5268,8 @@ function bsSrc(){
     links:[], hidden:[], linkDraft:'', linkErr:false,
     /* 지금 스레드가 펼쳐져 있는 필드 (한 번에 하나) + 필드별 스레드 보관 */
     refineFor:null, ai:{},
+    /* Use this 로 확정된 필드 — updated 배지와 undo/redo 가 여기서 켜진다 */
+    refined:{},
     prompt:'', turns:[], accepted:[], applied:null,
     aiState:'base', refineDraft:'', seed:0, typing:false,
     rewrite: bsRewriteDesc,
@@ -6041,6 +6045,13 @@ function bindBsSources(){
                               if (a.field){
                                 bsHistPush(a.field, bsBrand(b)[a.field]);
                                 bsWrite(b, a.field, a.prompt);
+                              }
+                              /* 적용됐으면 updated 배지를 붙이고 패널은 닫는다
+                                 (AI refine flow 6 · Applied) */
+                              const hu = bsSrc();
+                              if (hu.refineFor){
+                                (hu.refined || (hu.refined = {}))[hu.refineFor] = true;
+                                hu.refineFor = null;
                               }
                               renderBrand();
                             } break;
