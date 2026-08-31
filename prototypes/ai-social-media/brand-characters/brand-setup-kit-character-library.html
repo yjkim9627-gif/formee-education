@@ -12738,17 +12738,10 @@ body.bk2-clean #roleSwitch { display:none !important; }
     var row = a.parentElement.querySelector('.bs-chars');
     if (row) row.scrollBy({ left: (104 + 12) * 3 });   /* CSS scroll-behavior animates it */
   }, true);
-  function syncArrows(){
-    main.querySelectorAll('.bs-charswrap').forEach(function(w){
-      var row = w.querySelector('.bs-chars'), a = w.querySelector('.bs-carr');
-      if (!row || !a) return;
-      a.hidden = row.scrollWidth - row.clientWidth - row.scrollLeft < 2;
-    });
-  }
-  new MutationObserver(syncArrows).observe(main, { childList:true, subtree:true });
-  main.addEventListener('scroll', syncArrows, true);
-  window.addEventListener('resize', syncArrows);
-  syncArrows();
+  /* The frame draws the arrow on both rows unconditionally — even with the eight
+     cards filling the row exactly — so it is never hidden or dimmed. Clicking it
+     with nothing past the edge is simply a no-op, as at the end of any carousel. */
+
 
   main.addEventListener('input', function(e){
     var ta = e.target && e.target.closest && e.target.closest('[data-bsf]');
