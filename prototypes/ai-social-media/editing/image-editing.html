@@ -79,7 +79,8 @@
   .topbar__spacer { flex: 1; }
   .topbar__right { display: flex; align-items: center; gap: var(--spacing-sm); }
 
-  .icon-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border: var(--border-width-1) solid var(--color-neutral-400); border-radius: var(--radius-lg); background: var(--color-neutral-0); flex-shrink: 0; }
+  .icon-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border: var(--border-width-1) solid var(--color-neutral-400); border-radius: var(--radius-lg); background: var(--color-neutral-0); flex-shrink: 0; cursor: pointer; }
+  .icon-btn:disabled { opacity: .4; cursor: default; }
   .text-btn { display: flex; align-items: center; gap: var(--spacing-xs); padding: var(--spacing-sm) var(--spacing-md); border: var(--border-width-1) solid var(--color-neutral-400); border-radius: var(--radius-lg); background: var(--color-neutral-0); font-size: var(--font-size-text-sm); line-height: var(--line-height-text-sm); font-weight: var(--font-weight-semibold); color: var(--color-neutral-700); white-space: nowrap; }
   .search-field-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-lg); background: var(--color-neutral-0); }
   .notification-btn { width: 36px; height: 36px; border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; position: relative; flex-shrink: 0; }
@@ -755,13 +756,13 @@
       <div class="topbar__spacer"></div>
 
       <div class="topbar__right">
-        <button class="icon-btn" aria-label="Undo">
+        <button class="icon-btn" id="undoBtn" aria-label="Undo" onclick="undoHistory()" disabled>
           <span class="icon" style="width:16px;height:16px">
             <span class="icon__frag" style="inset:16.67% 62.5% 41.67% 16.67%"><img src="assets/screen-01-elements-panel/topbar/undo-1.svg" alt="" /></span>
             <span class="icon__frag" style="inset:37.5% 16.67% 16.67% 16.67%"><img src="assets/screen-01-elements-panel/topbar/undo-2.svg" alt="" /></span>
           </span>
         </button>
-        <button class="icon-btn" aria-label="Redo">
+        <button class="icon-btn" id="redoBtn" aria-label="Redo" onclick="redoHistory()" disabled>
           <span class="icon" style="width:16px;height:16px">
             <span class="icon__frag" style="inset:16.67% 16.67% 41.67% 62.5%"><img src="assets/screen-01-elements-panel/topbar/redo-1.svg" alt="" /></span>
             <span class="icon__frag" style="inset:37.5% 16.67% 16.67% 16.67%"><img src="assets/screen-01-elements-panel/topbar/redo-2.svg" alt="" /></span>
@@ -4059,9 +4060,107 @@
       refreshCarousels();
     }
 
+    // Every per-element detail panel's own close button, and every deselectText/Sticker/
+    // Image/Shape() (including the ones deleteSelectedElement() calls before removing an
+    // element), route through here -- always fall back to the default Elements library
+    // instead of hiding every panel, so deselecting (e.g. deleting a text box, or clicking
+    // away after clearing one) never leaves the whole left rail collapsed.
     function closePanel() {
-      switchPanel(null);
+      switchPanel('elements');
     }
+
+    // ---- Undo / Redo (top-bar buttons + Ctrl/Cmd+Z, Ctrl/Cmd+Shift+Z) ----
+    // Snapshots the whole poster canvas (#posterEl.innerHTML) rather than instrumenting every
+    // individual add/move/resize/style/delete call site — one mechanism covers all of them.
+    // Per-element JS state (.textState/.shapeState/.imageState) is a plain property, not a DOM
+    // attribute, so it doesn't survive an innerHTML swap on its own; save*State() also mirrors
+    // it into data-editor-state, and rehydrateElementStates() reads that back after every
+    // restore so re-selecting a restored element still works.
+    var canvasHistory = { stack: [], index: -1, max: 50 };
+    var isRestoringHistory = false;
+    var historyDebounceTimer = null;
+
+    function historyRoot() { return document.getElementById('posterEl'); }
+
+    function rehydrateElementStates(root) {
+      root.querySelectorAll('[data-editor-state]').forEach(function (el) {
+        var state;
+        try { state = JSON.parse(el.dataset.editorState); } catch (err) { return; }
+        if (el.classList.contains('canvas-text')) { el.textState = state; }
+        else if (el.classList.contains('canvas-shape')) { el.shapeState = state; }
+        else if (el.classList.contains('canvas-image')) { el.imageState = state; }
+      });
+    }
+
+    function updateHistoryButtons() {
+      var undoBtn = document.getElementById('undoBtn');
+      var redoBtn = document.getElementById('redoBtn');
+      if (undoBtn) { undoBtn.disabled = canvasHistory.index <= 0; }
+      if (redoBtn) { redoBtn.disabled = canvasHistory.index >= canvasHistory.stack.length - 1; }
+    }
+
+    function commitHistorySnapshot() {
+      var root = historyRoot();
+      if (!root || isRestoringHistory) { return; }
+      var snap = root.innerHTML;
+      if (canvasHistory.index >= 0 && canvasHistory.stack[canvasHistory.index] === snap) { return; }
+      canvasHistory.stack = canvasHistory.stack.slice(0, canvasHistory.index + 1);
+      canvasHistory.stack.push(snap);
+      if (canvasHistory.stack.length > canvasHistory.max) { canvasHistory.stack.shift(); }
+      canvasHistory.index = canvasHistory.stack.length - 1;
+      updateHistoryButtons();
+    }
+
+    function scheduleHistorySnapshot() {
+      if (isRestoringHistory) { return; }
+      clearTimeout(historyDebounceTimer);
+      historyDebounceTimer = setTimeout(commitHistorySnapshot, 400);
+    }
+
+    function initHistory() {
+      var root = historyRoot();
+      if (!root) { return; }
+      canvasHistory.stack = [root.innerHTML];
+      canvasHistory.index = 0;
+      updateHistoryButtons();
+      new MutationObserver(scheduleHistorySnapshot).observe(root, { childList: true, subtree: true, attributes: true, characterData: true });
+    }
+
+    function restoreHistorySnapshot(html) {
+      var root = historyRoot();
+      if (!root) { return; }
+      isRestoringHistory = true;
+      root.innerHTML = html;
+      rehydrateElementStates(root);
+      isRestoringHistory = false;
+      updateHistoryButtons();
+    }
+
+    function undoHistory() {
+      clearTimeout(historyDebounceTimer);
+      commitHistorySnapshot(); // flush any pending in-progress change as its own step first
+      if (canvasHistory.index <= 0) { return; }
+      canvasHistory.index--;
+      restoreHistorySnapshot(canvasHistory.stack[canvasHistory.index]);
+    }
+
+    function redoHistory() {
+      if (canvasHistory.index >= canvasHistory.stack.length - 1) { return; }
+      canvasHistory.index++;
+      restoreHistorySnapshot(canvasHistory.stack[canvasHistory.index]);
+    }
+
+    // Ctrl/Cmd+Z everywhere on screen — except while actually typing in a text field, where the
+    // browser's own native undo should handle in-progress keystrokes instead.
+    document.addEventListener('keydown', function (e) {
+      var mod = e.ctrlKey || e.metaKey;
+      if (!mod || e.key.toLowerCase() !== 'z') { return; }
+      var active = document.activeElement;
+      var isTextEditing = active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable);
+      if (isTextEditing) { return; }
+      e.preventDefault();
+      if (e.shiftKey) { redoHistory(); } else { undoHistory(); }
+    });
 
     // Brand panel sub-tabs (Overview/Logos/Colours/Fonts/Graphics/Photos) — independent of
     // switchPanel(), which only toggles between the top-level ToolPanel/nav-rail destinations.
@@ -4561,6 +4660,9 @@
         flipX: shapeFlipX,
         flipY: shapeFlipY
       };
+      // Mirrored into a real DOM attribute so it survives an undo/redo snapshot restore —
+      // see rehydrateElementStates().
+      el.dataset.editorState = JSON.stringify(el.shapeState);
     }
 
     function loadShapeState(el) {
@@ -4692,6 +4794,9 @@
         flipX: imageFlipX,
         flipY: imageFlipY
       };
+      // Mirrored into a real DOM attribute so it survives an undo/redo snapshot restore —
+      // see rehydrateElementStates().
+      el.dataset.editorState = JSON.stringify(el.imageState);
     }
 
     function loadImageState(el) {
@@ -5114,6 +5219,9 @@
         letterSpacing: textLetterSpacing, lineSpacing: textLineSpacing,
         fill: textColor.fill, border: textColor.border, outlineWidth: textOutlineWidth
       };
+      // Mirrored into a real DOM attribute (not just the JS property) so it survives an
+      // undo/redo snapshot restore — see rehydrateElementStates().
+      el.dataset.editorState = JSON.stringify(el.textState);
     }
 
     function loadTextState(el) {
@@ -5268,6 +5376,9 @@
 
     // A single handler for every handle (4 corners + 4 edges) — text boxes have no aspect lock,
     // so corners just move both edges at once instead of scaling by distance like images do.
+    // Dragging any handle also scales the actual font size (not just the box) — by the box's
+    // diagonal-length ratio, so a corner drag (both dimensions changing) scales text more than
+    // a single-edge drag, matching how it visually reads.
     function startTextResizeAxis(e, handle) {
       e.stopPropagation();
       e.preventDefault();
@@ -5278,6 +5389,8 @@
       var startTop = parseFloat(el.style.top);
       var startX = e.clientX;
       var startY = e.clientY;
+      var startFontSizePx = textFontSizePx;
+      var startDiag = Math.sqrt(startWidth * startWidth + startHeight * startHeight);
       var affectsRight = handle === 'right' || handle === 'tr' || handle === 'br';
       var affectsLeft = handle === 'left' || handle === 'tl' || handle === 'bl';
       var affectsBottom = handle === 'bottom' || handle === 'bl' || handle === 'br';
@@ -5298,6 +5411,9 @@
           el.style.height = newHeight + 'px';
           el.style.top = (startTop + (startHeight - newHeight)) + 'px';
         }
+        var newDiag = Math.sqrt(parseFloat(el.style.width) * parseFloat(el.style.width) + parseFloat(el.style.height) * parseFloat(el.style.height));
+        textFontSizePx = Math.max(8, Math.round(startFontSizePx * (newDiag / startDiag)));
+        renderTextStyle();
       }
       function onUp() {
         document.removeEventListener('pointermove', onMove);
@@ -7319,6 +7435,7 @@
     initCarousels();
     initImageCellOverlays();
     initListViews();
+    initHistory();
   </script>
 </body>
 </html>
