@@ -268,6 +268,7 @@
 
   /* Per-card "V{n}" chip + Preview's V{n}/V{n}.{k} regen-history chips share this pill look
      (Figma's Controls / Filter / Toggle), selected = the one currently shown in the editor panel. */
+  .img-version-chip-row{display:flex; gap:6px; flex-wrap:wrap;}
   .img-version-chip{display:inline-flex; align-items:center; height:28px; padding:0 13px; border-radius:999px; border:1px solid var(--color-neutral-400); background:var(--color-neutral-0); font-size:12px; font-weight:500; color:var(--color-neutral-700); font-family:var(--font-family-text); cursor:pointer;}
   .img-version-chip.selected{background:var(--color-neutral-150); border-color:var(--color-neutral-500); font-weight:600; color:var(--color-neutral-900);}
   .img-version-chip .mini-spinner{width:10px; height:10px; border-width:2px; margin-right:5px;}
@@ -486,7 +487,11 @@
 
   /* ---- Develop preview art ---- */
   #developBodyImage .develop-preview{width:340px; flex-shrink:0; aspect-ratio:1; border-radius:14px; background:linear-gradient(135deg,var(--color-brand-primary-mid),var(--color-brand-accent)); position:relative; overflow:hidden; display:flex; flex-direction:column; justify-content:flex-end; padding:24px;}
-  #developBodyCarousel .develop-preview{width:340px; flex-shrink:0; aspect-ratio:4/5; border-radius:14px; background:linear-gradient(135deg,var(--color-brand-primary-mid),var(--color-brand-accent));}
+  #developBodyCarousel .develop-preview{width:340px; flex-shrink:0; aspect-ratio:4/5; border-radius:14px; background:linear-gradient(135deg,var(--color-brand-primary-mid),var(--color-brand-accent)); position:relative; overflow:hidden; display:flex; flex-direction:column; justify-content:flex-end; padding:24px;}
+  #developBodyReel .develop-preview{width:260px; flex-shrink:0; aspect-ratio:9/16; border-radius:14px; background:linear-gradient(135deg,var(--color-brand-primary-mid),var(--color-brand-accent)); position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center;}
+  #developBodyReel .develop-preview-play{width:56px; height:56px; border-radius:999px; background:rgba(255,255,255,.25); border:1.5px solid rgba(255,255,255,.7); display:flex; align-items:center; justify-content:center;}
+  #developBodyReel .develop-preview-play::after{content:''; width:0; height:0; margin-left:4px; border-style:solid; border-width:9px 0 9px 15px; border-color:transparent transparent transparent #fff;}
+  #developBodyReel .develop-preview-duration{position:absolute; bottom:16px; left:16px; color:#fff; font-size:12px; font-weight:600; text-shadow:0 1px 4px rgba(0,0,0,.25);}
 
   /* ============ PUBLISH VIEW (ported from new-content-brief-to-generate.html; includes
      some Reel/Short canvas-editor rules that are unused here but harmless to leave in —
@@ -2383,7 +2388,13 @@
         </div>
       </div>
       <div class="develop-body" id="developBodyCarousel" style="display:none;">
-        <div class="develop-preview"></div>
+        <div class="develop-preview" id="developPreviewCarousel">
+          <div class="develop-preview-text">
+            <div class="develop-preview-headline" id="developHeadlineCarousel"></div>
+            <div class="develop-preview-subhead" id="developSubheadCarousel"></div>
+            <div class="develop-preview-cta" id="developCtaCarousel"></div>
+          </div>
+        </div>
         <div class="develop-side">
           <button class="btn btn-secondary" onclick="backToStoryboard()" style="margin-bottom:16px;"><img src="../../../../components/ai-social-media/icons/back.svg" class="icon-inline" alt="" style="margin-right:4px;"> Back to Storyboard</button>
           <h2 class="stage-title">Develop</h2>
@@ -2393,7 +2404,10 @@
         </div>
       </div>
       <div class="develop-body" id="developBodyReel" style="display:none;">
-        <div class="develop-preview"></div>
+        <div class="develop-preview" id="developPreviewReel">
+          <div class="develop-preview-play"></div>
+          <div class="develop-preview-duration" id="developDurationReel"></div>
+        </div>
         <div class="develop-side">
           <button class="btn btn-secondary" onclick="backToSceneVideos(); showSub('reelVideo')" style="margin-bottom:16px;"><img src="../../../../components/ai-social-media/icons/back.svg" class="icon-inline" alt="" style="margin-right:4px;"> Back to scene videos</button>
           <h2 class="stage-title">Develop</h2>
@@ -2675,11 +2689,15 @@ function renderChatQuickChips(chips){
     return;
   }
   wrap.style.display = 'flex';
-  wrap.innerHTML = chips.map((c, i) => `<button type="button" class="chat-chip${c.aiSweep ? ' ai-sweep' : ''}" onclick="handleQuickChipClick(${i})">${escapeHtml(c.label)}</button>`).join('');
+  wrap.innerHTML = chips.map((c, i) => `<button type="button" class="chat-chip${c.aiSweep ? ' ai-sweep' : ''}" data-chip-index="${i}" onclick="handleQuickChipClick(${i})">${escapeHtml(c.label)}</button>`).join('');
 }
+// Clicking a chip both acts on it and settles it into an inactive/used look — it's a
+// one-shot suggestion, not a toggle, so it shouldn't stay clickable afterward.
 function handleQuickChipClick(i){
   const chip = (window.__chatQuickChips || [])[i];
   if(!chip) return;
+  const btn = document.querySelector(`#chatQuickChips .chat-chip[data-chip-index="${i}"]`);
+  if(btn) btn.disabled = true;
   if(chip.direct){
     addChatMsg('user', chip.label);
     chip.direct();
@@ -3042,12 +3060,16 @@ function quickAction(action){
 // ---- Draft <-> Versions sub-stage tabs ----
 
 // ---- Confirm & generate N versions (parallel, individually regenerable) ----
-// versionState[i] = {id, ready, prompt} — "prompt" seeds the right-panel Image prompt box
-// for that version; editing + regenerating there just rewrites this same field (matches
-// Figma's Versions screen, node 6269-124021, where the prompt box sits directly in the grid's
-// editor panel rather than behind a separate "edit" step).
+// versionState[i] = {id, activeHistoryIndex, history:[{label, ready, prompt}, ...]} — each
+// card can pick up its own regeneration history right here in the grid (V2, V2.1, V2.2…),
+// matching Figma's Versions screen (node 6269-124021 / dev handoff 7606-230879) where the
+// prompt box + regen history sit directly in the grid's editor panel rather than behind a
+// separate "edit" step. History continues seamlessly once a version is picked into Preview
+// (see selectVersion()/renderRefineHistory).
 let versionState = [];
 window.__activeVersionId = 1; // which version's prompt shows in the right-hand editor panel
+
+function activeVersionEntry(v){ return v.history[v.activeHistoryIndex]; }
 
 function confirmAndGenerate(btn){
   if(btn){ btn.disabled = true; }
@@ -3055,8 +3077,12 @@ function confirmAndGenerate(btn){
   const n = window.__versionCount || 2;
   document.getElementById('tabVersions').classList.remove('locked');
   showSub('versions');
-  const basePrompt = document.getElementById('visualConceptText').value;
-  versionState = Array.from({length: n}, (_, i) => ({id: i + 1, ready: false, prompt: basePrompt}));
+  const basePrompt = document.getElementById('visualConceptText').value || buildVisualConceptPrompt();
+  versionState = Array.from({length: n}, (_, i) => ({
+    id: i + 1,
+    activeHistoryIndex: 0,
+    history: [{ label: 'V' + (i + 1), ready: false, prompt: basePrompt }],
+  }));
   window.__activeVersionId = 1;
   renderVersionGrid();
   renderVersionSegmentNav();
@@ -3067,7 +3093,7 @@ function confirmAndGenerate(btn){
   addChatMsg('ai', `<span class="tag">AI</span>Drafting ${label} now — I'll let you know the moment ${n > 1 ? "they're" : "it's"} all ready.<span class="note">Nothing advances automatically — pick one whenever you're ready.</span>`);
   versionState.forEach((v, i) => {
     setTimeout(() => {
-      v.ready = true;
+      activeVersionEntry(v).ready = true;
       renderVersionGrid();
       renderVersionEditorPanel();
       checkAllVersionsReady();
@@ -3078,7 +3104,7 @@ function confirmAndGenerate(btn){
 // chat too (onclick reuses selectVersion(), same action as the card's "Use this" button), so
 // picking a favorite doesn't mean leaving the conversation to go find the right card.
 function checkAllVersionsReady(){
-  if(versionState.every(v => v.ready)){
+  if(versionState.every(v => activeVersionEntry(v).ready)){
     const n = versionState.length;
     const label = `${n} version${n > 1 ? 's' : ''}`;
     document.getElementById('versionsStatus').textContent = `All ${label} ready — pick one to continue.`;
@@ -3088,31 +3114,36 @@ function checkAllVersionsReady(){
 }
 // Cards: real Image Scene Card component (components/ai-social-media/image-scene-card.css),
 // type="version" — Ready badge + "Version N" / "Use this" footer, matching Figma exactly.
-// Below each card: a single "V{n}" chip (selects that version into the editor panel on the
-// right) — Figma's grid also shows regeneration-history sub-chips (e.g. "V2.1") per card, but
-// that history only starts once a version is picked into Preview here (see renderRefineHistory).
+// The whole card is clickable (selects it into the editor panel), same action as its own
+// "V{n}" chip row below — Figma's grid also shows regeneration-history sub-chips (e.g. "V2.1")
+// per card once that card has been regenerated at least once.
 function renderVersionGrid(){
   const grid = document.getElementById('versionGrid');
-  grid.innerHTML = versionState.map(v => `
+  grid.innerHTML = versionState.map(v => {
+    const entry = activeVersionEntry(v);
+    const ready = entry.ready;
+    const chips = v.history.map((h, hi) => `<button type="button" class="img-version-chip${v.id === window.__activeVersionId && hi === v.activeHistoryIndex ? ' selected' : ''}" onclick="event.stopPropagation(); selectActiveVersion(${v.id}, ${hi})">${h.ready ? '' : '<span class="mini-spinner"></span>'}${h.label}</button>`).join('');
+    return `
     <div class="versions-scene-grid-col">
-      <div class="image-scene-card${v.ready && v.id === window.__activeVersionId ? ' selected' : ''}" data-type="version">
-        <div class="image-scene-card-preview${v.ready ? '' : ' generating'}">
+      <div class="image-scene-card${ready && v.id === window.__activeVersionId ? ' selected' : ''}" data-type="version" onclick="selectActiveVersion(${v.id})">
+        <div class="image-scene-card-preview${ready ? '' : ' generating'}">
           <div class="image-scene-card-top-row">
-            <span class="image-scene-card-ready-badge" style="${v.ready ? '' : 'display:none;'}">Ready</span>
+            <span class="image-scene-card-ready-badge" style="${ready ? '' : 'display:none;'}">Ready</span>
             <div class="image-scene-card-icon-row">
               <button class="image-scene-card-icon-btn download" type="button" onclick="event.stopPropagation(); downloadImage(${v.id})"><img src="../../../../components/ai-social-media/icons/download-ui.svg" alt=""></button>
-              <button class="image-scene-card-icon-btn maximize" type="button" onclick="event.stopPropagation(); if(${v.ready}) openImageLightbox([{label:'Version ${v.id}', ready:true}], 0, ${v.id});"><img src="../../../../components/ai-social-media/icons/maximize.svg" alt=""></button>
+              <button class="image-scene-card-icon-btn maximize" type="button" onclick="event.stopPropagation(); openVersionLightbox(${v.id})"><img src="../../../../components/ai-social-media/icons/maximize.svg" alt=""></button>
             </div>
           </div>
-          <div class="spinner-mini" style="${v.ready ? '' : 'display:block;'}"></div>
+          <div class="spinner-mini" style="${ready ? '' : 'display:block;'}"></div>
         </div>
         <div class="image-scene-card-footer">
           <span class="image-scene-card-version-label">Version ${v.id}</span>
-          <button type="button" class="image-scene-card-use-btn" style="${v.ready ? '' : 'display:none;'}" onclick="event.stopPropagation(); selectVersion(${v.id})">Use this</button>
+          <button type="button" class="image-scene-card-use-btn" style="${ready ? '' : 'display:none;'}" onclick="event.stopPropagation(); selectVersion(${v.id})">Use this</button>
         </div>
       </div>
-      <button type="button" class="img-version-chip${v.id === window.__activeVersionId ? ' selected' : ''}" onclick="selectActiveVersion(${v.id})">${v.ready ? '' : '<span class="mini-spinner"></span>'}V${v.id}</button>
-    </div>`).join('');
+      <div class="img-version-chip-row">${chips}</div>
+    </div>`;
+  }).join('');
 }
 function renderVersionSegmentNav(){
   const nav = document.getElementById('versionSegmentNav');
@@ -3122,42 +3153,63 @@ function renderVersionSegmentNav(){
 function renderVersionEditorPanel(){
   const v = versionState.find(x => x.id === window.__activeVersionId);
   if(!v) return;
-  document.getElementById('versionsPromptText').value = v.prompt;
-  document.getElementById('versionsRegenBtn').disabled = !v.ready;
+  document.getElementById('versionsPromptText').value = activeVersionEntry(v).prompt;
+  syncVersionsRegenBtn();
 }
-function selectActiveVersion(id){
+function selectActiveVersion(id, historyIndex){
   window.__activeVersionId = id;
+  if(historyIndex !== undefined){
+    const v = versionState.find(x => x.id === id);
+    if(v) v.activeHistoryIndex = historyIndex;
+  }
   renderVersionGrid();
   renderVersionSegmentNav();
   renderVersionEditorPanel();
 }
-function onVersionsPromptEdited(){ /* live-typed; picked up whenever Regenerate is pressed */ }
+function onVersionsPromptEdited(){ syncVersionsRegenBtn(); }
+// Regenerate stays disabled until the prompt has actually changed from what's already
+// generated (mirrors syncRefineRegenBtn() on the later Preview/Refine screen).
+function syncVersionsRegenBtn(){
+  const v = versionState.find(x => x.id === window.__activeVersionId);
+  if(!v) return;
+  const entry = activeVersionEntry(v);
+  const input = document.getElementById('versionsPromptText');
+  document.getElementById('versionsRegenBtn').disabled = !entry.ready || input.value.trim() === entry.prompt.trim();
+}
 function regenerateActiveVersion(){
   const v = versionState.find(x => x.id === window.__activeVersionId);
-  if(!v || !v.ready) return;
-  v.prompt = document.getElementById('versionsPromptText').value;
-  regenerateVersion(v.id);
-}
-function regenerateVersion(id){
-  const v = versionState.find(x => x.id === id);
-  v.ready = false;
+  if(!v || !activeVersionEntry(v).ready) return;
+  const promptText = document.getElementById('versionsPromptText').value;
+  const rootLabel = 'V' + v.id;
+  const newLabel = `${rootLabel}.${v.history.length}`;
+  v.history.push({ label: newLabel, ready: false, prompt: promptText });
+  v.activeHistoryIndex = v.history.length - 1;
   renderVersionGrid();
   renderVersionEditorPanel();
-  document.getElementById('versionsStatus').textContent = `Regenerating version ${id}…`;
+  document.getElementById('versionsStatus').textContent = `Regenerating version ${rootLabel}…`;
   setTimeout(() => {
-    v.ready = true;
+    activeVersionEntry(v).ready = true;
     renderVersionGrid();
     renderVersionEditorPanel();
     checkAllVersionsReady();
   }, 1400);
+}
+function openVersionLightbox(id){
+  const v = versionState.find(x => x.id === id);
+  if(!v || !activeVersionEntry(v).ready) return;
+  openImageLightbox(v.history, v.activeHistoryIndex, id, (i) => {
+    v.activeHistoryIndex = i;
+    renderVersionGrid();
+    renderVersionEditorPanel();
+  });
 }
 function selectVersion(id){
   addChatMsg('user', `Use version ${id}`);
   window.__selectedVersionId = id;
   document.getElementById('tabVersions').innerHTML = '<span class="check">✓</span> Versions';
   const v = versionState.find(x => x.id === id);
-  window.__editHistory = [{ label: 'V' + id, ready: true, prompt: v.prompt }];
-  window.__activeEditIndex = 0;
+  window.__editHistory = v.history.map(h => ({ ...h }));
+  window.__activeEditIndex = v.activeHistoryIndex;
   showVersionResult(id);
 }
 
@@ -3601,7 +3653,22 @@ function carGoToGenerate(){
     draftScript();
   }
 }
+// Mirrors imgUpdateDevelopPreview() — shows whichever card was selected in Storyboard/Preview
+// (falls back to card 1) so Develop isn't just an empty gradient once you get there.
+function carUpdateDevelopPreview(){
+  const n = window.__storyboardSelectedCard || 1;
+  const fields = ensureCardCopyFields(n);
+  const get = key => fields.find(f => f.key === key);
+  const h = get('headline'), s = get('subhead'), c = get('cta');
+  document.getElementById('developHeadlineCarousel').textContent = h.on ? h.text : '';
+  document.getElementById('developHeadlineCarousel').style.display = h.on ? 'block' : 'none';
+  document.getElementById('developSubheadCarousel').textContent = s.on ? s.text : '';
+  document.getElementById('developSubheadCarousel').style.display = s.on ? 'block' : 'none';
+  document.getElementById('developCtaCarousel').textContent = c.on ? c.text : '';
+  document.getElementById('developCtaCarousel').style.display = c.on ? 'inline-block' : 'none';
+}
 function carGoToDevelop(){
+  carUpdateDevelopPreview();
   showView('developView');
   setStep('stepEdit');
 }
@@ -4264,7 +4331,23 @@ function renderPreviewEditorPanels(){
 }
 // Prototype only — no real files exist to save, so these are visual no-ops.
 function downloadCard(n){}
-function expandCard(n){}
+// __cardImageHistory entries don't carry their own label (unlike the Image flow's
+// versionState), so synthesize the same V1/V1.1/V1.2… labels the version-row chips already
+// show, reusing the shared image lightbox (openImageLightbox) exactly like the Image flow does.
+function cardHistoryEntries(n){
+  const hist = window.__cardImageHistory[n] || [];
+  return hist.map((h, i) => ({ label: i === 0 ? 'V1' : `V1.${i}`, ready: h.ready }));
+}
+function expandCard(n){
+  const hist = window.__cardImageHistory[n];
+  const idx = window.__cardImageActiveIndex[n] || 0;
+  if(!hist || !hist[idx] || !hist[idx].ready) return;
+  openImageLightbox(cardHistoryEntries(n), idx, 'card' + n, (i) => {
+    window.__cardImageActiveIndex[n] = i;
+    renderStoryboardGrid();
+    if(document.getElementById('previewGrid')) renderPreviewGrid();
+  });
+}
 function downloadAllCards(){}
 
 // =====================================================================
@@ -6865,7 +6948,15 @@ function reelGoToGenerate(){
     runBriefToScript();
   }
 }
+// No real rendered video exists in this prototype, so Develop shows the same "video card"
+// placeholder treatment as the Storyboard/Preview stages (gradient + play icon) — mirrors
+// imgUpdateDevelopPreview()/carUpdateDevelopPreview() for the other two content types.
+function reelUpdateDevelopPreview(){
+  const seconds = window.__videoDuration || 8;
+  document.getElementById('developDurationReel').textContent = `0:${String(seconds).padStart(2, '0')}`;
+}
 function reelGoToDevelop(){
+  reelUpdateDevelopPreview();
   showView('developView');
   setStep('stepEdit');
   document.getElementById('briefActionBarReel').style.display = 'none';

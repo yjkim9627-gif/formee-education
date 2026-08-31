@@ -17,6 +17,7 @@
 }
 .image-scene-card[data-type="version"]{
   border:1.2px solid var(--color-neutral-400);
+  cursor:pointer;
 }
 .image-scene-card[data-type="version"].selected{border-color:var(--color-neutral-500);}
 .image-scene-card[data-type="final"]{border:2px solid var(--color-neutral-400);}
