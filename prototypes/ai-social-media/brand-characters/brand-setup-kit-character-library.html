@@ -12618,6 +12618,12 @@ body.bk2-clean #roleSwitch { display:none !important; }
 #charDetailMain.sp-open .cd-right{flex:0 0 828px;width:828px;max-width:828px;}
 </style>
 
+<style id="ux-tweaks-css">
+/* Brand Setup · the suggestion chips that sat on the same row as "Refine with AI"
+   are gone — the row keeps the button only. The chips inside the expanded
+   "Refine the description" panel (.bs-aipanel .refine-chips) are untouched. */
+#brandMain .bs-airow2 .bs-aichips{display:none;}
+</style>
 <style id="fit-css">
 /* Scale the fixed 1920x1162 artboard down to the real browser window, keeping the
    aspect ratio — the same technique the other prototypes in this repo use
