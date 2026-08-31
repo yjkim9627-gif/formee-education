@@ -12623,7 +12623,30 @@ body.bk2-clean #roleSwitch { display:none !important; }
    are gone — the row keeps the button only. The chips inside the expanded
    "Refine the description" panel (.bs-aipanel .refine-chips) are untouched. */
 #brandMain .bs-airow2 .bs-aichips{display:none;}
+/* with the chips gone the row has one child left, so space-between parked the
+   pill on the left — it belongs on the right */
+#brandMain .bs-airow2{justify-content:flex-end;}
 </style>
+
+<script id="ux-tweaks-js">
+/* "Refine with AI" is disabled while its field is empty. The stock handler looks
+   for the button in the textarea's parent, but the pill moved out of .bs-ta-wrap
+   into .bs-airow2 (a sibling), so it never found it and the button stayed dead
+   after typing. Re-run the same toggle from the field container. */
+(function(){
+  var main = document.getElementById('brandMain');
+  if (!main) return;
+  main.addEventListener('input', function(e){
+    var ta = e.target && e.target.closest && e.target.closest('[data-bsf]');
+    if (!ta) return;
+    var fld = ta.closest('.bs-field');
+    var btn = fld && fld.querySelector('.bs-ta-btn');
+    if (!btn || btn.classList.contains('on')) return;
+    var v = ta.isContentEditable ? ta.textContent : ta.value;
+    btn.disabled = !String(v || '').trim();
+  });
+})();
+</script>
 <style id="fit-css">
 /* Scale the fixed 1920x1162 artboard down to the real browser window, keeping the
    aspect ratio — the same technique the other prototypes in this repo use
