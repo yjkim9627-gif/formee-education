@@ -12618,5 +12618,35 @@ body.bk2-clean #roleSwitch { display:none !important; }
 #charDetailMain.sp-open .cd-right{flex:0 0 828px;width:828px;max-width:828px;}
 </style>
 
+<style id="fit-css">
+/* Scale the fixed 1920x1162 artboard down to the real browser window, keeping the
+   aspect ratio — the same technique the other prototypes in this repo use
+   (new-content-generation/v3, editing/image-editing.html). Panels inside the app
+   keep their own overflow-y:auto, so nothing is clipped; only the frame's overall
+   size changes. */
+html{display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;
+     background:#e5e5e5;overflow:hidden;}
+body{margin:0;padding:0;background:#e5e5e5;overflow:hidden;}
+.frame{transform-origin:top left;}
+</style>
+<script id="fit-js">
+(function(){
+  var W = 1920, H = 1162, MARGIN = 40;
+  function fit(){
+    var el = document.querySelector('.frame');
+    if (!el) return;
+    var scale = Math.min((window.innerWidth  - MARGIN * 2) / W,
+                         (window.innerHeight - MARGIN * 2) / H);
+    if (!(scale > 0)) scale = 1;
+    el.style.transform = 'scale(' + scale + ')';
+    document.body.style.width  = (W * scale) + 'px';
+    document.body.style.height = (H * scale) + 'px';
+  }
+  window.addEventListener('resize', fit);
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fit);
+  else fit();
+})();
+</script>
+
 </body>
 </html>

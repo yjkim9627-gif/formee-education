@@ -29,3 +29,10 @@ AI Social Media 제품의 브랜드/캐릭터 영역 프로토타입입니다.
 
 Figma `FME_AI-Social-Media` — Characters 섹션 `2258:43027`, Brand Kit 섹션 `6828:106701`.
 좌표·타이포·간격은 Figma 실측값 기준으로 맞췄습니다.
+
+## 화면 크기
+
+고정 1920×1162 아트보드를 `.frame`에 `transform: scale()` 을 걸어 브라우저 창에 맞춰 축소합니다
+(`fit-css` / `fit-js` 블록). `new-content-generation/v3`, `editing/image-editing.html` 과 같은 방식이라
+큰 모니터든 노트북이든 화면 전체가 잘리지 않고 들어옵니다. 내부 패널은 각자 `overflow-y:auto` 로
+스크롤하므로 내용이 잘리지 않습니다.
