@@ -2118,7 +2118,15 @@
           <!-- persistent settings bar -->
           <div class="settings-bar" id="settingsBar">
             <div class="setting-chip"><span class="ratio-icon"><i></i></span>9:16</div>
-            <div class="setting-chip"><img src="../../../../components/ai-social-media/icons/spec-duration.svg" class="icon-inline" alt=""> <span id="genSettingDuration">16s</span></div>
+            <div class="setting-chip-wrap" id="durationSettingChipWrap">
+              <div class="setting-chip clickable" onclick="toggleSettingPopover(event,'duration')"><img src="../../../../components/ai-social-media/icons/spec-duration.svg" class="icon-inline" alt=""> <span id="genSettingDuration">16s</span><span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span></div>
+              <div class="setting-popover" id="durationSettingPopover" style="display:none;">
+                <div class="duration-popover-label">Duration</div>
+                <div class="duration-option" data-seconds="8" onclick="selectDuration(8)"><span>8 seconds</span><span class="check">✓</span></div>
+                <div class="duration-option selected" data-seconds="16" onclick="selectDuration(16)"><span>16 seconds</span><span class="check">✓</span></div>
+                <div class="duration-option" data-seconds="24" onclick="selectDuration(24)"><span>24 seconds</span><span class="check">✓</span></div>
+              </div>
+            </div>
             <!-- Figma's spec row (5457-111240) is exactly 9:16 / duration / Character / Voice —
                  no language chip here (unlike Image's settings bar, out of scope for this pass). -->
 
@@ -4905,7 +4913,7 @@ renderMyVoicesCardRow();
 // ---- Settings bar: Character / Voice popovers ----
 function toggleSettingPopover(e, which){
   e.stopPropagation();
-  const ids = {character:'characterPopover', voice:'voiceSettingPopover'};
+  const ids = {character:'characterPopover', voice:'voiceSettingPopover', duration:'durationSettingPopover'};
   Object.entries(ids).forEach(([key, id]) => {
     const pop = document.getElementById(id);
     if(key === which){
@@ -4918,6 +4926,7 @@ function toggleSettingPopover(e, which){
 document.addEventListener('click', (e) => {
   if(!e.target.closest('#characterChipWrap')) document.getElementById('characterPopover').style.display = 'none';
   if(!e.target.closest('#voiceChipWrap')) document.getElementById('voiceSettingPopover').style.display = 'none';
+  if(!e.target.closest('#durationSettingChipWrap')) document.getElementById('durationSettingPopover').style.display = 'none';
 });
 function selectSettingCharacter(el, name){
   document.querySelectorAll('.char-mini-opt').forEach(a => a.classList.remove('selected'));
@@ -5046,13 +5055,58 @@ document.addEventListener('click', (e) => {
   if(pop && pop.style.display === 'block' && !e.target.closest('#durationChipWrap')) pop.style.display = 'none';
 });
 function selectDuration(seconds){
+  const oldSeconds = window.__videoDuration;
   window.__videoDuration = seconds;
   document.getElementById('durationChipText').textContent = seconds + 's';
   document.querySelectorAll('.duration-option').forEach(o => o.classList.toggle('selected', Number(o.dataset.seconds) === seconds));
   document.getElementById('durationPopover').style.display = 'none';
+  const settingPop = document.getElementById('durationSettingPopover');
+  if(settingPop) settingPop.style.display = 'none';
   document.getElementById('briefMetaDurationReel').textContent = seconds + 's';
   document.getElementById('genSettingDuration').textContent = seconds + 's';
-  
+
+  // A script that already exists needs to fit the new duration's word budget — surface that
+  // as an in-chat step (Figma 5457-111240's "top chip" duration control) instead of silently
+  // leaving an over-limit script for the user to notice on their own.
+  if(oldSeconds !== seconds){
+    const existingScript = document.getElementById('fullScript')?.value.trim();
+    if(existingScript) autoAdjustScriptForDuration(oldSeconds, seconds);
+  }
+}
+
+function autoAdjustScriptForDuration(oldSeconds, newSeconds){
+  const log = document.getElementById('chatLog');
+  if(!log) return;
+  const loadingEl = document.createElement('div');
+  loadingEl.className = 'msg ai loading';
+  loadingEl.innerHTML = `<div class="chat-loading-card"><div class="chat-loading-spinner"></div><div class="chat-loading-text"><span class="chat-loading-title">Adjusting the script...</span><span class="chat-loading-sub">Duration changed to ${newSeconds}s</span></div></div>`;
+  log.appendChild(loadingEl);
+  log.scrollTop = log.scrollHeight;
+
+  setTimeout(() => {
+    loadingEl.remove();
+    const base = document.getElementById('fullScript').value.replace(/^"|"$/g, '');
+    const max = getMaxScriptWords();
+    const count = countScriptWords(base);
+
+    const status = document.createElement('div');
+    status.className = 'msg-status';
+    status.innerHTML = `<span class="worked-label">Worked</span> <span class="worked-time">for 1s</span>`;
+    log.appendChild(status);
+
+    if(count > max){
+      const fitted = fitScriptToWordLimit(base, max);
+      const wrap = document.createElement('div');
+      wrap.innerHTML = renderScriptProposalMessage(fitted, `Duration changed to ${newSeconds}s (was ${oldSeconds}s), so I trimmed the script from ${count} to ${countScriptWords(fitted)} words to fit.`).trim();
+      log.appendChild(wrap.firstElementChild);
+    } else {
+      const msg = document.createElement('div');
+      msg.className = 'msg ai';
+      msg.innerHTML = `<span class="tag">AI</span>Duration changed to ${newSeconds}s — your script already fits (${count}/${max} words), so no changes needed.`;
+      log.appendChild(msg);
+    }
+    log.scrollTop = log.scrollHeight;
+  }, 900);
 }
 
 // ---- Timeline: scene grid + selected-scene editor (rebuilt per duration) ----
