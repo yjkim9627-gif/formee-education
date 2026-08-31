@@ -12708,7 +12708,7 @@ body.bk2-clean #roleSwitch { display:none !important; }
   display:flex;align-items:center;justify-content:center;font-size:0;box-shadow:none;color:transparent;}
 #brandMain .bs-char-ck img{width:12px;height:12px;display:block;}
 /* Controls / Carousel Arrow 32x32, centred on the card image, over the row's right edge */
-#brandMain .bs-charswrap{position:relative;}
+#brandMain .bs-charswrap{position:relative;width:916px;max-width:100%;}
 #brandMain .bs-chars{overflow-x:auto;scroll-behavior:smooth;scrollbar-width:none;}
 #brandMain .bs-chars::-webkit-scrollbar{width:0;height:0;display:none;}
 #brandMain .bs-carr{position:absolute;right:4px;top:36px;width:32px;height:32px;
@@ -12736,7 +12736,13 @@ body.bk2-clean #roleSwitch { display:none !important; }
     if (!a) return;
     e.stopPropagation(); e.preventDefault();
     var row = a.parentElement.querySelector('.bs-chars');
-    if (row) row.scrollBy({ left: (104 + 12) * 3 });   /* CSS scroll-behavior animates it */
+    if (!row) return;
+    var max = row.scrollWidth - row.clientWidth;
+    if (max < 2) return;                       /* everything already fits */
+    /* one screenful, snapped to the card pitch; back to the start at the end */
+    var pitch = 104 + 12;
+    var step  = Math.max(pitch, Math.floor(row.clientWidth / pitch) * pitch);
+    row.scrollLeft = row.scrollLeft >= max - 2 ? 0 : Math.min(max, row.scrollLeft + step);
   }, true);
   /* The frame draws the arrow on both rows unconditionally — even with the eight
      cards filling the row exactly — so it is never hidden or dimmed. Clicking it
