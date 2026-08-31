@@ -651,14 +651,14 @@
   .pub-hashtag-chip.added .x{display:inline-flex;}
   .pub-hashtag-seo-divider{height:1px; background:var(--color-neutral-200);}
 
-  /* ---- AI Suggestion Sweep — plays once on a chip that's freshly AI-suggested: a bright
-     highlight travels one lap around the pill border (Figma: "AI suggestion" spec section,
-     component "AI" State3→Default), then the chip settles into its plain default border.
-     Reusable via the .ai-sweep class on any pill-shaped chip. ---- */
+  /* ---- AI Suggestion Sweep — plays once on a chip that's freshly AI-suggested: the border's
+     gradient (not a single traveling dot/comet — the whole ring stays coloured throughout)
+     spins one full lap (Figma: "AI suggestion" spec section, component "AI" State3→Default),
+     then the chip settles into its plain default border. Reusable via .ai-sweep. ---- */
   .ai-sweep{border-color:var(--color-brand-primary) !important; position:relative;}
   .ai-sweep::before{
     content:''; position:absolute; inset:-1px; border-radius:inherit; padding:1px;
-    background:conic-gradient(from 0deg, transparent 0%, var(--color-brand-primary) 12%, transparent 24%);
+    background:conic-gradient(from 0deg, var(--color-brand-primary) 0%, var(--color-brand-primary-light) 50%, var(--color-brand-primary) 100%);
     -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite:xor; mask-composite:exclude;
     animation:ai-sweep-spin 1.2s linear 1 forwards; pointer-events:none;
