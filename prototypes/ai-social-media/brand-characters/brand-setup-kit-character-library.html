@@ -5484,6 +5484,36 @@ const BS_TAB_ICON = {
   accounts: '<svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M17.8666 9.21001L10.2082 16.8683C9.27005 17.8065 7.99757 18.3336 6.67075 18.3336C5.34393 18.3336 4.07145 17.8065 3.13325 16.8683C2.19505 15.9301 1.66797 14.6577 1.66797 13.3308C1.66797 12.004 2.19505 10.7315 3.13325 9.79334L10.2749 2.65168C10.9004 2.0251 11.7491 1.67266 12.6345 1.67188C13.5198 1.67109 14.3692 2.02204 14.9957 2.64751C15.6223 3.27298 15.9748 4.12174 15.9755 5.00706C15.9763 5.89239 15.6254 6.74177 14.9999 7.36834L7.84158 14.51C7.52885 14.8227 7.10469 14.9984 6.66242 14.9984C6.22014 14.9984 5.79598 14.8227 5.48325 14.51C5.17051 14.1973 4.99482 13.7731 4.99482 13.3308C4.99482 12.8886 5.17051 12.4644 5.48325 12.1517L12.5582 5.08501" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
 };
 
+/* styles · sub-panel (6738:106112) — picking a character opens its style row
+   right below, so Setup can pin the look the AI writes with, not just the face.
+   The styles come from the Characters library (stylesFor / styleArt). */
+function bsStylesPanelHTML(cur){
+  if (!cur || typeof stylesFor !== 'function') return '';
+  const all   = stylesFor(cur.id);
+  const shown = bState.bsStyleFav ? all.filter(x => x.fav) : all;
+  const sel   = (bState.bsStyleSel || {})[cur.id];
+  return `
+  <div class="bs-substyles">
+    <div class="bs-charrow">
+      <span class="bs-sublabel"><img class="bs-subav" src="${bsCharThumb(cur)}" alt="">
+        <b>${esc(cur.name)}&#8217;s styles</b></span>
+      <button type="button" class="bs-viewall" id="bsViewAllStyles">See all &rarr;</button>
+    </div>
+    <div class="bs-charfil">
+      <button type="button" class="bs-chip bs-favchip${bState.bsStyleFav ? ' on' : ''}"
+              data-bsstylefil="fav" aria-pressed="${!!bState.bsStyleFav}">Favorites &#9733;</button>
+    </div>
+    <div class="bs-chars bs-stylerow">
+      <div class="bs-char new" id="bsStyleNew"><div class="bs-char-img">+</div>
+        <p class="bs-char-n">Create New</p></div>
+      ${shown.map(st => `<div class="bs-char${sel === st.name ? ' on' : ''}" data-bsstyle="${esc(st.name)}">
+        <div class="bs-char-img"><img src="${st.src || styleArt(st.name) || bsCharThumb(cur)}" alt="">${
+          sel === st.name ? '<span class="bs-char-ck">&#10003;</span>' : ''}</div>
+        <p class="bs-char-n">${esc(st.name)}</p></div>`).join('')}
+    </div>
+  </div>`;
+}
+
 const BS_STEPS = [
   {
     key:'identity', title:'Brand & identity',
@@ -5620,7 +5650,7 @@ const BS_STEPS = [
       const defId = (list.find(c => (c.defaultFor || []).indexOf(b.name) >= 0) || {}).id;
       return `
       <div class="bs-cseg">
-        <button type="button" class="${b.noCharacter ? '' : 'on'}" data-bscmode="ai">AI Character</button>
+        <button type="button" class="${b.noCharacter ? '' : 'on'}" data-bscmode="ai">With Character</button>
         <button type="button" class="${b.noCharacter ? 'on' : ''}" data-bscmode="none">No Character</button>
       </div>
       ${b.noCharacter ? `<p class="bs-hint">Posts are written without a presenter —
@@ -5651,6 +5681,7 @@ const BS_STEPS = [
             c.id === defId ? '<span class="bs-char-def">Default</span>' : ''}</div>
           <p class="bs-char-n">${esc(c.name)}</p></div>`).join('')}
       </div>
+      ${bsStylesPanelHTML(cur)}
       `}`;
     },
   },
@@ -5898,6 +5929,12 @@ function renderBrandDetail(){
   const goLib = ()=>{ showView('characters'); };
   const va = $('#bsViewAllChars'); if (va) va.addEventListener('click', goLib);
   const cn = $('#bsCharNew');      if (cn) cn.addEventListener('click', goLib);
+  /* 스타일도 만들고 고르는 곳은 라이브러리다 — 그 캐릭터 상세로 보낸다 */
+  const goStyles = ()=>{ const br = B_DATA.find(x => x.id === bState.brandId);
+    const c = br && bsChar(br); showView('characters');
+    if (c && typeof openDetail === 'function') openDetail(c); };
+  const vs = $('#bsViewAllStyles'); if (vs) vs.addEventListener('click', goStyles);
+  const sn = $('#bsStyleNew');      if (sn) sn.addEventListener('click', goStyles);
 }
 
 /* Sources 블록 + AI 스레드 배선. #brandMain 은 innerHTML 만 갈리고 노드 자체는
@@ -5992,6 +6029,16 @@ function bindBsSources(){
     if (prim){ b.primaryChannel = prim.dataset.bsprimary; renderBrand(); return; }
     const seed = e.target.closest('[data-bsvoiceseed]');
     if (seed){ bState.bsVoiceSeed = (bState.bsVoiceSeed || 0) + 1; renderBrand(); return; }
+    const sfil = e.target.closest('[data-bsstylefil]');
+    if (sfil){ bState.bsStyleFav = !bState.bsStyleFav; renderBrand(); return; }
+    const sty = e.target.closest('[data-bsstyle]');
+    if (sty){
+      const c = bsChar(b);
+      if (c){ bState.bsStyleSel = bState.bsStyleSel || {};
+              bState.bsStyleSel[c.id] = bState.bsStyleSel[c.id] === sty.dataset.bsstyle
+                                      ? null : sty.dataset.bsstyle; }
+      renderBrand(); return;
+    }
     const cfil = e.target.closest('[data-bscharfil]');
     if (cfil){ const k = cfil.dataset.bscharfil;
                bState.bsCharFav = (k === 'fav') ? !bState.bsCharFav : bState.bsCharFav;
@@ -12641,6 +12688,17 @@ body.bk2-clean #roleSwitch { display:none !important; }
 /* with the chips gone the row has one child left, so space-between parked the
    pill on the left — it belongs on the right */
 #brandMain .bs-airow2{justify-content:flex-end;}
+/* Brand Setup · Characters (5899:92663) — cards are 104 wide on a 12px gutter,
+   and the styles sub-panel sits 32 under the character row. Style names can run
+   to two lines, so those cards are 144 tall against the character row's 124. */
+#brandMain .bs-chars{gap:12px;}
+#brandMain .bs-char{width:104px;}
+#brandMain .bs-char-img{width:104px;height:104px;}
+#brandMain .bs-substyles{margin-top:32px;display:flex;flex-direction:column;gap:12px;}
+#brandMain .bs-sublabel{display:flex;align-items:center;gap:12px;}
+#brandMain .bs-sublabel b{font-weight:600;font-size:14px;line-height:22px;color:var(--neutral-900);}
+#brandMain .bs-subav{width:20px;height:20px;border-radius:9999px;object-fit:cover;display:block;flex:none;}
+#brandMain .bs-stylerow .bs-char-n{min-height:32px;}
 </style>
 
 <script id="ux-tweaks-js">
