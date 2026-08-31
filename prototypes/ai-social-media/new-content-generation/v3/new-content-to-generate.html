@@ -651,6 +651,20 @@
   .pub-hashtag-chip.added .x{display:inline-flex;}
   .pub-hashtag-seo-divider{height:1px; background:var(--color-neutral-200);}
 
+  /* ---- AI Suggestion Sweep — plays once on a chip that's freshly AI-suggested: a bright
+     highlight travels one lap around the pill border (Figma: "AI suggestion" spec section,
+     component "AI" State3→Default), then the chip settles into its plain default border.
+     Reusable via the .ai-sweep class on any pill-shaped chip. ---- */
+  .ai-sweep{border-color:var(--color-brand-primary) !important; position:relative;}
+  .ai-sweep::before{
+    content:''; position:absolute; inset:-1px; border-radius:inherit; padding:1px;
+    background:conic-gradient(from 0deg, transparent 0%, var(--color-brand-primary) 12%, transparent 24%);
+    -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite:xor; mask-composite:exclude;
+    animation:ai-sweep-spin 1.2s linear 1 forwards; pointer-events:none;
+  }
+  @keyframes ai-sweep-spin{from{transform:rotate(0deg);} to{transform:rotate(360deg);}}
+
   /* -- Caption textarea + refine row -- */
   .pub-caption-input{width:100%; border:1px solid var(--color-neutral-400); border-radius:var(--radius-xl); padding:12px; font-size:14px; font-family:var(--font-family-text); color:var(--color-neutral-900); line-height:1.6; resize:vertical; min-height:100px;}
   .pub-caption-input:focus{outline:none; border-color:var(--color-brand-primary);}
@@ -6056,8 +6070,19 @@ const PUB_TAG_CHIP_X_ICON = 'data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjd
 
 function renderPubTagChip(tag){
   const selected = window.__pubSelectedTags.has(tag);
-  return `<button type="button" class="pub-hashtag-chip${selected ? ' added' : ''}" onclick="toggleHashtagSelection('${escapeHtml(tag)}', this)"><span class="x"><img src="${PUB_TAG_CHIP_X_ICON}" alt=""></span>${escapeHtml(tag)}</button>`;
+  // Freshly-suggested (unselected) chips get the one-shot "AI Suggestion Sweep" — a bright
+  // highlight lapping the border once before it settles to the plain default look (see
+  // .ai-sweep / ai-sweep-spin above, and the Figma "AI suggestion" dev-spec section).
+  const sweepClass = selected ? '' : ' ai-sweep';
+  return `<button type="button" class="pub-hashtag-chip${selected ? ' added' : sweepClass}" onclick="toggleHashtagSelection('${escapeHtml(tag)}', this)"><span class="x"><img src="${PUB_TAG_CHIP_X_ICON}" alt=""></span>${escapeHtml(tag)}</button>`;
 }
+// Once the sweep finishes lapping a chip's border, drop the .ai-sweep class so it settles
+// into the plain default border for good (never re-triggers on hover/click/re-render).
+document.addEventListener('animationend', (e) => {
+  if(e.animationName === 'ai-sweep-spin' && e.target.classList.contains('ai-sweep')){
+    e.target.classList.remove('ai-sweep');
+  }
+});
 
 // Tapping a chip drops the raw tag straight into the caption textarea (immediate,
 // visible feedback), on top of tracking selection so "Generate caption" can later
