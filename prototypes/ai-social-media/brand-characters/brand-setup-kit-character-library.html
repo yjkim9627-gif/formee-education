@@ -5484,6 +5484,9 @@ const BS_TAB_ICON = {
   accounts: '<svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M17.8666 9.21001L10.2082 16.8683C9.27005 17.8065 7.99757 18.3336 6.67075 18.3336C5.34393 18.3336 4.07145 17.8065 3.13325 16.8683C2.19505 15.9301 1.66797 14.6577 1.66797 13.3308C1.66797 12.004 2.19505 10.7315 3.13325 9.79334L10.2749 2.65168C10.9004 2.0251 11.7491 1.67266 12.6345 1.67188C13.5198 1.67109 14.3692 2.02204 14.9957 2.64751C15.6223 3.27298 15.9748 4.12174 15.9755 5.00706C15.9763 5.89239 15.6254 6.74177 14.9999 7.36834L7.84158 14.51C7.52885 14.8227 7.10469 14.9984 6.66242 14.9984C6.22014 14.9984 5.79598 14.8227 5.48325 14.51C5.17051 14.1973 4.99482 13.7731 4.99482 13.3308C4.99482 12.8886 5.17051 12.4644 5.48325 12.1517L12.5582 5.08501" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
 };
 
+/* Checkbox 5899:92728 — 16x16, neutral/900 fill, r4, 12px white tick */
+const BS_CK = '<span class="bs-char-ck"><img src="assets/ic_check_wh.svg" alt=""></span>';
+
 /* styles · sub-panel (6738:106112) — picking a character opens its style row
    right below, so Setup can pin the look the AI writes with, not just the face.
    The styles come from the Characters library (stylesFor / styleArt). */
@@ -5503,14 +5506,14 @@ function bsStylesPanelHTML(cur){
       <button type="button" class="bs-chip bs-favchip${bState.bsStyleFav ? ' on' : ''}"
               data-bsstylefil="fav" aria-pressed="${!!bState.bsStyleFav}">Favorites &#9733;</button>
     </div>
-    <div class="bs-chars bs-stylerow">
+    <div class="bs-charswrap"><div class="bs-chars bs-stylerow">
       <div class="bs-char new" id="bsStyleNew"><div class="bs-char-img">+</div>
         <p class="bs-char-n">Create New</p></div>
       ${shown.map(st => `<div class="bs-char${sel === st.name ? ' on' : ''}" data-bsstyle="${esc(st.name)}">
         <div class="bs-char-img"><img src="${st.src || styleArt(st.name) || bsCharThumb(cur)}" alt="">${
-          sel === st.name ? '<span class="bs-char-ck">&#10003;</span>' : ''}</div>
+          sel === st.name ? BS_CK : ''}</div>
         <p class="bs-char-n">${esc(st.name)}</p></div>`).join('')}
-    </div>
+    </div><button type="button" class="bs-carr" data-bsscroll aria-label="Scroll right">${ICONS.chevron}</button></div>
   </div>`;
 }
 
@@ -5673,14 +5676,14 @@ const BS_STEPS = [
           </select></span>
         </div>
         <button type="button" class="bs-viewall" id="bsViewAllChars">See all →</button></div>
-      <div class="bs-chars">
+      <div class="bs-charswrap"><div class="bs-chars">
         <div class="bs-char new" id="bsCharNew"><div class="bs-char-img">+</div><p class="bs-char-n">Create New</p></div>
         ${list.map(c => `<div class="bs-char${cur && c.id === cur.id ? ' on' : ''}" data-bschar="${c.id}">
           <div class="bs-char-img"><img src="${bsCharThumb(c)}" alt="">${
-            cur && c.id === cur.id ? '<span class="bs-char-ck">✓</span>' : ''}${
+            cur && c.id === cur.id ? BS_CK : ''}${
             c.id === defId ? '<span class="bs-char-def">Default</span>' : ''}</div>
           <p class="bs-char-n">${esc(c.name)}</p></div>`).join('')}
-      </div>
+      </div><button type="button" class="bs-carr" data-bsscroll aria-label="Scroll right">${ICONS.chevron}</button></div>
       ${bsStylesPanelHTML(cur)}
       `}`;
     },
@@ -12699,6 +12702,21 @@ body.bk2-clean #roleSwitch { display:none !important; }
 #brandMain .bs-sublabel b{font-weight:600;font-size:14px;line-height:22px;color:var(--neutral-900);}
 #brandMain .bs-subav{width:20px;height:20px;border-radius:9999px;object-fit:cover;display:block;flex:none;}
 #brandMain .bs-stylerow .bs-char-n{min-height:32px;}
+/* Checkbox 5899:92728 — top-right, 12px inset */
+#brandMain .bs-char-ck{position:absolute;right:12px;top:12px;width:16px;height:16px;
+  border-radius:var(--radius-sm,4px);background:var(--neutral-900);border:1px solid var(--neutral-900);
+  display:flex;align-items:center;justify-content:center;font-size:0;box-shadow:none;color:transparent;}
+#brandMain .bs-char-ck img{width:12px;height:12px;display:block;}
+/* Controls / Carousel Arrow 32x32, centred on the card image, over the row's right edge */
+#brandMain .bs-charswrap{position:relative;}
+#brandMain .bs-chars{overflow-x:auto;scroll-behavior:smooth;scrollbar-width:none;}
+#brandMain .bs-chars::-webkit-scrollbar{width:0;height:0;display:none;}
+#brandMain .bs-carr{position:absolute;right:4px;top:36px;width:32px;height:32px;
+  background:var(--neutral-0);border:1px solid var(--neutral-400);border-radius:9999px;
+  box-shadow:0 0 6px 0 var(--neutral-150);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;padding:0;}
+#brandMain .bs-carr:hover{background:var(--neutral-50);}
+#brandMain .bs-carr[hidden]{display:none;}
 </style>
 
 <script id="ux-tweaks-js">
@@ -12709,6 +12727,29 @@ body.bk2-clean #roleSwitch { display:none !important; }
 (function(){
   var main = document.getElementById('brandMain');
   if (!main) return;
+  /* Carousel arrows on the Brand Setup character / style rows: scroll the row,
+     and hide the arrow when there is nothing past the edge. */
+  /* capture, so the row scrolls before Brand Setup's own delegated click can
+     re-render the section out from under us */
+  main.addEventListener('click', function(e){
+    var a = e.target && e.target.closest && e.target.closest('[data-bsscroll]');
+    if (!a) return;
+    e.stopPropagation(); e.preventDefault();
+    var row = a.parentElement.querySelector('.bs-chars');
+    if (row) row.scrollBy({ left: (104 + 12) * 3 });   /* CSS scroll-behavior animates it */
+  }, true);
+  function syncArrows(){
+    main.querySelectorAll('.bs-charswrap').forEach(function(w){
+      var row = w.querySelector('.bs-chars'), a = w.querySelector('.bs-carr');
+      if (!row || !a) return;
+      a.hidden = row.scrollWidth - row.clientWidth - row.scrollLeft < 2;
+    });
+  }
+  new MutationObserver(syncArrows).observe(main, { childList:true, subtree:true });
+  main.addEventListener('scroll', syncArrows, true);
+  window.addEventListener('resize', syncArrows);
+  syncArrows();
+
   main.addEventListener('input', function(e){
     var ta = e.target && e.target.closest && e.target.closest('[data-bsf]');
     if (!ta) return;
