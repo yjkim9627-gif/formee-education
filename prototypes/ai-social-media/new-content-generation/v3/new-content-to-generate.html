@@ -1467,42 +1467,57 @@
               </div>
             </div>
 
-            <!-- Voice/appearance only applies to motion content — hidden entirely for Image post -->
-            <div id="charVoiceSection">
+          </div>
+
+          <!-- Voice/appearance only applies to motion content — hidden entirely for Image post.
+               Sits OUTSIDE #charWithSection (a sibling, not nested) so it still shows when
+               "No Character" is selected — only the appear-toggle vs needs-voice-toggle portion
+               swaps based on character mode; My voices/Browse library stays shared either way. -->
+          <div id="charVoiceSection">
             <div class="char-divider"></div>
-            <div class="appear-label">How does character appear in this video?</div>
-            <div class="seg-control" id="charAppearToggle">
-              <div class="seg-chip active" data-appear="lipsync" onclick="reelSetCharAppear('lipsync')">Talking (lip-sync)</div>
-              <div class="seg-chip" data-appear="acting" onclick="reelSetCharAppear('acting')">Acting only (voiceover)</div>
+            <div id="charAppearSection">
+              <div class="appear-label">How does character appear in this video?</div>
+              <div class="seg-control" id="charAppearToggle">
+                <div class="seg-chip active" data-appear="lipsync" onclick="reelSetCharAppear('lipsync')">Talking (lip-sync)</div>
+                <div class="seg-chip" data-appear="acting" onclick="reelSetCharAppear('acting')">Acting only (voiceover)</div>
+              </div>
             </div>
-            <div class="voice-section-label-row">
-              <span class="my-voices-label">My voices</span>
-              <div class="see-all-link">See all <img src="../../../../components/ai-social-media/icons/back.svg" class="icon-inline icon-flip" alt="" style="margin-left:2px;"></div>
+            <div id="charNeedsVoiceSection" style="display:none;">
+              <div class="appear-label">Does this video need a voice?</div>
+              <div class="seg-control" id="needsVoiceToggle">
+                <div class="seg-chip active" data-needsvoice="yes" onclick="reelSetNeedsVoice('yes')">AI Voice</div>
+                <div class="seg-chip" data-needsvoice="no" onclick="reelSetNeedsVoice('no')">No Voice</div>
+              </div>
             </div>
-            <div class="voice-card-row" id="myVoicesCardRow"></div>
-            <button type="button" class="voice-browse-btn" id="voiceBrowseBtn" onclick="reelToggleVoiceBrowsePanel()">Browse ElevenLabs Voice Library <span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span></button>
-            <div class="voice-browse-panel" id="voiceBrowsePanel" style="display:none;">
-              <div class="voice-browse-panel-header">
-                <div>
-                  <div class="voice-browse-panel-title">ElevenLabs voice library</div>
-                  <div class="voice-browse-panel-sub">Search thousands of community voices. Adding one imports it into your ElevenLabs account.</div>
+            <div id="voiceLibrarySection">
+              <div class="voice-section-label-row">
+                <span class="my-voices-label">My voices</span>
+                <div class="see-all-link">See all <img src="../../../../components/ai-social-media/icons/back.svg" class="icon-inline icon-flip" alt="" style="margin-left:2px;"></div>
+              </div>
+              <div class="voice-card-row" id="myVoicesCardRow"></div>
+              <button type="button" class="voice-browse-btn" id="voiceBrowseBtn" onclick="reelToggleVoiceBrowsePanel()">Browse ElevenLabs Voice Library <span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span></button>
+              <div class="voice-browse-panel" id="voiceBrowsePanel" style="display:none;">
+                <div class="voice-browse-panel-header">
+                  <div>
+                    <div class="voice-browse-panel-title">ElevenLabs voice library</div>
+                    <div class="voice-browse-panel-sub">Search thousands of community voices. Adding one imports it into your ElevenLabs account.</div>
+                  </div>
+                  <button type="button" class="voice-browse-close-btn" onclick="reelToggleVoiceBrowsePanel()">Close <img src="../../../../components/ai-social-media/icons/close-x.svg" class="icon-inline" alt=""></button>
                 </div>
-                <button type="button" class="voice-browse-close-btn" onclick="reelToggleVoiceBrowsePanel()">Close <img src="../../../../components/ai-social-media/icons/close-x.svg" class="icon-inline" alt=""></button>
+                <div class="voice-browse-search-row">
+                  <input type="text" class="voice-lib-search" placeholder="Search voice…" oninput="filterVoiceLib(this.value,'voiceLibGrid')">
+                  <button type="button" class="voice-lib-filter-btn">⚙ Filter</button>
+                </div>
+                <div class="voice-browse-chips">
+                  <span class="voice-browse-chip active">All</span>
+                  <span class="voice-browse-chip">Social Media</span>
+                  <span class="voice-browse-chip">Advertisement</span>
+                  <span class="voice-browse-chip">Character Animation</span>
+                  <span class="voice-browse-chip">Conversational</span>
+                  <span class="voice-browse-chip">Entertainment</span>
+                </div>
+                <div class="voice-lib-grid" id="voiceLibGrid"></div>
               </div>
-              <div class="voice-browse-search-row">
-                <input type="text" class="voice-lib-search" placeholder="Search voice…" oninput="filterVoiceLib(this.value,'voiceLibGrid')">
-                <button type="button" class="voice-lib-filter-btn">⚙ Filter</button>
-              </div>
-              <div class="voice-browse-chips">
-                <span class="voice-browse-chip active">All</span>
-                <span class="voice-browse-chip">Social Media</span>
-                <span class="voice-browse-chip">Advertisement</span>
-                <span class="voice-browse-chip">Character Animation</span>
-                <span class="voice-browse-chip">Conversational</span>
-                <span class="voice-browse-chip">Entertainment</span>
-              </div>
-              <div class="voice-lib-grid" id="voiceLibGrid"></div>
-            </div>
             </div>
           </div>
           </div>
@@ -4634,9 +4649,27 @@ function reviseScript(requestText){
 function reelSetCharMode(mode){
   document.querySelectorAll('#charModeToggle .seg-chip').forEach(c => c.classList.toggle('active', c.dataset.mode === mode));
   document.getElementById('charWithSection').style.display = mode === 'with' ? 'block' : 'none';
+  // Voice still applies with no character — just swap the appear-toggle (which assumes a
+  // character to lip-sync/voice-over) for the simpler "does this need a voice" toggle.
+  document.getElementById('charAppearSection').style.display = mode === 'with' ? 'block' : 'none';
+  document.getElementById('charNeedsVoiceSection').style.display = mode === 'none' ? 'block' : 'none';
+  syncVoiceLibraryVisibility();
 }
 function reelSetCharAppear(mode){
   document.querySelectorAll('#charAppearToggle .seg-chip').forEach(c => c.classList.toggle('active', c.dataset.appear === mode));
+}
+window.__needsVoice = 'yes';
+function reelSetNeedsVoice(mode){
+  window.__needsVoice = mode;
+  document.querySelectorAll('#needsVoiceToggle .seg-chip').forEach(c => c.classList.toggle('active', c.dataset.needsvoice === mode));
+  syncVoiceLibraryVisibility();
+}
+// My voices / Browse library only make sense when a voice is actually going to be used —
+// hidden when "No Character" + "No Voice" is selected together.
+function syncVoiceLibraryVisibility(){
+  const charMode = document.querySelector('#charModeToggle .seg-chip.active')?.dataset.mode;
+  const hide = charMode === 'none' && window.__needsVoice === 'no';
+  document.getElementById('voiceLibrarySection').style.display = hide ? 'none' : 'block';
 }
 // Only Elena has a downloaded style set in this prototype — selecting any other character
 // hides the styles sub-panel rather than showing empty/wrong photos.
