@@ -1,0 +1,36 @@
+/* Publish to Social — Modal (components/ai-social-media/publish-social-modal.html 참고)
+   Figma: FME_AI-Social-Media, "Publish confirmation modal" — 3 states (node 7834-331708/
+   331738/331769): handle box empty (Publish button disabled) → handle typed correctly
+   (button enabled) → confirmed (green "✓ Confirmed" note replaces the box). Uses the shared
+   Modal shell (components/shared/modal.css, .modal.modal--form) for the overlay/close/
+   title/footer — everything below is this modal's own product-specific inner content:
+   the per-destination preview card + the type-to-confirm box. One tab per selected
+   platform (Instagram/TikTok/Facebook), each gated independently behind its own handle
+   check (components/ai-social-media/setting-chip.html's .seg-chip pattern drives the tabs). */
+
+.pub-social-modal-overlay{position:fixed;}
+.pub-social-modal{max-width:640px;}
+.pub-social-modal .modal__footer{justify-content:space-between;}
+
+/* ---------- Destination preview row ---------- */
+.pub-social-preview-card{display:flex; gap:16px; border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl); padding:16px;}
+.pub-social-preview-thumb{width:96px; height:96px; border-radius:var(--radius-md); background:var(--color-neutral-25); border:1px solid var(--color-neutral-400); flex-shrink:0; display:flex; align-items:center; justify-content:center;}
+.pub-social-preview-thumb img{width:24px; height:24px; display:block;}
+.pub-social-preview-meta{display:flex; flex-direction:column; gap:6px; justify-content:center; min-width:0;}
+.pub-social-preview-handle{font-size:13px; font-weight:700; color:var(--color-neutral-900);}
+.pub-social-preview-handle a{color:var(--color-brand-primary); text-decoration:underline;}
+.pub-social-preview-format, .pub-social-preview-when{font-size:12.5px; color:var(--color-neutral-500);}
+
+/* ---------- Type-to-confirm box ----------
+   State=Default (input empty, button disabled) / State=Enabled (handle matches, button
+   active) — see .pub-social-confirm-btn:disabled below for the two button looks. */
+.pub-social-confirm-box{display:flex; flex-direction:column; gap:10px; background:var(--color-neutral-75); border-radius:var(--radius-xl); padding:16px; margin-top:16px;}
+.pub-social-confirm-warning{font-size:13px; font-weight:700; color:var(--color-brand-primary);}
+.pub-social-confirm-note{font-size:12.5px; color:var(--color-neutral-700); line-height:1.5; margin:0;}
+.pub-social-confirm-input{width:100%; border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); padding:9px 12px; font-size:13px; font-family:var(--font-family-text); color:var(--color-neutral-900); box-sizing:border-box;}
+.pub-social-confirm-input:focus{outline:none; border-color:var(--color-brand-primary);}
+.pub-social-confirm-btn{align-self:flex-start;}
+.pub-social-confirm-btn:disabled{opacity:.5; cursor:default;}
+
+/* ---------- State=Confirmed — replaces the whole confirm box once its platform is done ---------- */
+.pub-social-confirmed-note{display:flex; align-items:center; gap:8px; background:var(--color-badge-green-bg); color:var(--color-badge-green-text); border-radius:var(--radius-lg); padding:12px 16px; font-size:13px; font-weight:600;}

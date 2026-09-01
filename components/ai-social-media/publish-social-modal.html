@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>Publish to Social Modal — Shared Component</title>
+<link rel="stylesheet" href="../../tokens/tokens.css" />
+<link rel="stylesheet" href="../demo-nav.css" />
+<link rel="stylesheet" href="../shared/button.css" />
+<link rel="stylesheet" href="../shared/modal.css" />
+<link rel="stylesheet" href="publish-social-modal.css" />
+<style>
+  body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
+  .demo-main { padding: var(--spacing-4xl); }
+  h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-3xl); }
+  section { margin-bottom: var(--spacing-4xl); }
+  section h2 { font-size: var(--font-size-text-md); line-height: var(--line-height-text-md); font-weight: var(--font-weight-semibold); color: var(--color-neutral-700); margin: 0 0 var(--spacing-lg); }
+  .preview-frame--tall { height: 600px; }
+
+  /* Demo-only tab bar — the real seg-chip/seg-control pattern lives inline in
+     new-content-to-generate.html (used for several unrelated toggle groups too), so it isn't
+     re-extracted here; this is just enough markup to show the modal reads correctly with it. */
+  .demo-seg-control { display: flex; gap: 4px; background: var(--color-neutral-100); border-radius: var(--radius-lg); padding: 4px; width: fit-content; }
+  .demo-seg-chip { border: none; background: transparent; border-radius: var(--radius-md); padding: 7px 14px; font-family: var(--font-family-text); font-size: 13px; font-weight: 600; color: var(--color-neutral-600); cursor: pointer; }
+  .demo-seg-chip.active { background: var(--color-neutral-0); color: var(--color-neutral-900); box-shadow: var(--shadow-sm); }
+</style>
+</head>
+<body>
+<div class="demo-shell">
+  <nav class="demo-sidebar">
+    <a href="../../index.html" class="demo-sidebar-home">← Home</a>
+    <div class="demo-sidebar-group">
+      <div class="demo-sidebar-label">AI Social Media</div>
+      <a href="nav.html">Nav / Navigation</a>
+      <a href="topbar-stepper.html">Topbar + Stepper</a>
+      <a href="heading.html">Heading</a>
+      <a href="chat-panel.html">Chat Panel</a>
+      <a href="character-card.html">Character Card</a>
+      <a href="avatar.html">Avatar</a>
+      <a href="switch.html">Controls / Switch</a>
+      <a href="prompt-box.html">AI Prompt Box</a>
+      <a href="input.html">Input</a>
+      <a href="filter-chip.html">Controls / Filter / Toggle</a>
+      <a href="table-filter.html">Table / Filter</a>
+      <a href="setting-chip.html">Setting Chip</a>
+      <a href="actions-button.html">Actions / Button</a>
+      <a href="publish-social-modal.html" class="active">Publish to Social Modal</a>
+      <a href="icons.html">Icons</a>
+      <a href="scene-tile.html">Scene Tile</a>
+      <a href="storyboard-card.html">Storyboard Card</a>
+      <a href="image-scene-card.html">Image Scene Card</a>
+      <a href="voice-accordion-row.html">Voice Accordion Row</a>
+      <a href="queue-panel.html">Queue Job Row / Panel</a>
+      <a href="video-summary-card.html">Video Summary Card</a>
+      <a href="destination-account.html">Destination Account</a>
+      <a href="date-picker.html">Date Picker</a>
+      <a href="carousel-card-block.html">Carousel Card Block</a>
+    </div>
+    <div class="demo-sidebar-group">
+      <div class="demo-sidebar-label">Shared</div>
+      <a href="../shared/button.html">Button</a>
+      <a href="../shared/modal-confirm.html">Modal / Confirm</a>
+      <a href="../shared/modal-form.html">Modal / Form</a>
+      <a href="../shared/modal-success.html">Modal / Success</a>
+    </div>
+  </nav>
+  <main class="demo-main">
+  <h1>Publish to Social Modal</h1>
+
+  <section>
+    <h2>State = Default (handle box empty, publish button disabled)</h2>
+    <div class="preview-frame preview-frame--tall">
+      <div class="modal-overlay pub-social-modal-overlay" style="position:absolute;">
+        <div class="modal modal--form pub-social-modal">
+          <button type="button" class="modal__close">&times;</button>
+          <div class="modal__content">
+            <h2 class="modal__title">Publish to social</h2>
+            <p class="modal__body">Preview is live. Publishing requires typing the handle to confirm.</p>
+            <div class="demo-seg-control">
+              <button type="button" class="demo-seg-chip active">Instagram</button>
+              <button type="button" class="demo-seg-chip">TikTok</button>
+              <button type="button" class="demo-seg-chip">Facebook</button>
+            </div>
+            <div class="pub-social-preview-card">
+              <div class="pub-social-preview-thumb"><img src="icons/content-image-outline-sm.svg" alt=""></div>
+              <div class="pub-social-preview-meta">
+                <div class="pub-social-preview-handle">INSTAGRAM · @formeeexpress</div>
+                <div class="pub-social-preview-format">Format: Post + Story</div>
+                <div class="pub-social-preview-when">Publishing now</div>
+              </div>
+            </div>
+            <div class="pub-social-confirm-box">
+              <div class="pub-social-confirm-warning"><img src="icons/alert-sm.svg" class="icon-inline" style="width:14px;height:14px;vertical-align:-2px;" alt=""> This will post live to @formeeexpress</div>
+              <p class="pub-social-confirm-note">Heads up: this isn't a dry run. Confirming publishes the content above straight to Instagram. Type the handle below to unlock the button.</p>
+              <input type="text" class="pub-social-confirm-input" placeholder='Type "formeeexpress" to confirm'>
+              <button type="button" class="btn btn-dark pub-social-confirm-btn" disabled>Publish live to Instagram</button>
+            </div>
+          </div>
+          <div class="modal__footer">
+            <button type="button" class="btn btn-secondary">✓ Save as draft instead</button>
+            <button type="button" class="btn btn-secondary">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>State = Enabled (handle typed correctly)</h2>
+    <div class="preview-frame preview-frame--tall">
+      <div class="modal-overlay pub-social-modal-overlay" style="position:absolute;">
+        <div class="modal modal--form pub-social-modal">
+          <button type="button" class="modal__close">&times;</button>
+          <div class="modal__content">
+            <h2 class="modal__title">Publish to social</h2>
+            <p class="modal__body">Preview is live. Publishing requires typing the handle to confirm.</p>
+            <div class="demo-seg-control">
+              <button type="button" class="demo-seg-chip active">Instagram</button>
+              <button type="button" class="demo-seg-chip">TikTok</button>
+              <button type="button" class="demo-seg-chip">Facebook</button>
+            </div>
+            <div class="pub-social-preview-card">
+              <div class="pub-social-preview-thumb"><img src="icons/content-image-outline-sm.svg" alt=""></div>
+              <div class="pub-social-preview-meta">
+                <div class="pub-social-preview-handle">INSTAGRAM · @formeeexpress</div>
+                <div class="pub-social-preview-format">Format: Post + Story</div>
+                <div class="pub-social-preview-when">Publishing now</div>
+              </div>
+            </div>
+            <div class="pub-social-confirm-box">
+              <div class="pub-social-confirm-warning"><img src="icons/alert-sm.svg" class="icon-inline" style="width:14px;height:14px;vertical-align:-2px;" alt=""> This will post live to @formeeexpress</div>
+              <p class="pub-social-confirm-note">Heads up: this isn't a dry run. Confirming publishes the content above straight to Instagram. Type the handle below to unlock the button.</p>
+              <input type="text" class="pub-social-confirm-input" value="formeeexpress">
+              <button type="button" class="btn btn-dark pub-social-confirm-btn">Publish live to Instagram</button>
+            </div>
+          </div>
+          <div class="modal__footer">
+            <button type="button" class="btn btn-secondary">✓ Save as draft instead</button>
+            <button type="button" class="btn btn-secondary">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>State = Confirmed (per-platform tab, after publishing)</h2>
+    <div class="preview-frame preview-frame--tall">
+      <div class="modal-overlay pub-social-modal-overlay" style="position:absolute;">
+        <div class="modal modal--form pub-social-modal">
+          <button type="button" class="modal__close">&times;</button>
+          <div class="modal__content">
+            <h2 class="modal__title">Publish to social</h2>
+            <p class="modal__body">Preview is live. Publishing requires typing the handle to confirm.</p>
+            <div class="demo-seg-control">
+              <button type="button" class="demo-seg-chip active">✓ Instagram</button>
+              <button type="button" class="demo-seg-chip">TikTok</button>
+              <button type="button" class="demo-seg-chip">Facebook</button>
+            </div>
+            <div class="pub-social-confirmed-note">✓ Confirmed — Instagram will publish.</div>
+          </div>
+          <div class="modal__footer">
+            <button type="button" class="btn btn-secondary">✓ Save as draft instead</button>
+            <button type="button" class="btn btn-secondary">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  </main>
+</div>
+</body>
+</html>

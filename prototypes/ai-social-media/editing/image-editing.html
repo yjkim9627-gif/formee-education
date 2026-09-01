@@ -602,6 +602,32 @@
   .stage-canvas { flex: 1; min-height: 0; position: relative; overflow: hidden; }
   /* top offset by half of .context-bar's height (62px / 2 = 31px) so the poster centers on W:Canvas as a whole, not just the stage area below the context bar */
   .poster { position: absolute; left: 50%; top: calc(50% - 31px); transform: translate(-50%, -50%); width: 477px; height: 596px; overflow: hidden; background: var(--color-neutral-800); box-shadow: var(--shadow-canvas-poster); transition: transform 0.1s ease-out; }
+  /* Video handoff (?mode=video) shifts the poster up to leave room for the Reel Timeline
+     docked along the bottom of the same .stage-canvas — see initVideoTimelineMode(). */
+  .stage-canvas--video .poster { top: calc(50% - 100px); }
+
+  /* ---- Reel Timeline (Figma nodes 7834-359051 / 7606-226765) — built at runtime by
+     initVideoTimelineMode() rather than shipped as static markup, since it only applies to
+     the ?mode=video handoff; every other entry point (image/carousel) never creates it. A
+     simplified, non-interactive read of the real component (no drag-to-trim) — labeled lanes
+     + one clip per 8-second scene segment, matching how Reel/Short's own script stage already
+     splits video into 8-second segments. ---- */
+  .reel-timeline { position: absolute; left: 0; right: 0; bottom: 0; height: 176px; background: var(--color-neutral-0); border-top: 1px solid var(--color-neutral-300); display: flex; flex-direction: column; z-index: 5; }
+  .reel-timeline__toolbar { flex-shrink: 0; height: 36px; display: flex; align-items: center; gap: 10px; padding: 0 16px; border-bottom: 1px solid var(--color-neutral-200); }
+  .rt-play-btn { width: 24px; height: 24px; border-radius: 999px; border: 1px solid var(--color-neutral-400); background: var(--color-neutral-0); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 10px; padding: 0; }
+  .rt-time { font-size: 12px; color: var(--color-neutral-600); font-family: var(--font-family-text); }
+  .reel-timeline__body { flex: 1; min-height: 0; display: flex; }
+  .rt-labels { flex-shrink: 0; width: 96px; border-right: 1px solid var(--color-neutral-200); display: flex; flex-direction: column; }
+  .rt-labels__group { font-size: 10px; font-weight: 700; color: var(--color-neutral-400); text-transform: uppercase; letter-spacing: .03em; padding: 6px 10px 2px; }
+  .rt-labels__lane { font-size: 11.5px; color: var(--color-neutral-700); padding: 0 10px; height: 24px; display: flex; align-items: center; }
+  .rt-lanes { flex: 1; min-width: 0; overflow-x: auto; display: flex; flex-direction: column; position: relative; }
+  .rt-lane { height: 24px; display: flex; align-items: center; padding: 2px 6px; gap: 4px; border-bottom: 1px solid var(--color-neutral-100); }
+  .rt-lane--group-gap { margin-top: 4px; }
+  .rt-clip { height: 20px; border-radius: 5px; flex-shrink: 0; display: flex; align-items: center; padding: 0 8px; font-size: 10.5px; font-weight: 600; color: var(--color-neutral-0); white-space: nowrap; overflow: hidden; }
+  .rt-clip--overlay { background: var(--color-brand-primary-mid); }
+  .rt-clip--scene { background: var(--color-neutral-500); }
+  .rt-clip--waveform { background: repeating-linear-gradient(90deg, var(--color-neutral-300) 0 2px, var(--color-neutral-150) 2px 4px); }
+  .rt-playhead { position: absolute; top: 0; bottom: 0; width: 1.5px; background: var(--color-brand-primary); pointer-events: none; }
   .poster__bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .poster__overlay { position: absolute; inset: 0; width: 100%; height: 100%; }
   .poster__cta { position: absolute; left: 103px; top: 514px; display: flex; align-items: center; justify-content: center; padding: var(--spacing-md) var(--spacing-xl); background: var(--color-neutral-0); border-radius: var(--radius-xl); box-shadow: var(--shadow-poster-cta); }
@@ -7334,7 +7360,148 @@
       document.body.style.height = (1162 * PAGE_FIT_SCALE) + 'px';
       positionAiImproveUi();
     }
+
+    // ---- Handoff from new-content-to-generate.html's "Continue to editing" ----
+    // ?mode=image|carousel|video & ratio=W:H & pages=N & duration=<seconds> (video only).
+    // Called before fitScreenToViewport()/initStaticPosterTexts() so POSTER_WIDTH/HEIGHT and
+    // the page-thumb row are already correct by the time anything else measures them.
+    function applyPosterRatio(ratioStr) {
+      var parts = (ratioStr || '').split(':').map(Number);
+      if (parts.length !== 2 || !parts[0] || !parts[1]) { return; }
+      var rw = parts[0], rh = parts[1];
+      var w, h;
+      if (rw >= rh) { w = 477; h = Math.round(w * rh / rw); }
+      else { h = 596; w = Math.round(h * rw / rh); }
+      POSTER_WIDTH = w;
+      POSTER_HEIGHT = h;
+      var poster = document.getElementById('posterEl');
+      if (poster) { poster.style.width = w + 'px'; poster.style.height = h + 'px'; }
+    }
+
+    // Rebuilds the footer's page-thumb row for N pages (Carousel = card count, Image = number
+    // of versions generated, Video = always 1) — the file ships hardcoded to a 3-page example,
+    // so this replaces those thumbs with N generic ones instead of leaving stale extras/count.
+    function applyPageCount(n, ratioLabel) {
+      if (!n || n < 1) { n = 1; }
+      var pbLeft = document.querySelector('.pb-left');
+      if (!pbLeft) { return; }
+      var label = pbLeft.querySelector('.pb-left__label');
+      if (label) { label.textContent = n + (n === 1 ? ' page · ' : ' pages · ') + ratioLabel; }
+      var addThumb = pbLeft.querySelector('.page-thumb--add');
+      pbLeft.querySelectorAll('.page-thumb:not(.page-thumb--add)').forEach(function (el) { el.remove(); });
+      for (var i = 1; i <= n; i++) {
+        var thumb = document.createElement('div');
+        thumb.className = 'page-thumb' + (i === 1 ? ' page-thumb--current' : '');
+        thumb.innerHTML = '<img src="assets/screen-01-elements-panel/actionbar/page-thumb.png" alt="" /><span>' + i + '</span>';
+        if (addThumb) { pbLeft.insertBefore(thumb, addThumb); } else { pbLeft.appendChild(thumb); }
+      }
+    }
+
+    // Builds the Reel Timeline docked to the bottom of .stage-canvas — done at runtime (not
+    // shipped as static markup) since it only exists for the ?mode=video handoff. `duration`
+    // (seconds) determines how many 8-second scene clips render, matching the same segment
+    // length new-content-to-generate.html's own Reel/Short flow already uses.
+    function fmtTime(s) { return Math.floor(s / 60) + ':' + String(Math.floor(s) % 60).padStart(2, '0'); }
+
+    function initVideoTimelineMode(duration) {
+      var seconds = duration > 0 ? duration : 16;
+      var sceneCount = Math.max(1, Math.round(seconds / 8));
+      var stage = document.querySelector('.stage-canvas');
+      if (!stage || document.getElementById('reelTimeline')) { return; }
+      stage.classList.add('stage-canvas--video');
+
+      function clipsHtml(kind, count, label) {
+        var html = '';
+        for (var i = 0; i < count; i++) {
+          html += '<div class="rt-clip rt-clip--' + kind + '" style="width:' + (100 / count) + '%;">' + (label ? label + (count > 1 ? ' ' + (i + 1) : '') : '') + '</div>';
+        }
+        return html;
+      }
+
+      var timeline = document.createElement('div');
+      timeline.className = 'reel-timeline';
+      timeline.id = 'reelTimeline';
+      timeline.innerHTML =
+        '<div class="reel-timeline__toolbar">' +
+          '<button type="button" class="rt-play-btn" id="rtPlayBtn" onclick="toggleTimelinePlayback()">&#9654;</button>' +
+          '<span class="rt-time" id="rtTimeLabel">0:00 / ' + fmtTime(seconds) + '</span>' +
+        '</div>' +
+        '<div class="reel-timeline__body">' +
+          '<div class="rt-labels">' +
+            '<div class="rt-labels__group">Text</div>' +
+            '<div class="rt-labels__lane">Headline</div>' +
+            '<div class="rt-labels__lane">CTA</div>' +
+            '<div class="rt-labels__lane">Subhead</div>' +
+            '<div class="rt-labels__group">Media</div>' +
+            '<div class="rt-labels__lane">Scene</div>' +
+            '<div class="rt-labels__group">Audio</div>' +
+            '<div class="rt-labels__lane">Voiceover</div>' +
+            '<div class="rt-labels__lane">Music</div>' +
+          '</div>' +
+          '<div class="rt-lanes" id="rtLanes">' +
+            '<div class="rt-playhead" id="rtPlayhead" style="left:0;"></div>' +
+            '<div class="rt-lane">' + clipsHtml('overlay', sceneCount, 'Headline') + '</div>' +
+            '<div class="rt-lane">' + clipsHtml('overlay', sceneCount, 'CTA') + '</div>' +
+            '<div class="rt-lane">' + clipsHtml('overlay', 1, 'Subhead') + '</div>' +
+            '<div class="rt-lane rt-lane--group-gap">' + clipsHtml('scene', sceneCount, 'Scene') + '</div>' +
+            '<div class="rt-lane rt-lane--group-gap">' + clipsHtml('waveform', 1, '') + '</div>' +
+            '<div class="rt-lane">' + clipsHtml('waveform', 1, '') + '</div>' +
+          '</div>' +
+        '</div>';
+      stage.appendChild(timeline);
+
+      window.__timelineDuration = seconds;
+      window.__timelinePlaying = false;
+    }
+
+    // Play/pause is visual-only (moves the playhead over the stated duration on a plain
+    // timer) — matches how Duplicate/Copy style/Lock etc. elsewhere in this file are
+    // decorative affordances rather than real interactive features.
+    var __timelineTimer = null;
+    function toggleTimelinePlayback() {
+      var btn = document.getElementById('rtPlayBtn');
+      var label = document.getElementById('rtTimeLabel');
+      var playhead = document.getElementById('rtPlayhead');
+      var lanes = document.getElementById('rtLanes');
+      if (!btn || !label || !playhead || !lanes) { return; }
+      if (window.__timelinePlaying) {
+        window.__timelinePlaying = false;
+        clearInterval(__timelineTimer);
+        btn.innerHTML = '&#9654;';
+        return;
+      }
+      window.__timelinePlaying = true;
+      btn.innerHTML = '&#10074;&#10074;';
+      var elapsed = 0;
+      var total = window.__timelineDuration || 16;
+      clearInterval(__timelineTimer);
+      __timelineTimer = setInterval(function () {
+        elapsed += 0.2;
+        if (elapsed >= total) {
+          elapsed = 0;
+        }
+        var pct = elapsed / total;
+        playhead.style.left = (pct * lanes.clientWidth) + 'px';
+        label.textContent = fmtTime(elapsed) + ' / ' + fmtTime(total);
+      }, 200);
+    }
+
+    function initFromUrlParams() {
+      var params = new URLSearchParams(window.location.search);
+      if (![...params.keys()].length) { return; } // no handoff -- keep the file's own static example as-is
+      var mode = params.get('mode') || 'image';
+      var ratio = params.get('ratio') || '4:5';
+      var pages = parseInt(params.get('pages'), 10) || 1;
+      var duration = parseInt(params.get('duration'), 10) || 0;
+
+      applyPosterRatio(ratio);
+      applyPageCount(mode === 'video' ? 1 : pages, ratio);
+
+      if (mode === 'video') { initVideoTimelineMode(duration); }
+    }
+
     window.addEventListener('resize', fitScreenToViewport);
+    initFromUrlParams();
     fitScreenToViewport();
     initStaticPosterTexts();
 
