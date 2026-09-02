@@ -7099,5 +7099,67 @@ function fitScreenToViewport(){
 window.addEventListener('resize', fitScreenToViewport);
 fitScreenToViewport();
 </script>
+
+<style id="fmx-deeplink-css">
+/* Content Library 에서 넘어왔을 때만 뜨는 띠. 이 화면 마크업은 건드리지 않고
+   위에 얹기만 한다 — 라이브러리 쪽 링크가 사라지면 이 블록도 그냥 안 뜬다. */
+.fmx-ref{position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:9998;
+  display:flex;align-items:center;gap:10px;padding:8px 14px 8px 8px;
+  background:var(--color-neutral-0,#fff);border:1px solid var(--color-neutral-300,#d6ddeb);
+  border-radius:9999px;box-shadow:0 6px 20px rgba(15,23,41,.14);
+  font-family:var(--font-family-text),-apple-system,sans-serif;font-size:13px;
+  color:var(--color-neutral-900,#0f1729);white-space:nowrap;}
+.fmx-ref img{width:28px;height:36px;object-fit:cover;border-radius:6px;display:block;
+  background:var(--color-neutral-150,#e9edf6);}
+.fmx-ref b{font-weight:600;}
+.fmx-ref span{color:var(--color-neutral-500,#8a93a8);}
+.fmx-ref button{margin-left:4px;border:0;background:none;cursor:pointer;
+  color:var(--color-neutral-500,#8a93a8);font-size:14px;line-height:1;padding:2px 4px;}
+</style>
+<script id="fmx-deeplink-js">
+/* Content Library 딥링크
+   #ref=<제목>&thumb=<경로>&ratio=<9:16|4:5|1:1>&stage=<brief|script|reelTimeline>
+   stage 는 "돈 쓰기 직전의 마지막 무료 단계"를 가리킨다. */
+(function(){
+  var q = new URLSearchParams((location.hash || '').replace(/^#/, ''));
+  var ref = q.get('ref'), thumb = q.get('thumb'), ratio = q.get('ratio'), stage = q.get('stage');
+  if (!ref && !stage) return;
+
+  function pickType(){
+    if (stage === 'script') return 'carousel';
+    if (stage === 'reelTimeline') return 'reel';
+    return (ratio && ratio !== '9:16') ? 'image' : 'reel';
+  }
+  function banner(){
+    if (!ref) return;
+    var el = document.createElement('div');
+    el.className = 'fmx-ref';
+    el.innerHTML = (thumb ? '<img src="' + thumb + '" alt="">' : '') +
+      '<span>Based on</span><b></b>' +
+      '<button type="button" aria-label="Dismiss">✕</button>';
+    el.querySelector('b').textContent = ref;          /* 제목은 그대로 넣지 않는다 */
+    el.querySelector('button').onclick = function(){ el.remove(); };
+    document.body.appendChild(el);
+  }
+  function go(){
+    try {
+      var type = pickType();
+      var chip = document.querySelector('#contentTypeToggle .seg-chip[data-type="' + type + '"]');
+      if (chip && typeof selectContentType === 'function') selectContentType(chip);
+      /* Timeline 은 사용자가 대본을 승인해야(Use this script → Continue to Timeline)
+         열린다. 그 승인을 대신 눌러주지는 않는다 — 둘 다 무료 단계라 여기서 멈춰도
+         "돈 쓰기 전"이라는 목적은 지켜진다. */
+      if ((stage === 'reelTimeline' || stage === 'reelScript') && typeof goToGenerate === 'function'){
+        goToGenerate();
+      } else if (stage === 'script' && typeof goToGenerate === 'function'){
+        goToGenerate();
+      }
+    } catch(e){ /* 진입만 실패해도 브리프는 정상으로 열린다 */ }
+    banner();
+  }
+  if (document.readyState === 'complete') setTimeout(go, 60);
+  else window.addEventListener('load', function(){ setTimeout(go, 60); });
+})();
+</script>
 </body>
 </html>

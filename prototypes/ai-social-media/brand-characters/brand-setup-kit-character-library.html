@@ -1551,7 +1551,6 @@ input.card-name{background:var(--neutral-0);box-shadow:0 0 0 1px var(--neutral-4
       <input type="text" placeholder="Search content…" aria-label="Search content">
     </label>
     <div class="lib-filters">
-      <button type="button" class="lib-fchip lib-favf" id="libFavFilter" aria-pressed="false"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="m10 3 2.1 4.3 4.7.7-3.4 3.3.8 4.7L10 13.8 5.8 16l.8-4.7L3.2 8l4.7-.7z"/></svg>Favourites</button>
       <button type="button" class="lib-fchip">Status<i></i></button>
       <button type="button" class="lib-fchip">Created by<i></i></button>
       <button type="button" class="lib-fchip">Date<i></i></button>
@@ -1573,7 +1572,9 @@ input.card-name{background:var(--neutral-0);box-shadow:0 0 0 1px var(--neutral-4
       <div class="lib-group-head"><h2>Formee Express</h2><span class="lib-rule"></span></div>
       <div class="lib-grid">
 
-        <article class="lib-card r916" data-format="video" data-status="published" data-title="This New Lip Tint Is Everything" data-thumb="assets/imgLibLipTint.png">
+        <!-- 9:16 릴스 — 영상이라 재생 버튼과 스크러버가 있다 -->
+        <article class="lib-card r916" data-format="video" data-status="published"
+                 data-title="This New Lip Tint Is Everything" data-thumb="assets/imgLibLipTint.png">
           <div class="lib-tile">
             <img class="lib-thumb" src="assets/imgLibLipTint.png" alt="">
             <div class="lib-tile-ov">
@@ -1582,10 +1583,6 @@ input.card-name{background:var(--neutral-0);box-shadow:0 0 0 1px var(--neutral-4
                   <svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.4" aria-hidden="true">
                     <rect x="4.5" y="1.8" width="7" height="12.4" rx="1.6"/></svg>9:16</span>
                 <span class="lib-acts">
-                  <button type="button" class="lib-iconbtn lib-fav" aria-label="Favourite" aria-pressed="false">
-                    <svg viewBox="0 0 20 20" fill="none" stroke="#0F1729" stroke-width="1.5"
-                         stroke-linejoin="round"><path d="m10 3 2.1 4.3 4.7.7-3.4 3.3.8 4.7L10 13.8
-                         5.8 16l.8-4.7L3.2 8l4.7-.7z"/></svg></button>
                   <button type="button" class="lib-iconbtn" aria-label="Download">
                     <svg viewBox="0 0 20 20" fill="none" stroke="#0F1729" stroke-width="1.6"
                          stroke-linecap="round" stroke-linejoin="round">
@@ -1624,20 +1621,17 @@ input.card-name{background:var(--neutral-0);box-shadow:0 0 0 1px var(--neutral-4
           </div>
         </article>
 
-        <!-- 4:5 이미지 포스트 — 영상이 아니라 재생·스크러버가 없다 -->
-        <article class="lib-card r45" data-format="image" data-status="scheduled" data-title="Three Ways To Wear It" data-thumb="assets/imgThumb2.jpg">
+        <!-- 4:5 이미지 포스트 -->
+        <article class="lib-card r45" data-format="image" data-status="scheduled"
+                 data-title="Study in the UK — Applications Open" data-thumb="assets/imgLibStudyUK.png">
           <div class="lib-tile">
-            <img class="lib-thumb" src="assets/imgThumb2.jpg" alt="">
+            <img class="lib-thumb" src="assets/imgLibStudyUK.png" alt="">
             <div class="lib-tile-ov">
               <div class="lib-tile-top">
                 <span class="lib-fmt">
                   <svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.4" aria-hidden="true">
                     <rect x="3" y="2.4" width="10" height="11.2" rx="1.6"/></svg>4:5</span>
                 <span class="lib-acts">
-                  <button type="button" class="lib-iconbtn lib-fav" aria-label="Favourite" aria-pressed="false">
-                    <svg viewBox="0 0 20 20" fill="none" stroke="#0F1729" stroke-width="1.5"
-                         stroke-linejoin="round"><path d="m10 3 2.1 4.3 4.7.7-3.4 3.3.8 4.7L10 13.8
-                         5.8 16l.8-4.7L3.2 8l4.7-.7z"/></svg></button>
                   <button type="button" class="lib-iconbtn" aria-label="Download">
                     <svg viewBox="0 0 20 20" fill="none" stroke="#0F1729" stroke-width="1.6"
                          stroke-linecap="round" stroke-linejoin="round">
@@ -1651,26 +1645,23 @@ input.card-name{background:var(--neutral-0);box-shadow:0 0 0 1px var(--neutral-4
             </div>
           </div>
           <div class="lib-meta">
-            <p class="lib-name">Three Ways To Wear It</p>
+            <p class="lib-name">Study in the UK — Applications Open</p>
             <p class="lib-sub"><span class="lib-date">Aug 24, 2026</span>
               <span class="lib-badge sched">Scheduled</span></p>
           </div>
         </article>
 
         <!-- 1:1 이미지 포스트 -->
-        <article class="lib-card r11" data-format="image" data-status="draft" data-title="Shade Guide For Warm Tones" data-thumb="assets/imgThumb1.jpg">
+        <article class="lib-card r11" data-format="image" data-status="draft"
+                 data-title="UK Applications — January Intake" data-thumb="assets/imgLibJanIntake.png">
           <div class="lib-tile">
-            <img class="lib-thumb" src="assets/imgThumb1.jpg" alt="">
+            <img class="lib-thumb" src="assets/imgLibJanIntake.png" alt="">
             <div class="lib-tile-ov">
               <div class="lib-tile-top">
                 <span class="lib-fmt">
                   <svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.4" aria-hidden="true">
                     <rect x="2.6" y="2.6" width="10.8" height="10.8" rx="1.6"/></svg>1:1</span>
                 <span class="lib-acts">
-                  <button type="button" class="lib-iconbtn lib-fav" aria-label="Favourite" aria-pressed="false">
-                    <svg viewBox="0 0 20 20" fill="none" stroke="#0F1729" stroke-width="1.5"
-                         stroke-linejoin="round"><path d="m10 3 2.1 4.3 4.7.7-3.4 3.3.8 4.7L10 13.8
-                         5.8 16l.8-4.7L3.2 8l4.7-.7z"/></svg></button>
                   <button type="button" class="lib-iconbtn" aria-label="Download">
                     <svg viewBox="0 0 20 20" fill="none" stroke="#0F1729" stroke-width="1.6"
                          stroke-linecap="round" stroke-linejoin="round">
@@ -1684,49 +1675,9 @@ input.card-name{background:var(--neutral-0);box-shadow:0 0 0 1px var(--neutral-4
             </div>
           </div>
           <div class="lib-meta">
-            <p class="lib-name">Shade Guide For Warm Tones</p>
+            <p class="lib-name">UK Applications — January Intake</p>
             <p class="lib-sub"><span class="lib-date">Aug 21, 2026</span>
               <span class="lib-badge draft">Draft</span></p>
-          </div>
-        </article>
-
-        <!-- 캐러셀 — 여러 장이라는 걸 뒤에 겹친 종이와 장수 배지·점으로 보여준다 -->
-        <article class="lib-card r45 carousel" data-format="carousel" data-status="published" data-title="5 Steps To A Softer Lip" data-thumb="assets/imgThumb5.jpg">
-          <div class="lib-stack">
-            <span class="lib-stack-b2"></span><span class="lib-stack-b1"></span>
-            <div class="lib-tile">
-              <img class="lib-thumb" src="assets/imgThumb5.jpg" alt="">
-              <div class="lib-tile-ov">
-                <div class="lib-tile-top">
-                  <span class="lib-fmt">
-                    <svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.4" aria-hidden="true">
-                      <rect x="1.6" y="3.4" width="9" height="9.2" rx="1.4"/>
-                      <path d="M12.4 4.6v6.8"/><path d="M14.4 6v4"/></svg>1 / 5</span>
-                  <span class="lib-acts">
-                    <button type="button" class="lib-iconbtn lib-fav" aria-label="Favourite" aria-pressed="false">
-                    <svg viewBox="0 0 20 20" fill="none" stroke="#0F1729" stroke-width="1.5"
-                         stroke-linejoin="round"><path d="m10 3 2.1 4.3 4.7.7-3.4 3.3.8 4.7L10 13.8
-                         5.8 16l.8-4.7L3.2 8l4.7-.7z"/></svg></button>
-                  <button type="button" class="lib-iconbtn" aria-label="Download">
-                      <svg viewBox="0 0 20 20" fill="none" stroke="#0F1729" stroke-width="1.6"
-                           stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M10 3.5v8m0 0 3-3m-3 3-3-3M4 14.5h12"/></svg></button>
-                    <button type="button" class="lib-iconbtn" aria-label="More">
-                      <svg viewBox="0 0 20 20" fill="#0F1729" aria-hidden="true">
-                        <circle cx="5" cy="10" r="1.5"/><circle cx="10" cy="10" r="1.5"/>
-                        <circle cx="15" cy="10" r="1.5"/></svg></button>
-                  </span>
-                </div>
-                <div class="lib-dots" aria-hidden="true">
-                  <i class="on"></i><i></i><i></i><i></i><i></i>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="lib-meta">
-            <p class="lib-name">5 Steps To A Softer Lip</p>
-            <p class="lib-sub"><span class="lib-date">Aug 19, 2026</span>
-              <span class="lib-badge ok">Published</span></p>
           </div>
         </article>
 
@@ -25232,11 +25183,11 @@ if (_libNav) _libNav.addEventListener('click', () => { if (detail) closeDetail()
    ⋯ 메뉴는 상태에 따라 항목이 달라진다. 발행된 글에 "Publish now" 를 띄우거나
    실패한 생성에 "Schedule" 을 띄우면 안 되기 때문이다. */
 const LIB_MENU = {
-  draft:     ['Edit','Regenerate','Use as reference','-','Download','-',
+  draft:     ['Edit','Regenerate','Use as reference','Download','-',
               'Publish now','Schedule','-','Delete'],
-  scheduled: ['Edit','Regenerate','Use as reference','-','Download','-',
+  scheduled: ['Edit','Regenerate','Use as reference','Download','-',
               'Reschedule','Unschedule','-','Delete'],
-  published: ['View post','Regenerate','Use as reference','-','Download','-','Delete'],
+  published: ['View post','Regenerate','Use as reference','Download','-','Delete'],
   failed:    ['Try again','Use as reference','-','Delete']
 };
 function libCloseMenu(){ const m = $('#libMenu'); if (m) m.remove(); }
@@ -25269,24 +25220,18 @@ function ncRefMediaSet(on, src){
   tile.innerHTML = '<img src="' + src + '" alt=""><span class="nc-ref-x">✕</span>';
   list.insertBefore(tile, list.querySelector('.nc-ref-add'));
 }
-/* 같은 브리프로 다시 뽑는다. 카드 자리에서 진행 상태를 보여주고, 끝나면
-   그 카드가 갱신된다 — 버전을 쌓지 않는 대신 되돌리기를 토스트로 준다. */
+/* Regenerate 는 예진님 v3 생성 화면으로 넘긴다. 착지 지점은 포맷마다 다른데,
+   기준은 "돈 쓰기 직전의 마지막 무료 단계"다 — 릴스는 Timeline(썸네일 생성 전),
+   캐러셀은 Script(스토리보드 전), 이미지는 Brief(Continue 가 곧 생성). */
+/* v3 는 Timeline 을 "대본 승인" 뒤에만 연다. 그 승인을 대신 눌러줄 수는 없으니
+   릴스는 Script 까지만 보낸다 — Timeline 은 거기서 두 번 클릭, 둘 다 무료다. */
+const NC_V3_STAGE = { video:'reelScript', carousel:'script', image:'brief' };
 function libRegenerate(card){
-  if (card.classList.contains('is-gen')) return;
-  card.classList.add('is-gen');
-  const ov = document.createElement('div');
-  ov.className = 'lib-gen';
-  ov.innerHTML = '<span class="lib-gen-sp"></span><span class="lib-gen-t">Generating…</span>';
-  card.querySelector('.lib-tile').appendChild(ov);
-  setTimeout(() => {
-    ov.remove(); card.classList.remove('is-gen');
-    if (card.dataset.status === 'failed'){
-      card.dataset.status = 'draft';
-      const b = card.querySelector('.lib-badge');
-      if (b){ b.className = 'lib-badge draft'; b.textContent = 'Draft'; }
-    }
-    libToast('New take ready');
-  }, 2200);
+  const stage = NC_V3_STAGE[card.dataset.format] || 'brief';
+  const url = NC_V3_URL + '#regen=' + encodeURIComponent(card.dataset.title || '') +
+              '&stage=' + stage;
+  libToast('Opening a new take in New Content Generation…');
+  window.open(url, '_blank', 'noopener');
 }
 function libToast(msg){
   let t = $('#libToast');
@@ -25300,9 +25245,29 @@ function libToast(msg){
    것이라 새 탭으로 넘긴다 — 교차 출처라 값까지 실어 보낼 수는 없다. */
 const NC_V3_URL = 'https://yjkim9627-gif.github.io/formee-education/' +
   'prototypes/ai-social-media/new-content-generation/v3/new-content-to-generate.html';
+/* 카드에서 뽑아낸 속성 줄. 실제 제품에선 콘텐츠 메타에서 오지만, 여기선
+   카드가 들고 있는 값(포맷·상태·브랜드)으로 같은 모양을 만든다. */
+function libRefAttrs(card){
+  const fmt = {video:'Reel / Short', image:'Image post', carousel:'Carousel'}[card.dataset.format] || 'Reel / Short';
+  const ratio = card.classList.contains('r916') ? '9:16'
+              : card.classList.contains('r11')  ? '1:1' : '4:5';
+  const group = card.closest('.lib-group');
+  const brand = group ? group.querySelector('h2').textContent.trim() : '';
+  return [fmt, ratio, brand, 'Human', 'Headshot', 'Neutral', 'Soft studio']
+         .filter(Boolean).join(' · ');
+}
+/* Use as reference 는 예진님 v3 의 New Content 로 넘긴다. 무엇을 참고하는지는
+   URL 로 실어 보내고, 화면은 그쪽이 그린다 — 같은 UI 를 두 곳에 두지 않는다. */
 function libUseAsReference(card){
-  libToast('Opening New Content Generation…');
-  window.open(NC_V3_URL, '_blank', 'noopener');
+  const r = card.classList.contains('r916') ? '9:16'
+          : card.classList.contains('r11')  ? '1:1' : '4:5';
+  const url = NC_V3_URL
+    + '#ref=' + encodeURIComponent(card.dataset.title || '')
+    + '&thumb=' + encodeURIComponent(card.dataset.thumb || '')
+    + '&ratio=' + encodeURIComponent(r)
+    + '&stage=brief';
+  libToast('Opening New Content with this reference…');
+  window.open(url, '_blank', 'noopener');
 }
 const _libMain = $('#libMain');
 if (_libMain){
@@ -25347,13 +25312,15 @@ const LIB_TAB = { 'All':null, 'Videos':'video', 'Images':'image', 'Carousels':'c
 function libFilter(){
   const tabEl = document.querySelector('#libMain .lib-seg-i.on');
   const want  = LIB_TAB[(tabEl ? tabEl.textContent : 'All').trim()];
-  const favOn = $('#libFavFilter') && $('#libFavFilter').getAttribute('aria-pressed') === 'true';
+  const favEl = $('#libFavFilter');
+  const favOn = !!(favEl && favEl.getAttribute('aria-pressed') === 'true');
   const qEl   = document.querySelector('#libMain .lib-search input');
   const q     = (qEl ? qEl.value : '').trim().toLowerCase();
   let shown = 0;
   document.querySelectorAll('#libMain .lib-card').forEach(c => {
     const okTab = !want || c.dataset.format === want;
-    const okFav = !favOn || c.querySelector('.lib-fav').getAttribute('aria-pressed') === 'true';
+    const fav = c.querySelector('.lib-fav');
+    const okFav = !favOn || (fav && fav.getAttribute('aria-pressed') === 'true');
     const okQ   = !q || (c.dataset.title || '').toLowerCase().indexOf(q) >= 0;
     const on    = okTab && okFav && okQ;
     c.hidden = !on;
@@ -34016,7 +33983,7 @@ body.bk2-clean #roleSwitch { display:none !important; }
    채운다. 제목·날짜·상태가 같은 높이에서 읽혀야 목록을 훑을 수 있고, 날짜순
    정렬이 왼→오른쪽으로 흐르려면 카드 높이가 같아야 한다.
    실제 비율은 좌상단 배지가 알려주고, 원본은 프리뷰·다운로드에서 그대로 나간다. */
-#libMain{--lib-card-w:303px;--lib-tile-h:379px;
+#libMain{--lib-card-w:303px;--lib-tile-h:380px;
   padding:28px;display:flex;flex-direction:column;gap:20px;align-items:stretch;overflow:auto;}
 .lib-head{display:flex;align-items:flex-start;justify-content:space-between;}
 .lib-title{margin:0;font-size:22px;line-height:30px;font-weight:700;color:var(--neutral-900);}
@@ -34106,25 +34073,6 @@ body.bk2-clean #roleSwitch { display:none !important; }
 .lib-badge.draft{background:var(--neutral-150);color:var(--neutral-500);}
 
 /* New Content 상단의 레퍼런스 배너 — 라이브러리에서 넘어왔을 때만 */
-.libref{width:100%;align-self:stretch;display:flex;align-items:center;gap:12px;padding:10px 12px;margin-bottom:4px;
-  background:var(--neutral-50);border:1px solid var(--neutral-300);border-radius:12px;}
-.libref[hidden]{display:none;}
-.libref-th{width:44px;height:56px;flex:none;border-radius:8px;object-fit:cover;
-  background:var(--neutral-150);}
-.libref-body{flex:1;min-width:0;}
-.libref-lbl{margin:0;font-size:11px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;
-  color:var(--neutral-500);}
-.libref-name{margin:2px 0 6px;font-size:14px;font-weight:600;color:var(--neutral-900);
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.libref-opts{display:flex;gap:14px;}
-.libref-opt{display:inline-flex;align-items:center;gap:6px;font-size:13px;
-  color:var(--neutral-700);cursor:pointer;}
-/* 전역 리셋이 input 의 appearance 를 지워서 체크박스가 안 보인다 — 여기서만 되돌린다 */
-.libref-opt input{-webkit-appearance:checkbox;appearance:checkbox;
-  width:15px;height:15px;accent-color:var(--neutral-900);cursor:pointer;}
-.libref-x{width:28px;height:28px;flex:none;border:0;border-radius:8px;background:none;
-  font-size:18px;line-height:1;color:var(--neutral-500);cursor:pointer;}
-.libref-x:hover{background:var(--neutral-150);color:var(--neutral-900);}
 
 /* ── 포맷 변형 ──────────────────────────────────────────────────────────────
    9:16 만 영상이라 재생·스크러버가 있고, 4:5 / 1:1 은 정지 이미지다. */
@@ -34170,6 +34118,8 @@ body.bk2-clean #roleSwitch { display:none !important; }
   font-size:13px;font-weight:500;box-shadow:0 6px 20px rgba(15,23,41,.25);}
 .lib-toast[hidden]{display:none;}
 .lib-nores{margin:40px 0 0;text-align:center;font-size:14px;color:var(--neutral-500);}
+
+
 
 /* New Content → 예진님 v3 프로토타입 입구 */
 .nc-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;}
