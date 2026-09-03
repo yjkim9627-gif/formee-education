@@ -7118,12 +7118,16 @@ fitScreenToViewport();
 </style>
 <script id="fmx-deeplink-js">
 /* Content Library 딥링크
-   #ref=<제목>&thumb=<경로>&ratio=<9:16|4:5|1:1>&stage=<brief|script|reelTimeline>
+   #ref=<제목>&thumb=<경로>&ratio=<9:16|4:5|1:1>&stage=<brief|script|reelTimeline|publish>
+   초안 이어서 편집: #stage=publish&edit=<제목>&caption=<캡션>[&perplatform=1]
    stage 는 "돈 쓰기 직전의 마지막 무료 단계"를 가리킨다. */
 (function(){
   var q = new URLSearchParams((location.hash || '').replace(/^#/, ''));
   var ref = q.get('ref'), thumb = q.get('thumb'), ratio = q.get('ratio'), stage = q.get('stage');
-  if (!ref && !stage) return;
+  /* 라이브러리 초안을 이어서 편집할 때 넘어오는 값. ref 와 달리 "참고"가 아니라
+     같은 콘텐츠라서 배너를 띄우지 않고 캡션 필드를 그대로 채운다. */
+  var editTitle = q.get('edit'), caption = q.get('caption');
+  if (!ref && !stage && !editTitle) return;
 
   function pickType(){
     if (stage === 'script') return 'carousel';
@@ -7152,7 +7156,28 @@ fitScreenToViewport();
       /* Timeline 은 사용자가 대본을 승인해야(Use this script → Continue to Timeline)
          열린다. 그 승인을 대신 눌러주지는 않는다 — 둘 다 무료 단계라 여기서 멈춰도
          "돈 쓰기 전"이라는 목적은 지켜진다. */
-      if ((stage === 'reelTimeline' || stage === 'reelScript') && typeof goToGenerate === 'function'){
+      if (stage === 'publish' && typeof goToPublish === 'function'){
+        /* 라이브러리 초안의 "Edit & Publish" 가 오는 곳. 캡션·해시태그·플랫폼별 문구·
+           목적지·시점이 전부 이 단계에 있어서, 모달에 옮겨오지 않고 여기로 보낸다. */
+        goToPublish();
+        if (caption){
+          var ta = document.getElementById('pubCaption');
+          if (ta){
+            ta.value = caption;                       /* 빈 칸이 아니라 이어서 고치는 화면이다 */
+            if (typeof onSharedCaptionInput === 'function') onSharedCaptionInput();
+          }
+          /* 이미 발행 단계를 거친 초안이라 해시태그·SEO 는 저장돼 있는 상태다.
+             그래서 도착했을 때 접힌 채가 아니라 펼쳐져 있어야 한다.
+             generateHashtagsSEO() 는 900ms 지연이 있어 그만큼 뒤에 열린다. */
+          if (typeof generateHashtagsSEO === 'function') generateHashtagsSEO();
+        }
+        /* 플랫폼별 캡션은 초안에 실제 오버라이드가 있을 때만 켠다 — 링크가 말해줘야 한다 */
+        if (q.get('perplatform') === '1'){
+          var tg = document.getElementById('pubCaptionCustomToggle');
+          if (tg){ tg.checked = true;
+                   if (typeof toggleCaptionCustomize === 'function') toggleCaptionCustomize(); }
+        }
+      } else if ((stage === 'reelTimeline' || stage === 'reelScript') && typeof goToGenerate === 'function'){
         goToGenerate();
       } else if (stage === 'script' && typeof goToGenerate === 'function'){
         goToGenerate();
