@@ -34212,17 +34212,48 @@ body{margin:0;padding:0;background:#e5e5e5;overflow:hidden;}
 })();
 </script>
 <style id="libprev-css">
-/* ── Content Preview 모달 (Figma: Content Preview - modal / edit caption / caption failed / caption saved)
-   1920×1162 프레임 안에서 1480×860, 좌측 미디어 860 정사각 + 우측 620 상세. */
+/* ── Content Preview 모달
+   Figma: library › View post › Content Preview - modal (Instagram)  (7947:125360)
+          library › edit draft › Draft - default                      (8279:914)
+
+   모달은 보기 전용이다. 캡션 편집은 여기서 하지 않는다 — 게시된 글은 인스타 API 로
+   못 고치고, 초안은 Edit & Publish 단계에 플랫폼별 캡션·해시태그·목적지가 다 모여 있어서
+   같은 UI 를 두 곳에 두면 갈라진다. 그래서 상태는 콘텐츠 상태 3개뿐이다.
+
+   1920×1162 프레임 안에서 1400×860. 안쪽 여백 16, 미디어 774 정사각(라운드), 정보 열 578. */
 .libprev-layer{position:absolute;inset:0;z-index:120;}
 .libprev-scrim{position:absolute;inset:0;background:rgba(15,23,41,.38);}
-.libprev{position:absolute;left:220px;top:151px;width:1480px;height:860px;display:flex;
-  background:var(--neutral-0);border-radius:16px;overflow:hidden;
+.libprev{position:absolute;left:260px;top:151px;width:1400px;height:860px;
+  display:flex;flex-direction:column;padding:16px;
+  background:var(--neutral-0);border-radius:16px;
   box-shadow:0 28px 72px rgba(15,23,41,.30);}
-.libprev-media{width:860px;flex:none;background:var(--neutral-100);overflow:hidden;position:relative;}
-.libprev-media img{width:100%;height:100%;object-fit:cover;display:block;}
-.libprev-detail{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:18px;padding:24px 28px;}
+.libprev-body{display:flex;gap:16px;flex:1 1 auto;min-height:0;}
 
+/* ── 좌측 미디어 ── */
+.libprev-media{width:774px;flex:none;position:relative;overflow:hidden;
+  border-radius:var(--radius-xl);background:var(--neutral-100);}
+.libprev-media img{width:100%;height:100%;object-fit:cover;display:block;}
+.libprev-fmt{position:absolute;right:28px;top:20px;display:inline-flex;align-items:center;gap:5px;
+  height:36px;padding:0 12px;border-radius:var(--radius-lg);
+  background:rgba(15,23,41,.70);color:#fff;font-weight:600;font-size:13px;}
+.libprev-fmt svg{width:14px;height:14px;}
+.libprev-arrow{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;
+  display:grid;place-items:center;border:0;border-radius:9999px;cursor:pointer;
+  background:var(--neutral-0);box-shadow:0 2px 6px rgba(15,23,41,.20);}
+.libprev-arrow.prev{left:32px;}
+.libprev-arrow.next{right:32px;}
+.libprev-arrow svg{width:14px;height:14px;}
+/* 카운터는 하단 우측. 포스터가 하단 중앙에 자기 문구를 두기 때문에 중앙을 피한다 */
+.libprev-count{position:absolute;right:20px;bottom:20px;padding:5px 10px;border-radius:9999px;
+  background:rgba(15,23,41,.70);color:#fff;font-weight:600;font-size:12px;
+  font-variant-numeric:tabular-nums;}
+
+/* ── 우측 정보 열 ── */
+.libprev-detail{flex:1 1 auto;min-width:0;position:relative;
+  display:flex;flex-direction:column;gap:18px;padding:24px;}
+/* 스크롤바는 오른쪽 여백 위에 떠 있다 — 자리를 따로 차지하지 않아 좌우 여백이 대칭이다 */
+.libprev-bar{position:absolute;right:8px;top:24px;bottom:24px;width:6px;border-radius:9999px;
+  background:var(--neutral-200);}
 .libprev-head{display:flex;align-items:center;gap:8px;flex:none;}
 .libprev-badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:9999px;
   font-weight:600;font-size:11px;line-height:16px;}
@@ -34235,29 +34266,23 @@ body{margin:0;padding:0;background:#e5e5e5;overflow:hidden;}
 .libprev-close svg{width:16px;height:16px;}
 
 .libprev-label{font-weight:700;font-size:13px;line-height:20px;color:var(--neutral-900);flex:none;}
-.libprev-caption,.libprev-prompt{font-weight:400;font-size:14px;line-height:22px;color:var(--neutral-700);
-  white-space:pre-line;flex:none;}
+.libprev-caption,.libprev-prompt{font-weight:400;font-size:14px;line-height:22px;
+  color:var(--neutral-700);white-space:pre-line;flex:none;}
 .libprev-meta{font-weight:400;font-size:12px;line-height:18px;color:var(--neutral-500);flex:none;}
+.libprev-div{height:1px;background:var(--neutral-200);flex:none;}
 .libprev-grow{flex:1 1 auto;min-height:0;}
 
-/* 캡션 편집 */
-.libprev-editor{flex:none;border:1.5px solid #4f6de6;border-radius:10px;padding:10px 12px;background:var(--neutral-0);}
-.libprev-editor textarea{width:100%;height:220px;border:0;resize:none;outline:none;background:none;
-  font-family:inherit;font-weight:400;font-size:14px;line-height:22px;color:var(--neutral-900);}
-.libprev-ebar{display:flex;align-items:center;gap:8px;flex:none;}
-.libprev-cnt{font-weight:400;font-size:12px;line-height:18px;color:var(--neutral-500);}
+/* 목적지별 결과 — 카드의 줄과 같은 어휘를 쓴다 */
+.libprev-dest{display:flex;flex-direction:column;gap:2px;flex:none;}
+.libprev-dest span{font-weight:600;font-size:10px;line-height:14px;letter-spacing:.06em;}
+.libprev-dest .posted{color:var(--badge-green-text);}
+.libprev-dest .scheduled{color:#155eef;}
+.libprev-dest .failed{color:var(--badge-red-text);}
+.libprev-dest .none{color:var(--neutral-500);}
 
-/* 알림 배너 */
-.libprev-alert{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:10px;flex:none;}
-.libprev-alert.err{background:#fbe3e5;}
-.libprev-alert.err b{display:block;font-weight:700;font-size:13px;line-height:20px;color:#ad1519;}
-.libprev-alert.err span{font-weight:400;font-size:12px;line-height:18px;color:#ad1519;}
-.libprev-alert.ok{background:var(--badge-green-bg);}
-.libprev-alert.ok b{display:block;font-weight:700;font-size:13px;line-height:20px;color:var(--badge-green-text);}
-.libprev-alert.ok span{font-weight:400;font-size:12px;line-height:18px;color:var(--badge-green-text);}
-.libprev-alert svg{width:18px;height:18px;flex:none;margin-top:1px;}
-
-.libprev-actions{display:flex;align-items:center;gap:8px;flex:none;}
+/* ── 푸터 ── */
+.libprev-footer{display:flex;align-items:center;justify-content:flex-end;gap:12px;
+  flex:none;padding-top:16px;border-top:1px solid var(--neutral-200);}
 .libprev-btn{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 14px;cursor:pointer;
   border-radius:var(--radius-lg);font-family:inherit;font-weight:600;font-size:14px;line-height:20px;}
 .libprev-btn svg{width:16px;height:16px;}
@@ -34265,138 +34290,185 @@ body{margin:0;padding:0;background:#e5e5e5;overflow:hidden;}
 .libprev-btn.sec{background:var(--neutral-0);color:var(--neutral-900);border:1px solid var(--neutral-300);}
 .libprev-btn.ghost{background:none;color:var(--neutral-700);border:1px solid transparent;}
 
-/* 상태별 표시 — data-state 하나로 4개 화면을 전환한다 */
+/* 상태별 표시 — 콘텐츠 상태 하나로 푸터와 목적지 줄이 갈린다 */
 .libprev [data-only]{display:none;}
-.libprev[data-state="edit"]   [data-only~="edit"],
-.libprev[data-state="failed"] [data-only~="failed"],
-.libprev[data-state="saved"]  [data-only~="saved"]{display:flex;}
-.libprev[data-state="edit"]   [data-hide~="edit"],
-.libprev[data-state="failed"] [data-hide~="failed"]{display:none;}
+.libprev[data-state="published"] [data-only~="published"],
+.libprev[data-state="scheduled"] [data-only~="scheduled"],
+.libprev[data-state="draft"]     [data-only~="draft"]{display:inline-flex;}
+.libprev[data-state="published"] .libprev-dest[data-only~="published"],
+.libprev[data-state="scheduled"] .libprev-dest[data-only~="scheduled"]{display:flex;}
 </style>
 
 <div class="libprev-layer" id="libprevLayer" hidden>
   <div class="libprev-scrim" data-libprev="close"></div>
   <div class="libprev" id="libprev" role="dialog" aria-modal="true"
        aria-label="Content preview" data-state="published">
-    <div class="libprev-media"><img id="libprevImg" src="" alt=""></div>
-    <div class="libprev-detail">
-      <div class="libprev-head">
-        <span class="libprev-badge ok" id="libprevStatus">Published</span>
-        <span class="libprev-badge muted">From your idea</span>
-        <span class="libprev-sp"></span>
-        <button type="button" class="libprev-close" data-libprev="close" aria-label="Close">
-          <svg viewBox="0 0 16 16" fill="none" stroke="#8A93A8" stroke-width="1.6" stroke-linecap="round">
-            <path d="M4 4l8 8M12 4l-8 8"/></svg></button>
+
+    <div class="libprev-body">
+      <div class="libprev-media">
+        <img id="libprevImg" src="" alt="">
+        <span class="libprev-fmt">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4">
+            <rect x="3.5" y="1.5" width="9" height="13" rx="1.6"/><path d="M6.5 12.3h3" stroke-linecap="round"/></svg>
+          <span id="libprevRatio">1:1</span></span>
+        <button type="button" class="libprev-arrow prev" data-libprev="prev" aria-label="Previous">
+          <svg viewBox="0 0 16 16" fill="none" stroke="#0F1729" stroke-width="1.8"
+               stroke-linecap="round" stroke-linejoin="round"><path d="M10 3 5 8l5 5"/></svg></button>
+        <button type="button" class="libprev-arrow next" data-libprev="next" aria-label="Next">
+          <svg viewBox="0 0 16 16" fill="none" stroke="#0F1729" stroke-width="1.8"
+               stroke-linecap="round" stroke-linejoin="round"><path d="m6 3 5 5-5 5"/></svg></button>
+        <span class="libprev-count" id="libprevCount">1 / 5</span>
       </div>
 
-      <div class="libprev-alert err" data-only="failed">
-        <svg viewBox="0 0 18 18" fill="none" stroke="#AD1519" stroke-width="1.6" stroke-linecap="round">
-          <circle cx="9" cy="9" r="7"/><path d="M9 5.5v4M9 12.4v.1"/></svg>
-        <div><b>Couldn&rsquo;t update on Instagram</b>
-          <span>The live caption is unchanged. Your edit is kept here until it saves.</span></div>
+      <div class="libprev-detail">
+        <span class="libprev-bar"></span>
+        <div class="libprev-head">
+          <span class="libprev-badge" id="libprevStatus">Published</span>
+          <span class="libprev-badge muted">From your idea</span>
+          <span class="libprev-sp"></span>
+          <button type="button" class="libprev-close" data-libprev="close" aria-label="Close">
+            <svg viewBox="0 0 16 16" fill="none" stroke="#8A93A8" stroke-width="1.6" stroke-linecap="round">
+              <path d="M4 4l8 8M12 4l-8 8"/></svg></button>
+        </div>
+
+        <p class="libprev-label">Caption</p>
+        <p class="libprev-caption" id="libprevCap"></p>
+
+        <span class="libprev-div"></span>
+
+        <p class="libprev-label">Original prompt</p>
+        <p class="libprev-prompt" id="libprevPrompt"></p>
+
+        <span class="libprev-div"></span>
+
+        <p class="libprev-label">Details</p>
+        <p class="libprev-meta" id="libprevMeta"></p>
+        <div class="libprev-dest" id="libprevDest"></div>
+
+        <span class="libprev-grow"></span>
       </div>
-      <div class="libprev-alert ok" data-only="saved">
-        <svg viewBox="0 0 18 18" fill="none" stroke="#027A48" stroke-width="1.6"
+    </div>
+
+    <div class="libprev-footer">
+      <button type="button" class="libprev-btn ghost" data-libprev="dl">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"
              stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="9" cy="9" r="7"/><path d="m5.8 9.2 2.1 2.1 4.3-4.3"/></svg>
-        <div><b>Caption updated on Instagram</b>
-          <span>Your live post now shows the new caption. Edits don&rsquo;t re-notify followers.</span></div>
-      </div>
+          <path d="M8 2.8v6.6m0 0 2.4-2.4M8 9.4 5.6 7M3 12.6h10"/></svg>
+        Download</button>
 
-      <p class="libprev-label">Caption</p>
-      <p class="libprev-caption" data-hide="edit failed" id="libprevCap"></p>
-      <div class="libprev-editor" data-only="edit failed">
-        <textarea id="libprevTa" aria-label="Caption"></textarea>
-      </div>
-      <div class="libprev-ebar" data-only="edit failed">
-        <span class="libprev-cnt" id="libprevCnt">412 / 2,200</span>
-        <span class="libprev-sp"></span>
-        <button type="button" class="libprev-btn sec" data-libprev="cancel">Cancel</button>
-        <button type="button" class="libprev-btn pri" data-libprev="save" id="libprevSave">Save caption</button>
-      </div>
+      <button type="button" class="libprev-btn sec" data-libprev="dup" data-only="published">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"
+             stroke-linecap="round" stroke-linejoin="round">
+          <rect x="5.5" y="5.5" width="8" height="8" rx="1.6"/><path d="M10.5 5.5v-1a1.6 1.6 0 0 0-1.6-1.6H4a1.6 1.6 0 0 0-1.6 1.6v4.9c0 .9.7 1.6 1.6 1.6h1"/></svg>
+        Duplicate &amp; edit</button>
+      <button type="button" class="libprev-btn pri" data-libprev="ig" data-only="published">
+        <svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.4">
+          <rect x="2.2" y="2.2" width="11.6" height="11.6" rx="3.4"/>
+          <circle cx="8" cy="8" r="2.9"/><circle cx="11.6" cy="4.4" r=".8" fill="#fff" stroke="none"/></svg>
+        View on Instagram</button>
 
-      <p class="libprev-label">Input Prompt</p>
-      <p class="libprev-prompt" id="libprevPrompt"></p>
-      <p class="libprev-meta" id="libprevMeta"></p>
-      <span class="libprev-grow"></span>
-
-      <div class="libprev-actions" data-hide="edit failed">
-        <button type="button" class="libprev-btn pri" data-libprev="ig">
-          <svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.4">
-            <rect x="2.2" y="2.2" width="11.6" height="11.6" rx="3.4"/>
-            <circle cx="8" cy="8" r="2.9"/><circle cx="11.6" cy="4.4" r=".8" fill="#fff" stroke="none"/></svg>
-          View on Instagram</button>
-        <button type="button" class="libprev-btn sec" data-libprev="edit">
-          <svg viewBox="0 0 16 16" fill="none" stroke="#0F1729" stroke-width="1.5"
-               stroke-linecap="round" stroke-linejoin="round">
-            <path d="M11.2 2.8a1.7 1.7 0 0 1 2.4 2.4L5.9 12.9l-3.2.8.8-3.2z"/></svg>
-          Edit caption</button>
-        <button type="button" class="libprev-btn ghost" data-libprev="dl">
-          <svg viewBox="0 0 16 16" fill="none" stroke="#475069" stroke-width="1.6"
-               stroke-linecap="round" stroke-linejoin="round">
-            <path d="M8 2.8v6.6m0 0 2.4-2.4M8 9.4 5.6 7M3 12.6h10"/></svg>
-          Download</button>
-      </div>
+      <button type="button" class="libprev-btn pri" data-libprev="editpub" data-only="draft scheduled">
+        <svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.5"
+             stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11.2 2.8a1.7 1.7 0 0 1 2.4 2.4L5.9 12.9l-3.2.8.8-3.2z"/></svg>
+        Edit &amp; Publish</button>
     </div>
   </div>
 </div>
 
 <script id="libprev-js">
-/* 라이브러리 카드 클릭 → 콘텐츠 프리뷰. 상태 4종을 data-state 하나로 전환한다.
-   #libprev=<state> 딥링크로 정적 캡처도 가능하다. */
+/* 라이브러리 카드 → 콘텐츠 프리뷰. 상태는 카드의 data-status 를 그대로 따른다.
+   모달에서는 아무것도 고치지 않는다 — 편집은 언제나 원래 단계로 보낸다. */
 (function(){
-  var CAPTION =
-    'Studying abroad is more accessible than you think! Don’t let common myths hold you back from your dreams. 🌍\n\n' +
-    'At Formee Express, we break down barriers: we find affordable programs for every budget, simplify complex applications, ' +
-    'and match courses to your unique profile — not just perfect grades. From expert visa support to step-by-step guidance, ' +
-    'you’re never alone in this journey. 🎓\n\n' +
-    'Ready to go global? Access our trusted resources and expert guidance to start your international education today. ' +
-    'Your future starts here! ✨✈️ #StudyAbroad #FormeeExpress #HigherEducation #GlobalStudent';
-  var PROMPT = 'Text to Post\nA carousel of ‘The 5 myths about applying abroad’ and how Formee Express debunks them with accurate guidance and resources.';
-
-  function $(s,r){ return (r||document).querySelector(s); }
+  var $ = function(s, r){ return (r||document).querySelector(s); };
   var layer = $('#libprevLayer'), box = $('#libprev');
   if (!layer || !box) return;
 
+  var CAPTION =
+    'Studying abroad is more accessible than you think! Don’t let common myths hold you back ' +
+    'from your dreams. 🌍\n\n' +
+    'At Formee Express, we break down barriers: we find affordable programs for every budget, ' +
+    'simplify complex applications, and match courses to your unique profile — not just perfect ' +
+    'grades. From expert visa support to step-by-step guidance, you’re never alone in this journey. 🎓\n\n' +
+    'Ready to go global? Access our trusted resources and expert guidance to start your international ' +
+    'education today. Your future starts here! ✨✈️ #StudyAbroad #FormeeExpress #HigherEducation #GlobalStudent';
+  var PROMPT =
+    'A carousel of ‘The 5 myths about applying abroad’ and how Formee Express debunks them ' +
+    'with accurate guidance and resources.';
+
+  /* 목적지별 결과. 실제 제품에선 게시 기록에서 오지만 여기선 상태로 흉내낸다.
+     핵심은 한 게시물이 플랫폼마다 다른 결과를 가질 수 있다는 점이다. */
+  var DEST = {
+    published: [['INSTAGRAM','POSTED','posted'], ['FACEBOOK','FAILED','failed']],
+    scheduled: [['INSTAGRAM','SCHEDULED','scheduled']],
+    draft:     []
+  };
+  var META = {
+    published: 'Published Aug 26, 2026 · Created by me',
+    scheduled: 'Scheduled for Aug 28, 2026 9:00 AM · Created by me',
+    draft:     'Draft · Last edited Aug 27, 2026 · Created by me'
+  };
+  var LABEL = {published:'Published', scheduled:'Scheduled', draft:'Draft'};
+
   function setState(st){
     box.setAttribute('data-state', st);
-    var save = $('#libprevSave');
-    if (save) save.textContent = (st === 'failed') ? 'Try again' : 'Save caption';
-    var meta = $('#libprevMeta');
-    if (meta) meta.textContent = (st === 'saved')
-      ? 'Published Aug 26, 2026 · Formee Express · Edited Aug 27, 2026'
-      : 'Published Aug 26, 2026 · Formee Express · Created by Me';
+    var badge = $('#libprevStatus');
+    badge.textContent = LABEL[st] || st;
+    badge.className = 'libprev-badge' + (st === 'published' ? ' ok' : ' muted');
+    $('#libprevMeta').textContent = META[st] || '';
+    $('#libprevDest').innerHTML = (DEST[st] || []).map(function(d){
+      return '<span class="' + d[2] + '">' + d[0] + ' · ' + d[1] + '</span>';
+    }).join('');
   }
+
   function open(card, st){
-    var img = $('#libprevImg');
-    var thumb = card && card.getAttribute('data-thumb');
-    if (img) img.src = thumb || 'assets/imgLibLipTint.png';
-    var status = (card && card.getAttribute('data-status')) || 'published';
-    var sEl = $('#libprevStatus');
-    if (sEl) sEl.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+    var thumb = card && card.dataset.thumb;
+    if (thumb) $('#libprevImg').src = thumb;
+    var ratio = card && (card.classList.contains('r916') ? '9:16'
+                       : card.classList.contains('r11')  ? '1:1' : '4:5');
+    $('#libprevRatio').textContent = ratio || '1:1';
     $('#libprevCap').textContent = CAPTION;
-    $('#libprevTa').value = CAPTION;
     $('#libprevPrompt').textContent = PROMPT;
-    setState(st || 'published');
+    setState(st || (card && card.dataset.status) || 'published');
     layer.hidden = false;
   }
   function close(){ layer.hidden = true; }
+
+  /* 편집은 v3 의 Edit & Publish 단계로 보낸다. 캡션·해시태그·플랫폼별 문구·목적지·시점이
+     전부 거기 모여 있어서, 모달에 옮겨오면 같은 UI 가 두 곳으로 갈라진다. */
+  var V3 = 'https://yjkim9627-gif.github.io/formee-education/' +
+           'prototypes/ai-social-media/new-content-generation/v3/new-content-to-generate.html';
+  function editAndPublish(){
+    /* 캡션을 실어 보낸다 — 빈 칸에서 다시 쓰는 게 아니라 이어서 고치는 화면이어야 한다.
+       ref 가 아니라 edit 으로 보내는 이유는, 이건 "참고할 다른 글"이 아니라
+       같은 콘텐츠이기 때문이다. ref 로 보내면 v3 가 "Based on" 배너를 띄운다. */
+    var url = V3 + '#stage=publish'
+            + '&edit=' + encodeURIComponent(box.dataset.title || '')
+            + '&caption=' + encodeURIComponent($('#libprevCap').textContent || '');
+    window.open(url, '_blank', 'noopener');
+  }
+  function todo(what){
+    if (typeof libToast === 'function') libToast(what + ' — not wired yet');
+  }
 
   document.addEventListener('click', function(e){
     var act = e.target.closest('[data-libprev]');
     if (act){
       var a = act.getAttribute('data-libprev');
-      if (a === 'close' || a === 'cancel') { if (a==='cancel') setState('published'); else close(); return; }
-      if (a === 'edit') { setState('edit'); return; }
-      if (a === 'save') { setState(box.getAttribute('data-state')==='failed' ? 'saved' : 'saved'); return; }
+      if (a === 'close')   { close(); return; }
+      if (a === 'editpub') { editAndPublish(); return; }
+      if (a === 'prev' || a === 'next') { return; }   /* TODO: 캐러셀 이동 */
+      if (a === 'dl')  { todo('Download'); return; }  /* TODO: 실제 다운로드 */
+      if (a === 'dup') { todo('Duplicate & edit'); return; }  /* TODO: 복제 라우팅 미정 */
+      if (a === 'ig')  { todo('View on Instagram'); return; } /* TODO: 게시물 URL 필요 */
       return;
     }
     var card = e.target.closest('.lib-card');
-    if (card && !e.target.closest('.lib-iconbtn')) open(card, 'published');
+    if (card && !e.target.closest('.lib-iconbtn')) { box.dataset.title = card.dataset.title || ''; open(card); }
   });
   document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && !layer.hidden) close(); });
 
-  /* 딥링크: #libprev=published|edit|failed|saved  (+ &card=<n> 로 카드 지정) */
+  /* 딥링크: #libprev=published|scheduled|draft  (+ &card=<n>) */
   function fromHash(){
     var m = /[#&]libprev=([a-z]+)/.exec(location.hash || '');
     if (!m) return;
@@ -34404,6 +34476,7 @@ body{margin:0;padding:0;background:#e5e5e5;overflow:hidden;}
     var cards = document.querySelectorAll('.lib-card');
     var card = cards[n ? (+n[1]) : 0] || null;
     if (typeof showView === 'function') showView('library');
+    if (card) box.dataset.title = card.dataset.title || '';
     open(card, m[1]);
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fromHash);
