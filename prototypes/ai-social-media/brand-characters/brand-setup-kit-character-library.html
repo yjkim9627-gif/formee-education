@@ -25206,30 +25206,23 @@ function libOpenMenu(btn, card){
   pop.style.top  = Math.round(b.bottom - t.top + 8) + 'px';
   pop.style.left = Math.round(b.right - t.left - pop.offsetWidth) + 'px';
 }
-/* 비주얼 레퍼런스는 새 UI 를 만들지 않고 New Content 가 이미 갖고 있는
-   "Reference media" 칸에 그대로 밀어 넣는다 — 입력이 두 군데로 갈라지면 안 된다.
-   배너는 출처와 무엇을 따라갈지(비주얼 / 보이스)만 책임진다. */
-function ncRefMediaSet(on, src){
-  const list = document.querySelector('#ncMain .nc-refs');
-  if (!list) return;
-  const had = list.querySelector('[data-fromlib]');
-  if (had) had.remove();
-  if (!on || !src) return;
-  const tile = document.createElement('div');
-  tile.className = 'nc-ref'; tile.setAttribute('data-fromlib','1');
-  tile.innerHTML = '<img src="' + src + '" alt=""><span class="nc-ref-x">✕</span>';
-  list.insertBefore(tile, list.querySelector('.nc-ref-add'));
-}
+
 /* Regenerate 는 예진님 v3 생성 화면으로 넘긴다. 착지 지점은 포맷마다 다른데,
-   기준은 "돈 쓰기 직전의 마지막 무료 단계"다 — 릴스는 Timeline(썸네일 생성 전),
-   캐러셀은 Script(스토리보드 전), 이미지는 Brief(Continue 가 곧 생성). */
-/* v3 는 Timeline 을 "대본 승인" 뒤에만 연다. 그 승인을 대신 눌러줄 수는 없으니
-   릴스는 Script 까지만 보낸다 — Timeline 은 거기서 두 번 클릭, 둘 다 무료다. */
+   기준은 "돈 쓰기 직전의 마지막 무료 단계"다.
+   v3 는 Timeline 을 대본 승인 뒤에만 열기 때문에 릴스는 Script 까지만 보낸다. */
 const NC_V3_STAGE = { video:'reelScript', carousel:'script', image:'brief' };
 function libRegenerate(card){
   const stage = NC_V3_STAGE[card.dataset.format] || 'brief';
-  const url = NC_V3_URL + '#regen=' + encodeURIComponent(card.dataset.title || '') +
-              '&stage=' + stage;
+  /* Regenerate 도 같은 파라미터를 쓴다 — 받는 쪽에서 출처 칩을 그리려면
+     제목만으로는 부족하다. regen=1 로 "다시 뽑기"라는 것만 구분한다. */
+  const r = card.classList.contains('r916') ? '9:16'
+          : card.classList.contains('r11')  ? '1:1' : '4:5';
+  const url = NC_V3_URL
+    + '#ref=' + encodeURIComponent(card.dataset.title || '')
+    + '&thumb=' + encodeURIComponent(libThumbUrl(card.dataset.thumb))
+    + '&ratio=' + encodeURIComponent(r)
+    + '&stage=' + stage
+    + '&regen=1';
   libToast('Opening a new take in New Content Generation…');
   window.open(url, '_blank', 'noopener');
 }
@@ -25245,25 +25238,21 @@ function libToast(msg){
    것이라 새 탭으로 넘긴다 — 교차 출처라 값까지 실어 보낼 수는 없다. */
 const NC_V3_URL = 'https://yjkim9627-gif.github.io/formee-education/' +
   'prototypes/ai-social-media/new-content-generation/v3/new-content-to-generate.html';
-/* 카드에서 뽑아낸 속성 줄. 실제 제품에선 콘텐츠 메타에서 오지만, 여기선
-   카드가 들고 있는 값(포맷·상태·브랜드)으로 같은 모양을 만든다. */
-function libRefAttrs(card){
-  const fmt = {video:'Reel / Short', image:'Image post', carousel:'Carousel'}[card.dataset.format] || 'Reel / Short';
-  const ratio = card.classList.contains('r916') ? '9:16'
-              : card.classList.contains('r11')  ? '1:1' : '4:5';
-  const group = card.closest('.lib-group');
-  const brand = group ? group.querySelector('h2').textContent.trim() : '';
-  return [fmt, ratio, brand, 'Human', 'Headshot', 'Neutral', 'Soft studio']
-         .filter(Boolean).join(' · ');
+
+/* 받는 쪽(v3)은 다른 폴더라 `assets/…` 상대경로가 안 맞는다. 저장소 루트 기준
+   절대경로로 넘겨서 어느 화면에서 열든 같은 파일을 가리키게 한다. */
+const LIB_ASSET_BASE = '/formee-education/prototypes/ai-social-media/brand-characters/';
+function libThumbUrl(src){
+  if (!src) return '';
+  if (/^(https?:|\/)/.test(src)) return src;
+  return LIB_ASSET_BASE + src;
 }
-/* Use as reference 는 예진님 v3 의 New Content 로 넘긴다. 무엇을 참고하는지는
-   URL 로 실어 보내고, 화면은 그쪽이 그린다 — 같은 UI 를 두 곳에 두지 않는다. */
 function libUseAsReference(card){
   const r = card.classList.contains('r916') ? '9:16'
           : card.classList.contains('r11')  ? '1:1' : '4:5';
   const url = NC_V3_URL
     + '#ref=' + encodeURIComponent(card.dataset.title || '')
-    + '&thumb=' + encodeURIComponent(card.dataset.thumb || '')
+    + '&thumb=' + encodeURIComponent(libThumbUrl(card.dataset.thumb))
     + '&ratio=' + encodeURIComponent(r)
     + '&stage=brief';
   libToast('Opening New Content with this reference…');
@@ -25294,17 +25283,7 @@ if (_libMain){
 document.addEventListener('click', e => {
   if (!e.target.closest('#libMain')) libCloseMenu();
 });
-const _ncRefClear = $('#ncRefClear');
-if (_ncRefClear) _ncRefClear.addEventListener('click', () => {
-  $('#ncRef').hidden = true; ncRefMediaSet(false);
-});
-/* 비주얼을 끄면 Reference media 에서도 빠진다 — 배너와 입력이 어긋나면 안 된다 */
-const _ncRefBanner = $('#ncRef');
-if (_ncRefBanner) _ncRefBanner.addEventListener('change', e => {
-  const box = e.target.closest('[data-ncref]');
-  if (box && box.dataset.ncref === 'visual')
-    ncRefMediaSet(box.checked, _ncRefBanner.dataset.thumb);
-});
+
 /* ── 라이브러리 거르기 ──────────────────────────────────────────────────────
    탭(포맷) · 즐겨찾기 · 검색이 한 함수에서 같이 걸린다. 따로 두면 셋 중 하나만
    반영되는 상태가 생긴다. 그룹은 남은 카드가 없으면 통째로 숨긴다. */
@@ -26527,7 +26506,6 @@ document.addEventListener('click',function(e){ var su=document.getElementById('s
   .nc-input-lg{min-height:58px;}
   .nc-ph{font:400 14px/22px 'DM Sans',sans-serif;color:var(--neutral-450);}
   .nc-refwrap{display:flex;flex-direction:column;gap:16px;}
-  .nc-refs{display:flex;gap:12px;}
   .nc-ref{position:relative;width:120px;height:120px;border-radius:8px;overflow:hidden;}
   .nc-ref img{width:100%;height:100%;object-fit:cover;display:block;}
   .nc-ref-x{position:absolute;right:5px;top:5px;width:16px;height:16px;border-radius:50%;background:#111;
@@ -34121,14 +34099,7 @@ body.bk2-clean #roleSwitch { display:none !important; }
 
 
 
-/* New Content → 예진님 v3 프로토타입 입구 */
-.nc-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;}
-.nc-head-txt{min-width:0;}
-.nc-v3link{display:inline-flex;align-items:center;gap:7px;flex:none;height:38px;padding:0 14px;
-  border:1px solid var(--neutral-300);border-radius:9999px;background:var(--neutral-0);
-  font-size:13px;font-weight:600;color:var(--neutral-800);white-space:nowrap;}
-.nc-v3link:hover{background:var(--neutral-50);border-color:var(--neutral-450);}
-.nc-v3link svg{width:14px;height:14px;flex:none;}
+
 
 
 
@@ -34240,5 +34211,206 @@ body{margin:0;padding:0;background:#e5e5e5;overflow:hidden;}
   else fit();
 })();
 </script>
+<style id="libprev-css">
+/* ── Content Preview 모달 (Figma: Content Preview - modal / edit caption / caption failed / caption saved)
+   1920×1162 프레임 안에서 1480×860, 좌측 미디어 860 정사각 + 우측 620 상세. */
+.libprev-layer{position:absolute;inset:0;z-index:120;}
+.libprev-scrim{position:absolute;inset:0;background:rgba(15,23,41,.38);}
+.libprev{position:absolute;left:220px;top:151px;width:1480px;height:860px;display:flex;
+  background:var(--neutral-0);border-radius:16px;overflow:hidden;
+  box-shadow:0 28px 72px rgba(15,23,41,.30);}
+.libprev-media{width:860px;flex:none;background:var(--neutral-100);overflow:hidden;position:relative;}
+.libprev-media img{width:100%;height:100%;object-fit:cover;display:block;}
+.libprev-detail{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:18px;padding:24px 28px;}
+
+.libprev-head{display:flex;align-items:center;gap:8px;flex:none;}
+.libprev-badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:9999px;
+  font-weight:600;font-size:11px;line-height:16px;}
+.libprev-badge.ok{background:var(--badge-green-bg);color:var(--badge-green-text);}
+.libprev-badge.muted{background:var(--neutral-100);color:var(--neutral-700);}
+.libprev-sp{flex:1 1 auto;}
+.libprev-close{width:28px;height:28px;flex:none;display:grid;place-items:center;border:0;background:none;
+  border-radius:var(--radius-lg);cursor:pointer;}
+.libprev-close:hover{background:var(--neutral-100);}
+.libprev-close svg{width:16px;height:16px;}
+
+.libprev-label{font-weight:700;font-size:13px;line-height:20px;color:var(--neutral-900);flex:none;}
+.libprev-caption,.libprev-prompt{font-weight:400;font-size:14px;line-height:22px;color:var(--neutral-700);
+  white-space:pre-line;flex:none;}
+.libprev-meta{font-weight:400;font-size:12px;line-height:18px;color:var(--neutral-500);flex:none;}
+.libprev-grow{flex:1 1 auto;min-height:0;}
+
+/* 캡션 편집 */
+.libprev-editor{flex:none;border:1.5px solid #4f6de6;border-radius:10px;padding:10px 12px;background:var(--neutral-0);}
+.libprev-editor textarea{width:100%;height:220px;border:0;resize:none;outline:none;background:none;
+  font-family:inherit;font-weight:400;font-size:14px;line-height:22px;color:var(--neutral-900);}
+.libprev-ebar{display:flex;align-items:center;gap:8px;flex:none;}
+.libprev-cnt{font-weight:400;font-size:12px;line-height:18px;color:var(--neutral-500);}
+
+/* 알림 배너 */
+.libprev-alert{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:10px;flex:none;}
+.libprev-alert.err{background:#fbe3e5;}
+.libprev-alert.err b{display:block;font-weight:700;font-size:13px;line-height:20px;color:#ad1519;}
+.libprev-alert.err span{font-weight:400;font-size:12px;line-height:18px;color:#ad1519;}
+.libprev-alert.ok{background:var(--badge-green-bg);}
+.libprev-alert.ok b{display:block;font-weight:700;font-size:13px;line-height:20px;color:var(--badge-green-text);}
+.libprev-alert.ok span{font-weight:400;font-size:12px;line-height:18px;color:var(--badge-green-text);}
+.libprev-alert svg{width:18px;height:18px;flex:none;margin-top:1px;}
+
+.libprev-actions{display:flex;align-items:center;gap:8px;flex:none;}
+.libprev-btn{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 14px;cursor:pointer;
+  border-radius:var(--radius-lg);font-family:inherit;font-weight:600;font-size:14px;line-height:20px;}
+.libprev-btn svg{width:16px;height:16px;}
+.libprev-btn.pri{background:#2b2b2b;color:#fff;border:1px solid #2b2b2b;}
+.libprev-btn.sec{background:var(--neutral-0);color:var(--neutral-900);border:1px solid var(--neutral-300);}
+.libprev-btn.ghost{background:none;color:var(--neutral-700);border:1px solid transparent;}
+
+/* 상태별 표시 — data-state 하나로 4개 화면을 전환한다 */
+.libprev [data-only]{display:none;}
+.libprev[data-state="edit"]   [data-only~="edit"],
+.libprev[data-state="failed"] [data-only~="failed"],
+.libprev[data-state="saved"]  [data-only~="saved"]{display:flex;}
+.libprev[data-state="edit"]   [data-hide~="edit"],
+.libprev[data-state="failed"] [data-hide~="failed"]{display:none;}
+</style>
+
+<div class="libprev-layer" id="libprevLayer" hidden>
+  <div class="libprev-scrim" data-libprev="close"></div>
+  <div class="libprev" id="libprev" role="dialog" aria-modal="true"
+       aria-label="Content preview" data-state="published">
+    <div class="libprev-media"><img id="libprevImg" src="" alt=""></div>
+    <div class="libprev-detail">
+      <div class="libprev-head">
+        <span class="libprev-badge ok" id="libprevStatus">Published</span>
+        <span class="libprev-badge muted">From your idea</span>
+        <span class="libprev-sp"></span>
+        <button type="button" class="libprev-close" data-libprev="close" aria-label="Close">
+          <svg viewBox="0 0 16 16" fill="none" stroke="#8A93A8" stroke-width="1.6" stroke-linecap="round">
+            <path d="M4 4l8 8M12 4l-8 8"/></svg></button>
+      </div>
+
+      <div class="libprev-alert err" data-only="failed">
+        <svg viewBox="0 0 18 18" fill="none" stroke="#AD1519" stroke-width="1.6" stroke-linecap="round">
+          <circle cx="9" cy="9" r="7"/><path d="M9 5.5v4M9 12.4v.1"/></svg>
+        <div><b>Couldn&rsquo;t update on Instagram</b>
+          <span>The live caption is unchanged. Your edit is kept here until it saves.</span></div>
+      </div>
+      <div class="libprev-alert ok" data-only="saved">
+        <svg viewBox="0 0 18 18" fill="none" stroke="#027A48" stroke-width="1.6"
+             stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="9" cy="9" r="7"/><path d="m5.8 9.2 2.1 2.1 4.3-4.3"/></svg>
+        <div><b>Caption updated on Instagram</b>
+          <span>Your live post now shows the new caption. Edits don&rsquo;t re-notify followers.</span></div>
+      </div>
+
+      <p class="libprev-label">Caption</p>
+      <p class="libprev-caption" data-hide="edit failed" id="libprevCap"></p>
+      <div class="libprev-editor" data-only="edit failed">
+        <textarea id="libprevTa" aria-label="Caption"></textarea>
+      </div>
+      <div class="libprev-ebar" data-only="edit failed">
+        <span class="libprev-cnt" id="libprevCnt">412 / 2,200</span>
+        <span class="libprev-sp"></span>
+        <button type="button" class="libprev-btn sec" data-libprev="cancel">Cancel</button>
+        <button type="button" class="libprev-btn pri" data-libprev="save" id="libprevSave">Save caption</button>
+      </div>
+
+      <p class="libprev-label">Input Prompt</p>
+      <p class="libprev-prompt" id="libprevPrompt"></p>
+      <p class="libprev-meta" id="libprevMeta"></p>
+      <span class="libprev-grow"></span>
+
+      <div class="libprev-actions" data-hide="edit failed">
+        <button type="button" class="libprev-btn pri" data-libprev="ig">
+          <svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.4">
+            <rect x="2.2" y="2.2" width="11.6" height="11.6" rx="3.4"/>
+            <circle cx="8" cy="8" r="2.9"/><circle cx="11.6" cy="4.4" r=".8" fill="#fff" stroke="none"/></svg>
+          View on Instagram</button>
+        <button type="button" class="libprev-btn sec" data-libprev="edit">
+          <svg viewBox="0 0 16 16" fill="none" stroke="#0F1729" stroke-width="1.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11.2 2.8a1.7 1.7 0 0 1 2.4 2.4L5.9 12.9l-3.2.8.8-3.2z"/></svg>
+          Edit caption</button>
+        <button type="button" class="libprev-btn ghost" data-libprev="dl">
+          <svg viewBox="0 0 16 16" fill="none" stroke="#475069" stroke-width="1.6"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 2.8v6.6m0 0 2.4-2.4M8 9.4 5.6 7M3 12.6h10"/></svg>
+          Download</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script id="libprev-js">
+/* 라이브러리 카드 클릭 → 콘텐츠 프리뷰. 상태 4종을 data-state 하나로 전환한다.
+   #libprev=<state> 딥링크로 정적 캡처도 가능하다. */
+(function(){
+  var CAPTION =
+    'Studying abroad is more accessible than you think! Don’t let common myths hold you back from your dreams. 🌍\n\n' +
+    'At Formee Express, we break down barriers: we find affordable programs for every budget, simplify complex applications, ' +
+    'and match courses to your unique profile — not just perfect grades. From expert visa support to step-by-step guidance, ' +
+    'you’re never alone in this journey. 🎓\n\n' +
+    'Ready to go global? Access our trusted resources and expert guidance to start your international education today. ' +
+    'Your future starts here! ✨✈️ #StudyAbroad #FormeeExpress #HigherEducation #GlobalStudent';
+  var PROMPT = 'Text to Post\nA carousel of ‘The 5 myths about applying abroad’ and how Formee Express debunks them with accurate guidance and resources.';
+
+  function $(s,r){ return (r||document).querySelector(s); }
+  var layer = $('#libprevLayer'), box = $('#libprev');
+  if (!layer || !box) return;
+
+  function setState(st){
+    box.setAttribute('data-state', st);
+    var save = $('#libprevSave');
+    if (save) save.textContent = (st === 'failed') ? 'Try again' : 'Save caption';
+    var meta = $('#libprevMeta');
+    if (meta) meta.textContent = (st === 'saved')
+      ? 'Published Aug 26, 2026 · Formee Express · Edited Aug 27, 2026'
+      : 'Published Aug 26, 2026 · Formee Express · Created by Me';
+  }
+  function open(card, st){
+    var img = $('#libprevImg');
+    var thumb = card && card.getAttribute('data-thumb');
+    if (img) img.src = thumb || 'assets/imgLibLipTint.png';
+    var status = (card && card.getAttribute('data-status')) || 'published';
+    var sEl = $('#libprevStatus');
+    if (sEl) sEl.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+    $('#libprevCap').textContent = CAPTION;
+    $('#libprevTa').value = CAPTION;
+    $('#libprevPrompt').textContent = PROMPT;
+    setState(st || 'published');
+    layer.hidden = false;
+  }
+  function close(){ layer.hidden = true; }
+
+  document.addEventListener('click', function(e){
+    var act = e.target.closest('[data-libprev]');
+    if (act){
+      var a = act.getAttribute('data-libprev');
+      if (a === 'close' || a === 'cancel') { if (a==='cancel') setState('published'); else close(); return; }
+      if (a === 'edit') { setState('edit'); return; }
+      if (a === 'save') { setState(box.getAttribute('data-state')==='failed' ? 'saved' : 'saved'); return; }
+      return;
+    }
+    var card = e.target.closest('.lib-card');
+    if (card && !e.target.closest('.lib-iconbtn')) open(card, 'published');
+  });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && !layer.hidden) close(); });
+
+  /* 딥링크: #libprev=published|edit|failed|saved  (+ &card=<n> 로 카드 지정) */
+  function fromHash(){
+    var m = /[#&]libprev=([a-z]+)/.exec(location.hash || '');
+    if (!m) return;
+    var n = /[#&]card=(\d+)/.exec(location.hash || '');
+    var cards = document.querySelectorAll('.lib-card');
+    var card = cards[n ? (+n[1]) : 0] || null;
+    if (typeof showView === 'function') showView('library');
+    open(card, m[1]);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fromHash);
+  else fromHash();
+  window.addEventListener('hashchange', fromHash);
+})();
+</script>
+
 </body>
 </html>
