@@ -16,12 +16,28 @@
 }
 .demo-sidebar-home:hover{background:var(--color-neutral-50); color:var(--color-neutral-900); border-color:var(--color-neutral-300);}
 
-.demo-sidebar-group{margin-bottom:24px;}
+.demo-sidebar-group{margin-bottom:8px;}
 .demo-sidebar-group:last-child{margin-bottom:0;}
 .demo-sidebar-label{
   font-size:10px; font-weight:700; letter-spacing:.05em; text-transform:uppercase;
   color:var(--color-neutral-500); padding:0 10px; margin:0 0 6px;
 }
+
+/* Accordion group (Figma-section groupings) — replaces the old flat .demo-sidebar-label
+   list once a folder has enough demo pages that a single flat list gets unwieldy. Each
+   group's expanded/collapsed state is baked into that page's own static HTML (no JS runs
+   on load) — only the toggle click is scripted, via demo-nav.js. */
+.demo-sidebar-group-toggle{
+  display:flex; align-items:center; justify-content:space-between; width:100%;
+  padding:6px 10px; margin:0; background:none; border:none; cursor:pointer;
+  font-size:10px; font-weight:700; letter-spacing:.05em; text-transform:uppercase;
+  color:var(--color-neutral-500); font-family:var(--font-family-text);
+}
+.demo-sidebar-group-toggle:hover{color:var(--color-neutral-900);}
+.demo-sidebar-group-caret{font-size:8px; transition:transform .15s ease; flex-shrink:0;}
+.demo-sidebar-group.collapsed .demo-sidebar-group-caret{transform:rotate(-90deg);}
+.demo-sidebar-group-items{display:flex; flex-direction:column;}
+.demo-sidebar-group.collapsed .demo-sidebar-group-items{display:none;}
 .demo-sidebar a{
   display:block; padding:7px 10px; border-radius:7px; font-size:12.5px; line-height:1.4;
   color:var(--color-neutral-700); text-decoration:none; font-family:var(--font-family-text);
