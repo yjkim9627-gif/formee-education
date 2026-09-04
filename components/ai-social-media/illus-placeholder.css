@@ -1,0 +1,23 @@
+/* illus · image placeholder — shared component (components/ai-social-media/illus-placeholder.html 참고)
+   Figma: FME_AI-Social-Media, "06 Data Display" (1124:10591) → "illus · image placeholder"
+   (6845:135666) — a 160×160 decorative empty-state illustration (soft blob + dotted corners
+   + a white card with a centered glyph), 5 Types: Img / font / Brands / Colors / Cord.
+   "Cord" was already extracted earlier this session as icons/illus-connection-placeholder.svg
+   (used by the Publish-to-social modal's "Not connected" state) — reused here as-is rather
+   than duplicated. The other 3 flat types (Img/Brands/Colors) export as single self-contained
+   SVGs from Figma; "font" is the one exception (it has a real text node, "Aa", that Figma
+   can't flatten into the same single-file export), so it's built here as blob+card art with
+   live HTML text on top instead of a baked-in image — matching this project's rule of using
+   real text/tokens over baked pixels wherever the design lets us. */
+
+.illus-placeholder{width:160px; height:160px; display:block; position:relative;}
+.illus-placeholder img{display:block; width:100%; height:100%;}
+
+.illus-placeholder.type-font{display:flex; align-items:center; justify-content:center;}
+/* width/height:100% matters here — a position:absolute img with inset values but no explicit
+   size doesn't stretch to fill the computed box, it renders at the SVG file's own intrinsic
+   pixel size instead (see actions-button.css's .actions-btn-ai-icon for the same fix). */
+.illus-placeholder.type-font .illus-placeholder-blob{position:absolute; top:12.41%; left:18.07%; right:13.7%; bottom:18.04%; width:100%; height:100%;}
+.illus-placeholder.type-font .illus-placeholder-card{position:relative; width:58px; height:58px; display:flex; align-items:center; justify-content:center;}
+.illus-placeholder.type-font .illus-placeholder-card img{position:absolute; inset:-13.79% -20.69% -27.59% -20.69%; width:100%; height:100%;}
+.illus-placeholder.type-font .illus-placeholder-font-label{position:relative; font-family:var(--font-family-text); font-weight:500; font-size:30px; color:var(--color-neutral-350); user-select:none;}

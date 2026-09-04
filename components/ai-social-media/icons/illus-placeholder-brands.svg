@@ -1,0 +1,30 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="illus &#194;&#183; image placeholder">
+<path id="blob" opacity="0.13" d="M80 19.86C90.29 19.72 102.53 23.63 111.12 28.88C119.7 34.12 127.02 42.99 131.52 51.34C136.01 59.69 138.23 69.87 138.07 79C137.9 88.13 135.35 98.31 130.53 106.13C125.7 113.95 117.54 121.78 109.12 125.91C100.7 130.04 89.16 131.79 80 130.91C70.84 130.04 61.22 125.51 54.13 120.67C47.05 115.82 41.62 108.76 37.51 101.82C33.4 94.87 30.44 87.12 29.48 79C28.52 70.88 28.45 61.32 31.77 53.1C35.09 44.89 41.36 35.25 49.4 29.71C57.44 24.17 69.71 20 80 19.86Z" fill="#E2E8FC"/>
+<path id="Vector" opacity="0.35" d="M29 55C30.6569 55 32 53.6569 32 52C32 50.3431 30.6569 49 29 49C27.3431 49 26 50.3431 26 52C26 53.6569 27.3431 55 29 55Z" fill="#4F6DE6"/>
+<path id="Vector_2" opacity="0.28" d="M30 124C32.2091 124 34 122.209 34 120C34 117.791 32.2091 116 30 116C27.7909 116 26 117.791 26 120C26 122.209 27.7909 124 30 124Z" fill="#4F6DE6"/>
+<path id="Vector_3" opacity="0.3" d="M128 123C129.657 123 131 121.657 131 120C131 118.343 129.657 117 128 117C126.343 117 125 118.343 125 120C125 121.657 126.343 123 128 123Z" fill="#4F6DE6"/>
+<path id="Vector_4" opacity="0.4" d="M105 28.5C106.381 28.5 107.5 27.3807 107.5 26C107.5 24.6193 106.381 23.5 105 23.5C103.619 23.5 102.5 24.6193 102.5 26C102.5 27.3807 103.619 28.5 105 28.5Z" fill="#4F6DE6"/>
+<path id="Vector_5" opacity="0.25" d="M133 90C134.105 90 135 89.1046 135 88C135 86.8954 134.105 86 133 86C131.895 86 131 86.8954 131 88C131 89.1046 131.895 90 133 90Z" fill="#4F6DE6"/>
+<g id="card" filter="url(#filter0_d_0_19)">
+<path d="M96 52H64C56.8203 52 51 57.8203 51 65V97C51 104.18 56.8203 110 64 110H96C103.18 110 109 104.18 109 97V65C109 57.8203 103.18 52 96 52Z" fill="white"/>
+</g>
+<g id="icon / pagebar / new-folder">
+<path id="Vector_6" d="M80 78.6667V85.6667" stroke="#C5CEE0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_7" d="M76.5 82.1667H83.5" stroke="#C5CEE0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_8" d="M89.3333 90.3333C89.9522 90.3333 90.5457 90.0875 90.9833 89.6499C91.4208 89.2123 91.6667 88.6188 91.6667 88V76.3333C91.6667 75.7145 91.4208 75.121 90.9833 74.6834C90.5457 74.2458 89.9522 74 89.3333 74H80.1167C79.7264 74.0038 79.3415 73.9097 78.997 73.7263C78.6526 73.5428 78.3596 73.2759 78.145 72.95L77.2 71.55C76.9875 71.2274 76.6983 70.9626 76.3583 70.7793C76.0182 70.596 75.638 70.5001 75.2517 70.5H70.6667C70.0478 70.5 69.4543 70.7458 69.0168 71.1834C68.5792 71.621 68.3333 72.2145 68.3333 72.8333V88C68.3333 88.6188 68.5792 89.2123 69.0168 89.6499C69.4543 90.0875 70.0478 90.3333 70.6667 90.3333H89.3333Z" stroke="#C5CEE0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</g>
+<defs>
+<filter id="filter0_d_0_19" x="39" y="44" width="82" height="82" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="4"/>
+<feGaussianBlur stdDeviation="6"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0.31 0 0 0 0 0.43 0 0 0 0 0.9 0 0 0 0.18 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_0_19"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_0_19" result="shape"/>
+</filter>
+</defs>
+</svg>

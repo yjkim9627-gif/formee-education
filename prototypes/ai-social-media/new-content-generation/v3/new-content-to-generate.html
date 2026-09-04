@@ -6869,7 +6869,7 @@ function renderSocialTabContent(){
             <div class="pub-social-notconnected-sub">Connect a ${platform.label} account for this brand to publish here.</div>
           </div>
           <button type="button" class="actions-btn actions-btn--primary" onclick="connectPlatform('${key}'); renderSocialTabs(); renderSocialTabContent();">
-            <span class="actions-btn-ai-icon"><img src="../../../../components/ai-social-media/icons/actions/btn-ai-icon-white-a.svg" alt=""><img src="../../../../components/ai-social-media/icons/actions/btn-ai-icon-white-b.svg" alt=""></span>
+            <span class="actions-btn-ai-icon"><span><img src="../../../../components/ai-social-media/icons/actions/btn-ai-icon-white-a.svg" alt=""></span><span><img src="../../../../components/ai-social-media/icons/actions/btn-ai-icon-white-b.svg" alt=""></span></span>
             <span>Connect</span>
           </button>
         </div>
@@ -6886,7 +6886,7 @@ function renderSocialTabContent(){
          <span>Confirmed — ${platform.label} will ${tabMode === 'schedule' ? 'be scheduled' : 'publish'}</span>
        </button>`
     : `<button type="button" class="actions-btn actions-btn--inactive pub-social-confirm-btn" id="pubSocialConfirmBtn" disabled onclick="confirmPublishPlatform('${key}')">
-         <span class="actions-btn-ai-icon"><img src="../../../../components/ai-social-media/icons/actions/btn-ai-icon-grey-a.svg" alt=""><img src="../../../../components/ai-social-media/icons/actions/btn-ai-icon-grey-b.svg" alt=""></span>
+         <span class="actions-btn-ai-icon"><span><img src="../../../../components/ai-social-media/icons/actions/btn-ai-icon-grey-a.svg" alt=""></span><span><img src="../../../../components/ai-social-media/icons/actions/btn-ai-icon-grey-b.svg" alt=""></span></span>
          <span>${actionLabel} live to ${platform.label}</span>
        </button>`;
 
