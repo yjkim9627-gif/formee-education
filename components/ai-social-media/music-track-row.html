@@ -2,15 +2,19 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
-<title>Setting Chip — Shared Component</title>
+<title>Music Track Row — AI Social Media Component</title>
 <link rel="stylesheet" href="../../tokens/tokens.css" />
 <link rel="stylesheet" href="../demo-nav.css" />
-<link rel="stylesheet" href="setting-chip.css" />
+<link rel="stylesheet" href="actions-button.css" />
+<link rel="stylesheet" href="music-track-row.css" />
 <style>
   body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
   .demo-main { padding: var(--spacing-4xl); }
-  h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-3xl); }
-  .row { display: flex; gap: var(--spacing-sm); }
+  h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-sm); }
+  .demo-note { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); max-width: 720px; margin: 0 0 var(--spacing-3xl); line-height: 1.6; }
+  .demo-row { display: flex; flex-direction: column; gap: var(--spacing-sm); margin-bottom: var(--spacing-3xl); max-width: 912px; }
+  .demo-label { font-size: var(--font-size-text-xs); color: var(--color-neutral-500); }
+  .demo-grid { display: flex; flex-direction: column; gap: var(--spacing-md); }
 </style>
 </head>
 <body>
@@ -35,7 +39,7 @@
         <a href="actions-button.html">Actions / Button</a>
       </div>
     </div>
-    <div class="demo-sidebar-group" data-group="inputs">
+    <div class="demo-sidebar-group collapsed" data-group="inputs">
       <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>03 Inputs & Controls</span><span class="demo-sidebar-group-caret">▾</span></button>
       <div class="demo-sidebar-group-items">
         <a href="controls-field-ai-assisted-text.html">Controls / Field / AI assisted text</a>
@@ -55,7 +59,7 @@
         <a href="input-login.html">Input / Login</a>
         <a href="input.html">Input</a>
         <a href="segment-chip.html">Segment Chip</a>
-        <a href="setting-chip.html" class="active">Setting Chip</a>
+        <a href="setting-chip.html">Setting Chip</a>
         <a href="switch.html">Controls / Switch</a>
         <a href="table-filter.html">Table / Filter</a>
         <a href="toggle-chip.html">Controls / Toggle Chip</a>
@@ -78,12 +82,12 @@
         <a href="prompt-box.html">AI Prompt Box</a>
       </div>
     </div>
-    <div class="demo-sidebar-group collapsed" data-group="editor">
+    <div class="demo-sidebar-group" data-group="editor">
       <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Editor</span><span class="demo-sidebar-group-caret">▾</span></button>
       <div class="demo-sidebar-group-items">
         <a href="heading.html">Heading</a>
         <a href="image-scene-card.html">Image Scene Card</a>
-        <a href="music-track-row.html">Music Track Row</a>
+        <a href="music-track-row.html" class="active">Music Track Row</a>
         <a href="queue-panel.html">Queue Job Row / Queue Panel</a>
         <a href="scene-tile.html">Scene Tile</a>
         <a href="storyboard-card.html">Storyboard Card</a>
@@ -121,12 +125,46 @@
     </div>
   </nav>
   <main class="demo-main">
-  <h1>Setting Chip</h1>
-  <div class="row">
-    <div class="setting-chip"><div class="chip-ic ratio-box-ic"></div>Ratio <b>9:16</b></div>
-    <div class="setting-chip brand-chip-setting">Brand kit <b>applied</b></div>
-    <div class="setting-chip clickable">Character <b>Elena</b> <span class="chevron">▾</span></div>
-    <div class="setting-chip disabled"><div class="chip-ic ratio-box-ic"></div>Ratio <b>9:16</b></div>
+  <h1>Music Track Row</h1>
+  <p class="demo-note">Figma: "audio" section (2086:63836) → "audio" component set (2086:61844) — background-music picker row for the video editor's Timeline/Music panel. One row per track, radio-selected (only one plays at a time); "No Music" is the fixed opt-out row that always appears first. hover/focused states are real :hover/:focus-within, not separate markup.</p>
+
+  <div class="demo-row">
+    <span class="demo-label">Type = No music / Default / Pause (selected)</span>
+    <div class="demo-grid">
+
+      <label class="music-track-row" data-type="no-music">
+        <img class="music-track-icon" src="icons/audio-volume-off.svg" alt="">
+        <div class="music-track-info">
+          <span class="music-track-title">No Music</span>
+        </div>
+        <input type="radio" class="music-track-radio" name="music-track-demo">
+      </label>
+
+      <label class="music-track-row" data-type="default">
+        <img class="music-track-icon" src="icons/audio-play.svg" alt="">
+        <div class="music-track-info">
+          <span class="music-track-title">Funky Chunk</span>
+          <span class="music-track-duration">03:59</span>
+          <span class="music-track-mood">Hype</span>
+          <span class="music-track-bpm">BPM 115</span>
+        </div>
+        <button type="button" class="music-track-favorite"><img src="icons/audio-favorite-false.svg" alt="Favorite"></button>
+        <input type="radio" class="music-track-radio" name="music-track-demo">
+      </label>
+
+      <label class="music-track-row" data-type="pause">
+        <img class="music-track-icon" src="icons/audio-pause.svg" alt="">
+        <div class="music-track-info">
+          <span class="music-track-title">Funky Chunk</span>
+          <span class="music-track-duration">03:59</span>
+          <span class="music-track-mood">Hype</span>
+          <span class="music-track-bpm">BPM 115</span>
+        </div>
+        <button type="button" class="music-track-favorite"><img src="icons/audio-favorite-false.svg" alt="Favorite"></button>
+        <input type="radio" class="music-track-radio" name="music-track-demo" checked>
+      </label>
+
+    </div>
   </div>
   </main>
 </div>

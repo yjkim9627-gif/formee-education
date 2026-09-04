@@ -1,0 +1,40 @@
+/* Music Track Row — shared component (components/ai-social-media/music-track-row.html 참고)
+   Figma: FME_AI-Social-Media, "audio" section (2086:63836) → "audio" component set (2086:61844).
+   Background-music picker row for the video editor's Timeline/Music panel — one row per
+   track, radio-selected (only one music track plays at a time). 3 "type" variants (Default /
+   Pause = a track selected and currently playing / No Music = the opt-out row, always first)
+   × 3 "state" variants (normal/hover/focused) — states implemented as real :hover/
+   :focus-within rather than separate markup, matching every other row/list component in
+   this library. */
+
+.music-track-row{
+  display:flex; align-items:center; gap:var(--spacing-md); width:100%; box-sizing:border-box;
+  height:54px; padding:13px var(--spacing-xl);
+  background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg);
+  cursor:pointer;
+}
+.music-track-row:hover{border-color:var(--color-neutral-450); background:var(--color-neutral-50);}
+.music-track-row:focus-within{border-color:var(--color-brand-primary);}
+
+.music-track-icon{width:24px; height:24px; flex-shrink:0; display:block;}
+/* the play/pause glyph doubles as a per-row preview button, independent of picking the track */
+.music-track-icon-btn{padding:0; border:none; background:none; cursor:pointer; flex-shrink:0; display:flex;}
+
+.music-track-info{flex:1 0 0; min-width:0; display:flex; align-items:center; gap:var(--spacing-md);}
+.music-track-title{
+  flex:1 0 0; min-width:0; font-family:var(--font-family-text); font-size:13px; font-weight:500; line-height:20px;
+  color:var(--color-neutral-700); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+/* "No Music" is the opt-out row — its title reads as the primary label, not a track name */
+.music-track-row[data-type="no-music"] .music-track-title{color:var(--color-neutral-900);}
+.music-track-duration, .music-track-mood, .music-track-bpm{
+  flex-shrink:0; font-family:var(--font-family-text); font-size:12px; font-weight:500; line-height:18px; color:var(--color-neutral-500);
+}
+.music-track-duration{width:60px;}
+.music-track-mood, .music-track-bpm{width:100px;}
+
+.music-track-favorite{width:20px; height:20px; flex-shrink:0; padding:0; border:none; background:none; cursor:pointer; display:flex; align-items:center; justify-content:center;}
+.music-track-favorite img{width:20px; height:20px; display:block;}
+
+.music-track-radio{-webkit-appearance:none; appearance:none; margin:0; flex-shrink:0; width:20px; height:20px; border-radius:var(--radius-full); border:1.5px solid var(--color-neutral-400); background:var(--color-neutral-0); cursor:pointer; background-repeat:no-repeat; background-position:center;}
+.music-track-radio:checked{background-color:var(--color-neutral-900); border-color:var(--color-neutral-900); background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgdmlld0JveD0iMCAwIDEyIDEyIiBmaWxsPSJub25lIj48cGF0aCBkPSJNMTAgM0w0LjUgOC41TDIgNiIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPg==");}
