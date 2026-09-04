@@ -1,14 +1,18 @@
 /* Icons — shared component (components/ai-social-media/icons.html 참고)
-   Figma: FME_AI-Social-Media, "01 Icons" (3191:30848) — 130+ icon library, organized by
-   category (ai, arrange, audio, color, content, data, edit, editing tool bar, flip, format,
-   layer, menu, nav, pagebar, panel, social, spec, transition, ui, view, voice).
+   Figma: FME_AI-Social-Media, "01 Icons" (3191:30848) — the full 151-icon library, organized
+   by category (ai, arrange, audio, color, content, data, edit, editing tool bar, flip, format,
+   layer, menu, nav, pagebar, panel, social, spec, transition, ui, view, voice). Every icon
+   exported directly from its Figma component via the Plugin API's SVG_STRING export, one
+   exception: social/meta's source vector used a large embedded raster pattern fill Figma
+   couldn't cleanly re-export as a small icon SVG, so it's simplified to a flat brand-blue
+   glyph here instead of the literal source asset.
 
-   Only a first batch is downloaded so far — the icons actually needed to replace emoji/ad-hoc
-   glyphs already used across the generate flows (see icons.html for the exact list and which
-   emoji each one replaces). Figma exports these with a baked-in fill/stroke color rather than
-   currentColor, so they render as-is; a spot that needs the icon to recolor on state (e.g. an
-   active chip) still needs its own CSS-drawn treatment or an inlined <svg> instead of <img>.
-   spec/9-16, spec/4-5, spec/1-1 are CSS-drawn (.ratio-box-ic in prompt-box.css), not image
-   assets, matching how Figma itself defines them — they're not in this folder. */
+   Figma exports these with a baked-in fill/stroke color rather than currentColor, so they
+   render as-is; a spot that needs the icon to recolor on state (e.g. an active chip) still
+   needs its own CSS-drawn treatment or an inlined <svg> instead of <img>. spec/9-16, spec/4-5,
+   spec/1-1 in the Brief prompt box use CSS-drawn ratio boxes (.ratio-box-ic in prompt-box.css)
+   instead of these image assets, matching how Figma itself defines them there — this folder's
+   spec-*.svg copies exist for completeness/reference, not because anything currently <img>s
+   them from here. */
 
 .icon-swatch{width:20px; height:20px; display:inline-block; vertical-align:middle;}

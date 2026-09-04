@@ -11,7 +11,9 @@
   .demo-main { padding: var(--spacing-4xl); }
   h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-sm); }
   .demo-note { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); max-width: 640px; margin: 0 0 var(--spacing-3xl); line-height: 1.6; }
-  .icon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1px; background: var(--color-neutral-200); border: 1px solid var(--color-neutral-200); border-radius: 12px; overflow: hidden; }
+  .icon-section-title { font-size: var(--font-size-text-md); font-weight: 700; color: var(--color-neutral-700); text-transform: capitalize; margin: var(--spacing-3xl) 0 var(--spacing-sm); }
+  .icon-section-title:first-of-type { margin-top: 0; }
+  .icon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1px; background: var(--color-neutral-200); border: 1px solid var(--color-neutral-200); border-radius: 12px; overflow: hidden; margin-bottom: var(--spacing-lg); }
   .icon-cell { background: var(--color-neutral-0); padding: var(--spacing-lg); display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
   .icon-cell img { width: 24px; height: 24px; }
   .icon-name { font-size: 11.5px; font-weight: 600; color: var(--color-neutral-900); }
@@ -22,62 +24,116 @@
 <div class="demo-shell">
   <nav class="demo-sidebar">
     <a href="../../index.html" class="demo-sidebar-home">← Home</a>
-    <div class="demo-sidebar-group">
-      <div class="demo-sidebar-label">AI Social Media</div>
-      <a href="nav.html">Nav / Navigation</a>
-      <a href="topbar-stepper.html">Topbar + Stepper</a>
-      <a href="heading.html">Heading</a>
-      <a href="chat-panel.html">Chat Panel</a>
-      <a href="character-card.html">Character Card</a>
-      <a href="avatar.html">Avatar</a>
-      <a href="switch.html">Controls / Switch</a>
-      <a href="prompt-box.html">AI Prompt Box</a>
-      <a href="input.html">Input</a>
-      <a href="filter-chip.html">Controls / Filter / Toggle</a>
-      <a href="table-filter.html">Table / Filter</a>
-      <a href="setting-chip.html">Setting Chip</a>
-      <a href="actions-button.html">Actions / Button</a>
-      <a href="icons.html" class="active">Icons</a>
-      <a href="scene-tile.html">Scene Tile</a>
-      <a href="storyboard-card.html">Storyboard Card</a>
-      <a href="image-scene-card.html">Image Scene Card</a>
-      <a href="voice-accordion-row.html">Voice Accordion Row</a>
-      <a href="queue-panel.html">Queue Job Row / Panel</a>
-      <a href="video-summary-card.html">Video Summary Card</a>
-      <a href="destination-account.html">Destination Account</a>
-      <a href="date-picker.html">Date Picker</a>
-      <a href="carousel-card-block.html">Carousel Card Block</a>
+    <div class="demo-sidebar-group collapsed" data-group="brand">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>00 Brand</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="brand-logo.html">Brand / Logo</a>
+      </div>
     </div>
-    <div class="demo-sidebar-group">
-      <div class="demo-sidebar-label">Shared</div>
-      <a href="../shared/button.html">Button</a>
-      <a href="../shared/modal-confirm.html">Modal / Confirm</a>
-      <a href="../shared/modal-form.html">Modal / Form</a>
-      <a href="../shared/modal-success.html">Modal / Success</a>
+    <div class="demo-sidebar-group" data-group="icons">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>01 Icons</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="icons.html" class="active">Icons</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="actions">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>02 Actions</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="actions-button.html">Actions / Button</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="inputs">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>03 Inputs & Controls</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="controls-field-ai-assisted-text.html">Controls / Field / AI assisted text</a>
+        <a href="controls-field.html">Controls / Field</a>
+        <a href="controls-filter-select.html">Controls / Filter / Select</a>
+        <a href="controls-filter-toggle.html">Controls / Filter / Toggle</a>
+        <a href="controls-menu.html">Menu / Context Menu / Size Dropdown</a>
+        <a href="controls-misc.html">Controls — Icon Action, Popover, Carousel Arrow, Scrollbar, Segmented Control</a>
+        <a href="controls-multi-select.html">Controls / Multi Select</a>
+        <a href="controls-option-card.html">Controls / Option Card</a>
+        <a href="controls-search-field.html">Controls / Search Field</a>
+        <a href="controls-social-profile-row.html">Controls / Social profile row</a>
+        <a href="controls-toggles.html">Controls / Toggles</a>
+        <a href="date-picker.html">Date Picker</a>
+        <a href="duration-chip.html">Controls / Duration Chip</a>
+        <a href="filter-chip.html">Controls / Filter / Toggle</a>
+        <a href="input-login.html">Input / Login</a>
+        <a href="input.html">Input</a>
+        <a href="segment-chip.html">Segment Chip</a>
+        <a href="setting-chip.html">Setting Chip</a>
+        <a href="switch.html">Controls / Switch</a>
+        <a href="table-filter.html">Table / Filter</a>
+        <a href="toggle-chip.html">Controls / Toggle Chip</a>
+        <a href="uploads-file-badge.html">Uploads / File Badge / Source Row</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="navigation">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>04 Navigation</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="nav.html">Nav / Navigation</a>
+        <a href="topbar-stepper.html">Topbar + Stepper</a>
+        <a href="avatar.html">Avatar</a>
+        <a href="w-action-bar.html">W:ActionBar</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="ai-assistant">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>AI Assistant</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="chat-panel.html">Chat Panel</a>
+        <a href="prompt-box.html">AI Prompt Box</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="editor">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Editor</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="heading.html">Heading</a>
+        <a href="image-scene-card.html">Image Scene Card</a>
+        <a href="queue-panel.html">Queue Job Row / Queue Panel</a>
+        <a href="scene-tile.html">Scene Tile</a>
+        <a href="storyboard-card.html">Storyboard Card</a>
+        <a href="video-summary-card.html">Video Summary Card</a>
+        <a href="voice-accordion-row.html">Voice Accordion Row</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="product-selectors">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Product Selectors</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="character-card.html">Character Card</a>
+        <a href="destination-account.html">Destination Account</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="data-display">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Data Display</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="carousel-card-block.html">Carousel Card Block</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="feedback">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Feedback</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="publish-social-modal.html">Publish to Social Modal</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="shared">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Shared</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="../shared/button.html">Button</a>
+        <a href="../shared/modal-confirm.html">Modal / Confirm</a>
+        <a href="../shared/modal-form.html">Modal / Form</a>
+        <a href="../shared/modal-success.html">Modal / Success</a>
+      </div>
     </div>
   </nav>
   <main class="demo-main">
   <h1>Icons</h1>
-  <p class="demo-note">Figma's "01 Icons" library (3191:30848) has 130+ icons across 20 categories. This is the first batch — just the ones needed to replace emoji/hand-drawn glyphs already used across the generate flows. Each is exported as-is from Figma (baked-in color, not currentColor), so a spot that needs the icon to recolor on state still needs its own treatment.</p>
+  <p class="demo-note">Figma's "01 Icons" library (3191:30848) — the full 151-icon set across 20 categories, downloaded and organized to match Figma's own "icon library — by category" grouping. Each is exported as-is from Figma (baked-in color, not currentColor), so a spot that needs the icon to recolor on state still needs its own treatment. A handful of the earliest additions also carry the emoji/hand-drawn glyph they replaced, from before this page covered the full set.</p>
+
+  <h2 class="icon-section-title">ai</h2>
   <div class="icon-grid">
-    <div class="icon-cell"><img src="icons/spec-duration.svg" alt=""><span class="icon-name">spec / duration</span><span class="icon-replaces">⏱</span></div>
-    <div class="icon-cell"><img src="icons/spec-versions.svg" alt=""><span class="icon-name">spec / versions</span><span class="icon-replaces">🔢 (layers glyph)</span></div>
-    <div class="icon-cell"><img src="icons/chevron-down.svg" alt=""><span class="icon-name">ui / chevron-down</span><span class="icon-replaces">▾ ⌄</span></div>
-    <div class="icon-cell"><img src="icons/back.svg" alt=""><span class="icon-name">ui / back</span><span class="icon-replaces">← (rotate 180° for →)</span></div>
-    <div class="icon-cell"><img src="icons/arrow-up.svg" alt=""><span class="icon-name">ui / arrow-up</span><span class="icon-replaces">↑ (chat send)</span></div>
-    <div class="icon-cell"><img src="icons/download.svg" alt=""><span class="icon-name">ui / download</span><span class="icon-replaces">⬇</span></div>
-    <div class="icon-cell"><img src="icons/close-x.svg" alt=""><span class="icon-name">ui / close (x glyph)</span><span class="icon-replaces">✕</span></div>
-    <div class="icon-cell"><img src="icons/chat.svg" alt=""><span class="icon-name">ui / chat</span><span class="icon-replaces">💬</span></div>
-    <div class="icon-cell"><img src="icons/check.svg" alt=""><span class="icon-name">check</span><span class="icon-replaces">✓</span></div>
-    <div class="icon-cell"><img src="icons/attach.svg" alt=""><span class="icon-name">edit / attach</span><span class="icon-replaces">📎</span></div>
-    <div class="icon-cell"><img src="icons/edit-pencil.svg" alt=""><span class="icon-name">edit / pencil</span><span class="icon-replaces">✏️ ✎</span></div>
-    <div class="icon-cell"><img src="icons/refresh-ccw.svg" alt=""><span class="icon-name">refresh-ccw</span><span class="icon-replaces">↻ 🔁</span></div>
-    <div class="icon-cell"><img src="icons/zap.svg" alt=""><span class="icon-name">zap</span><span class="icon-replaces">⚡ (credit cost)</span></div>
-    <div class="icon-cell"><img src="icons/alert-sm.svg" alt=""><span class="icon-name">alert-sm</span><span class="icon-replaces">⚠️</span></div>
-    <div class="icon-cell"><img src="icons/audio-play.svg" alt=""><span class="icon-name">audio / play</span><span class="icon-replaces">▶</span></div>
-    <div class="icon-cell"><img src="icons/audio-pause.svg" alt=""><span class="icon-name">audio / pause</span><span class="icon-replaces">⏸</span></div>
-    <div class="icon-cell"><img src="icons/nav-voices.svg" alt=""><span class="icon-name">nav / voices</span><span class="icon-replaces">🎙 🔊</span></div>
-    <div class="icon-cell"><img src="icons/nav-characters.svg" alt=""><span class="icon-name">nav / characters</span><span class="icon-replaces">👤 🧑</span></div>
+    <div class="icon-cell"><img src="icons/ai-sparkle-outline-grey.svg" alt=""><span class="icon-name">ai / sparkle-outline-grey</span></div>
+    <div class="icon-cell"><img src="icons/sparkle-multi.svg" alt=""><span class="icon-name">ai / sparkle-multi</span></div>
     <div class="icon-cell">
       <div style="position:relative; width:24px; height:24px;">
         <img src="icons/sparkle-single-a.svg" alt="" style="position:absolute; inset:0; width:100%; height:100%;">
@@ -85,8 +141,237 @@
       </div>
       <span class="icon-name">ai / sparkle-single</span><span class="icon-replaces">✨</span>
     </div>
+    <div class="icon-cell"><img src="icons/ai-sparkle-outline-color.svg" alt=""><span class="icon-name">ai / sparkle-outline-color</span></div>
+    <div class="icon-cell"><img src="icons/ai-refine.svg" alt=""><span class="icon-name">ai / refine</span></div>
+  </div>
+
+  <h2 class="icon-section-title">arrange</h2>
+  <div class="icon-grid">
+    <div class="icon-cell"><img src="icons/arrange-arrange.svg" alt=""><span class="icon-name">arrange / arrange</span></div>
+    <div class="icon-cell"><img src="icons/arrange-align.svg" alt=""><span class="icon-name">arrange / align</span></div>
+  </div>
+
+  <h2 class="icon-section-title">audio</h2>
+  <div class="icon-grid">
+    <div class="icon-cell"><img src="icons/audio-play.svg" alt=""><span class="icon-name">audio / play</span><span class="icon-replaces">▶</span></div>
+    <div class="icon-cell"><img src="icons/audio-volume-off.svg" alt=""><span class="icon-name">audio / volume-off</span></div>
+    <div class="icon-cell"><img src="icons/audio-pause.svg" alt=""><span class="icon-name">audio / pause</span><span class="icon-replaces">⏸</span></div>
+  </div>
+
+  <h2 class="icon-section-title">color</h2>
+  <div class="icon-grid">
+    <div class="icon-cell"><img src="icons/color-palette.svg" alt=""><span class="icon-name">color / palette</span></div>
+    <div class="icon-cell"><img src="icons/color-swatch-book.svg" alt=""><span class="icon-name">color / swatch-book</span></div>
+    <div class="icon-cell"><img src="icons/color-droplet.svg" alt=""><span class="icon-name">color / droplet</span></div>
+    <div class="icon-cell"><img src="icons/color-droplets.svg" alt=""><span class="icon-name">color / droplets</span></div>
+    <div class="icon-cell"><img src="icons/color-blend.svg" alt=""><span class="icon-name">color / blend</span></div>
+    <div class="icon-cell"><img src="icons/color-pipette.svg" alt=""><span class="icon-name">color / pipette</span></div>
+  </div>
+
+  <h2 class="icon-section-title">content</h2>
+  <div class="icon-grid">
+    <div class="icon-cell"><img src="icons/content-reel.svg" alt=""><span class="icon-name">content / reel</span></div>
+    <div class="icon-cell"><img src="icons/content-bl-reel.svg" alt=""><span class="icon-name">content / bl / reel</span></div>
+    <div class="icon-cell"><img src="icons/content-story.svg" alt=""><span class="icon-name">content / story</span></div>
+    <div class="icon-cell"><img src="icons/content-image.svg" alt=""><span class="icon-name">content / image</span></div>
+    <div class="icon-cell"><img src="icons/content-carousel.svg" alt=""><span class="icon-name">content / carousel</span></div>
+    <div class="icon-cell"><img src="icons/content-image-plus.svg" alt=""><span class="icon-name">content / image-plus</span></div>
+  </div>
+
+  <h2 class="icon-section-title">data</h2>
+  <div class="icon-grid">
+    <div class="icon-cell"><img src="icons/data-shield-check.svg" alt=""><span class="icon-name">data / shield-check</span></div>
+    <div class="icon-cell"><img src="icons/data-chart-column-big.svg" alt=""><span class="icon-name">data / chart-column-big</span></div>
+    <div class="icon-cell"><img src="icons/data-trending-up.svg" alt=""><span class="icon-name">data / trending-up</span></div>
+  </div>
+
+  <h2 class="icon-section-title">edit</h2>
+  <div class="icon-grid">
+    <div class="icon-cell"><img src="icons/edit-copy-style.svg" alt=""><span class="icon-name">edit / copy-style</span></div>
+    <div class="icon-cell"><img src="icons/edit-duplicate.svg" alt=""><span class="icon-name">edit / duplicate</span></div>
+    <div class="icon-cell"><img src="icons/edit-duplicate-2.svg" alt=""><span class="icon-name">edit / duplicate-2</span></div>
+    <div class="icon-cell"><img src="icons/edit-lock.svg" alt=""><span class="icon-name">edit / lock</span></div>
+    <div class="icon-cell"><img src="icons/edit-lock-open.svg" alt=""><span class="icon-name">edit / lock-open</span></div>
+    <div class="icon-cell"><img src="icons/edit-delete.svg" alt=""><span class="icon-name">edit / delete</span></div>
+    <div class="icon-cell"><img src="icons/edit-edit.svg" alt=""><span class="icon-name">edit / edit</span></div>
+    <div class="icon-cell"><img src="icons/edit-trash.svg" alt=""><span class="icon-name">edit / trash</span></div>
+    <div class="icon-cell"><img src="icons/attach.svg" alt=""><span class="icon-name">edit / attach</span><span class="icon-replaces">📎</span></div>
+    <div class="icon-cell"><img src="icons/edit-pencil.svg" alt=""><span class="icon-name">edit / pencil</span><span class="icon-replaces">✏️ ✎</span></div>
+  </div>
+
+  <h2 class="icon-section-title">editing tool bar</h2>
+  <div class="icon-grid">
+    <div class="icon-cell"><img src="icons/toolbar-elements.svg" alt=""><span class="icon-name">editing tool bar / elements</span></div>
+    <div class="icon-cell"><img src="icons/toolbar-text.svg" alt=""><span class="icon-name">editing tool bar / text</span></div>
+    <div class="icon-cell"><img src="icons/toolbar-uploads.svg" alt=""><span class="icon-name">editing tool bar / uploads</span></div>
+    <div class="icon-cell"><img src="icons/toolbar-brand.svg" alt=""><span class="icon-name">editing tool bar / brand</span></div>
+    <div class="icon-cell"><img src="icons/toolbar-type6.svg" alt=""><span class="icon-name">editing tool bar / type6</span></div>
+    <div class="icon-cell"><img src="icons/toolbar-audio.svg" alt=""><span class="icon-name">editing tool bar / audio</span></div>
+  </div>
+
+  <h2 class="icon-section-title">flip</h2>
+  <div class="icon-grid">
+    <div class="icon-cell"><img src="icons/flip-horizontal.svg" alt=""><span class="icon-name">flip / horizontal</span></div>
+    <div class="icon-cell"><img src="icons/flip-vertical.svg" alt=""><span class="icon-name">flip / vertical</span></div>
+  </div>
+
+  <h2 class="icon-section-title">format</h2>
+  <div class="icon-grid">
+    <div class="icon-cell"><img src="icons/format-bold.svg" alt=""><span class="icon-name">format / bold</span></div>
+    <div class="icon-cell"><img src="icons/format-italic.svg" alt=""><span class="icon-name">format / italic</span></div>
+    <div class="icon-cell"><img src="icons/format-underline.svg" alt=""><span class="icon-name">format / underline</span></div>
+    <div class="icon-cell"><img src="icons/format-strikethrough.svg" alt=""><span class="icon-name">format / strikethrough</span></div>
+    <div class="icon-cell"><img src="icons/format-case-upper.svg" alt=""><span class="icon-name">format / case-upper</span></div>
+    <div class="icon-cell"><img src="icons/format-alignleft.svg" alt=""><span class="icon-name">format / alignleft</span></div>
+    <div class="icon-cell"><img src="icons/format-aligncenter.svg" alt=""><span class="icon-name">format / aligncenter</span></div>
+    <div class="icon-cell"><img src="icons/format-alignright.svg" alt=""><span class="icon-name">format / alignright</span></div>
+    <div class="icon-cell"><img src="icons/format-align-start-vertical.svg" alt=""><span class="icon-name">format / align-start-vertical</span></div>
+    <div class="icon-cell"><img src="icons/format-align-start-horizontal.svg" alt=""><span class="icon-name">format / align-start-horizontal</span></div>
+    <div class="icon-cell"><img src="icons/format-align-center-vertical.svg" alt=""><span class="icon-name">format / align-center-vertical</span></div>
+    <div class="icon-cell"><img src="icons/format-align-center-horizontal.svg" alt=""><span class="icon-name">format / align-center-horizontal</span></div>
+    <div class="icon-cell"><img src="icons/format-align-end-vertical.svg" alt=""><span class="icon-name">format / align-end-vertical</span></div>
+    <div class="icon-cell"><img src="icons/format-align-end-horizontal.svg" alt=""><span class="icon-name">format / align-end-horizontal</span></div>
+  </div>
+
+  <h2 class="icon-section-title">layer</h2>
+  <div class="icon-grid">
+    <div class="icon-cell"><img src="icons/layer-text.svg" alt=""><span class="icon-name">layer / text</span></div>
+    <div class="icon-cell"><img src="icons/layer-image.svg" alt=""><span class="icon-name">layer / image</span></div>
+    <div class="icon-cell"><img src="icons/layer-button.svg" alt=""><span class="icon-name">layer / button</span></div>
+    <div class="icon-cell"><img src="icons/layer-grip.svg" alt=""><span class="icon-name">layer / grip</span></div>
+    <div class="icon-cell"><img src="icons/layer-up.svg" alt=""><span class="icon-name">layer / up</span></div>
+    <div class="icon-cell"><img src="icons/layer-down.svg" alt=""><span class="icon-name">layer / down</span></div>
+    <div class="icon-cell"><img src="icons/layer-move-up.svg" alt=""><span class="icon-name">layer-move-up</span></div>
+    <div class="icon-cell"><img src="icons/layer-move-down.svg" alt=""><span class="icon-name">layer-move-down</span></div>
+  </div>
+
+  <h2 class="icon-section-title">menu</h2>
+  <div class="icon-grid">
+    <div class="icon-cell"><img src="icons/menu-text.svg" alt=""><span class="icon-name">menu / text</span></div>
+    <div class="icon-cell"><img src="icons/menu-image.svg" alt=""><span class="icon-name">menu / image</span></div>
+    <div class="icon-cell"><img src="icons/menu-sticker.svg" alt=""><span class="icon-name">menu / sticker</span></div>
+    <div class="icon-cell"><img src="icons/menu-shape.svg" alt=""><span class="icon-name">menu / shape</span></div>
+    <div class="icon-cell"><img src="icons/menu-upload.svg" alt=""><span class="icon-name">menu / upload</span></div>
+  </div>
+
+  <h2 class="icon-section-title">nav</h2>
+  <div class="icon-grid">
+    <div class="icon-cell"><img src="icons/nav-home.svg" alt=""><span class="icon-name">nav / home</span></div>
+    <div class="icon-cell"><img src="icons/nav-workspace-03.svg" alt=""><span class="icon-name">nav / workspace-03</span></div>
+    <div class="icon-cell"><img src="icons/nav-library.svg" alt=""><span class="icon-name">nav / library</span></div>
+    <div class="icon-cell"><img src="icons/nav-folder-closed.svg" alt=""><span class="icon-name">nav / folder-closed</span></div>
+    <div class="icon-cell"><img src="icons/nav-analytics.svg" alt=""><span class="icon-name">nav / analytics</span></div>
+    <div class="icon-cell"><img src="icons/nav-schedule.svg" alt=""><span class="icon-name">nav / schedule</span></div>
+    <div class="icon-cell"><img src="icons/nav-audio.svg" alt=""><span class="icon-name">nav / audio</span></div>
+    <div class="icon-cell"><img src="icons/nav-voices.svg" alt=""><span class="icon-name">nav / voices</span><span class="icon-replaces">🎙 🔊</span></div>
+    <div class="icon-cell"><img src="icons/nav-characters.svg" alt=""><span class="icon-name">nav / characters</span><span class="icon-replaces">👤 🧑</span></div>
+    <div class="icon-cell"><img src="icons/nav-billing.svg" alt=""><span class="icon-name">nav / billing</span></div>
+    <div class="icon-cell"><img src="icons/nav-settings.svg" alt=""><span class="icon-name">nav / settings</span></div>
+    <div class="icon-cell"><img src="icons/nav-admin.svg" alt=""><span class="icon-name">nav / admin</span></div>
+    <div class="icon-cell"><img src="icons/nav-bell.svg" alt=""><span class="icon-name">nav / bell</span></div>
+    <div class="icon-cell"><img src="icons/nav-logout.svg" alt=""><span class="icon-name">nav / logout</span></div>
+  </div>
+
+  <h2 class="icon-section-title">pagebar</h2>
+  <div class="icon-grid">
+    <div class="icon-cell"><img src="icons/pagebar-grid.svg" alt=""><span class="icon-name">pagebar / grid</span></div>
+    <div class="icon-cell"><img src="icons/pagebar-target.svg" alt=""><span class="icon-name">pagebar / target</span></div>
+    <div class="icon-cell"><img src="icons/pagebar-minus.svg" alt=""><span class="icon-name">pagebar / minus</span></div>
+    <div class="icon-cell"><img src="icons/pagebar-plus.svg" alt=""><span class="icon-name">pagebar / plus</span></div>
+    <div class="icon-cell"><img src="icons/pagebar-layer.svg" alt=""><span class="icon-name">pagebar / layer</span></div>
+    <div class="icon-cell"><img src="icons/pagebar-new-folder.svg" alt=""><span class="icon-name">pagebar / new-folder</span></div>
+  </div>
+
+  <h2 class="icon-section-title">panel</h2>
+  <div class="icon-grid">
+    <div class="icon-cell"><img src="icons/panel-cta.svg" alt=""><span class="icon-name">panel / cta</span></div>
+    <div class="icon-cell"><img src="icons/panel-upload.svg" alt=""><span class="icon-name">panel / upload</span></div>
+    <div class="icon-cell"><img src="icons/panel-brand.svg" alt=""><span class="icon-name">panel / brand</span></div>
+    <div class="icon-cell"><img src="icons/panel-pen.svg" alt=""><span class="icon-name">panel / pen</span></div>
+    <div class="icon-cell"><img src="icons/panel-duplicate.svg" alt=""><span class="icon-name">panel / duplicate</span></div>
+    <div class="icon-cell"><img src="icons/panel-swap.svg" alt=""><span class="icon-name">panel / swap</span></div>
+    <div class="icon-cell"><img src="icons/panel-close.svg" alt=""><span class="icon-name">panel / close</span></div>
+    <div class="icon-cell"><img src="icons/panel-check.svg" alt=""><span class="icon-name">panel / check</span></div>
+  </div>
+
+  <h2 class="icon-section-title">social</h2>
+  <div class="icon-grid">
+    <div class="icon-cell"><img src="icons/social-instagram.svg" alt=""><span class="icon-name">social / instagram</span></div>
+    <div class="icon-cell"><img src="icons/social-tiktok.svg" alt=""><span class="icon-name">social / tiktok</span></div>
+    <div class="icon-cell"><img src="icons/social-facebook.svg" alt=""><span class="icon-name">social / facebook</span></div>
+    <div class="icon-cell"><img src="icons/social-youtube.svg" alt=""><span class="icon-name">social / youtube</span></div>
+    <div class="icon-cell"><img src="icons/social-linkedin.svg" alt=""><span class="icon-name">social / linkedin</span></div>
+    <div class="icon-cell"><img src="icons/social-meta.svg" alt=""><span class="icon-name">social / meta</span></div>
+  </div>
+
+  <h2 class="icon-section-title">spec</h2>
+  <div class="icon-grid">
+    <div class="icon-cell"><img src="icons/spec-duration.svg" alt=""><span class="icon-name">spec / duration</span><span class="icon-replaces">⏱</span></div>
+    <div class="icon-cell"><img src="icons/spec-versions.svg" alt=""><span class="icon-name">spec / versions</span><span class="icon-replaces">🔢 (layers glyph)</span></div>
+    <div class="icon-cell"><img src="icons/spec-9-16.svg" alt=""><span class="icon-name">spec / 9-16</span></div>
+    <div class="icon-cell"><img src="icons/spec-1-1.svg" alt=""><span class="icon-name">spec / 1-1</span></div>
+    <div class="icon-cell"><img src="icons/spec-4-5.svg" alt=""><span class="icon-name">spec / 4-5</span></div>
+  </div>
+
+  <h2 class="icon-section-title">transition</h2>
+  <div class="icon-grid">
+    <div class="icon-cell"><img src="icons/transition-fade.svg" alt=""><span class="icon-name">transition / fade</span></div>
+    <div class="icon-cell"><img src="icons/transition-dissolve.svg" alt=""><span class="icon-name">transition / dissolve</span></div>
+  </div>
+
+  <h2 class="icon-section-title">ui</h2>
+  <div class="icon-grid">
+    <div class="icon-cell"><img src="icons/chevron-down.svg" alt=""><span class="icon-name">ui / chevron-down</span><span class="icon-replaces">▾ ⌄</span></div>
+    <div class="icon-cell"><img src="icons/chevron-up.svg" alt=""><span class="icon-name">ui / chevron-up</span></div>
+    <div class="icon-cell"><img src="icons/back.svg" alt=""><span class="icon-name">ui / back</span><span class="icon-replaces">← (rotate 180° for →)</span></div>
+    <div class="icon-cell"><img src="icons/arrow-up.svg" alt=""><span class="icon-name">ui / arrow-up</span><span class="icon-replaces">↑ (chat send)</span></div>
+    <div class="icon-cell"><img src="icons/ui-arrow-down.svg" alt=""><span class="icon-name">ui / arrow-down</span></div>
+    <div class="icon-cell"><img src="icons/download.svg" alt=""><span class="icon-name">ui / download</span><span class="icon-replaces">⬇</span></div>
+    <div class="icon-cell"><img src="icons/close-x.svg" alt=""><span class="icon-name">ui / close (x glyph)</span><span class="icon-replaces">✕</span></div>
+    <div class="icon-cell"><img src="icons/chat.svg" alt=""><span class="icon-name">ui / chat</span><span class="icon-replaces">💬</span></div>
+    <div class="icon-cell"><img src="icons/check.svg" alt=""><span class="icon-name">check</span><span class="icon-replaces">✓</span></div>
+    <div class="icon-cell"><img src="icons/ui-undo.svg" alt=""><span class="icon-name">ui / undo</span></div>
+    <div class="icon-cell"><img src="icons/ui-redo.svg" alt=""><span class="icon-name">ui / redo</span></div>
+    <div class="icon-cell"><img src="icons/ui-panel.svg" alt=""><span class="icon-name">ui / panel</span></div>
+    <div class="icon-cell"><img src="icons/ui-search.svg" alt=""><span class="icon-name">ui / search</span></div>
+    <div class="icon-cell"><img src="icons/ui-cursor.svg" alt=""><span class="icon-name">ui / cursor</span></div>
+    <div class="icon-cell"><img src="icons/ui-spinner.svg" alt=""><span class="icon-name">ui / spinner</span></div>
+    <div class="icon-cell"><img src="icons/ui-ellipsis.svg" alt=""><span class="icon-name">ui / ellipsis</span></div>
+    <div class="icon-cell"><img src="icons/ui-layout.svg" alt=""><span class="icon-name">ui / layout</span></div>
+    <div class="icon-cell"><img src="icons/ui-layers-toggle.svg" alt=""><span class="icon-name">ui / layers-toggle</span></div>
+    <div class="icon-cell"><img src="icons/ui-corner-up-left.svg" alt=""><span class="icon-name">ui / corner-up-left</span></div>
+    <div class="icon-cell"><img src="icons/refresh-ccw.svg" alt=""><span class="icon-name">refresh-ccw</span><span class="icon-replaces">↻ 🔁</span></div>
+    <div class="icon-cell"><img src="icons/zap.svg" alt=""><span class="icon-name">zap</span><span class="icon-replaces">⚡ (credit cost)</span></div>
+    <div class="icon-cell"><img src="icons/caret-down-filled.svg" alt=""><span class="icon-name">ic / caret-down (filled)</span></div>
+    <div class="icon-cell"><img src="icons/crop.svg" alt=""><span class="icon-name">crop</span></div>
+    <div class="icon-cell"><img src="icons/arrow-down-up.svg" alt=""><span class="icon-name">arrow-down-up</span></div>
+    <div class="icon-cell"><img src="icons/move-up.svg" alt=""><span class="icon-name">move-up</span></div>
+    <div class="icon-cell"><img src="icons/move-down.svg" alt=""><span class="icon-name">move-down</span></div>
+    <div class="icon-cell"><img src="icons/scan-square.svg" alt=""><span class="icon-name">scan-square</span></div>
+    <div class="icon-cell"><img src="icons/list-chevrons-up-down.svg" alt=""><span class="icon-name">list-chevrons-up-down</span></div>
+    <div class="icon-cell"><img src="icons/opacity.svg" alt=""><span class="icon-name">opacity</span></div>
+    <div class="icon-cell"><img src="icons/rotate-ccw.svg" alt=""><span class="icon-name">rotate-ccw</span></div>
+    <div class="icon-cell"><img src="icons/arrow-up-left.svg" alt=""><span class="icon-name">arrow-up-left</span></div>
+    <div class="icon-cell"><img src="icons/circle-check.svg" alt=""><span class="icon-name">circle-check</span></div>
+    <div class="icon-cell"><img src="icons/arrow-down-wide-narrow.svg" alt=""><span class="icon-name">arrow-down-wide-narrow</span></div>
+    <div class="icon-cell"><img src="icons/maximize.svg" alt=""><span class="icon-name">maximize</span></div>
+    <div class="icon-cell"><img src="icons/volume-2.svg" alt=""><span class="icon-name">volume-2</span></div>
+    <div class="icon-cell"><img src="icons/circle-user-round.svg" alt=""><span class="icon-name">circle-user-round</span></div>
+    <div class="icon-cell"><img src="icons/triangle-alert.svg" alt=""><span class="icon-name">triangle-alert</span></div>
+  </div>
+
+  <h2 class="icon-section-title">view</h2>
+  <div class="icon-grid">
+    <div class="icon-cell"><img src="icons/view-layout-list.svg" alt=""><span class="icon-name">view / layout-list</span></div>
+    <div class="icon-cell"><img src="icons/view-grid-2x2.svg" alt=""><span class="icon-name">view / grid-2x2</span></div>
+  </div>
+
+  <h2 class="icon-section-title">voice</h2>
+  <div class="icon-grid">
+    <div class="icon-cell"><img src="icons/voice-clone.svg" alt=""><span class="icon-name">voice / clone</span></div>
   </div>
   </main>
 </div>
+<script src="../demo-nav.js"></script>
 </body>
 </html>
