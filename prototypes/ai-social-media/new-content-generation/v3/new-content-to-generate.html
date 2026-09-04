@@ -28,6 +28,7 @@
 <link rel="stylesheet" href="../../../../components/ai-social-media/brand-kit-summary.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/image-scene-card.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/storyboard-card.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/destination-account.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/publish-social-modal.css">
 <!-- Playfair Display: only used live for the Draft screen's brand-kit font-preview tags (Formee
      Express's Heading face, matching brand-setup-kit-character-library.html's own import). -->
@@ -741,6 +742,15 @@
   .pub-dest-checkbox{width:16px; height:16px; flex-shrink:0; border-radius:var(--radius-sm); appearance:none; -webkit-appearance:none; margin:0; border:1px solid var(--color-neutral-400); background:var(--color-neutral-0); cursor:pointer; background-repeat:no-repeat; background-position:center;}
   .pub-dest-checkbox:checked{background-color:var(--color-brand-primary); border-color:var(--color-brand-primary); background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgdmlld0JveD0iMCAwIDEyIDEyIiBmaWxsPSJub25lIj48cGF0aCBkPSJNMTAgM0w0LjUgOC41TDIgNiIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPg==");}
   .pub-dest-checkbox:disabled{opacity:.5; background-color:var(--color-neutral-150); cursor:not-allowed;}
+
+  /* -- Simple destinations grid — Reel/Short, Story Video and Carousel don't offer a Post/
+     Story choice per platform (only Image does), so their Publish screen uses the plain
+     "Destination Account" component (components/ai-social-media/destination-account.css)
+     in a 2-column wrap instead of the Destination Table Row above (Figma: Reel/Short ·
+     Publish 7606-231428, Carousel · Publish 7606-231570 vs. Image post · Publish 7606-231641,
+     which keeps the table). -- */
+  .pub-dest-accounts-grid{display:flex; flex-wrap:wrap; gap:var(--spacing-md);}
+  .pub-dest-accounts-grid .destination-account{width:calc(50% - 6px);}
 
   /* -- When / schedule -- */
   .pub-when-options{display:flex; flex-direction:column; gap:12px;}
@@ -6294,10 +6304,26 @@ function getCaptionForPlatform(key){
 // with a Post/Story column per surface the current content type actually offers (see
 // getDestinationSurfaces()). Reel/Short and Carousel render a single "Post" column; Story
 // Video renders a single "Story" column — same markup either way, just fewer <th>/cells.
+// Image is the only content type that offers a real Post/Story choice per platform, so it
+// alone keeps the Destination Table Row layout; Reel/Short, Story Video and Carousel each
+// only ever publish one fixed way and use the plain Destination Account component instead
+// (see the two render*() functions below, and the CSS comment above .pub-dest-accounts-grid).
 function renderPublishDestinations(){
   const el = document.getElementById('pubDestinations');
   if(!el) return;
   ensurePlatformFormatDefaults();
+  if(window.__contentType === 'image'){
+    el.classList.remove('pub-dest-accounts-grid');
+    el.classList.add('pub-dest-table');
+    renderPublishDestinationsTable(el);
+  } else {
+    el.classList.remove('pub-dest-table');
+    el.classList.add('pub-dest-accounts-grid');
+    renderPublishDestinationsSimple(el);
+  }
+}
+
+function renderPublishDestinationsTable(el){
   const surfaces = getDestinationSurfaces();
   const gap = '<div class="pub-dest-gap"></div>';
   // A flexible gap between every slot (meta, each surface column, status) — not just one
@@ -6336,6 +6362,35 @@ function renderPublishDestinations(){
   }).join('');
 
   el.innerHTML = `<div class="pub-dest-table-header"><div class="pub-dest-meta"></div>${gap}${colHeads}${gap}<div class="pub-dest-status-col"></div></div>${rows}`;
+}
+
+// Reel/Short, Story Video, Carousel: a single fixed surface ('post' or 'story') per this
+// content type, so each platform only needs one checkbox — reuses the shared Destination
+// Account component (components/ai-social-media/destination-account.css) rather than a
+// one-column table.
+function renderPublishDestinationsSimple(el){
+  const surface = getDestinationSurfaces()[0];
+  el.innerHTML = PUBLISH_PLATFORMS.map(p => {
+    const connected = window.__platformConnections[p.key];
+    const checked = connected && window.__platformFormats[p.key][surface];
+    const checkbox = connected
+      ? `<span class="destination-checkbox${checked ? ' checked' : ''}" onclick="toggleDestinationFormat('${p.key}','${surface}'); renderPublishDestinations(); onDestinationToggle();">${checked ? '<img src="../../../../components/ai-social-media/icons/wh-check.svg" alt="">' : ''}</span>`
+      : `<span class="destination-checkbox disabled"></span>`;
+    const status = connected
+      ? `<span class="destination-account-status connected">Connected</span>`
+      : `<span class="destination-account-status not-connected">Not connected</span><button class="destination-account-connect-btn" type="button" onclick="connectPlatform('${p.key}')">Connect</button>`;
+    return `
+      <div class="destination-account ${connected ? 'connected' : 'not-connected'}">
+        <div class="destination-account-row">
+          ${checkbox}
+          <img class="destination-account-icon" src="${PUBLISH_PLATFORM_ICONS[p.key]}" alt="">
+          <span class="destination-account-name">${p.label}</span>
+          <span class="destination-account-spacer"></span>
+          ${status}
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
 function connectPlatform(key){
@@ -6948,7 +7003,8 @@ function reelGoToGenerate(){
 // Image/Carousel.
 function reelGoToDevelop(){
   const duration = window.__videoDuration || 16;
-  window.location.href = `../../editing/image-editing.html?mode=video&ratio=9:16&duration=${duration}`;
+  const story = window.__isStoryVideo ? '&story=1' : '';
+  window.location.href = `../../editing/image-editing.html?mode=video&ratio=9:16&duration=${duration}${story}`;
 }
 
 // Publish doesn't differ by content type (verified: the only content-type-specific bits
@@ -6958,6 +7014,31 @@ function goToPublish(){
   showView('publishView');
   setStep('stepEdit');
   populatePublishView();
+}
+
+// ---- Handoff back from image-editing.html (see goBackToStep() in that file) — its stepper's
+// "Brief & Style"/"Generate" labels and footer Publish button all redirect here with
+// ?view=brief|generate|publish&contentType=image|carousel|reel(&story=1). Restores the
+// matching content type/chip before routing, since image-editing.html is a separate page
+// load with no shared in-memory state. ----
+function initFromEditorHandoff(){
+  const params = new URLSearchParams(window.location.search);
+  const view = params.get('view');
+  if(!view) return false;
+  const type = params.get('contentType') || 'reel';
+  window.__isStoryVideo = params.get('story') === '1';
+  window.__contentType = type;
+  const chipType = window.__isStoryVideo ? 'story' : type;
+  const chip = document.querySelector(`#contentTypeToggle .seg-chip[data-type="${chipType}"]`);
+  if(chip){
+    document.querySelectorAll('#contentTypeToggle .seg-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+  }
+  applyContentType();
+  if(view === 'publish') goToPublish();
+  else if(view === 'generate') goToGenerate();
+  else goToBrief();
+  return true;
 }
 
 // ---- Brand mode (demo role-switch, bottom-right) — shared control, applies to both
@@ -7085,7 +7166,7 @@ imgSetDraftMode('overlay');
 carSetCharMode('with'); // matches the "With Character" chip that's active by default in the HTML
 setBrandMode('none');
 applyContentType();
-goToBrief();
+if(!initFromEditorHandoff()) goToBrief();
 
 // ---- Scale the whole 1920x1080 .app to fit the real browser window, preserving aspect
 // ratio — same technique as prototypes/ai-social-media/editing/image-editing.html, so this

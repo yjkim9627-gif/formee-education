@@ -75,6 +75,7 @@
   .nav-stepper__label--done { color: var(--color-neutral-500); }
   .nav-stepper__label--current { color: var(--color-neutral-900); }
   .nav-stepper__connector { width: 30px; height: 1px; background: var(--color-neutral-400); flex-shrink: 0; }
+  .nav-stepper__item--clickable { cursor: pointer; }
 
   .topbar__spacer { flex: 1; }
   .topbar__right { display: flex; align-items: center; gap: var(--spacing-sm); }
@@ -763,12 +764,12 @@
       </div>
 
       <nav class="nav-stepper">
-        <div class="nav-stepper__item">
+        <div class="nav-stepper__item nav-stepper__item--clickable" onclick="goBackToStep('brief')">
           <span class="nav-stepper__dot nav-stepper__dot--done"><img src="assets/screen-01-elements-panel/topbar/check.svg" alt="" /></span>
           <span class="nav-stepper__label nav-stepper__label--done">Brief &amp; Style</span>
         </div>
         <span class="nav-stepper__connector"></span>
-        <div class="nav-stepper__item">
+        <div class="nav-stepper__item nav-stepper__item--clickable" onclick="goBackToStep('generate')">
           <span class="nav-stepper__dot nav-stepper__dot--done"><img src="assets/screen-01-elements-panel/topbar/check.svg" alt="" /></span>
           <span class="nav-stepper__label nav-stepper__label--done">Generate</span>
         </div>
@@ -3998,7 +3999,7 @@
 
       <div class="ab-right">
         <button class="save-draft-btn">Save draft</button>
-        <button class="publish-btn">
+        <button class="publish-btn" onclick="goBackToStep('publish')">
           <span>Publish</span>
           <span class="icon" style="width:18px;height:18px">
             <span class="icon__frag" style="inset:37.5% 25% 37.5% 25%"><img src="assets/screen-01-elements-panel/actionbar/caret.svg" alt="" /></span>
@@ -7497,6 +7498,22 @@
       applyPageCount(mode === 'video' ? 1 : pages, ratio);
 
       if (mode === 'video') { initVideoTimelineMode(duration); }
+    }
+
+    // ---- Back-navigation to new-content-to-generate.html — the top stepper's "Brief & Style"/
+    // "Generate" labels and the footer Publish button all land here. This is a separate page
+    // load (no shared in-memory state), so the only context we can carry back is whatever came
+    // in on our own URL (?mode=&story=) from the original "Continue to editing" handoff;
+    // ?story=1 (set by reelGoToDevelop() when Story Video) disambiguates Reel/Short vs. Story
+    // Video, since both hand off here as mode=video. Opening this file directly with no
+    // handoff params at all falls back to Image, matching applyPosterRatio()/applyPageCount()'s
+    // own static-example default above.
+    function goBackToStep(view) {
+      var params = new URLSearchParams(window.location.search);
+      var mode = params.get('mode') || 'image';
+      var contentType = mode === 'video' ? 'reel' : mode;
+      var story = params.get('story') === '1' ? '&story=1' : '';
+      window.location.href = '../new-content-generation/v3/new-content-to-generate.html?view=' + view + '&contentType=' + contentType + story;
     }
 
     window.addEventListener('resize', fitScreenToViewport);
