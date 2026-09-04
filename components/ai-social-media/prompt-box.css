@@ -35,14 +35,6 @@
 .prompt-chip.clickable{cursor:pointer; transition:border-color .15s ease, background .15s ease;}
 .prompt-chip.clickable:hover{background:var(--color-neutral-50); border-color:var(--color-neutral-450);}
 .prompt-chip.clickable .chevron{font-size:9px; color:var(--color-neutral-500); margin-left:1px;}
-
-/* state: open — while this chip's popover is showing (Figma "focused" variant, node 2203:17800) */
-.prompt-chip.clickable.open{background:var(--color-neutral-150); border-color:var(--color-neutral-500); color:var(--color-neutral-900);}
-.prompt-chip.clickable.open .ratio-box-ic::after{border-color:var(--color-neutral-700);}
-.prompt-chip.clickable.open .chevron{color:var(--color-neutral-700);}
-
-/* state: inactive/disabled */
-.prompt-chip.disabled{background:var(--color-neutral-150); border-color:var(--color-neutral-400); color:var(--color-neutral-500); cursor:not-allowed;}
 .prompt-chip-wrap{position:relative;}
 
 /* ---------- Chip popover (aspect ratio / duration 등 설정 선택) ---------- */
