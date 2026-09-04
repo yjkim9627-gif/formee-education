@@ -2968,6 +2968,7 @@ function toggleBrandKit(){
   if(window.__brandMode !== 'set') return; // disabled state — nothing to toggle until brand is set up
   brandKitOn = !brandKitOn;
   document.getElementById('brandKitSwitch').classList.toggle('on', brandKitOn);
+  document.getElementById('brandKitSummary').style.display = brandKitOn ? 'flex' : 'none';
   updateVisualConceptPrompt();
 }
 function imgGoToBrandSetup(){
