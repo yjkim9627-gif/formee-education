@@ -1,0 +1,28 @@
+/* Generate / Preview Panel — shared component (components/ai-social-media/generate-preview-panel.html 참고)
+   Figma: FME_AI-Social-Media, "06 Data Display" (1124:10591) → "Generate / Preview Panel"
+   component set (6856:135729). A generated-asset thumbnail slot — Empty (nothing generated
+   yet) / Loading (spinner) / Result (the actual image, with a bottom scrim + label) — at two
+   sizes, lg (220×275, e.g. a single large preview) and sm (85×106, e.g. a grid of picks).
+   Result uses this library's usual neutral-gradient placeholder instead of a real stock
+   photo (see image-scene-card.css/character-card.css for the same convention). */
+
+.gen-preview-panel{
+  position:relative; box-sizing:border-box; border-radius:var(--radius-xl); overflow:hidden;
+  display:flex; align-items:center; justify-content:center;
+}
+.gen-preview-panel.lg{width:220px; height:275px;}
+.gen-preview-panel.sm{width:85px; height:106px;}
+
+/* state: Empty / Loading — flat neutral-100 tile with a centered glyph */
+.gen-preview-panel[data-state="empty"], .gen-preview-panel[data-state="loading"]{background:var(--color-neutral-100);}
+.gen-preview-panel img.glyph{display:block;}
+.gen-preview-panel.lg img.glyph{width:80px; height:80px;}
+.gen-preview-panel.sm img.glyph{width:28px; height:28px;}
+.gen-preview-panel[data-state="loading"] img.glyph{animation:gen-preview-spin 1s linear infinite;}
+@keyframes gen-preview-spin{to{transform:rotate(360deg);}}
+
+/* state: Result — full-bleed placeholder gradient + bottom scrim + label (lg only; sm is too
+   small to carry the label meaningfully, so it's just the thumbnail) */
+.gen-preview-panel[data-state="result"]{background:linear-gradient(129deg, var(--color-neutral-200) 14%, var(--color-neutral-150) 86%);}
+.gen-preview-panel-scrim{position:absolute; left:0; right:0; bottom:0; height:96px; background:linear-gradient(to bottom, rgba(11,20,40,0), rgba(11,20,40,.72)); pointer-events:none;}
+.gen-preview-panel-label{position:absolute; left:14px; right:14px; bottom:14px; font-family:var(--font-family-text); font-size:14px; font-weight:600; line-height:22px; color:var(--color-neutral-0); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}

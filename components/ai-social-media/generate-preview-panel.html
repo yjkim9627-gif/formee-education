@@ -2,16 +2,19 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
-<title>Avatar — Shared Component</title>
+<title>Generate Preview Panel — AI Social Media Component</title>
 <link rel="stylesheet" href="../../tokens/tokens.css" />
 <link rel="stylesheet" href="../demo-nav.css" />
-<link rel="stylesheet" href="avatar.css" />
+<link rel="stylesheet" href="generate-preview-panel.css" />
 <style>
   body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
   .demo-main { padding: var(--spacing-4xl); }
-  h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-3xl); }
-  .row { display: flex; align-items: center; gap: var(--spacing-2xl); }
-  .row div { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-sm); font-size: var(--font-size-text-xs); color: var(--color-neutral-700); }
+  h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-sm); }
+  .demo-note { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); max-width: 720px; margin: 0 0 var(--spacing-3xl); line-height: 1.6; }
+  .demo-row { display: flex; flex-direction: column; gap: var(--spacing-sm); margin-bottom: var(--spacing-3xl); }
+  .demo-label { font-size: var(--font-size-text-xs); color: var(--color-neutral-500); }
+  .demo-grid { display: flex; flex-wrap: wrap; gap: var(--spacing-2xl); align-items: flex-start; }
+  .demo-swatch { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-sm); }
 </style>
 </head>
 <body>
@@ -63,12 +66,12 @@
         <a href="uploads-file-badge.html">Uploads / File Badge / Source Row</a>
       </div>
     </div>
-    <div class="demo-sidebar-group" data-group="navigation">
+    <div class="demo-sidebar-group collapsed" data-group="navigation">
       <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>04 Navigation</span><span class="demo-sidebar-group-caret">▾</span></button>
       <div class="demo-sidebar-group-items">
         <a href="nav.html">Nav / Navigation</a>
         <a href="topbar-stepper.html">Topbar + Stepper</a>
-        <a href="avatar.html" class="active">Avatar</a>
+        <a href="avatar.html">Avatar</a>
         <a href="w-action-bar.html">W:ActionBar</a>
       </div>
     </div>
@@ -99,11 +102,11 @@
         <a href="destination-account.html">Destination Account</a>
       </div>
     </div>
-    <div class="demo-sidebar-group collapsed" data-group="data-display">
+    <div class="demo-sidebar-group" data-group="data-display">
       <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Data Display</span><span class="demo-sidebar-group-caret">▾</span></button>
       <div class="demo-sidebar-group-items">
         <a href="carousel-card-block.html">Carousel Card Block</a>
-        <a href="generate-preview-panel.html">Generate Preview Panel</a>
+        <a href="generate-preview-panel.html" class="active">Generate Preview Panel</a>
         <a href="post-status-chip.html">Post Status Chip</a>
       </div>
     </div>
@@ -124,12 +127,46 @@
     </div>
   </nav>
   <main class="demo-main">
-  <h1>Avatar</h1>
-  <div class="row">
-    <div><div class="ai-avatar sm">DV</div>sm — 20px, Type=Profile</div>
-    <div><div class="ai-avatar md">DV</div>md — 32px, Type=Profile</div>
-    <div><div class="ai-avatar sm type-image"><img src="icons/menu-image.svg" alt=""></div>sm — 20px, Type=Image</div>
-    <div><div class="ai-avatar md type-image"><img src="icons/menu-image.svg" alt=""></div>md — 32px, Type=Image</div>
+  <h1>Generate Preview Panel</h1>
+  <p class="demo-note">Figma: "06 Data Display" (1124:10591) → "Generate / Preview Panel" (6856:135729) — a generated-asset thumbnail slot: Empty (nothing generated yet) / Loading (spinner) / Result (the image, with a bottom scrim + label), at two sizes. Result uses a neutral-gradient placeholder instead of a real stock photo, matching image-scene-card.css/character-card.css elsewhere in this library.</p>
+
+  <div class="demo-row">
+    <span class="demo-label">Size = lg (220×275)</span>
+    <div class="demo-grid">
+      <div class="demo-swatch">
+        <div class="gen-preview-panel lg" data-state="empty"><img class="glyph" src="icons/content-image-empty-glyph.svg" alt=""></div>
+        <span>Empty</span>
+      </div>
+      <div class="demo-swatch">
+        <div class="gen-preview-panel lg" data-state="loading"><img class="glyph" src="icons/loader-circle.svg" alt=""></div>
+        <span>Loading</span>
+      </div>
+      <div class="demo-swatch">
+        <div class="gen-preview-panel lg" data-state="result">
+          <div class="gen-preview-panel-scrim"></div>
+          <span class="gen-preview-panel-label">Autumn Park</span>
+        </div>
+        <span>Result</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-row">
+    <span class="demo-label">Size = sm (85×106)</span>
+    <div class="demo-grid">
+      <div class="demo-swatch">
+        <div class="gen-preview-panel sm" data-state="empty"><img class="glyph" src="icons/content-image-empty-glyph.svg" alt=""></div>
+        <span>Empty</span>
+      </div>
+      <div class="demo-swatch">
+        <div class="gen-preview-panel sm" data-state="loading"><img class="glyph" src="icons/loader-circle.svg" alt=""></div>
+        <span>Loading</span>
+      </div>
+      <div class="demo-swatch">
+        <div class="gen-preview-panel sm" data-state="result"></div>
+        <span>Result</span>
+      </div>
+    </div>
   </div>
   </main>
 </div>
