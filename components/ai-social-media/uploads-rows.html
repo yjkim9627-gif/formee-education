@@ -2,16 +2,20 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
-<title>Avatar — Shared Component</title>
+<title>Uploads Panel Rows — AI Social Media Component</title>
 <link rel="stylesheet" href="../../tokens/tokens.css" />
 <link rel="stylesheet" href="../demo-nav.css" />
-<link rel="stylesheet" href="avatar.css" />
+<link rel="stylesheet" href="uploads-rows.css" />
 <style>
   body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
   .demo-main { padding: var(--spacing-4xl); }
-  h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-3xl); }
-  .row { display: flex; align-items: center; gap: var(--spacing-2xl); }
-  .row div { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-sm); font-size: var(--font-size-text-xs); color: var(--color-neutral-700); }
+  h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-sm); }
+  h2 { font-size: var(--font-size-text-md); font-weight: 700; color: var(--color-neutral-700); margin: var(--spacing-3xl) 0 var(--spacing-md); }
+  h2:first-of-type { margin-top: 0; }
+  .demo-note { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); max-width: 720px; margin: 0 0 var(--spacing-3xl); line-height: 1.6; }
+  .demo-sub { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); margin: 0 0 var(--spacing-lg); }
+  .demo-grid { display: flex; flex-wrap: wrap; gap: var(--spacing-2xl); align-items: flex-start; }
+  .demo-col { display: flex; flex-direction: column; gap: var(--spacing-md); }
 </style>
 </head>
 <body>
@@ -63,12 +67,12 @@
         <a href="uploads-file-badge.html">Uploads / File Badge / Source Row</a>
       </div>
     </div>
-    <div class="demo-sidebar-group" data-group="navigation">
+    <div class="demo-sidebar-group collapsed" data-group="navigation">
       <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>04 Navigation</span><span class="demo-sidebar-group-caret">▾</span></button>
       <div class="demo-sidebar-group-items">
         <a href="nav.html">Nav / Navigation</a>
         <a href="topbar-stepper.html">Topbar + Stepper</a>
-        <a href="avatar.html" class="active">Avatar</a>
+        <a href="avatar.html">Avatar</a>
         <a href="w-action-bar.html">W:ActionBar</a>
       </div>
     </div>
@@ -85,7 +89,7 @@
         <a href="upload-dropzone.html">Upload Dropzone / Dashed Upload Row</a>
       </div>
     </div>
-    <div class="demo-sidebar-group collapsed" data-group="editor">
+    <div class="demo-sidebar-group" data-group="editor">
       <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Editor</span><span class="demo-sidebar-group-caret">▾</span></button>
       <div class="demo-sidebar-group-items">
         <a href="editor-color-swatch.html">Editor / ContextBar Color Swatch</a>
@@ -97,7 +101,7 @@
         <a href="queue-panel.html">Queue Job Row / Queue Panel</a>
         <a href="scene-tile.html">Scene Tile</a>
         <a href="storyboard-card.html">Storyboard Card</a>
-        <a href="uploads-rows.html">Uploads Panel Rows</a>
+        <a href="uploads-rows.html" class="active">Uploads Panel Rows</a>
         <a href="video-summary-card.html">Video Summary Card</a>
         <a href="voice-accordion-row.html">Voice Accordion Row</a>
       </div>
@@ -135,12 +139,65 @@
     </div>
   </nav>
   <main class="demo-main">
-  <h1>Avatar</h1>
-  <div class="row">
-    <div><div class="ai-avatar sm">DV</div>sm — 20px, Type=Profile</div>
-    <div><div class="ai-avatar md">DV</div>md — 32px, Type=Profile</div>
-    <div><div class="ai-avatar sm type-image"><img src="icons/menu-image.svg" alt=""></div>sm — 20px, Type=Image</div>
-    <div><div class="ai-avatar md type-image"><img src="icons/menu-image.svg" alt=""></div>md — 32px, Type=Image</div>
+  <h1>Uploads Panel Rows</h1>
+  <p class="demo-note">Figma: "08 Editor" (1124:10672) — the folder/file list rows shown inside the Uploads side-panel, following on from the drag &amp; drop affordances already built in <a href="upload-dropzone.html">Upload Dropzone / Dashed Upload Row</a>.</p>
+
+  <h2>Uploads / Folder Row</h2>
+  <p class="demo-sub">Node 2575:71946 (Default) / 2575:71996 (Hover) / 2588:72216 (Rename).</p>
+  <div class="demo-grid">
+    <div class="demo-col">
+      <div class="uploads-folder-row">
+        <span class="uploads-folder-row-left">
+          <span class="uploads-folder-row-icon"><img src="icons/nav-folder-closed.svg" alt=""></span>
+          <span class="uploads-folder-row-title">Folder 01</span>
+        </span>
+        <button type="button" class="uploads-folder-row-action"><img src="icons/ui-ellipsis.svg" alt="More"></button>
+      </div>
+      <div class="uploads-folder-row hover">
+        <span class="uploads-folder-row-left">
+          <span class="uploads-folder-row-icon"><img src="icons/nav-folder-closed.svg" alt=""></span>
+          <span class="uploads-folder-row-title">Folder 01</span>
+        </span>
+        <button type="button" class="uploads-folder-row-action"><img src="icons/ui-ellipsis.svg" alt="More"></button>
+      </div>
+      <div class="uploads-folder-row rename">
+        <span class="uploads-folder-row-left">
+          <span class="uploads-folder-row-icon"><img src="icons/nav-folder-closed.svg" alt=""></span>
+          <span class="uploads-folder-row-title">Folder 01</span>
+        </span>
+        <button type="button" class="uploads-folder-row-action"><img src="icons/ui-ellipsis.svg" alt="More"></button>
+      </div>
+    </div>
+  </div>
+
+  <h2>Uploads / Folder Rename Field</h2>
+  <p class="demo-sub">Node 2598:65264 — the active-editing counterpart, shown near the row being renamed.</p>
+  <div class="demo-grid">
+    <div class="uploads-folder-rename-field">
+      <span class="uploads-folder-rename-field-row">
+        <span class="uploads-folder-rename-field-text">Brand Default</span>
+        <img src="icons/edit-pencil.svg" alt="Rename">
+      </span>
+      <span class="uploads-folder-rename-field-underline"></span>
+    </div>
+  </div>
+
+  <h2>Uploads / File Row</h2>
+  <p class="demo-sub">Node 3317:21984 — checkbox + thumbnail (a preview of the not-yet-built Editor / cell family) + filename/meta + optional action.</p>
+  <div class="demo-grid">
+    <div class="uploads-file-row">
+      <input type="checkbox" class="uploads-file-row-checkbox" aria-label="Select file">
+      <div class="editor-cell"><img src="icons/editor-cell-placeholder.svg" alt=""></div>
+      <div class="uploads-file-row-meta">
+        <span class="uploads-file-row-name">Filename.png</span>
+        <span class="uploads-file-row-sub">
+          <span>68x68px</span>
+          <span class="uploads-file-row-sub-dot"></span>
+          <span>210.2 KB</span>
+        </span>
+      </div>
+      <button type="button" class="uploads-file-row-action"><img src="icons/ui-ellipsis.svg" alt="More"></button>
+    </div>
   </div>
   </main>
 </div>

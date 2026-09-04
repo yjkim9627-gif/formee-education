@@ -1,0 +1,47 @@
+/* Uploads panel rows (components/ai-social-media/uploads-rows.html 참고)
+   Figma: FME_AI-Social-Media, "08 Editor" (1124:10672) — "업로드 패널" group: the folder/file
+   list rows shown inside the Uploads side-panel, following directly on from the drag & drop
+   affordances already built in upload-dropzone.css. */
+
+/* ---------- Uploads / Folder Row (2575:71946 Default / 2575:71996 Hover / 2588:72216 Rename) ---------- */
+.uploads-folder-row{box-sizing:border-box; width:284px; display:flex; align-items:center; justify-content:space-between; padding:12px; background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); cursor:pointer;}
+.uploads-folder-row:hover, .uploads-folder-row.hover{border-color:var(--color-neutral-500);}
+.uploads-folder-row.rename{background:var(--color-neutral-150); border-color:var(--color-neutral-500); cursor:default;}
+.uploads-folder-row-left{display:flex; align-items:center; gap:12px; height:24px;}
+.uploads-folder-row-icon{width:24px; height:24px; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+.uploads-folder-row-icon img{width:21px; height:21px; display:block;}
+.uploads-folder-row-title{font-family:var(--font-family-text); font-size:14px; font-weight:600; line-height:22px; color:var(--color-neutral-700); white-space:nowrap;}
+/* Rename state highlights the title as a text-selection (brand/primary-mid) rather than swapping
+   in a real input -- Figma's own instance for this state is still the static title text, just
+   painted with a selection-color background and darker (neutral/900) text. */
+.uploads-folder-row.rename .uploads-folder-row-title{background:var(--color-brand-primary-mid); color:var(--color-neutral-900);}
+.uploads-folder-row-action{width:24px; height:24px; display:flex; align-items:center; justify-content:center; flex-shrink:0; border:none; background:none; border-radius:var(--radius-md); cursor:pointer; padding:0;}
+.uploads-folder-row-action:hover{background:var(--color-neutral-100);}
+.uploads-folder-row-action img{width:16px; height:16px; display:block;}
+
+/* ---------- Uploads / Folder Rename Field (2598:65264) ----------
+   The active-editing counterpart to the Rename row above -- an inline text+pencil with an
+   underline, shown in a popover/tooltip near the row being renamed rather than inside it. */
+.uploads-folder-rename-field{display:inline-flex; flex-direction:column; align-items:flex-start; gap:2px;}
+.uploads-folder-rename-field-row{display:flex; align-items:flex-start; gap:var(--spacing-sm);}
+.uploads-folder-rename-field-text{font-family:var(--font-family-text); font-size:13px; font-weight:600; line-height:20px; color:var(--color-neutral-700); white-space:nowrap;}
+.uploads-folder-rename-field img{width:16px; height:16px; display:block; margin-top:2px; cursor:pointer;}
+.uploads-folder-rename-field-underline{width:100%; height:1px; background:var(--color-neutral-400);}
+
+/* ---------- Uploads / File Row (3317:21984) ----------
+   Its thumbnail reuses a single SM/Image/Default variant of the wider Editor / cell family
+   (2481:64631 / 2598:68625) -- .editor-cell here is a minimal preview of that not-yet-built
+   family, sized/styled to exactly this one instance; extend rather than duplicate when the full
+   Editor / cell group is built. */
+.editor-cell{box-sizing:border-box; width:68px; height:68px; display:flex; align-items:center; justify-content:center; padding:6px; background:var(--color-neutral-25); border:1px solid var(--color-neutral-400); border-radius:var(--radius-md); flex-shrink:0;}
+.editor-cell img{width:28px; height:28px; display:block;}
+
+.uploads-file-row{box-sizing:border-box; width:284px; display:flex; align-items:center; gap:var(--spacing-md);}
+.uploads-file-row-checkbox{width:16px; height:16px; box-sizing:border-box; background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-sm); flex-shrink:0; padding:0; cursor:pointer; appearance:none; -webkit-appearance:none;}
+.uploads-file-row-meta{flex:1 0 0; min-width:0; display:flex; flex-direction:column; gap:2px; justify-content:center;}
+.uploads-file-row-name{font-family:var(--font-family-text); font-size:13px; font-weight:600; line-height:20px; color:var(--color-neutral-700); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.uploads-file-row-sub{display:flex; align-items:center; gap:var(--spacing-sm);}
+.uploads-file-row-sub span{font-family:var(--font-family-text); font-size:12px; font-weight:500; line-height:18px; color:var(--color-neutral-500); white-space:nowrap;}
+.uploads-file-row-sub-dot{width:2px; height:2px; border-radius:999px; background:var(--color-neutral-500); flex-shrink:0;}
+.uploads-file-row-action{width:24px; height:24px; box-sizing:border-box; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-md); box-shadow:var(--shadow-cell-action); cursor:pointer; padding:0;}
+.uploads-file-row-action img{width:16px; height:16px; display:block;}
