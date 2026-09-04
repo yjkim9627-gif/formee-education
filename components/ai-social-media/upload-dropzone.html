@@ -2,15 +2,18 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
-<title>Table / Filter — Shared Component</title>
+<title>Upload Dropzone — AI Social Media Component</title>
 <link rel="stylesheet" href="../../tokens/tokens.css" />
 <link rel="stylesheet" href="../demo-nav.css" />
-<link rel="stylesheet" href="table-filter.css" />
+<link rel="stylesheet" href="upload-dropzone.css" />
 <style>
   body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
   .demo-main { padding: var(--spacing-4xl); }
-  h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-3xl); }
-  .row { display: flex; align-items: center; gap: var(--spacing-2xl); }
+  h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-sm); }
+  h2 { font-size: var(--font-size-text-md); font-weight: 700; color: var(--color-neutral-700); margin: var(--spacing-3xl) 0 var(--spacing-md); }
+  h2:first-of-type { margin-top: 0; }
+  .demo-note { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); max-width: 720px; margin: 0 0 var(--spacing-3xl); line-height: 1.6; }
+  .demo-grid { display: flex; flex-wrap: wrap; gap: var(--spacing-2xl); align-items: flex-start; }
 </style>
 </head>
 <body>
@@ -35,7 +38,7 @@
         <a href="actions-button.html">Actions / Button</a>
       </div>
     </div>
-    <div class="demo-sidebar-group" data-group="inputs">
+    <div class="demo-sidebar-group collapsed" data-group="inputs">
       <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>03 Inputs & Controls</span><span class="demo-sidebar-group-caret">▾</span></button>
       <div class="demo-sidebar-group-items">
         <a href="controls-field-ai-assisted-text.html">Controls / Field / AI assisted text</a>
@@ -57,7 +60,7 @@
         <a href="segment-chip.html">Segment Chip</a>
         <a href="setting-chip.html">Setting Chip</a>
         <a href="switch.html">Controls / Switch</a>
-        <a href="table-filter.html" class="active">Table / Filter</a>
+        <a href="table-filter.html">Table / Filter</a>
         <a href="toggle-chip.html">Controls / Toggle Chip</a>
         <a href="uploads-file-badge.html">Uploads / File Badge / Source Row</a>
       </div>
@@ -78,10 +81,10 @@
         <a href="prompt-box.html">AI Prompt Box</a>
       </div>
     </div>
-    <div class="demo-sidebar-group collapsed" data-group="upload">
+    <div class="demo-sidebar-group" data-group="upload">
       <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>07 Upload</span><span class="demo-sidebar-group-caret">▾</span></button>
       <div class="demo-sidebar-group-items">
-        <a href="upload-dropzone.html">Upload Dropzone / Dashed Upload Row</a>
+        <a href="upload-dropzone.html" class="active">Upload Dropzone / Dashed Upload Row</a>
       </div>
     </div>
     <div class="demo-sidebar-group collapsed" data-group="editor">
@@ -130,12 +133,30 @@
     </div>
   </nav>
   <main class="demo-main">
-  <h1>Table / Filter</h1>
-  <div class="row">
-    <button class="table-filter-btn">
-      <span>Filter</span>
-      <svg class="icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2 4h12M4.5 8h7M7 12h2"/></svg>
-    </button>
+  <h1>Upload Dropzone / Dashed Upload Row</h1>
+  <p class="demo-note">Figma: "07 Upload" (1124:10636) — two related dashed-border upload affordances: the standalone Dropzone (drag &amp; drop target, title + subtitle) and the compact Dashed Upload Row (icon + label only), in Row (inline) or Tile (square) layouts.</p>
+
+  <h2>Upload / Upload Dropzone</h2>
+  <div class="demo-grid">
+    <div class="upload-dropzone">
+      <div class="upload-dropzone-title-row">
+        <img src="icons/upload-dropzone-arrow.svg" alt="">
+        <span class="upload-dropzone-title">Upload media</span>
+      </div>
+      <span class="upload-dropzone-sub">Images, video, GIF · drag &amp; drop</span>
+    </div>
+  </div>
+
+  <h2>Upload / Dashed Upload Row — Direction = Row / Tile</h2>
+  <div class="demo-grid">
+    <div class="upload-dashed-row">
+      <img src="icons/panel-upload.svg" alt="">
+      <span>Upload</span>
+    </div>
+    <div class="upload-dashed-row tile">
+      <img src="icons/panel-upload.svg" alt="">
+      <span>Upload</span>
+    </div>
   </div>
   </main>
 </div>
