@@ -1,9 +1,116 @@
 /* Input — shared component (components/ai-social-media/input.html 참고)
-   Figma: FME_AI-Social-Media, "Input" (5982:99368) — 6 states: Default, Default-filled,
-   Hover, Focused, Error, Word count. Figma's reference frame is 960px wide but the
-   component itself is width:100%, so it fills whatever container it's placed in — matching
-   how .scene-desc / .prompt-summary / .script-text etc. are already used across the
-   generate flows (this is that same input, just not yet pulled out as a shared file). */
+   Figma: FME_AI-Social-Media, "03 Inputs & Controls" (1124:30) → "Input" (1956:51741),
+   ~30 variant symbols organized as Size (SM·36 / MD·40 / LG·100) × Type (Dropdown, Add Row,
+   Dropdown Deletable, Text, Error, Badge, Time, Description, Date, Content) × State
+   (Default/Hover/Focused) × Filled (True/False). All types share one visual base
+   (.input-field: white fill, 1px neutral-400 border, radius-lg, DM Sans 14/22) and layer on
+   a type-specific inner layout. Icons render from components/ai-social-media/icons/ —
+   chevron-down-24.svg (dropdown/badge suffix), edit-trash.svg (deletable), alert-sm.svg
+   (error), pagebar-plus.svg (add row) were already in the shared icon set; clock/calendar/
+   document were newly exported to icons/input/ (Figma had no matching icon on disk yet).
+
+   Section 2 below is "Input / login" (3894:63615) — see input-login.css instead: it's a
+   visually/structurally distinct login-specific field (h:50, radius-xl, text/md Medium,
+   password-eye affordance) so it got its own file rather than being folded in here.
+
+   Section 3 preserves the PRE-EXISTING .ai-input textarea block. It predates this pass and
+   is load-bearing: prototypes/ai-social-media/new-content-generation/v3/new-content-to-generate.html
+   links this stylesheet and uses .ai-input / .ai-input-wrap / .ai-input-error-msg /
+   .ai-input-wordcount directly. Left untouched (selectors, values) so that page keeps working;
+   it's presented in the demo page as its own documented section rather than merged into
+   .input-field, since renaming/aliasing it would risk breaking that live prototype. */
+
+/* ================= 1. Input (1956:51741) ================= */
+
+.input-field{
+  display:flex; align-items:center; gap:var(--spacing-md);
+  width:100%; box-sizing:border-box; padding:0 var(--spacing-md);
+  background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg);
+  font-family:var(--font-family-text); font-size:var(--font-size-text-md); line-height:var(--line-height-text-md);
+  font-weight:var(--font-weight-regular); color:var(--color-neutral-900);
+}
+input.input-field, textarea.input-field{ outline:none; }
+input.input-field::placeholder, textarea.input-field::placeholder{ color:var(--color-neutral-500); }
+
+/* Size */
+.input-field--sm{ height:36px; }
+.input-field--md{ height:40px; }
+.input-field--lg{ height:100px; }
+
+/* State — real pseudo-classes for functional elements (Text/Description/Error's <input>),
+   plus explicit modifier classes so the demo grid can show a state without a live cursor. */
+.input-field:hover, .input-field--hover{ border-color:var(--color-neutral-500); }
+.input-field:focus, .input-field:focus-within, .input-field--focused{
+  border-color:var(--color-brand-primary); border-width:var(--icon-stroke-width-12);
+}
+
+/* Shared text + suffix-icon slots (Dropdown / Badge / Time / Date / Dropdown Deletable) */
+.input-field__text{
+  flex:1 1 0%; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.input-field__text--placeholder{ color:var(--color-neutral-500); }
+.input-field__icon{ display:flex; align-items:center; justify-content:center; flex-shrink:0; width:24px; height:24px; }
+.input-field__icon img{ display:block; width:100%; height:100%; }
+.input-field__icon--18{ width:18px; height:18px; }
+
+/* ---- Type: Text — plain, no icon (also the base spec Controls/Field's input reuses) ---- */
+.input-field--text{ padding:0 var(--spacing-md); }
+
+/* ---- Type: Dropdown / Time / Date / Badge — text + trailing icon, share the base row ---- */
+.input-field--dropdown, .input-field--time, .input-field--date, .input-field--badge{ }
+
+/* ---- Type: Dropdown Deletable — dropdown box (radius-md) + external trash icon ---- */
+.input-field-deletable-row{ display:flex; align-items:center; gap:var(--spacing-md); width:100%; }
+.input-field-deletable-row .input-field{ flex:1 1 0%; border-radius:var(--radius-md); min-width:0; }
+.input-field__trash{ width:20px; height:20px; flex-shrink:0; cursor:pointer; }
+
+/* ---- Type: Add Row — dashed placeholder button ---- */
+button.input-field--add-row{ font:inherit; cursor:pointer; }
+.input-field--add-row{
+  height:48px; justify-content:center; gap:var(--spacing-xs);
+  background:var(--color-neutral-50); border-style:dashed;
+}
+.input-field--add-row .input-field__text{ flex:none; color:var(--color-neutral-500); }
+.input-field--add-row .input-field__icon{ width:16px; height:16px; }
+
+/* ---- Type: Badge — pill inside the field, then trailing chevron ---- */
+.input-field__badge-slot{ display:flex; flex:1 1 0%; min-width:0; }
+.input-field__badge-pill{
+  display:inline-flex; align-items:center; justify-content:center; white-space:nowrap;
+  padding:4px var(--spacing-sm); border-radius:var(--radius-full);
+  font-family:var(--font-family-badge); font-size:var(--font-size-badge-md); font-weight:var(--font-weight-semibold); line-height:14px;
+  background:var(--color-badge-red-bg); color:var(--color-badge-red-text);
+}
+.input-field__badge-pill--purple{ background:var(--color-badge-purple-bg); color:var(--color-badge-purple-text); }
+
+/* ---- Type: Error — bordered box (text + alert icon) + help message below ---- */
+.input-field-wrap{ display:flex; flex-direction:column; gap:var(--spacing-xs); width:100%; box-sizing:border-box; }
+.input-field--error{ border-color:var(--color-badge-red-text); border-width:var(--icon-stroke-width-12); }
+.input-field__help{ margin:0; padding:0 var(--spacing-2); font-size:var(--font-size-text-xs); line-height:var(--line-height-text-xs); font-weight:var(--font-weight-medium); color:var(--color-badge-red-text); }
+
+/* ---- Type: Description — LG·100 textarea, top-aligned, no resize handle in Figma ---- */
+textarea.input-field--description{
+  align-items:flex-start; height:100px; padding:var(--spacing-md); resize:none;
+  font-family:var(--font-family-text);
+}
+
+/* ---- Type: Content — document/version row (icon chip + title/date + side date + badge + chevron) ---- */
+.input-field--content{
+  height:auto; align-items:flex-start; justify-content:flex-end; gap:var(--spacing-sm);
+  padding:var(--spacing-lg);
+}
+.input-field__doc-main{ display:flex; align-items:flex-start; gap:var(--spacing-md); flex:1 1 0%; min-width:0; }
+.input-field__doc-icon{
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  padding:6px; border-radius:var(--radius-sm); background:var(--color-neutral-25); border:1px solid var(--color-neutral-300);
+}
+.input-field__doc-icon img{ width:18px; height:18px; }
+.input-field__doc-meta{ display:flex; flex-direction:column; gap:2px; min-width:0; }
+.input-field__doc-title{ margin:0; font-size:var(--font-size-text-md); line-height:var(--line-height-text-md); font-weight:var(--font-weight-semibold); color:var(--color-neutral-900); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.input-field__doc-date{ margin:0; font-size:var(--font-size-text-xs); line-height:var(--line-height-text-xs); color:var(--color-neutral-500); white-space:nowrap; }
+.input-field__doc-side-date{ flex-shrink:0; font-size:var(--font-size-text-xs); line-height:var(--line-height-text-xs); color:var(--color-neutral-500); white-space:nowrap; align-self:center; }
+
+/* ================= 3. Pre-existing textarea variant (kept as-is — see file header) ================= */
 
 .ai-input{
   width:100%; min-height:100px; border:1px solid var(--color-neutral-400); border-radius:var(--radius-xl);

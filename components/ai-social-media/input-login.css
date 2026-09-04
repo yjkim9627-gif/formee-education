@@ -1,0 +1,39 @@
+/* Input / Login — AI Social Media component (components/ai-social-media/input-login.html 참고)
+   Figma: FME_AI-Social-Media, "03 Inputs & Controls" (1124:30) → "Input / login" (3894:63615) —
+   5 states: Default(Filled=False), Default(Filled=True), Hover(Filled=True), Focused(Filled=True),
+   Error(Filled=True). Kept as its own file rather than a section on input.html: it's visually and
+   structurally distinct from the generic "Input" component — larger (h:50 vs h:36/40), radius-xl
+   instead of radius-lg, Text/md Medium instead of Regular, and a password-visibility eye icon
+   affordance that none of the generic Input types have. Icon: icons/input/icon-eye.svg (newly
+   exported; alert-sm.svg / chevron / trash etc. it might otherwise share are already covered
+   by input.css's icon set, this one just needed the eye). */
+
+.input-login{
+  display:flex; align-items:center; gap:var(--spacing-md);
+  width:100%; height:50px; box-sizing:border-box; padding:0 var(--spacing-md);
+  background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-xl);
+  font-family:var(--font-family-text);
+}
+.input-login:hover, .input-login--hover{ border-color:var(--color-neutral-500); }
+.input-login:focus-within, .input-login--focused{
+  border-color:var(--color-brand-primary); border-width:var(--icon-stroke-width-12);
+}
+.input-login--error{ border-color:var(--color-badge-red-text); border-width:var(--icon-stroke-width-12); }
+
+.input-login__input{
+  flex:1 1 0%; min-width:0; border:none; outline:none; background:transparent; padding:0;
+  font-family:inherit; font-size:var(--font-size-text-md); line-height:var(--line-height-text-md);
+  font-weight:var(--font-weight-medium); color:var(--color-neutral-900);
+}
+.input-login__input::placeholder{ color:var(--color-neutral-500); }
+
+.input-login__icon{ display:flex; align-items:center; justify-content:center; flex-shrink:0; width:24px; height:24px; cursor:pointer; }
+.input-login__icon img{ display:block; width:100%; height:100%; }
+.input-login__action{
+  flex-shrink:0; font-size:var(--font-size-text-md); line-height:var(--line-height-text-md);
+  font-weight:var(--font-weight-semibold); color:var(--color-brand-primary-dark); cursor:pointer; white-space:nowrap;
+}
+
+/* Error — wrap adds the help message row below the field, matching the generic Input's Error type */
+.input-login-wrap{ display:flex; flex-direction:column; gap:var(--spacing-xs); width:100%; box-sizing:border-box; }
+.input-login__help{ margin:0; padding:0 var(--spacing-2); font-size:var(--font-size-text-xs); line-height:var(--line-height-text-xs); font-weight:var(--font-weight-medium); color:var(--color-badge-red-text); }

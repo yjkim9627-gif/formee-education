@@ -1,0 +1,83 @@
+/* Controls / Icon Action, Option List Popover, Carousel Arrow, Scrollbar, Segmented Control
+   — shared components (components/ai-social-media/controls-misc.html 참고)
+   Figma: FME_AI-Social-Media, "03 Inputs & Controls" (1124:30):
+     - Controls / Icon Action (1728:29892) — State=default/hover × Intent=neutral/danger
+     - Controls / Icon Action/Controls/Option List Popover (2147:54556) — single symbol
+     - Controls / Carousel Arrow (2275:1539) — direction=next/prev
+     - Controls / Scrollbar (3450:1697) — state=Default/Hover
+     - Controls / Segmented Control (3174:1775) — 2~3 "Segment Chip" children, first selected
+
+   Icon colors are pre-baked per-state assets from Figma (not currentColor) — see
+   icons/controls/icon-action-swap-*.svg. Per get_design_context, the "default" state
+   renders the exact same light icon regardless of Intent — only Hover changes the icon
+   color/background per Intent, so State=default/Intent=danger looks identical to
+   State=default/Intent=neutral. This isn't a bug in this file, it mirrors the Figma
+   variant logic 1:1. */
+
+/* ---------- Controls / Icon Action ---------- */
+.controls-icon-action{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:28px; height:28px; border-radius:var(--radius-lg);
+  background:transparent; border:none; cursor:pointer; padding:0;
+}
+.controls-icon-action img{ width:16px; height:16px; flex-shrink:0; }
+.controls-icon-action--hover{ background:var(--color-neutral-100); }
+.controls-icon-action--danger.controls-icon-action--hover{ background:var(--color-badge-red-bg); }
+
+/* ---------- Controls / Icon Action/Controls/Option List Popover ---------- */
+.controls-option-popover{
+  display:inline-flex; flex-direction:column; align-items:stretch; gap:var(--spacing-xs);
+  padding:var(--spacing-sm); background:var(--color-neutral-0);
+  border:var(--border-width-1) solid var(--color-neutral-200); border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-modal); font-family:var(--font-family-text);
+}
+/* Figma spec is 7px vertical padding here (off the 8px spacing scale) — rounded up to
+   spacing-sm (8px) per the project convention of not introducing off-scale one-off values. */
+.controls-option-popover__header{
+  padding:var(--spacing-sm); font-size:var(--font-size-text-xs); line-height:var(--line-height-text-xs);
+  font-weight:var(--font-weight-semibold); color:var(--color-neutral-700);
+}
+.controls-option-row{
+  display:flex; align-items:center; justify-content:space-between;
+  width:160px; height:36px; padding:var(--spacing-sm); border-radius:var(--radius-md);
+  font-size:var(--font-size-text-md); line-height:var(--line-height-text-md);
+  font-weight:var(--font-weight-medium); color:var(--color-neutral-700);
+  background:transparent; border:none; cursor:pointer; font-family:var(--font-family-text);
+}
+.controls-option-row--selected{ background:var(--color-neutral-100); }
+.controls-option-row img{ width:16px; height:16px; flex-shrink:0; }
+
+/* ---------- Controls / Carousel Arrow ---------- */
+.controls-carousel-arrow{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:32px; height:32px; border-radius:var(--radius-full);
+  background:var(--color-neutral-0); border:var(--border-width-1) solid var(--color-neutral-400);
+  box-shadow:var(--shadow-md); cursor:pointer; padding:0;
+}
+.controls-carousel-arrow img{ width:20px; height:20px; flex-shrink:0; }
+
+/* ---------- Controls / Scrollbar ---------- */
+/* Figma spec radius is 3px (an off-scale value between radius-xs/2px and radius-sm/4px);
+   since the thumb is only 6px wide, any radius ≥3px renders as the same full pill shape,
+   so radius-full is used rather than adding a new one-off token. */
+.controls-scrollbar{
+  width:6px; height:200px; border-radius:var(--radius-full); background:var(--color-neutral-400);
+}
+.controls-scrollbar--hover{ background:var(--color-neutral-500); }
+
+/* ---------- Controls / Segmented Control ---------- */
+.controls-segmented-control{
+  display:inline-flex; align-items:center; padding:var(--spacing-xs);
+  background:var(--color-neutral-100); border-radius:var(--radius-xl);
+}
+.controls-segment-chip{
+  display:flex; align-items:center; justify-content:center; white-space:nowrap;
+  padding:var(--spacing-sm) var(--spacing-xl); border-radius:var(--radius-lg);
+  font-family:var(--font-family-text); font-size:var(--font-size-text-md); line-height:var(--line-height-text-md);
+  font-weight:var(--font-weight-medium); color:var(--color-neutral-700);
+  background:transparent; border:none; cursor:pointer;
+}
+.controls-segment-chip--selected{
+  background:var(--color-neutral-0); box-shadow:var(--shadow-cell-action);
+  font-weight:var(--font-weight-semibold); color:var(--color-neutral-900);
+}

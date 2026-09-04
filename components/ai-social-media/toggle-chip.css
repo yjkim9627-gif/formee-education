@@ -1,0 +1,31 @@
+/* Controls / Toggle Chip — shared component (components/ai-social-media/toggle-chip.html 참고)
+   Figma: FME_AI-Social-Media, "03 Inputs & Controls" (1124:30) → Controls / Toggle Chip (1570:1103)
+   3 states: off (default, bordered), on (selected, neutral-150 fill), idle (no bg/border — resting/
+   pre-hover look). Icon-only square/pill button (e.g. grid/list view toggle on a toolbar).
+   The icon itself is a separate baked-color asset per state — see icons/controls/pagebar-grid-selected.svg
+   (dark, for "on") vs the shared icons/pagebar-grid.svg (grey, for "off"/"idle"), same as the
+   Actions/Button "AI Improve" icon pattern (2 color variants, not 1 recolored asset). */
+
+.toggle-chip{
+  display:inline-flex; align-items:center; justify-content:center; gap:var(--spacing-sm);
+  border-radius:var(--radius-md); cursor:pointer; box-sizing:border-box;
+}
+.toggle-chip img{ width:16px; height:16px; flex-shrink:0; }
+
+/* state: off (default) — bordered, fixed height to match Figma */
+.toggle-chip--off{
+  height:28px; padding:var(--spacing-sm);
+  background:var(--color-neutral-0); border:var(--border-width-1) solid var(--color-neutral-400);
+}
+
+/* state: on (selected) */
+.toggle-chip--on{
+  padding:6px var(--spacing-sm);
+  background:var(--color-neutral-150);
+}
+
+/* state: idle — no bg/border */
+.toggle-chip--idle{
+  padding:6px var(--spacing-sm);
+  background:transparent;
+}

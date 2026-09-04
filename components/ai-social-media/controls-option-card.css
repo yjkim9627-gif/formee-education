@@ -1,0 +1,59 @@
+/* Controls / Option Card — shared component (components/ai-social-media/controls-option-card.html 참고)
+   Figma: FME_AI-Social-Media, "03 Inputs & Controls" (1124:30) → "Controls / Option Card" (4666:68290).
+   2 states: Selected=False (4666:68288), Selected=True (4666:68289). A selectable
+   radio-style card/tile with an optional sub-label, an optional "sample" text block
+   (revealed below a divider) and an optional "Suggested" badge pinned top-right.
+
+   Judgment call: the radio indicator's exact SVGs (a plain ring / a filled circle+check)
+   aren't in icons/ and are trivial shapes, so the ring is drawn in pure CSS and the
+   check reuses icons/wh-check.svg over a --color-neutral-900 filled circle instead of
+   exporting new art. */
+
+.controls-option-card{
+  display:flex; flex-direction:column; gap:var(--spacing-md); align-items:flex-start;
+  position:relative; width:100%; max-width:320px; box-sizing:border-box;
+  padding:var(--spacing-lg); border-radius:var(--radius-lg); cursor:pointer;
+  background:var(--color-neutral-0); border:1px solid var(--color-neutral-400);
+  font-family:var(--font-family-text);
+}
+.controls-option-card--selected{
+  background:var(--color-neutral-150); border-color:var(--color-neutral-500);
+}
+
+.controls-option-card__row{ display:flex; align-items:center; gap:var(--spacing-md); width:100%; }
+
+.controls-option-card__radio{
+  width:20px; height:20px; border-radius:var(--radius-full); flex-shrink:0; box-sizing:border-box;
+  border:1.5px solid var(--color-neutral-400); background:var(--color-neutral-0);
+}
+.controls-option-card--selected .controls-option-card__radio{
+  border:none; background:var(--color-neutral-900);
+  display:flex; align-items:center; justify-content:center;
+}
+.controls-option-card__radio img{ width:10px; height:10px; }
+
+.controls-option-card__text{ display:flex; flex-direction:column; gap:var(--spacing-xs); flex:1 0 0; min-width:0; padding-right:var(--spacing-5xl); }
+.controls-option-card__label{
+  margin:0; font-size:var(--font-size-text-md); line-height:var(--line-height-text-md); font-weight:var(--font-weight-medium);
+  color:var(--color-neutral-700);
+}
+.controls-option-card--selected .controls-option-card__label{ font-weight:var(--font-weight-semibold); color:var(--color-neutral-900); }
+.controls-option-card__sub-label{
+  margin:0; font-size:var(--font-size-text-xs); line-height:var(--line-height-text-xs); font-weight:var(--font-weight-regular);
+  color:var(--color-neutral-500);
+}
+
+.controls-option-card__sample{ display:flex; flex-direction:column; gap:var(--spacing-md); width:100%; }
+.controls-option-card__divider{ height:1px; width:100%; background:var(--color-neutral-150); }
+.controls-option-card__sample-text{
+  margin:0; font-size:var(--font-size-text-sm); line-height:var(--line-height-text-sm); font-weight:var(--font-weight-regular);
+  color:var(--color-neutral-700);
+}
+
+.controls-option-card__badge{
+  position:absolute; top:15px; right:15px;
+  display:flex; align-items:center; justify-content:center;
+  padding:var(--spacing-2) var(--spacing-sm); border-radius:var(--radius-lg);
+  background:var(--color-badge-green-bg); color:var(--color-badge-green-text);
+  font-size:var(--font-size-badge-md); font-weight:var(--font-weight-semibold); white-space:nowrap;
+}

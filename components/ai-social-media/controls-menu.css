@@ -1,0 +1,86 @@
+/* Menu / Context Menu / Size Dropdown family — shared component
+   Figma: FME_AI-Social-Media, "03 Inputs & Controls" (1124:30):
+     - Menu / Option detail (5478:3046) — 6 variants: State=Default/Hover/Focused x Radius=False/True.
+       A rich two-line menu row (label + optional "Recommended" badge, sub-label), used standalone
+       and reused inside Context Menu's "Option list" type.
+     - Controls / Context Menu (5478:111500) — 2 types: Actions (simple one-line items,
+       incl. a selected/checked item and a red "Delete" item), Option list (a list of
+       Menu / Option detail rows).
+     - Size Dropdown (5552:84082) — single symbol, a small size-picker popover reusing the
+       same simple one-line "Menu / Item" pattern as Context Menu's Actions type, plus a
+       custom scrollbar thumb.
+   Icons: check = icons/panel-check.svg (existing, reused as-is).
+
+   Token gaps found while porting (kept as flagged raw values per project convention —
+   see actions-button.css's dark-gradient precedent — since tokens/tokens.css is out of
+   scope for this component's edits):
+     - Figma variable `gray/75` (#f0f0f0, the Hover-state background) has no neutral-*
+       token in tokens.css. Its value happens to exactly equal --color-scale-gray-100,
+       but that token's scale is documented as a placeholder "Colour Popover" swatch
+       set, not a UI-chrome neutral — reused anyway since the hex matches exactly and
+       tokens.css cannot be extended from this component's scope.
+     - Figma variable `badge/red/text` here resolves to #c4271b (Context Menu's "Delete"
+       label), which does NOT equal tokens.css's --color-badge-red-text (#b80000). Two
+       different reds are apparently in play in this file; kept as its own raw value
+       rather than misusing the badge token.
+     - Size Dropdown's container border (#e0e6f0) and shadow (0px 8px 24px rgba(15,23,41,.12))
+       are raw literals in Figma, not bound to variables. Border approximated with the
+       closest existing token (--color-neutral-200); shadow reuses --shadow-popover, the
+       token already documented in tokens.css for "floating popovers" (closest existing
+       semantic match, though not a pixel-exact reproduction). */
+
+/* ---------- shared: simple one-line "Menu / Item" (Context Menu Actions, Size Dropdown) ---------- */
+.menu-item{
+  display:flex; align-items:center; justify-content:space-between; gap:var(--spacing-sm);
+  width:100%; height:36px; padding:0 var(--spacing-sm); border-radius:var(--radius-md);
+  background:var(--color-neutral-0); box-sizing:border-box;
+  font-family:var(--font-family-text); font-size:var(--font-size-text-md); line-height:var(--line-height-text-md); font-weight:var(--font-weight-medium);
+  color:var(--color-neutral-900); cursor:pointer; border:none; text-align:left;
+}
+.menu-item--selected{ background:var(--color-neutral-100); }
+.menu-item--danger{ color:#c4271b; } /* Figma `badge/red/text` on this node — see file header note, differs from --color-badge-red-text */
+.menu-item img{ width:16px; height:16px; flex-shrink:0; }
+
+/* ---------- Menu / Option detail (rich two-line row) ---------- */
+.menu-option{
+  display:flex; align-items:center; justify-content:space-between;
+  width:280px; height:38px; padding:0 12px 0 8px; box-sizing:border-box;
+  background:var(--color-neutral-0); border:none; cursor:pointer; text-align:left;
+}
+.menu-option--radius{ border-radius:var(--radius-md); }
+.menu-option--hover{ background:var(--color-scale-gray-100); } /* Figma `gray/75` #f0f0f0 — see file header note */
+.menu-option--focused{ background:var(--color-neutral-100); }
+.menu-option-text{ display:flex; flex-direction:column; align-items:flex-start; overflow:hidden; }
+.menu-option-label-row{ display:flex; align-items:center; gap:var(--spacing-sm); margin-bottom:-2px; }
+.menu-option-label{ font-family:var(--font-family-text); font-size:var(--font-size-text-md); line-height:var(--line-height-text-md); font-weight:var(--font-weight-medium); color:var(--color-neutral-900); white-space:nowrap; }
+.menu-option-sub{ font-family:var(--font-family-text); font-size:var(--font-size-text-xs); line-height:var(--line-height-text-xs); font-weight:var(--font-weight-regular); color:var(--color-neutral-450); white-space:nowrap; }
+.menu-option-badge{
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  padding:var(--spacing-2) var(--spacing-sm); border-radius:var(--radius-full); background:var(--color-neutral-150);
+  font-family:var(--font-family-text); font-size:var(--font-size-badge-md); line-height:14px; font-weight:var(--font-weight-semibold); color:var(--color-neutral-900); white-space:nowrap;
+}
+.menu-option img{ width:14px; height:14px; flex-shrink:0; }
+
+/* ---------- Controls / Context Menu ---------- */
+.context-menu{
+  display:flex; flex-direction:column; gap:2px; align-items:stretch;
+  width:200px; padding:var(--spacing-sm); box-sizing:border-box;
+  background:var(--color-neutral-0); border:var(--border-width-1) solid var(--color-neutral-400);
+  border-radius:var(--radius-md-lg); box-shadow:var(--shadow-modal);
+}
+.context-menu--option-list{ width:296px; }
+
+/* ---------- Size Dropdown ---------- */
+.size-dropdown{
+  position:relative; width:140px; height:238px; box-sizing:border-box; overflow:hidden;
+  background:var(--color-neutral-0);
+  border:var(--border-width-1) solid var(--color-neutral-200); /* Figma raw #e0e6f0 — see file header note */
+  border-radius:var(--radius-xl);
+  box-shadow:var(--shadow-popover); /* Figma raw shadow — see file header note */
+}
+.size-dropdown-list{ display:flex; flex-direction:column; gap:2px; align-items:stretch; position:absolute; left:5px; top:0; width:128px; }
+.size-dropdown-scrollbar{
+  position:absolute; right:7px; top:28px; width:6px; height:143px;
+  border-radius:3px; /* half of the 6px thumb width — no matching radius token at this scale */
+  background:var(--color-neutral-400);
+}

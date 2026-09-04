@@ -1,0 +1,24 @@
+/* Controls / Filter / Select — shared component (components/ai-social-media/controls-filter-select.html 참고)
+   Figma: FME_AI-Social-Media, "03 Inputs & Controls" (1124:30) → Controls / Filter / Select (3544:1796)
+   2 states: Inactive (default, "Created by ▾" outline pill) and Active (dark pill showing the
+   selected value with a leading "x" clear icon and a "label | value" split).
+   Figma's own padding is off the 4/8/12/16 spacing scale (5px/7px/10px/11px/14px) — kept as literal
+   px per style-reference precedent (Actions/Publish Button's 131px/8px is the same kind of exception). */
+
+.filter-select{
+  display:inline-flex; align-items:center; gap:var(--spacing-xs);
+  padding:5px 10px 5px 12px; border-radius:var(--radius-full);
+  background:var(--color-neutral-0); border:var(--border-width-1) solid var(--color-neutral-400);
+  font-family:var(--font-family-text); cursor:pointer; box-sizing:border-box;
+}
+.filter-select__label{ font-size:var(--font-size-text-xs); line-height:var(--line-height-text-xs); font-weight:var(--font-weight-medium); color:var(--color-neutral-700); white-space:nowrap; }
+.filter-select__caret{ width:16px; height:16px; flex-shrink:0; }
+
+/* state: Active */
+.filter-select--active{
+  background:var(--color-neutral-900); border:none; gap:7px; padding:5px 14px 5px 11px;
+}
+.filter-select--active .filter-select__label{ font-weight:var(--font-weight-semibold); color:var(--color-neutral-0); }
+.filter-select__close{ width:18px; height:18px; flex-shrink:0; }
+.filter-select__divider{ width:1px; height:13px; background:var(--color-neutral-0); flex-shrink:0; }
+.filter-select__value{ font-size:var(--font-size-text-xs); line-height:var(--line-height-text-xs); font-weight:var(--font-weight-semibold); color:var(--color-neutral-0); white-space:nowrap; }

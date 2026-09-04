@@ -1,0 +1,18 @@
+/* Segment Chip — shared component (components/ai-social-media/segment-chip.html 참고)
+   Figma: FME_AI-Social-Media, "03 Inputs & Controls" (1124:30) → Segment Chip (2131:1321)
+   2 states: Default (no bg/border, radius/xl), Active (white bg + shadow/sm, radius/lg — reuses
+   the same elevation as --shadow-cell-action). Used inside a segmented-control row. */
+
+.segment-chip{
+  display:inline-flex; align-items:center; justify-content:center;
+  padding:var(--spacing-sm) var(--spacing-xl); border-radius:var(--radius-xl);
+  background:transparent; border:none;
+  font-family:var(--font-family-text); font-size:var(--font-size-text-md); line-height:var(--line-height-text-md); font-weight:var(--font-weight-medium);
+  color:var(--color-neutral-700); cursor:pointer; white-space:nowrap;
+}
+
+/* state: Active */
+.segment-chip--active{
+  background:var(--color-neutral-0); box-shadow:var(--shadow-cell-action); border-radius:var(--radius-lg);
+  font-weight:var(--font-weight-semibold); color:var(--color-neutral-900);
+}

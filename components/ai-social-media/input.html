@@ -2,14 +2,25 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
-<title>Input — Shared Component</title>
+<title>Input — AI Social Media Component</title>
 <link rel="stylesheet" href="../../tokens/tokens.css" />
 <link rel="stylesheet" href="../demo-nav.css" />
 <link rel="stylesheet" href="input.css" />
 <style>
   body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
   .demo-main { padding: var(--spacing-4xl); }
-  h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-3xl); }
+  h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-sm); }
+  h2 { font-size: var(--font-size-text-md); font-weight: 700; color: var(--color-neutral-700); margin: var(--spacing-3xl) 0 var(--spacing-md); }
+  h2:first-of-type { margin-top: 0; }
+  h3 { font-size: var(--font-size-text-sm); font-weight: 600; color: var(--color-neutral-500); margin: var(--spacing-lg) 0 var(--spacing-sm); }
+  .demo-note { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); max-width: 720px; margin: 0 0 var(--spacing-3xl); line-height: 1.6; }
+  .demo-grid { display: flex; flex-wrap: wrap; gap: var(--spacing-2xl); align-items: flex-start; margin-bottom: var(--spacing-lg); }
+  .cell-demo { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+  .cell-demo .demo-label { font-size: var(--font-size-text-2xs); color: var(--color-neutral-500); }
+  .cell-w-240 { width: 240px; }
+  .cell-w-360 { width: 360px; }
+  .cell-w-440 { width: 440px; }
+  .cell-w-512 { width: 512px; }
   .demo-row { display: flex; flex-direction: column; gap: var(--spacing-sm); margin-bottom: var(--spacing-2xl); max-width: 640px; }
   .demo-label { font-size: var(--font-size-text-xs); color: var(--color-neutral-500); }
 </style>
@@ -18,42 +29,444 @@
 <div class="demo-shell">
   <nav class="demo-sidebar">
     <a href="../../index.html" class="demo-sidebar-home">← Home</a>
-    <div class="demo-sidebar-group">
-      <div class="demo-sidebar-label">AI Social Media</div>
-      <a href="nav.html">Nav / Navigation</a>
-      <a href="topbar-stepper.html">Topbar + Stepper</a>
-      <a href="heading.html">Heading</a>
-      <a href="chat-panel.html">Chat Panel</a>
-      <a href="character-card.html">Character Card</a>
-      <a href="avatar.html">Avatar</a>
-      <a href="switch.html">Controls / Switch</a>
-      <a href="prompt-box.html">AI Prompt Box</a>
-      <a href="input.html" class="active">Input</a>
-      <a href="filter-chip.html">Controls / Filter / Toggle</a>
-      <a href="table-filter.html">Table / Filter</a>
-      <a href="setting-chip.html">Setting Chip</a>
-      <a href="actions-button.html">Actions / Button</a>
-      <a href="icons.html">Icons</a>
-      <a href="scene-tile.html">Scene Tile</a>
-      <a href="storyboard-card.html">Storyboard Card</a>
-      <a href="image-scene-card.html">Image Scene Card</a>
-      <a href="voice-accordion-row.html">Voice Accordion Row</a>
-      <a href="queue-panel.html">Queue Job Row / Panel</a>
-      <a href="video-summary-card.html">Video Summary Card</a>
-      <a href="destination-account.html">Destination Account</a>
-      <a href="date-picker.html">Date Picker</a>
-      <a href="carousel-card-block.html">Carousel Card Block</a>
+    <div class="demo-sidebar-group collapsed" data-group="brand">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>00 Brand</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="brand-logo.html">Brand / Logo</a>
+      </div>
     </div>
-    <div class="demo-sidebar-group">
-      <div class="demo-sidebar-label">Shared</div>
-      <a href="../shared/button.html">Button</a>
-      <a href="../shared/modal-confirm.html">Modal / Confirm</a>
-      <a href="../shared/modal-form.html">Modal / Form</a>
-      <a href="../shared/modal-success.html">Modal / Success</a>
+    <div class="demo-sidebar-group collapsed" data-group="icons">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>01 Icons</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="icons.html">Icons</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="actions">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>02 Actions</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="actions-button.html">Actions / Button</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group" data-group="inputs">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>03 Inputs & Controls</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="controls-field-ai-assisted-text.html">Controls / Field / AI assisted text</a>
+        <a href="controls-field.html">Controls / Field</a>
+        <a href="controls-filter-select.html">Controls / Filter / Select</a>
+        <a href="controls-filter-toggle.html">Controls / Filter / Toggle</a>
+        <a href="controls-menu.html">Menu / Context Menu / Size Dropdown</a>
+        <a href="controls-misc.html">Controls — Icon Action, Popover, Carousel Arrow, Scrollbar, Segmented Control</a>
+        <a href="controls-multi-select.html">Controls / Multi Select</a>
+        <a href="controls-option-card.html">Controls / Option Card</a>
+        <a href="controls-search-field.html">Controls / Search Field</a>
+        <a href="controls-social-profile-row.html">Controls / Social profile row</a>
+        <a href="controls-toggles.html">Controls / Toggles</a>
+        <a href="date-picker.html">Date Picker</a>
+        <a href="duration-chip.html">Controls / Duration Chip</a>
+        <a href="filter-chip.html">Controls / Filter / Toggle</a>
+        <a href="input-login.html">Input / Login</a>
+        <a href="input.html" class="active">Input</a>
+        <a href="segment-chip.html">Segment Chip</a>
+        <a href="setting-chip.html">Setting Chip</a>
+        <a href="switch.html">Controls / Switch</a>
+        <a href="table-filter.html">Table / Filter</a>
+        <a href="toggle-chip.html">Controls / Toggle Chip</a>
+        <a href="uploads-file-badge.html">Uploads / File Badge / Source Row</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="navigation">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>04 Navigation</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="nav.html">Nav / Navigation</a>
+        <a href="topbar-stepper.html">Topbar + Stepper</a>
+        <a href="avatar.html">Avatar</a>
+        <a href="w-action-bar.html">W:ActionBar</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="ai-assistant">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>AI Assistant</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="chat-panel.html">Chat Panel</a>
+        <a href="prompt-box.html">AI Prompt Box</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="editor">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Editor</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="heading.html">Heading</a>
+        <a href="image-scene-card.html">Image Scene Card</a>
+        <a href="queue-panel.html">Queue Job Row / Queue Panel</a>
+        <a href="scene-tile.html">Scene Tile</a>
+        <a href="storyboard-card.html">Storyboard Card</a>
+        <a href="video-summary-card.html">Video Summary Card</a>
+        <a href="voice-accordion-row.html">Voice Accordion Row</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="product-selectors">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Product Selectors</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="character-card.html">Character Card</a>
+        <a href="destination-account.html">Destination Account</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="data-display">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Data Display</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="carousel-card-block.html">Carousel Card Block</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="feedback">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Feedback</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="publish-social-modal.html">Publish to Social Modal</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="shared">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Shared</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="../shared/button.html">Button</a>
+        <a href="../shared/modal-confirm.html">Modal / Confirm</a>
+        <a href="../shared/modal-form.html">Modal / Form</a>
+        <a href="../shared/modal-success.html">Modal / Success</a>
+      </div>
     </div>
   </nav>
   <main class="demo-main">
   <h1>Input</h1>
+  <p class="demo-note">Figma: "03 Inputs &amp; Controls" (1124:30) → "Input" (1956:51741) — 33 variant symbols across Size (SM·36 / MD·40 / LG·100) × Type (Dropdown, Add Row, Dropdown Deletable, Text, Error, Badge, Time, Description, Date, Content) × State (Default/Hover/Focused) × Filled (True/False). Grouped below by Type, mirroring Figma's own layout; Size/State/Filled shown as smaller rows within each. The login-specific field ("Input / login", 3894:63615) is a separate, larger component — see <a href="input-login.html">Input / Login</a>. The pre-existing textarea-style field this page used to document is kept further down for the live prototype that depends on its exact class names.</p>
+
+  <h2>Dropdown</h2>
+  <h3>Size = SM · 36</h3>
+  <div class="demo-grid">
+    <div class="cell-demo">
+      <span class="demo-label">Default · Filled=False</span>
+      <div class="cell-w-240">
+        <div class="input-field input-field--dropdown input-field--sm">
+          <span class="input-field__text input-field__text--placeholder">Placeholder</span>
+          <span class="input-field__icon"><img src="icons/chevron-down-24.svg" alt=""></span>
+        </div>
+      </div>
+    </div>
+    <div class="cell-demo">
+      <span class="demo-label">Default · Filled=True</span>
+      <div class="cell-w-240">
+        <div class="input-field input-field--dropdown input-field--sm">
+          <span class="input-field__text">Placeholder</span>
+          <span class="input-field__icon"><img src="icons/chevron-down-24.svg" alt=""></span>
+        </div>
+      </div>
+    </div>
+    <div class="cell-demo">
+      <span class="demo-label">Hover · Filled=True</span>
+      <div class="cell-w-240">
+        <div class="input-field input-field--dropdown input-field--sm input-field--hover">
+          <span class="input-field__text">Placeholder</span>
+          <span class="input-field__icon"><img src="icons/chevron-down-24.svg" alt=""></span>
+        </div>
+      </div>
+    </div>
+    <div class="cell-demo">
+      <span class="demo-label">Focused · Filled=True</span>
+      <div class="cell-w-240">
+        <div class="input-field input-field--dropdown input-field--sm input-field--focused">
+          <span class="input-field__text">Placeholder</span>
+          <span class="input-field__icon"><img src="icons/chevron-down-24.svg" alt=""></span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <h3>Size = MD · 40</h3>
+  <div class="demo-grid">
+    <div class="cell-demo">
+      <span class="demo-label">Default · Filled=False</span>
+      <div class="cell-w-240">
+        <div class="input-field input-field--dropdown input-field--md">
+          <span class="input-field__text input-field__text--placeholder">Placeholder</span>
+          <span class="input-field__icon"><img src="icons/chevron-down-24.svg" alt=""></span>
+        </div>
+      </div>
+    </div>
+    <div class="cell-demo">
+      <span class="demo-label">Default · Filled=True</span>
+      <div class="cell-w-240">
+        <div class="input-field input-field--dropdown input-field--md">
+          <span class="input-field__text">Placeholder</span>
+          <span class="input-field__icon"><img src="icons/chevron-down-24.svg" alt=""></span>
+        </div>
+      </div>
+    </div>
+    <div class="cell-demo">
+      <span class="demo-label">Hover · Filled=True</span>
+      <div class="cell-w-240">
+        <div class="input-field input-field--dropdown input-field--md input-field--hover">
+          <span class="input-field__text">Placeholder</span>
+          <span class="input-field__icon"><img src="icons/chevron-down-24.svg" alt=""></span>
+        </div>
+      </div>
+    </div>
+    <div class="cell-demo">
+      <span class="demo-label">Focused · Filled=True</span>
+      <div class="cell-w-240">
+        <div class="input-field input-field--dropdown input-field--md input-field--focused">
+          <span class="input-field__text">Placeholder</span>
+          <span class="input-field__icon"><img src="icons/chevron-down-24.svg" alt=""></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Add Row</h2>
+  <p class="demo-note">Size = MD · 40 (48px tall) — Filled=False only; dashed border, no suffix icon.</p>
+  <div class="demo-grid">
+    <div class="cell-demo">
+      <span class="demo-label">Default · Filled=False</span>
+      <div class="cell-w-240">
+        <button type="button" class="input-field input-field--add-row input-field--md">
+          <img class="input-field__icon" src="icons/pagebar-plus.svg" alt="">
+          <span class="input-field__text">Placeholder</span>
+        </button>
+      </div>
+    </div>
+    <div class="cell-demo">
+      <span class="demo-label">Hover · Filled=False</span>
+      <div class="cell-w-240">
+        <button type="button" class="input-field input-field--add-row input-field--md input-field--hover">
+          <img class="input-field__icon" src="icons/pagebar-plus.svg" alt="">
+          <span class="input-field__text">Placeholder</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <h2>Dropdown Deletable</h2>
+  <p class="demo-note">Size = SM · 36 — the dropdown box (radius-md) plus an external trash icon; Filled=True only shows a Hover state.</p>
+  <div class="demo-grid">
+    <div class="cell-demo">
+      <span class="demo-label">Default · Filled=False</span>
+      <div class="cell-w-240">
+        <div class="input-field-deletable-row">
+          <div class="input-field input-field--dropdown input-field--sm">
+            <span class="input-field__text input-field__text--placeholder">Placeholder</span>
+            <span class="input-field__icon"><img src="icons/chevron-down-24.svg" alt=""></span>
+          </div>
+          <img class="input-field__trash" src="icons/edit-trash.svg" alt="Remove row">
+        </div>
+      </div>
+    </div>
+    <div class="cell-demo">
+      <span class="demo-label">Default · Filled=True</span>
+      <div class="cell-w-240">
+        <div class="input-field-deletable-row">
+          <div class="input-field input-field--dropdown input-field--sm">
+            <span class="input-field__text">Placeholder</span>
+            <span class="input-field__icon"><img src="icons/chevron-down-24.svg" alt=""></span>
+          </div>
+          <img class="input-field__trash" src="icons/edit-trash.svg" alt="Remove row">
+        </div>
+      </div>
+    </div>
+    <div class="cell-demo">
+      <span class="demo-label">Hover · Filled=True</span>
+      <div class="cell-w-240">
+        <div class="input-field-deletable-row">
+          <div class="input-field input-field--dropdown input-field--sm input-field--hover">
+            <span class="input-field__text">Placeholder</span>
+            <span class="input-field__icon"><img src="icons/chevron-down-24.svg" alt=""></span>
+          </div>
+          <img class="input-field__trash" src="icons/edit-trash.svg" alt="Remove row">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Text</h2>
+  <p class="demo-note">Size = SM · 36 — plain, no icon. This is the same visual spec that "Controls / Field" wraps its own &lt;input&gt; with, so it's built here as a real &lt;input&gt;.</p>
+  <div class="demo-grid">
+    <div class="cell-demo">
+      <span class="demo-label">Default · Filled=False</span>
+      <div class="cell-w-240"><input type="text" class="input-field input-field--text input-field--sm" placeholder="Placeholder"></div>
+    </div>
+    <div class="cell-demo">
+      <span class="demo-label">Default · Filled=True</span>
+      <div class="cell-w-240"><input type="text" class="input-field input-field--text input-field--sm" value="Placeholder"></div>
+    </div>
+    <div class="cell-demo">
+      <span class="demo-label">Hover · Filled=True</span>
+      <div class="cell-w-240"><input type="text" class="input-field input-field--text input-field--sm input-field--hover" value="Placeholder"></div>
+    </div>
+    <div class="cell-demo">
+      <span class="demo-label">Focused · Filled=True</span>
+      <div class="cell-w-240"><input type="text" class="input-field input-field--text input-field--sm input-field--focused" value="Placeholder"></div>
+    </div>
+  </div>
+
+  <h2>Error</h2>
+  <p class="demo-note">Size = SM · 36 — Text type in an error state: red border + alert icon inside the field, help message below. Figma only documents the Focused/Filled=True combination.</p>
+  <div class="demo-grid">
+    <div class="cell-demo">
+      <span class="demo-label">Focused · Filled=True</span>
+      <div class="cell-w-240">
+        <div class="input-field-wrap">
+          <div class="input-field input-field--sm input-field--error input-field--focused">
+            <span class="input-field__text">Placeholder</span>
+            <span class="input-field__icon"><img src="icons/alert-sm.svg" alt=""></span>
+          </div>
+          <p class="input-field__help">Help message</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Badge</h2>
+  <p class="demo-note">Size = SM · 36 — a badge pill in place of plain text, plus the trailing chevron. Badge color approximated to the closest existing badge token (Figma gave #c4271b/#feeaea; tokens.css's closest red pair is --color-badge-red-text/#b80000 and --color-badge-red-bg/#ffe0e2).</p>
+  <div class="demo-grid">
+    <div class="cell-demo">
+      <span class="demo-label">Default · Filled=True</span>
+      <div class="cell-w-240">
+        <div class="input-field input-field--badge input-field--sm">
+          <span class="input-field__badge-slot"><span class="input-field__badge-pill">Label</span></span>
+          <span class="input-field__icon"><img src="icons/chevron-down-24.svg" alt=""></span>
+        </div>
+      </div>
+    </div>
+    <div class="cell-demo">
+      <span class="demo-label">Hover · Filled=True</span>
+      <div class="cell-w-240">
+        <div class="input-field input-field--badge input-field--sm input-field--hover">
+          <span class="input-field__badge-slot"><span class="input-field__badge-pill">Label</span></span>
+          <span class="input-field__icon"><img src="icons/chevron-down-24.svg" alt=""></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Time</h2>
+  <p class="demo-note">Size = SM · 36 — text + trailing clock icon (icons/input/icon-clock.svg, newly exported).</p>
+  <div class="demo-grid">
+    <div class="cell-demo">
+      <span class="demo-label">Default · Filled=False</span>
+      <div class="cell-w-240">
+        <div class="input-field input-field--time input-field--sm">
+          <span class="input-field__text input-field__text--placeholder">Placeholder</span>
+          <span class="input-field__icon input-field__icon--18"><img src="icons/input/icon-clock.svg" alt=""></span>
+        </div>
+      </div>
+    </div>
+    <div class="cell-demo">
+      <span class="demo-label">Default · Filled=True</span>
+      <div class="cell-w-240">
+        <div class="input-field input-field--time input-field--sm">
+          <span class="input-field__text">Placeholder</span>
+          <span class="input-field__icon input-field__icon--18"><img src="icons/input/icon-clock.svg" alt=""></span>
+        </div>
+      </div>
+    </div>
+    <div class="cell-demo">
+      <span class="demo-label">Hover · Filled=True</span>
+      <div class="cell-w-240">
+        <div class="input-field input-field--time input-field--sm input-field--hover">
+          <span class="input-field__text">Placeholder</span>
+          <span class="input-field__icon input-field__icon--18"><img src="icons/input/icon-clock.svg" alt=""></span>
+        </div>
+      </div>
+    </div>
+    <div class="cell-demo">
+      <span class="demo-label">Focused · Filled=True</span>
+      <div class="cell-w-240">
+        <div class="input-field input-field--time input-field--sm input-field--focused">
+          <span class="input-field__text">Placeholder</span>
+          <span class="input-field__icon input-field__icon--18"><img src="icons/input/icon-clock.svg" alt=""></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Date</h2>
+  <p class="demo-note">Size = SM · 36 — text + trailing calendar icon (icons/input/icon-calendar.svg, newly exported).</p>
+  <div class="demo-grid">
+    <div class="cell-demo">
+      <span class="demo-label">Default · Filled=False</span>
+      <div class="cell-w-240">
+        <div class="input-field input-field--date input-field--sm">
+          <span class="input-field__text input-field__text--placeholder">Placeholder</span>
+          <span class="input-field__icon input-field__icon--18"><img src="icons/input/icon-calendar.svg" alt=""></span>
+        </div>
+      </div>
+    </div>
+    <div class="cell-demo">
+      <span class="demo-label">Default · Filled=True</span>
+      <div class="cell-w-240">
+        <div class="input-field input-field--date input-field--sm">
+          <span class="input-field__text">Placeholder</span>
+          <span class="input-field__icon input-field__icon--18"><img src="icons/input/icon-calendar.svg" alt=""></span>
+        </div>
+      </div>
+    </div>
+    <div class="cell-demo">
+      <span class="demo-label">Hover · Filled=True</span>
+      <div class="cell-w-240">
+        <div class="input-field input-field--date input-field--sm input-field--hover">
+          <span class="input-field__text">Placeholder</span>
+          <span class="input-field__icon input-field__icon--18"><img src="icons/input/icon-calendar.svg" alt=""></span>
+        </div>
+      </div>
+    </div>
+    <div class="cell-demo">
+      <span class="demo-label">Focused · Filled=True</span>
+      <div class="cell-w-240">
+        <div class="input-field input-field--date input-field--sm input-field--focused">
+          <span class="input-field__text">Placeholder</span>
+          <span class="input-field__icon input-field__icon--18"><img src="icons/input/icon-calendar.svg" alt=""></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Description</h2>
+  <p class="demo-note">Size = LG · 100 — a fixed-height textarea (no resize handle in Figma).</p>
+  <div class="demo-grid">
+    <div class="cell-demo">
+      <span class="demo-label">Default · Filled=False</span>
+      <div class="cell-w-512"><textarea class="input-field input-field--description" placeholder="Placeholder"></textarea></div>
+    </div>
+    <div class="cell-demo">
+      <span class="demo-label">Hover · Filled=False</span>
+      <div class="cell-w-512"><textarea class="input-field input-field--description input-field--hover" placeholder="Placeholder"></textarea></div>
+    </div>
+    <div class="cell-demo">
+      <span class="demo-label">Default · Filled=True</span>
+      <div class="cell-w-512"><textarea class="input-field input-field--description">Placeholder</textarea></div>
+    </div>
+    <div class="cell-demo">
+      <span class="demo-label">Focused · Filled=True</span>
+      <div class="cell-w-512"><textarea class="input-field input-field--description input-field--focused">Placeholder</textarea></div>
+    </div>
+  </div>
+
+  <h2>Content</h2>
+  <p class="demo-note">Size = LG · 100 — a document/version row: icon chip, title + date, a right-aligned date, a status badge and a chevron. Figma documents only Default/Filled=False. (The exported node also carried two overlapping "chevron-down" instances at the same position — most likely a Figma authoring artifact — so only one is rendered here.)</p>
+  <div class="demo-grid">
+    <div class="cell-demo">
+      <span class="demo-label">Default · Filled=False</span>
+      <div class="cell-w-440">
+        <div class="input-field input-field--content">
+          <div class="input-field__doc-main">
+            <span class="input-field__doc-icon"><img src="icons/input/icon-document.svg" alt=""></span>
+            <div class="input-field__doc-meta">
+              <p class="input-field__doc-title">Document</p>
+              <p class="input-field__doc-date">22 June 2026</p>
+            </div>
+          </div>
+          <span class="input-field__doc-side-date">22 June 2026</span>
+          <span class="input-field__badge-pill input-field__badge-pill--purple">Draft</span>
+          <span class="input-field__icon input-field__icon--18"><img src="icons/chevron-down.svg" alt=""></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Textarea (existing usage)</h2>
+  <p class="demo-note">Pre-existing partial component (.ai-input) kept for backward compatibility — see file header comment in input.css. Live in prototypes/ai-social-media/new-content-generation/v3/new-content-to-generate.html.</p>
 
   <div class="demo-row">
     <span class="demo-label">default (empty)</span>
@@ -90,5 +503,6 @@
   </div>
   </main>
 </div>
+<script src="../demo-nav.js"></script>
 </body>
 </html>

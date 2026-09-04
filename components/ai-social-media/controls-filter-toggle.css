@@ -1,0 +1,34 @@
+/* Controls / Filter / Toggle — shared component (components/ai-social-media/controls-filter-toggle.html 참고)
+   Figma: FME_AI-Social-Media, "03 Inputs & Controls" (1124:30) → Controls / Filter / Toggle (89:15961)
+   6 variants: type=text/icon/close × state=default/selected.
+   NOTE: components/ai-social-media/filter-chip.html already ships an earlier, simpler pill for this
+   same Figma name (favorites star + age-chevron chips, neutral-100 tint, no border-color change on
+   select). It doesn't cover the icon/close types, the "· count" sub-text, or the neutral-150/border-500
+   selected treatment this node actually specifies, so this is a separate, more complete file pair
+   rather than an edit to filter-chip.css/.html.
+   Icons: type=icon uses icons/controls/star-fill-default.svg / star-fill-selected.svg (exported —
+   two baked-color variants, not a single recolorable asset). type=close reuses the existing
+   icons/panel-close.svg (byte-identical glyph, already the right stroke color for both states). */
+
+.filter-toggle{
+  display:inline-flex; align-items:center; gap:var(--spacing-xs);
+  height:28px; padding:var(--spacing-sm) var(--spacing-md);
+  border:var(--border-width-1) solid var(--color-neutral-400); border-radius:var(--radius-full);
+  background:var(--color-neutral-0); box-sizing:border-box; cursor:pointer;
+}
+.filter-toggle__label{
+  font-family:var(--font-family-text); font-size:var(--font-size-text-xs); line-height:var(--line-height-text-xs); font-weight:var(--font-weight-medium);
+  color:var(--color-neutral-700);
+}
+.filter-toggle__dot{ width:2px; height:2px; border-radius:50%; background:var(--color-neutral-700); flex-shrink:0; }
+.filter-toggle__count{
+  font-family:var(--font-family-text); font-size:var(--font-size-text-xs); line-height:var(--line-height-text-xs); font-weight:var(--font-weight-medium);
+  color:var(--color-neutral-700);
+}
+.filter-toggle__icon{ width:12px; height:12px; flex-shrink:0; }
+
+/* state: selected */
+.filter-toggle--selected{ background:var(--color-neutral-150); border-color:var(--color-neutral-500); }
+.filter-toggle--selected .filter-toggle__label{ font-weight:var(--font-weight-semibold); color:var(--color-neutral-900); }
+.filter-toggle--selected .filter-toggle__dot{ background:var(--color-neutral-900); }
+.filter-toggle--selected .filter-toggle__count{ font-weight:var(--font-weight-semibold); color:var(--color-neutral-900); }

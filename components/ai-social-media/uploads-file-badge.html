@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>Uploads / File Badge / Source Row — Shared Component</title>
+<link rel="stylesheet" href="../../tokens/tokens.css" />
+<link rel="stylesheet" href="../demo-nav.css" />
+<link rel="stylesheet" href="uploads-file-badge.css" />
+<style>
+  body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
+  .demo-main { padding: var(--spacing-4xl); }
+  h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-sm); }
+  h2 { font-size: var(--font-size-text-md); font-weight: 700; color: var(--color-neutral-700); margin: var(--spacing-3xl) 0 var(--spacing-md); }
+  h2:first-of-type { margin-top: 0; }
+  h3 { font-size: var(--font-size-text-sm); font-weight: 600; color: var(--color-neutral-500); margin: var(--spacing-lg) 0 var(--spacing-sm); }
+  .demo-note { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); max-width: 640px; margin: 0 0 var(--spacing-3xl); line-height: 1.6; }
+  .row { display: flex; align-items: center; gap: var(--spacing-2xl); flex-wrap: wrap; padding: var(--spacing-xl); background: var(--color-neutral-0); border: 1px solid var(--color-neutral-200); border-radius: 12px; }
+  .row + .row { margin-top: var(--spacing-lg); }
+  .col { display: flex; flex-direction: column; gap: var(--spacing-md); width: 100%; }
+</style>
+</head>
+<body>
+<div class="demo-shell">
+  <nav class="demo-sidebar">
+    <a href="../../index.html" class="demo-sidebar-home">← Home</a>
+    <div class="demo-sidebar-group collapsed" data-group="brand">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>00 Brand</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="brand-logo.html">Brand / Logo</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="icons">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>01 Icons</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="icons.html">Icons</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="actions">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>02 Actions</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="actions-button.html">Actions / Button</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group" data-group="inputs">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>03 Inputs & Controls</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="controls-field-ai-assisted-text.html">Controls / Field / AI assisted text</a>
+        <a href="controls-field.html">Controls / Field</a>
+        <a href="controls-filter-select.html">Controls / Filter / Select</a>
+        <a href="controls-filter-toggle.html">Controls / Filter / Toggle</a>
+        <a href="controls-menu.html">Menu / Context Menu / Size Dropdown</a>
+        <a href="controls-misc.html">Controls — Icon Action, Popover, Carousel Arrow, Scrollbar, Segmented Control</a>
+        <a href="controls-multi-select.html">Controls / Multi Select</a>
+        <a href="controls-option-card.html">Controls / Option Card</a>
+        <a href="controls-search-field.html">Controls / Search Field</a>
+        <a href="controls-social-profile-row.html">Controls / Social profile row</a>
+        <a href="controls-toggles.html">Controls / Toggles</a>
+        <a href="date-picker.html">Date Picker</a>
+        <a href="duration-chip.html">Controls / Duration Chip</a>
+        <a href="filter-chip.html">Controls / Filter / Toggle</a>
+        <a href="input-login.html">Input / Login</a>
+        <a href="input.html">Input</a>
+        <a href="segment-chip.html">Segment Chip</a>
+        <a href="setting-chip.html">Setting Chip</a>
+        <a href="switch.html">Controls / Switch</a>
+        <a href="table-filter.html">Table / Filter</a>
+        <a href="toggle-chip.html">Controls / Toggle Chip</a>
+        <a href="uploads-file-badge.html" class="active">Uploads / File Badge / Source Row</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="navigation">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>04 Navigation</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="nav.html">Nav / Navigation</a>
+        <a href="topbar-stepper.html">Topbar + Stepper</a>
+        <a href="avatar.html">Avatar</a>
+        <a href="w-action-bar.html">W:ActionBar</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="ai-assistant">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>AI Assistant</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="chat-panel.html">Chat Panel</a>
+        <a href="prompt-box.html">AI Prompt Box</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="editor">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Editor</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="heading.html">Heading</a>
+        <a href="image-scene-card.html">Image Scene Card</a>
+        <a href="queue-panel.html">Queue Job Row / Queue Panel</a>
+        <a href="scene-tile.html">Scene Tile</a>
+        <a href="storyboard-card.html">Storyboard Card</a>
+        <a href="video-summary-card.html">Video Summary Card</a>
+        <a href="voice-accordion-row.html">Voice Accordion Row</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="product-selectors">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Product Selectors</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="character-card.html">Character Card</a>
+        <a href="destination-account.html">Destination Account</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="data-display">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Data Display</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="carousel-card-block.html">Carousel Card Block</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="feedback">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Feedback</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="publish-social-modal.html">Publish to Social Modal</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="shared">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Shared</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="../shared/button.html">Button</a>
+        <a href="../shared/modal-confirm.html">Modal / Confirm</a>
+        <a href="../shared/modal-form.html">Modal / Form</a>
+        <a href="../shared/modal-success.html">Modal / Success</a>
+      </div>
+    </div>
+  </nav>
+  <main class="demo-main">
+  <h1>Uploads / File Badge / Source Row</h1>
+  <p class="demo-note">Figma: "03 Inputs &amp; Controls" (1124:30) — "Uploads / File Badge" (6084:3686, 5 file types), "Uploads / File Badge · Colour" (6084:120767, same 5 types), "Uploads / Source Row" (6132:3771, 5 file types &times; 2 states: ready/analysing).</p>
+
+  <h2>Uploads / File Badge (outline)</h2>
+  <div class="row">
+    <div class="file-badge">
+      <img src="icons/uploads/file-text.svg" alt="">
+      <span class="file-badge-label">PDF</span>
+    </div>
+    <div class="file-badge">
+      <img src="icons/uploads/file-text.svg" alt="">
+      <span class="file-badge-label">DOCX</span>
+    </div>
+    <div class="file-badge">
+      <img src="icons/uploads/file-text.svg" alt="">
+      <span class="file-badge-label">PPTX</span>
+    </div>
+    <div class="file-badge">
+      <img src="icons/uploads/file-text.svg" alt="">
+      <span class="file-badge-label">TXT</span>
+    </div>
+    <div class="file-badge">
+      <img src="icons/uploads/globe.svg" alt="">
+      <span class="file-badge-label">WEB</span>
+    </div>
+  </div>
+
+  <h2>Uploads / File Badge · Colour</h2>
+  <div class="row">
+    <div class="file-badge-colour file-badge-colour--pdf">
+      <span class="file-badge-colour-label">PDF</span>
+      <img class="file-badge-colour-fold" src="icons/uploads/badge-fold.svg" alt="">
+    </div>
+    <div class="file-badge-colour file-badge-colour--docx">
+      <span class="file-badge-colour-label">DOCX</span>
+      <img class="file-badge-colour-fold" src="icons/uploads/badge-fold.svg" alt="">
+    </div>
+    <div class="file-badge-colour file-badge-colour--pptx">
+      <span class="file-badge-colour-label">PPTX</span>
+      <img class="file-badge-colour-fold" src="icons/uploads/badge-fold.svg" alt="">
+    </div>
+    <div class="file-badge-colour file-badge-colour--txt">
+      <span class="file-badge-colour-label">TXT</span>
+      <img class="file-badge-colour-fold" src="icons/uploads/badge-fold.svg" alt="">
+    </div>
+    <div class="file-badge-colour file-badge-colour--web">
+      <img src="icons/uploads/badge-web-colour.svg" alt="">
+    </div>
+  </div>
+
+  <h2>Uploads / Source Row</h2>
+  <h3>State=ready</h3>
+  <div class="row">
+    <div class="col">
+      <div class="source-row">
+        <div class="file-badge-colour file-badge-colour--pdf">
+          <span class="file-badge-colour-label">PDF</span>
+          <img class="file-badge-colour-fold" src="icons/uploads/badge-fold.svg" alt="">
+        </div>
+        <div class="source-row-meta">
+          <span class="source-row-name">formeeexpress.com</span>
+          <span class="source-row-sub">Linked · analysed</span>
+        </div>
+        <div class="source-row-spacer"></div>
+        <button class="source-row-remove"><img src="icons/panel-close.svg" alt="Remove"></button>
+      </div>
+      <div class="source-row">
+        <div class="file-badge-colour file-badge-colour--docx">
+          <span class="file-badge-colour-label">DOCX</span>
+          <img class="file-badge-colour-fold" src="icons/uploads/badge-fold.svg" alt="">
+        </div>
+        <div class="source-row-meta">
+          <span class="source-row-name">Brand-Guidelines-2026.docx</span>
+          <span class="source-row-sub">Uploaded · analysed</span>
+        </div>
+        <div class="source-row-spacer"></div>
+        <button class="source-row-remove"><img src="icons/panel-close.svg" alt="Remove"></button>
+      </div>
+      <div class="source-row">
+        <div class="file-badge-colour file-badge-colour--pptx">
+          <span class="file-badge-colour-label">PPTX</span>
+          <img class="file-badge-colour-fold" src="icons/uploads/badge-fold.svg" alt="">
+        </div>
+        <div class="source-row-meta">
+          <span class="source-row-name">Q3-Campaign-Deck.pptx</span>
+          <span class="source-row-sub">Uploaded · analysed</span>
+        </div>
+        <div class="source-row-spacer"></div>
+        <button class="source-row-remove"><img src="icons/panel-close.svg" alt="Remove"></button>
+      </div>
+      <div class="source-row">
+        <div class="file-badge-colour file-badge-colour--txt">
+          <span class="file-badge-colour-label">TXT</span>
+          <img class="file-badge-colour-fold" src="icons/uploads/badge-fold.svg" alt="">
+        </div>
+        <div class="source-row-meta">
+          <span class="source-row-name">tone-of-voice-notes.txt</span>
+          <span class="source-row-sub">Uploaded · analysed</span>
+        </div>
+        <div class="source-row-spacer"></div>
+        <button class="source-row-remove"><img src="icons/panel-close.svg" alt="Remove"></button>
+      </div>
+      <div class="source-row">
+        <div class="file-badge-colour file-badge-colour--web">
+          <img src="icons/uploads/badge-web-colour.svg" alt="">
+        </div>
+        <div class="source-row-meta">
+          <span class="source-row-name">formeeholdings.com</span>
+          <span class="source-row-sub">Linked · analysed</span>
+        </div>
+        <div class="source-row-spacer"></div>
+        <button class="source-row-remove"><img src="icons/panel-close.svg" alt="Remove"></button>
+      </div>
+    </div>
+  </div>
+
+  <h3>State=analysing</h3>
+  <div class="row">
+    <div class="col">
+      <div class="source-row source-row--analysing">
+        <div class="file-badge">
+          <img src="icons/uploads/file-text.svg" alt="">
+          <span class="file-badge-label">PDF</span>
+        </div>
+        <div class="source-row-meta">
+          <span class="source-row-name">formeeexpress.com</span>
+          <span class="source-row-sub">Analysing…</span>
+        </div>
+        <div class="source-row-spacer"></div>
+        <button class="source-row-remove"><img src="icons/panel-close.svg" alt="Remove"></button>
+      </div>
+      <div class="source-row source-row--analysing">
+        <div class="file-badge">
+          <img src="icons/uploads/file-text.svg" alt="">
+          <span class="file-badge-label">DOCX</span>
+        </div>
+        <div class="source-row-meta">
+          <span class="source-row-name">Brand-Guidelines-2026.docx</span>
+          <span class="source-row-sub">Analysing…</span>
+        </div>
+        <div class="source-row-spacer"></div>
+        <button class="source-row-remove"><img src="icons/panel-close.svg" alt="Remove"></button>
+      </div>
+      <div class="source-row source-row--analysing">
+        <div class="file-badge">
+          <img src="icons/uploads/file-text.svg" alt="">
+          <span class="file-badge-label">PPTX</span>
+        </div>
+        <div class="source-row-meta">
+          <span class="source-row-name">Q3-Campaign-Deck.pptx</span>
+          <span class="source-row-sub">Analysing…</span>
+        </div>
+        <div class="source-row-spacer"></div>
+        <button class="source-row-remove"><img src="icons/panel-close.svg" alt="Remove"></button>
+      </div>
+      <div class="source-row source-row--analysing">
+        <div class="file-badge">
+          <img src="icons/uploads/file-text.svg" alt="">
+          <span class="file-badge-label">TXT</span>
+        </div>
+        <div class="source-row-meta">
+          <span class="source-row-name">tone-of-voice-notes.txt</span>
+          <span class="source-row-sub">Analysing…</span>
+        </div>
+        <div class="source-row-spacer"></div>
+        <button class="source-row-remove"><img src="icons/panel-close.svg" alt="Remove"></button>
+      </div>
+      <div class="source-row source-row--analysing">
+        <div class="file-badge">
+          <img src="icons/uploads/globe.svg" alt="">
+          <span class="file-badge-label">WEB</span>
+        </div>
+        <div class="source-row-meta">
+          <span class="source-row-name">formeeholdings.com</span>
+          <span class="source-row-sub">Analysing…</span>
+        </div>
+        <div class="source-row-spacer"></div>
+        <button class="source-row-remove"><img src="icons/panel-close.svg" alt="Remove"></button>
+      </div>
+    </div>
+  </div>
+  </main>
+</div>
+<script src="../demo-nav.js"></script>
+</body>
+</html>

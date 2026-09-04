@@ -1,0 +1,71 @@
+/* Uploads / File Badge family — shared component
+   Figma: FME_AI-Social-Media, "03 Inputs & Controls" (1124:30):
+     - Uploads / File Badge (6084:3686) — 5 file types: pdf, docx, pptx, txt, web.
+       Outline badge: neutral-400 border, mono icon + type label.
+     - Uploads / File Badge · Colour (6084:120767) — same 5 file types, filled colour
+       variant with a corner "fold" decoration; pdf/docx/pptx/txt share one shape,
+       "web" is a single pre-composed graphic exported whole from Figma (icon + bg baked in).
+     - Uploads / Source Row (6132:3771) — 10 variants: 5 file types x 2 states
+       (ready, analysing). Ready uses the Colour badge at full opacity; analysing uses
+       the outline badge at 70% row opacity with the meta subtext swapped to "Analysing…".
+   Icons exported this session (not previously in icons/): icons/uploads/file-text.svg,
+   icons/uploads/globe.svg, icons/uploads/badge-fold.svg, icons/uploads/badge-web-colour.svg.
+   Reused existing icon: icons/panel-close.svg (Source Row's remove "x").
+
+   Token gaps found while porting (kept as flagged raw values — tokens/tokens.css is out
+   of scope for this component's edits, see actions-button.css's dark-gradient precedent
+   for the established pattern of flagging instead of silently hardcoding):
+     - File Badge's corner radius (Figma `radius/9` = 9px) and File Badge · Colour's
+       (Figma `radius/5` = 5px) both fall between existing radius tokens with no exact
+       match (radius-lg=8/radius-md-lg=10, and radius-sm=4/radius-md=6 respectively).
+     - The five file-type accent colours (Figma variables `file/pdf` #d64b3f, `file/docx`
+       #2b6cb0, `file/pptx` #c05621, `file/txt` #4a5568, `file/web` #2f855a) have no
+       equivalent in tokens.css's neutral/brand/badge scales — these are a distinct
+       semantic set specific to file-type iconography. */
+
+/* ---------- Uploads / File Badge (outline, mono) ---------- */
+.file-badge{
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px;
+  width:40px; height:40px; padding:4px 0; box-sizing:border-box;
+  background:var(--color-neutral-0); border:var(--border-width-1) solid var(--color-neutral-400);
+  border-radius:9px; /* Figma `radius/9` — no exact tokens.css match, see file header note */
+}
+.file-badge img{ width:22px; height:22px; flex-shrink:0; }
+.file-badge-label{
+  font-family:var(--font-family-text); font-size:8px; line-height:10px; font-weight:var(--font-weight-bold);
+  letter-spacing:0.16px; color:var(--color-neutral-700); text-align:center; white-space:nowrap;
+}
+
+/* ---------- Uploads / File Badge · Colour ---------- */
+.file-badge-colour{
+  position:relative; display:flex; flex-direction:column; align-items:center; justify-content:flex-end;
+  width:32px; height:40px; padding:0 1px 5px; box-sizing:border-box; overflow:hidden;
+  border-radius:5px; /* Figma `radius/5` — no exact tokens.css match, see file header note */
+  flex-shrink:0;
+}
+.file-badge-colour--pdf{ background:#d64b3f; } /* Figma variable file/pdf — see file header note */
+.file-badge-colour--docx{ background:#2b6cb0; } /* Figma variable file/docx */
+.file-badge-colour--pptx{ background:#c05621; } /* Figma variable file/pptx */
+.file-badge-colour--txt{ background:#4a5568; } /* Figma variable file/txt */
+.file-badge-colour--web{ padding:0; } /* "web" is a single pre-composed graphic, see icons/uploads/badge-web-colour.svg */
+.file-badge-colour--web img{ width:100%; height:100%; display:block; }
+.file-badge-colour-label{
+  font-family:var(--font-family-text); font-size:10px; line-height:14px; font-weight:var(--font-weight-bold);
+  letter-spacing:1.2px; color:var(--color-neutral-0); text-align:center; text-transform:uppercase; white-space:nowrap;
+}
+.file-badge-colour-fold{ position:absolute; top:0; right:0; width:11px; height:11px; }
+
+/* ---------- Uploads / Source Row ---------- */
+.source-row{
+  display:flex; align-items:center; gap:var(--spacing-md); box-sizing:border-box;
+  width:100%; max-width:952px; padding:var(--spacing-md) var(--spacing-lg);
+  background:var(--color-neutral-0); border:var(--border-width-1) solid var(--color-neutral-300);
+  border-radius:var(--radius-md-lg);
+}
+.source-row--analysing{ opacity:0.7; }
+.source-row-meta{ display:flex; flex-direction:column; gap:2px; overflow:hidden; white-space:nowrap; }
+.source-row-name{ font-family:var(--font-family-text); font-size:var(--font-size-text-sm); line-height:var(--line-height-text-sm); font-weight:var(--font-weight-semibold); color:var(--color-neutral-900); }
+.source-row-sub{ font-family:var(--font-family-text); font-size:var(--font-size-text-xs); line-height:var(--line-height-text-xs); font-weight:var(--font-weight-regular); color:var(--color-neutral-500); }
+.source-row-spacer{ flex:1 0 0; }
+.source-row-remove{ flex-shrink:0; width:16px; height:16px; border:none; background:none; padding:0; cursor:pointer; }
+.source-row-remove img{ width:16px; height:16px; display:block; }

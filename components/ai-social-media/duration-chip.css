@@ -1,0 +1,19 @@
+/* Controls / Duration Chip — shared component (components/ai-social-media/duration-chip.html 참고)
+   Figma: FME_AI-Social-Media, "03 Inputs & Controls" (1124:30) → Controls / Duration Chip (272:5630)
+   2 states: default, selected. Fixed 52x40 pill used to pick clip/reel duration (e.g. "15s"). */
+
+.duration-chip{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:52px; height:var(--spacing-4xl); /* Figma: 52x40, height matches spacing/4xl token */
+  padding:0 var(--spacing-md);
+  border:var(--border-width-1) solid var(--color-neutral-400); border-radius:var(--radius-lg);
+  background:var(--color-neutral-0);
+  font-family:var(--font-family-text); font-size:var(--font-size-text-xs); line-height:var(--line-height-text-xs); font-weight:var(--font-weight-medium);
+  color:var(--color-neutral-700); cursor:pointer; box-sizing:border-box;
+}
+
+/* state: selected */
+.duration-chip--selected{
+  background:var(--color-neutral-150); border-color:var(--color-neutral-500);
+  font-weight:var(--font-weight-semibold); color:var(--color-neutral-900);
+}

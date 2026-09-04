@@ -1,0 +1,46 @@
+/* Controls / Field / AI assisted text — shared component
+   (components/ai-social-media/controls-field-ai-assisted-text.html 참고)
+   Figma: FME_AI-Social-Media, "03 Inputs & Controls" (1124:30) →
+   "Controls / Field /AI assisted text" (4651:68446).
+   Single-symbol component: label + multi-line textarea + optional helper text +
+   a trailing "Refine with AI" pill, right-aligned below the field. The pill's icon
+   reuses icons/ai-refine.svg (already used by Actions/Publish flows) and its label
+   is a brand→accent gradient text — built from --color-brand-primary/--color-brand-accent,
+   no new hex needed. */
+
+.controls-field-ai{
+  display:flex; flex-direction:column; gap:var(--spacing-sm); align-items:flex-start;
+  width:100%; max-width:952px; font-family:var(--font-family-text);
+}
+.controls-field-ai__label{
+  font-size:var(--font-size-text-md); line-height:var(--line-height-text-md); font-weight:var(--font-weight-semibold);
+  color:var(--color-neutral-800); margin:0;
+}
+.controls-field-ai__textarea{
+  width:100%; box-sizing:border-box; height:100px; resize:none;
+  padding:var(--spacing-md); border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg);
+  background:var(--color-neutral-0); font-family:var(--font-family-text);
+  font-size:var(--font-size-text-md); line-height:var(--line-height-text-md); font-weight:var(--font-weight-regular);
+  color:var(--color-neutral-900);
+}
+.controls-field-ai__textarea::placeholder{ color:var(--color-neutral-500); }
+.controls-field-ai__textarea:focus-visible{ outline:none; border-color:var(--color-neutral-500); }
+
+.controls-field-ai__helper{
+  font-size:var(--font-size-text-2xs); line-height:var(--line-height-text-2xs); font-weight:var(--font-weight-regular);
+  color:var(--color-neutral-500); margin:0; width:100%;
+}
+
+.controls-field-ai__chips{ display:flex; align-items:center; justify-content:flex-end; width:100%; }
+.controls-field-ai__refine-btn{
+  display:inline-flex; align-items:center; gap:var(--spacing-xs);
+  padding:6px 11px; border-radius:var(--radius-full);
+  background:var(--color-neutral-0); border:1px solid var(--color-neutral-100);
+  box-shadow:0px 1px 2px rgba(15,23,41,.05); cursor:pointer;
+}
+.controls-field-ai__refine-btn img{ width:16px; height:16px; }
+.controls-field-ai__refine-btn span{
+  font-size:var(--font-size-text-xs); line-height:var(--line-height-text-xs); font-weight:var(--font-weight-semibold);
+  background:linear-gradient(to right, var(--color-brand-primary), var(--color-brand-accent));
+  -webkit-background-clip:text; background-clip:text; color:transparent; white-space:nowrap;
+}

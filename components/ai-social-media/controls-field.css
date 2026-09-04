@@ -1,0 +1,60 @@
+/* Controls / Field — shared component (components/ai-social-media/controls-field.html 참고)
+   Figma: FME_AI-Social-Media, "03 Inputs & Controls" (1124:30) → "Controls / Field" (467:12).
+   Single-symbol component: a labeled form-field wrapper — title row (label + optional
+   "from <site>" badge + optional grid/list view switcher) + input box + optional helper text.
+   The input box itself reuses the same visual spec as Input / Size=SM·36, Type=Text
+   (components/ai-social-media/input.html) — border-400/radius-lg/px-12/py-7 — so this
+   component is really "label + helper wrapped around an Input", not a new input style. */
+
+.controls-field{
+  display:flex; flex-direction:column; gap:var(--spacing-sm);
+  align-items:flex-start; width:100%; max-width:468px;
+  font-family:var(--font-family-text);
+}
+
+.controls-field__title{
+  display:flex; align-items:center; justify-content:space-between; width:100%; gap:var(--spacing-sm);
+}
+.controls-field__label{
+  font-size:var(--font-size-text-md); line-height:var(--line-height-text-md); font-weight:var(--font-weight-semibold);
+  color:var(--color-neutral-800); margin:0; white-space:nowrap;
+}
+
+/* optional: "from formeeexpress.com" source badge */
+.controls-field__badge{
+  display:flex; align-items:center; justify-content:center;
+  padding:var(--spacing-2) var(--spacing-sm); border-radius:var(--radius-full);
+  background:var(--color-neutral-150);
+  font-size:var(--font-size-badge-md); font-weight:var(--font-weight-semibold); color:var(--color-neutral-900);
+  white-space:nowrap;
+}
+
+/* optional: grid/list view switcher, reuses icons/view-grid-2x2.svg + icons/view-layout-list.svg */
+.controls-field__view-toggle{
+  display:flex; align-items:center; justify-content:flex-end; gap:var(--spacing-xs);
+  padding:var(--spacing-xs); border-radius:var(--radius-lg); background:var(--color-neutral-100); height:36px;
+}
+.controls-field__view-option{
+  display:flex; align-items:center; justify-content:center; width:28px; height:28px;
+  border-radius:var(--radius-md); background:transparent; border:none; cursor:pointer;
+}
+.controls-field__view-option img{ width:16px; height:16px; }
+.controls-field__view-option--active{
+  background:var(--color-neutral-0); border:0.6px solid var(--color-neutral-400);
+  box-shadow:0px 1px 1.5px rgba(15,23,41,.1), 0px 1px 0.5px rgba(15,23,41,.04);
+}
+
+.controls-field__input{
+  display:flex; align-items:center; width:100%; box-sizing:border-box;
+  padding:7px var(--spacing-md); border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg);
+  background:var(--color-neutral-0);
+  font-size:var(--font-size-text-md); line-height:var(--line-height-text-md); font-weight:var(--font-weight-regular);
+  color:var(--color-neutral-900);
+}
+.controls-field__input::placeholder{ color:var(--color-neutral-500); }
+.controls-field__input:focus-visible{ outline:none; border-color:var(--color-neutral-500); }
+
+.controls-field__helper{
+  font-size:var(--font-size-text-2xs); line-height:var(--line-height-text-2xs); font-weight:var(--font-weight-regular);
+  color:var(--color-neutral-500); margin:0; width:100%;
+}
