@@ -57,6 +57,9 @@
   --color-alert-bg: #b80000;
   --color-error-text: #b80000;
   --color-warning-text: #d97706;
+  /* Figma variables safezone/covered, safezone/cropped — Editor / Safe Zone Legend swatches */
+  --color-safezone-covered: #c3d6f2;
+  --color-safezone-cropped: #f2c8d8;
 
   /* ---------- Color / Action (AI/Primary dark button — Figma: Actions/Publish Button, Actions/Button Primary) ---------- */
   --color-action-primary-dark-gradient-start: #323232;

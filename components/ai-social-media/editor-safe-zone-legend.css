@@ -1,0 +1,26 @@
+/* Editor Safe Zone Legend (components/ai-social-media/editor-safe-zone-legend.html 참고)
+   Figma: FME_AI-Social-Media, "08 Editor" (1124:10672) — a floating popover shown over the
+   canvas that explains what each safe-zone overlay color means: Editor / Safe Zone Legend Row
+   (7846:4041, 3 types: Safe/Covered/Cropped) assembled into Editor / Safe Zone Legend (7846:4060,
+   header + 2 of those rows). New color tokens added to tokens/tokens.css for this:
+   --color-safezone-covered / --color-safezone-cropped (Figma variables safezone/covered,
+   safezone/cropped — no existing token matched these). */
+
+/* ---------- Editor / Safe Zone Legend Row (7846:4028 Safe / 7846:4034 Covered / 7846:4040 Cropped) ---------- */
+.safe-zone-legend-row{box-sizing:border-box; width:258px; display:flex; align-items:flex-start; gap:10px; padding:var(--spacing-md); background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-xl); overflow:hidden;}
+.safe-zone-legend-swatch{width:16px; height:16px; box-sizing:border-box; border-radius:var(--radius-sm); flex-shrink:0;}
+.safe-zone-legend-swatch.type-safe{border:1.2px dashed var(--color-neutral-500);}
+.safe-zone-legend-swatch.type-covered{background:var(--color-safezone-covered); border:1px solid var(--color-safezone-covered);}
+.safe-zone-legend-swatch.type-cropped{background:var(--color-safezone-cropped); border:1px solid var(--color-safezone-cropped);}
+.safe-zone-legend-text{flex:1 0 0; min-width:0; display:flex; flex-direction:column; gap:2px;}
+.safe-zone-legend-name{font-family:var(--font-family-text); font-size:13px; font-weight:600; line-height:20px; color:var(--color-neutral-900); width:100%;}
+.safe-zone-legend-desc{font-family:var(--font-family-text); font-size:11px; font-weight:400; line-height:16px; color:var(--color-neutral-500); width:100%;}
+
+/* ---------- Editor / Safe Zone Legend (7846:4060) ----------
+   The assembled popover only uses the Safe + Cropped rows (matching Figma's own instance) --
+   the Covered row above is still built as a reusable variant for wherever else a 3rd safe-zone
+   tier applies, just not part of this default 2-row popover. */
+.safe-zone-legend{box-sizing:border-box; width:290px; display:flex; flex-direction:column; align-items:flex-start; gap:var(--spacing-md); padding:var(--spacing-lg); background:var(--color-neutral-0); border:1px solid var(--color-neutral-200); border-radius:var(--radius-2xl); box-shadow:0px 12px 16px rgba(15,23,41,0.18);} /* one-off popover shadow, no existing token matches this exact 12px/16px/0.18 combination */
+.safe-zone-legend-header{display:flex; align-items:center; gap:var(--spacing-sm); width:100%; overflow:hidden;}
+.safe-zone-legend-header img{width:16px; height:16px; display:block; flex-shrink:0;}
+.safe-zone-legend-title{flex:1 0 0; min-width:0; font-family:var(--font-family-text); font-size:14px; font-weight:600; line-height:22px; color:var(--color-neutral-900);}

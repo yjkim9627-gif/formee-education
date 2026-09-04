@@ -1,0 +1,7 @@
+/* Editor / Content Preview Actions (components/ai-social-media/content-preview-actions.html 참고)
+   Figma: FME_AI-Social-Media, "08 Editor" (1124:10672) — the action-button row shown under a
+   content preview, 4 states (Published/Draft/Scheduled/Failed). Every button in every state is
+   a plain Actions / Button instance (actions-button.css: .actions-btn--primary / --secondary /
+   --ghost) -- no new button chrome here, just this thin row wrapper plus new icons for the
+   actions actions-button.html didn't already have variants for. */
+.content-preview-actions{display:flex; align-items:center; gap:var(--spacing-sm);}

@@ -2,19 +2,22 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
-<title>Actions / Button — Shared Component</title>
+<title>Safe Zone Legend & Content Preview Actions — AI Social Media Component</title>
 <link rel="stylesheet" href="../../tokens/tokens.css" />
 <link rel="stylesheet" href="../demo-nav.css" />
 <link rel="stylesheet" href="actions-button.css" />
+<link rel="stylesheet" href="editor-safe-zone-legend.css" />
+<link rel="stylesheet" href="content-preview-actions.css" />
 <style>
   body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
   .demo-main { padding: var(--spacing-4xl); }
   h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-sm); }
   h2 { font-size: var(--font-size-text-md); font-weight: 700; color: var(--color-neutral-700); margin: var(--spacing-3xl) 0 var(--spacing-md); }
   h2:first-of-type { margin-top: 0; }
-  .demo-note { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); max-width: 640px; margin: 0 0 var(--spacing-3xl); line-height: 1.6; }
-  .row { display: flex; align-items: center; gap: var(--spacing-2xl); flex-wrap: wrap; padding: var(--spacing-xl); background: var(--color-neutral-0); border: 1px solid var(--color-neutral-200); border-radius: 12px; }
-  .row + .row { margin-top: var(--spacing-lg); }
+  .demo-note { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); max-width: 720px; margin: 0 0 var(--spacing-3xl); line-height: 1.6; }
+  .demo-sub { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); margin: 0 0 var(--spacing-lg); }
+  .demo-grid { display: flex; flex-wrap: wrap; gap: var(--spacing-2xl); align-items: flex-start; }
+  .demo-col { display: flex; flex-direction: column; gap: var(--spacing-md); }
 </style>
 </head>
 <body>
@@ -33,10 +36,10 @@
         <a href="icons.html">Icons</a>
       </div>
     </div>
-    <div class="demo-sidebar-group" data-group="actions">
+    <div class="demo-sidebar-group collapsed" data-group="actions">
       <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>02 Actions</span><span class="demo-sidebar-group-caret">▾</span></button>
       <div class="demo-sidebar-group-items">
-        <a href="actions-button.html" class="active">Actions / Button</a>
+        <a href="actions-button.html">Actions / Button</a>
       </div>
     </div>
     <div class="demo-sidebar-group collapsed" data-group="inputs">
@@ -88,13 +91,13 @@
         <a href="upload-dropzone.html">Upload Dropzone / Dashed Upload Row</a>
       </div>
     </div>
-    <div class="demo-sidebar-group collapsed" data-group="editor">
+    <div class="demo-sidebar-group" data-group="editor">
       <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Editor</span><span class="demo-sidebar-group-caret">▾</span></button>
       <div class="demo-sidebar-group-items">
         <a href="editor-color-swatch.html">Editor / ContextBar Color Swatch</a>
         <a href="editor-context-bar.html">Editor ContextBar</a>
         <a href="editor-panel-chrome.html">Editor Panel & Controls</a>
-        <a href="editor-safe-zone-legend.html">Safe Zone Legend & Content Preview Actions</a>
+        <a href="editor-safe-zone-legend.html" class="active">Safe Zone Legend & Content Preview Actions</a>
         <a href="heading.html">Heading</a>
         <a href="image-scene-card.html">Image Scene Card</a>
         <a href="music-track-row.html">Music Track Row</a>
@@ -139,63 +142,106 @@
     </div>
   </nav>
   <main class="demo-main">
-  <h1>Actions / Button</h1>
-  <p class="demo-note">Figma: "02 Actions" (1124:17) — 4 component families: the 6-style "Actions / Button", the pill-shaped "Actions / Button / text" toggle, the dark "Actions / Publish Button" split button, and "Actions / Segment Button / Poster CTA".</p>
+  <h1>Safe Zone Legend &amp; Content Preview Actions</h1>
+  <p class="demo-note">Figma: "08 Editor" (1124:10672), two small closing pieces of this section: a floating popover explaining the safe-zone overlay colors, and the action-button row shown under a content preview (Published/Draft/Scheduled/Failed).</p>
 
-  <h2>Actions / Button — 6 styles</h2>
-  <div class="row">
-    <button class="actions-btn actions-btn--primary">
-      <span class="actions-btn-ai-icon"><span><img src="icons/actions/btn-ai-icon-white-a.svg" alt=""></span><span><img src="icons/actions/btn-ai-icon-white-b.svg" alt=""></span></span>
-      <span>Button</span>
-    </button>
-    <button class="actions-btn actions-btn--blue">
-      <span class="actions-btn-ai-icon"><span><img src="icons/actions/btn-ai-icon-white-a.svg" alt=""></span><span><img src="icons/actions/btn-ai-icon-white-b.svg" alt=""></span></span>
-      <span>Button</span>
-    </button>
-    <button class="actions-btn actions-btn--secondary">
-      <img src="icons/panel-duplicate.svg" alt="">
-      <span>Button</span>
-    </button>
-    <button class="actions-btn actions-btn--ghost">
-      <img src="icons/pagebar-plus.svg" alt="">
-      <span>Button</span>
-    </button>
-    <button class="actions-btn actions-btn--inactive" disabled>
-      <span class="actions-btn-ai-icon"><span><img src="icons/actions/btn-ai-icon-grey-a.svg" alt=""></span><span><img src="icons/actions/btn-ai-icon-grey-b.svg" alt=""></span></span>
-      <span>Button</span>
-    </button>
-    <button class="actions-btn actions-btn--loading">
-      <img src="icons/actions/btn-spinner-white.svg" alt="">
-      <span>Button</span>
-    </button>
+  <h2>Editor / Safe Zone Legend Row</h2>
+  <p class="demo-sub">Node 7846:4028 (Safe) / 7846:4034 (Covered) / 7846:4040 (Cropped).</p>
+  <div class="demo-grid">
+    <div class="demo-col">
+      <div class="safe-zone-legend-row">
+        <span class="safe-zone-legend-swatch type-safe"></span>
+        <span class="safe-zone-legend-text">
+          <span class="safe-zone-legend-name">Essential safe zone</span>
+          <span class="safe-zone-legend-desc">Keep text, faces and CTA inside the dashed area.</span>
+        </span>
+      </div>
+      <div class="safe-zone-legend-row">
+        <span class="safe-zone-legend-swatch type-covered"></span>
+        <span class="safe-zone-legend-text">
+          <span class="safe-zone-legend-name">Essential safe zone</span>
+          <span class="safe-zone-legend-desc">Keep text, faces and CTA inside the dashed area.</span>
+        </span>
+      </div>
+      <div class="safe-zone-legend-row">
+        <span class="safe-zone-legend-swatch type-cropped"></span>
+        <span class="safe-zone-legend-text">
+          <span class="safe-zone-legend-name">Essential safe zone</span>
+          <span class="safe-zone-legend-desc">Keep text, faces and CTA inside the dashed area.</span>
+        </span>
+      </div>
+    </div>
   </div>
 
-  <h2>Actions / Button / text</h2>
-  <div class="row">
-    <button class="actions-btn-text">
-      <img src="icons/actions/btn-icon-user-default.svg" alt="">
-      <span class="actions-btn-text__label">AI Character</span>
-      <span class="actions-btn-text__sub">(optional — AI matches visual style)</span>
-    </button>
-    <button class="actions-btn-text actions-btn-text--selected">
-      <img src="icons/actions/btn-icon-user-selected.svg" alt="">
-      <span class="actions-btn-text__label">AI Character</span>
-      <span class="actions-btn-text__sub">(optional — AI matches visual style)</span>
-    </button>
+  <h2>Editor / Safe Zone Legend</h2>
+  <p class="demo-sub">Node 7846:4060 — header + Safe/Cropped rows, the assembled popover.</p>
+  <div class="demo-grid">
+    <div class="safe-zone-legend">
+      <span class="safe-zone-legend-header">
+        <img src="icons/pagebar-target.svg" alt="">
+        <span class="safe-zone-legend-title">Safe zones · 4:5 Feed</span>
+      </span>
+      <div class="safe-zone-legend-row">
+        <span class="safe-zone-legend-swatch type-safe"></span>
+        <span class="safe-zone-legend-text">
+          <span class="safe-zone-legend-name">Essential safe zone</span>
+          <span class="safe-zone-legend-desc">Keep text, faces and CTA inside the dashed area.</span>
+        </span>
+      </div>
+      <div class="safe-zone-legend-row">
+        <span class="safe-zone-legend-swatch type-cropped"></span>
+        <span class="safe-zone-legend-text">
+          <span class="safe-zone-legend-name">Essential safe zone</span>
+          <span class="safe-zone-legend-desc">Keep text, faces and CTA inside the dashed area.</span>
+        </span>
+      </div>
+    </div>
   </div>
 
-  <h2>Actions / Publish Button</h2>
-  <div class="row">
-    <button class="actions-publish-btn">
-      <span>Publish</span>
-      <img src="icons/actions/btn-publish-chevron-right.svg" alt="">
-    </button>
-  </div>
-
-  <h2>Actions / Segment Button / Poster CTA</h2>
-  <div class="row">
-    <button class="actions-poster-cta">Get Started with Formee Express</button>
-    <button class="actions-poster-cta actions-poster-cta--focused">Get Started with Formee Express</button>
+  <h2>Editor / Content Preview Actions</h2>
+  <p class="demo-sub">Node 7976:4205, 4 states — every button reuses Actions / Button (actions-button.css) as-is; only the icons/labels change per state.</p>
+  <div class="demo-col">
+    <div>
+      <p class="demo-sub" style="margin-bottom:var(--spacing-sm);">Status = Published</p>
+      <div class="content-preview-actions">
+        <button type="button" class="actions-btn actions-btn--primary">
+          <span class="actions-btn-ai-icon"><span><img src="icons/actions/btn-ai-icon-white-a.svg" alt=""></span><span><img src="icons/actions/btn-ai-icon-white-b.svg" alt=""></span></span>
+          <span>View on Instagram</span>
+        </button>
+        <button type="button" class="actions-btn actions-btn--secondary"><img src="icons/content-preview-edit.svg" alt="">Edit caption</button>
+        <button type="button" class="actions-btn actions-btn--ghost"><img src="icons/content-preview-download.svg" alt="">Download</button>
+      </div>
+    </div>
+    <div>
+      <p class="demo-sub" style="margin-bottom:var(--spacing-sm);">Status = Draft</p>
+      <div class="content-preview-actions">
+        <button type="button" class="actions-btn actions-btn--primary"><img src="icons/content-preview-publish.svg" alt="">Publish now</button>
+        <button type="button" class="actions-btn actions-btn--secondary"><img src="icons/content-preview-schedule.svg" alt="">Schedule</button>
+        <button type="button" class="actions-btn actions-btn--ghost"><img src="icons/content-preview-edit.svg" alt="">Edit</button>
+      </div>
+    </div>
+    <div>
+      <p class="demo-sub" style="margin-bottom:var(--spacing-sm);">Status = Scheduled</p>
+      <div class="content-preview-actions">
+        <button type="button" class="actions-btn actions-btn--primary">
+          <span class="actions-btn-ai-icon"><span><img src="icons/actions/btn-ai-icon-white-a.svg" alt=""></span><span><img src="icons/actions/btn-ai-icon-white-b.svg" alt=""></span></span>
+          <span>Reschedule</span>
+        </button>
+        <button type="button" class="actions-btn actions-btn--secondary"><img src="icons/content-preview-edit.svg" alt="">Edit</button>
+        <button type="button" class="actions-btn actions-btn--ghost"><img src="icons/content-preview-cancel.svg" alt="">Cancel schedule</button>
+      </div>
+    </div>
+    <div>
+      <p class="demo-sub" style="margin-bottom:var(--spacing-sm);">Status = Failed</p>
+      <div class="content-preview-actions">
+        <button type="button" class="actions-btn actions-btn--primary">
+          <span class="actions-btn-ai-icon"><span><img src="icons/actions/btn-ai-icon-white-a.svg" alt=""></span><span><img src="icons/actions/btn-ai-icon-white-b.svg" alt=""></span></span>
+          <span>Retry</span>
+        </button>
+        <button type="button" class="actions-btn actions-btn--secondary"><img src="icons/content-preview-edit.svg" alt="">Edit</button>
+        <button type="button" class="actions-btn actions-btn--ghost"><img src="icons/context-delete.svg" alt="">Delete</button>
+      </div>
+    </div>
   </div>
   </main>
 </div>
