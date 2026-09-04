@@ -7187,5 +7187,454 @@ function fitScreenToViewport(){
 window.addEventListener('resize', fitScreenToViewport);
 fitScreenToViewport();
 </script>
+
+<style id="fmx-deeplink-css">
+/* Content Library 에서 넘어왔을 때만 뜨는 띠. 이 화면 마크업은 건드리지 않고
+   위에 얹기만 한다 — 라이브러리 쪽 링크가 사라지면 이 블록도 그냥 안 뜬다. */
+.fmx-ref{position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:9998;
+  display:flex;align-items:center;gap:10px;padding:8px 14px 8px 8px;
+  background:var(--color-neutral-0,#fff);border:1px solid var(--color-neutral-300,#d6ddeb);
+  border-radius:9999px;box-shadow:0 6px 20px rgba(15,23,41,.14);
+  font-family:var(--font-family-text),-apple-system,sans-serif;font-size:13px;
+  color:var(--color-neutral-900,#0f1729);white-space:nowrap;}
+.fmx-ref img{width:28px;height:36px;object-fit:cover;border-radius:6px;display:block;
+  background:var(--color-neutral-150,#e9edf6);}
+.fmx-ref b{font-weight:600;}
+.fmx-ref span{color:var(--color-neutral-500,#8a93a8);}
+.fmx-ref button{margin-left:4px;border:0;background:none;cursor:pointer;
+  color:var(--color-neutral-500,#8a93a8);font-size:14px;line-height:1;padding:2px 4px;}
+</style>
+<script id="fmx-deeplink-js">
+/* Content Library 딥링크
+   #ref=<제목>&thumb=<경로>&ratio=<9:16|4:5|1:1>&stage=<brief|script|reelTimeline|publish>
+   초안 이어서 편집: #stage=publish&edit=<제목>&caption=<캡션>[&perplatform=1]
+   stage 는 "돈 쓰기 직전의 마지막 무료 단계"를 가리킨다. */
+(function(){
+  var q = new URLSearchParams((location.hash || '').replace(/^#/, ''));
+  var ref = q.get('ref'), thumb = q.get('thumb'), ratio = q.get('ratio'), stage = q.get('stage');
+  /* 라이브러리 초안을 이어서 편집할 때 넘어오는 값. ref 와 달리 "참고"가 아니라
+     같은 콘텐츠라서 배너를 띄우지 않고 캡션 필드를 그대로 채운다. */
+  var editTitle = q.get('edit'), caption = q.get('caption');
+  if (!ref && !stage && !editTitle) return;
+
+  function pickType(){
+    if (stage === 'script') return 'carousel';
+    if (stage === 'reelTimeline') return 'reel';
+    return (ratio && ratio !== '9:16') ? 'image' : 'reel';
+  }
+  function banner(){
+    if (!ref) return;
+    /* 라이브러리 레퍼런스 UI(fmxref-js)가 실려 있으면 이 자리를 그쪽이 대신한다.
+       그 블록을 지우면 아래 띠 배너가 원래대로 다시 뜬다. */
+    if (window.fmxRefMount) return window.fmxRefMount({ref:ref, thumb:thumb, ratio:ratio, stage:stage});
+    var el = document.createElement('div');
+    el.className = 'fmx-ref';
+    el.innerHTML = (thumb ? '<img src="' + thumb + '" alt="">' : '') +
+      '<span>Based on</span><b></b>' +
+      '<button type="button" aria-label="Dismiss">✕</button>';
+    el.querySelector('b').textContent = ref;          /* 제목은 그대로 넣지 않는다 */
+    el.querySelector('button').onclick = function(){ el.remove(); };
+    document.body.appendChild(el);
+  }
+  function go(){
+    try {
+      var type = pickType();
+      var chip = document.querySelector('#contentTypeToggle .seg-chip[data-type="' + type + '"]');
+      if (chip && typeof selectContentType === 'function') selectContentType(chip);
+      /* Timeline 은 사용자가 대본을 승인해야(Use this script → Continue to Timeline)
+         열린다. 그 승인을 대신 눌러주지는 않는다 — 둘 다 무료 단계라 여기서 멈춰도
+         "돈 쓰기 전"이라는 목적은 지켜진다. */
+      if (stage === 'publish' && typeof goToPublish === 'function'){
+        /* 라이브러리 초안의 "Edit & Publish" 가 오는 곳. 캡션·해시태그·플랫폼별 문구·
+           목적지·시점이 전부 이 단계에 있어서, 모달에 옮겨오지 않고 여기로 보낸다. */
+        goToPublish();
+        if (caption){
+          var ta = document.getElementById('pubCaption');
+          if (ta){
+            ta.value = caption;                       /* 빈 칸이 아니라 이어서 고치는 화면이다 */
+            if (typeof onSharedCaptionInput === 'function') onSharedCaptionInput();
+          }
+          /* 이미 발행 단계를 거친 초안이라 해시태그·SEO 는 저장돼 있는 상태다.
+             그래서 도착했을 때 접힌 채가 아니라 펼쳐져 있어야 한다.
+             generateHashtagsSEO() 는 900ms 지연이 있어 그만큼 뒤에 열린다. */
+          if (typeof generateHashtagsSEO === 'function') generateHashtagsSEO();
+        }
+        /* 플랫폼별 캡션은 초안에 실제 오버라이드가 있을 때만 켠다 — 링크가 말해줘야 한다 */
+        if (q.get('perplatform') === '1'){
+          var tg = document.getElementById('pubCaptionCustomToggle');
+          if (tg){ tg.checked = true;
+                   if (typeof toggleCaptionCustomize === 'function') toggleCaptionCustomize(); }
+        }
+      } else if ((stage === 'reelTimeline' || stage === 'reelScript') && typeof goToGenerate === 'function'){
+        goToGenerate();
+      } else if (stage === 'script' && typeof goToGenerate === 'function'){
+        goToGenerate();
+      }
+    } catch(e){ /* 진입만 실패해도 브리프는 정상으로 열린다 */ }
+    banner();
+  }
+  if (document.readyState === 'complete') setTimeout(go, 60);
+  else window.addEventListener('load', function(){ setTimeout(go, 60); });
+})();
+</script>
+<style id="fmxref-css">
+/* Content Library "Use as reference"
+   ─ 라이브러리에서 넘어온 게시물을 브리프 안에서 조절하는 UI.
+   Figma: library 섹션 8093:227085(도착) · 8124:128280(팝오버) ·
+          8124:128886(프레임 선택) · 8128:129254(프레임 반영)
+
+   기존 마크업은 고치지 않는다. 칩 한 줄을 .prompt-top 맨 앞에 끼워 넣을 뿐이다.
+   .reference-images-row 안에는 넣지 않는다 — renderReferenceImages() 가 그 행의
+   innerHTML 을 통째로 갈아치우기 때문에 넣는 족족 지워진다. 형제로 둔다.
+
+   모달·버튼은 공용 컴포넌트(components/shared/modal.css, button.css)를 그대로 쓰고,
+   세그먼트는 이 파일의 .seg-control/.seg-chip 을 쓴다. 새로 정의한 건 칩·팝오버·
+   프레임 타일·토스트뿐이다. */
+
+/* .app 은 fit 스케일이 1 일 때 transform 이 없어서 containing block 이 되지 않는다.
+   그러면 모달·토스트의 absolute 기준이 뷰포트로 새 나간다. 그것만 못박아 둔다. */
+.app{position:relative;}
+
+/* ---------- 브리프 안의 레퍼런스 칩 ---------- */
+.fmxref-row{position:relative; display:flex; margin-bottom:var(--spacing-md);}
+.fmxref-row:empty{display:none;}
+.fmxref-chip{display:flex; align-items:center; gap:var(--spacing-sm);
+  padding:var(--spacing-sm) var(--spacing-sm) var(--spacing-sm) var(--spacing-sm);
+  background:var(--color-brand-primary-light,#eef2fb);
+  border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl);
+  font-family:var(--font-family-text); text-align:left;}
+.fmxref-chip:hover{border-color:var(--color-neutral-450);}
+.fmxref-hit{display:flex; align-items:center; gap:var(--spacing-md); min-width:0;
+  cursor:pointer; padding-right:var(--spacing-sm);}
+.fmxref-chip .th{width:40px; flex:none; aspect-ratio:9/16; border-radius:var(--radius-md);
+  object-fit:cover; display:block; background:var(--color-neutral-150);}
+.fmxref-chip[data-r="4:5"] .th{aspect-ratio:4/5;}
+.fmxref-chip[data-r="1:1"] .th{aspect-ratio:1/1;}
+.fmxref-chip .tx{display:flex; flex-direction:column; gap:2px; min-width:0;}
+.fmxref-chip .t1{display:flex; align-items:center; gap:var(--spacing-sm);
+  font-size:var(--font-size-text-sm); font-weight:var(--font-weight-semibold);
+  color:var(--color-neutral-900); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.fmxref-chip .t2{font-size:var(--font-size-text-xs); color:var(--color-neutral-600);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.fmxref-tag{flex:none; padding:2px 6px; border-radius:var(--radius-sm);
+  background:var(--color-neutral-900); color:var(--color-neutral-0);
+  font-size:10px; font-weight:var(--font-weight-semibold); letter-spacing:.04em;}
+.fmxref-x{flex:none; margin-left:var(--spacing-sm); width:24px; height:24px; border:0;
+  border-radius:var(--radius-sm); background:none; cursor:pointer; line-height:1;
+  color:var(--color-neutral-500); font-size:15px; font-family:inherit;}
+.fmxref-x:hover{background:var(--color-neutral-100); color:var(--color-neutral-800);}
+
+/* ---------- Use as reference 팝오버 ---------- */
+.fmxref-pop{position:absolute; top:calc(100% + 8px); left:0; z-index:60; width:376px;
+  display:flex; flex-direction:column; gap:var(--spacing-lg);
+  padding:var(--spacing-xl); background:var(--color-neutral-0);
+  border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl);
+  box-shadow:0 10px 28px rgba(15,23,41,0.14); font-family:var(--font-family-text);}
+.fmxref-pop[hidden]{display:none;}
+.fmxref-pop-head{display:flex; align-items:center; gap:var(--spacing-sm);
+  font-size:var(--font-size-text-lg,16px); font-weight:var(--font-weight-semibold);
+  color:var(--color-neutral-900);}
+.fmxref-pop-head svg{width:18px; height:18px; flex:none; color:var(--color-neutral-500);}
+.fmxref-pop-head .fmxref-x{margin-left:auto;}
+.fmxref-lb{font-size:var(--font-size-text-xs); color:var(--color-neutral-500);
+  margin-bottom:var(--spacing-sm);}
+.fmxref-fr{display:flex; align-items:flex-start; gap:var(--spacing-md);}
+.fmxref-fr .thwrap{position:relative; width:70px; flex:none; aspect-ratio:9/16;}
+.fmxref-fr .thwrap[data-r="4:5"]{aspect-ratio:4/5;}
+.fmxref-fr .thwrap[data-r="1:1"]{aspect-ratio:1/1;}
+.fmxref-fr .th{width:100%; height:100%; border-radius:var(--radius-lg); object-fit:cover;
+  display:block; background:var(--color-neutral-150);}
+.fmxref-fr .cover{position:absolute; left:0; bottom:0; padding:4px 8px;
+  border-radius:var(--radius-md); background:rgba(15,23,41,0.55);
+  font-size:11px; font-weight:var(--font-weight-semibold); color:#fff;}
+.fmxref-fr .meta{display:flex; flex-direction:column; gap:4px; min-width:0; flex:1;}
+.fmxref-fr .nm{font-size:var(--font-size-text-md); font-weight:var(--font-weight-semibold);
+  color:var(--color-neutral-900);}
+.fmxref-fr .sub{font-size:var(--font-size-text-sm); color:var(--color-neutral-500);}
+.fmxref-change{margin-top:auto; align-self:flex-end; display:inline-flex; align-items:center;
+  gap:var(--spacing-sm); border:0; background:none; cursor:pointer; padding:0;
+  font-family:inherit; font-size:var(--font-size-text-md);
+  font-weight:var(--font-weight-medium); color:var(--color-neutral-600);}
+.fmxref-change:hover{color:var(--color-neutral-900);}
+.fmxref-change svg{width:16px; height:16px;}
+.fmxref-mchips{display:flex; flex-wrap:wrap; gap:var(--spacing-sm);}
+.fmxref-mchip{height:34px; padding:0 14px; border-radius:var(--radius-full);
+  border:1px solid var(--color-neutral-300); background:var(--color-neutral-0);
+  cursor:pointer; font-family:inherit; font-size:var(--font-size-text-sm);
+  font-weight:var(--font-weight-medium); color:var(--color-neutral-600);}
+.fmxref-mchip[aria-pressed="true"]{background:var(--color-brand-primary-light,#eef2fb);
+  border-color:var(--color-neutral-450); color:var(--color-neutral-900);
+  font-weight:var(--font-weight-semibold);}
+.fmxref-hr{height:1px; background:var(--color-neutral-200); border:0; margin:0;}
+.fmxref-cp{display:flex; align-items:center; gap:var(--spacing-md);
+  font-size:var(--font-size-text-sm); color:var(--color-neutral-900);}
+.fmxref-cp .k{width:64px; flex:none; color:var(--color-neutral-500);}
+.fmxref-cp img{width:22px; height:22px; border-radius:var(--radius-full); object-fit:cover;
+  background:var(--color-neutral-150);}
+.fmxref-cp .v{font-weight:var(--font-weight-semibold);}
+.fmxref-pill{padding:3px 10px; border-radius:var(--radius-full);
+  background:var(--color-brand-primary-light,#eef2fb);
+  font-size:var(--font-size-text-xs); font-weight:var(--font-weight-medium);
+  color:var(--color-neutral-700);}
+.fmxref-pop-foot{display:flex; justify-content:flex-end;}
+
+/* ---------- 프레임 선택 모달 ---------- */
+.fmxref-ov{z-index:70;}
+.fmxref-ov[hidden]{display:none;}
+.fmxref-modal{max-width:640px; gap:var(--spacing-xl); padding:var(--spacing-2xl);}
+.fmxref-modal .fmxref-mh{display:flex; align-items:center; gap:var(--spacing-md);
+  padding-bottom:var(--spacing-xl); border-bottom:1px solid var(--color-neutral-200);}
+.fmxref-modal .fmxref-mh svg{width:20px; height:20px; flex:none; color:var(--color-neutral-600);}
+.fmxref-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:var(--spacing-md);}
+.fmxref-tile{position:relative; aspect-ratio:9/16; border-radius:var(--radius-lg);
+  border:2px solid transparent; background:var(--color-neutral-150); cursor:pointer;
+  padding:0; overflow:hidden;}
+.fmxref-tile[aria-pressed="true"]{border-color:var(--color-brand-primary);}
+.fmxref-tile .tc{position:absolute; left:8px; bottom:8px; padding:4px 8px;
+  border-radius:var(--radius-md); background:rgba(15,23,41,0.55);
+  font-size:11px; font-weight:var(--font-weight-semibold); color:#fff;
+  font-family:var(--font-family-text);}
+.fmxref-tile .ck{position:absolute; right:8px; top:8px; width:22px; height:22px;
+  border-radius:var(--radius-full); background:var(--color-brand-primary);
+  display:none; align-items:center; justify-content:center;}
+.fmxref-tile[aria-pressed="true"] .ck{display:flex;}
+.fmxref-tile .ck svg{width:13px; height:13px; color:#fff;}
+
+/* ---------- 도착 토스트 ---------- */
+.fmxref-toast{position:absolute; top:76px; right:24px; z-index:80;
+  display:flex; align-items:center; gap:var(--spacing-sm);
+  padding:12px 18px; border-radius:var(--radius-full);
+  background:var(--color-neutral-900); color:var(--color-neutral-0);
+  font-family:var(--font-family-text); font-size:var(--font-size-text-md);
+  font-weight:var(--font-weight-medium); box-shadow:0 6px 20px rgba(15,23,41,.25);}
+.fmxref-toast[hidden]{display:none;}
+.fmxref-toast svg{width:18px; height:18px; flex:none;}
+</style>
+<script id="fmxref-js">
+/* 라이브러리 딥링크(#ref&thumb&ratio&stage)로 들어왔을 때만 산다.
+   fmx-deeplink-js 의 banner() 가 window.fmxRefMount 를 먼저 찾고, 있으면 이쪽으로
+   넘긴다. 이 블록을 지우면 그쪽 띠 배너가 원래대로 다시 뜬다. */
+(function(){
+  var ICO = {
+    check:'<svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7.4" stroke="currentColor" stroke-width="1.4"/><path d="M6.9 10.1l2.1 2.1 4.1-4.3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    film:'<svg viewBox="0 0 20 20" fill="none"><rect x="2.6" y="3.4" width="14.8" height="13.2" rx="1.8" stroke="currentColor" stroke-width="1.4"/><path d="M6.4 3.4v13.2M13.6 3.4v13.2" stroke="currentColor" stroke-width="1.4"/><path d="M2.6 7h3.8M2.6 13h3.8M13.6 7h3.8M13.6 13h3.8" stroke="currentColor" stroke-width="1.4"/></svg>',
+    swap:'<svg viewBox="0 0 16 16" fill="none"><path d="M2.2 6.4a5.8 5.8 0 0 1 9.7-2.4l1.9 1.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.8 2.4v3.6h-3.6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.8 9.6a5.8 5.8 0 0 1-9.7 2.4l-1.9-1.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.2 13.6V10h3.6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    tick:'<svg viewBox="0 0 12 12" fill="none"><path d="M10 3L4.5 8.5 2 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+  };
+  var MATCH = ['Style','Composition','Colors','Subject'];
+  var S = null;          /* 레퍼런스 상태. 딥링크가 없으면 끝까지 null 이다 */
+  var pending = null;    /* 모달에서 고르는 중인 프레임 (아직 확정 전) */
+
+  function esc(s){ return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  /* 라이브러리 카드의 thumb 은 그 페이지 기준 상대경로(assets/…)로 온다.
+     v3 에서 그대로 쓰면 없는 경로가 되니 실제 위치로 바꿔 준다. 실패하면 회색으로 둔다. */
+  function thumbSrc(t){
+    if (!t) return '';
+    if (/^(https?:|data:|\.)/.test(t)) return t;
+    return t.indexOf('assets/') === 0 ? '../../brand-characters/' + t : t;
+  }
+  function onerr(){ return ' onerror="this.style.visibility=\'hidden\'"'; }
+
+  function duration(){
+    var el = document.getElementById('durationChipText');
+    var m = el && /(\d+)/.exec(el.textContent);
+    return m ? Number(m[1]) : 16;
+  }
+  function tc(sec){ return Math.floor(sec/60) + ':' + String(sec%60).padStart(2,'0'); }
+  function frames(){
+    var d = duration(), out = [];
+    for (var i = 0; i < 8; i++) out.push(tc(Math.round(i * d / 7)));
+    return out;
+  }
+  function matchList(){ return MATCH.filter(function(m){ return S.match[m]; }); }
+  function subline(){
+    /* 프레임은 영상에만 있는 개념이다. 이미지·캐러셀에서는 아예 말하지 않는다 */
+    var f = !S.isVideo ? '' : (S.frame === 'Cover' ? 'Cover frame' : 'Frame ' + S.frame) + ' · ';
+    var m = matchList();
+    return f + S.strength + (m.length ? ' · ' + m.join(', ') : '');
+  }
+
+  /* ---------- 칩 ---------- */
+  function chipHTML(){
+    return '<div class="fmxref-chip" data-r="' + esc(S.ratio) + '">' +
+      '<div class="fmxref-hit" data-fmxref="open" role="button" tabindex="0">' +
+        (S.thumb ? '<img class="th" src="' + esc(thumbSrc(S.thumb)) + '" alt=""' + onerr() + '>'
+                 : '<span class="th"></span>') +
+        '<span class="tx">' +
+          '<span class="t1"><span class="fmxref-tag">REF</span>from “' + esc(S.title) + '”</span>' +
+          '<span class="t2">' + esc(subline()) + '</span>' +
+        '</span></div>' +
+      '<button type="button" class="fmxref-x" data-fmxref="remove" aria-label="Remove reference">✕</button>' +
+    '</div>';
+  }
+
+  /* ---------- 팝오버 ---------- */
+  function popHTML(){
+    var isCover = S.frame === 'Cover';
+    return '<div class="fmxref-pop" hidden>' +
+      '<div class="fmxref-pop-head">' + ICO.check + 'Use as reference' +
+        '<button type="button" class="fmxref-x" data-fmxref="close" aria-label="Close">✕</button></div>' +
+      '<div><div class="fmxref-lb">Reference frame</div>' +
+        '<div class="fmxref-fr">' +
+          '<span class="thwrap" data-r="' + esc(S.ratio) + '">' +
+            (S.thumb ? '<img class="th" src="' + esc(thumbSrc(S.thumb)) + '" alt=""' + onerr() + '>'
+                     : '<span class="th"></span>') +
+            (S.isVideo ? '<span class="cover">' + esc(isCover ? 'Cover' : S.frame) + '</span>' : '') +
+          '</span>' +
+          '<span class="meta"><span class="nm">' + esc(S.title) + '</span>' +
+            '<span class="sub">' + esc(S.kindLabel + ' · ' + S.ratio + (S.isVideo ? ' · ' + duration() + 's' : '')) + '</span>' +
+            (S.isVideo ? '<button type="button" class="fmxref-change" data-fmxref="frames">' +
+                         ICO.swap + 'Change frame</button>' : '') +
+          '</span></div></div>' +
+      '<div><div class="fmxref-lb">Reference strength</div>' +
+        '<div class="seg-control">' +
+          ['Loose','Balanced','Close match'].map(function(v){
+            return '<div class="seg-chip' + (S.strength === v ? ' active' : '') +
+                   '" data-fmxref="strength" data-v="' + v + '">' + v + '</div>';
+          }).join('') + '</div></div>' +
+      '<div><div class="fmxref-lb">Match from reference</div>' +
+        '<div class="fmxref-mchips">' +
+          MATCH.map(function(m){
+            return '<button type="button" class="fmxref-mchip" data-fmxref="match" data-v="' + m +
+                   '" aria-pressed="' + (S.match[m] ? 'true' : 'false') + '">' + m + '</button>';
+          }).join('') + '</div></div>' +
+      '<hr class="fmxref-hr">' +
+      '<div><div class="fmxref-lb">Copied settings</div>' +
+        '<div class="fmxref-cp" style="margin-bottom:8px;"><span class="k">Character</span>' +
+          '<img src="assets/characters/elena.png" alt=""' + onerr() + '><span class="v">Elena</span></div>' +
+        '<div class="fmxref-cp"><span class="k">Format</span>' +
+          '<span class="fmxref-pill">' + esc(S.kindLabel) + '</span>' +
+          '<span class="fmxref-pill">' + esc(S.ratio) + '</span>' +
+          (S.isVideo ? '<span class="fmxref-pill">' + duration() + 's</span>' : '') +
+        '</div></div>' +
+      '<div class="fmxref-pop-foot">' +
+        '<button type="button" class="btn btn-dark" data-fmxref="apply">Apply</button></div>' +
+    '</div>';
+  }
+
+  /* ---------- 프레임 선택 모달 ---------- */
+  function modalHTML(){
+    return '<div class="modal-overlay fmxref-ov" hidden>' +
+      '<div class="modal fmxref-modal">' +
+        '<div class="fmxref-mh">' + ICO.film +
+          '<h2 class="modal__title">Choose reference frame</h2>' +
+          '<button type="button" class="modal__close" data-fmxref="frames-close" aria-label="Close">✕</button></div>' +
+        '<p class="modal__body">Pick the moment that best represents the look you want.</p>' +
+        '<div class="fmxref-grid"></div>' +
+        '<div class="modal__footer" style="justify-content:flex-end;">' +
+          '<button type="button" class="btn btn-secondary" data-fmxref="frames-close">Back</button>' +
+          '<button type="button" class="btn btn-dark" data-fmxref="frames-use">Use this frame</button>' +
+        '</div></div></div>';
+  }
+  function paintGrid(){
+    var g = document.querySelector('.fmxref-ov .fmxref-grid');
+    if (!g) return;
+    g.innerHTML = frames().map(function(f){
+      return '<button type="button" class="fmxref-tile" data-fmxref="tile" data-v="' + f +
+             '" aria-pressed="' + (pending === f ? 'true' : 'false') + '">' +
+             '<span class="ck">' + ICO.tick + '</span><span class="tc">' + f + '</span></button>';
+    }).join('');
+  }
+
+  /* ---------- 그리기 ---------- */
+  function render(){
+    document.querySelectorAll('.fmxref-row').forEach(function(row){
+      var open = !!row.querySelector('.fmxref-pop:not([hidden])');
+      row.innerHTML = S ? chipHTML() + popHTML() : '';
+      if (open && S){ var p = row.querySelector('.fmxref-pop'); if (p) p.hidden = false; }
+    });
+  }
+  function mountRows(){
+    document.querySelectorAll('.prompt-top').forEach(function(top){
+      if (top.querySelector(':scope > .fmxref-row')) return;
+      var row = document.createElement('div');
+      row.className = 'fmxref-row';
+      top.insertBefore(row, top.firstChild);
+    });
+  }
+  function toast(msg){
+    var t = document.querySelector('.fmxref-toast');
+    if (!t){
+      t = document.createElement('div');
+      t.className = 'fmxref-toast';
+      (document.querySelector('.app') || document.body).appendChild(t);
+    }
+    t.innerHTML = ICO.check + '<span></span>';
+    t.querySelector('span').textContent = msg;
+    t.hidden = false;
+    clearTimeout(toast._t);
+    toast._t = setTimeout(function(){ t.hidden = true; }, 2800);
+  }
+
+  /* ---------- 클릭 ---------- */
+  document.addEventListener('click', function(e){
+    var hit = e.target.closest('[data-fmxref]');
+    var act = hit && hit.dataset.fmxref;
+    if (!act){
+      /* 바깥을 누르면 팝오버만 닫는다. 모달은 스스로 닫아야 한다 */
+      if (!e.target.closest('.fmxref-pop') && !e.target.closest('.fmxref-ov'))
+        document.querySelectorAll('.fmxref-pop').forEach(function(p){ p.hidden = true; });
+      return;
+    }
+    var row = hit.closest('.fmxref-row');
+    var pop = row && row.querySelector('.fmxref-pop');
+
+    if (act === 'open'){
+      var wasOpen = pop && !pop.hidden;
+      document.querySelectorAll('.fmxref-pop').forEach(function(p){ p.hidden = true; });
+      if (pop) pop.hidden = wasOpen;
+    }
+    else if (act === 'close'){ if (pop) pop.hidden = true; }
+    else if (act === 'remove'){ S = null; render(); }
+    else if (act === 'strength'){ S.strength = hit.dataset.v; render(); }
+    else if (act === 'match'){
+      S.match[hit.dataset.v] = !S.match[hit.dataset.v];
+      /* 전부 끄면 참고할 게 없어진다 — 마지막 하나는 못 끄게 막는다 */
+      if (!matchList().length){ S.match[hit.dataset.v] = true; return; }
+      render();
+    }
+    else if (act === 'apply'){ if (pop) pop.hidden = true; }
+    else if (act === 'frames'){
+      pending = S.frame === 'Cover' ? frames()[2] : S.frame;
+      paintGrid();
+      var ov = document.querySelector('.fmxref-ov'); if (ov) ov.hidden = false;
+    }
+    else if (act === 'tile'){ pending = hit.dataset.v; paintGrid(); }
+    else if (act === 'frames-close'){
+      var ov2 = document.querySelector('.fmxref-ov'); if (ov2) ov2.hidden = true;
+    }
+    else if (act === 'frames-use'){
+      S.frame = pending;
+      var ov3 = document.querySelector('.fmxref-ov'); if (ov3) ov3.hidden = true;
+      render();
+      /* 프레임을 바꿔도 팝오버는 열린 채로 둔다 — 방금 뭘 바꿨는지 보여야 한다 */
+      var p2 = document.querySelector('.fmxref-row .fmxref-pop'); if (p2) p2.hidden = false;
+    }
+  });
+
+  /* ---------- 진입 ---------- */
+  window.fmxRefMount = function(d){
+    if (!d || !d.ref) return;
+    var ratio = d.ratio || '9:16';
+    var isVideo = !(ratio && ratio !== '9:16');
+    S = {
+      title: d.ref, thumb: d.thumb || '', ratio: ratio, isVideo: isVideo,
+      kindLabel: isVideo ? 'Reel' : (d.stage === 'script' ? 'Carousel' : 'Image'),
+      frame: 'Cover', strength: 'Balanced',
+      match: { Style:true, Composition:true, Colors:true, Subject:false }
+    };
+    mountRows();
+    if (!document.querySelector('.fmxref-ov')){
+      var wrap = document.createElement('div');
+      wrap.innerHTML = modalHTML();
+      (document.querySelector('.app') || document.body).appendChild(wrap.firstChild);
+    }
+    render();
+    toast('Reference added from “' + d.ref + '”');
+  };
+})();
+</script>
 </body>
 </html>
