@@ -2,15 +2,19 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
-<title>Table / Filter — Shared Component</title>
+<title>Post Status Chip — AI Social Media Component</title>
 <link rel="stylesheet" href="../../tokens/tokens.css" />
 <link rel="stylesheet" href="../demo-nav.css" />
-<link rel="stylesheet" href="table-filter.css" />
+<link rel="stylesheet" href="post-status-chip.css" />
 <style>
   body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
   .demo-main { padding: var(--spacing-4xl); }
-  h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-3xl); }
-  .row { display: flex; align-items: center; gap: var(--spacing-2xl); }
+  h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-sm); }
+  .demo-note { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); max-width: 720px; margin: 0 0 var(--spacing-3xl); line-height: 1.6; }
+  .demo-row { display: flex; flex-direction: column; gap: var(--spacing-sm); margin-bottom: var(--spacing-3xl); }
+  .demo-label { font-size: var(--font-size-text-xs); color: var(--color-neutral-500); }
+  .demo-grid { display: flex; flex-wrap: wrap; gap: var(--spacing-2xl); align-items: flex-start; }
+  .demo-swatch { display: flex; flex-direction: column; align-items: flex-start; gap: var(--spacing-sm); background: var(--color-neutral-0); border: 1px solid var(--color-neutral-200); border-radius: 12px; padding: var(--spacing-lg); }
 </style>
 </head>
 <body>
@@ -35,7 +39,7 @@
         <a href="actions-button.html">Actions / Button</a>
       </div>
     </div>
-    <div class="demo-sidebar-group" data-group="inputs">
+    <div class="demo-sidebar-group collapsed" data-group="inputs">
       <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>03 Inputs & Controls</span><span class="demo-sidebar-group-caret">▾</span></button>
       <div class="demo-sidebar-group-items">
         <a href="controls-field-ai-assisted-text.html">Controls / Field / AI assisted text</a>
@@ -57,7 +61,7 @@
         <a href="segment-chip.html">Segment Chip</a>
         <a href="setting-chip.html">Setting Chip</a>
         <a href="switch.html">Controls / Switch</a>
-        <a href="table-filter.html" class="active">Table / Filter</a>
+        <a href="table-filter.html">Table / Filter</a>
         <a href="toggle-chip.html">Controls / Toggle Chip</a>
         <a href="uploads-file-badge.html">Uploads / File Badge / Source Row</a>
       </div>
@@ -98,11 +102,11 @@
         <a href="destination-account.html">Destination Account</a>
       </div>
     </div>
-    <div class="demo-sidebar-group collapsed" data-group="data-display">
+    <div class="demo-sidebar-group" data-group="data-display">
       <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Data Display</span><span class="demo-sidebar-group-caret">▾</span></button>
       <div class="demo-sidebar-group-items">
         <a href="carousel-card-block.html">Carousel Card Block</a>
-        <a href="post-status-chip.html">Post Status Chip</a>
+        <a href="post-status-chip.html" class="active">Post Status Chip</a>
       </div>
     </div>
     <div class="demo-sidebar-group collapsed" data-group="feedback">
@@ -122,12 +126,39 @@
     </div>
   </nav>
   <main class="demo-main">
-  <h1>Table / Filter</h1>
-  <div class="row">
-    <button class="table-filter-btn">
-      <span>Filter</span>
-      <svg class="icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M2 4h12M4.5 8h7M7 12h2"/></svg>
-    </button>
+  <h1>Post Status Chip</h1>
+  <p class="demo-note">Figma: "06 Data Display" (8350:237808) → "Data / Post Status Chip" — a compact row of the platform icons a post went out to (Library/Schedule list rows). Each platform is its own boolean, so a row only shows the icons for platforms it actually published to. The 4 "Status" variants (Posted/Status2/Status3/Status4) render pixel-identical in Figma, so only one look is implemented here.</p>
+
+  <div class="demo-row">
+    <span class="demo-label">All platforms</span>
+    <div class="demo-grid">
+      <div class="demo-swatch">
+        <div class="post-status-chip">
+          <img src="icons/social-instagram.svg" alt="Instagram">
+          <img src="icons/social-tiktok.svg" alt="TikTok">
+          <img src="icons/social-youtube.svg" alt="YouTube">
+          <img src="icons/social-meta.svg" alt="Meta">
+          <img src="icons/social-linkedin.svg" alt="LinkedIn">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-row">
+    <span class="demo-label">Subset — only the platforms this post actually went to</span>
+    <div class="demo-grid">
+      <div class="demo-swatch">
+        <div class="post-status-chip">
+          <img src="icons/social-instagram.svg" alt="Instagram">
+          <img src="icons/social-tiktok.svg" alt="TikTok">
+        </div>
+      </div>
+      <div class="demo-swatch">
+        <div class="post-status-chip">
+          <img src="icons/social-youtube.svg" alt="YouTube">
+        </div>
+      </div>
+    </div>
   </div>
   </main>
 </div>

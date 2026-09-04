@@ -1,17 +1,24 @@
 /* Avatar — shared component (components/ai-social-media/avatar.html 참고)
-   Figma: FME_AI-Social-Media, "Avatar" (5877:119503) — 20px plain circle placeholder.
-   The product also uses a larger 32px variant filled with user initials (topbar avatar,
-   chat user-message avatar) — documented here too since it's the same primitive at a
-   different size/fill, not a separate component. */
+   Figma: FME_AI-Social-Media, "Avatar" (5877:119503, re-listed under "06 Data Display" at
+   7834:402587) — two Types confirmed there: Profile (initials on a brand-tint circle) and
+   Image (a placeholder-icon circle, for a user/asset with no photo loaded yet), each at
+   Size=20 or Size=32. Previously only had the plain-neutral-400/initials pair below (no
+   live usage of the empty "sm" placeholder found, so safe to fold into the real Profile
+   spec instead of keeping it a separate undocumented look). */
 
-.ai-avatar{border-radius:var(--radius-full); background:var(--color-neutral-400); flex-shrink:0;}
-
-/* size: sm — plain placeholder circle, as in the Figma symbol */
-.ai-avatar.sm{width:20px; height:20px;}
-
-/* size: md — with initials (topbar, chat bubbles) */
-.ai-avatar.md{
-  width:32px; height:32px; background:var(--color-brand-primary-mid);
+.ai-avatar{
+  border-radius:var(--radius-full); background:var(--color-brand-primary-mid); flex-shrink:0;
   display:flex; align-items:center; justify-content:center;
-  font-family:var(--font-family-text); font-size:11px; font-weight:700; color:var(--color-neutral-800);
+  font-family:var(--font-family-text); font-weight:700; color:var(--color-neutral-800);
 }
+
+/* size: sm — 20px */
+.ai-avatar.sm{width:20px; height:20px; font-size:9px; letter-spacing:.6px;}
+/* size: md — 32px (topbar, chat bubbles) */
+.ai-avatar.md{width:32px; height:32px; font-size:11px;}
+
+/* type: Image — no photo loaded yet, shows a placeholder icon instead of initials */
+.ai-avatar.type-image{background:var(--color-neutral-400);}
+.ai-avatar.type-image img{display:block;}
+.ai-avatar.sm.type-image img{width:10px; height:10px;}
+.ai-avatar.md.type-image img{width:16px; height:16px;}

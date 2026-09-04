@@ -1,0 +1,15 @@
+/* Data / Post Status Chip — shared component (components/ai-social-media/post-status-chip.html 참고)
+   Figma: FME_AI-Social-Media, "06 Data Display" (8350:237808) → "Data / Post Status Chip"
+   component set. A compact row of the platform icons this post went out to (Library/Schedule
+   list rows). Each platform is its own boolean ("Show Instagram" etc.) rather than a fixed
+   set, so a row only shows the icons for platforms it actually published to.
+
+   The 4 "Status" variants (Posted/Status2/Status3/Status4) render pixel-identical in Figma —
+   no color/badge/text distinguishes them yet — so only one look is implemented here; add a
+   real state-specific style if/when Figma actually differentiates them. */
+
+.post-status-chip{
+  display:flex; align-items:center; gap:var(--spacing-xs);
+  height:36px; box-sizing:border-box; padding:8px var(--spacing-xs); border-radius:var(--radius-lg);
+}
+.post-status-chip img{width:20px; height:20px; display:block; flex-shrink:0; border-radius:var(--radius-sm);}
