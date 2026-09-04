@@ -2,28 +2,29 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
-<title>Brand / Logo — Shared Component</title>
+<title>Editor Color Swatch — AI Social Media Component</title>
 <link rel="stylesheet" href="../../tokens/tokens.css" />
 <link rel="stylesheet" href="../demo-nav.css" />
-<link rel="stylesheet" href="brand-logo.css" />
+<link rel="stylesheet" href="editor-color-swatch.css" />
 <style>
   body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
   .demo-main { padding: var(--spacing-4xl); }
   h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-sm); }
-  .demo-note { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); max-width: 640px; margin: 0 0 var(--spacing-3xl); line-height: 1.6; }
-  .brand-grid { display: flex; flex-wrap: wrap; gap: var(--spacing-2xl); align-items: flex-end; }
-  .brand-cell { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-sm); }
-  .brand-cell span { font-size: 11.5px; font-weight: 600; color: var(--color-neutral-700); }
+  h2 { font-size: var(--font-size-text-md); font-weight: 700; color: var(--color-neutral-700); margin: var(--spacing-3xl) 0 var(--spacing-md); }
+  h2:first-of-type { margin-top: 0; }
+  .demo-note { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); max-width: 720px; margin: 0 0 var(--spacing-3xl); line-height: 1.6; }
+  .demo-sub { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); margin: 0 0 var(--spacing-lg); }
+  .demo-grid { display: flex; flex-wrap: wrap; gap: var(--spacing-2xl); align-items: center; }
 </style>
 </head>
 <body>
 <div class="demo-shell">
   <nav class="demo-sidebar">
     <a href="../../index.html" class="demo-sidebar-home">← Home</a>
-    <div class="demo-sidebar-group" data-group="brand">
+    <div class="demo-sidebar-group collapsed" data-group="brand">
       <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>00 Brand</span><span class="demo-sidebar-group-caret">▾</span></button>
       <div class="demo-sidebar-group-items">
-        <a href="brand-logo.html" class="active">Brand / Logo</a>
+        <a href="brand-logo.html">Brand / Logo</a>
       </div>
     </div>
     <div class="demo-sidebar-group collapsed" data-group="icons">
@@ -87,10 +88,10 @@
         <a href="upload-dropzone.html">Upload Dropzone / Dashed Upload Row</a>
       </div>
     </div>
-    <div class="demo-sidebar-group collapsed" data-group="editor">
+    <div class="demo-sidebar-group" data-group="editor">
       <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Editor</span><span class="demo-sidebar-group-caret">▾</span></button>
       <div class="demo-sidebar-group-items">
-        <a href="editor-color-swatch.html">Editor / ContextBar Color Swatch</a>
+        <a href="editor-color-swatch.html" class="active">Editor / ContextBar Color Swatch</a>
         <a href="editor-panel-chrome.html">Editor Panel & Controls</a>
         <a href="heading.html">Heading</a>
         <a href="image-scene-card.html">Image Scene Card</a>
@@ -135,16 +136,39 @@
     </div>
   </nav>
   <main class="demo-main">
-  <h1>Brand / Logo</h1>
-  <p class="demo-note">Figma: "00 Brand" (1124:9) → "Brand / Logo" (4085:88616) — one mark per partner brand, all fixed pixel-grid sizes (no responsive scaling needed for this use, matches Figma). Also used standalone as "Brand/Formee Education/mark" (1049:9970) wherever only the Formee Education mark is needed (e.g. the editor topbar).</p>
-  <div class="brand-grid">
-    <div class="brand-cell"><div class="brand-logo"><img src="icons/brand/formee-education.svg" alt="Formee Education"></div><span>Formee Education</span></div>
-    <div class="brand-cell"><div class="brand-logo brand-logo--scei"><img src="icons/brand/scei.svg" alt="SCEI"></div><span>SCEI</span></div>
-    <div class="brand-cell"><div class="brand-logo brand-logo--sche"><img src="icons/brand/sche-emblem.svg" alt="SCHE"></div><span>SCHE</span></div>
-    <div class="brand-cell"><div class="brand-logo brand-logo--initials brand-logo--aurora">AL</div><span>Aurora Language</span></div>
-    <div class="brand-cell"><div class="brand-logo brand-logo--initials brand-logo--meridian">MB</div><span>Meridian Business</span></div>
-    <div class="brand-cell"><div class="brand-logo brand-logo--initials brand-logo--coastline">CT</div><span>Coastline TAFE</span></div>
-    <div class="brand-cell"><div class="brand-logo brand-logo--initials brand-logo--northbridge">NC</div><span>Northbridge College</span></div>
+  <h1>Editor / ContextBar Color Swatch</h1>
+  <p class="demo-note">Figma: "08 Editor" (1124:10672) — "색상/스와치" group: the round color-picker swatch used inside editor side-panels (Editor / Color Swatch, 985:9209) and the smaller variant used inside the floating ContextBar toolbar (ContextBar / Swatch, 3694:30683).</p>
+
+  <h2>Editor / Color Swatch — sizes</h2>
+  <p class="demo-sub">Node 985:9209. Default (solid), Transparent ("no color"), unselected vs. selected border.</p>
+  <div class="demo-grid">
+    <button type="button" class="editor-color-swatch size-sm" style="--sw-color:#f92f60;"></button>
+    <button type="button" class="editor-color-swatch" style="--sw-color:#4f6de6;"></button>
+    <button type="button" class="editor-color-swatch selected" style="--sw-color:#4f6de6;"></button>
+    <button type="button" class="editor-color-swatch size-lg" style="--sw-color:#22c55e;"></button>
+    <button type="button" class="editor-color-swatch type-transparent"><img src="icons/swatch-no-color.svg" alt="No color"></button>
+  </div>
+
+  <h2>Editor / Color Swatch — Delete &amp; Add</h2>
+  <p class="demo-sub">Delete: selected swatch with a remove badge. Add: rainbow gradient ring, opens a picker.</p>
+  <div class="demo-grid">
+    <button type="button" class="editor-color-swatch type-delete" style="--sw-color:#4f6de6;">
+      <span class="editor-color-swatch-delete-badge"><img src="icons/swatch-delete-x.svg" alt="Remove"></span>
+    </button>
+    <button type="button" class="editor-color-swatch type-add">
+      <span class="editor-color-swatch-add-inner"><img src="icons/pagebar-plus.svg" alt="Add color"></span>
+    </button>
+  </div>
+
+  <h2>ContextBar / Swatch</h2>
+  <p class="demo-sub">Node 3694:30683 — Fill (solid disc) vs. Line (ring, for stroke color) types; selected wraps the swatch in a 4px brand ring instead of recoloring a border.</p>
+  <div class="demo-grid">
+    <span class="contextbar-swatch-wrap"><button type="button" class="contextbar-swatch type-fill" style="--sw-color:#f92f60;"></button></span>
+    <span class="contextbar-swatch-wrap selected"><button type="button" class="contextbar-swatch type-fill" style="--sw-color:#f92f60;"></button></span>
+    <span class="contextbar-swatch-wrap"><button type="button" class="contextbar-swatch type-line"><span class="contextbar-swatch-line-core" style="--sw-color:#4f6de6;"></span></button></span>
+    <span class="contextbar-swatch-wrap selected"><button type="button" class="contextbar-swatch type-line"><span class="contextbar-swatch-line-core" style="--sw-color:#4f6de6;"></span></button></span>
+    <span class="contextbar-swatch-wrap"><button type="button" class="contextbar-swatch type-line-transparent"><img src="icons/swatch-line-no-color.svg" alt="No line color"></button></span>
+    <span class="contextbar-swatch-wrap"><button type="button" class="contextbar-swatch type-transparent"><img src="icons/swatch-no-color.svg" alt="No fill"></button></span>
   </div>
   </main>
 </div>

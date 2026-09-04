@@ -1,0 +1,40 @@
+/* Editor color/line swatches (components/ai-social-media/editor-color-swatch.html 참고)
+   Figma: FME_AI-Social-Media, "08 Editor" (1124:10672) — "색상/스와치" group: the round color-
+   picker swatch used inside editor side-panels (Editor / Color Swatch, 985:9209) and the smaller
+   variant used inside the floating ContextBar toolbar (ContextBar / Swatch, 3694:30683). */
+
+/* ---------- Editor / Color Swatch (985:9209) ----------
+   Sizes SM(16)/MD(26)/LG(44), types Default (solid color)/Transparent (diagonal-line "no color")/
+   Delete (adds an X badge, only fetched at the larger 32/44 sizes)/Add (rainbow gradient ring +
+   plus, the "add new swatch" affordance). Only MD Default/Transparent and LG Add/Delete were
+   fetched precisely — SM scales the same MD proportions down (no separate spec pulled for it),
+   and Delete/Add's conic-gradient stops + badge offsets are Figma's own literal exported values,
+   not tokens (a 17-stop rainbow ring has no token to bind to). */
+.editor-color-swatch{position:relative; box-sizing:border-box; display:inline-flex; flex-shrink:0; align-items:center; justify-content:center; width:26px; height:26px; padding:0; border-radius:var(--radius-full); border:1px solid var(--color-neutral-400); background:var(--sw-color, var(--color-brand-primary)); cursor:pointer;}
+.editor-color-swatch.selected{border-color:var(--color-neutral-500);}
+.editor-color-swatch.size-sm{width:16px; height:16px;}
+.editor-color-swatch.size-lg{width:44px; height:44px;}
+.editor-color-swatch.type-transparent{background:none; border:none;}
+.editor-color-swatch.type-transparent img{position:absolute; inset:0; width:100%; height:100%; display:block;}
+.editor-color-swatch.type-delete{width:32px; height:32px; border-color:var(--color-neutral-500);}
+.editor-color-swatch-delete-badge{position:absolute; top:-5px; right:-5px; box-sizing:border-box; width:20px; height:20px; display:flex; align-items:center; justify-content:center; background:var(--color-neutral-950); border-radius:var(--radius-full);}
+.editor-color-swatch-delete-badge img{width:16px; height:16px; display:block;}
+.editor-color-swatch.type-add{width:44px; height:44px; border:none; background-image:conic-gradient(from 90deg, #ff5b5b 0%, #ff863e 7.15%, #ffb020 14.3%, #ffca3e 21.45%, #ffe45b 28.6%, #d6e167 32.175%, #addd73 35.75%, #84da7e 39.325%, #5bd68a 42.9%, #5bcdc5 50%, #5bc4ff 57.1%, #6b98ff 64.25%, #7a6bff 71.4%, #bd63e8 78.55%, #ff5bd0 85.7%, #ff5b96 92.85%, #ff5b5b 100%);}
+.editor-color-swatch-add-inner{position:absolute; inset:5px; border-radius:var(--radius-full); background:var(--color-neutral-0); display:flex; align-items:center; justify-content:center;}
+.editor-color-swatch-add-inner img{width:18px; height:18px; display:block;}
+
+/* ---------- ContextBar / Swatch (3694:30683) ----------
+   A second, smaller (24px) swatch family used inside the floating ContextBar toolbar — visually
+   related to Editor / Color Swatch above but its own component, with a Line type (a colored ring
+   rather than a solid fill, for stroke/line-color pickers) whose Selected=true state wraps the
+   whole swatch in a 4px brand/primary-light ring instead of just recoloring a border. Only
+   Fill/Line (default+selected) and Line-transparent (default only) were fetched — Fill-
+   transparent reuses the same "no color" asset as Editor / Color Swatch's Transparent type
+   (same visual language; no separate asset was pulled for it in this pass). */
+.contextbar-swatch-wrap{display:inline-flex; align-items:center; justify-content:center; border-radius:var(--radius-full); flex-shrink:0;}
+.contextbar-swatch-wrap.selected{border:4px solid var(--color-brand-primary-light);}
+.contextbar-swatch{position:relative; box-sizing:border-box; width:24px; height:24px; padding:0; display:flex; align-items:center; justify-content:center; border-radius:var(--radius-full); border:1px solid var(--color-neutral-700); background:var(--sw-color, #f92f60); overflow:hidden; cursor:pointer;}
+.contextbar-swatch.type-line{background:none;}
+.contextbar-swatch-line-core{width:100%; height:100%; box-sizing:border-box; border-radius:var(--radius-full); border:7px solid var(--sw-color, var(--color-brand-primary));}
+.contextbar-swatch.type-transparent, .contextbar-swatch.type-line-transparent{background:none; border:none;}
+.contextbar-swatch.type-transparent img, .contextbar-swatch.type-line-transparent img{position:absolute; inset:0; width:100%; height:100%; display:block;}

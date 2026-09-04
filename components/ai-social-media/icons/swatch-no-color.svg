@@ -1,0 +1,13 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Editor / Color Swatch">
+<g clip-path="url(#clip0_0_6)">
+<path id="Vector 211" d="M25.8977 0.102539L-0.102295 26.1025" stroke="#C4271B" stroke-width="1.6"/>
+</g>
+<path d="M13 0.5C19.9036 0.5 25.5 6.09644 25.5 13C25.5 19.9036 19.9036 25.5 13 25.5C6.09644 25.5 0.5 19.9036 0.5 13C0.5 6.09644 6.09644 0.5 13 0.5Z" stroke="#C8D1E1"/>
+</g>
+<defs>
+<clipPath id="clip0_0_6">
+<path d="M0 13C0 5.8203 5.8203 0 13 0V0C20.1797 0 26 5.8203 26 13V13C26 20.1797 20.1797 26 13 26V26C5.8203 26 0 20.1797 0 13V13Z" fill="white"/>
+</clipPath>
+</defs>
+</svg>
