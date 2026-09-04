@@ -6842,39 +6842,82 @@ function renderSocialTabContent(){
   const wrap = document.getElementById('pubSocialTabContent');
   const done = window.__socialModalConfirmed[key];
   const tabMode = getEffectiveTabMode(key);
+  const verb = tabMode === 'schedule' ? 'schedules' : 'publishes';
+  const actionLabel = tabMode === 'schedule' ? 'Schedule' : 'Publish';
 
-  if(done){
-    wrap.innerHTML = `<div class="pub-social-confirmed-note">✓ Confirmed — ${platform.label} will ${tabMode === 'schedule' ? 'be scheduled' : 'publish'}.</div>`;
+  // Figma "Not connected" state (7606:232090) — a platform the brand hasn't connected yet
+  // gets an illustration + inline connect card instead of the preview/confirm boxes.
+  if(!window.__platformConnections[key]){
+    wrap.innerHTML = `
+      <div class="pub-social-notconnected-card">
+        <img class="pub-social-notconnected-illus" src="../../../../components/ai-social-media/icons/illus-connection-placeholder.svg" alt="">
+        <div class="pub-social-notconnected-row">
+          <div class="pub-social-notconnected-meta">
+            <div class="pub-social-notconnected-title">${platform.label} isn't connected</div>
+            <div class="pub-social-notconnected-sub">Connect a ${platform.label} account for this brand to publish here.</div>
+          </div>
+          <button type="button" class="actions-btn actions-btn--primary" onclick="connectPlatform('${key}'); renderSocialTabs(); renderSocialTabContent();">
+            <span class="actions-btn-ai-icon"><img src="../../../../components/ai-social-media/icons/actions/btn-ai-icon-white-a.svg" alt=""><img src="../../../../components/ai-social-media/icons/actions/btn-ai-icon-white-b.svg" alt=""></span>
+            <span>Connect</span>
+          </button>
+        </div>
+      </div>
+    `;
     return;
   }
+
+  // Figma "Confirmed" state (7606:232059) — the preview + confirm box stay on screen,
+  // only the button flips to a disabled checkmark "Confirmed" look (not a separate banner).
+  const btnHtml = done
+    ? `<button type="button" class="actions-btn actions-btn--inactive pub-social-confirm-btn" disabled>
+         <img src="../../../../components/ai-social-media/icons/check.svg" alt="">
+         <span>Confirmed — ${platform.label} will ${tabMode === 'schedule' ? 'be scheduled' : 'publish'}</span>
+       </button>`
+    : `<button type="button" class="actions-btn actions-btn--inactive pub-social-confirm-btn" id="pubSocialConfirmBtn" disabled onclick="confirmPublishPlatform('${key}')">
+         <span class="actions-btn-ai-icon"><img src="../../../../components/ai-social-media/icons/actions/btn-ai-icon-grey-a.svg" alt=""><img src="../../../../components/ai-social-media/icons/actions/btn-ai-icon-grey-b.svg" alt=""></span>
+         <span>${actionLabel} live to ${platform.label}</span>
+       </button>`;
 
   const formats = getSelectedFormatsForPlatform(key).join(' + ');
   const whenText = tabMode === 'schedule'
     ? `Scheduled for ${getScheduleForPlatform(key) || '—'}`
     : 'Publishing now';
-  const verb = tabMode === 'schedule' ? 'schedules' : 'publishes';
-  const actionLabel = tabMode === 'schedule' ? 'Schedule' : 'Publish';
 
   wrap.innerHTML = `
     <div class="pub-social-preview-card">
       <div class="pub-social-preview-thumb"><img src="../../../../components/ai-social-media/icons/content-image-outline-sm.svg" alt=""></div>
       <div class="pub-social-preview-meta">
-        <div class="pub-social-preview-handle">${platform.label.toUpperCase()} · @${PUBLISH_FAKE_HANDLE}</div>
+        <div class="pub-social-preview-title">
+          <span class="pub-social-preview-handle">${platform.label}</span>
+          <span class="dot-sep"></span>
+          <span class="pub-social-preview-handle">@${PUBLISH_FAKE_HANDLE}</span>
+        </div>
         <div class="pub-social-preview-format">Format: ${formats}</div>
         <div class="pub-social-preview-when">${whenText}</div>
       </div>
     </div>
     <div class="pub-social-confirm-box">
-      <div class="pub-social-confirm-warning"><img src="../../../../components/ai-social-media/icons/alert-sm.svg" class="icon-inline" alt=""> This will post live to @${PUBLISH_FAKE_HANDLE}</div>
+      <div class="pub-social-confirm-warning">This will post live to @${PUBLISH_FAKE_HANDLE}</div>
       <p class="pub-social-confirm-note">Heads up: this isn't a dry run. Confirming ${verb} the content above straight to ${platform.label}. Type the handle below to unlock the button.</p>
-      <input type="text" class="pub-social-confirm-input" id="pubSocialConfirmInput" placeholder='Type &quot;${PUBLISH_FAKE_HANDLE}&quot; to confirm' oninput="onSocialConfirmInput(this.value)">
-      <button type="button" class="btn btn-dark pub-social-confirm-btn" id="pubSocialConfirmBtn" disabled onclick="confirmPublishPlatform('${key}')"><span style="position:relative;display:inline-block;width:14px;height:14px;vertical-align:-2px;"><img src="../../../../components/ai-social-media/icons/sparkle-single-a.svg" style="position:absolute;inset:0;width:100%;height:100%;" alt=""><img src="../../../../components/ai-social-media/icons/sparkle-single-b.svg" style="position:absolute;inset:0;width:100%;height:100%;" alt=""></span> ${actionLabel} live to ${platform.label}</button>
+      <input type="text" class="pub-social-confirm-input" id="pubSocialConfirmInput" value="${done ? PUBLISH_FAKE_HANDLE : ''}" ${done ? 'disabled' : ''} placeholder='Type &quot;${PUBLISH_FAKE_HANDLE}&quot; to confirm' oninput="onSocialConfirmInput(this.value)">
+      ${btnHtml}
     </div>
   `;
 }
 
 function onSocialConfirmInput(value){
-  document.getElementById('pubSocialConfirmBtn').disabled = value.trim() !== PUBLISH_FAKE_HANDLE;
+  const btn = document.getElementById('pubSocialConfirmBtn');
+  const ready = value.trim() === PUBLISH_FAKE_HANDLE;
+  btn.disabled = !ready;
+  // Figma: Inactive (grey, disabled) -> Style=Blue (solid brand-primary, enabled) once the
+  // typed handle matches — actions-button.css's --blue variant, same AI-sparkle icon in white.
+  btn.classList.toggle('actions-btn--inactive', !ready);
+  btn.classList.toggle('actions-btn--blue', ready);
+  const icons = btn.querySelectorAll('.actions-btn-ai-icon img');
+  if(icons.length === 2){
+    icons[0].src = `../../../../components/ai-social-media/icons/actions/btn-ai-icon-${ready ? 'white' : 'grey'}-a.svg`;
+    icons[1].src = `../../../../components/ai-social-media/icons/actions/btn-ai-icon-${ready ? 'white' : 'grey'}-b.svg`;
+  }
 }
 
 function confirmPublishPlatform(key){

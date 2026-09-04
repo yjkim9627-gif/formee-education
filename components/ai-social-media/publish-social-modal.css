@@ -1,36 +1,50 @@
 /* Publish to Social — Modal (components/ai-social-media/publish-social-modal.html 참고)
-   Figma: FME_AI-Social-Media, "Publish confirmation modal" — 3 states (node 7834-331708/
-   331738/331769): handle box empty (Publish button disabled) → handle typed correctly
-   (button enabled) → confirmed (green "✓ Confirmed" note replaces the box). Uses the shared
-   Modal shell (components/shared/modal.css, .modal.modal--form) for the overlay/close/
-   title/footer — everything below is this modal's own product-specific inner content:
-   the per-destination preview card + the type-to-confirm box. One tab per selected
-   platform (Instagram/TikTok/Facebook), each gated independently behind its own handle
-   check (components/ai-social-media/setting-chip.html's .seg-chip pattern drives the tabs). */
+   Figma: FME_AI-Social-Media, "Publish confirmation modal" — 4 states:
+     - Default (unconfirmed) — 7606:231998 (handle box empty, Publish button Inactive)
+     - Handle typed (ready to confirm) — 7606:232028 (button becomes Style=Blue/enabled)
+     - Confirmed (Instagram done, tab auto-advanced) — 7606:232059 (box stays, button
+       flips to a disabled "✓ Confirmed — X will publish" look — it does NOT get replaced
+       by a separate banner)
+     - Not connected (Instagram done, tab auto-advanced) — 7606:232090 (illustration +
+       inline "not connected" card with a Connect button, in place of the preview/confirm
+       boxes)
+   Uses the shared Modal shell (components/shared/modal.css, .modal.modal--form) for the
+   overlay/close/title/footer, and reuses Actions/Button (actions-button.css:
+   .actions-btn / --blue / --inactive) for the confirm button's 3 styles instead of a
+   bespoke button class. */
 
 .pub-social-modal-overlay{position:fixed;}
 .pub-social-modal{max-width:640px;}
 .pub-social-modal .modal__footer{justify-content:space-between;}
 
-/* ---------- Destination preview row ---------- */
-.pub-social-preview-card{display:flex; gap:16px; border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl); padding:16px;}
-.pub-social-preview-thumb{width:96px; height:96px; border-radius:var(--radius-md); background:var(--color-neutral-25); border:1px solid var(--color-neutral-400); flex-shrink:0; display:flex; align-items:center; justify-content:center;}
-.pub-social-preview-thumb img{width:24px; height:24px; display:block;}
-.pub-social-preview-meta{display:flex; flex-direction:column; gap:6px; justify-content:center; min-width:0;}
-.pub-social-preview-handle{font-size:13px; font-weight:700; color:var(--color-neutral-900);}
-.pub-social-preview-handle a{color:var(--color-brand-primary); text-decoration:underline;}
-.pub-social-preview-format, .pub-social-preview-when{font-size:12.5px; color:var(--color-neutral-500);}
+/* ---------- Destination preview row (Figma: "Editor / cell" 80x80 thumb) ---------- */
+.pub-social-preview-card{display:flex; gap:var(--spacing-lg); border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl); padding:var(--spacing-lg); margin-top:var(--spacing-lg);}
+.pub-social-preview-thumb{width:80px; height:80px; box-sizing:border-box; padding:var(--spacing-sm); border-radius:var(--radius-md); background:var(--color-neutral-25); border:1px solid var(--color-neutral-400); flex-shrink:0; display:flex; align-items:center; justify-content:center;}
+.pub-social-preview-thumb img{width:36px; height:36px; display:block;}
+.pub-social-preview-meta{display:flex; flex-direction:column; gap:var(--spacing-xs); justify-content:center; min-width:0;}
+.pub-social-preview-title{display:flex; align-items:center; gap:var(--spacing-xs);}
+.pub-social-preview-title .dot-sep{width:2px; height:2px; border-radius:999px; background:var(--color-neutral-400); flex-shrink:0;}
+.pub-social-preview-handle{font-size:14px; font-weight:600; line-height:22px; color:var(--color-neutral-900);}
+.pub-social-preview-format, .pub-social-preview-when{font-size:13px; line-height:20px; color:var(--color-neutral-500);}
 
 /* ---------- Type-to-confirm box ----------
-   State=Default (input empty, button disabled) / State=Enabled (handle matches, button
-   active) — see .pub-social-confirm-btn:disabled below for the two button looks. */
-.pub-social-confirm-box{display:flex; flex-direction:column; gap:10px; background:var(--color-neutral-75); border-radius:var(--radius-xl); padding:16px; margin-top:16px;}
-.pub-social-confirm-warning{font-size:13px; font-weight:700; color:var(--color-brand-primary);}
-.pub-social-confirm-note{font-size:12.5px; color:var(--color-neutral-700); line-height:1.5; margin:0;}
-.pub-social-confirm-input{width:100%; border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); padding:9px 12px; font-size:13px; font-family:var(--font-family-text); color:var(--color-neutral-900); box-sizing:border-box;}
+   State=Default (input empty, button Inactive) / State=Enabled (handle matches, button
+   Style=Blue) / State=Confirmed (button becomes a disabled checkmark button) — the box
+   itself (warning + note + input) stays on screen across all three; only the button changes. */
+.pub-social-confirm-box{display:flex; flex-direction:column; gap:var(--spacing-md); background:var(--color-neutral-75); border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl); padding:var(--spacing-lg); margin-top:var(--spacing-lg);}
+.pub-social-confirm-warning{font-size:13px; font-weight:600; line-height:20px; color:var(--color-brand-primary-dark);}
+.pub-social-confirm-note{font-size:13px; line-height:20px; color:var(--color-neutral-900); margin:0;}
+.pub-social-confirm-input{width:100%; border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); padding:7px var(--spacing-md); font-size:14px; line-height:22px; font-family:var(--font-family-text); color:var(--color-neutral-900); box-sizing:border-box;}
+.pub-social-confirm-input::placeholder{color:var(--color-neutral-500);}
 .pub-social-confirm-input:focus{outline:none; border-color:var(--color-brand-primary);}
-.pub-social-confirm-btn{align-self:flex-start;}
-.pub-social-confirm-btn:disabled{opacity:.5; cursor:default;}
+.pub-social-confirm-btn{width:100%; box-sizing:border-box;}
+.pub-social-confirm-btn img{width:16px; height:16px;}
 
-/* ---------- State=Confirmed — replaces the whole confirm box once its platform is done ---------- */
-.pub-social-confirmed-note{display:flex; align-items:center; gap:8px; background:var(--color-badge-green-bg); color:var(--color-badge-green-text); border-radius:var(--radius-lg); padding:12px 16px; font-size:13px; font-weight:600;}
+/* ---------- State=Not connected — illustration + inline connect card, replaces the
+   preview card + confirm box for a platform this brand hasn't connected yet ---------- */
+.pub-social-notconnected-card{display:flex; flex-direction:column; align-items:center; justify-content:space-between; height:328px; box-sizing:border-box; padding:28px var(--spacing-2xl); background:var(--color-neutral-75); border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl); margin-top:var(--spacing-lg);} /* 28px: no exact spacing token between lg(16)/2xl(24) and 3xl(32) */
+.pub-social-notconnected-illus{width:160px; height:160px; display:block;}
+.pub-social-notconnected-row{display:flex; align-items:center; justify-content:space-between; gap:var(--spacing-lg); width:100%; box-sizing:border-box; padding:var(--spacing-md) var(--spacing-lg); background:var(--color-neutral-0); border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl);}
+.pub-social-notconnected-meta{display:flex; flex-direction:column; gap:2px; min-width:0;}
+.pub-social-notconnected-title{font-size:14px; font-weight:600; line-height:22px; color:var(--color-neutral-900);}
+.pub-social-notconnected-sub{font-size:13px; line-height:20px; color:var(--color-neutral-500);}
