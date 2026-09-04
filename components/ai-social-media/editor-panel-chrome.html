@@ -2,10 +2,10 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
-<title>Upload Dropzone — AI Social Media Component</title>
+<title>Editor Panel & Controls — AI Social Media Component</title>
 <link rel="stylesheet" href="../../tokens/tokens.css" />
 <link rel="stylesheet" href="../demo-nav.css" />
-<link rel="stylesheet" href="upload-dropzone.css" />
+<link rel="stylesheet" href="editor-panel-chrome.css" />
 <style>
   body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
   .demo-main { padding: var(--spacing-4xl); }
@@ -13,7 +13,10 @@
   h2 { font-size: var(--font-size-text-md); font-weight: 700; color: var(--color-neutral-700); margin: var(--spacing-3xl) 0 var(--spacing-md); }
   h2:first-of-type { margin-top: 0; }
   .demo-note { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); max-width: 720px; margin: 0 0 var(--spacing-3xl); line-height: 1.6; }
+  .demo-sub { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); margin: 0 0 var(--spacing-lg); }
   .demo-grid { display: flex; flex-wrap: wrap; gap: var(--spacing-2xl); align-items: flex-start; }
+  .demo-grid.tight { gap: var(--spacing-md); }
+  .demo-panel-bg { background: var(--color-neutral-75); border-radius: var(--radius-xl); padding: var(--spacing-xl); }
 </style>
 </head>
 <body>
@@ -81,16 +84,16 @@
         <a href="prompt-box.html">AI Prompt Box</a>
       </div>
     </div>
-    <div class="demo-sidebar-group" data-group="upload">
+    <div class="demo-sidebar-group collapsed" data-group="upload">
       <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>07 Upload</span><span class="demo-sidebar-group-caret">▾</span></button>
       <div class="demo-sidebar-group-items">
-        <a href="upload-dropzone.html" class="active">Upload Dropzone / Dashed Upload Row</a>
+        <a href="upload-dropzone.html">Upload Dropzone / Dashed Upload Row</a>
       </div>
     </div>
-    <div class="demo-sidebar-group collapsed" data-group="editor">
+    <div class="demo-sidebar-group" data-group="editor">
       <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Editor</span><span class="demo-sidebar-group-caret">▾</span></button>
       <div class="demo-sidebar-group-items">
-        <a href="editor-panel-chrome.html">Editor Panel & Controls</a>
+        <a href="editor-panel-chrome.html" class="active">Editor Panel & Controls</a>
         <a href="heading.html">Heading</a>
         <a href="image-scene-card.html">Image Scene Card</a>
         <a href="music-track-row.html">Music Track Row</a>
@@ -134,29 +137,158 @@
     </div>
   </nav>
   <main class="demo-main">
-  <h1>Upload Dropzone / Dashed Upload Row</h1>
-  <p class="demo-note">Figma: "07 Upload" (1124:10636) — two related dashed-border upload affordances: the standalone Dropzone (drag &amp; drop target, title + subtitle) and the compact Dashed Upload Row (icon + label only), in Row (inline) or Tile (square) layouts.</p>
+  <h1>Editor Panel & Controls</h1>
+  <p class="demo-note">Figma: "08 Editor" (1124:10672) — "패널/레이아웃 기본" priority group (1~3번): the panel shell every editor side-panel (Elements/Text/Brand Kit/etc.) is built from, layer/page management pieces, and effect/format controls. The rest of "08 Editor" (color/swatch, context bar + popovers, brand kit, sticker/shape/line icons, editor/cell, safe zone legend, content preview actions) is a later pass.</p>
 
-  <h2>Upload / Upload Dropzone</h2>
+  <h2>Editor / Panel Header</h2>
+  <p class="demo-sub">Node 2287:1535 — title + back (optional) + close, with an optional subtitle row.</p>
   <div class="demo-grid">
-    <div class="upload-dropzone">
-      <div class="upload-dropzone-title-row">
-        <img src="icons/upload-dropzone-arrow.svg" alt="">
-        <span class="upload-dropzone-title">Upload media</span>
+    <div class="demo-panel-bg" style="width:284px; box-sizing:border-box;">
+      <div class="editor-panel-header">
+        <div class="editor-panel-header-row">
+          <div class="editor-panel-header-left">
+            <button type="button" class="editor-panel-header-back"><img src="icons/ui-back.svg" alt=""></button>
+            <span class="editor-panel-header-title">Text</span>
+          </div>
+          <button type="button" class="editor-panel-header-close"><img src="icons/button-x-dark.svg" alt="Close"></button>
+        </div>
+        <span class="editor-panel-header-sub">Choose a style, then customize the text.</span>
       </div>
-      <span class="upload-dropzone-sub">Images, video, GIF · drag &amp; drop</span>
     </div>
   </div>
 
-  <h2>Upload / Dashed Upload Row — Direction = Row / Tile</h2>
+  <h2>Editor / Section Header</h2>
+  <p class="demo-sub">Node 2287:1541 — icon + label, optional "See all".</p>
   <div class="demo-grid">
-    <div class="upload-dashed-row">
-      <img src="icons/panel-upload.svg" alt="">
-      <span>Upload</span>
+    <div class="demo-panel-bg" style="width:284px; box-sizing:border-box;">
+      <div class="editor-section-header">
+        <div class="editor-section-header-left">
+          <img src="icons/layer-grip.svg" alt="">
+          <span class="editor-section-header-title">Recently Used</span>
+        </div>
+        <button type="button" class="editor-section-header-see-all">See all</button>
+      </div>
     </div>
-    <div class="upload-dashed-row tile">
-      <img src="icons/panel-upload.svg" alt="">
-      <span>Upload</span>
+  </div>
+
+  <h2>Editor / Prop Stepper</h2>
+  <p class="demo-sub">Node 986:9186 — numeric +/- stepper used by several sliders/controls.</p>
+  <div class="demo-grid">
+    <div class="editor-prop-stepper">
+      <button type="button" class="editor-prop-stepper-cell"><img src="icons/chevron-left.svg" alt="Decrease"></button>
+      <span class="editor-prop-stepper-val">12</span>
+      <button type="button" class="editor-prop-stepper-cell"><img src="icons/chevron-right.svg" alt="Increase"></button>
+    </div>
+  </div>
+
+  <h2>Editor / Panel Action Tile &amp; Row</h2>
+  <p class="demo-sub">Nodes 1801:21737 (Tile) / 1801:21741 (Row) — icon + label actions inside a panel.</p>
+  <div class="demo-grid">
+    <button type="button" class="editor-panel-action-tile">
+      <img src="icons/flip-horizontal.svg" alt="">
+      <span class="editor-panel-action-tile-label">Flip horizontal</span>
+    </button>
+    <button type="button" class="editor-panel-action-row">
+      <img src="icons/menu-image.svg" alt="">
+      <span class="editor-panel-action-row-label">Replace image</span>
+    </button>
+  </div>
+
+  <h2>Editor / Project Name Field</h2>
+  <p class="demo-sub">Node 2228:62316.</p>
+  <div class="demo-grid">
+    <div class="editor-project-name-field">
+      <span class="editor-project-name-field-text">Affordable UK Degree · Carousel</span>
+      <img src="icons/edit-pencil.svg" alt="Edit">
+    </div>
+  </div>
+
+  <h2>Editor / Segmented Toggle</h2>
+  <p class="demo-sub">Node 2325:1560 (Selected=false) / 2325:1562 (Selected=true) — segments share the track width equally.</p>
+  <div class="demo-grid">
+    <div class="editor-segmented-toggle" style="width:220px;">
+      <button type="button" class="editor-segmented-toggle-item selected">Fill</button>
+      <button type="button" class="editor-segmented-toggle-item">Outline</button>
+    </div>
+  </div>
+
+  <h2>Editor / Layer Row (Panel)</h2>
+  <p class="demo-sub">Node 889:7568 (default) / 889:7585 (selected) — selected adds reorder up/down icons.</p>
+  <div class="demo-grid tight" style="flex-direction:column;">
+    <div class="editor-layer-row">
+      <img src="icons/layer-grip.svg" class="editor-layer-row-grip" alt="">
+      <img src="icons/layer-button.svg" alt="">
+      <span class="editor-layer-row-name">Button</span>
+      <div class="editor-layer-row-spacer"></div>
+      <img src="icons/layer-up.svg" class="editor-layer-row-reorder" alt="Move up">
+      <img src="icons/layer-up.svg" class="editor-layer-row-reorder editor-layer-row-reorder-down" alt="Move down">
+      <img src="icons/layer-eye.svg" alt="Visible">
+      <img src="icons/edit-lock.svg" alt="Lock">
+    </div>
+    <div class="editor-layer-row selected">
+      <img src="icons/layer-grip.svg" class="editor-layer-row-grip" alt="">
+      <img src="icons/layer-button.svg" alt="">
+      <span class="editor-layer-row-name">Subheading</span>
+      <div class="editor-layer-row-spacer"></div>
+      <img src="icons/layer-up.svg" class="editor-layer-row-reorder" alt="Move up">
+      <img src="icons/layer-up.svg" class="editor-layer-row-reorder editor-layer-row-reorder-down" alt="Move down">
+      <img src="icons/layer-eye.svg" alt="Visible">
+      <img src="icons/edit-lock.svg" alt="Lock">
+    </div>
+  </div>
+
+  <h2>Editor / Page Thumb</h2>
+  <p class="demo-sub">Node 474:9 (default) / 474:11 (selected) / 474:15 (add).</p>
+  <div class="demo-grid">
+    <div class="editor-page-thumb"><span class="editor-page-thumb-num">1</span></div>
+    <div class="editor-page-thumb selected">
+      <span class="editor-page-thumb-num">2</span>
+      <div class="editor-page-thumb-delete"><img src="icons/pagebar-delete.svg" alt="Delete page"></div>
+    </div>
+    <div class="editor-page-thumb editor-page-thumb--add"><img src="icons/pagebar-plus.svg" alt="Add page"></div>
+  </div>
+
+  <h2>Editor / View Switcher</h2>
+  <p class="demo-sub">Node 2522:66005.</p>
+  <div class="demo-grid">
+    <div class="editor-view-switcher">
+      <button type="button" class="editor-view-switcher-option selected"><img src="icons/view-grid-2x2.svg" alt="Grid view"></button>
+      <button type="button" class="editor-view-switcher-option"><img src="icons/view-layout-list.svg" alt="List view"></button>
+    </div>
+  </div>
+
+  <h2>Editor / Effect Tile (compact)</h2>
+  <p class="demo-sub">Node 986:9195.</p>
+  <div class="demo-grid">
+    <button type="button" class="editor-effect-tile">
+      <div class="editor-effect-tile-preview"><span class="editor-effect-tile-chip"><span class="editor-effect-tile-chip-text">Ag</span></span></div>
+      <span class="editor-effect-tile-name">None</span>
+    </button>
+  </div>
+
+  <h2>Editor / Format Toggle</h2>
+  <p class="demo-sub">Node 985:9200 (Default).</p>
+  <div class="demo-grid">
+    <button type="button" class="editor-format-toggle"><img src="icons/format-bold.svg" alt="Bold"></button>
+    <button type="button" class="editor-format-toggle active"><img src="icons/format-italic.svg" alt="Italic"></button>
+  </div>
+
+  <h2>Editor / Image Count</h2>
+  <p class="demo-sub">Node 2159:39043 (default).</p>
+  <div class="demo-grid">
+    <div class="editor-image-count">1</div>
+    <div class="editor-image-count selected">4</div>
+  </div>
+
+  <h2>Editor / Slider</h2>
+  <p class="demo-sub">Node 986:9202 (Default-100).</p>
+  <div class="demo-grid">
+    <div class="editor-slider">
+      <div class="editor-slider-track" style="--val:100%;">
+        <div class="editor-slider-fill"></div>
+        <div class="editor-slider-thumb"></div>
+      </div>
+      <span class="editor-slider-value">100%</span>
     </div>
   </div>
   </main>

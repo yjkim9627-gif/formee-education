@@ -1,0 +1,131 @@
+/* Editor panel chrome — shared components (components/ai-social-media/editor-panel-chrome.html 참고)
+   Figma: FME_AI-Social-Media, "08 Editor" (1124:10672) — "패널/레이아웃 기본" priority group
+   (1~3번): panel shell pieces (header, section header, prop stepper, action tile/row, project
+   name field, segmented toggle), layer/page management (layer row, page thumb, view switcher),
+   and effect/format controls (effect tile, format toggle, image count, slider). Remaining 08
+   Editor groups (color/swatch, context bar + popovers, brand kit, sticker/shape/line icons,
+   editor/cell, safe zone legend, content preview actions) are a separate, later pass. */
+
+/* ---------- Editor / Panel Header (2287:1535) ---------- */
+.editor-panel-header{width:284px; display:flex; flex-direction:column; gap:var(--spacing-sm); align-items:flex-start;}
+.editor-panel-header-row{display:flex; align-items:center; justify-content:space-between; width:100%;}
+.editor-panel-header-left{display:flex; align-items:center; gap:var(--spacing-sm);}
+.editor-panel-header-back{display:flex; padding:4px; border:none; background:none; border-radius:6px; cursor:pointer;}
+.editor-panel-header-back:hover{background:var(--color-neutral-100);}
+.editor-panel-header-back img{width:16px; height:16px; display:block;}
+.editor-panel-header-title{font-family:var(--font-family-text); font-size:16px; font-weight:700; line-height:24px; color:var(--color-neutral-900); white-space:nowrap;}
+.editor-panel-header-close{display:flex; width:20px; height:20px; border:none; background:none; padding:0; cursor:pointer; flex-shrink:0;}
+.editor-panel-header-close img{width:100%; height:100%; display:block;}
+.editor-panel-header-sub{font-family:var(--font-family-text); font-size:12px; font-weight:400; line-height:18px; color:var(--color-neutral-500); width:100%;}
+
+/* ---------- Editor / Section Header (2287:1541) ---------- */
+.editor-section-header{display:flex; align-items:center; justify-content:space-between; width:100%;}
+.editor-section-header-left{display:flex; align-items:center; gap:var(--spacing-sm);}
+.editor-section-header-left img{width:16px; height:16px; display:block;}
+.editor-section-header-title{font-family:var(--font-family-text); font-size:14px; font-weight:600; line-height:22px; color:var(--color-neutral-800); white-space:nowrap;}
+.editor-section-header-see-all{font-family:var(--font-family-text); font-size:12px; font-weight:600; line-height:18px; color:var(--color-neutral-600); white-space:nowrap; background:none; border:none; padding:0; cursor:pointer;}
+
+/* ---------- Editor / Prop Stepper (986:9186) ---------- */
+.editor-prop-stepper{display:inline-flex; align-items:center; height:36px; background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg);}
+.editor-prop-stepper-cell{display:flex; align-items:center; justify-content:center; width:32px; height:32px; border:none; background:none; padding:0; cursor:pointer; flex-shrink:0;}
+.editor-prop-stepper-cell img{width:16px; height:16px; display:block;}
+.editor-prop-stepper-cell:hover{background:var(--color-neutral-50);}
+.editor-prop-stepper-val{display:flex; align-items:center; justify-content:center; width:44px; height:32px; font-family:var(--font-family-text); font-size:13px; font-weight:500; line-height:20px; color:var(--color-neutral-900);}
+
+/* ---------- Editor / Panel Action Tile (1801:21737) ---------- */
+.editor-panel-action-tile{box-sizing:border-box; width:137px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:var(--spacing-xs); padding:12px 0; background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); overflow:hidden; cursor:pointer;}
+.editor-panel-action-tile:hover{background:var(--color-neutral-50);}
+.editor-panel-action-tile img{width:20px; height:20px; display:block;}
+.editor-panel-action-tile-label{font-family:var(--font-family-text); font-size:13px; font-weight:600; line-height:20px; color:var(--color-neutral-900); white-space:nowrap;}
+
+/* ---------- Editor / Panel Action Row (1801:21741) ---------- */
+.editor-panel-action-row{box-sizing:border-box; width:284px; display:flex; align-items:center; justify-content:center; gap:var(--spacing-sm); padding:13px 0; background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); overflow:hidden; cursor:pointer;}
+.editor-panel-action-row:hover{background:var(--color-neutral-50);}
+.editor-panel-action-row img{width:20px; height:20px; display:block;}
+.editor-panel-action-row-label{font-family:var(--font-family-text); font-size:13px; font-weight:600; line-height:20px; color:var(--color-neutral-700); white-space:nowrap;}
+
+/* ---------- Editor / Project Name Field (2228:62316) ---------- */
+.editor-project-name-field{box-sizing:border-box; width:248px; display:flex; align-items:center; gap:var(--spacing-sm); padding:8px 12px; background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg);}
+.editor-project-name-field-text{flex:1 0 0; min-width:0; font-family:var(--font-family-text); font-size:13px; font-weight:600; line-height:20px; color:var(--color-neutral-700); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.editor-project-name-field img{width:16px; height:16px; display:block; flex-shrink:0; cursor:pointer;}
+
+/* ---------- Editor / Segmented Toggle (2325:1560 Selected=false / 2325:1562 Selected=true) ----------
+   The track wrapper itself isn't a separately-fetched Figma node -- the component description on
+   the Item (2325:1564) says only "Set layoutGrow=1 on the instance so segments share the track
+   width equally", implying a plain tinted track any Item row sits in. Modeled on the same
+   tinted-track + white-selected-pill pattern already used by Editor / View Switcher below. */
+.editor-segmented-toggle{display:flex; align-items:center; gap:2px; background:var(--color-neutral-100); border-radius:var(--radius-lg); padding:4px;}
+.editor-segmented-toggle-item{flex:1 0 0; display:flex; align-items:center; justify-content:center; padding:7px 12px; border:none; background:none; border-radius:var(--radius-lg); cursor:pointer; font-family:var(--font-family-text); font-size:13px; font-weight:500; line-height:20px; color:var(--color-neutral-500); white-space:nowrap;}
+.editor-segmented-toggle-item.selected{background:var(--color-neutral-0); font-weight:600; color:var(--color-neutral-900);}
+
+/* ---------- Editor / Layer Row (Panel) — default (889:7568) / selected (889:7585) ----------
+   The two states aren't just a color swap: selected adds a pair of reorder (up/down) icons plus
+   a spacer before the eye/lock icons, which default doesn't have -- markup always includes the
+   reorder+spacer elements, .selected just reveals them (and lets the name stop stretching to
+   make room). */
+.editor-layer-row{box-sizing:border-box; width:258px; display:flex; align-items:center; gap:var(--spacing-sm); padding:var(--spacing-md); background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-xl); overflow:hidden; cursor:pointer;}
+.editor-layer-row img{width:16px; height:16px; display:block; flex-shrink:0;}
+.editor-layer-row-grip{cursor:grab;}
+.editor-layer-row-name{flex:1 0 0; min-width:0; font-family:var(--font-family-text); font-size:13px; font-weight:600; line-height:20px; color:var(--color-neutral-700); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.editor-layer-row-spacer{flex:1 0 0; min-width:0; display:none;}
+.editor-layer-row-reorder{display:none; flex-shrink:0; cursor:pointer;}
+.editor-layer-row-reorder.editor-layer-row-reorder-down{transform:rotate(180deg);}
+.editor-layer-row.selected{background:var(--color-neutral-150); border-color:var(--color-neutral-500);}
+.editor-layer-row.selected .editor-layer-row-name{flex:0 0 auto;}
+.editor-layer-row.selected .editor-layer-row-name{color:var(--color-neutral-900);}
+.editor-layer-row.selected .editor-layer-row-spacer{display:block;}
+.editor-layer-row.selected .editor-layer-row-reorder{display:flex;}
+
+/* ---------- Editor / Page Thumb — default (474:9) / selected (474:11) / add (474:15) ----------
+   46x57.5px and the delete badge's fractional px (24.643px etc.) are Figma's own exported values
+   for this one thumbnail size, not tokens -- no spacing/size token lines up with them. */
+.editor-page-thumb{position:relative; box-sizing:border-box; width:46px; height:57.5px; display:flex; align-items:center; justify-content:center; border-radius:var(--radius-lg); background-image:linear-gradient(119.74deg, rgb(40,50,90) 0%, rgb(79,109,230) 83.333%); cursor:pointer;}
+.editor-page-thumb-num{font-family:var(--font-family-text); font-size:22px; font-weight:700; line-height:30px; letter-spacing:-0.1px; color:var(--color-neutral-0); text-shadow:0px 1.643px 3.286px rgba(0,0,0,0.6), 0px 3.286px 13.143px rgba(0,0,0,0.35);}
+.editor-page-thumb.selected{border:1px solid var(--color-brand-primary-mid);}
+.editor-page-thumb-delete{position:absolute; left:31.86px; top:-7.57px; box-sizing:border-box; width:24.643px; height:24.643px; display:flex; align-items:center; justify-content:center; background:var(--color-neutral-950); border:3.286px solid var(--color-neutral-0); border-radius:12.5px; overflow:hidden; cursor:pointer;}
+.editor-page-thumb-delete img{width:11.5px; height:11.5px; display:block;}
+.editor-page-thumb--add{background-image:none; background:var(--color-neutral-0); border:1.643px dashed var(--color-neutral-400);}
+.editor-page-thumb--add img{width:26.286px; height:26.286px; display:block;}
+
+/* ---------- Editor / View Switcher (2522:66005) ----------
+   Figma's own exported code has the icon variable/data-name pairing swapped between the two
+   options (imgIconViewGrid2X2 used in the FIRST/selected slot but commented "layout-list", and
+   vice versa) -- verified against each asset's own embedded <g id="icon / view / ..."> and used
+   the id, not the mismatched comment: selected slot is really grid-2x2, the other is layout-list. */
+.editor-view-switcher{display:inline-flex; align-items:center; gap:var(--spacing-xs); height:36px; box-sizing:border-box; padding:4px; background:var(--color-neutral-100); border-radius:var(--radius-lg);}
+.editor-view-switcher-option{box-sizing:border-box; display:flex; align-items:center; justify-content:center; width:28px; height:28px; padding:var(--spacing-sm); border:none; background:none; border-radius:var(--radius-md); cursor:pointer; flex-shrink:0;}
+.editor-view-switcher-option img{width:16px; height:16px; display:block;}
+.editor-view-switcher-option.selected{background:var(--color-neutral-0); border:0.6px solid var(--color-neutral-400); box-shadow:var(--shadow-cell-action);}
+
+/* ---------- Editor / Effect Tile compact (986:9195) ---------- */
+.editor-effect-tile{box-sizing:border-box; width:62px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:var(--spacing-xs); padding:6px 5px 5px; background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-md); cursor:pointer;}
+.editor-effect-tile-preview{width:100%; height:30px; display:flex; align-items:center; justify-content:center; border-radius:var(--radius-md); overflow:hidden;}
+.editor-effect-tile-chip{display:flex; align-items:center; justify-content:center; padding:1px 5px; border-radius:var(--radius-sm);}
+.editor-effect-tile-chip-text{font-family:var(--font-family-text); font-size:15px; font-weight:700; line-height:22px; color:var(--color-neutral-900); white-space:nowrap;}
+.editor-effect-tile-name{font-family:var(--font-family-text); font-size:10px; font-weight:500; line-height:14px; color:var(--color-neutral-500); white-space:nowrap;}
+
+/* ---------- Editor / Format Toggle (985:9200 Default) ----------
+   Only the Default state was fetched for this pass -- Hover/Focused (3711:36153 / 985:9203) are
+   inferred from the same hover/active pattern already used by the Prop Stepper cell above, not
+   pulled from Figma directly; revisit if those two states are ever fetched precisely. */
+.editor-format-toggle{box-sizing:border-box; display:flex; align-items:center; justify-content:center; width:30px; height:28px; border:none; background:none; border-radius:var(--radius-md); cursor:pointer; padding:0;}
+.editor-format-toggle:hover{background:var(--color-neutral-50);}
+.editor-format-toggle.active{background:var(--color-neutral-100);}
+.editor-format-toggle img{width:16px; height:16px; display:block;}
+
+/* ---------- Editor / Image Count (2159:39043 default) ----------
+   Only the default state was fetched -- .selected is inferred from the same brand-tinted
+   selected-border pattern used by Editor / Page Thumb above, not pulled from Figma directly. */
+.editor-image-count{box-sizing:border-box; width:36px; height:36px; display:flex; align-items:center; justify-content:center; background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); overflow:hidden; font-family:var(--font-family-text); font-size:13px; font-weight:600; line-height:20px; color:var(--color-neutral-900); cursor:pointer;}
+.editor-image-count.selected{border-color:var(--color-brand-primary); color:var(--color-brand-primary-dark);}
+
+/* ---------- Editor / Slider (986:9202 Default-100) ----------
+   Figma exports the track as a flat image asset (a straight color line); built here as a real
+   fill+thumb pair instead so the "value" is actually adjustable per-instance via inline
+   `--val` rather than baking one fixed screenshot. Only the Default-100 example was fetched in
+   this pass (Default-0 / Color grading / Centered variants not yet pulled). */
+.editor-slider{display:flex; align-items:center; gap:var(--spacing-lg);}
+.editor-slider-track{position:relative; flex-shrink:0; width:96px; height:4px; border-radius:var(--radius-full); background:var(--color-neutral-300);}
+.editor-slider-fill{position:absolute; top:0; left:0; height:100%; border-radius:var(--radius-full); background:var(--color-brand-primary); width:var(--val, 100%);}
+.editor-slider-thumb{position:absolute; top:50%; left:var(--val, 100%); width:14px; height:14px; border-radius:50%; background:var(--color-neutral-0); border:2px solid var(--color-neutral-400); transform:translate(-50%,-50%); box-shadow:var(--shadow-cell-action);}
+.editor-slider-value{box-sizing:border-box; flex-shrink:0; display:flex; align-items:center; height:36px; padding:9px 12px; background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); font-family:var(--font-family-text); font-size:13px; font-weight:500; line-height:20px; color:var(--color-neutral-700);}
