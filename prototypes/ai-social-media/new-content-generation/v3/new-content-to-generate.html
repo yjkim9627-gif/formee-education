@@ -795,6 +795,9 @@
   .pub-warning-note.visible{display:flex;}
   .pub-divider{height:1px; background:var(--color-neutral-200); margin:var(--spacing-2xl) 0;}
   .pub-run-ad{display:flex; align-items:center; justify-content:space-between; gap:16px; background:#fff; border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl); padding:12px 16px;}
+  /* a real spacer element, not margin/padding on the last child — Chrome doesn't reliably
+     include trailing margin/padding of a scroll container's last child in its scrollHeight. */
+  .pub-bottom-spacer{height:60px; flex-shrink:0;}
   .pub-run-ad-sub{font-size:12px; color:var(--color-neutral-500); margin:4px 0 0;}
 
   /* "Publish to social" modal styles now live in
@@ -2593,6 +2596,7 @@
         </div>
         <button class="btn btn-secondary" onclick="runAsAd()">Set up ad →</button>
       </div>
+      <div class="pub-bottom-spacer"></div>
     </div>
   </div>
 
