@@ -20,38 +20,106 @@
 <div class="demo-shell">
   <nav class="demo-sidebar">
     <a href="../../index.html" class="demo-sidebar-home">← Home</a>
-    <div class="demo-sidebar-group">
-      <div class="demo-sidebar-label">AI Social Media</div>
-      <a href="nav.html">Nav / Navigation</a>
-      <a href="topbar-stepper.html">Topbar + Stepper</a>
-      <a href="heading.html">Heading</a>
-      <a href="chat-panel.html">Chat Panel</a>
-      <a href="character-card.html">Character Card</a>
-      <a href="avatar.html">Avatar</a>
-      <a href="switch.html">Controls / Switch</a>
-      <a href="prompt-box.html">AI Prompt Box</a>
-      <a href="input.html">Input</a>
-      <a href="filter-chip.html">Controls / Filter / Toggle</a>
-      <a href="table-filter.html">Table / Filter</a>
-      <a href="setting-chip.html">Setting Chip</a>
-      <a href="actions-button.html">Actions / Button</a>
-      <a href="icons.html">Icons</a>
-      <a href="scene-tile.html">Scene Tile</a>
-      <a href="storyboard-card.html">Storyboard Card</a>
-      <a href="image-scene-card.html">Image Scene Card</a>
-      <a href="voice-accordion-row.html">Voice Accordion Row</a>
-      <a href="video-summary-card.html">Video Summary Card</a>
-      <a href="destination-account.html">Destination Account</a>
-      <a href="date-picker.html">Date Picker</a>
-      <a href="carousel-card-block.html">Carousel Card Block</a>
-      <a href="queue-panel.html" class="active">Queue Job Row / Panel</a>
+    <div class="demo-sidebar-group collapsed" data-group="brand">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>00 Brand</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="brand-logo.html">Brand / Logo</a>
+      </div>
     </div>
-    <div class="demo-sidebar-group">
-      <div class="demo-sidebar-label">Shared</div>
-      <a href="../shared/button.html">Button</a>
-      <a href="../shared/modal-confirm.html">Modal / Confirm</a>
-      <a href="../shared/modal-form.html">Modal / Form</a>
-      <a href="../shared/modal-success.html">Modal / Success</a>
+    <div class="demo-sidebar-group collapsed" data-group="icons">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>01 Icons</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="icons.html">Icons</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="actions">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>02 Actions</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="actions-button.html">Actions / Button</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="inputs">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>03 Inputs & Controls</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="controls-field-ai-assisted-text.html">Controls / Field / AI assisted text</a>
+        <a href="controls-field.html">Controls / Field</a>
+        <a href="controls-filter-select.html">Controls / Filter / Select</a>
+        <a href="controls-filter-toggle.html">Controls / Filter / Toggle</a>
+        <a href="controls-menu.html">Menu / Context Menu / Size Dropdown</a>
+        <a href="controls-misc.html">Controls — Icon Action, Popover, Carousel Arrow, Scrollbar, Segmented Control</a>
+        <a href="controls-multi-select.html">Controls / Multi Select</a>
+        <a href="controls-option-card.html">Controls / Option Card</a>
+        <a href="controls-search-field.html">Controls / Search Field</a>
+        <a href="controls-social-profile-row.html">Controls / Social profile row</a>
+        <a href="controls-toggles.html">Controls / Toggles</a>
+        <a href="date-picker.html">Date Picker</a>
+        <a href="duration-chip.html">Controls / Duration Chip</a>
+        <a href="filter-chip.html">Controls / Filter / Toggle</a>
+        <a href="input-login.html">Input / Login</a>
+        <a href="input.html">Input</a>
+        <a href="segment-chip.html">Segment Chip</a>
+        <a href="setting-chip.html">Setting Chip</a>
+        <a href="switch.html">Controls / Switch</a>
+        <a href="table-filter.html">Table / Filter</a>
+        <a href="toggle-chip.html">Controls / Toggle Chip</a>
+        <a href="uploads-file-badge.html">Uploads / File Badge / Source Row</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="navigation">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>04 Navigation</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="nav.html">Nav / Navigation</a>
+        <a href="topbar-stepper.html">Topbar + Stepper</a>
+        <a href="avatar.html">Avatar</a>
+        <a href="w-action-bar.html">W:ActionBar</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="ai-assistant">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>AI Assistant</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="chat-panel.html">Chat Panel</a>
+        <a href="prompt-box.html">AI Prompt Box</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group" data-group="editor">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Editor</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="heading.html">Heading</a>
+        <a href="image-scene-card.html">Image Scene Card</a>
+        <a href="queue-panel.html" class="active">Queue Job Row / Queue Panel</a>
+        <a href="scene-tile.html">Scene Tile</a>
+        <a href="storyboard-card.html">Storyboard Card</a>
+        <a href="video-summary-card.html">Video Summary Card</a>
+        <a href="voice-accordion-row.html">Voice Accordion Row</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="product-selectors">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Product Selectors</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="character-card.html">Character Card</a>
+        <a href="destination-account.html">Destination Account</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="data-display">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Data Display</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="carousel-card-block.html">Carousel Card Block</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="feedback">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Feedback</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="publish-social-modal.html">Publish to Social Modal</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="shared">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Shared</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="../shared/button.html">Button</a>
+        <a href="../shared/modal-confirm.html">Modal / Confirm</a>
+        <a href="../shared/modal-form.html">Modal / Form</a>
+        <a href="../shared/modal-success.html">Modal / Success</a>
+      </div>
     </div>
   </nav>
   <main class="demo-main">
@@ -131,5 +199,6 @@
   </div>
   </main>
 </div>
+<script src="../demo-nav.js"></script>
 </body>
 </html>
