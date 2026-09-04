@@ -6034,14 +6034,19 @@ function getPublishMetaText(){
 }
 
 // key -> {post: bool, story: bool}. Connected platforms default to every surface the
-// content type offers; not-connected platforms start with nothing checked.
+// content type offers. Not-connected platforms default to nothing checked EXCEPT facebook,
+// which the Destinations/Publish reference screens (7606:232090) show as a selected-but-
+// not-connected destination -- it needs to default checked so its "Not connected" tab
+// (illustration + inline Connect card) is actually reachable by opening Publish, not just
+// possible in theory. Other not-connected platforms stay opt-in.
 window.__platformFormats = window.__platformFormats || {};
 function ensurePlatformFormatDefaults(){
   const surfaces = getDestinationSurfaces();
   PUBLISH_PLATFORMS.forEach(p => {
     if(window.__platformFormats[p.key]) return;
     const connected = window.__platformConnections[p.key];
-    window.__platformFormats[p.key] = { post: connected && surfaces.includes('post'), story: connected && surfaces.includes('story') };
+    const on = connected || p.key === 'facebook';
+    window.__platformFormats[p.key] = { post: on && surfaces.includes('post'), story: on && surfaces.includes('story') };
   });
 }
 
@@ -6371,10 +6376,13 @@ function renderPublishDestinationsTable(el){
     const connected = window.__platformConnections[p.key];
     const icon = `<img class="pub-dest-icon" src="${PUBLISH_PLATFORM_ICONS[p.key]}" alt="">`;
     const formats = window.__platformFormats[p.key];
-    const allChecked = connected && surfaces.every(s => formats[s]);
+    // Connection status no longer disables these -- you can select a not-connected platform
+    // as a destination (it just shows the "Not connected" Connect prompt in the Publish
+    // modal instead of the normal preview/confirm box once you get there).
+    const allChecked = surfaces.every(s => formats[s]);
     const cols = surfaces.map(s => `
       <div class="pub-dest-col">
-        <input type="checkbox" class="pub-dest-checkbox" ${formats[s] ? 'checked' : ''} ${connected ? '' : 'disabled'} onchange="toggleDestinationFormat('${p.key}','${s}')">
+        <input type="checkbox" class="pub-dest-checkbox" ${formats[s] ? 'checked' : ''} onchange="toggleDestinationFormat('${p.key}','${s}')">
       </div>
     `).join(gap);
     const status = connected
@@ -6383,7 +6391,7 @@ function renderPublishDestinationsTable(el){
     return `
       <div class="pub-dest-row${connected ? '' : ' not-connected'}">
         <div class="pub-dest-select-col">
-          <input type="checkbox" class="pub-dest-checkbox" ${allChecked ? 'checked' : ''} ${connected ? '' : 'disabled'} onchange="toggleDestinationAllSurfaces('${p.key}', this.checked)">
+          <input type="checkbox" class="pub-dest-checkbox" ${allChecked ? 'checked' : ''} onchange="toggleDestinationAllSurfaces('${p.key}', this.checked)">
         </div>
         <div class="pub-dest-meta">
           ${icon}
@@ -6411,10 +6419,11 @@ function renderPublishDestinationsSimple(el){
   const surface = getDestinationSurfaces()[0];
   el.innerHTML = PUBLISH_PLATFORMS.map(p => {
     const connected = window.__platformConnections[p.key];
-    const checked = connected && window.__platformFormats[p.key][surface];
-    const checkbox = connected
-      ? `<span class="destination-checkbox${checked ? ' checked' : ''}" onclick="toggleDestinationFormat('${p.key}','${surface}');">${checked ? '<img src="../../../../components/ai-social-media/icons/wh-check.svg" alt="">' : ''}</span>`
-      : `<span class="destination-checkbox disabled"></span>`;
+    // Connection status no longer disables this -- see renderPublishDestinationsTable's
+    // matching comment: selecting a not-connected platform is what makes its "Not connected"
+    // state reachable in the Publish modal instead of permanently dead code.
+    const checked = window.__platformFormats[p.key][surface];
+    const checkbox = `<span class="destination-checkbox${checked ? ' checked' : ''}" onclick="toggleDestinationFormat('${p.key}','${surface}');">${checked ? '<img src="../../../../components/ai-social-media/icons/wh-check.svg" alt="">' : ''}</span>`;
     const status = connected
       ? `<span class="destination-account-status connected">Connected</span>`
       : `<span class="destination-account-status not-connected">Not connected</span><button class="destination-account-connect-btn" type="button" onclick="connectPlatform('${p.key}')">Connect</button>`;

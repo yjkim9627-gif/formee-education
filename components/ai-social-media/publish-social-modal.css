@@ -25,7 +25,12 @@
 /* Figma has the × inline in the title row (space-between), not floating top-right over the
    whole modal like the shared .modal__close default — override position for this modal only. */
 .pub-social-modal .modal__close{position:static; width:24px; height:24px; flex-shrink:0;}
-.pub-social-modal .modal__close img{width:100%; height:100%; display:block;}
+/* Explicit px, not width/height:100% -- .modal__close is a flex container with align-items:center
+   (inherited from the shared .modal__close default, not overridden), and a percentage-sized
+   flex item that isn't stretched resolves unreliably in that case (measured 12x22px in practice,
+   not the expected 24x24) -- combined with this SVG's own preserveAspectRatio="none", that
+   distorted the × into a stretched, broken-looking shape. Fixed size sidesteps it entirely. */
+.pub-social-modal .modal__close img{width:24px; height:24px; display:block;}
 .pub-social-title-group{display:flex; flex-direction:column; gap:var(--spacing-xs);}
 .pub-social-title-row{display:flex; align-items:center; justify-content:space-between; gap:var(--spacing-lg);}
 
