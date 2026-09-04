@@ -1,0 +1,40 @@
+/* Editor ContextBar (components/ai-social-media/editor-context-bar.html 참고)
+   Figma: FME_AI-Social-Media, "08 Editor" (1124:10672) — the floating selection toolbar that
+   appears above a selected canvas element. Three pieces: the atomic pill button used throughout
+   (ContextBar / Item, 3439:1699/1707), the floating toolbar shell that holds a row of them
+   (Editor / ContextBar / Floating, 2476:22360 — content varies by what's selected: Text/CTA-text/
+   CTA-button/Sticker/Image/Shape; only the Sticker variant was fetched precisely in this pass,
+   the others reuse the same shell+item pieces with a different item row), and the outer row that
+   places it between a "Quick Add" button and a view/target/layer toggle group (Editor /
+   ContextBar, 3402:23338). The 6 secondary popovers that open from individual items (Replace /
+   Flip / Opacity / Arrange / Layer / Spacing) are a separate, later pass. */
+
+/* ---------- ContextBar / Item (3439:1699 Default / 3439:1707 Focused) ----------
+   Icon+label, icon-only, or label-only (no `img`) — the toolbar decides per-item which parts to
+   show. Hover wasn't fetched separately; inferred as a lighter step between Default and Focused
+   (same relationship other panel pieces in this library use between their own hover/selected). */
+.context-bar-item{display:inline-flex; align-items:center; justify-content:center; gap:var(--spacing-xs); box-sizing:border-box; padding:6px; border:none; background:transparent; border-radius:var(--radius-lg); cursor:pointer; font-family:var(--font-family-text); font-size:14px; font-weight:500; line-height:22px; color:var(--color-neutral-700); white-space:nowrap;}
+.context-bar-item:hover{background:var(--color-neutral-100);}
+.context-bar-item.focused{background:var(--color-neutral-150); color:var(--color-neutral-900);}
+.context-bar-item img{width:20px; height:20px; display:block; flex-shrink:0;}
+
+/* ---------- Editor / ContextBar / Floating (2476:22360, Type=Sticker) ---------- */
+.context-bar-floating{display:inline-flex; flex-shrink:0; align-items:center; gap:var(--spacing-xs); box-sizing:border-box; padding:var(--spacing-sm); background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-xl); box-shadow:var(--shadow-modal); overflow:hidden;}
+.context-bar-floating-divider{width:1px; height:20px; background:var(--color-neutral-400); flex-shrink:0;}
+.context-bar-floating-swatches{display:flex; align-items:center; gap:6px; box-sizing:border-box; padding:4px 6px; border-radius:var(--radius-lg);}
+
+/* ---------- Editor / ContextBar (3402:23338) — outer row ---------- */
+.context-bar{display:flex; align-items:flex-start; justify-content:space-between; width:100%; box-sizing:border-box; padding:var(--spacing-sm) var(--spacing-lg);}
+.context-bar-quick-add{display:inline-flex; align-items:center; gap:var(--spacing-sm); height:36px; box-sizing:border-box; padding:8px 12px; background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); cursor:pointer; font-family:var(--font-family-text); font-size:14px; font-weight:600; line-height:22px; color:var(--color-brand-primary); flex-shrink:0;}
+/* Figma's fetched code left the "+" icon override empty (no asset captured) -- drawn here as two
+   CSS bars instead of sourcing a guessed asset, since the button's icon is brand-blue (matching
+   the "Add" label) and no blue-stroke plus icon exists in this library yet. */
+.context-bar-quick-add-plus{position:relative; width:16px; height:16px; flex-shrink:0;}
+.context-bar-quick-add-plus::before, .context-bar-quick-add-plus::after{content:""; position:absolute; background:var(--color-brand-primary); border-radius:1px;}
+.context-bar-quick-add-plus::before{left:7px; top:2px; width:2px; height:12px;}
+.context-bar-quick-add-plus::after{left:2px; top:7px; width:12px; height:2px;}
+/* Right-side view/target/layer toggle group -- reuses the existing Controls / Toggle Chip
+   component (toggle-chip.css) as-is rather than rebuilding it; its shadow token
+   (--shadow-toggle-pill) is an exact match for this group's own Figma shadow spec. */
+.context-bar-toggles{display:flex; align-items:center; gap:var(--spacing-xs); box-sizing:border-box; padding:4px; background:var(--color-neutral-0); border:1px solid var(--color-neutral-200); border-radius:var(--radius-lg); box-shadow:var(--shadow-toggle-pill); flex-shrink:0;}
+.context-bar-toggles-divider{width:1px; height:18px; background:var(--color-neutral-200); flex-shrink:0;}
