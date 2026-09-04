@@ -1,20 +1,91 @@
-/* Actions / Button — shared component (components/ai-social-media/actions-button.html 참고)
-   Figma: FME_AI-Social-Media, "Actions / Button" (6010:102242) — bordered full-width
-   button with a circular play glyph + label, used for audio/voice previews. Matches
-   .voice-preview-btn already built ad hoc in the Timeline/Video Voice sections. */
+/* Actions / Button family — shared component (components/ai-social-media/actions-button.html 참고)
+   Figma: FME_AI-Social-Media, "02 Actions" (1124:17):
+     - Actions / Button (2921:1107) — 6 styles: Primary, Blue, Secondary, Ghost, Inactive, Loading
+     - Actions / Button / text (89:15851) — pill toggle, state=default/selected
+     - Actions / Publish Button (777:7362) — the dark "Publish ▾" split button
+     - Actions / Segment Button/Actions/Poster CTA (3676:65306) — state=Default/Focused
+   All icons are pre-baked per-state colors from Figma (not currentColor), so Primary/Blue's
+   white AI-sparkle icon and Inactive's grey one are two separate asset pairs, not one
+   recolored asset — see icons/actions/. */
 
+/* ---------- Actions / Button (6 styles) ---------- */
 .actions-btn{
-  display:inline-flex; align-items:center; justify-content:center; gap:8px; width:100%; box-sizing:border-box;
-  padding:10px 14px; background:var(--color-neutral-0); border:1px solid var(--color-neutral-400);
-  border-radius:var(--radius-lg); cursor:pointer;
-  font-family:var(--font-family-text); font-size:13px; font-weight:600; color:var(--color-neutral-900);
+  display:inline-flex; align-items:center; justify-content:center; gap:var(--spacing-sm);
+  padding:9px 14px; border:none; border-radius:var(--radius-lg);
+  font-family:var(--font-family-text); font-size:var(--font-size-text-sm); line-height:var(--line-height-text-sm); font-weight:var(--font-weight-semibold);
+  cursor:pointer; white-space:nowrap;
 }
-.actions-btn:hover{border-color:var(--color-neutral-450);}
-.actions-btn .play-icon{
-  width:20px; height:20px; border-radius:999px; border:1.5px solid var(--color-neutral-700);
-  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+.actions-btn img{ width:16px; height:16px; flex-shrink:0; }
+
+.actions-btn--primary, .actions-btn--loading{
+  background:linear-gradient(to bottom, #323232, #222222);
+  color:var(--color-neutral-0);
+  box-shadow:0 1px 2px rgba(13,13,13,.1), inset 0 -1px 1.2px #121212, inset 0 0.5px 1px rgba(255,255,255,.15);
 }
-.actions-btn .play-icon::after{
-  content:''; width:0; height:0; margin-left:1px;
-  border-style:solid; border-width:4px 0 4px 6px; border-color:transparent transparent transparent var(--color-neutral-700);
+.actions-btn--blue{
+  background:var(--color-brand-primary);
+  color:var(--color-neutral-0);
+  box-shadow:0 1px 2px rgba(13,13,13,.1);
 }
+.actions-btn--secondary{
+  background:var(--color-neutral-0);
+  color:var(--color-neutral-700);
+  border:1px solid var(--color-neutral-400);
+}
+.actions-btn--ghost{
+  background:transparent;
+  color:var(--color-neutral-700);
+  height:38px;
+}
+.actions-btn--inactive{
+  background:var(--color-neutral-300);
+  color:var(--color-neutral-450);
+  cursor:default;
+}
+.actions-btn--loading img{ animation:actions-btn-spin 0.9s linear infinite; }
+@keyframes actions-btn-spin{ to{ transform:rotate(360deg); } }
+
+/* Primary/Blue's & Inactive's "AI Improve" sparkle icon is 2 overlapping layers */
+.actions-btn-ai-icon{ position:relative; width:16px; height:16px; flex-shrink:0; }
+.actions-btn-ai-icon img{ position:absolute; }
+.actions-btn-ai-icon img:first-child{ top:30%; left:5%; right:20%; bottom:-5%; }
+.actions-btn-ai-icon img:last-child{ top:5%; left:65%; right:-5%; bottom:55%; }
+
+/* ---------- Actions / Button / text (pill toggle) ---------- */
+.actions-btn-text{
+  display:inline-flex; align-items:center; gap:var(--spacing-xs);
+  height:40px; padding:9px var(--spacing-lg); border-radius:var(--radius-full);
+  border:1px solid var(--color-neutral-400); background:var(--color-neutral-0);
+  font-family:var(--font-family-text); cursor:pointer;
+}
+.actions-btn-text img{ width:20px; height:20px; flex-shrink:0; }
+.actions-btn-text__label{ font-size:var(--font-size-text-md); line-height:var(--line-height-text-md); font-weight:var(--font-weight-medium); color:var(--color-neutral-700); }
+.actions-btn-text__sub{ font-size:var(--font-size-text-xs); line-height:var(--line-height-text-xs); font-weight:var(--font-weight-medium); color:var(--color-neutral-500); }
+.actions-btn-text--selected{ background:var(--color-neutral-150); border-color:var(--color-neutral-500); }
+.actions-btn-text--selected .actions-btn-text__label{ font-weight:var(--font-weight-semibold); color:var(--color-neutral-900); }
+.actions-btn-text--selected .actions-btn-text__sub{ color:var(--color-neutral-700); }
+
+/* ---------- Actions / Publish Button ----------
+   Updated in Figma: the trailing icon is now a chevron-right (was chevron-down) — this
+   button no longer opens a dropdown in place, it advances to the next step — and the right
+   padding tightened to 12px to sit closer to that icon (left padding unchanged at spacing-lg). */
+.actions-publish-btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:var(--spacing-sm);
+  width:131px; height:36px; padding:8px 12px 8px var(--spacing-lg); border:none; border-radius:var(--radius-lg);
+  background:linear-gradient(to bottom, #323232, #222222);
+  box-shadow:inset 0 -1px 1.2px #121212;
+  font-family:var(--font-family-text); font-size:var(--font-size-text-md); line-height:var(--line-height-text-md); font-weight:var(--font-weight-semibold);
+  color:var(--color-neutral-0); cursor:pointer;
+}
+.actions-publish-btn img{ width:18px; height:18px; flex-shrink:0; }
+
+/* ---------- Actions / Segment Button / Poster CTA ---------- */
+.actions-poster-cta{
+  display:inline-flex; align-items:center; justify-content:center;
+  padding:12px var(--spacing-xl); border-radius:var(--radius-xl);
+  background:var(--color-neutral-0);
+  box-shadow:0 8px 12px rgba(0,0,0,.28);
+  font-family:var(--font-family-text); font-size:var(--font-size-text-md); line-height:var(--line-height-text-md); font-weight:var(--font-weight-semibold);
+  color:var(--color-brand-primary-dark); cursor:pointer; white-space:nowrap;
+}
+.actions-poster-cta--focused{ background:var(--color-brand-primary-mid); }
