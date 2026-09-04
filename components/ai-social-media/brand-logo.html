@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>Brand / Logo — Shared Component</title>
+<link rel="stylesheet" href="../../tokens/tokens.css" />
+<link rel="stylesheet" href="../demo-nav.css" />
+<link rel="stylesheet" href="brand-logo.css" />
+<style>
+  body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
+  .demo-main { padding: var(--spacing-4xl); }
+  h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-sm); }
+  .demo-note { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); max-width: 640px; margin: 0 0 var(--spacing-3xl); line-height: 1.6; }
+  .brand-grid { display: flex; flex-wrap: wrap; gap: var(--spacing-2xl); align-items: flex-end; }
+  .brand-cell { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-sm); }
+  .brand-cell span { font-size: 11.5px; font-weight: 600; color: var(--color-neutral-700); }
+</style>
+</head>
+<body>
+<div class="demo-shell">
+  <nav class="demo-sidebar">
+    <a href="../../index.html" class="demo-sidebar-home">← Home</a>
+    <div class="demo-sidebar-group" data-group="brand">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>00 Brand</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="brand-logo.html" class="active">Brand / Logo</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="icons">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>01 Icons</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="icons.html">Icons</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="actions">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>02 Actions</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="actions-button.html">Actions / Button</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="inputs">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>03 Inputs & Controls</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="controls-field-ai-assisted-text.html">Controls / Field / AI assisted text</a>
+        <a href="controls-field.html">Controls / Field</a>
+        <a href="controls-filter-select.html">Controls / Filter / Select</a>
+        <a href="controls-filter-toggle.html">Controls / Filter / Toggle</a>
+        <a href="controls-menu.html">Menu / Context Menu / Size Dropdown</a>
+        <a href="controls-misc.html">Controls — Icon Action, Popover, Carousel Arrow, Scrollbar, Segmented Control</a>
+        <a href="controls-multi-select.html">Controls / Multi Select</a>
+        <a href="controls-option-card.html">Controls / Option Card</a>
+        <a href="controls-search-field.html">Controls / Search Field</a>
+        <a href="controls-social-profile-row.html">Controls / Social profile row</a>
+        <a href="controls-toggles.html">Controls / Toggles</a>
+        <a href="date-picker.html">Date Picker</a>
+        <a href="duration-chip.html">Controls / Duration Chip</a>
+        <a href="filter-chip.html">Controls / Filter / Toggle</a>
+        <a href="input-login.html">Input / Login</a>
+        <a href="input.html">Input</a>
+        <a href="segment-chip.html">Segment Chip</a>
+        <a href="setting-chip.html">Setting Chip</a>
+        <a href="switch.html">Controls / Switch</a>
+        <a href="table-filter.html">Table / Filter</a>
+        <a href="toggle-chip.html">Controls / Toggle Chip</a>
+        <a href="uploads-file-badge.html">Uploads / File Badge / Source Row</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="navigation">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>04 Navigation</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="nav.html">Nav / Navigation</a>
+        <a href="topbar-stepper.html">Topbar + Stepper</a>
+        <a href="avatar.html">Avatar</a>
+        <a href="w-action-bar.html">W:ActionBar</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="ai-assistant">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>AI Assistant</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="chat-panel.html">Chat Panel</a>
+        <a href="prompt-box.html">AI Prompt Box</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="editor">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Editor</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="heading.html">Heading</a>
+        <a href="image-scene-card.html">Image Scene Card</a>
+        <a href="queue-panel.html">Queue Job Row / Queue Panel</a>
+        <a href="scene-tile.html">Scene Tile</a>
+        <a href="storyboard-card.html">Storyboard Card</a>
+        <a href="video-summary-card.html">Video Summary Card</a>
+        <a href="voice-accordion-row.html">Voice Accordion Row</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="product-selectors">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Product Selectors</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="character-card.html">Character Card</a>
+        <a href="destination-account.html">Destination Account</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="data-display">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Data Display</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="carousel-card-block.html">Carousel Card Block</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="feedback">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Feedback</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="publish-social-modal.html">Publish to Social Modal</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="shared">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Shared</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="../shared/button.html">Button</a>
+        <a href="../shared/modal-confirm.html">Modal / Confirm</a>
+        <a href="../shared/modal-form.html">Modal / Form</a>
+        <a href="../shared/modal-success.html">Modal / Success</a>
+      </div>
+    </div>
+  </nav>
+  <main class="demo-main">
+  <h1>Brand / Logo</h1>
+  <p class="demo-note">Figma: "00 Brand" (1124:9) → "Brand / Logo" (4085:88616) — one mark per partner brand, all fixed pixel-grid sizes (no responsive scaling needed for this use, matches Figma). Also used standalone as "Brand/Formee Education/mark" (1049:9970) wherever only the Formee Education mark is needed (e.g. the editor topbar).</p>
+  <div class="brand-grid">
+    <div class="brand-cell"><div class="brand-logo"><img src="icons/brand/formee-education.svg" alt="Formee Education"></div><span>Formee Education</span></div>
+    <div class="brand-cell"><div class="brand-logo brand-logo--scei"><img src="icons/brand/scei.svg" alt="SCEI"></div><span>SCEI</span></div>
+    <div class="brand-cell"><div class="brand-logo brand-logo--sche"><img src="icons/brand/sche-emblem.svg" alt="SCHE"></div><span>SCHE</span></div>
+    <div class="brand-cell"><div class="brand-logo brand-logo--initials brand-logo--aurora">AL</div><span>Aurora Language</span></div>
+    <div class="brand-cell"><div class="brand-logo brand-logo--initials brand-logo--meridian">MB</div><span>Meridian Business</span></div>
+    <div class="brand-cell"><div class="brand-logo brand-logo--initials brand-logo--coastline">CT</div><span>Coastline TAFE</span></div>
+    <div class="brand-cell"><div class="brand-logo brand-logo--initials brand-logo--northbridge">NC</div><span>Northbridge College</span></div>
+  </div>
+  </main>
+</div>
+<script src="../demo-nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+/* Brand / Logo — shared component (components/ai-social-media/brand-logo.html 참고)
+   Figma: FME_AI-Social-Media, "00 Brand" (1124:9) → "Brand / Logo" (4085:88616), variant
+   prop `brand` — one mark per partner brand. Formee Education and SCEI render their own
+   vector mark asset directly; SCHE renders its white wordmark (icons/brand/sche-emblem.svg)
+   over a solid navy badge; the remaining four (Aurora Language, Meridian Business,
+   Coastline TAFE, Northbridge College) have no dedicated mark yet in this design system, so
+   they render as a solid-color badge with a 2-letter initial, per Figma's own placeholder
+   treatment for those partners. */
+
+.brand-logo{
+  width:41px; height:40px;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+  border-radius:var(--radius-md);
+  overflow:hidden;
+}
+.brand-logo img{ display:block; width:100%; height:100%; }
+
+.brand-logo--scei{ width:30px; height:40.18px; border-radius:0; }
+
+.brand-logo--sche{ width:34px; height:40.94px; background:#003059; padding:5px; box-sizing:border-box; }
+.brand-logo--sche img{ width:100%; height:100%; object-fit:contain; }
+
+.brand-logo--initials{ width:33px; height:40px; font-family:var(--font-family-text); font-size:15px; font-weight:700; color:#fff; letter-spacing:0.4px; }
+.brand-logo--aurora{ background:#1d4ed8; }
+.brand-logo--meridian{ background:#a21caf; }
+.brand-logo--coastline{ background:#c2410c; }
+.brand-logo--northbridge{ background:#15803d; }
