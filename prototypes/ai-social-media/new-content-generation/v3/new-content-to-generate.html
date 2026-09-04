@@ -145,6 +145,12 @@
   .chat-cta-title{font-size:14px; font-weight:700; color:var(--color-neutral-900);}
   .chat-cta-text{font-size:14px; color:var(--color-neutral-700); line-height:1.57;}
   .chat-cta-card .btn-dark, .chat-cta-card .btn-secondary{width:100%; justify-content:center; padding:9px 14px; font-size:13px;}
+  /* AI / Response Card (7164:15) "Buttons 1row"/"Buttons 2rows" states — the version-pick
+     buttons (V1/V2/…) are fixed 128px, not full-width like every other chat CTA button, and
+     lay out as a plain row up to 2 versions or a 2-column grid from 3 versions on. */
+  .ai-version-buttons{display:flex; gap:12px;}
+  .ai-version-buttons.rows-2{display:grid; grid-template-columns:repeat(2, 1fr);}
+  .chat-cta-card .ai-version-buttons .btn-dark{width:auto; flex:1;}
   /* State = "1 Button + Checklist(, Disabled)" — the confirmation badge row (e.g. "Applied to
      Script panel") shown above that state's button. */
   .chat-cta-checklist{display:flex; align-items:center; gap:8px; width:100%; box-sizing:border-box; background:var(--color-badge-blue-bg); border:1px solid var(--color-brand-primary-mid); border-radius:var(--radius-lg); padding:6px 8px;}
@@ -3123,8 +3129,9 @@ function checkAllVersionsReady(){
     const n = versionState.length;
     const label = `${n} version${n > 1 ? 's' : ''}`;
     document.getElementById('versionsStatus').textContent = `All ${label} ready — pick one to continue.`;
-    const pills = versionState.map(v => `<button type="button" class="version-pill" onclick="selectVersion(${v.id})">V${v.id}</button>`).join('');
-    addChatMsg('ai', `<span class="tag">AI</span>All ${label} are ready. Pick your favorite to move into Develop, or regenerate any one individually.<div class="chat-cta-row">${pills}</div>`);
+    const rows2 = versionState.length >= 3;
+    const pills = versionState.map(v => `<button type="button" class="btn btn-dark" onclick="selectVersion(${v.id})">V${v.id}</button>`).join('');
+    appendChatCta(`All ${label} ready`, 'Pick your favorite to move into Develop, or regenerate any one individually.', `<div class="ai-version-buttons${rows2 ? ' rows-2' : ''}">${pills}</div>`);
   }
 }
 // Cards: real Image Scene Card component (components/ai-social-media/image-scene-card.css),
