@@ -2616,16 +2616,20 @@
 
 <div class="modal-overlay pub-social-modal-overlay" id="pubSocialModalOverlay" style="display:none;">
   <div class="modal modal--form pub-social-modal">
-    <button type="button" class="modal__close" onclick="closePublishSocialModal()"><img src="../../../../components/ai-social-media/icons/close-x.svg" class="icon-inline" alt=""></button>
     <div class="modal__content">
-      <h2 class="modal__title">Publish to social</h2>
-      <p class="modal__body" id="pubSocialModalSubtitle">Preview is live. Publishing requires typing the handle to confirm.</p>
+      <div class="pub-social-title-group">
+        <div class="pub-social-title-row">
+          <h2 class="modal__title">Publish to social</h2>
+          <button type="button" class="modal__close" onclick="closePublishSocialModal()"><img src="../../../../components/ai-social-media/icons/button-x-dark.svg" class="icon-inline" alt=""></button>
+        </div>
+        <p class="modal__body" id="pubSocialModalSubtitle">Preview is live. Publishing requires typing the handle to confirm.</p>
+      </div>
       <div class="seg-control" id="pubSocialTabs"></div>
       <div id="pubSocialTabContent"></div>
     </div>
     <div class="modal__footer">
-      <button type="button" class="btn btn-secondary" onclick="quickSaveDraftFromModal()">✓ Save as draft instead</button>
-      <button type="button" class="btn btn-secondary" onclick="closePublishSocialModal()">Cancel</button>
+      <button type="button" class="actions-btn actions-btn--secondary" onclick="quickSaveDraftFromModal()">Save as draft instead</button>
+      <button type="button" class="actions-btn actions-btn--primary" onclick="closePublishSocialModal()">Cancel</button>
     </div>
   </div>
 </div>
@@ -5981,7 +5985,7 @@ function getPublishHookText(){
   const headline = (typeof copyFields !== 'undefined') ? copyFields.find(f => f.key === 'headline') : null;
   return (headline && headline.text) || document.getElementById('briefPromptImage')?.value.trim() || '';
 }
-window.__platformConnections = window.__platformConnections || { instagram: true, tiktok: true, facebook: true, youtube: false, linkedin: false };
+window.__platformConnections = window.__platformConnections || { instagram: true, tiktok: true, facebook: false, youtube: false, linkedin: false };
 
 const PUBLISH_PLATFORM_ICONS = {
   instagram: 'data:image/png;base64,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',
@@ -6911,7 +6915,7 @@ function renderSocialTabContent(){
     <div class="pub-social-confirm-box">
       <div class="pub-social-confirm-warning">This will post live to @${PUBLISH_FAKE_HANDLE}</div>
       <p class="pub-social-confirm-note">Heads up: this isn't a dry run. Confirming ${verb} the content above straight to ${platform.label}. Type the handle below to unlock the button.</p>
-      <input type="text" class="pub-social-confirm-input" id="pubSocialConfirmInput" value="${done ? PUBLISH_FAKE_HANDLE : ''}" ${done ? 'disabled' : ''} placeholder='Type &quot;${PUBLISH_FAKE_HANDLE}&quot; to confirm' oninput="onSocialConfirmInput(this.value)">
+      <input type="text" class="input-field input-field--sm input-field--text" id="pubSocialConfirmInput" value="${done ? PUBLISH_FAKE_HANDLE : ''}" ${done ? 'disabled' : ''} placeholder='Type &quot;${PUBLISH_FAKE_HANDLE}&quot; to confirm' oninput="onSocialConfirmInput(this.value)">
       ${btnHtml}
     </div>
   `;

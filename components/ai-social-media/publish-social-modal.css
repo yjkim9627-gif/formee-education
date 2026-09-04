@@ -14,11 +14,26 @@
    bespoke button class. */
 
 .pub-social-modal-overlay{position:fixed;}
-.pub-social-modal{max-width:640px;}
-.pub-social-modal .modal__footer{justify-content:space-between;}
+/* Figma's real modal (7606:231998 etc.) is 520px/24px padding/20px gap, not the shared
+   .modal--form default (which is tuned looser for the generic Confirm/Success/Form shells —
+   scoped here instead of changed globally). Its outer frame is also align-items:flex-end
+   (title/segmented-control/cards stretch full width via modal__content below, but the
+   footer's button pair stays shrink-to-fit and right-aligned — not spread edge-to-edge). */
+.pub-social-modal{max-width:520px; padding:var(--spacing-2xl); gap:var(--spacing-xl); align-items:flex-end;}
+.pub-social-modal .modal__content{align-self:stretch;}
+.pub-social-modal .modal__title{font-size:16px; line-height:24px; font-weight:600;}
+/* Figma has the × inline in the title row (space-between), not floating top-right over the
+   whole modal like the shared .modal__close default — override position for this modal only. */
+.pub-social-modal .modal__close{position:static; width:24px; height:24px; flex-shrink:0;}
+.pub-social-modal .modal__close img{width:100%; height:100%; display:block;}
+.pub-social-title-group{display:flex; flex-direction:column; gap:var(--spacing-xs);}
+.pub-social-title-row{display:flex; align-items:center; justify-content:space-between; gap:var(--spacing-lg);}
 
-/* ---------- Destination preview row (Figma: "Editor / cell" 80x80 thumb) ---------- */
-.pub-social-preview-card{display:flex; gap:var(--spacing-lg); border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl); padding:var(--spacing-lg); margin-top:var(--spacing-lg);}
+/* ---------- Destination preview row (Figma: "Editor / cell" 80x80 thumb) ----------
+   No margin-top here — the 16px gap above this card already comes from modal__content's
+   own flex gap (between the segmented control and #pubSocialTabContent); this card is the
+   first thing inside that wrapper, so an extra margin-top would double the gap to 32px. */
+.pub-social-preview-card{display:flex; gap:var(--spacing-lg); border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl); padding:var(--spacing-lg);}
 .pub-social-preview-thumb{width:80px; height:80px; box-sizing:border-box; padding:var(--spacing-sm); border-radius:var(--radius-md); background:var(--color-neutral-25); border:1px solid var(--color-neutral-400); flex-shrink:0; display:flex; align-items:center; justify-content:center;}
 .pub-social-preview-thumb img{width:36px; height:36px; display:block;}
 .pub-social-preview-meta{display:flex; flex-direction:column; gap:var(--spacing-xs); justify-content:center; min-width:0;}
@@ -34,15 +49,17 @@
 .pub-social-confirm-box{display:flex; flex-direction:column; gap:var(--spacing-md); background:var(--color-neutral-75); border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl); padding:var(--spacing-lg); margin-top:var(--spacing-lg);}
 .pub-social-confirm-warning{font-size:13px; font-weight:600; line-height:20px; color:var(--color-brand-primary-dark);}
 .pub-social-confirm-note{font-size:13px; line-height:20px; color:var(--color-neutral-900); margin:0;}
-.pub-social-confirm-input{width:100%; border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); padding:7px var(--spacing-md); font-size:14px; line-height:22px; font-family:var(--font-family-text); color:var(--color-neutral-900); box-sizing:border-box;}
-.pub-social-confirm-input::placeholder{color:var(--color-neutral-500);}
-.pub-social-confirm-input:focus{outline:none; border-color:var(--color-brand-primary);}
+/* Type-to-confirm input reuses the real Input component (input.css: .input-field
+   .input-field--sm .input-field--text) instead of a bespoke class — no rules needed here. */
 .pub-social-confirm-btn{width:100%; box-sizing:border-box;}
 .pub-social-confirm-btn img{width:16px; height:16px;}
 
 /* ---------- State=Not connected — illustration + inline connect card, replaces the
    preview card + confirm box for a platform this brand hasn't connected yet ---------- */
-.pub-social-notconnected-card{display:flex; flex-direction:column; align-items:center; justify-content:space-between; height:328px; box-sizing:border-box; padding:28px var(--spacing-2xl); background:var(--color-neutral-75); border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl); margin-top:var(--spacing-lg);} /* 28px: no exact spacing token between lg(16)/2xl(24) and 3xl(32) */
+/* No margin-top — same reasoning as .pub-social-preview-card above: this card is the first
+   (only) thing inside #pubSocialTabContent in the Not-connected state, so the 16px gap
+   above it already comes from modal__content's flex gap. */
+.pub-social-notconnected-card{display:flex; flex-direction:column; align-items:center; justify-content:space-between; height:328px; box-sizing:border-box; padding:28px var(--spacing-2xl); background:var(--color-neutral-75); border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl);} /* 28px: no exact spacing token between lg(16)/2xl(24) and 3xl(32) */
 .pub-social-notconnected-illus{width:160px; height:160px; display:block;}
 .pub-social-notconnected-row{display:flex; align-items:center; justify-content:space-between; gap:var(--spacing-lg); width:100%; box-sizing:border-box; padding:var(--spacing-md) var(--spacing-lg); background:var(--color-neutral-0); border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl);}
 .pub-social-notconnected-meta{display:flex; flex-direction:column; gap:2px; min-width:0;}
