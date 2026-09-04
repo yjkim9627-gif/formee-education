@@ -17,6 +17,8 @@
 <link rel="stylesheet" href="../../../../components/ai-social-media/heading.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/input.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/table-filter.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/controls-filter-toggle.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/controls-filter-select.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/avatar.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/actions-button.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/scene-tile.css">
@@ -898,19 +900,40 @@
   .voice-new-card:hover{border-color:var(--color-neutral-450); color:var(--color-neutral-700);}
   .voice-browse-btn{width:100%; border:1px solid var(--color-neutral-400); background:#fff; border-radius:10px; padding:11px 16px; font-size:13.5px; font-weight:600; color:var(--color-neutral-900); font-family:var(--font-family-text); cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; margin-top:16px;}
   .voice-browse-btn:hover{border-color:var(--color-neutral-500); background:var(--color-neutral-50);}
-  .voice-browse-panel{border:1px solid var(--color-neutral-300); border-radius:12px; padding:20px; margin-top:16px;}
-  .voice-browse-panel-header{display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:16px;}
-  .voice-browse-panel-title{font-size:15px; font-weight:700; color:var(--color-neutral-900); margin-bottom:4px;}
-  .voice-browse-panel-sub{font-size:12px; color:var(--color-neutral-500);}
-  .voice-browse-close-btn{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--color-neutral-300); background:#fff; border-radius:999px; padding:6px 12px; font-size:12px; font-weight:600; color:var(--color-neutral-700); cursor:pointer; flex-shrink:0; font-family:var(--font-family-text);}
-  .voice-browse-close-btn:hover{border-color:var(--color-neutral-450);}
-  .voice-browse-search-row{display:flex; gap:8px; margin-bottom:16px;}
-  .voice-browse-search-row .voice-lib-search{flex:1;}
-  .voice-browse-chips{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:16px;}
-  .voice-browse-chip{border:1px solid var(--color-neutral-300); border-radius:999px; padding:5px 12px; font-size:11.5px; font-weight:600; color:var(--color-neutral-700); cursor:pointer; background:#fff; white-space:nowrap;}
-  .voice-browse-chip.active{background:var(--color-neutral-900); border-color:var(--color-neutral-900); color:#fff;}
+  /* ---- Browse ElevenLabs Voice Library — rebuilt to match Figma (node 7606-228780) exactly,
+     reusing the already-shipped shared components for every chip/filter/search control instead
+     of the ad hoc pills this used to have: .filter-toggle (components/ai-social-media/
+     controls-filter-toggle.css) for the plain genre chips, .filter-select (controls-filter-
+     select.css) for the Language/Gender dropdown chips, .table-filter-btn (table-filter.css)
+     for the Filter/sort buttons. Only the voice-row grid itself (.voice-lib-row) has no existing
+     shared component to reuse — Figma names it "Editor / Audio Row" but nothing under that name
+     has been built yet, so it's defined fresh here. ---- */
+  .voice-browse-panel{background:var(--color-neutral-75); border:1px solid var(--color-neutral-400); border-radius:var(--radius-xl); padding:var(--spacing-lg); margin-top:16px; display:flex; flex-direction:column; gap:var(--spacing-lg);}
+  .voice-browse-panel-header{display:flex; align-items:flex-start; justify-content:space-between; gap:16px;}
+  .voice-browse-panel-title{font-size:16px; line-height:24px; font-weight:700; color:var(--color-neutral-900);}
+  .voice-browse-panel-sub{font-size:13px; line-height:20px; color:var(--color-neutral-500);}
+  .voice-browse-close-btn{display:inline-flex; align-items:center; gap:var(--spacing-xs); height:28px; padding:9px var(--spacing-md); border:none; border-radius:var(--radius-lg); background:linear-gradient(180deg, var(--color-action-primary-dark-gradient-start), var(--color-action-primary-dark-gradient-end)); box-shadow:0 1px 2px rgba(13,13,13,0.1); font-family:var(--font-family-text); font-size:12px; font-weight:600; color:var(--color-neutral-0); cursor:pointer; flex-shrink:0;}
+  .voice-browse-close-btn img{width:18px; height:18px;}
+  .voice-browse-search-row{display:flex; gap:var(--spacing-md); align-items:center;}
+  .voice-lib-search-wrap{flex:1; min-width:0; display:flex; align-items:center; gap:8px; height:36px; padding:0 12px; border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); background:var(--color-neutral-0); box-sizing:border-box;}
+  .voice-lib-search-wrap img{width:16px; height:16px; flex-shrink:0;}
+  .voice-lib-search{flex:1; min-width:0; border:none; outline:none; background:none; font-size:13px; font-family:var(--font-family-text); color:var(--color-neutral-900); padding:0;}
+  .voice-lib-search::placeholder{color:var(--color-neutral-500);}
+  .voice-browse-chips{display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
+  .voice-browse-chip-divider{width:1px; height:16px; background:var(--color-neutral-600); flex-shrink:0;}
   .voice-lib-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; max-height:340px; overflow-y:auto;}
-  .voice-lib-grid .voice-lib-row{border:1px solid var(--color-neutral-200); border-radius:8px; padding:8px;}
+  .voice-lib-row{display:flex; align-items:center; gap:10px; padding:var(--spacing-sm); border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); background:var(--color-neutral-0); box-sizing:border-box; cursor:pointer;}
+  .voice-lib-row:hover{border-color:var(--color-neutral-500);}
+  .voice-lib-row.hidden{display:none;}
+  .voice-lib-row.added{border-color:var(--color-brand-primary); background:var(--color-brand-primary-light);}
+  .voice-lib-play{width:32px; height:32px; border-radius:999px; border:1.5px solid var(--color-neutral-700); background:none; flex-shrink:0; display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0;}
+  .voice-lib-play.playing{border-color:var(--color-brand-primary);}
+  .voice-lib-play img{width:15px; height:15px;}
+  .voice-lib-info{flex:1; min-width:0; display:flex; flex-direction:column; gap:1px;}
+  .voice-lib-name{font-size:12px; font-weight:500; color:var(--color-neutral-700); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .voice-lib-meta{font-size:11px; color:var(--color-neutral-500); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .voice-lib-add{border:1px solid var(--color-neutral-300); background:#fff; border-radius:999px; padding:3px 10px; font-size:10.5px; font-weight:600; color:var(--color-neutral-700); cursor:pointer; flex-shrink:0; font-family:var(--font-family-text);}
+  .voice-lib-add:hover{border-color:var(--color-brand-primary); color:var(--color-brand-primary);}
 
   /* ---- Chat attachments (not covered by chat-panel.css) ---- */
   .chat-attachments{padding:12px 16px 0; border-bottom:1px solid var(--color-neutral-200); display:flex; flex-direction:column; gap:8px;}
@@ -1510,19 +1533,29 @@
                     <div class="voice-browse-panel-title">ElevenLabs voice library</div>
                     <div class="voice-browse-panel-sub">Search thousands of community voices. Adding one imports it into your ElevenLabs account.</div>
                   </div>
-                  <button type="button" class="voice-browse-close-btn" onclick="reelToggleVoiceBrowsePanel()">Close <img src="../../../../components/ai-social-media/icons/close-x.svg" class="icon-inline" alt=""></button>
+                  <button type="button" class="voice-browse-close-btn" onclick="reelToggleVoiceBrowsePanel()">Close <img src="../../../../components/ai-social-media/icons/chevron-up.svg" alt=""></button>
                 </div>
                 <div class="voice-browse-search-row">
-                  <input type="text" class="voice-lib-search" placeholder="Search voice…" oninput="filterVoiceLib(this.value,'voiceLibGrid')">
-                  <button type="button" class="voice-lib-filter-btn">⚙ Filter</button>
+                  <div class="voice-lib-search-wrap">
+                    <img src="../../../../components/ai-social-media/icons/ui-search.svg" alt="">
+                    <input type="text" class="voice-lib-search" placeholder="Search voice" oninput="filterVoiceLib(this.value,'voiceLibGrid')">
+                  </div>
+                  <div class="table-filter-btn"><span>Filter</span><img class="icon" src="../../../../components/ai-social-media/icons/list-filter.svg" alt=""></div>
+                  <div class="table-filter-btn" style="width:36px; justify-content:center; padding:8px;"><img class="icon" src="../../../../components/ai-social-media/icons/arrow-down-wide-narrow.svg" alt=""></div>
                 </div>
                 <div class="voice-browse-chips">
-                  <span class="voice-browse-chip active">All</span>
-                  <span class="voice-browse-chip">Social Media</span>
-                  <span class="voice-browse-chip">Advertisement</span>
-                  <span class="voice-browse-chip">Character Animation</span>
-                  <span class="voice-browse-chip">Conversational</span>
-                  <span class="voice-browse-chip">Entertainment</span>
+                  <div class="filter-toggle filter-toggle--selected"><span class="filter-toggle__label">All</span></div>
+                  <div class="filter-select"><span class="filter-select__label">Language</span><img class="filter-select__caret" src="../../../../components/ai-social-media/icons/caret-down-filled.svg" alt=""></div>
+                  <div class="filter-select"><span class="filter-select__label">Gender</span><img class="filter-select__caret" src="../../../../components/ai-social-media/icons/caret-down-filled.svg" alt=""></div>
+                  <div class="voice-browse-chip-divider"></div>
+                  <div class="filter-toggle"><span class="filter-toggle__label">All</span></div>
+                  <div class="filter-toggle"><span class="filter-toggle__label">Social Media</span></div>
+                  <div class="filter-toggle"><span class="filter-toggle__label">Advertisement</span></div>
+                  <div class="filter-toggle"><span class="filter-toggle__label">Characters Animations</span></div>
+                  <div class="filter-toggle"><span class="filter-toggle__label">Conversational</span></div>
+                  <div class="filter-toggle"><span class="filter-toggle__label">Entertainment TV</span></div>
+                  <div class="filter-toggle"><span class="filter-toggle__label">Informative Educational</span></div>
+                  <div class="filter-toggle"><span class="filter-toggle__label">Narrative Story</span></div>
                 </div>
                 <div class="voice-lib-grid" id="voiceLibGrid"></div>
               </div>
@@ -4948,11 +4981,24 @@ function renderVoiceLibRows(containerId){
   if(container.dataset.rendered) return;
   container.dataset.rendered = '1';
   container.innerHTML = VOICE_LIBRARY_DATA.map(v => `
-    <div class="voice-lib-row" data-name="${v.name.toLowerCase()}">
-      <div class="voice-play" onclick="togglePreview(event,this)"><img src="../../../../components/ai-social-media/icons/audio-play.svg" class="icon-inline icon-16" alt=""></div>
-      <div class="voice-item-info"><span class="voice-item-name">${v.name}</span><span class="voice-item-tag">${v.tag}</span></div>
-      <button type="button" class="voice-lib-add" onclick="event.stopPropagation(); addVoiceFromLibrary(this)">+ Add</button>
+    <div class="voice-lib-row" data-name="${v.name.toLowerCase()}" onclick="addVoiceFromLibrary(this)">
+      <button type="button" class="voice-lib-play" onclick="toggleVoiceLibPreview(event,this)"><img src="../../../../components/ai-social-media/icons/audio-row-play-triangle.svg" alt=""></button>
+      <div class="voice-lib-info"><span class="voice-lib-name">${v.name}</span><span class="voice-lib-meta">${v.tag}</span></div>
     </div>`).join('');
+}
+// Same "one plays at a time" pattern as togglePreview() (My voices row), scoped separately
+// since .voice-lib-play is a distinct 32px ring treatment (Figma "Editor / Audio Row") rather
+// than .voice-play's 24px one — reusing togglePreview()'s global querySelectorAll would also
+// stop whatever's playing in My voices, which isn't this grid's business.
+function toggleVoiceLibPreview(e, btn){
+  e.stopPropagation();
+  const wasPlaying = btn.classList.contains('playing');
+  document.querySelectorAll('.voice-lib-play.playing').forEach(b => { b.classList.remove('playing'); b.innerHTML = '<img src="../../../../components/ai-social-media/icons/audio-row-play-triangle.svg" alt="">'; });
+  if(!wasPlaying){
+    btn.classList.add('playing');
+    btn.innerHTML = '<img src="../../../../components/ai-social-media/icons/audio-pause.svg" alt="">';
+    setTimeout(() => { btn.classList.remove('playing'); btn.innerHTML = '<img src="../../../../components/ai-social-media/icons/audio-row-play-triangle.svg" alt="">'; }, 2000);
+  }
 }
 function filterVoiceLib(query, containerId){
   const q = query.trim().toLowerCase();
@@ -4960,11 +5006,9 @@ function filterVoiceLib(query, containerId){
     row.classList.toggle('hidden', !!q && !row.dataset.name.includes(q));
   });
 }
-function addVoiceFromLibrary(btn){
-  const original = btn.textContent;
-  btn.textContent = '✓ Added';
-  btn.disabled = true;
-  setTimeout(() => { btn.textContent = original; btn.disabled = false; }, 1500);
+function addVoiceFromLibrary(row){
+  document.querySelectorAll('#voiceLibGrid .voice-lib-row.added').forEach(r => r.classList.remove('added'));
+  row.classList.add('added');
 }
 function reelToggleVoiceBrowsePanel(){
   const panel = document.getElementById('voiceBrowsePanel');
