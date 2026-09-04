@@ -93,3 +93,13 @@
 .btn-block {
   width: 100%;
 }
+
+/* ---------- Button / Small (HR Tool — Figma: Create a job 등 폼 하단 액션 버튼) ---------- */
+.btn-sm {
+  height: 34px;
+  padding: 0 var(--spacing-md);
+  border-radius: var(--radius-md-lg);
+  font-size: var(--font-size-text-md);
+  line-height: var(--line-height-text-md);
+  gap: var(--spacing-2);
+}

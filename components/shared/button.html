@@ -49,38 +49,106 @@
 <div class="demo-shell">
   <nav class="demo-sidebar">
     <a href="../../index.html" class="demo-sidebar-home">← Home</a>
-    <div class="demo-sidebar-group">
-      <div class="demo-sidebar-label">AI Social Media</div>
-      <a href="../ai-social-media/nav.html">Nav / Navigation</a>
-      <a href="../ai-social-media/topbar-stepper.html">Topbar + Stepper</a>
-      <a href="../ai-social-media/heading.html">Heading</a>
-      <a href="../ai-social-media/chat-panel.html">Chat Panel</a>
-      <a href="../ai-social-media/character-card.html">Character Card</a>
-      <a href="../ai-social-media/avatar.html">Avatar</a>
-      <a href="../ai-social-media/switch.html">Controls / Switch</a>
-      <a href="../ai-social-media/prompt-box.html">AI Prompt Box</a>
-      <a href="../ai-social-media/input.html">Input</a>
-      <a href="../ai-social-media/filter-chip.html">Controls / Filter / Toggle</a>
-      <a href="../ai-social-media/table-filter.html">Table / Filter</a>
-      <a href="../ai-social-media/setting-chip.html">Setting Chip</a>
-      <a href="../ai-social-media/actions-button.html">Actions / Button</a>
-      <a href="../ai-social-media/icons.html">Icons</a>
-      <a href="../ai-social-media/scene-tile.html">Scene Tile</a>
-      <a href="../ai-social-media/storyboard-card.html">Storyboard Card</a>
-      <a href="../ai-social-media/image-scene-card.html">Image Scene Card</a>
-      <a href="../ai-social-media/voice-accordion-row.html">Voice Accordion Row</a>
-      <a href="../ai-social-media/queue-panel.html">Queue Job Row / Panel</a>
-      <a href="../ai-social-media/video-summary-card.html">Video Summary Card</a>
-      <a href="../ai-social-media/destination-account.html">Destination Account</a>
-      <a href="../ai-social-media/date-picker.html">Date Picker</a>
-      <a href="../ai-social-media/carousel-card-block.html">Carousel Card Block</a>
+    <div class="demo-sidebar-group collapsed" data-group="brand">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>00 Brand</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="../ai-social-media/brand-logo.html">Brand / Logo</a>
+      </div>
     </div>
-    <div class="demo-sidebar-group">
-      <div class="demo-sidebar-label">Shared</div>
-      <a href="button.html" class="active">Button</a>
-      <a href="modal-confirm.html">Modal / Confirm</a>
-      <a href="modal-form.html">Modal / Form</a>
-      <a href="modal-success.html">Modal / Success</a>
+    <div class="demo-sidebar-group collapsed" data-group="icons">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>01 Icons</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="../ai-social-media/icons.html">Icons</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="actions">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>02 Actions</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="../ai-social-media/actions-button.html">Actions / Button</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="inputs">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>03 Inputs & Controls</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="../ai-social-media/controls-field-ai-assisted-text.html">Controls / Field / AI assisted text</a>
+        <a href="../ai-social-media/controls-field.html">Controls / Field</a>
+        <a href="../ai-social-media/controls-filter-select.html">Controls / Filter / Select</a>
+        <a href="../ai-social-media/controls-filter-toggle.html">Controls / Filter / Toggle</a>
+        <a href="../ai-social-media/controls-menu.html">Menu / Context Menu / Size Dropdown</a>
+        <a href="../ai-social-media/controls-misc.html">Controls — Icon Action, Popover, Carousel Arrow, Scrollbar, Segmented Control</a>
+        <a href="../ai-social-media/controls-multi-select.html">Controls / Multi Select</a>
+        <a href="../ai-social-media/controls-option-card.html">Controls / Option Card</a>
+        <a href="../ai-social-media/controls-search-field.html">Controls / Search Field</a>
+        <a href="../ai-social-media/controls-social-profile-row.html">Controls / Social profile row</a>
+        <a href="../ai-social-media/controls-toggles.html">Controls / Toggles</a>
+        <a href="../ai-social-media/date-picker.html">Date Picker</a>
+        <a href="../ai-social-media/duration-chip.html">Controls / Duration Chip</a>
+        <a href="../ai-social-media/filter-chip.html">Controls / Filter / Toggle</a>
+        <a href="../ai-social-media/input-login.html">Input / Login</a>
+        <a href="../ai-social-media/input.html">Input</a>
+        <a href="../ai-social-media/segment-chip.html">Segment Chip</a>
+        <a href="../ai-social-media/setting-chip.html">Setting Chip</a>
+        <a href="../ai-social-media/switch.html">Controls / Switch</a>
+        <a href="../ai-social-media/table-filter.html">Table / Filter</a>
+        <a href="../ai-social-media/toggle-chip.html">Controls / Toggle Chip</a>
+        <a href="../ai-social-media/uploads-file-badge.html">Uploads / File Badge / Source Row</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="navigation">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>04 Navigation</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="../ai-social-media/nav.html">Nav / Navigation</a>
+        <a href="../ai-social-media/topbar-stepper.html">Topbar + Stepper</a>
+        <a href="../ai-social-media/avatar.html">Avatar</a>
+        <a href="../ai-social-media/w-action-bar.html">W:ActionBar</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="ai-assistant">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>AI Assistant</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="../ai-social-media/chat-panel.html">Chat Panel</a>
+        <a href="../ai-social-media/prompt-box.html">AI Prompt Box</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="editor">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Editor</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="../ai-social-media/heading.html">Heading</a>
+        <a href="../ai-social-media/image-scene-card.html">Image Scene Card</a>
+        <a href="../ai-social-media/queue-panel.html">Queue Job Row / Queue Panel</a>
+        <a href="../ai-social-media/scene-tile.html">Scene Tile</a>
+        <a href="../ai-social-media/storyboard-card.html">Storyboard Card</a>
+        <a href="../ai-social-media/video-summary-card.html">Video Summary Card</a>
+        <a href="../ai-social-media/voice-accordion-row.html">Voice Accordion Row</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="product-selectors">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Product Selectors</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="../ai-social-media/character-card.html">Character Card</a>
+        <a href="../ai-social-media/destination-account.html">Destination Account</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="data-display">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Data Display</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="../ai-social-media/carousel-card-block.html">Carousel Card Block</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="feedback">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Feedback</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="../ai-social-media/publish-social-modal.html">Publish to Social Modal</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group" data-group="shared">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Shared</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="button.html" class="active">Button</a>
+        <a href="modal-confirm.html">Modal / Confirm</a>
+        <a href="modal-form.html">Modal / Form</a>
+        <a href="modal-success.html">Modal / Success</a>
+      </div>
     </div>
   </nav>
   <main class="demo-main">
@@ -109,7 +177,16 @@
       <button class="btn btn-danger" disabled>Button</button>
     </div>
   </section>
+
+  <section>
+    <h2>Small (HR Tool)</h2>
+    <div class="row">
+      <button class="btn btn-secondary btn-sm">Go Back</button>
+      <button class="btn btn-primary btn-sm">Continue</button>
+    </div>
+  </section>
   </main>
 </div>
+<script src="../demo-nav.js"></script>
 </body>
 </html>
