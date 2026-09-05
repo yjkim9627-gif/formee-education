@@ -2,15 +2,19 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
-<title>Controls / Filter / Toggle — Shared Component</title>
+<title>Editor Cell — AI Social Media Component</title>
 <link rel="stylesheet" href="../../tokens/tokens.css" />
 <link rel="stylesheet" href="../demo-nav.css" />
-<link rel="stylesheet" href="filter-chip.css" />
+<link rel="stylesheet" href="editor-cell.css" />
 <style>
   body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
   .demo-main { padding: var(--spacing-4xl); }
-  h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-3xl); }
-  .row { display: flex; gap: var(--spacing-sm); }
+  h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-sm); }
+  h2 { font-size: var(--font-size-text-md); font-weight: 700; color: var(--color-neutral-700); margin: var(--spacing-3xl) 0 var(--spacing-md); }
+  h2:first-of-type { margin-top: 0; }
+  .demo-note { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); max-width: 720px; margin: 0 0 var(--spacing-3xl); line-height: 1.6; }
+  .demo-sub { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); margin: 0 0 var(--spacing-lg); }
+  .demo-grid { display: flex; flex-wrap: wrap; gap: var(--spacing-2xl); align-items: flex-end; }
 </style>
 </head>
 <body>
@@ -35,7 +39,7 @@
         <a href="actions-button.html">Actions / Button</a>
       </div>
     </div>
-    <div class="demo-sidebar-group" data-group="inputs">
+    <div class="demo-sidebar-group collapsed" data-group="inputs">
       <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>03 Inputs & Controls</span><span class="demo-sidebar-group-caret">▾</span></button>
       <div class="demo-sidebar-group-items">
         <a href="controls-field-ai-assisted-text.html">Controls / Field / AI assisted text</a>
@@ -51,7 +55,7 @@
         <a href="controls-toggles.html">Controls / Toggles</a>
         <a href="date-picker.html">Date Picker</a>
         <a href="duration-chip.html">Controls / Duration Chip</a>
-        <a href="filter-chip.html" class="active">Controls / Filter / Toggle</a>
+        <a href="filter-chip.html">Controls / Filter / Toggle</a>
         <a href="input-login.html">Input / Login</a>
         <a href="input.html">Input</a>
         <a href="segment-chip.html">Segment Chip</a>
@@ -84,12 +88,12 @@
         <a href="upload-dropzone.html">Upload Dropzone / Dashed Upload Row</a>
       </div>
     </div>
-    <div class="demo-sidebar-group collapsed" data-group="editor">
+    <div class="demo-sidebar-group" data-group="editor">
       <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Editor</span><span class="demo-sidebar-group-caret">▾</span></button>
       <div class="demo-sidebar-group-items">
         <a href="brand-kit.html">Brand Kit</a>
         <a href="context-bar-popovers.html">ContextBar Popovers</a>
-        <a href="editor-cell.html">Editor Cell</a>
+        <a href="editor-cell.html" class="active">Editor Cell</a>
         <a href="editor-color-swatch.html">Editor / ContextBar Color Swatch</a>
         <a href="editor-context-bar.html">Editor ContextBar</a>
         <a href="editor-panel-chrome.html">Editor Panel & Controls</a>
@@ -138,12 +142,46 @@
     </div>
   </nav>
   <main class="demo-main">
-  <h1>Controls / Filter / Toggle</h1>
-  <div class="row">
-    <div class="filter-chip">Favorites ★</div>
-    <div class="filter-chip active">Favorites ★</div>
-    <div class="filter-chip disabled">Favorites ★</div>
-    <div class="filter-chip">Age <span class="chevron">▾</span></div>
+  <h1>Editor Cell</h1>
+  <p class="demo-note">Figma: "08 Editor" (1124:10672) — the square content-thumbnail tile reused throughout the editor: <a href="uploads-rows.html">Uploads / File Row</a>, <a href="context-bar-popovers.html">ContextBar / Popover / Replace</a>, and Brand Kit's Logo/Image Preview cards all place their thumbnail here instead of a bespoke box.</p>
+
+  <h2>Sizes × types</h2>
+  <p class="demo-sub">SM(68)/MD(90)/LG(144) — Image (empty placeholder), Logo, Sticker.</p>
+  <div class="demo-grid">
+    <div class="editor-cell size-sm type-image"><img src="icons/editor-cell-placeholder.svg" alt=""></div>
+    <div class="editor-cell size-md type-image"><img src="icons/menu-image.svg" alt=""></div>
+    <div class="editor-cell size-lg type-image"><img src="icons/menu-image.svg" alt=""></div>
+    <div class="editor-cell size-sm type-logo"><img src="icons/fmx-logo-sample.svg" alt=""></div>
+    <div class="editor-cell size-md type-logo"><img src="icons/fmx-logo-sample.svg" alt=""></div>
+    <div class="editor-cell size-lg type-logo"><img src="icons/fmx-logo-sample.svg" alt=""></div>
+    <div class="editor-cell size-sm type-sticker"><img src="icons/stickers/sparkling-heart.svg" alt=""></div>
+    <div class="editor-cell size-md type-sticker"><img src="icons/stickers/sparkling-heart.svg" alt=""></div>
+    <div class="editor-cell size-lg type-sticker"><img src="icons/stickers/sparkling-heart.svg" alt=""></div>
+  </div>
+
+  <h2>Focused state</h2>
+  <div class="demo-grid">
+    <div class="editor-cell size-sm type-image"><img src="icons/editor-cell-placeholder.svg" alt=""></div>
+    <div class="editor-cell size-sm type-image focused"><img src="icons/editor-cell-placeholder.svg" alt=""></div>
+    <div class="editor-cell size-sm type-sticker"><img src="icons/stickers/sparkling-heart.svg" alt=""></div>
+    <div class="editor-cell size-sm type-sticker focused"><img src="icons/stickers/sparkling-heart.svg" alt=""></div>
+  </div>
+
+  <h2>type=Upload / Uploading</h2>
+  <p class="demo-sub">Own chrome — dashed border, stacked icon+label. Identical to Brand Kit / Font Swatch's Upload/Uploading states.</p>
+  <div class="demo-grid">
+    <div class="editor-cell size-md type-upload"><img src="icons/panel-upload.svg" alt=""><span>Upload</span></div>
+    <div class="editor-cell size-md type-upload uploading"><img src="icons/loader-circle.svg" alt=""><span>Uploading…</span></div>
+  </div>
+
+  <h2>With checkbox + action overlay</h2>
+  <p class="demo-sub">Brand Kit / Image Preview's Hover state.</p>
+  <div class="demo-grid">
+    <div class="editor-cell size-lg type-image">
+      <input type="checkbox" class="editor-cell-checkbox" aria-label="Select">
+      <button type="button" class="editor-cell-action"><img src="icons/ui-ellipsis.svg" alt="More"></button>
+      <img src="icons/menu-image.svg" alt="">
+    </div>
   </div>
   </main>
 </div>

@@ -29,13 +29,8 @@
 .uploads-folder-rename-field-underline{width:100%; height:1px; background:var(--color-neutral-400);}
 
 /* ---------- Uploads / File Row (3317:21984) ----------
-   Its thumbnail reuses a single SM/Image/Default variant of the wider Editor / cell family
-   (2481:64631 / 2598:68625) -- .editor-cell here is a minimal preview of that not-yet-built
-   family, sized/styled to exactly this one instance; extend rather than duplicate when the full
-   Editor / cell group is built. */
-.editor-cell{box-sizing:border-box; width:68px; height:68px; display:flex; align-items:center; justify-content:center; padding:6px; background:var(--color-neutral-25); border:1px solid var(--color-neutral-400); border-radius:var(--radius-md); flex-shrink:0;}
-.editor-cell img{width:28px; height:28px; display:block;}
-
+   Its thumbnail reuses Editor / cell (SM/Image/Default) -- see editor-cell.css, the canonical
+   source for that component now that it's fully built. */
 .uploads-file-row{box-sizing:border-box; width:284px; display:flex; align-items:center; gap:var(--spacing-md);}
 .uploads-file-row-checkbox{width:16px; height:16px; box-sizing:border-box; background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-sm); flex-shrink:0; padding:0; cursor:pointer; appearance:none; -webkit-appearance:none;}
 .uploads-file-row-meta{flex:1 0 0; min-width:0; display:flex; flex-direction:column; gap:2px; justify-content:center;}

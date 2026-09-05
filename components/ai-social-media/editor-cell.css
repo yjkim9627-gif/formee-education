@@ -1,0 +1,49 @@
+/* Editor / cell (components/ai-social-media/editor-cell.html 참고)
+   Figma: FME_AI-Social-Media, "08 Editor" (1124:10672) — the square content-thumbnail tile used
+   throughout the editor: Uploads / File Row (uploads-rows.css), ContextBar / Popover / Replace
+   (context-bar-popovers.css) and Brand Kit's Logo/Image Preview cards (brand-kit.css) all place
+   their thumbnail inside this exact component rather than a bespoke box. This file is now the
+   single canonical source for it — it started as a minimal SM/Image copy inside uploads-rows.css
+   (extended here, not duplicated) sized/styled to exactly that one instance.
+   Sizes SM(68)/MD(90)/LG(144), types Image (empty placeholder)/Logo/Sticker (content types — all
+   3 share identical 8px-padding/solid-border/radius-md chrome, just different size + content) and
+   Upload (its own dashed-border/12px-padding/radius-xl look — shared 1:1 with Brand Kit / Font
+   Swatch's Upload+Uploading states, see brand-kit.css). States Default (neutral-400 border) and
+   Focused/Hover (neutral-500 border), plus optional checkbox/ellipsis-action overlays (Figma's
+   own two examples used slightly different corner insets, 3px vs 6px -- standardized here on 4px,
+   the nearest spacing token, spacing-xs). */
+
+.editor-cell{position:relative; box-sizing:border-box; display:flex; align-items:center; justify-content:center; flex-shrink:0; padding:var(--spacing-sm); background:var(--color-neutral-25); border:1px solid var(--color-neutral-400); border-radius:var(--radius-md); overflow:hidden;}
+.editor-cell.focused, .editor-cell:hover{border-color:var(--color-neutral-500);}
+.editor-cell.size-sm{width:68px; height:68px;}
+.editor-cell.size-md{width:90px; height:90px;}
+.editor-cell.size-lg{width:144px; height:144px;}
+
+/* type=Image (empty placeholder) -- SM already shipped with editor-cell-placeholder.svg (28px,
+   baked-in 0.35 opacity) from uploads-rows.css's original instance; MD/LG use the plain
+   icon/content/image glyph (reuses icons/menu-image.svg -- confirmed identical geometry) at
+   sizes interpolated between Figma's own SM and LG examples (no exact MD spec was fetched). */
+.editor-cell.type-image img{display:block;}
+.editor-cell.type-image.size-sm img{width:28px; height:28px;}
+.editor-cell.type-image.size-md img{width:32px; height:32px;}
+.editor-cell.type-image.size-lg img{width:36px; height:36px;}
+
+/* type=Logo -- a wide brand-logo asset filling the available row, any size */
+.editor-cell.type-logo img{width:100%; height:auto; display:block;}
+
+/* type=Sticker -- content is inset ~26.47% per side in Figma (content ~47% of the cell), same
+   ratio at every size since it's expressed as a percentage there too */
+.editor-cell.type-sticker img{width:47%; height:47%; display:block;}
+
+/* type=Upload -- dashed border, own chrome instead of the solid-border content types; identical
+   to Brand Kit / Font Swatch's Upload/Uploading states (brand-kit.css reuses this class). */
+.editor-cell.type-upload{flex-direction:column; gap:var(--spacing-sm); padding:var(--spacing-md); background:var(--color-neutral-0); border-style:dashed; border-radius:var(--radius-xl); cursor:pointer;}
+.editor-cell.type-upload img{width:16px; height:16px; display:block;}
+.editor-cell.type-upload span{font-family:var(--font-family-text); font-size:12px; font-weight:600; line-height:18px; color:var(--color-neutral-700); white-space:nowrap;}
+.editor-cell.type-upload.uploading img{animation:editor-cell-spin 0.9s linear infinite;}
+@keyframes editor-cell-spin{from{transform:rotate(0deg);} to{transform:rotate(360deg);}}
+
+/* Optional overlays -- a leading select checkbox and/or a trailing "more" action */
+.editor-cell-checkbox{position:absolute; top:4px; left:4px; width:16px; height:16px; box-sizing:border-box; background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-sm); flex-shrink:0; padding:0; cursor:pointer; appearance:none; -webkit-appearance:none;}
+.editor-cell-action{position:absolute; top:4px; right:4px; width:24px; height:24px; box-sizing:border-box; display:flex; align-items:center; justify-content:center; background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-md); box-shadow:var(--shadow-cell-action); cursor:pointer; padding:0;}
+.editor-cell-action img{width:16px; height:16px; display:block;}

@@ -2,15 +2,21 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
-<title>Controls / Filter / Toggle — Shared Component</title>
+<title>Brand Kit — AI Social Media Component</title>
 <link rel="stylesheet" href="../../tokens/tokens.css" />
 <link rel="stylesheet" href="../demo-nav.css" />
-<link rel="stylesheet" href="filter-chip.css" />
+<link rel="stylesheet" href="editor-cell.css" />
+<link rel="stylesheet" href="brand-kit.css" />
 <style>
   body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
   .demo-main { padding: var(--spacing-4xl); }
-  h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-3xl); }
-  .row { display: flex; gap: var(--spacing-sm); }
+  h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-sm); }
+  h2 { font-size: var(--font-size-text-md); font-weight: 700; color: var(--color-neutral-700); margin: var(--spacing-3xl) 0 var(--spacing-md); }
+  h2:first-of-type { margin-top: 0; }
+  .demo-note { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); max-width: 720px; margin: 0 0 var(--spacing-3xl); line-height: 1.6; }
+  .demo-sub { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); margin: 0 0 var(--spacing-lg); }
+  .demo-grid { display: flex; flex-wrap: wrap; gap: var(--spacing-2xl); align-items: flex-start; }
+  .demo-col { display: flex; flex-direction: column; gap: var(--spacing-md); }
 </style>
 </head>
 <body>
@@ -35,7 +41,7 @@
         <a href="actions-button.html">Actions / Button</a>
       </div>
     </div>
-    <div class="demo-sidebar-group" data-group="inputs">
+    <div class="demo-sidebar-group collapsed" data-group="inputs">
       <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>03 Inputs & Controls</span><span class="demo-sidebar-group-caret">▾</span></button>
       <div class="demo-sidebar-group-items">
         <a href="controls-field-ai-assisted-text.html">Controls / Field / AI assisted text</a>
@@ -51,7 +57,7 @@
         <a href="controls-toggles.html">Controls / Toggles</a>
         <a href="date-picker.html">Date Picker</a>
         <a href="duration-chip.html">Controls / Duration Chip</a>
-        <a href="filter-chip.html" class="active">Controls / Filter / Toggle</a>
+        <a href="filter-chip.html">Controls / Filter / Toggle</a>
         <a href="input-login.html">Input / Login</a>
         <a href="input.html">Input</a>
         <a href="segment-chip.html">Segment Chip</a>
@@ -84,10 +90,10 @@
         <a href="upload-dropzone.html">Upload Dropzone / Dashed Upload Row</a>
       </div>
     </div>
-    <div class="demo-sidebar-group collapsed" data-group="editor">
+    <div class="demo-sidebar-group" data-group="editor">
       <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Editor</span><span class="demo-sidebar-group-caret">▾</span></button>
       <div class="demo-sidebar-group-items">
-        <a href="brand-kit.html">Brand Kit</a>
+        <a href="brand-kit.html" class="active">Brand Kit</a>
         <a href="context-bar-popovers.html">ContextBar Popovers</a>
         <a href="editor-cell.html">Editor Cell</a>
         <a href="editor-color-swatch.html">Editor / ContextBar Color Swatch</a>
@@ -138,12 +144,96 @@
     </div>
   </nav>
   <main class="demo-main">
-  <h1>Controls / Filter / Toggle</h1>
-  <div class="row">
-    <div class="filter-chip">Favorites ★</div>
-    <div class="filter-chip active">Favorites ★</div>
-    <div class="filter-chip disabled">Favorites ★</div>
-    <div class="filter-chip">Age <span class="chevron">▾</span></div>
+  <h1>Brand Kit</h1>
+  <p class="demo-note">Figma: "08 Editor" (1124:10672) — the brand-asset cards in the Brand Kit panel. Logo/Image Preview place their thumbnail in <a href="editor-cell.html">Editor / cell</a> rather than a bespoke box; Font Swatch's Upload/Uploading states reuse Editor / cell's own dashed-card chrome as-is.</p>
+
+  <h2>Brand Kit / Logo Preview</h2>
+  <p class="demo-sub">Node 4584:3110.</p>
+  <div class="demo-grid">
+    <div class="brand-kit-logo-preview">
+      <div class="brand-kit-logo-preview-frame">
+        <div class="editor-cell size-md type-logo"><img src="icons/fmx-logo-sample.svg" alt=""></div>
+      </div>
+      <div class="brand-kit-card-body">
+        <div>
+          <div class="brand-kit-card-name">primary-logo.svg</div>
+          <div class="brand-kit-card-meta">SVG · 512×512 · 8 KB</div>
+        </div>
+        <span class="brand-kit-card-badge"><span>In Preview</span></span>
+      </div>
+    </div>
+  </div>
+
+  <h2>Brand Kit / Image Preview</h2>
+  <p class="demo-sub">Node 5405:124471 — hover reveals a checkbox + ellipsis action on the cell (editor-cell.css).</p>
+  <div class="demo-grid">
+    <div class="brand-kit-image-preview">
+      <div class="editor-cell size-lg type-image">
+        <input type="checkbox" class="editor-cell-checkbox" aria-label="Select">
+        <button type="button" class="editor-cell-action"><img src="icons/ui-ellipsis.svg" alt="More"></button>
+        <img src="icons/menu-image.svg" alt="">
+      </div>
+      <div class="brand-kit-card-body" style="padding:0;">
+        <div>
+          <div class="brand-kit-card-name">graphic-01.jpg</div>
+          <div class="brand-kit-card-meta">jpg · 512×512 · 8 KB</div>
+        </div>
+        <span class="brand-kit-card-badge"><span>In Preview</span></span>
+      </div>
+    </div>
+  </div>
+
+  <h2>Brand Kit / Font Swatch</h2>
+  <p class="demo-sub">Node 4504:2708 (Default) — Upload/Uploading reuse Editor / cell's .type-upload as-is.</p>
+  <div class="demo-grid">
+    <div class="brand-kit-font-swatch">
+      <span class="brand-kit-font-swatch-glyph">Abc</span>
+      <span class="brand-kit-font-swatch-name">DM Sans</span>
+      <span class="brand-kit-font-swatch-desc">Modern sans</span>
+    </div>
+    <div class="editor-cell size-md type-upload"><img src="icons/panel-upload.svg" alt=""><span>Upload</span></div>
+    <div class="editor-cell size-md type-upload uploading"><img src="icons/loader-circle.svg" alt=""><span>Uploading…</span></div>
+  </div>
+
+  <h2>Brand Kit / Text Style Card</h2>
+  <p class="demo-sub">Node 3711:66254 etc. — Heading/Subheading/Body types, each an actual live font preview. Default / Hover (Quick Add) / Checked (selected).</p>
+  <div class="demo-grid">
+    <div class="demo-col">
+      <div class="brand-kit-text-style-card">
+        <div class="brand-kit-text-style-card-text">
+          <span class="brand-kit-text-style-card-sample type-heading">Heading</span>
+          <span class="brand-kit-text-style-card-meta">Georgia Bold</span>
+        </div>
+      </div>
+      <div class="brand-kit-text-style-card hover">
+        <div class="brand-kit-text-style-card-text">
+          <span class="brand-kit-text-style-card-sample type-heading">Heading</span>
+          <span class="brand-kit-text-style-card-meta">Georgia Bold</span>
+        </div>
+        <button type="button" class="brand-kit-text-style-card-action action-add"><img src="icons/pagebar-plus.svg" alt="Add"></button>
+      </div>
+      <div class="brand-kit-text-style-card">
+        <div class="brand-kit-text-style-card-text">
+          <span class="brand-kit-text-style-card-sample type-heading">Heading</span>
+          <span class="brand-kit-text-style-card-meta">Georgia Bold</span>
+        </div>
+        <span class="brand-kit-text-style-card-checkbox"><img src="icons/wh-check.svg" alt="Selected"></span>
+      </div>
+    </div>
+    <div class="demo-col">
+      <div class="brand-kit-text-style-card">
+        <div class="brand-kit-text-style-card-text">
+          <span class="brand-kit-text-style-card-sample type-subheading">Subheading</span>
+          <span class="brand-kit-text-style-card-meta">Georgia Semibold</span>
+        </div>
+      </div>
+      <div class="brand-kit-text-style-card">
+        <div class="brand-kit-text-style-card-text">
+          <span class="brand-kit-text-style-card-sample type-body">Body</span>
+          <span class="brand-kit-text-style-card-meta">Impact Regular</span>
+        </div>
+      </div>
+    </div>
   </div>
   </main>
 </div>

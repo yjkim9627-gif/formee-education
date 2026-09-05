@@ -1,0 +1,48 @@
+/* Brand Kit (components/ai-social-media/brand-kit.html 참고)
+   Figma: FME_AI-Social-Media, "08 Editor" (1124:10672) — the brand-asset cards shown in the
+   Brand Kit panel: Logo/Image Preview cards (both place their thumbnail in Editor / cell,
+   editor-cell.css, rather than a bespoke box), Font Swatch, and Text Style Card. */
+
+/* ---------- Brand Kit / Logo Preview (4584:3110) ---------- */
+.brand-kit-logo-preview{box-sizing:border-box; width:150px; display:flex; flex-direction:column; align-items:flex-start; gap:10px; background:var(--color-neutral-0); border:1px solid var(--color-neutral-300); border-radius:10px; overflow:hidden;} /* 10px: no exact radius token between lg(8)/xl(12) */
+.brand-kit-logo-preview-frame{box-sizing:border-box; width:100%; display:flex; align-items:center; justify-content:center; padding:9px; background:var(--color-neutral-50);} /* 9px: no exact spacing token between sm(8)/md(12) */
+.brand-kit-card-body{box-sizing:border-box; width:100%; display:flex; flex-direction:column; gap:var(--spacing-sm); padding:0 var(--spacing-md) var(--spacing-md);}
+.brand-kit-card-name{font-family:var(--font-family-text); font-size:13px; font-weight:600; line-height:20px; color:var(--color-neutral-700); white-space:nowrap;}
+.brand-kit-card-meta{font-family:var(--font-family-text); font-size:12px; font-weight:500; line-height:18px; color:var(--color-neutral-500); white-space:nowrap;}
+.brand-kit-card-badge{display:inline-flex; align-items:center; padding:2px var(--spacing-sm); border-radius:var(--radius-full); background:var(--color-neutral-950); align-self:flex-start;}
+.brand-kit-card-badge span{font-family:var(--font-family-text); font-size:11px; font-weight:600; line-height:14px; color:var(--color-neutral-0); white-space:nowrap;}
+
+/* ---------- Brand Kit / Image Preview (5405:124471) ----------
+   No preview-frame wrapper (unlike Logo Preview) -- the LG Editor / cell sits directly on the
+   card, and shows the checkbox/action overlay on hover (see editor-cell.css). */
+.brand-kit-image-preview{box-sizing:border-box; width:144px; display:flex; flex-direction:column; align-items:flex-start; gap:14px;} /* 14px: no exact spacing token between md(12)/lg(16) */
+
+/* ---------- Brand Kit / Font Swatch (4504:2708 Default) ----------
+   Upload/Uploading states reuse Editor / cell's own .type-upload chrome as-is (editor-cell.css)
+   -- identical 90px dashed card, not a separate implementation. */
+.brand-kit-font-swatch{box-sizing:border-box; width:90px; height:90px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-md); text-align:center; overflow:hidden;}
+.brand-kit-font-swatch-glyph{font-family:var(--font-family-text); font-size:26px; font-weight:400; line-height:32px; color:var(--color-neutral-900); width:100%;}
+.brand-kit-font-swatch-name{font-family:var(--font-family-text); font-size:11px; font-weight:600; line-height:16px; color:var(--color-neutral-700); width:100%;}
+.brand-kit-font-swatch-desc{font-family:var(--font-family-text); font-size:10px; font-weight:400; line-height:14px; color:var(--color-neutral-500); width:100%;}
+
+/* ---------- Brand Kit / Text Style Card (3711:66254 etc.) ----------
+   3 types (Heading/Subheading/Body, each an actual live font-family/size preview -- not a
+   token, since the whole point of the card is showing what a brand's own uploaded/chosen font
+   looks like) x Default/Hover(quick-add)/Focused x action=Add/Check. Default is a plain 2-line
+   card; Hover reveals a 28px "Quick Add" +; the selected/Check look swaps that for a solid dark
+   checked box instead of the + and drops the card back to a single row (no room for the type
+   sample's own line since ---checked cards in Figma stay 56px tall like Default, just
+   accommodating name+meta side-by-side with the checkbox, per the fetched 6318:3567 spec). */
+.brand-kit-text-style-card{box-sizing:border-box; width:286px; min-height:56px; display:flex; align-items:center; gap:var(--spacing-sm); padding:var(--spacing-sm) var(--spacing-md); background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); cursor:pointer;}
+.brand-kit-text-style-card.hover, .brand-kit-text-style-card:hover{border-color:var(--color-neutral-500);}
+.brand-kit-text-style-card-text{flex:1 0 0; min-width:0; display:flex; flex-direction:column; gap:4px;}
+.brand-kit-text-style-card-sample{color:var(--color-neutral-900); line-height:22px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.brand-kit-text-style-card-sample.type-heading{font-family:Georgia, serif; font-weight:700; font-size:23px;}
+.brand-kit-text-style-card-sample.type-subheading{font-family:Georgia, serif; font-weight:700; font-size:17px; line-height:22px;}
+.brand-kit-text-style-card-sample.type-body{font-family:Impact, sans-serif; font-weight:400; font-size:13px;}
+.brand-kit-text-style-card-meta{font-family:var(--font-family-text); font-size:12px; font-weight:500; line-height:18px; color:var(--color-neutral-500); white-space:nowrap;}
+.brand-kit-text-style-card-action{width:28px; height:28px; box-sizing:border-box; flex-shrink:0; display:flex; align-items:center; justify-content:center; border:none; border-radius:var(--radius-md); cursor:pointer; padding:0;}
+.brand-kit-text-style-card-action.action-add{background:var(--color-neutral-150); border:1px solid var(--color-neutral-400);}
+.brand-kit-text-style-card-action img{width:16px; height:16px; display:block;}
+.brand-kit-text-style-card-checkbox{width:16px; height:16px; box-sizing:border-box; display:flex; align-items:center; justify-content:center; background:var(--color-neutral-900); border:1px solid var(--color-neutral-900); border-radius:var(--radius-sm);}
+.brand-kit-text-style-card-checkbox img{width:12px; height:12px; display:block;}
