@@ -2,12 +2,12 @@
    Figma: FME_AI-Social-Media, "08 Editor" (1124:10672) — the floating selection toolbar that
    appears above a selected canvas element. Three pieces: the atomic pill button used throughout
    (ContextBar / Item, 3439:1699/1707), the floating toolbar shell that holds a row of them
-   (Editor / ContextBar / Floating, 2476:22360 — content varies by what's selected: Text/CTA-text/
-   CTA-button/Sticker/Image/Shape; only the Sticker variant was fetched precisely in this pass,
-   the others reuse the same shell+item pieces with a different item row), and the outer row that
-   places it between a "Quick Add" button and a view/target/layer toggle group (Editor /
-   ContextBar, 3402:23338). The 6 secondary popovers that open from individual items (Replace /
-   Flip / Opacity / Arrange / Layer / Spacing) are a separate, later pass. */
+   (Editor / ContextBar / Floating, 2476:22360 — all 6 content-type variants, Text/CTA-text/
+   CTA-button/Sticker/Image/Shape, are just different compositions of the same shell+item+swatch
+   pieces below; none needed their own CSS), and the outer row that places it between a "Quick
+   Add" button and a view/target/layer toggle group (Editor / ContextBar, 3402:23338). The 6
+   secondary popovers that open from individual items (Replace/Flip/Opacity/Arrange/Layer/
+   Spacing) live in context-bar-popovers.css. */
 
 /* ---------- ContextBar / Item (3439:1699 Default / 3439:1707 Focused) ----------
    Icon+label, icon-only, or label-only (no `img`) — the toolbar decides per-item which parts to

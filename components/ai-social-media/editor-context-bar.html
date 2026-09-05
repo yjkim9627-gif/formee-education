@@ -146,7 +146,7 @@
   </nav>
   <main class="demo-main">
   <h1>Editor ContextBar</h1>
-  <p class="demo-note">Figma: "08 Editor" (1124:10672) — the floating selection toolbar above a selected canvas element. ContextBar / Item (3439:1699/1707) is the atomic pill button; Editor / ContextBar / Floating (2476:22360) is the shell holding a row of them (content varies by selection type — Text/CTA-text/CTA-button/Sticker/Image/Shape; the Sticker variant shown below is the one fetched precisely); Editor / ContextBar (3402:23338) is the outer row placing it between a Quick Add button and a view/target/layer toggle group. The 6 secondary popovers (Replace/Flip/Opacity/Arrange/Layer/Spacing) that open from individual items are a later pass.</p>
+  <p class="demo-note">Figma: "08 Editor" (1124:10672) — the floating selection toolbar above a selected canvas element. ContextBar / Item (3439:1699/1707) is the atomic pill button; Editor / ContextBar / Floating (2476:22360) is the shell holding a row of them — all 6 content-type variants (Text/CTA-text/CTA-button/Sticker/Image/Shape) are shown below, each just a different composition of the same item/swatch pieces; Editor / ContextBar (3402:23338) is the outer row placing it between a Quick Add button and a view/target/layer toggle group. The 6 secondary popovers (Replace/Flip/Opacity/Arrange/Layer/Spacing) that open from individual items live in <a href="context-bar-popovers.html">ContextBar Popovers</a>.</p>
 
   <h2>ContextBar / Item</h2>
   <p class="demo-sub">Node 3439:1699 (Default) / 3439:1707 (Focused) — icon+label, icon-only, or label-only.</p>
@@ -169,6 +169,114 @@
       </span>
       <button type="button" class="context-bar-item"><img src="icons/context-duplicate.svg" alt="Duplicate"></button>
       <button type="button" class="context-bar-item"><img src="icons/context-crop.svg" alt="Crop"></button>
+      <button type="button" class="context-bar-item"><img src="icons/context-lock.svg" alt="Lock"></button>
+      <span class="context-bar-floating-divider"></span>
+      <button type="button" class="context-bar-item"><img src="icons/context-layer.svg" alt="">Layer</button>
+      <button type="button" class="context-bar-item"><img src="icons/context-align.svg" alt="">Align</button>
+      <button type="button" class="context-bar-item">Flip</button>
+      <span class="context-bar-floating-divider"></span>
+      <button type="button" class="context-bar-item"><img src="icons/context-arrange.svg" alt="Arrange"></button>
+      <button type="button" class="context-bar-item"><img src="icons/context-delete.svg" alt="Delete"></button>
+    </div>
+  </div>
+
+  <h2>Editor / ContextBar / Floating — Type = Text</h2>
+  <p class="demo-sub">Node 776:7322 — text color swatch, Spacing, Copy style, Duplicate/Lock, Layer/Align/Flip, Arrange/Delete.</p>
+  <div class="demo-grid">
+    <div class="context-bar-floating">
+      <span class="context-bar-floating-swatches">
+        <button type="button" class="contextbar-swatch type-fill" style="--sw-color:var(--color-neutral-0);"></button>
+      </span>
+      <button type="button" class="context-bar-item"><img src="icons/context-spacing.svg" alt="">Spacing</button>
+      <button type="button" class="context-bar-item"><img src="icons/content-preview-edit.svg" alt="">Copy style</button>
+      <button type="button" class="context-bar-item"><img src="icons/context-duplicate.svg" alt="Duplicate"></button>
+      <button type="button" class="context-bar-item"><img src="icons/context-lock.svg" alt="Lock"></button>
+      <span class="context-bar-floating-divider"></span>
+      <button type="button" class="context-bar-item"><img src="icons/context-layer.svg" alt="">Layer</button>
+      <button type="button" class="context-bar-item"><img src="icons/context-align.svg" alt="">Align</button>
+      <button type="button" class="context-bar-item">Flip</button>
+      <span class="context-bar-floating-divider"></span>
+      <button type="button" class="context-bar-item"><img src="icons/context-arrange.svg" alt="Arrange"></button>
+      <button type="button" class="context-bar-item"><img src="icons/context-delete.svg" alt="Delete"></button>
+    </div>
+  </div>
+
+  <h2>Editor / ContextBar / Floating — Type = CTA-text</h2>
+  <p class="demo-sub">Node 3676:64697 — Edit text, Spacing, Copy style, Duplicate/Lock, Layer/Align/Flip, Arrange/Delete.</p>
+  <div class="demo-grid">
+    <div class="context-bar-floating">
+      <button type="button" class="context-bar-item"><img src="icons/context-edit-text.svg" alt="Edit text"></button>
+      <button type="button" class="context-bar-item"><img src="icons/context-spacing.svg" alt="">Spacing</button>
+      <button type="button" class="context-bar-item"><img src="icons/content-preview-edit.svg" alt="">Copy style</button>
+      <button type="button" class="context-bar-item"><img src="icons/context-duplicate.svg" alt="Duplicate"></button>
+      <button type="button" class="context-bar-item"><img src="icons/context-lock.svg" alt="Lock"></button>
+      <span class="context-bar-floating-divider"></span>
+      <button type="button" class="context-bar-item"><img src="icons/context-layer.svg" alt="">Layer</button>
+      <button type="button" class="context-bar-item"><img src="icons/context-align.svg" alt="">Align</button>
+      <button type="button" class="context-bar-item">Flip</button>
+      <span class="context-bar-floating-divider"></span>
+      <button type="button" class="context-bar-item"><img src="icons/context-arrange.svg" alt="Arrange"></button>
+      <button type="button" class="context-bar-item"><img src="icons/context-delete.svg" alt="Delete"></button>
+    </div>
+  </div>
+
+  <h2>Editor / ContextBar / Floating — Type = CTA-button</h2>
+  <p class="demo-sub">Node 5312:102851 — fill color + line color (selected), Copy style, Duplicate/Lock, Layer/Align/Flip, Arrange/Delete.</p>
+  <div class="demo-grid">
+    <div class="context-bar-floating">
+      <span class="context-bar-floating-swatches">
+        <button type="button" class="contextbar-swatch type-fill" style="--sw-color:var(--color-neutral-0);"></button>
+      </span>
+      <span class="context-bar-floating-swatches">
+        <span class="contextbar-swatch-wrap selected"><button type="button" class="contextbar-swatch type-line"><span class="contextbar-swatch-line-core" style="--sw-color:#4f6de6;"></span></button></span>
+      </span>
+      <button type="button" class="context-bar-item"><img src="icons/content-preview-edit.svg" alt="">Copy style</button>
+      <button type="button" class="context-bar-item"><img src="icons/context-duplicate.svg" alt="Duplicate"></button>
+      <button type="button" class="context-bar-item"><img src="icons/context-lock.svg" alt="Lock"></button>
+      <span class="context-bar-floating-divider"></span>
+      <button type="button" class="context-bar-item"><img src="icons/context-layer.svg" alt="">Layer</button>
+      <button type="button" class="context-bar-item"><img src="icons/context-align.svg" alt="">Align</button>
+      <button type="button" class="context-bar-item">Flip</button>
+      <span class="context-bar-floating-divider"></span>
+      <button type="button" class="context-bar-item"><img src="icons/context-arrange.svg" alt="Arrange"></button>
+      <button type="button" class="context-bar-item"><img src="icons/context-delete.svg" alt="Delete"></button>
+    </div>
+  </div>
+
+  <h2>Editor / ContextBar / Floating — Type = Image</h2>
+  <p class="demo-sub">Node 3676:61300 — Remove BG, Replace, Duplicate/Crop/Lock, Layer/Align/Flip, Arrange/Delete.</p>
+  <div class="demo-grid">
+    <div class="context-bar-floating">
+      <button type="button" class="context-bar-item"><img src="icons/context-remove-bg.svg" alt="">Remove BG</button>
+      <button type="button" class="context-bar-item"><img src="icons/context-replace.svg" alt="">Replace</button>
+      <button type="button" class="context-bar-item"><img src="icons/context-duplicate.svg" alt="Duplicate"></button>
+      <button type="button" class="context-bar-item"><img src="icons/context-crop.svg" alt="Crop"></button>
+      <button type="button" class="context-bar-item"><img src="icons/context-lock.svg" alt="Lock"></button>
+      <span class="context-bar-floating-divider"></span>
+      <button type="button" class="context-bar-item"><img src="icons/context-layer.svg" alt="">Layer</button>
+      <button type="button" class="context-bar-item"><img src="icons/context-align.svg" alt="">Align</button>
+      <button type="button" class="context-bar-item">Flip</button>
+      <span class="context-bar-floating-divider"></span>
+      <button type="button" class="context-bar-item"><img src="icons/context-arrange.svg" alt="Arrange"></button>
+      <button type="button" class="context-bar-item"><img src="icons/context-delete.svg" alt="Delete"></button>
+    </div>
+  </div>
+
+  <h2>Editor / ContextBar / Floating — Type = Shape</h2>
+  <p class="demo-sub">Node 3508:24465 — recent colors, line color (selected), Replace, Copy style, Duplicate/Lock, Layer/Align/Flip, Arrange/Delete.</p>
+  <div class="demo-grid">
+    <div class="context-bar-floating">
+      <span class="context-bar-floating-swatches">
+        <button type="button" class="contextbar-swatch type-fill" style="--sw-color:#f92f60;"></button>
+        <button type="button" class="contextbar-swatch type-fill" style="--sw-color:#ff6dc6;"></button>
+        <button type="button" class="contextbar-swatch type-fill" style="--sw-color:#ffb2ff;"></button>
+      </span>
+      <span class="context-bar-floating-swatches">
+        <span class="contextbar-swatch-wrap selected"><button type="button" class="contextbar-swatch type-line"><span class="contextbar-swatch-line-core" style="--sw-color:#4f6de6;"></span></button></span>
+      </span>
+      <button type="button" class="context-bar-item"><img src="icons/context-replace.svg" alt="">Replace</button>
+      <button type="button" class="context-bar-item"><img src="icons/content-preview-edit.svg" alt="">Copy style</button>
+      <button type="button" class="context-bar-item"><img src="icons/context-duplicate.svg" alt="Duplicate"></button>
       <button type="button" class="context-bar-item"><img src="icons/context-lock.svg" alt="Lock"></button>
       <span class="context-bar-floating-divider"></span>
       <button type="button" class="context-bar-item"><img src="icons/context-layer.svg" alt="">Layer</button>
