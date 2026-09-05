@@ -19,7 +19,6 @@
 <link rel="stylesheet" href="../../../../components/ai-social-media/table-filter.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/controls-filter-toggle.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/controls-filter-select.css">
-<link rel="stylesheet" href="../../../../components/ai-social-media/avatar.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/actions-button.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/scene-tile.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/voice-accordion-row.css">
@@ -32,6 +31,8 @@
 <link rel="stylesheet" href="../../../../components/ai-social-media/storyboard-card.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/destination-account.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/publish-social-modal.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/controls-misc.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/controls-toggles.css">
 <!-- Playfair Display: only used live for the Draft screen's brand-kit font-preview tags (Formee
      Express's Heading face, matching brand-setup-kit-character-library.html's own import). -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap">
@@ -94,7 +95,15 @@
   .seg-chip.active{background:#fff; color:var(--color-neutral-900); font-weight:600; box-shadow:0 1px 1.5px rgba(15,23,41,0.1),0 1px 0.5px rgba(15,23,41,0.04);}
   .seg-chip.disabled{opacity:.4; cursor:default; pointer-events:none;}
 
-  .btn-dark{background:linear-gradient(180deg, var(--color-action-primary-dark-gradient-start), var(--color-action-primary-dark-gradient-end)); border-color:transparent; color:var(--color-neutral-0); box-shadow:0 1px 2px rgba(13,13,13,0.1);}
+  /* .btn-dark is deliberately its own class (composed with shared button.css's .btn base, 40px/
+     16px-padding) rather than actions-button.css's .actions-btn--primary -- same dark-gradient
+     treatment (style-reference.md documents this exact gradient being reused across multiple
+     differently-sized button families, e.g. Auth Button), but a genuinely different, larger CTA
+     tier used here for step-advancing actions (Continue/Generate/Publish), not the smaller
+     Actions/Button pill. It was missing the glossy inset highlight that treatment's other sizes
+     have, though -- added via the existing (previously unused) shadow token for the dark inset
+     line, plus the matching top highlight (no token yet for that one). */
+  .btn-dark{background:linear-gradient(180deg, var(--color-action-primary-dark-gradient-start), var(--color-action-primary-dark-gradient-end)); border-color:transparent; color:var(--color-neutral-0); box-shadow:0 1px 2px rgba(13,13,13,0.1), var(--shadow-action-primary-dark-inset), inset 0 0.5px 1px rgba(255,255,255,.15);}
   .btn-dark:hover:not(:disabled){filter:brightness(1.1);}
   .btn-dark:active:not(:disabled){filter:brightness(0.92);}
   .btn-dark:disabled{background:var(--color-neutral-300); color:var(--color-neutral-450); box-shadow:none;}
@@ -610,8 +619,13 @@
   .ed-ab-center{display:flex; align-items:center; gap:16px; font-size:13px; color:var(--color-neutral-500); flex-shrink:0;}
   .ed-ab-center .chip{border:1px solid var(--color-neutral-400); border-radius:8px; padding:6px 12px; font-size:12px; font-weight:500; color:var(--color-neutral-700);}
   .ed-ab-right{display:flex; align-items:center; gap:12px; flex-shrink:0;}
-  .ed-publish-btn{display:flex; align-items:center; gap:8px; border:none; border-radius:8px; padding:9px 12px 9px 16px; background:linear-gradient(180deg,#323232,#222); color:#fff; font-size:14px; font-weight:600; font-family:var(--font-family-text); cursor:pointer; box-shadow:inset 0 -1px 1.2px rgba(18,18,18,0.6);}
-  .ed-publish-btn__icon{width:18px; height:18px; flex-shrink:0;}
+  /* .ed-publish-btn removed -- this IS Actions / Publish Button (777:7362), already built exactly
+     in actions-button.css as .actions-publish-btn (linked above); markup below now uses it
+     directly instead of a duplicate local class. One local addition still needed: the real
+     component is a fixed 131px sized for the single word "Publish", but this button's label also
+     swaps to "Schedule"/"Save as draft"/"Publish / Schedule" depending on state (see
+     setPublishMainBtnLabel), so it needs to grow with its content instead of clipping. */
+  .actions-publish-btn.auto-width{width:auto; padding-left:var(--spacing-lg); padding-right:var(--spacing-lg);}
 
   /* ============ PUBLISH VIEW (Figma: FME_AI-Social-Media · Publish, node 6269-126410) ============ */
   .pub-body{flex:1; min-height:0; overflow-y:auto; display:flex; justify-content:center; background:var(--color-neutral-50); padding-top:var(--spacing-4xl); padding-bottom:var(--spacing-7xl);}
@@ -652,9 +666,8 @@
   .pub-regenerate-btn:disabled{cursor:default; opacity:.7;}
   .pub-regenerate-btn .ic{width:16px; height:16px; display:flex; flex-shrink:0;}
   .pub-regenerate-btn .ic img{width:100%; height:100%; display:block;}
-  .pub-close-btn{display:inline-flex; align-items:center; gap:var(--spacing-sm); border:none; border-radius:var(--radius-lg); padding:9px 12px; background:linear-gradient(180deg,#323232,#222); color:#fff; font-size:12px; font-weight:600; cursor:pointer; font-family:var(--font-family-text); box-shadow:inset 0 -1px 1.2px rgba(18,18,18,0.6);}
-  .pub-close-btn .ic{width:18px; height:18px; display:flex; flex-shrink:0;}
-  .pub-close-btn .ic img{width:100%; height:100%; display:block;}
+  /* .pub-close-btn removed -- a plain dark CTA at Actions/Button's own size, not the fixed-width
+     Publish Button, so it now uses actions-button.css's real .actions-btn/--primary directly. */
   .pub-hashtag-seo-summary{font-size:var(--font-size-text-xs); color:var(--color-neutral-600); line-height:1.5; margin:0;}
   .pub-hashtag-seo-group{display:flex; flex-direction:column; gap:var(--spacing-sm);}
   .pub-hashtag-seo-label{font-size:var(--font-size-text-md); line-height:var(--line-height-text-md); font-weight:var(--font-weight-semibold); color:var(--color-neutral-800);}
@@ -725,9 +738,13 @@
   .pub-dest-gap{flex:1 0 0; min-width:12px;}
   .pub-dest-col{width:56px; flex-shrink:0; display:flex; align-items:center; justify-content:center;}
   .pub-dest-status-col{width:240px; flex-shrink:0; display:flex; align-items:center; justify-content:flex-end; gap:10px;}
-  .pub-dest-status{flex-shrink:0; font-family:var(--font-family-text); font-size:11px; font-weight:600; line-height:14px; white-space:nowrap;}
-  .pub-dest-status.connected{background:var(--color-badge-green-bg); color:var(--color-badge-green-text); border-radius:var(--radius-lg); padding:2px 8px;}
-  .pub-dest-status.not-connected{background:var(--color-neutral-400); color:var(--color-neutral-700); border-radius:999px; padding:2px 8px;}
+  /* .pub-dest-status / .connected duplicated the real Controls / Toggles feedback badge
+     (controls-toggles.css's .ctrl-feedback / --green, now linked) almost exactly (same padding/
+     font-size/line-height/radius) -- removed in favor of it. .not-connected's own neutral-400/
+     neutral-700 grey has no matching shared modifier yet (the closest, --secondary, is a
+     different neutral-150/neutral-900 combo), so it stays local as .pub-dest-status--not-connected,
+     layered on top of the shared .ctrl-feedback base instead of reimplementing that too. */
+  .pub-dest-status--not-connected{background:var(--color-neutral-400); color:var(--color-neutral-700); border-radius:var(--radius-full);}
   .pub-dest-connect-btn{flex-shrink:0; display:inline-flex; align-items:center; justify-content:center; padding:9px 14px; background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); font-family:var(--font-family-text); font-size:13px; font-weight:600; line-height:20px; color:var(--color-neutral-700); cursor:pointer;}
   .pub-dest-connect-btn:hover{border-color:var(--color-neutral-450);}
   .pub-dest-checkbox{width:16px; height:16px; flex-shrink:0; border-radius:var(--radius-sm); appearance:none; -webkit-appearance:none; margin:0; border:1px solid var(--color-neutral-400); background:var(--color-neutral-0); cursor:pointer; background-repeat:no-repeat; background-position:center;}
@@ -846,21 +863,21 @@
   .mention-option{padding:7px 10px; font-size:12.5px; color:var(--color-neutral-900); border-radius:6px; cursor:pointer;}
   .mention-option:hover, .mention-option.active{background:var(--color-neutral-100);}
   .ic-svg{flex-shrink:0; display:inline-block;}
-  .duration-popover{position:absolute; top:calc(100% + 6px); left:0; min-width:160px; background:#fff; border:1px solid var(--color-neutral-400); border-radius:8px; box-shadow:0 0 3px var(--color-neutral-150); padding:8px; z-index:40;}
-  .duration-popover-label{font-size:12px; font-weight:600; color:var(--color-neutral-700); padding:7px 8px;}
-  .duration-option{display:flex; align-items:center; justify-content:space-between; gap:16px; padding:8px; border-radius:6px; font-size:14px; font-weight:500; color:var(--color-neutral-700); cursor:pointer;}
-  .duration-option:hover{background:var(--color-neutral-50);}
-  .duration-option.selected{background:var(--color-neutral-100);}
-  .duration-option .check{display:none; color:var(--color-brand-primary); font-size:13px;}
-  .duration-option.selected .check{display:inline;}
+  /* .duration-popover / .duration-popover-label / .duration-option removed -- this was a
+     duplicate of the real Controls / Option Popover + Option Row (controls-misc.css, now
+     linked): .controls-option-popover / __header / .controls-option-row / --selected. Kept only
+     the page-specific absolute positioning here, on the element's own id instead of a class,
+     since that positioning is layout, not part of the reusable component. */
+  #durationPopover{position:absolute; top:calc(100% + 6px); left:0; z-index:40;}
 
   /* ---- Character section shared bits ----
      Reel/Short's character cards now use the same shared .char-card component as
      Image/Carousel (character-card.css) instead of a separate .char-card-reel variant —
      matches the "unify Character section design across all flows" request. ---- */
   .char-filter-row{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px;}
-  .filter-select{display:flex; align-items:center; gap:4px; height:28px; padding:0 10px 0 12px; border-radius:999px; background:#fff; border:1px solid var(--color-neutral-400); font-size:12px; font-weight:500; color:var(--color-neutral-700); cursor:pointer;}
-  .filter-select .chevron{font-size:9px; color:var(--color-neutral-500);}
+  /* .filter-select itself is NOT defined here -- it's the real Controls / Filter / Select
+     component (controls-filter-select.css, linked above). A local override used to shadow it
+     with a bespoke look; removed so every usage in this file renders the real spec. */
   .see-all-link{display:flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:var(--color-neutral-600); cursor:pointer; padding:0 12px; height:28px;}
   .see-all-link:hover{color:var(--color-neutral-900);}
   .char-styles-panel{margin-top:16px; display:none;}
@@ -1350,8 +1367,8 @@
               <div class="char-filter-row">
                 <div class="char-filters">
                   <div class="filter-chip active">Favorites <img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjEyIiBoZWlnaHQ9IjEyIiB2aWV3Qm94PSIwIDAgMTIgMTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gc3Rhci1maWxsIiBjbGlwLXBhdGg9InVybCgjY2xpcDBfMF8xMjM5KSI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik01Ljc2MjUgMS4xNDc1QzUuNzg0NDEgMS4xMDMyMyA1LjgxODI2IDEuMDY1OTcgNS44NjAyMyAxLjAzOTkxQzUuOTAyMTkgMS4wMTM4NiA1Ljk1MDYgMS4wMDAwNSA2IDEuMDAwMDVDNi4wNDk0IDEuMDAwMDUgNi4wOTc4MSAxLjAxMzg2IDYuMTM5NzcgMS4wMzk5MUM2LjE4MTc0IDEuMDY1OTcgNi4yMTU1OSAxLjEwMzIzIDYuMjM3NSAxLjE0NzVMNy4zOTI1IDMuNDg3QzcuNDY4NTkgMy42NDA5OCA3LjU4MDkxIDMuNzc0MiA3LjcxOTgxIDMuODc1MjNDNy44NTg3MiAzLjk3NjI1IDguMDIwMDYgNC4wNDIwNiA4LjE5IDQuMDY3TDEwLjc3MyA0LjQ0NUMxMC44MjE5IDQuNDUyMDkgMTAuODY3OSA0LjQ3Mjc0IDEwLjkwNTcgNC41MDQ2QzEwLjk0MzYgNC41MzY0NiAxMC45NzE3IDQuNTc4MjcgMTAuOTg3IDQuNjI1M0MxMS4wMDIzIDQuNjcyMzMgMTEuMDA0MSA0LjcyMjcgMTAuOTkyMyA0Ljc3MDcyQzEwLjk4MDUgNC44MTg3MyAxMC45NTU0IDQuODYyNDggMTAuOTIgNC44OTdMOS4wNTIgNi43MTZDOC45Mjg4MSA2LjgzNjA1IDguODM2NjQgNi45ODQyNCA4Ljc4MzQyIDcuMTQ3ODFDOC43MzAyIDcuMzExMzkgOC43MTc1MyA3LjQ4NTQ0IDguNzQ2NSA3LjY1NUw5LjE4NzUgMTAuMjI1QzkuMTk2MTQgMTAuMjczOSA5LjE5MDg2IDEwLjMyNDMgOS4xNzIyNSAxMC4zNzAzQzkuMTUzNjQgMTAuNDE2NCA5LjEyMjQ3IDEwLjQ1NjMgOS4wODIyNyAxMC40ODU1QzkuMDQyMDggMTAuNTE0NyA4Ljk5NDQ5IDEwLjUzMiA4Ljk0NDkzIDEwLjUzNTRDOC44OTUzOCAxMC41Mzg5IDguODQ1ODUgMTAuNTI4MyA4LjgwMiAxMC41MDVMNi40OTMgOS4yOTFDNi4zNDA4NiA5LjIxMTExIDYuMTcxNTkgOS4xNjkzOCA1Ljk5OTc1IDkuMTY5MzhDNS44Mjc5MSA5LjE2OTM4IDUuNjU4NjQgOS4yMTExMSA1LjUwNjUgOS4yOTFMMy4xOTggMTAuNTA1QzMuMTU0MTcgMTAuNTI4MiAzLjEwNDcgMTAuNTM4NiAzLjA1NTIzIDEwLjUzNTFDMy4wMDU3NSAxMC41MzE2IDIuOTU4MjYgMTAuNTE0MyAyLjkxODE1IDEwLjQ4NTFDMi44NzgwNCAxMC40NTU5IDIuODQ2OTIgMTAuNDE2MSAyLjgyODMzIDEwLjM3MDFDMi44MDk3NCAxMC4zMjQxIDIuODA0NDMgMTAuMjczOSAyLjgxMyAxMC4yMjVMMy4yNTM1IDcuNjU1NUMzLjI4MjYgNy40ODU4NyAzLjI2OTk5IDcuMzExNyAzLjIxNjc3IDcuMTQ4MDJDMy4xNjM1NSA2Ljk4NDM1IDMuMDcxMyA2LjgzNjA4IDIuOTQ4IDYuNzE2TDEuMDggNC44OTc1QzEuMDQ0MyA0Ljg2MzAyIDEuMDE5IDQuODE5MiAxLjAwNjk4IDQuNzcxMDRDMC45OTQ5NjYgNC43MjI4OCAwLjk5NjcxOSA0LjY3MjMxIDEuMDEyMDQgNC42MjUxQzEuMDI3MzYgNC41Nzc4OCAxLjA1NTYzIDQuNTM1OTIgMS4wOTM2NCA0LjUwMzk5QzEuMTMxNjQgNC40NzIwNiAxLjE3Nzg1IDQuNDUxNDUgMS4yMjcgNC40NDQ1TDMuODA5NSA0LjA2N0MzLjk3OTYzIDQuMDQyMjUgNC4xNDExOSAzLjk3NjUzIDQuMjgwMjkgMy44NzU0OUM0LjQxOTM5IDMuNzc0NDYgNC41MzE4NSAzLjY0MTE0IDQuNjA4IDMuNDg3TDUuNzYyNSAxLjE0NzVaIiBmaWxsPSIjNDc1MDY5IiBzdHJva2U9IiM0NzUwNjkiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMF8wXzEyMzkiPgo8cmVjdCB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIGZpbGw9IndoaXRlIi8+CjwvY2xpcFBhdGg+CjwvZGVmcz4KPC9zdmc+Cg==" alt="" width="12" height="12" style="margin-left:2px;"></div>
-                  <div class="filter-select">Age<span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span></div>
-                  <div class="filter-select">Gender<span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span></div>
+                  <div class="filter-select"><span class="filter-select__label">Age</span><img class="filter-select__caret" src="../../../../components/ai-social-media/icons/caret-down-filled.svg" alt=""></div>
+                  <div class="filter-select"><span class="filter-select__label">Gender</span><img class="filter-select__caret" src="../../../../components/ai-social-media/icons/caret-down-filled.svg" alt=""></div>
                 </div>
                 <div class="see-all-link">See all <img src="../../../../components/ai-social-media/icons/back.svg" class="icon-inline icon-flip" alt="" style="margin-left:2px;"></div>
               </div>
@@ -1428,11 +1445,11 @@
                 <div class="prompt-chip clickable" onclick="toggleDurationPopover(event)">
                   <svg class="ic-svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.3" stroke="#8A93A8" stroke-width="1.4"/><path d="M8 4.7V8L10.2 9.6" stroke="#8A93A8" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="durationChipText">16s</span><span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span>
                 </div>
-                <div class="duration-popover" id="durationPopover" style="display:none;">
-                  <div class="duration-popover-label">Duration</div>
-                  <div class="duration-option" data-seconds="8" onclick="selectDuration(8)"><span>8 seconds</span><span class="check">✓</span></div>
-                  <div class="duration-option selected" data-seconds="16" onclick="selectDuration(16)"><span>16 seconds</span><span class="check">✓</span></div>
-                  <div class="duration-option" data-seconds="24" onclick="selectDuration(24)"><span>24 seconds</span><span class="check">✓</span></div>
+                <div class="controls-option-popover" id="durationPopover" style="display:none;">
+                  <div class="controls-option-popover__header">Duration</div>
+                  <button type="button" class="controls-option-row" data-seconds="8" onclick="selectDuration(8)"><span>8 seconds</span></button>
+                  <button type="button" class="controls-option-row controls-option-row--selected" data-seconds="16" onclick="selectDuration(16)"><span>16 seconds</span><img src="../../../../components/ai-social-media/icons/check.svg" alt=""></button>
+                  <button type="button" class="controls-option-row" data-seconds="24" onclick="selectDuration(24)"><span>24 seconds</span></button>
                 </div>
               </div>
             </div>
@@ -1453,8 +1470,8 @@
             <div class="char-filter-row">
               <div class="char-filters">
                 <div class="filter-chip active">Favorites <img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjEyIiBoZWlnaHQ9IjEyIiB2aWV3Qm94PSIwIDAgMTIgMTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gc3Rhci1maWxsIiBjbGlwLXBhdGg9InVybCgjY2xpcDBfMF8xMjM5KSI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik01Ljc2MjUgMS4xNDc1QzUuNzg0NDEgMS4xMDMyMyA1LjgxODI2IDEuMDY1OTcgNS44NjAyMyAxLjAzOTkxQzUuOTAyMTkgMS4wMTM4NiA1Ljk1MDYgMS4wMDAwNSA2IDEuMDAwMDVDNi4wNDk0IDEuMDAwMDUgNi4wOTc4MSAxLjAxMzg2IDYuMTM5NzcgMS4wMzk5MUM2LjE4MTc0IDEuMDY1OTcgNi4yMTU1OSAxLjEwMzIzIDYuMjM3NSAxLjE0NzVMNy4zOTI1IDMuNDg3QzcuNDY4NTkgMy42NDA5OCA3LjU4MDkxIDMuNzc0MiA3LjcxOTgxIDMuODc1MjNDNy44NTg3MiAzLjk3NjI1IDguMDIwMDYgNC4wNDIwNiA4LjE5IDQuMDY3TDEwLjc3MyA0LjQ0NUMxMC44MjE5IDQuNDUyMDkgMTAuODY3OSA0LjQ3Mjc0IDEwLjkwNTcgNC41MDQ2QzEwLjk0MzYgNC41MzY0NiAxMC45NzE3IDQuNTc4MjcgMTAuOTg3IDQuNjI1M0MxMS4wMDIzIDQuNjcyMzMgMTEuMDA0MSA0LjcyMjcgMTAuOTkyMyA0Ljc3MDcyQzEwLjk4MDUgNC44MTg3MyAxMC45NTU0IDQuODYyNDggMTAuOTIgNC44OTdMOS4wNTIgNi43MTZDOC45Mjg4MSA2LjgzNjA1IDguODM2NjQgNi45ODQyNCA4Ljc4MzQyIDcuMTQ3ODFDOC43MzAyIDcuMzExMzkgOC43MTc1MyA3LjQ4NTQ0IDguNzQ2NSA3LjY1NUw5LjE4NzUgMTAuMjI1QzkuMTk2MTQgMTAuMjczOSA5LjE5MDg2IDEwLjMyNDMgOS4xNzIyNSAxMC4zNzAzQzkuMTUzNjQgMTAuNDE2NCA5LjEyMjQ3IDEwLjQ1NjMgOS4wODIyNyAxMC40ODU1QzkuMDQyMDggMTAuNTE0NyA4Ljk5NDQ5IDEwLjUzMiA4Ljk0NDkzIDEwLjUzNTRDOC44OTUzOCAxMC41Mzg5IDguODQ1ODUgMTAuNTI4MyA4LjgwMiAxMC41MDVMNi40OTMgOS4yOTFDNi4zNDA4NiA5LjIxMTExIDYuMTcxNTkgOS4xNjkzOCA1Ljk5OTc1IDkuMTY5MzhDNS44Mjc5MSA5LjE2OTM4IDUuNjU4NjQgOS4yMTExMSA1LjUwNjUgOS4yOTFMMy4xOTggMTAuNTA1QzMuMTU0MTcgMTAuNTI4MiAzLjEwNDcgMTAuNTM4NiAzLjA1NTIzIDEwLjUzNTFDMy4wMDU3NSAxMC41MzE2IDIuOTU4MjYgMTAuNTE0MyAyLjkxODE1IDEwLjQ4NTFDMi44NzgwNCAxMC40NTU5IDIuODQ2OTIgMTAuNDE2MSAyLjgyODMzIDEwLjM3MDFDMi44MDk3NCAxMC4zMjQxIDIuODA0NDMgMTAuMjczOSAyLjgxMyAxMC4yMjVMMy4yNTM1IDcuNjU1NUMzLjI4MjYgNy40ODU4NyAzLjI2OTk5IDcuMzExNyAzLjIxNjc3IDcuMTQ4MDJDMy4xNjM1NSA2Ljk4NDM1IDMuMDcxMyA2LjgzNjA4IDIuOTQ4IDYuNzE2TDEuMDggNC44OTc1QzEuMDQ0MyA0Ljg2MzAyIDEuMDE5IDQuODE5MiAxLjAwNjk4IDQuNzcxMDRDMC45OTQ5NjYgNC43MjI4OCAwLjk5NjcxOSA0LjY3MjMxIDEuMDEyMDQgNC42MjUxQzEuMDI3MzYgNC41Nzc4OCAxLjA1NTYzIDQuNTM1OTIgMS4wOTM2NCA0LjUwMzk5QzEuMTMxNjQgNC40NzIwNiAxLjE3Nzg1IDQuNDUxNDUgMS4yMjcgNC40NDQ1TDMuODA5NSA0LjA2N0MzLjk3OTYzIDQuMDQyMjUgNC4xNDExOSAzLjk3NjUzIDQuMjgwMjkgMy44NzU0OUM0LjQxOTM5IDMuNzc0NDYgNC41MzE4NSAzLjY0MTE0IDQuNjA4IDMuNDg3TDUuNzYyNSAxLjE0NzVaIiBmaWxsPSIjNDc1MDY5IiBzdHJva2U9IiM0NzUwNjkiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMF8wXzEyMzkiPgo8cmVjdCB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIGZpbGw9IndoaXRlIi8+CjwvY2xpcFBhdGg+CjwvZGVmcz4KPC9zdmc+Cg==" alt="" width="12" height="12" style="margin-left:2px;"></div>
-                <div class="filter-select">Age<span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span></div>
-                <div class="filter-select">Gender<span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span></div>
+                <div class="filter-select"><span class="filter-select__label">Age</span><img class="filter-select__caret" src="../../../../components/ai-social-media/icons/caret-down-filled.svg" alt=""></div>
+                <div class="filter-select"><span class="filter-select__label">Gender</span><img class="filter-select__caret" src="../../../../components/ai-social-media/icons/caret-down-filled.svg" alt=""></div>
               </div>
               <div class="see-all-link">See all <img src="../../../../components/ai-social-media/icons/back.svg" class="icon-inline icon-flip" alt="" style="margin-left:2px;"></div>
             </div>
@@ -1654,8 +1671,8 @@
               <div class="char-filter-row">
                 <div class="char-filters">
                   <div class="filter-chip active">Favorites <img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjEyIiBoZWlnaHQ9IjEyIiB2aWV3Qm94PSIwIDAgMTIgMTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gc3Rhci1maWxsIiBjbGlwLXBhdGg9InVybCgjY2xpcDBfMF8xMjM5KSI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik01Ljc2MjUgMS4xNDc1QzUuNzg0NDEgMS4xMDMyMyA1LjgxODI2IDEuMDY1OTcgNS44NjAyMyAxLjAzOTkxQzUuOTAyMTkgMS4wMTM4NiA1Ljk1MDYgMS4wMDAwNSA2IDEuMDAwMDVDNi4wNDk0IDEuMDAwMDUgNi4wOTc4MSAxLjAxMzg2IDYuMTM5NzcgMS4wMzk5MUM2LjE4MTc0IDEuMDY1OTcgNi4yMTU1OSAxLjEwMzIzIDYuMjM3NSAxLjE0NzVMNy4zOTI1IDMuNDg3QzcuNDY4NTkgMy42NDA5OCA3LjU4MDkxIDMuNzc0MiA3LjcxOTgxIDMuODc1MjNDNy44NTg3MiAzLjk3NjI1IDguMDIwMDYgNC4wNDIwNiA4LjE5IDQuMDY3TDEwLjc3MyA0LjQ0NUMxMC44MjE5IDQuNDUyMDkgMTAuODY3OSA0LjQ3Mjc0IDEwLjkwNTcgNC41MDQ2QzEwLjk0MzYgNC41MzY0NiAxMC45NzE3IDQuNTc4MjcgMTAuOTg3IDQuNjI1M0MxMS4wMDIzIDQuNjcyMzMgMTEuMDA0MSA0LjcyMjcgMTAuOTkyMyA0Ljc3MDcyQzEwLjk4MDUgNC44MTg3MyAxMC45NTU0IDQuODYyNDggMTAuOTIgNC44OTdMOS4wNTIgNi43MTZDOC45Mjg4MSA2LjgzNjA1IDguODM2NjQgNi45ODQyNCA4Ljc4MzQyIDcuMTQ3ODFDOC43MzAyIDcuMzExMzkgOC43MTc1MyA3LjQ4NTQ0IDguNzQ2NSA3LjY1NUw5LjE4NzUgMTAuMjI1QzkuMTk2MTQgMTAuMjczOSA5LjE5MDg2IDEwLjMyNDMgOS4xNzIyNSAxMC4zNzAzQzkuMTUzNjQgMTAuNDE2NCA5LjEyMjQ3IDEwLjQ1NjMgOS4wODIyNyAxMC40ODU1QzkuMDQyMDggMTAuNTE0NyA4Ljk5NDQ5IDEwLjUzMiA4Ljk0NDkzIDEwLjUzNTRDOC44OTUzOCAxMC41Mzg5IDguODQ1ODUgMTAuNTI4MyA4LjgwMiAxMC41MDVMNi40OTMgOS4yOTFDNi4zNDA4NiA5LjIxMTExIDYuMTcxNTkgOS4xNjkzOCA1Ljk5OTc1IDkuMTY5MzhDNS44Mjc5MSA5LjE2OTM4IDUuNjU4NjQgOS4yMTExMSA1LjUwNjUgOS4yOTFMMy4xOTggMTAuNTA1QzMuMTU0MTcgMTAuNTI4MiAzLjEwNDcgMTAuNTM4NiAzLjA1NTIzIDEwLjUzNTFDMy4wMDU3NSAxMC41MzE2IDIuOTU4MjYgMTAuNTE0MyAyLjkxODE1IDEwLjQ4NTFDMi44NzgwNCAxMC40NTU5IDIuODQ2OTIgMTAuNDE2MSAyLjgyODMzIDEwLjM3MDFDMi44MDk3NCAxMC4zMjQxIDIuODA0NDMgMTAuMjczOSAyLjgxMyAxMC4yMjVMMy4yNTM1IDcuNjU1NUMzLjI4MjYgNy40ODU4NyAzLjI2OTk5IDcuMzExNyAzLjIxNjc3IDcuMTQ4MDJDMy4xNjM1NSA2Ljk4NDM1IDMuMDcxMyA2LjgzNjA4IDIuOTQ4IDYuNzE2TDEuMDggNC44OTc1QzEuMDQ0MyA0Ljg2MzAyIDEuMDE5IDQuODE5MiAxLjAwNjk4IDQuNzcxMDRDMC45OTQ5NjYgNC43MjI4OCAwLjk5NjcxOSA0LjY3MjMxIDEuMDEyMDQgNC42MjUxQzEuMDI3MzYgNC41Nzc4OCAxLjA1NTYzIDQuNTM1OTIgMS4wOTM2NCA0LjUwMzk5QzEuMTMxNjQgNC40NzIwNiAxLjE3Nzg1IDQuNDUxNDUgMS4yMjcgNC40NDQ1TDMuODA5NSA0LjA2N0MzLjk3OTYzIDQuMDQyMjUgNC4xNDExOSAzLjk3NjUzIDQuMjgwMjkgMy44NzU0OUM0LjQxOTM5IDMuNzc0NDYgNC41MzE4NSAzLjY0MTE0IDQuNjA4IDMuNDg3TDUuNzYyNSAxLjE0NzVaIiBmaWxsPSIjNDc1MDY5IiBzdHJva2U9IiM0NzUwNjkiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMF8wXzEyMzkiPgo8cmVjdCB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIGZpbGw9IndoaXRlIi8+CjwvY2xpcFBhdGg+CjwvZGVmcz4KPC9zdmc+Cg==" alt="" width="12" height="12" style="margin-left:2px;"></div>
-                  <div class="filter-select">Age<span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span></div>
-                  <div class="filter-select">Gender<span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span></div>
+                  <div class="filter-select"><span class="filter-select__label">Age</span><img class="filter-select__caret" src="../../../../components/ai-social-media/icons/caret-down-filled.svg" alt=""></div>
+                  <div class="filter-select"><span class="filter-select__label">Gender</span><img class="filter-select__caret" src="../../../../components/ai-social-media/icons/caret-down-filled.svg" alt=""></div>
                 </div>
                 <div class="see-all-link">See all <img src="../../../../components/ai-social-media/icons/back.svg" class="icon-inline icon-flip" alt="" style="margin-left:2px;"></div>
               </div>
@@ -2135,10 +2152,10 @@
             <div class="setting-chip-wrap" id="durationSettingChipWrap">
               <div class="setting-chip clickable" onclick="toggleSettingPopover(event,'duration')"><img src="../../../../components/ai-social-media/icons/spec-duration.svg" class="icon-inline" alt=""> <span id="genSettingDuration">16s</span><span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span></div>
               <div class="setting-popover" id="durationSettingPopover" style="display:none;">
-                <div class="duration-popover-label">Duration</div>
-                <div class="duration-option" data-seconds="8" onclick="selectDuration(8)"><span>8 seconds</span><span class="check">✓</span></div>
-                <div class="duration-option selected" data-seconds="16" onclick="selectDuration(16)"><span>16 seconds</span><span class="check">✓</span></div>
-                <div class="duration-option" data-seconds="24" onclick="selectDuration(24)"><span>24 seconds</span><span class="check">✓</span></div>
+                <div class="controls-option-popover__header">Duration</div>
+                <button type="button" class="controls-option-row" data-seconds="8" onclick="selectDuration(8)"><span>8 seconds</span></button>
+                <button type="button" class="controls-option-row controls-option-row--selected" data-seconds="16" onclick="selectDuration(16)"><span>16 seconds</span><img src="../../../../components/ai-social-media/icons/check.svg" alt=""></button>
+                <button type="button" class="controls-option-row" data-seconds="24" onclick="selectDuration(24)"><span>24 seconds</span></button>
               </div>
             </div>
             <!-- Figma's spec row (5457-111240) is exactly 9:16 / duration / Character / Voice —
@@ -2461,9 +2478,9 @@
                   <span class="ic"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gcmVmcmVzaC1jY3ciPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNMiA1LjMzMzMzTDMuNTA2NjcgMy44MjY2N0M0LjcxMjY1IDIuNjYwODIgNi4zMjI2MyAyLjAwNjMxIDggMkM5LjU5MTMgMiAxMS4xMTc0IDIuNjMyMTQgMTIuMjQyNiAzLjc1NzM2QzEzLjE3NzYgNC42OTIzMiAxMy43NzIxIDUuOTA0MDYgMTMuOTQ2NSA3LjIiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzIiIGQ9Ik0yIDJWNS4zMzMzM0g1LjMzMzMzIiBzdHJva2U9IiM4QTkzQTgiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggaWQ9IlZlY3Rvcl8zIiBkPSJNMTQgMTAuNjY2N0wxMi40OTMzIDEyLjE3MzNDMTEuMjg3NCAxMy4zMzkyIDkuNjc3MzYgMTMuOTkzNyA4IDE0QzYuNDA4NyAxNCA0Ljg4MjU4IDEzLjM2NzkgMy43NTczNiAxMi4yNDI2QzIuODIyNCAxMS4zMDc3IDIuMjI3ODcgMTAuMDk1OSAyLjA1MzU1IDguOCIgc3Ryb2tlPSIjOEE5M0E4IiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxwYXRoIGlkPSJWZWN0b3JfNCIgZD0iTTEwLjY2NjcgMTAuNjY2N0gxNFYxNCIgc3Ryb2tlPSIjOEE5M0E4IiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjwvZz4KPC9zdmc+Cg==" alt=""></span>
                   Regenerate
                 </button>
-                <button type="button" class="pub-close-btn" onclick="closeHashtagSeoPanel()">
+                <button type="button" class="actions-btn actions-btn--primary" onclick="closeHashtagSeoPanel()">
                   Close
-                  <span class="ic"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiB2aWV3Qm94PSIwIDAgMTggMTgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gY2hldnJvbi11cCI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik0xMy41IDExLjI1TDkgNi43NUw0LjUgMTEuMjUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMS42IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9nPgo8L3N2Zz4K" alt=""></span>
+                  <img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiB2aWV3Qm94PSIwIDAgMTggMTgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gY2hldnJvbi11cCI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik0xMy41IDExLjI1TDkgNi43NUw0LjUgMTEuMjUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMS42IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9nPgo8L3N2Zz4K" alt="">
                 </button>
               </div>
             </div>
@@ -2606,7 +2623,7 @@
     <div class="ed-ab-center"><span class="meta-text" id="pubMetaText"></span></div>
     <div class="ed-ab-right">
       <button class="btn btn-secondary" onclick="quickSaveDraft()">Save as draft</button>
-      <button class="ed-publish-btn" id="pubMainBtn" onclick="handlePublishMainAction()"><span>Publish</span><img src="../../../../components/ai-social-media/icons/content-preview-publish.svg" class="ed-publish-btn__icon" alt=""></button>
+      <button class="actions-publish-btn auto-width" id="pubMainBtn" onclick="handlePublishMainAction()"><span>Publish</span><img src="../../../../components/ai-social-media/icons/content-preview-publish.svg" alt=""></button>
     </div>
   </div>
     </div>
@@ -5173,7 +5190,13 @@ function selectDuration(seconds){
   const oldSeconds = window.__videoDuration;
   window.__videoDuration = seconds;
   document.getElementById('durationChipText').textContent = seconds + 's';
-  document.querySelectorAll('.duration-option').forEach(o => o.classList.toggle('selected', Number(o.dataset.seconds) === seconds));
+  document.querySelectorAll('.controls-option-row[data-seconds]').forEach(o => {
+    const isSelected = Number(o.dataset.seconds) === seconds;
+    o.classList.toggle('controls-option-row--selected', isSelected);
+    const existingCheck = o.querySelector('img');
+    if(isSelected && !existingCheck) o.insertAdjacentHTML('beforeend', '<img src="../../../../components/ai-social-media/icons/check.svg" alt="">');
+    else if(!isSelected && existingCheck) existingCheck.remove();
+  });
   document.getElementById('durationPopover').style.display = 'none';
   const settingPop = document.getElementById('durationSettingPopover');
   if(settingPop) settingPop.style.display = 'none';
@@ -6386,8 +6409,8 @@ function renderPublishDestinationsTable(el){
       </div>
     `).join(gap);
     const status = connected
-      ? `<span class="pub-dest-status connected">Connected</span>`
-      : `<span class="pub-dest-status not-connected">Not connected</span><button class="pub-dest-connect-btn" onclick="connectPlatform('${p.key}')">Connect</button>`;
+      ? `<span class="ctrl-feedback ctrl-feedback--green">Connected</span>`
+      : `<span class="ctrl-feedback pub-dest-status--not-connected">Not connected</span><button class="pub-dest-connect-btn" onclick="connectPlatform('${p.key}')">Connect</button>`;
     return `
       <div class="pub-dest-row${connected ? '' : ' not-connected'}">
         <div class="pub-dest-select-col">
@@ -6576,7 +6599,7 @@ function renderWhenPlatformList(){
 // Button component (Figma 777:7362), which dropped its leading icon in favor of just the
 // trailing chevron.
 function setPublishMainBtnLabel(label){
-  document.getElementById('pubMainBtn').innerHTML = `<span>${label}</span><img src="../../../../components/ai-social-media/icons/content-preview-publish.svg" class="ed-publish-btn__icon" alt="">`;
+  document.getElementById('pubMainBtn').innerHTML = `<span>${label}</span><img src="../../../../components/ai-social-media/icons/content-preview-publish.svg" alt="">`;
 }
 function updateWhenSelection(){
   clearPublishWarning();
