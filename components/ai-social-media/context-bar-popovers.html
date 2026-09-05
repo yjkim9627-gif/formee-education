@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>ContextBar Popovers — AI Social Media Component</title>
+<link rel="stylesheet" href="../../tokens/tokens.css" />
+<link rel="stylesheet" href="../demo-nav.css" />
+<link rel="stylesheet" href="uploads-rows.css" />
+<link rel="stylesheet" href="editor-panel-chrome.css" />
+<link rel="stylesheet" href="context-bar-popovers.css" />
+<style>
+  body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
+  .demo-main { padding: var(--spacing-4xl); }
+  h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-sm); }
+  h2 { font-size: var(--font-size-text-md); font-weight: 700; color: var(--color-neutral-700); margin: var(--spacing-3xl) 0 var(--spacing-md); }
+  h2:first-of-type { margin-top: 0; }
+  .demo-note { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); max-width: 720px; margin: 0 0 var(--spacing-3xl); line-height: 1.6; }
+  .demo-sub { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); margin: 0 0 var(--spacing-lg); }
+  .demo-grid { display: flex; flex-wrap: wrap; gap: var(--spacing-2xl); align-items: flex-start; }
+</style>
+</head>
+<body>
+<div class="demo-shell">
+  <nav class="demo-sidebar">
+    <a href="../../index.html" class="demo-sidebar-home">← Home</a>
+    <div class="demo-sidebar-group collapsed" data-group="brand">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>00 Brand</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="brand-logo.html">Brand / Logo</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="icons">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>01 Icons</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="icons.html">Icons</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="actions">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>02 Actions</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="actions-button.html">Actions / Button</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="inputs">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>03 Inputs & Controls</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="controls-field-ai-assisted-text.html">Controls / Field / AI assisted text</a>
+        <a href="controls-field.html">Controls / Field</a>
+        <a href="controls-filter-select.html">Controls / Filter / Select</a>
+        <a href="controls-filter-toggle.html">Controls / Filter / Toggle</a>
+        <a href="controls-menu.html">Menu / Context Menu / Size Dropdown</a>
+        <a href="controls-misc.html">Controls — Icon Action, Popover, Carousel Arrow, Scrollbar, Segmented Control</a>
+        <a href="controls-multi-select.html">Controls / Multi Select</a>
+        <a href="controls-option-card.html">Controls / Option Card</a>
+        <a href="controls-search-field.html">Controls / Search Field</a>
+        <a href="controls-social-profile-row.html">Controls / Social profile row</a>
+        <a href="controls-toggles.html">Controls / Toggles</a>
+        <a href="date-picker.html">Date Picker</a>
+        <a href="duration-chip.html">Controls / Duration Chip</a>
+        <a href="filter-chip.html">Controls / Filter / Toggle</a>
+        <a href="input-login.html">Input / Login</a>
+        <a href="input.html">Input</a>
+        <a href="segment-chip.html">Segment Chip</a>
+        <a href="setting-chip.html">Setting Chip</a>
+        <a href="switch.html">Controls / Switch</a>
+        <a href="table-filter.html">Table / Filter</a>
+        <a href="toggle-chip.html">Controls / Toggle Chip</a>
+        <a href="uploads-file-badge.html">Uploads / File Badge / Source Row</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="navigation">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>04 Navigation</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="nav.html">Nav / Navigation</a>
+        <a href="topbar-stepper.html">Topbar + Stepper</a>
+        <a href="avatar.html">Avatar</a>
+        <a href="w-action-bar.html">W:ActionBar</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="ai-assistant">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>AI Assistant</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="chat-panel.html">Chat Panel</a>
+        <a href="prompt-box.html">AI Prompt Box</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="upload">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>07 Upload</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="upload-dropzone.html">Upload Dropzone / Dashed Upload Row</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group" data-group="editor">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Editor</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="context-bar-popovers.html" class="active">ContextBar Popovers</a>
+        <a href="editor-color-swatch.html">Editor / ContextBar Color Swatch</a>
+        <a href="editor-context-bar.html">Editor ContextBar</a>
+        <a href="editor-panel-chrome.html">Editor Panel & Controls</a>
+        <a href="editor-safe-zone-legend.html">Safe Zone Legend & Content Preview Actions</a>
+        <a href="heading.html">Heading</a>
+        <a href="image-scene-card.html">Image Scene Card</a>
+        <a href="music-track-row.html">Music Track Row</a>
+        <a href="queue-panel.html">Queue Job Row / Queue Panel</a>
+        <a href="scene-tile.html">Scene Tile</a>
+        <a href="storyboard-card.html">Storyboard Card</a>
+        <a href="uploads-rows.html">Uploads Panel Rows</a>
+        <a href="video-summary-card.html">Video Summary Card</a>
+        <a href="voice-accordion-row.html">Voice Accordion Row</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="product-selectors">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Product Selectors</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="character-card.html">Character Card</a>
+        <a href="destination-account.html">Destination Account</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="data-display">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Data Display</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="carousel-card-block.html">Carousel Card Block</a>
+        <a href="generate-preview-panel.html">Generate Preview Panel</a>
+        <a href="illus-placeholder.html">Illus Placeholder</a>
+        <a href="post-status-chip.html">Post Status Chip</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="feedback">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Feedback</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="publish-social-modal.html">Publish to Social Modal</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="shared">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Shared</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="../shared/button.html">Button</a>
+        <a href="../shared/modal-confirm.html">Modal / Confirm</a>
+        <a href="../shared/modal-form.html">Modal / Form</a>
+        <a href="../shared/modal-success.html">Modal / Success</a>
+      </div>
+    </div>
+  </nav>
+  <main class="demo-main">
+  <h1>ContextBar Popovers</h1>
+  <p class="demo-note">Figma: "08 Editor" (1124:10672) — the 6 floating popovers that open from individual <a href="editor-context-bar.html">Editor ContextBar</a> items: Replace, Flip, Opacity, Arrange, Layer, Spacing. 5 of the 6 (all but Replace) are built almost entirely from one shared row, Menu / Item, plus the existing Editor / Slider for Opacity/Spacing.</p>
+
+  <h2>ContextBar / Popover / Replace</h2>
+  <p class="demo-sub">Node 3662:26573 — recent-match thumbnails (Editor / cell) + carousel arrow + "AI Matched" badge.</p>
+  <div class="demo-grid">
+    <div class="popover-replace">
+      <div class="popover-replace-header">
+        <span class="popover-replace-header-left">
+          <img src="icons/arrow-down-up.svg" alt="">
+          <span class="popover-replace-title">Replace Sticker</span>
+        </span>
+        <span class="popover-replace-badge"><span>AI Matched</span></span>
+      </div>
+      <div class="popover-replace-preview">
+        <div class="popover-replace-items">
+          <div class="editor-cell"><img src="icons/stickers/sparkling-heart.svg" alt=""></div>
+          <div class="editor-cell"><img src="icons/stickers/heart-with-ribbon.svg" alt=""></div>
+          <div class="editor-cell"><img src="icons/stickers/heart-with-arrow.svg" alt=""></div>
+          <div class="editor-cell"><img src="icons/stickers/growing-heart.svg" alt=""></div>
+        </div>
+        <span class="popover-replace-fade"></span>
+        <button type="button" class="popover-replace-arrow"><img src="icons/chevron-right.svg" alt="More"></button>
+      </div>
+    </div>
+  </div>
+
+  <h2>ContextBar / Popover / Flip</h2>
+  <p class="demo-sub">Node 3662:26572.</p>
+  <div class="demo-grid">
+    <div class="context-popover" style="width:180px;">
+      <button type="button" class="popover-menu-item"><img src="icons/popover-flip-horizontal.svg" alt="">Flip Horizontal</button>
+      <button type="button" class="popover-menu-item"><img src="icons/popover-flip-vertical.svg" alt="">Flip Vertical</button>
+    </div>
+  </div>
+
+  <h2>ContextBar / Popover / Opacity</h2>
+  <p class="demo-sub">Node 3711:32960 — reuses Editor / Slider (editor-panel-chrome.css).</p>
+  <div class="demo-grid">
+    <div class="context-popover has-slider" style="width:298px;">
+      <button type="button" class="popover-menu-item" style="width:auto;">Opacity</button>
+      <div class="context-popover-slider-row">
+        <div class="editor-slider">
+          <div class="editor-slider-track" style="--val:100%;">
+            <div class="editor-slider-fill"></div>
+            <div class="editor-slider-thumb"></div>
+          </div>
+          <span class="editor-slider-value">100%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>ContextBar / Popover / Arrange</h2>
+  <p class="demo-sub">Node 3662:26571 — horizontal-align column + vertical-align column.</p>
+  <div class="demo-grid">
+    <div class="context-popover">
+      <div class="context-popover-columns">
+        <div class="context-popover-column">
+          <button type="button" class="popover-menu-item"><img src="icons/popover-align-top.svg" alt="">Top</button>
+          <button type="button" class="popover-menu-item"><img src="icons/popover-align-middle.svg" alt="">Middle</button>
+          <button type="button" class="popover-menu-item"><img src="icons/popover-align-bottom.svg" alt="">Bottom</button>
+        </div>
+        <div class="context-popover-column">
+          <button type="button" class="popover-menu-item"><img src="icons/popover-align-left.svg" alt="">Left</button>
+          <button type="button" class="popover-menu-item"><img src="icons/popover-align-center.svg" alt="">Center</button>
+          <button type="button" class="popover-menu-item"><img src="icons/popover-align-right.svg" alt="">Right</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>ContextBar / Popover / Layer</h2>
+  <p class="demo-sub">Node 3662:26570.</p>
+  <div class="demo-grid">
+    <div class="context-popover" style="width:180px;">
+      <button type="button" class="popover-menu-item"><img src="icons/popover-layer-front.svg" alt="">Bring to front</button>
+      <button type="button" class="popover-menu-item"><img src="icons/popover-layer-forward.svg" alt="">Bring forward</button>
+      <button type="button" class="popover-menu-item"><img src="icons/popover-layer-backward.svg" alt="">Send backward</button>
+      <button type="button" class="popover-menu-item"><img src="icons/popover-layer-back.svg" alt="">Send to back</button>
+      <span class="popover-menu-divider"></span>
+      <button type="button" class="popover-menu-item"><img src="icons/popover-show-layers.svg" alt="">Show layers</button>
+    </div>
+  </div>
+
+  <h2>ContextBar / Popover / Spacing</h2>
+  <p class="demo-sub">Node 4554:81524 — Letter spacing + Line spacing sliders.</p>
+  <div class="demo-grid">
+    <div class="context-popover has-slider" style="width:298px;">
+      <button type="button" class="popover-menu-item" style="width:auto;">Letter spacing</button>
+      <div class="context-popover-slider-row">
+        <div class="editor-slider">
+          <div class="editor-slider-track" style="--val:0%;">
+            <div class="editor-slider-fill"></div>
+            <div class="editor-slider-thumb"></div>
+          </div>
+          <span class="editor-slider-value">0</span>
+        </div>
+      </div>
+      <button type="button" class="popover-menu-item" style="width:auto;">Line spacing</button>
+      <div class="context-popover-slider-row">
+        <div class="editor-slider">
+          <div class="editor-slider-track" style="--val:0%;">
+            <div class="editor-slider-fill"></div>
+            <div class="editor-slider-thumb"></div>
+          </div>
+          <span class="editor-slider-value">0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  </main>
+</div>
+<script src="../demo-nav.js"></script>
+</body>
+</html>
