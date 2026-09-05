@@ -1284,7 +1284,7 @@
       </div>
       <div class="ed-ab-right">
         <button class="btn-secondary">Save draft</button>
-        <button class="ed-publish-btn" onclick="continueToPublish()">⬆ Publish ▾</button>
+        <button class="ed-publish-btn" onclick="continueToPublish()">Publish ⬆</button>
       </div>
     </div>
   </div>
@@ -1405,7 +1405,7 @@
     <div class="ed-ab-center"></div>
     <div class="ed-ab-right">
       <button class="btn-secondary" onclick="quickSaveDraft()">Save as draft</button>
-      <button class="ed-publish-btn" id="pubMainBtn" onclick="handlePublishMainAction()">⬆ Publish →</button>
+      <button class="ed-publish-btn" id="pubMainBtn" onclick="handlePublishMainAction()">Publish ⬆</button>
     </div>
   </div>
   </div>
@@ -2926,7 +2926,7 @@ function updateWhenSelection(){
   if(selected !== 'schedule') closeDatePicker();
   clearPublishWarning();
   const btn = document.getElementById('pubMainBtn');
-  if(selected === 'now') btn.innerHTML = '⬆ Publish →';
+  if(selected === 'now') btn.innerHTML = 'Publish ⬆';
   else if(selected === 'schedule') btn.innerHTML = '🕐 Schedule →';
   else btn.innerHTML = '📝 Save as draft →';
 }

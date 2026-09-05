@@ -2,7 +2,7 @@
    Figma: FME_AI-Social-Media, "02 Actions" (1124:17):
      - Actions / Button (2921:1107) — 6 styles: Primary, Blue, Secondary, Ghost, Inactive, Loading
      - Actions / Button / text (89:15851) — pill toggle, state=default/selected
-     - Actions / Publish Button (777:7362) — the dark "Publish ▾" split button
+     - Actions / Publish Button (777:7362) — the dark "Publish" button (upload-icon trailing)
      - Actions / Segment Button/Actions/Poster CTA (3676:65306) — state=Default/Focused
    All icons are pre-baked per-state colors from Figma (not currentColor), so Primary/Blue's
    white AI-sparkle icon and Inactive's grey one are two separate asset pairs, not one
@@ -74,10 +74,11 @@
 .actions-btn-text--selected .actions-btn-text__label{ font-weight:var(--font-weight-semibold); color:var(--color-neutral-900); }
 .actions-btn-text--selected .actions-btn-text__sub{ color:var(--color-neutral-700); }
 
-/* ---------- Actions / Publish Button ----------
-   Updated in Figma: the trailing icon is now a chevron-right (was chevron-down) — this
-   button no longer opens a dropdown in place, it advances to the next step — and the right
-   padding tightened to 12px to sit closer to that icon (left padding unchanged at spacing-lg). */
+/* ---------- Actions / Publish Button (777:7362) ----------
+   Updated in Figma again: the trailing icon is now icon/menu/upload (an upload-to-tray glyph),
+   replacing the chevron-right used previously (which itself had replaced an even earlier
+   chevron-down) -- reuses icons/content-preview-publish.svg (confirmed identical geometry,
+   just 20px vs this button's 18px) rather than downloading a duplicate white-stroke asset. */
 .actions-publish-btn{
   display:inline-flex; align-items:center; justify-content:center; gap:var(--spacing-sm);
   width:131px; height:36px; padding:8px 12px 8px var(--spacing-lg); border:none; border-radius:var(--radius-lg);
