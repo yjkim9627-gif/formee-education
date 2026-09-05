@@ -49,14 +49,35 @@
 .editor-project-name-field-text{flex:1 0 0; min-width:0; font-family:var(--font-family-text); font-size:13px; font-weight:600; line-height:20px; color:var(--color-neutral-700); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
 .editor-project-name-field img{width:16px; height:16px; display:block; flex-shrink:0; cursor:pointer;}
 
-/* ---------- Editor / Segmented Toggle (2325:1560 Selected=false / 2325:1562 Selected=true) ----------
-   The track wrapper itself isn't a separately-fetched Figma node -- the component description on
-   the Item (2325:1564) says only "Set layoutGrow=1 on the instance so segments share the track
-   width equally", implying a plain tinted track any Item row sits in. Modeled on the same
-   tinted-track + white-selected-pill pattern already used by Editor / View Switcher below. */
-.editor-segmented-toggle{display:flex; align-items:center; gap:2px; background:var(--color-neutral-100); border-radius:var(--radius-lg); padding:4px;}
+/* ---------- Editor / Segmented Toggle (2325:1577, Options=2 (2325:1565) / Options=3 (2325:1570)) ----------
+   Track itself now fetched directly (was inferred as a generic tinted-track in an earlier pass):
+   padding is 3px (no exact spacing token between spacing-2/2px and spacing-xs/4px, hardcoded),
+   and segments touch directly (gap:0) at 2 options but get a spacing-xs gap at 3 -- add
+   .options-3 for that case. Items still use Editor / Segmented Toggle Item's own spec
+   (2325:1560/1562): Selected=true is a white pill + neutral-900 semibold label (not brand/primary
+   as the component's own usage-notes text says -- the actual fetched instance uses neutral-900,
+   which is what's implemented here). */
+.editor-segmented-toggle{display:flex; align-items:flex-start; gap:0; background:var(--color-neutral-100); border-radius:var(--radius-lg); padding:3px;}
+.editor-segmented-toggle.options-3{gap:var(--spacing-xs);}
 .editor-segmented-toggle-item{flex:1 0 0; display:flex; align-items:center; justify-content:center; padding:7px 12px; border:none; background:none; border-radius:var(--radius-lg); cursor:pointer; font-family:var(--font-family-text); font-size:13px; font-weight:500; line-height:20px; color:var(--color-neutral-500); white-space:nowrap;}
 .editor-segmented-toggle-item.selected{background:var(--color-neutral-0); font-weight:600; color:var(--color-neutral-900);}
+
+/* ---------- Editor / Add Menu Item (885:7544) ---------- */
+.editor-add-menu-item{box-sizing:border-box; width:204px; height:46px; display:flex; align-items:center; gap:var(--spacing-md); padding:var(--spacing-md); border:none; background:none; border-radius:var(--radius-lg); cursor:pointer; font-family:var(--font-family-text); font-size:14px; font-weight:500; line-height:22px; color:var(--color-neutral-900); white-space:nowrap;}
+.editor-add-menu-item:hover{background:var(--color-neutral-50);}
+.editor-add-menu-item img{width:20px; height:20px; display:block; flex-shrink:0;}
+
+/* ---------- Editor / Rotate Handle (3518:55901) ---------- */
+.editor-rotate-handle{box-sizing:border-box; width:23px; height:23px; display:flex; align-items:center; justify-content:center; padding:10px; background:var(--color-neutral-0); border:none; border-radius:var(--radius-full); box-shadow:var(--shadow-cell-action); cursor:pointer;}
+.editor-rotate-handle img{width:14px; height:14px; display:block;}
+
+/* ---------- Editor / Text Format (3803:61920) ----------
+   A row of Editor / Format Toggle cells (.editor-format-toggle, above) inside its own bordered
+   wrapper -- no new toggle-cell CSS needed, just this outer frame. */
+.editor-text-format{display:inline-flex; align-items:center; gap:2px; height:36px; box-sizing:border-box; padding:2px 4px; background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg);}
+
+/* ---------- Editor / Panel Action Row/Tooltip (4554:89321) ---------- */
+.editor-tooltip{display:inline-flex; align-items:center; box-sizing:border-box; padding:var(--spacing-xs) var(--spacing-sm); background:var(--color-neutral-900); border-radius:var(--radius-md); font-family:var(--font-family-text); font-size:12px; font-weight:500; line-height:18px; color:var(--color-neutral-0); white-space:nowrap;}
 
 /* ---------- Editor / Layer Row (Panel) — default (889:7568) / selected (889:7585) ----------
    The two states aren't just a color swap: selected adds a pair of reorder (up/down) icons plus
