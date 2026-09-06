@@ -213,21 +213,13 @@ input:focus-visible{outline:none;}   /* the wrapping field already shows focus v
 .seg-on{background:var(--neutral-0);border-radius:8px;filter:var(--shadow-sm);}
 .seg-on span{font-weight:600;color:var(--neutral-900);}
 
-/* ---- roster scale: counts, drill-down, overflow tile ---- */
+/* ---- roster scale: counts, drill-down ---- */
 .group-count{font-weight:600;font-size:12px;line-height:18px;color:var(--neutral-500);
   background:var(--neutral-100);border-radius:9999px;padding:1px 8px;flex:none;}
 .focus-back{width:28px;height:28px;border-radius:var(--radius-md);flex:none;
   display:flex;align-items:center;justify-content:center;transform:rotate(180deg);}
 .focus-back:hover{background:var(--neutral-100);}
 .group.focused .grid{max-height:none;}
-
-.card-more{cursor:pointer;}
-.thumb-more{height:347px;width:100%;flex:none;border:1px dashed var(--neutral-300);
-  border-radius:var(--radius-xl);display:flex;flex-direction:column;gap:2px;
-  align-items:center;justify-content:center;overflow:hidden;background:var(--neutral-50);}
-.thumb-more:hover{border-color:var(--neutral-450);background:var(--neutral-100);}
-.more-n{font-weight:700;font-size:22px;line-height:30px;color:var(--neutral-700);}
-.more-l{font-weight:500;font-size:13px;line-height:20px;color:var(--neutral-500);}
 
 /* --------------------------------------------------------------- groups */
 .groups{display:flex;flex-direction:column;gap:28px;align-items:flex-start;width:100%;flex:none;}
@@ -239,25 +231,37 @@ input:focus-visible{outline:none;}   /* the wrapping field already shows focus v
 .see-all{font-weight:500;font-size:14px;line-height:22px;color:var(--neutral-700);white-space:nowrap;flex:none;}
 .see-all:hover{color:var(--neutral-900);}
 
-.grid{position:relative;display:flex;gap:24px;align-items:flex-start;width:100%;flex:none;
-  overflow-x:auto;overflow-y:hidden;}
-.grid.wrapped{flex-wrap:wrap;row-gap:24px;overflow:visible;}
+/* A group holds 12 slots — 6 columns x 2 rows, the Create New tile counted as one.
+   Inside that it simply wraps: nothing is hidden, so no arrow, no fade, no See all. */
+.grid{position:relative;display:flex;flex-wrap:wrap;gap:24px;row-gap:24px;align-items:flex-start;
+  width:100%;flex:none;overflow:visible;}
+/* Past 12 slots the group keeps its two rows and scrolls sideways instead of growing
+   down. Slots are paired into vertical columns, so both rows stay full at every count —
+   fill order is top, bottom, then move right. A fixed slot height is what keeps the
+   second row aligned; without it the shorter cards float and the row breaks up. */
+.grid.carousel{flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;}
+.grid.carousel .col{display:flex;flex-direction:column;gap:24px;flex:none;width:244px;}
+.grid.carousel .card{height:383px;}
+.grid.carousel .card-new .thumb-new{height:383px;}
 
-.carousel-arrow{position:absolute;top:167px;width:32px;height:32px;
+.carousel-arrow{position:absolute;top:417px;width:32px;height:32px;   /* vertical centre of the two rows */
   background:var(--neutral-0);border:1px solid var(--neutral-400);border-radius:9999px;
-  box-shadow:0px 0px 6px 0px var(--neutral-150);overflow:hidden;display:block;}
-.arrow-r{left:1553px;}
+  box-shadow:0px 0px 6px 0px var(--neutral-150);overflow:hidden;display:block;z-index:2;}
+.arrow-r{right:18px;}   /* the 18px gutter puts the arrow's right edge on the card edge, 1584 */
 .arrow-l{left:12px;}
+/* the fade says the row continues past the clip — it goes once you reach the end */
+.cfade{position:absolute;top:38px;right:18px;width:120px;height:790px;pointer-events:none;
+  background:linear-gradient(90deg,rgba(248,250,255,0) 0%,var(--neutral-50) 100%);}
 .arrow-l .ic{transform:scaleX(-1);}   /* mirrored instance of the same chevron asset */
 .carousel-arrow:hover{background:var(--neutral-50);}
 
 /* ---------------------------------------------------------------- card */
-.card{position:relative;display:flex;flex-direction:column;gap:8px;align-items:flex-start;width:246px;flex:none;}
+.card{position:relative;display:flex;flex-direction:column;gap:8px;align-items:flex-start;width:244px;flex:none;}
 .card{cursor:pointer;}
 .card-new{cursor:default;}
 .thumb{position:relative;height:295px;width:100%;flex:none;
   border:1px solid var(--neutral-400);border-radius:var(--radius-xl);overflow:hidden;}
-.thumb-img{position:absolute;inset:-1px;width:246px;height:295px;max-width:none;
+.thumb-img{position:absolute;inset:-1px;width:244px;height:295px;max-width:none;
   object-fit:cover;border-radius:var(--radius-xl);pointer-events:none;} /* fill spans under the inside-drawn 1px stroke, as in Figma */
 .posts-badge{position:absolute;bottom:11px;right:11px;background:var(--neutral-900);
   display:flex;align-items:center;justify-content:center;padding:2px 8px;border-radius:8px;}
@@ -267,7 +271,7 @@ input:focus-visible{outline:none;}   /* the wrapping field already shows focus v
   display:flex;align-items:center;justify-content:center;
   background:#fff;border:1px solid var(--neutral-400);filter:var(--shadow-sm);}
 .iconbtn.fav{left:8px;}
-.iconbtn.more{left:199px;}
+.iconbtn.more{left:197px;}
 .iconbtn:hover{background:var(--neutral-50);}
 .iconbtn.fav.active{background:var(--neutral-150);border-color:var(--neutral-500);}
 .iconbtn.more.active{background:var(--neutral-150);border-color:var(--neutral-450);}
@@ -295,6 +299,16 @@ input.card-name{background:var(--neutral-0);box-shadow:0 0 0 1px var(--neutral-4
   text-align:center;white-space:nowrap;}
 
 .empty-note{font-weight:400;font-size:13px;line-height:20px;color:var(--neutral-500);}
+
+/* an account with no characters at all — Figma `Characters · empty` 8516:219271.
+   Not the same thing as a search that found nothing, which keeps .empty-note. */
+.empty-state{width:100%;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:250px 0;}
+.empty-icon{width:72px;height:72px;border-radius:9999px;background:var(--neutral-100);
+  display:flex;align-items:center;justify-content:center;margin-bottom:20px;}
+.empty-title{font-weight:700;font-size:18px;line-height:26px;color:var(--neutral-900);}
+.empty-sub{font-weight:400;font-size:14px;line-height:22px;color:var(--neutral-500);margin-top:4px;}
+.empty-state .btn-primary{margin-top:16px;}
 
 /* ------------------------------------------------------------ context menu */
 .ctx-menu{position:absolute;left:36px;top:54px;width:200px;height:124px;background:#fff;
@@ -1550,10 +1564,39 @@ input.card-name{background:var(--neutral-0);box-shadow:0 0 0 1px var(--neutral-4
         <circle cx="7" cy="7" r="4.6"/><path d="m10.6 10.6 3 3" stroke-linecap="round"/></svg>
       <input type="text" placeholder="Search content…" aria-label="Search content">
     </label>
+    <!-- 2026-09-04 Figma `Filters · Status / Created by / Date open`
+         (8449:123072 / 123094 / 123116) 기준으로 다시 만들었다.
+         칩은 두 모습이다 — 안 걸렸을 땐 흰 알약 + 캐럿, 걸렸을 땐 남색 알약 +
+         ✕ + 라벨 | 값. ✕ 를 누르면 그 필터만 해제된다.
+         Status 만 다중선택(체크박스)이고 Created by · Date 는 단일선택이다. -->
     <div class="lib-filters">
-      <button type="button" class="lib-fchip">Status<i></i></button>
-      <button type="button" class="lib-fchip">Created by<i></i></button>
-      <button type="button" class="lib-fchip">Date<i></i></button>
+      <div class="lib-fwrap">
+        <button type="button" class="lib-fchip" data-lfilter="status" aria-expanded="false"><span class="lib-fx"><svg viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round"><path d="m5.5 5.5 7 7m0-7-7 7"/></svg></span><span class="lib-flabel">Status</span><span class="lib-fdiv"></span><span class="lib-fval"></span><i></i></button>
+        <div class="lib-fmenu" data-lmenu="status" role="menu" hidden>
+        <button type="button" class="lib-fitem" role="menuitemcheckbox" aria-checked="false" data-v="published"><span class="lib-cb"><svg viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.4 6.2 4.8 8.6 9.6 3.6"/></svg></span><span>Published</span></button>
+        <button type="button" class="lib-fitem" role="menuitemcheckbox" aria-checked="false" data-v="scheduled"><span class="lib-cb"><svg viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.4 6.2 4.8 8.6 9.6 3.6"/></svg></span><span>Scheduled</span></button>
+        <button type="button" class="lib-fitem" role="menuitemcheckbox" aria-checked="false" data-v="draft"><span class="lib-cb"><svg viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.4 6.2 4.8 8.6 9.6 3.6"/></svg></span><span>Draft</span></button>
+        </div>
+      </div>
+      <div class="lib-fwrap">
+        <button type="button" class="lib-fchip" data-lfilter="author" aria-expanded="false"><span class="lib-fx"><svg viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round"><path d="m5.5 5.5 7 7m0-7-7 7"/></svg></span><span class="lib-flabel">Created by</span><span class="lib-fdiv"></span><span class="lib-fval"></span><i></i></button>
+        <div class="lib-fmenu" data-lmenu="author" role="menu" hidden>
+        <button type="button" class="lib-fitem" role="menuitemcheckbox" aria-checked="false" data-v="Me"><span>Me</span></button>
+        <button type="button" class="lib-fitem" role="menuitemcheckbox" aria-checked="false" data-v="Tabir"><span>Tabir</span></button>
+        <button type="button" class="lib-fitem" role="menuitemcheckbox" aria-checked="false" data-v="Norimi"><span>Norimi</span></button>
+        <button type="button" class="lib-fitem" role="menuitemcheckbox" aria-checked="false" data-v="Yejin"><span>Yejin</span></button>
+        <button type="button" class="lib-fitem" role="menuitemcheckbox" aria-checked="false" data-v="Abeer"><span>Abeer</span></button>
+        </div>
+      </div>
+      <div class="lib-fwrap">
+        <button type="button" class="lib-fchip" data-lfilter="date" aria-expanded="false"><span class="lib-fx"><svg viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round"><path d="m5.5 5.5 7 7m0-7-7 7"/></svg></span><span class="lib-flabel">Date</span><span class="lib-fdiv"></span><span class="lib-fval"></span><i></i></button>
+        <div class="lib-fmenu" data-lmenu="date" role="menu" hidden>
+        <button type="button" class="lib-fitem" role="menuitemcheckbox" aria-checked="false" data-v="7"><span>Last 7 days</span></button>
+        <button type="button" class="lib-fitem" role="menuitemcheckbox" aria-checked="false" data-v="30"><span>Last 30 days</span></button>
+        <button type="button" class="lib-fitem" role="menuitemcheckbox" aria-checked="false" data-v="90"><span>Last 90 days</span></button>
+        <button type="button" class="lib-fitem" role="menuitemcheckbox" aria-checked="false" data-v="year"><span>This year</span></button>
+        </div>
+      </div>
       <span class="lib-count">24 items</span>
     </div>
   </div>
@@ -1565,7 +1608,22 @@ input.card-name{background:var(--neutral-0);box-shadow:0 0 0 1px var(--neutral-4
     <button type="button" class="lib-seg-i" role="tab" aria-selected="false">Carousels</button>
   </div>
 
-  <p class="lib-nores" id="libNoResults" hidden>Nothing matches these filters</p>
+  <!-- 2026-09-04 Figma `Content Library · empty` 7891:125077 / `· no results` 8479:140946.
+       한 껍데기에 두 얼굴이다 — 라이브러리가 통째로 비었을 때(empty)와
+       필터·검색 결과만 없을 때(nores). 아이콘은 좌측 nav 의 Library 아이콘을 그대로 쓴다. -->
+  <div class="lib-empty" id="libNoResults" data-mode="nores" hidden>
+    <div class="lib-empty-glyph"><div class="ic clip" style="width:48px;height:48px;"><div class="f" style="inset:28.57% 16.67% 13.1% 66.67%"><div class="f" style="inset:-6.86% -24.01%"><img src="assets/imgVector11.svg" alt=""></div></div><div class="f" style="inset:28.57% 50% 13.1% 50%"><div class="f" style="inset:-6.86% -0.8px"><img src="assets/imgVector12.svg" alt=""></div></div><div class="f" style="inset:35.71% 66.67% 14.29% 33.33%"><div class="f" style="inset:-8% -0.8px"><img src="assets/imgVector13.svg" alt=""></div></div><div class="f" style="inset:21.43% 83.33% 11.9% 16.67%"><div class="f" style="inset:-6% -0.8px"><img src="assets/imgVector14.svg" alt=""></div></div></div></div>
+    <div class="lib-empty-copy">
+      <p class="lib-empty-t" id="libEmptyTitle">No contents yet</p>
+      <p class="lib-empty-b" id="libEmptyBody">Create your first piece of content to see it here.</p>
+    </div>
+    <button type="button" class="lib-empty-btn" id="libEmptyBtn">
+      <svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.7"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M8 3.2v9.6M3.2 8h9.6"/></svg>
+      <span id="libEmptyBtnLabel">New Content</span>
+    </button>
+  </div>
 
   <div class="lib-groups">
     <section class="lib-group">
@@ -1574,7 +1632,8 @@ input.card-name{background:var(--neutral-0);box-shadow:0 0 0 1px var(--neutral-4
 
         <!-- 9:16 릴스 — 영상이라 재생 버튼과 스크러버가 있다 -->
         <article class="lib-card r916" data-format="video" data-status="published"
-                 data-title="This New Lip Tint Is Everything" data-thumb="assets/imgLibLipTint.png">
+                 data-title="This New Lip Tint Is Everything" data-thumb="assets/imgLibLipTint.png"
+                 data-author="Me" data-date="2026-08-26">
           <div class="lib-tile">
             <img class="lib-thumb" src="assets/imgLibLipTint.png" alt="">
             <div class="lib-tile-ov">
@@ -1623,7 +1682,8 @@ input.card-name{background:var(--neutral-0);box-shadow:0 0 0 1px var(--neutral-4
 
         <!-- 4:5 이미지 포스트 -->
         <article class="lib-card r45" data-format="image" data-status="scheduled"
-                 data-title="Study in the UK — Applications Open" data-thumb="assets/imgLibStudyUK.png">
+                 data-title="Study in the UK — Applications Open" data-thumb="assets/imgLibStudyUK.png"
+                 data-author="Tabir" data-date="2026-08-24">
           <div class="lib-tile">
             <img class="lib-thumb" src="assets/imgLibStudyUK.png" alt="">
             <div class="lib-tile-ov">
@@ -1653,7 +1713,8 @@ input.card-name{background:var(--neutral-0);box-shadow:0 0 0 1px var(--neutral-4
 
         <!-- 1:1 이미지 포스트 -->
         <article class="lib-card r11" data-format="image" data-status="draft"
-                 data-title="UK Applications — January Intake" data-thumb="assets/imgLibJanIntake.png">
+                 data-title="UK Applications — January Intake" data-thumb="assets/imgLibJanIntake.png"
+                 data-author="Norimi" data-date="2026-08-21">
           <div class="lib-tile">
             <img class="lib-thumb" src="assets/imgLibJanIntake.png" alt="">
             <div class="lib-tile-ov">
@@ -17679,36 +17740,45 @@ const newCardHTML = () => `<div class="card card-new">
     ${ICONS.plus24}<span>New character</span>
   </button></div>`;
 
-/* one screen holds six tiles, and the "New character" tile plus the overflow tile
-   each take one — so a capped row shows four characters. Past a dozen a sideways
-   row stops being browsable and turns into a bad grid. */
-const ROW_FITS = 4;
-const CAROUSEL_MAX = 12;
+/* A group is 12 slots — 6 columns x 2 rows — and the Create New tile is one of
+   them. Within 12 the slots simply wrap onto the two rows: nothing is hidden, so
+   the group carries no arrow, no fade and no See all. Past 12 the group keeps its
+   two rows and scrolls sideways instead of growing down. Slots are paired into
+   vertical columns, which is what stops the second row from thinning out as the
+   count grows — a plain nowrap row would leave it empty. */
+const PER_ROW = 6;
+const SLOTS   = PER_ROW * 2;
+
+/* fill order inside a column: top, bottom, then move right */
+const columnsHTML = tiles => {
+  let out = '';
+  for (let i = 0; i < tiles.length; i += 2)
+    out += `<div class="col">${tiles[i]}${tiles[i + 1] || ''}</div>`;
+  return out;
+};
 
 function groupHTML(g, expanded){
-  const total = g.cards.length;
-  const capped = !expanded && total > CAROUSEL_MAX;      // too many to scroll through
-  const shown  = capped ? g.cards.slice(0, ROW_FITS) : g.cards;
-  const rest   = total - shown.length;
+  const tiles    = [newCardHTML()].concat(g.cards.map(cardHTML));
+  const carousel = !expanded && tiles.length > SLOTS;
 
   const head = g.title === null ? '' :
     `<div class="group-head">
        <p class="group-title">${esc(g.title)}</p>
        <div class="group-rule"></div>
        <button type="button" class="see-all" data-act="seeall" data-key="${esc(g.key)}"${
-         expanded || total > ROW_FITS ? '' : ' hidden'}>${expanded ? 'See less' : 'See all'}</button>
+         carousel || expanded ? '' : ' hidden'}>${expanded ? 'See less' : 'See all'}</button>
      </div>`;
 
-  const moreTile = rest > 0
-    ? `<div class="card card-more"><button type="button" class="thumb-more" data-act="seeall" data-key="${esc(g.key)}">
-         <span class="more-n">+${rest}</span><span class="more-l">more</span></button></div>`
-    : '';
-
-  return `<div class="group${capped ? ' capped' : ''}" data-key="${esc(g.key)}">
+  if (!carousel)
+    return `<div class="group" data-key="${esc(g.key)}">
     ${head}
-    <div class="grid no-sb${expanded ? ' wrapped' : ''}" data-key="${esc(g.key)}">
-      ${newCardHTML()}${shown.map(cardHTML).join('')}${moreTile}
-    </div>
+    <div class="grid" data-key="${esc(g.key)}">${tiles.join('')}</div>
+  </div>`;
+
+  return `<div class="group has-carousel" data-key="${esc(g.key)}">
+    ${head}
+    <div class="grid carousel no-sb" data-key="${esc(g.key)}">${columnsHTML(tiles)}</div>
+    <div class="cfade" hidden></div>
     <button type="button" class="carousel-arrow arrow-l" data-act="scroll" data-dir="-1" aria-label="Scroll left" hidden>${ICONS.chevron}</button>
     <button type="button" class="carousel-arrow arrow-r" data-act="scroll" data-dir="1" aria-label="Scroll right" hidden>${ICONS.chevron}</button>
   </div>`;
@@ -17734,13 +17804,18 @@ function render(){
   const cards = visibleCards();
   paintRosterCount(cards);
 
-  /* an account with no characters at all is not a failed search — it gets the
-     "Add New Character" row with nothing but the create tile in it */
+  /* An account with no characters at all is not a failed search, and the two look
+     nothing alike: this is the centred block from Figma `Characters · empty`
+     8516:219271, while a search that found nothing keeps the one-line .empty-note. */
   if (!DATA.length || (!cards.length && !isFiltered())){
     host.innerHTML =
-      `<div class="group" data-key="__empty">
-         <div class="group-head"><p class="group-title">Add New Character</p><div class="group-rule"></div></div>
-         <div class="grid no-sb wrapped" data-key="__empty">${newCardHTML()}</div>
+      `<div class="empty-state">
+         <div class="empty-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#8a93a8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 19v-1.5a3.5 3.5 0 0 0-3.5-3.5h-5A3.5 3.5 0 0 0 4 17.5V19"/><circle cx="10" cy="8" r="3.2"/><path d="M20 19v-1.5a3.5 3.5 0 0 0-2.6-3.4"/><path d="M15.4 5.2a3.2 3.2 0 0 1 0 5.6"/></svg></div>
+         <p class="empty-title">No characters yet</p>
+         <p class="empty-sub">Create your first character to see it here.</p>
+         <button type="button" class="btn-primary" data-act="new">
+           ${ICONS.plus24}<span>New character</span><span class="btn-inset"></span>
+         </button>
        </div>`;
     return;
   }
@@ -17760,7 +17835,7 @@ function render(){
              <p class="group-title">${esc(g.title || 'All characters')}</p>
              <div class="group-rule"></div>
            </div>
-           <div class="grid no-sb wrapped" data-key="${esc(g.key)}">
+           <div class="grid" data-key="${esc(g.key)}">
              ${newCardHTML()}${g.cards.map(cardHTML).join('')}
            </div>
          </div>`;
@@ -17786,19 +17861,20 @@ function render(){
   if (input){ input.focus(); input.select(); }
 }
 
-/* arrows + "See all" exist only while the row actually overflows — which is why
-   the frame shows them on Formee Express but not on SCEI. The white gradient
-   fade that used to sit under the right arrow was dropped in the latest frame. */
+/* Arrow and fade belong to the carousel state only, and even there they go once
+   you reach that end — same rule as the vertical scrollbar: an affordance shows
+   only while something is actually out of view. "See all" is decided in
+   groupHTML, because it depends on the slot count rather than on scroll position. */
 function syncOverflow(grid){
   const group   = grid.closest('.group');
-  const wrapped = grid.classList.contains('wrapped');
-  const over    = !wrapped && grid.scrollWidth - grid.clientWidth > 1;
+  const car     = grid.classList.contains('carousel');
+  const over    = car && grid.scrollWidth - grid.clientWidth > 1;
   const atStart = grid.scrollLeft <= 1;
   const atEnd   = grid.scrollLeft >= grid.scrollWidth - grid.clientWidth - 1;
-  const seeAll  = $('.see-all', group);
-  if (seeAll) seeAll.hidden = !(over || wrapped);
-  $('.arrow-r', group).hidden = !(over && !atEnd);
-  $('.arrow-l', group).hidden = !(over && !atStart);
+  const set = (sel, on) => { const el = $(sel, group); if (el) el.hidden = !on; };
+  set('.arrow-r', over && !atEnd);
+  set('.arrow-l', over && !atStart);
+  set('.cfade',   over && !atEnd);
 }
 
 /* --------------------------------------------------- destructive confirmation
@@ -25247,11 +25323,18 @@ function libThumbUrl(src){
   if (/^(https?:|\/)/.test(src)) return src;
   return LIB_ASSET_BASE + src;
 }
+/* 2026-09-04 Figma `use as reference` 4화면(8224:131295)에서 확정된 기본값.
+   v3 쪽 팝오버가 이 값으로 열리도록 URL 에 같이 실어 보낸다. 마크업·동작은
+   `useasreference-module.html` 에 따로 빼 뒀다 — 이 앱엔 New Content 가 없다. */
+const LIB_REF_DEFAULTS = { strength: 'Balanced', match: 'Style,Composition,Colors', frame: 'cover' };
 function libUseAsReference(card){
   const r = card.classList.contains('r916') ? '9:16'
           : card.classList.contains('r11')  ? '1:1' : '4:5';
   const url = NC_V3_URL
     + '#ref=' + encodeURIComponent(card.dataset.title || '')
+    + '&strength=' + encodeURIComponent(LIB_REF_DEFAULTS.strength)
+    + '&match=' + encodeURIComponent(LIB_REF_DEFAULTS.match)
+    + '&frame=' + encodeURIComponent(LIB_REF_DEFAULTS.frame)
     + '&thumb=' + encodeURIComponent(libThumbUrl(card.dataset.thumb))
     + '&ratio=' + encodeURIComponent(r)
     + '&stage=brief';
@@ -25288,6 +25371,17 @@ document.addEventListener('click', e => {
    탭(포맷) · 즐겨찾기 · 검색이 한 함수에서 같이 걸린다. 따로 두면 셋 중 하나만
    반영되는 상태가 생긴다. 그룹은 남은 카드가 없으면 통째로 숨긴다. */
 const LIB_TAB = { 'All':null, 'Videos':'video', 'Images':'image', 'Carousels':'carousel' };
+/* 필터 상태. status 만 다중선택이라 배열이고 나머지는 값 하나다.
+   NOW 는 씨앗 데이터(2026-08) 기준의 "오늘" — 프로토타입이라 고정한다. */
+const LIB_F = { status: [], author: null, date: null };
+const LIB_NOW = new Date('2026-08-27T00:00:00');
+const LIB_DATE_LABEL = { '7':'Last 7 days', '30':'Last 30 days', '90':'Last 90 days', year:'This year' };
+function libDateOk(iso){
+  if (!LIB_F.date || !iso) return true;
+  const d = new Date(iso + 'T00:00:00');
+  if (LIB_F.date === 'year') return d.getFullYear() === LIB_NOW.getFullYear();
+  return (LIB_NOW - d) / 86400000 <= (+LIB_F.date);
+}
 function libFilter(){
   const tabEl = document.querySelector('#libMain .lib-seg-i.on');
   const want  = LIB_TAB[(tabEl ? tabEl.textContent : 'All').trim()];
@@ -25301,7 +25395,10 @@ function libFilter(){
     const fav = c.querySelector('.lib-fav');
     const okFav = !favOn || (fav && fav.getAttribute('aria-pressed') === 'true');
     const okQ   = !q || (c.dataset.title || '').toLowerCase().indexOf(q) >= 0;
-    const on    = okTab && okFav && okQ;
+    const okSt  = !LIB_F.status.length || LIB_F.status.indexOf(c.dataset.status) >= 0;
+    const okAu  = !LIB_F.author || c.dataset.author === LIB_F.author;
+    const okDt  = libDateOk(c.dataset.date);
+    const on    = okTab && okFav && okQ && okSt && okAu && okDt;
     c.hidden = !on;
     if (on) shown++;
   });
@@ -25310,8 +25407,26 @@ function libFilter(){
   });
   const count = document.querySelector('#libMain .lib-count');
   if (count) count.textContent = shown + (shown === 1 ? ' item' : ' items');
+  /* 라이브러리가 통째로 빈 것과, 필터 때문에 결과가 없는 것은 다른 화면이다.
+     total 은 필터 이전의 카드 수 — libForceEmpty 는 캡처용 딥링크(#libempty=1). */
+  const total = document.querySelectorAll('#libMain .lib-card').length;
   const empty = $('#libNoResults');
-  if (empty) empty.hidden = shown > 0;
+  if (empty){
+    const isEmpty = window.libForceEmpty || total === 0;
+    empty.hidden = shown > 0 && !isEmpty;
+    empty.dataset.mode = isEmpty ? 'empty' : 'nores';
+    if (isEmpty){
+      $('#libEmptyTitle').textContent = 'No contents yet';
+      $('#libEmptyBody').textContent  = 'Create your first piece of content to see it here.';
+      $('#libEmptyBtnLabel').textContent = 'New Content';
+    } else {
+      $('#libEmptyTitle').textContent = q ? 'No results for \u201c' + q + '\u201d' : 'No results';
+      $('#libEmptyBody').textContent  = 'Try a different keyword, or clear the filters to see everything.';
+      $('#libEmptyBtnLabel').textContent = 'Clear filters';
+    }
+    document.querySelectorAll('#libMain .lib-groups, #libMain .lib-group')
+      .forEach(g => { if (isEmpty) g.hidden = true; });
+  }
 }
 document.querySelectorAll('#libMain .lib-seg-i').forEach(t => {
   t.addEventListener('click', () => {
@@ -25328,6 +25443,84 @@ if (_libFav) _libFav.addEventListener('click', () => {
 });
 const _libSearch = document.querySelector('#libMain .lib-search input');
 if (_libSearch) _libSearch.addEventListener('input', libFilter);
+
+/* ── 필터 칩 · 드롭다운 ────────────────────────────────────────────────────
+   칩을 누르면 열리고, 바깥이나 Esc 로 닫힌다. 칩의 ✕ 는 열지 않고 해제만 한다. */
+function libCloseMenus(except){
+  document.querySelectorAll('#libMain .lib-fmenu').forEach(m => {
+    if (m === except) return;
+    m.hidden = true;
+    const c = m.parentNode.querySelector('.lib-fchip');
+    if (c) c.setAttribute('aria-expanded', 'false');
+  });
+}
+function libSyncChip(key){
+  const wrap = document.querySelector('#libMain .lib-fmenu[data-lmenu="' + key + '"]');
+  if (!wrap) return;
+  const chip = wrap.parentNode.querySelector('.lib-fchip');
+  let val = '';
+  if (key === 'status') val = LIB_F.status.length ? LIB_F.status.length + ' selected' : '';
+  else if (key === 'author') val = LIB_F.author || '';
+  else if (key === 'date') val = LIB_F.date ? LIB_DATE_LABEL[LIB_F.date] : '';
+  chip.classList.toggle('on', !!val);
+  chip.querySelector('.lib-fval').textContent = val;
+  wrap.querySelectorAll('.lib-fitem').forEach(it => {
+    const v = it.dataset.v;
+    const onN = key === 'status' ? LIB_F.status.indexOf(v) >= 0 : LIB_F[key] === v;
+    it.setAttribute('aria-checked', onN ? 'true' : 'false');
+  });
+}
+document.addEventListener('click', e => {
+  const chip = e.target.closest('#libMain .lib-fchip');
+  if (chip){
+    const key = chip.dataset.lfilter;
+    /* ✕ 는 해제 전용 — 눌러도 메뉴가 열리면 안 된다 */
+    if (e.target.closest('.lib-fx') && chip.classList.contains('on')){
+      if (key === 'status') LIB_F.status = []; else LIB_F[key] = null;
+      libSyncChip(key); libCloseMenus(null); libFilter(); return;
+    }
+    const menu = chip.parentNode.querySelector('.lib-fmenu');
+    const willOpen = menu.hidden;
+    libCloseMenus(willOpen ? menu : null);
+    menu.hidden = !willOpen;
+    chip.setAttribute('aria-expanded', String(willOpen));
+    return;
+  }
+  const item = e.target.closest('#libMain .lib-fitem');
+  if (item){
+    const menu = item.closest('.lib-fmenu'), key = menu.dataset.lmenu, v = item.dataset.v;
+    if (key === 'status'){
+      const i = LIB_F.status.indexOf(v);
+      if (i >= 0) LIB_F.status.splice(i, 1); else LIB_F.status.push(v);
+    } else {
+      LIB_F[key] = (LIB_F[key] === v) ? null : v;   /* 같은 값을 다시 누르면 해제 */
+      menu.hidden = true;
+      menu.parentNode.querySelector('.lib-fchip').setAttribute('aria-expanded', 'false');
+    }
+    libSyncChip(key); libFilter(); return;
+  }
+  if (!e.target.closest('#libMain .lib-fwrap')) libCloseMenus(null);
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') libCloseMenus(null); });
+['status','author','date'].forEach(libSyncChip);
+
+/* 빈 상태의 버튼 — empty 면 New Content(v3), nores 면 필터 전체 해제 */
+const _libEmptyBtn = $('#libEmptyBtn');
+if (_libEmptyBtn) _libEmptyBtn.addEventListener('click', () => {
+  const mode = $('#libNoResults').dataset.mode;
+  if (mode === 'empty'){ window.open(NC_V3_URL, '_blank', 'noopener'); return; }
+  LIB_F.status = []; LIB_F.author = null; LIB_F.date = null;
+  ['status','author','date'].forEach(libSyncChip);
+  const q = document.querySelector('#libMain .lib-search input'); if (q) q.value = '';
+  const all = document.querySelector('#libMain .lib-seg-i');
+  if (all) all.click(); else libFilter();
+});
+/* 캡처·검토용 딥링크: #libempty=1 이면 라이브러리를 통째로 빈 것처럼 보여준다 */
+if (/[#&]libempty=1/.test(location.hash || '')){
+  window.libForceEmpty = true;
+  if (typeof showView === 'function') showView('library');
+  libFilter();
+}
 function genShow(fmt){                       // Brief 에서 고른 포맷을 이어받는다
   document.querySelectorAll('#genMain .gen-var').forEach(v => {
     v.hidden = v.dataset.fmt !== fmt;
@@ -33985,6 +34178,35 @@ body.bk2-clean #roleSwitch { display:none !important; }
   transform:rotate(45deg) translate(-2px,-2px);}
 .lib-count{font-size:12px;font-weight:500;color:var(--neutral-500);margin-left:2px;}
 
+/* ── 필터 칩 · 드롭다운 (Figma 8449:123072 / 123094 / 123116) ──────────────
+   걸린 칩은 남색으로 반전되고 ✕ 와 값이 붙는다. 캐럿은 그때 사라진다. */
+.lib-fwrap{position:relative;}
+.lib-fchip .lib-fx,.lib-fchip .lib-fdiv,.lib-fchip .lib-fval{display:none;}
+.lib-fchip.on{background:var(--neutral-900);border-color:var(--neutral-900);color:var(--neutral-0);
+  padding:5px 14px 5px 11px;gap:7px;font-weight:600;}
+.lib-fchip.on:hover{background:#1b2436;}
+.lib-fchip.on i{display:none;}
+.lib-fchip.on .lib-fx{display:inline-flex;width:18px;height:18px;flex:none;}
+.lib-fchip.on .lib-fx svg{width:18px;height:18px;}
+.lib-fchip.on .lib-fdiv{display:block;width:1px;height:13px;flex:none;background:var(--neutral-0);}
+.lib-fchip.on .lib-fval{display:inline;}
+.lib-fmenu{position:absolute;left:0;top:calc(100% + 8px);z-index:40;width:200px;
+  display:flex;flex-direction:column;gap:2px;padding:6px;background:var(--neutral-0);
+  border:1px solid var(--neutral-400);border-radius:10px;box-shadow:0 4px 10px rgba(0,0,0,.1);}
+.lib-fitem{display:flex;align-items:center;gap:10px;width:100%;padding:7px 12px;
+  border:0;background:var(--neutral-0);border-radius:6px;cursor:pointer;text-align:left;
+  font-family:inherit;font-weight:400;font-size:14px;line-height:22px;color:var(--neutral-900);}
+.lib-fitem:hover{background:var(--neutral-50);}
+.lib-fitem span:last-child{flex:1 1 auto;}
+/* 단일선택 메뉴(Created by · Date)는 체크박스가 없어서 행 자체를 강조한다 */
+.lib-fmenu[data-lmenu="author"] .lib-fitem[aria-checked="true"],
+.lib-fmenu[data-lmenu="date"]   .lib-fitem[aria-checked="true"]{background:var(--neutral-100);font-weight:600;}
+.lib-cb{width:16px;height:16px;flex:none;display:grid;place-items:center;
+  border:1px solid var(--neutral-400);border-radius:4px;background:var(--neutral-0);}
+.lib-cb svg{width:12px;height:12px;display:none;}
+.lib-fitem[aria-checked="true"] .lib-cb{background:var(--neutral-900);border-color:var(--neutral-900);}
+.lib-fitem[aria-checked="true"] .lib-cb svg{display:block;}
+
 /* Controls / Segmented Control · content type */
 .lib-seg{display:inline-flex;align-self:flex-start;gap:0;padding:4px;
   background:var(--neutral-100);border-radius:12px;}
@@ -34095,7 +34317,24 @@ body.bk2-clean #roleSwitch { display:none !important; }
   padding:10px 16px;border-radius:9999px;background:var(--neutral-900);color:var(--neutral-0);
   font-size:13px;font-weight:500;box-shadow:0 6px 20px rgba(15,23,41,.25);}
 .lib-toast[hidden]{display:none;}
-.lib-nores{margin:40px 0 0;text-align:center;font-size:14px;color:var(--neutral-500);}
+/* ── 빈 상태 (Figma 8479:135682 `empty-state`, 480×278) ────────────────────
+   glyph 80 원형 + 제목 20/28 Bold + 본문 14/22 + 버튼. empty 와 nores 가 같은 껍데기다. */
+.lib-empty{display:flex;flex-direction:column;align-items:center;gap:12px;
+  padding:96px 0 40px;text-align:center;}
+.lib-empty-glyph{width:80px;height:80px;flex:none;display:grid;place-items:center;
+  border-radius:9999px;background:var(--neutral-100);}
+.lib-empty-copy{display:flex;flex-direction:column;gap:3px;align-items:center;}
+.lib-empty-t{margin:0;font-size:20px;line-height:28px;font-weight:700;color:var(--neutral-900);}
+.lib-empty-b{margin:0;max-width:480px;font-size:14px;line-height:22px;color:var(--neutral-500);}
+.lib-empty-btn{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;cursor:pointer;
+  border:0;border-radius:var(--radius-lg);font-family:inherit;font-weight:600;font-size:13px;
+  line-height:20px;color:var(--neutral-0);background:linear-gradient(#323232,#222);
+  box-shadow:0 1px 2px rgba(13,13,13,.1),inset 0 -1px 1.2px #121212,inset 0 .5px 1px rgba(255,255,255,.15);}
+.lib-empty-btn svg{width:16px;height:16px;flex:none;}
+/* nores 는 부차적 동작이라 보조 버튼으로 (Figma `Clear filters`) */
+.lib-empty[data-mode="nores"] .lib-empty-btn{background:var(--neutral-0);color:var(--neutral-700);
+  border:1px solid var(--neutral-400);box-shadow:none;}
+.lib-empty[data-mode="nores"] .lib-empty-btn svg{display:none;}
 
 
 
@@ -34356,22 +34595,21 @@ body{margin:0;padding:0;background:#e5e5e5;overflow:hidden;}
           <path d="M8 2.8v6.6m0 0 2.4-2.4M8 9.4 5.6 7M3 12.6h10"/></svg>
         Download</button>
 
-      <button type="button" class="libprev-btn sec" data-libprev="dup" data-only="published">
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"
+      <!-- 2026-09-04 Figma `Content Preview · published (view only)` 8319:208574 기준:
+           게시된 글의 푸터는 Download + View on Social 둘뿐이다.
+           `Duplicate & edit` 는 새 디자인에서 빠졌다. -->
+      <button type="button" class="libprev-btn pri" data-libprev="social" data-only="published">
+        <svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.5"
              stroke-linecap="round" stroke-linejoin="round">
-          <rect x="5.5" y="5.5" width="8" height="8" rx="1.6"/><path d="M10.5 5.5v-1a1.6 1.6 0 0 0-1.6-1.6H4a1.6 1.6 0 0 0-1.6 1.6v4.9c0 .9.7 1.6 1.6 1.6h1"/></svg>
-        Duplicate &amp; edit</button>
-      <button type="button" class="libprev-btn pri" data-libprev="ig" data-only="published">
-        <svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.4">
-          <rect x="2.2" y="2.2" width="11.6" height="11.6" rx="3.4"/>
-          <circle cx="8" cy="8" r="2.9"/><circle cx="11.6" cy="4.4" r=".8" fill="#fff" stroke="none"/></svg>
-        View on Instagram</button>
+          <path d="M9.4 2.6h4v4"/><path d="M13.4 2.6 7.6 8.4"/>
+          <path d="M12.2 9.6v3a1.4 1.4 0 0 1-1.4 1.4H3.4A1.4 1.4 0 0 1 2 12.6V5.2a1.4 1.4 0 0 1 1.4-1.4h3"/></svg>
+        View on Social</button>
 
       <button type="button" class="libprev-btn pri" data-libprev="editpub" data-only="draft scheduled">
         <svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.5"
              stroke-linecap="round" stroke-linejoin="round">
           <path d="M11.2 2.8a1.7 1.7 0 0 1 2.4 2.4L5.9 12.9l-3.2.8.8-3.2z"/></svg>
-        Edit &amp; Publish</button>
+        Go back to Edit &amp; Publish</button>
     </div>
   </div>
 </div>
@@ -34436,6 +34674,8 @@ body{margin:0;padding:0;background:#e5e5e5;overflow:hidden;}
 
   /* 편집은 v3 의 Edit & Publish 단계로 보낸다. 캡션·해시태그·플랫폼별 문구·목적지·시점이
      전부 거기 모여 있어서, 모달에 옮겨오면 같은 UI 가 두 곳으로 갈라진다. */
+  /* TODO: 발행 기록에서 온 실제 게시물 URL 로 교체할 것. */
+  var SOCIAL_URL = 'https://www.instagram.com/';
   var V3 = 'https://yjkim9627-gif.github.io/formee-education/' +
            'prototypes/ai-social-media/new-content-generation/v3/new-content-to-generate.html';
   function editAndPublish(){
@@ -34459,8 +34699,9 @@ body{margin:0;padding:0;background:#e5e5e5;overflow:hidden;}
       if (a === 'editpub') { editAndPublish(); return; }
       if (a === 'prev' || a === 'next') { return; }   /* TODO: 캐러셀 이동 */
       if (a === 'dl')  { todo('Download'); return; }  /* TODO: 실제 다운로드 */
-      if (a === 'dup') { todo('Duplicate & edit'); return; }  /* TODO: 복제 라우팅 미정 */
-      if (a === 'ig')  { todo('View on Instagram'); return; } /* TODO: 게시물 URL 필요 */
+      /* 게시된 글은 앱 안에서 못 고친다 — 실제 SNS 게시물을 새 탭으로 열어 내보낸다.
+         앱 안 임베드가 아니다. 실제 게시물 URL 은 발행 기록에서 온다. */
+      if (a === 'social') { window.open(SOCIAL_URL, '_blank', 'noopener'); return; }
       return;
     }
     var card = e.target.closest('.lib-card');
