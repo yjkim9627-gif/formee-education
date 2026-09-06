@@ -1,6 +1,6 @@
 /* 컴포넌트 데모 페이지 전용 사이드바 — 실제 제품 컴포넌트가 아니라 이 리포의 데모 페이지들을
    서로 넘나들기 위한 내비게이션. components/ai-social-media, components/shared 두 폴더의
-   데모 html 12개가 전부 이 파일을 공유해서 링크한다. */
+   데모 html 60여개가 전부 이 파일을 공유해서 링크한다. */
 
 .demo-shell{display:flex; min-height:100vh;}
 
@@ -10,11 +10,26 @@
   padding:32px 16px; position:sticky; top:0; align-self:flex-start; height:100vh; overflow-y:auto;
 }
 .demo-sidebar-home{
-  display:flex; align-items:center; gap:6px; padding:8px 10px; margin-bottom:20px;
+  display:flex; align-items:center; gap:6px; padding:8px 10px; margin-bottom:12px;
   border-radius:7px; font-size:12.5px; font-weight:600; color:var(--color-neutral-700);
   text-decoration:none; font-family:var(--font-family-text); border:1px solid var(--color-neutral-200);
 }
 .demo-sidebar-home:hover{background:var(--color-neutral-50); color:var(--color-neutral-900); border-color:var(--color-neutral-300);}
+
+/* Search box — injected by demo-nav.js on every page load, not part of each page's own
+   static markup (see that file's comment for why). */
+.demo-sidebar-search-wrap{margin-bottom:16px;}
+.demo-sidebar-search{
+  width:100%; box-sizing:border-box; padding:7px 10px;
+  border:1px solid var(--color-neutral-200); border-radius:7px;
+  font-size:12.5px; font-family:var(--font-family-text); color:var(--color-neutral-900);
+  background:var(--color-neutral-0);
+}
+.demo-sidebar-search::placeholder{color:var(--color-neutral-450);}
+.demo-sidebar-search:focus{outline:none; border-color:var(--color-neutral-400);}
+/* Native search-input clear ("x") button — unstyled by default in Chrome/Safari, this at
+   least keeps it from looking broken next to the rest of this sidebar's flat, borderless look. */
+.demo-sidebar-search::-webkit-search-cancel-button{cursor:pointer;}
 
 .demo-sidebar-group{margin-bottom:8px;}
 .demo-sidebar-group:last-child{margin-bottom:0;}
