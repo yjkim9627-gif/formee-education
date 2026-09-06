@@ -221,10 +221,26 @@
   .ref-image-chip .thumb{width:28px; height:28px; border-radius:6px; background:linear-gradient(135deg,var(--color-brand-primary-mid),var(--color-brand-accent)); position:relative; flex-shrink:0;}
   .ref-image-chip .thumb::after{content:'🖼'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:12px;}
   .ref-image-chip .label{font-size:12.5px; font-weight:600; color:var(--color-neutral-900);}
-  .ref-image-chip .remove{color:var(--color-neutral-500); font-size:11px; cursor:pointer; margin-left:2px;}
-  .ref-image-add{display:flex; align-items:center; gap:8px; background:var(--color-neutral-100); border-radius:var(--radius-lg); padding:10px 16px; cursor:pointer; color:var(--color-neutral-450); font-size:13px; font-weight:500; align-self:flex-start;}
-  .ref-image-add:hover{background:var(--color-neutral-150);}
-  .ref-image-add .ic{width:20px; height:20px; border-radius:4px; background:var(--color-neutral-400);}
+  .ref-image-chip{position:relative; padding-right:var(--spacing-4xl);}
+  .ref-image-chip .remove{position:absolute; top:var(--spacing-xs); right:var(--spacing-xs); display:flex; align-items:center; justify-content:center; width:var(--spacing-2xl); height:var(--spacing-2xl); padding:0; margin:0; border:var(--border-width-1) solid var(--color-neutral-400); border-radius:var(--radius-full); background:var(--color-neutral-0); color:var(--color-neutral-700); cursor:pointer; opacity:0; pointer-events:none;}
+  .ref-image-chip:hover .remove, .ref-image-chip:focus-within .remove{opacity:1; pointer-events:auto;}
+  @media (hover:none){.ref-image-chip .remove{opacity:1; pointer-events:auto;}}
+  .ref-image-chip .remove:focus-visible{outline:var(--border-width-1) solid var(--color-brand-primary); outline-offset:var(--spacing-2);}
+  .ref-image-chip .remove img{width:var(--spacing-md); height:var(--spacing-md);}
+  /* Prompt Reference Chip, empty state — Figma node 5991:95700. Real spec: bg
+     neutral-100, 12/20 padding, 6px gap, radius-lg, neutral-450 13px/500 label, and the
+     real icon/content/image-plus glyph (not a plain placeholder square). Compact variant
+     (used inline above a smaller prompt box, e.g. Reel/Story's scene cards) is the exact
+     same chip — Figma has no separate compact spec — just without align-self:flex-start
+     since it already sits alone at the top of its own box. */
+  .ref-image-add, .ref-image-add-compact{display:flex; align-items:center; justify-content:center; gap:6px; background:var(--color-neutral-100); border-radius:var(--radius-lg); padding:var(--spacing-xl) var(--spacing-md); cursor:pointer; color:var(--color-neutral-450); font-size:13px; font-weight:500; font-family:var(--font-family-text);}
+  .ref-image-add{align-self:flex-start;}
+  .ref-image-add:hover, .ref-image-add-compact:hover{background:var(--color-neutral-150);}
+  .ref-image-add .ref-add-icon, .ref-image-add-compact .ref-add-icon{width:20px; height:20px; flex-shrink:0; display:block;}
+  /* Reel/Short & Story Video Brief & Style prompt box: Reference vs first/last frame are
+     mutually exclusive attachment modes — the inactive option greys out instead of disappearing,
+     so it's clear it's still there once the other is removed. */
+  .ref-image-add.disabled, .ref-image-add-compact.disabled{opacity:.4; cursor:not-allowed; pointer-events:none;}
 
   /* -- Character section (Brief & Style) — .char-section/.char-panel/.char-filters/.char-grid/
      .char-card + Filter Chip now in components/ai-social-media/character-card.css + filter-chip.css. -- */
@@ -479,6 +495,24 @@
   #stageAreaCarousel .stage-tab .check{color:var(--color-badge-green-text); font-weight:700;}
   #stageAreaCarousel .stage-body-inner{max-width:960px; margin:0 auto; width:100%; flex:1; min-height:0; display:flex; flex-direction:column;}
   #stageAreaCarousel .stage-sub-text{font-size:12px; color:var(--color-neutral-500); margin:0 0 24px;}
+
+  /* Brand kit on — Figma 7606:230710. Keep the shared summary component. */
+  #stageAreaImage #subDraft .stage-body-inner{max-width:calc(var(--spacing-7xl) * 16);}
+  #brandKitSummary{flex-wrap:wrap; gap:var(--spacing-xl); padding:var(--spacing-lg);}
+  #brandKitSummary .brand-kit-summary-col{flex-basis:calc(var(--spacing-7xl) * 4); gap:var(--spacing-md);}
+  #brandKitSummary .brand-kit-fonts{display:flex; flex-wrap:wrap; gap:var(--spacing-sm);}
+  #brandKitSummary .brand-kit-font-row{max-width:100%; box-sizing:border-box; flex-wrap:wrap; gap:var(--spacing-sm);}
+  #brandKitSummary .brand-kit-font-tag,
+  #brandKitSummary .brand-kit-font-meta{line-height:var(--line-height-text-xs);}
+  #brandKitSummary .brand-kit-fonts-title{min-height:var(--line-height-text-2xl); display:flex; align-items:center;}
+
+  /* Image post · Draft — Figma 7606:323920; reuse Controls / Setting Chip. */
+  #stageAreaImage:has(#tabDraft.active) .stage-tabs{margin-bottom:var(--spacing-2);}
+  #stageAreaImage #settingsBarImage{position:static; flex-shrink:0; gap:var(--spacing-md); margin-top:var(--spacing-2xl);}
+  #stageAreaImage #subDraft .stage-body{padding-top:var(--spacing-xl);}
+  #settingsBarImage .character-avatar{display:flex; align-items:center; justify-content:center; width:var(--spacing-lg); height:var(--spacing-lg); border-radius:var(--radius-full); background:var(--color-neutral-400);}
+  #settingsBarImage .character-avatar img{width:var(--spacing-md); height:var(--spacing-md);}
+  #stageAreaImage:has(#tabDraft.active) #brandSettingChipImage{display:none !important;}
 
   /* ---- Generate — brand kit summary + baked-in warning + draft-section spacing ----
      Figma: Image post · Draft — Brand kit on (node 6236-205), stage-body-inner (6236-267). ---- */
@@ -851,7 +885,7 @@
   .img-lightbox-pill.active{background:var(--color-neutral-900); color:var(--color-neutral-0);}
 
   /* =====================================================================
-     REEL/SHORT (Script/Timeline/Video) — ported from
+     REEL/SHORT (Script/Video) — ported from
      new-content-brief-to-generate.html as a third native content type,
      alongside Image post and Carousel above. Only genuinely Reel-specific
      classes are included here — anything already covered by the shared
@@ -1025,13 +1059,23 @@
   .setting-popover-footer{margin-top:8px; padding-top:8px; border-top:1px solid var(--color-neutral-200); font-size:11.5px; color:var(--color-neutral-600); text-align:center; cursor:pointer;}
   .setting-popover-footer:hover{color:var(--color-neutral-900);}
 
-  #subReelScript, #subReelTimeline, #subReelVideo{display:flex; flex-direction:column; flex:1; min-height:0;}
+  #subReelScript, #subReelVideo{display:flex; flex-direction:column; flex:1; min-height:0;}
   #stageAreaReel .stage-body{flex:1; min-height:0; padding:32px 28px 14px; overflow-y:auto; display:flex; flex-direction:column;}
   /* Figma's Script screen (5457-111240) has no button in the right-hand panel — "Continue"
      lives only in the bottom genActionBarV3 feedback bar. Kept in the DOM (not removed)
      since syncGenActionBarV3() reads this button's text/disabled/onclick to mirror it into
      that bottom bar; it's just not meant to be seen here too. */
-  #scriptPanel .stage-cta-row{display:none;}
+  #scriptPanel .stage-cta-row{display:flex; flex-wrap:wrap; justify-content:flex-start; gap:var(--spacing-sm); margin-top:var(--spacing-md);}
+  /* Script screen's first-time generation — the full script box, scene cards, labels and
+     reference chips render immediately as normal; only the text-filling areas (full script,
+     each clip's image prompt + narration) mask behind a spinner while runBriefToScript()'s
+     chat loading card is up, via showFieldSpinner()/hideFieldSpinners(). */
+  .field-fill-wrap{position:relative;}
+  .field-fill-spinner{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:var(--color-neutral-0); border-radius:var(--radius-lg); z-index:2;}
+  .field-fill-spinner .chat-loading-spinner{margin-top:0;}
+  #reelScriptSyncStatus{margin:0; font-size:var(--font-size-text-xs); line-height:var(--line-height-text-xs);}
+  .voice-script-text[aria-invalid="true"]{border-color:var(--color-error-text);}
+  .voice-script-text[aria-invalid="true"] + .scene-guide{color:var(--color-error-text);}
   #stageAreaReel .stage-body-inner{max-width:960px; margin:0 auto; width:100%; flex:1; min-height:0; display:flex; flex-direction:column;}
   #stageAreaReel .stage-sub-text{font-size:12px; color:var(--color-neutral-500); margin:0 0 6px;}
 
@@ -1088,54 +1132,37 @@
   .detail-import-empty-note{font-size:11.5px; color:var(--color-neutral-500);}
   .detail-import-empty-note a{color:var(--color-brand-primary); font-weight:600; cursor:pointer; text-decoration:underline;}
 
-  /* ---- Timeline stage: canvas grid + selected-scene editor panel ----
-     .scene-tile* base rules now come from components/ai-social-media/scene-tile.css
+  /* ---- Video stage: canvas grid + selected-scene editor panel ----
+     .scene-tile* and .video-tile* base rules come from components/ai-social-media/scene-tile.css
      (linked in <head>) — this used to be a local, not-quite-matching copy (blue
      selection ring instead of the neutral-400->500 border rule every other card in
      this product uses, translucent-blur badge instead of Figma's solid neutral-700,
      6px badge radius instead of 4px). Only the grid-specific sizing that scene-tile.css
      can't know about (fitting a responsive 2-col grid instead of a fixed 303px card)
-     stays local. */
+     stays local. The Script stage's own scene cards (#sceneEditorPanel) don't need this
+     canvas grid at all — they're a plain vertical list, no thumbnail preview. */
   .timeline-stage{display:flex; gap:20px; max-width:960px; flex:1; min-height:0;}
   .timeline-canvas{flex:1; min-width:0; min-height:0; display:flex; flex-direction:column;}
-  .scene-grid{display:grid; grid-template-columns:1fr 1fr; grid-auto-rows:min-content; gap:14px; align-content:start; justify-items:start; flex:1; min-height:0; overflow-y:auto;}
-  .scene-grid .scene-tile-preview{max-height:294px;}
-  .scene-grid.single-row .scene-tile-preview{max-height:none;}
   .spinner-mini{display:none; width:26px; height:26px; border-radius:999px; border:2.5px solid rgba(255,255,255,0.35); border-top-color:#fff; animation:spin .8s linear infinite; position:absolute; top:50%; left:50%; margin:-13px 0 0 -13px;}
 
   .scene-editor-col{width:320px; flex-shrink:0; display:flex; flex-direction:column;}
-  .scene-editor-panel{width:100%; margin-bottom:14px;}
+  /* Script's #sceneEditorPanel shows every clip's card at once (no nav), so it needs the same
+     stacked-card gap convention as Carousel's .script-card-list — the Video stage still shows
+     one .video-scene-editor at a time so this doesn't affect it. */
+  .scene-editor-panel{width:100%; display:flex; flex-direction:column; gap:10px; margin-bottom:14px;}
+  #stageAreaReel .draft-section{margin:24px 0 4px;}
+  #stageAreaReel .draft-section-label{font-size:13px; font-weight:700; color:var(--color-neutral-900); margin-bottom:2px;}
+  #stageAreaReel .draft-section-hint{font-size:12px; color:var(--color-neutral-500); margin:0 0 10px;}
   .scene-card{border:1px solid var(--color-neutral-300); border-radius:10px; padding:16px;}
-  .scene-time{font-size:11px; font-weight:600; color:var(--color-neutral-500); display:flex; align-items:center; gap:6px;}
-  .scene-time .dot{width:7px; height:7px; border-radius:999px; background:var(--color-brand-primary);}
+  /* Card chrome for each clip now matches Carousel's own .carousel-card-block (same white
+     card, header row, title style) instead of a Reel-only shape — see
+     components/ai-social-media/carousel-card-block.css. Only this small time badge next to
+     the title is Reel-specific (Carousel's cards have no per-card time range). */
+  .scene-time-badge{font-size:12px; font-weight:500; color:var(--color-neutral-500);}
   .scene-guide{font-size:10.5px; color:var(--color-neutral-500); margin-bottom:12px;}
-  /* Matches the real "Voice Section" Figma component (Components section, node 7148-115284)
-     exactly — bg white, border neutral-300, radius-xl(12), padding 12/16, "Voice" label with
-     no icon, Editor/Segmented-Toggle-style mode toggle. Interactive bits (accordion caching,
-     per-scene preview state) stay local JS — the static Figma export has no such states. */
-  .voice-section{background:#fff; border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl); padding:12px 16px; margin-bottom:16px; flex-shrink:0;}
-  .voice-section-header{display:flex; align-items:center; justify-content:space-between; gap:12px;}
-  .voice-section-header .scene-desc-label-reel{margin-bottom:0;}
-  .voice-label{font-size:14px; font-weight:600; color:var(--color-neutral-900); font-family:var(--font-family-text);}
-  .voice-section-header-right{display:flex; align-items:center; gap:12px; flex-shrink:0;}
-  .voice-mode-toggle{display:flex; background:var(--color-neutral-100); border-radius:var(--radius-lg); padding:3px; flex-shrink:0;}
-  .voice-mode-btn{font-size:13px; font-weight:500; line-height:20px; color:var(--color-neutral-500); padding:7px 12px; border-radius:var(--radius-lg); cursor:pointer; font-family:var(--font-family-text);}
-  .voice-mode-btn.active{background:#fff; color:var(--color-neutral-900); font-weight:600;}
-  .voice-section-collapse-btn{width:20px; height:20px; border:none; background:transparent; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:transform .15s;}
-  .voice-section-collapse-btn img{width:20px; height:20px; display:block;}
-  /* Figma shows chevron-down while collapsed, chevron-up while expanded — same asset,
-     rotated 180° when expanded, rather than swapping the icon source. */
-  .voice-section:not(.collapsed) .voice-section-collapse-btn{transform:rotate(180deg);}
-  .voice-section .voice-cost-summary, .voice-section .voice-section-body{margin-top:16px;}
-  .voice-section.collapsed .voice-cost-summary, .voice-section.collapsed .voice-section-body{display:none;}
-  .voice-section-body{display:flex; flex-direction:column; gap:10px;}
-  .voice-section-body > .voice-preview-btn{width:100%; justify-content:center;}
-  .voice-cost-summary{font-size:10.5px; color:var(--color-neutral-500); line-height:1.45; margin:-4px 0 12px;}
-  .voice-cost-summary b{color:var(--color-neutral-700); font-weight:700;}
   /* base look now from voice-accordion-row.css — resize/min-height are v3-only (the
      static Figma box isn't user-resizable, this one needs to be for longer scripts). */
-  .voice-script-text{resize:vertical; min-height:44px;}
-  .voice-script-text.whole{min-height:72px;}
+  .voice-script-text{resize:vertical; min-height:40px;}
   .voice-preview-btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; border:1px solid var(--color-neutral-400); background:#fff; border-radius:var(--radius-lg); padding:9px 14px; font-size:13px; font-weight:600; color:var(--color-neutral-900); cursor:pointer; font-family:var(--font-family-text); transition:border-color .15s, color .15s; flex-shrink:0;}
   .voice-preview-btn:hover{border-color:var(--color-neutral-450);}
   .voice-preview-btn .vp-cost{color:var(--color-neutral-500); font-weight:700;}
@@ -1144,32 +1171,33 @@
   .voice-preview-btn.stale{border-color:var(--color-warning-text); color:var(--color-warning-text);}
   .voice-preview-btn.loading, .voice-preview-btn.playing{border-color:var(--color-brand-primary-mid); color:var(--color-brand-primary); cursor:default;}
   .voice-preview-btn:disabled{cursor:default;}
+  .voice-preview-btn.compact{padding:5px 10px; font-size:12px; gap:5px;}
   .vp-spinner{width:9px; height:9px; border-radius:999px; border:2px solid var(--color-neutral-300); border-top-color:var(--color-brand-primary); display:inline-block; animation:spin .7s linear infinite;}
 
-  /* ---- Split-by-scene accordion ----
-     Base row (.voice-accordion-row, header, time/summary/caret text, expanded body
-     padding) now comes from components/ai-social-media/voice-accordion-row.css. Local
-     rules here are only the pieces that component genuinely can't know about: the list
-     wrapper, the ready/pending status dot (a live-generation-state indicator with no
-     equivalent in the static Figma export), the collapsed/expanded body toggle (Figma
-     shows two separate static frames for this; a real accordion needs actual show/hide),
-     and the word-count-guide+Preview-button row inside the body (v3 puts them side by
-     side to save vertical space — Figma's static capture only showed the Preview button
-     stacked full-width below the script box, no guide text next to it). */
-  .voice-acc-list{display:flex; flex-direction:column; gap:6px;}
-  .voice-acc-status{flex-shrink:0; font-size:11px; line-height:1;}
-  .voice-acc-status.ready{color:var(--color-badge-green-text);}
-  .voice-acc-status.pending{color:var(--color-warning-text);}
-  .voice-accordion-row .voice-acc-body{display:none;}
-  .voice-accordion-row.expanded .voice-acc-body{display:flex;}
-  .voice-acc-bottom{display:flex; align-items:center; justify-content:space-between; gap:10px;}
-  .voice-acc-bottom .scene-guide{margin-bottom:0; flex:1; min-width:0;}
-  .scene-desc-block{margin-bottom:12px;}
+  /* ---- Narration — merged directly into each scene card (see renderSceneNarrationHTML())
+     instead of a separate "Voice" card with its own accordion list, since the image prompt
+     and the narration are both properties of the same clip. A thin top border is enough to
+     separate the two fields within one card; .voice-script-text's own box styling comes
+     from the real voice-accordion-row.css component, just without that component's
+     collapsed/expanded row chrome (there's nothing left to collapse — one field per clip). */
+  /* .carousel-card-block uses align-items:flex-start, so a direct child needs its own
+     width:100% to fill the card — same reason its own .script-card-msg declares it —
+     otherwise it just shrinks to its content's width instead of the card's. */
+  .scene-narration-block{width:100%; box-sizing:border-box; border-top:1px solid var(--color-neutral-200); padding-top:12px; display:flex; flex-direction:column; gap:6px;}
+  .scene-narration-head{display:flex; align-items:center; justify-content:space-between; gap:8px;}
+  .scene-narration-block .scene-guide{margin-bottom:0;}
+
+  .scene-desc-block{width:100%; box-sizing:border-box; margin-bottom:0;}
   .scene-desc-label-reel{font-size:10.5px; font-weight:600; color:var(--color-neutral-500); display:flex; align-items:center; gap:4px; margin-bottom:6px;}
   .scene-desc-box{border:1px solid var(--color-neutral-300); border-radius:7px; padding:10px 12px 32px; display:flex; flex-direction:column; gap:8px; position:relative; transition:border-color .15s, box-shadow .15s;}
   .scene-desc-box:focus-within{border-color:var(--color-brand-primary); box-shadow:0 0 0 3px rgba(79,109,230,.12);}
   .scene-desc{width:100%; border:none; padding:0; font-size:13px; font-family:var(--font-family-text); color:var(--color-neutral-900); line-height:1.5; resize:vertical; min-height:56px; background:transparent; outline:none; cursor:text;}
   .scene-note{font-size:10.5px; color:var(--color-neutral-500);}
+  /* Script now stacks every clip's card at once (Video still shows one at a time), so a
+     shorter box keeps the list from feeling oversized — scoped to this stage only, doesn't
+     touch the shared .scene-desc-box used by Image/Carousel's own prompt boxes elsewhere. */
+  #stageAreaReel .scene-desc-box{padding:8px 12px;}
+  #stageAreaReel .scene-desc{min-height:36px;}
   .timeline-cta{display:flex; flex-direction:column; align-items:stretch; gap:8px; margin-top:14px; flex-shrink:0;}
   .timeline-cta .meta-text{text-align:left; line-height:1.4;}
   .timeline-cta .btn-dark{width:100%;}
@@ -1177,7 +1205,7 @@
   .scene-prompt-text{width:100%; border:1px solid var(--color-neutral-300); border-radius:7px; padding:10px 12px; font-size:12.5px; font-family:var(--font-family-text); color:var(--color-neutral-900); line-height:1.5; resize:vertical; min-height:70px; background:var(--color-neutral-50);}
   .scene-prompt-text:focus{background:#fff; border-color:var(--color-brand-primary); outline:none;}
 
-  /* ---- Video stage: per-scene video generation + free combine (mirrors Timeline's layout) ---- */
+  /* ---- Video stage: per-scene video generation + free combine ---- */
   .video-grid{display:grid; grid-template-columns:1fr 1fr; grid-auto-rows:min-content; gap:14px; align-content:start; justify-items:start; flex:1; min-height:0; overflow-y:auto;}
   .video-tile{width:100%; max-width:303px; border:1.5px solid var(--color-neutral-300); border-radius:12px; overflow:hidden; cursor:pointer; background:#fff; transition:border-color 0.15s, box-shadow 0.15s;}
   .video-tile:hover{border-color:var(--color-neutral-450);}
@@ -1200,12 +1228,11 @@
 
   .video-editor-panel{width:100%; display:flex; flex-direction:column; gap:8px;}
   /* Figma: Reel/Short · Timeline - Video (node 6077-107146), scene-editor-col — the "Video
-     prompt" box is the same real .scene-card/.scene-desc-box pattern Timeline's own "Scene &
-     character action description" uses, with the same small Regenerate pill the Image flow's
-     Versions/Preview screens use (.img-prompt-regen-btn). The time/scene-range caption above
-     the card is a real product need the static Figma capture doesn't show — kept as a plain
-     label outside the bordered card rather than folded into it. */
-  .video-scene-header-row{margin-bottom:8px;}
+     prompt" box is the same real .scene-card/.scene-desc-box pattern the Script stage's own
+     "Scene & character action description" uses, with the same small Regenerate pill the Image flow's
+     Versions/Preview screens use (.img-prompt-regen-btn). The clip/time caption is a real
+     product need the static Figma capture doesn't show — now the .carousel-card-block-title,
+     same as Script's own cards (see .scene-time-badge above). */
 
   .combine-stale-banner{display:none; flex-direction:column; align-items:stretch; gap:8px; background:var(--color-brand-primary-light); border:1px solid var(--color-brand-primary-mid); border-radius:10px; padding:10px 14px; margin-top:14px; font-size:12px; color:var(--color-neutral-900); flex-shrink:0;}
   .combine-stale-banner .btn-secondary{width:100%;}
@@ -1804,10 +1831,10 @@
             <div class="stage-tab locked" id="tabPreviewImage" onclick="showSub('previewImage')">Preview</div>
           </div>
 
-          <div class="settings-bar" id="settingsBarImage">
-            <div class="setting-chip"><div class="chip-ic ratio-box-ic"></div> <b>Image post</b></div>
-            <div class="setting-chip"><div class="chip-ic ratio-box-ic"></div> <b id="genSettingRatioImage">4:5</b></div>
-            <div class="setting-chip">🌐 <b>English</b></div>
+          <div class="settings-bar" id="settingsBarImage" aria-label="Image post settings">
+            <div class="setting-chip"><div class="chip-ic"><img id="genSettingRatioIconImage" src="../../../../components/ai-social-media/icons/spec-4-5.svg" alt=""></div><b id="genSettingRatioImage">4:5</b></div>
+            <div class="setting-chip"><div class="chip-ic"><img src="../../../../components/ai-social-media/icons/spec-versions.svg" alt=""></div><b id="genSettingVersionsImage">2 Versions</b></div>
+            <div class="setting-chip" id="genSettingCharacterChipImage"><span class="character-avatar"><img src="../../../../components/ai-social-media/icons/menu-image.svg" alt=""></span><span>Character</span><span class="dot-sep" aria-hidden="true"></span><b id="genSettingCharacterImage">Elena</b></div>
             <div class="setting-chip brand-chip-setting" id="brandSettingChipImage" style="display:none;">🏷 Brand: <b>Formee Express</b></div>
           </div>
 
@@ -1827,7 +1854,7 @@
                 <textarea class="visual-concept-text" id="visualConceptText" placeholder="Not drafted yet — I'll work this out once the copy is confirmed." oninput="onVisualConceptEdited()"></textarea>
 
                 <div class="brand-kit-row">
-                  <button type="button" class="field-switch" id="brandKitSwitch" onclick="toggleBrandKit()"><span class="knob"></span></button>
+                  <button type="button" class="field-switch" id="brandKitSwitch" role="switch" aria-label="Use brand kit" aria-checked="false" onclick="toggleBrandKit()"><span class="knob"></span></button>
                   <span class="brand-kit-label">Use brand kit</span>
                 </div>
                 <div class="brand-kit-summary" id="brandKitSummary">
@@ -2003,7 +2030,7 @@
 
               <div class="script-global-brand" id="scriptGlobalBrand">
                 <div class="brand-kit-row" style="margin-top:0;">
-                  <button type="button" class="field-switch" id="globalBrandKitSwitch" onclick="toggleGlobalBrandKit()"><span class="knob"></span></button>
+                  <button type="button" class="field-switch" id="globalBrandKitSwitch" role="switch" aria-label="Use brand kit" aria-checked="false" onclick="toggleGlobalBrandKit()"><span class="knob"></span></button>
                   <span class="brand-kit-label">Use brand kit</span>
                 </div>
                 <!-- Same card as the Image flow's Draft screen (identical markup/classes — see
@@ -2142,7 +2169,6 @@
         <div class="stage-area" id="stageAreaReel" style="display:none;">
           <div class="stage-tabs">
             <div class="stage-tab" id="tabReelScript" onclick="showSub('reelScript')">Script</div>
-            <div class="stage-tab locked" id="tabReelTimeline" onclick="showSub('reelTimeline')">Timeline</div>
             <div class="stage-tab locked" id="tabReelVideo" onclick="showSub('reelVideo')">Video</div>
           </div>
 
@@ -2201,7 +2227,12 @@
             <div class="setting-chip brand-chip-setting" id="brandSettingChip" style="display:none;">🏷 Brand: <b>Formee Express</b></div>
           </div>
 
-          <!-- SUB-STAGE: Script -->
+          <!-- SUB-STAGE: Script (also holds the per-clip scene description + narration, which
+               used to live on their own Timeline tab — merged in here so both can be set up in
+               one pass right after the script is confirmed; see reelConfirmScript()/
+               renderReelSceneEditors(). No thumbnail canvas any more — this prototype doesn't
+               render scene thumbnails, so a plain list of clip cards replaces the old
+               canvas+nav pairing.) -->
           <div class="stage-sub" id="subReelScript">
             <div class="stage-body">
             <div class="stage-body-inner">
@@ -2209,63 +2240,39 @@
                 <div class="ai-heading" style="margin-bottom:16px;">
                   <div class="ai-heading-text">
                     <p class="ai-heading-title" id="scriptLabel">Full script</p>
-                    <p class="ai-heading-sub">Confirm the full script first. You'll then break it down and refine it by time segment.</p>
+                    <p class="ai-heading-sub">Your script and clips are ready to edit. Script changes automatically update clip narration and untouched image prompts.</p>
                   </div>
                 </div>
                 <div class="ai-input-wrap">
-                  <textarea class="ai-input script-text" id="fullScript" oninput="validateScriptLength()"></textarea>
+                  <div class="field-fill-wrap" id="fullScriptFieldWrap">
+                    <textarea class="ai-input script-text" id="fullScript" oninput="reelOnScriptInput()"></textarea>
+                  </div>
                   <div class="script-limit-row" id="scriptLimitRow">
                     <span class="script-limit-error" id="scriptLimitError"></span>
                     <span class="script-limit-count" id="scriptLimitCount"></span>
                   </div>
                 </div>
 
+                <!-- Re-splits the scenes below from whatever's currently in the script field —
+                     useful after typing a custom script by hand instead of using the chat
+                     draft's "Use this script" (which already applies this as part of its own
+                     click). Scenes/voice are always visible (see #reelSceneSection below), not
+                     gated behind this. -->
                 <div class="stage-cta-row">
-                  <button class="btn btn-dark" onclick="reelConfirmScript()">Continue to Timeline</button>
+                  <p class="scene-note" id="reelScriptSyncStatus" role="status" aria-live="polite">Clips are up to date.</p>
                 </div>
-              </div>
-            </div>
-            </div>
-          </div>
 
-          <!-- SUB-STAGE: Timeline (confirms per-segment dialogue + scene description only — video
-               generation happens directly on Video, grouped into 8s clips; see subReelVideo below) -->
-          <div class="stage-sub" id="subReelTimeline" style="display:none;">
-            <div class="stage-body">
-            <div class="stage-body-inner">
-              <h2 class="stage-title">Timeline</h2>
-              <p class="stage-sub-text" id="timelineStageSub">Confirm the dialogue and scene description for each segment, then generate the video.</p>
-
-              <div class="timeline-stage">
-                <div class="timeline-canvas">
-                  <div class="scene-grid" id="sceneGrid"></div>
-                </div>
-                <div class="scene-editor-col">
-                  <div class="scene-nav" id="segmentNav"></div>
-                  <div class="scene-editor-panel" id="sceneEditorPanel"></div>
-                  <div class="voice-section" id="voiceSection_tl">
-                    <div class="voice-section-header">
-                      <label class="voice-label">Voice</label>
-                      <div class="voice-section-header-right">
-                        <div class="voice-mode-toggle" id="voiceModeToggle_tl">
-                          <div class="voice-mode-btn" data-mode="whole" onclick="setVoiceMode('whole')">Whole take</div>
-                          <div class="voice-mode-btn" data-mode="split" onclick="setVoiceMode('split')">Split by scene</div>
-                        </div>
-                        <button class="voice-section-collapse-btn" onclick="toggleVoiceSectionCollapse('tl')" title="Collapse"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></button>
-                      </div>
-                    </div>
-                    <div class="voice-cost-summary" id="voiceCostSummary_tl"></div>
-                    <div class="voice-section-body" id="voiceSectionBody_tl"></div>
+                <div id="reelSceneSection">
+                  <div class="draft-section">
+                    <div class="draft-section-label">Scenes</div>
+                    <p class="draft-section-hint" id="reelSceneSectionSub"></p>
                   </div>
-                  <!-- Hidden — per Figma, "Generate video" doesn't live in this right-side work
-                       area (it's already offered as a chat CTA — see appendChatCta('Generate
-                       Video', ...) below — and in the persistent bottom action bar); the only
-                       page CTA Figma actually draws inside a Generate work area is Carousel
-                       Preview's Regenerate All/Regenerate Card N (node 6566-115391). Kept in the
-                       DOM as the hidden source syncGenActionBarV3() mirrors text/onclick from. -->
-                  <div class="timeline-cta" style="display:none;">
-                    <button class="btn btn-dark" id="timelineCtaBtn" onclick="proceedToStudio()">Generate video</button>
-                    <span class="meta-text" id="timelineCtaMeta"></span>
+                  <div class="scene-editor-panel" id="sceneEditorPanel"></div>
+                  <!-- Hidden — mirrors the "Generate Video" chat CTA (appendChatCta in
+                       reelConfirmScript()) for syncGenActionBarV3()'s bottom action bar, same
+                       pattern as every other Generate sub-stage's forward-progress action. -->
+                  <div style="display:none;">
+                    <button class="btn btn-dark" id="reelGenerateVideoBtn" onclick="proceedToStudio()">Generate video</button>
                   </div>
                 </div>
               </div>
@@ -2278,7 +2285,7 @@
             <div class="stage-body">
             <div class="stage-body-inner">
               <h2 class="stage-title">Video</h2>
-              <p class="stage-sub-text" id="studioStageSub">Generate an 8-second video clip for each part of the video, then combine them into the final cut. The narration audio from Timeline carries over automatically.</p>
+              <p class="stage-sub-text" id="studioStageSub">Generate an 8-second video clip for each part of the video, then combine them into the final cut. The narration audio from Script carries over automatically.</p>
 
               <div class="timeline-stage">
                 <div class="timeline-canvas">
@@ -2287,20 +2294,6 @@
                 <div class="scene-editor-col">
                   <div class="scene-nav" id="videoSegmentNav"></div>
                   <div class="video-editor-panel" id="videoEditorPanel"></div>
-                  <div class="voice-section" id="voiceSection_vid">
-                    <div class="voice-section-header">
-                      <label class="voice-label">Voice</label>
-                      <div class="voice-section-header-right">
-                        <div class="voice-mode-toggle" id="voiceModeToggle_vid">
-                          <div class="voice-mode-btn" data-mode="whole" onclick="setVoiceMode('whole')">Whole take</div>
-                          <div class="voice-mode-btn" data-mode="split" onclick="setVoiceMode('split')">Split by scene</div>
-                        </div>
-                        <button class="voice-section-collapse-btn" onclick="toggleVoiceSectionCollapse('vid')" title="Collapse"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></button>
-                      </div>
-                    </div>
-                    <div class="voice-cost-summary" id="voiceCostSummary_vid"></div>
-                    <div class="voice-section-body" id="voiceSectionBody_vid"></div>
-                  </div>
                   <!-- Informational notice only — the actual "Recombine" action is the same
                        mirrored button as everything below, reachable from the bottom action bar. -->
                   <div class="combine-stale-banner" id="combineStaleBanner" style="display:none;">
@@ -2341,7 +2334,7 @@
                       </div>
                       <div class="video-summary-card-divider"></div>
                       <div id="combineSummarySpecs" style="display:contents;"></div>
-                      <p class="combine-audio-note"><img src="../../../../components/ai-social-media/icons/nav-voices.svg" class="icon-inline" alt=""> Narration from Timeline is already mixed in — no extra steps needed.</p>
+                      <p class="combine-audio-note"><img src="../../../../components/ai-social-media/icons/nav-voices.svg" class="icon-inline" alt=""> Narration from Script is already mixed in — no extra steps needed.</p>
                     </div>
                     <!-- Hidden — per Figma, "Continue to editing"/"Skip to publish" don't live in
                          this right-side work area (it's already offered as a chat CTA — see
@@ -2456,7 +2449,16 @@
         <p class="pub-subtitle">Describe your idea — AI handles everything else</p>
       </div>
 
-      <div class="pub-block">
+      <div class="pub-block" id="pubDestinationsBlock">
+        <label class="pub-block-label">Destinations</label>
+        <p class="pub-block-sub" id="pubDestSubtitle">Choose where and how you want to publish.</p>
+        <div class="pub-dest-table" id="pubDestinations"></div>
+      </div>
+
+      <!-- Story Video has no caption (see populatePublishView()'s __isStoryVideo check) — the
+           block stays in the DOM, just hidden, so pubCaption's value/handlers stay valid for
+           the functions that still read it (composePubCaption() etc. just see an empty string). -->
+      <div class="pub-block" id="pubCaptionBlock">
         <label class="pub-block-label">Caption</label>
         <div class="pub-card">
           <div class="pub-caption-actions-row">
@@ -2520,12 +2522,6 @@
           </div>
           <div class="pub-caption-per-platform" id="pubCaptionPerPlatform" style="display:none;"></div>
         </div>
-      </div>
-
-      <div class="pub-block">
-        <label class="pub-block-label">Destinations</label>
-        <p class="pub-block-sub" id="pubDestSubtitle">Choose where and how you want to publish.</p>
-        <div class="pub-dest-table" id="pubDestinations"></div>
       </div>
 
       <div class="pub-block">
@@ -2994,20 +2990,22 @@ function imgApplyBrandMode(mode){
     empty.style.display = 'none';
     chip.style.display = 'flex';
   } else {
-    brandSwitch.classList.add('disabled');
+    brandSwitch.classList.remove('disabled');
     brandKitOn = false;
     brandSwitch.classList.remove('on');
     summary.style.display = 'none';
     empty.style.display = 'block';
     chip.style.display = 'none';
   }
+  brandSwitch.setAttribute('aria-checked', String(brandKitOn));
   updateVisualConceptPrompt();
 }
 function toggleBrandKit(){
-  if(window.__brandMode !== 'set') return; // disabled state — nothing to toggle until brand is set up
   brandKitOn = !brandKitOn;
   document.getElementById('brandKitSwitch').classList.toggle('on', brandKitOn);
   document.getElementById('brandKitSummary').style.display = brandKitOn ? 'flex' : 'none';
+  document.getElementById('brandKitEmpty').style.display = !brandKitOn && window.__brandMode !== 'set' ? 'block' : 'none';
+  document.getElementById('brandKitSwitch').setAttribute('aria-checked', String(brandKitOn));
   updateVisualConceptPrompt();
 }
 function imgGoToBrandSetup(){
@@ -3394,11 +3392,11 @@ function imgRenderReferenceImages(){
     <div class="ref-image-chip">
       <div class="thumb"></div>
       <span class="label">Image ${n}</span>
-      <span class="remove" onclick="imgRemoveReferenceImage(${n})"><img src="../../../../components/ai-social-media/icons/close-x.svg" class="icon-inline" alt=""></span>
+      <button type="button" class="remove" onclick="event.stopPropagation(); imgRemoveReferenceImage(${n})" aria-label="Remove reference image ${n}" title="Remove reference"><img src="../../../../components/ai-social-media/icons/controls/chip-close-x.svg" class="icon-inline" alt=""></button>
     </div>
   `).join('');
   document.getElementById('referenceImagesRowImage').innerHTML = chips + `
-    <div class="ref-image-add" onclick="imgAddReferenceImage()"><div class="ic"></div><span>+ Reference</span></div>
+    <div class="ref-image-add" onclick="imgAddReferenceImage()"><img class="ref-add-icon" src="../../../../components/ai-social-media/icons/content-image-plus.svg" alt=""><span>Reference</span></div>
   `;
 }
 imgRenderReferenceImages();
@@ -3444,6 +3442,9 @@ function imgUpdateBriefMeta(){
   const credits = n * CREDIT_PER_VERSION;
   document.getElementById('briefMetaTextImage').textContent = `Image post · ${ratio} · ${n} version${n > 1 ? 's' : ''}`;
   document.getElementById('genSettingRatioImage').textContent = ratio;
+  document.getElementById('genSettingVersionsImage').textContent = `${n} Version${n > 1 ? 's' : ''}`;
+  const ratioIcons = {'4:5': '../../../../components/ai-social-media/icons/spec-4-5.svg', '9:16': '../../../../components/ai-social-media/icons/spec-9-16.svg', '1:1': '../../../../components/ai-social-media/icons/spec-1-1.svg'};
+  document.getElementById('genSettingRatioIconImage').src = ratioIcons[ratio];
   document.getElementById('versionResultSub').textContent = `Image post · ${ratio} · English`;
   document.getElementById('creditEstValue').innerHTML = `~${credits} credits <span class="credit-sub">(${n} version${n > 1 ? 's' : ''})</span>`;
   syncGenActionBarV3();
@@ -3453,6 +3454,7 @@ function imgUpdateBriefMeta(){
 function imgSetCharMode(mode){
   document.querySelectorAll('#charModeToggleImage .seg-chip').forEach(c => c.classList.toggle('active', c.dataset.mode === mode));
   document.getElementById('charWithSectionImage').style.display = mode === 'with' ? 'block' : 'none';
+  document.getElementById('genSettingCharacterChipImage').style.display = mode === 'with' ? '' : 'none';
 }
 // Clicking a card selects it (like a radio button, at most one per grid) — but clicking
 // the already-selected card again deselects it instead of just re-selecting the same one.
@@ -3476,6 +3478,8 @@ function scrollCharGrid(btn){
 const CHAR_WITH_STYLES_IMAGE = { elena: "Elena's styles" };
 function imgSelectChar(el, charId){
   const nowSelected = toggleCharCardSelect(el, '#charGridImage');
+  document.getElementById('genSettingCharacterChipImage').style.display = nowSelected ? '' : 'none';
+  if(nowSelected) document.getElementById('genSettingCharacterImage').textContent = el.querySelector('.name').textContent;
   const panel = document.getElementById('charStylesPanelImage');
   const label = nowSelected ? CHAR_WITH_STYLES_IMAGE[charId] : null;
   panel.classList.toggle('show', !!label);
@@ -3561,11 +3565,11 @@ function carRenderReferenceImages(){
     <div class="ref-image-chip">
       <div class="thumb"></div>
       <span class="label">Image ${n}</span>
-      <span class="remove" onclick="carRemoveReferenceImage(${n})"><img src="../../../../components/ai-social-media/icons/close-x.svg" class="icon-inline" alt=""></span>
+      <button type="button" class="remove" onclick="event.stopPropagation(); carRemoveReferenceImage(${n})" aria-label="Remove reference image ${n}" title="Remove reference"><img src="../../../../components/ai-social-media/icons/controls/chip-close-x.svg" class="icon-inline" alt=""></button>
     </div>
   `).join('');
   document.getElementById('referenceImagesRowCarousel').innerHTML = chips + `
-    <div class="ref-image-add" onclick="carAddReferenceImage()"><div class="ic"></div><span>+ Reference</span></div>
+    <div class="ref-image-add" onclick="carAddReferenceImage()"><img class="ref-add-icon" src="../../../../components/ai-social-media/icons/content-image-plus.svg" alt=""><span>Reference</span></div>
   `;
 }
 carRenderReferenceImages();
@@ -3820,7 +3824,7 @@ function confirmScript(){
 
 // =====================================================================
 // STORYBOARD STAGE — canvas grid on the left (mirrors the video flow's
-// Timeline: each tile starts as a plain placeholder, then generating,
+// Video stage: each tile starts as a plain placeholder, then generating,
 // then ready — image generation happens in place here, no separate
 // Generate tab). Right sidebar: card selector + headline/subhead/CTA
 // copy fields + scene & background description for whichever card is
@@ -4118,7 +4122,6 @@ function selectStoryboardCard(n){
   if(previewEditor) previewEditor.style.display = 'flex';
 }
 function toggleGlobalBrandKit(){
-  if(window.__brandMode !== 'set') return; // disabled until brand is set up
   window.__globalBrandKitOn = !window.__globalBrandKitOn;
   updateGlobalBrandKitUI();
 }
@@ -4127,17 +4130,12 @@ function updateGlobalBrandKitUI(){
   const summary = document.getElementById('globalBrandKitSummary');
   const empty = document.getElementById('globalBrandKitEmpty');
   if(!sw) return;
-  if(window.__brandMode === 'set'){
-    sw.classList.remove('disabled');
-    sw.classList.toggle('on', !!window.__globalBrandKitOn);
-    summary.style.display = window.__globalBrandKitOn ? 'flex' : 'none';
-    empty.style.display = 'none';
-  } else {
-    sw.classList.add('disabled');
-    sw.classList.remove('on');
-    summary.style.display = 'none';
-    empty.style.display = 'block';
-  }
+  const on = !!window.__globalBrandKitOn;
+  sw.classList.remove('disabled');
+  sw.classList.toggle('on', on);
+  sw.setAttribute('aria-checked', String(on));
+  summary.style.display = on ? 'flex' : 'none';
+  empty.style.display = !on && window.__brandMode !== 'set' ? 'block' : 'none';
 }
 
 // ---- Image generation (manual "Generate images" click — mirrors the video flow's "Generate thumbnails") ----
@@ -4577,13 +4575,98 @@ let scriptDraftCounter = 0;
 window.__scriptDrafts = {};
 window.__latestScriptText = '';
 
+
+// Script is the narration source of truth; manually edited visual prompts need review.
+let reelScriptSyncTimer;
+window.__reelPromptReview = {};
+function buildDurationScript(){
+  // Prototype copy for the existing lip-tint brief, one complete beat per 8-second clip.
+  const lines = window.__brandMode === 'set' ? [
+    'Discover this lip tint. A hand swatch reveals the colour in soft, natural light.',
+    'Applied to the lips, the tint reveals its true finish. See the colour up close.',
+    'The final look brings the demonstration together. Explore the shade and make it yours.'
+  ] : [
+    'Meet my new favourite lip tint! Watch this hand swatch catch the soft natural light.',
+    'Now onto my lips. Look at that colour come through as I apply the tint!',
+    'Here is the finished look, up close. Which shade would you try? Find your favourite!'
+  ];
+  return lines.slice(0, getSceneCount()).join(' ');
+}
+function reelOnScriptInput(){
+  window.__reelScriptEdited = true;
+  window.__reelSyncPending = true;
+  validateScriptLength();
+  document.getElementById('reelScriptSyncStatus').textContent = 'Updating clips when you pause typing…';
+  updateReelReadiness();
+  clearTimeout(reelScriptSyncTimer);
+  reelScriptSyncTimer = setTimeout(syncReelClipsFromScript, 700);
+}
+function syncReelClipsFromScript(){
+  clearTimeout(reelScriptSyncTimer);
+  const text = document.getElementById('fullScript').value.trim().replace(/^"|"$/g, '');
+  if(text === window.__approvedFullScript && window.__reelSyncedClipCount === getSceneCount()){
+    window.__reelSyncPending = false;
+    renderReelSceneEditors();
+    validateScriptLength();
+    return;
+  }
+  window.__reelSyncedClipCount = getSceneCount();
+  const lines = splitScriptIntoScenes(text, getSceneCount());
+  window.__unitDescriptions ||= {};
+  window.__sceneScripts ||= {};
+  lines.forEach((line, i) => {
+    const n = i + 1;
+    if(window.__sceneScripts[n] !== line){
+      if(window.__unitDescTouched[n]) window.__reelPromptReview[n] = true;
+      else window.__unitDescriptions[n] = line ? buildSceneDescFromNarration(n, line) : '';
+    }
+    window.__sceneScripts[n] = line;
+  });
+  window.__approvedFullScript = text;
+  window.__latestScriptText = text;
+  window.__scriptConfirmed = true;
+  window.__reelSyncPending = false;
+  renderReelSceneEditors();
+  validateScriptLength();
+  updateReelReadiness();
+}
+function resolveReelPromptReview(n, regenerate){
+  if(regenerate){
+    window.__unitDescTouched[n] = false;
+    window.__unitDescriptions[n] = buildSceneDescFromNarration(n, getSceneScript(n));
+  }
+  delete window.__reelPromptReview[n];
+  renderReelSceneEditors();
+}
+function reelHasInvalidNarration(){
+  return Array.from({length:getSceneCount()}, (_,i)=>countScriptWords(getSceneScript(i+1)))
+    .some(count => count === 0 || count > 15);
+}
+function reelNeedsPromptReview(){
+  return Array.from({length:getSceneCount()}, (_,i)=>i+1).some(n=>window.__reelPromptReview[n]);
+}
+function updateReelReadiness(){
+  const invalid = reelHasInvalidNarration() || countScriptWords(document.getElementById('fullScript').value) > getMaxScriptWords();
+  const review = reelNeedsPromptReview();
+  const blocked = invalid || review || window.__reelSyncPending;
+  const button = document.getElementById('reelGenerateVideoBtn');
+  if(button) button.disabled = !!blocked;
+  const status = document.getElementById('reelScriptSyncStatus');
+  if(status && !window.__reelSyncPending) status.textContent = invalid
+    ? 'Each clip needs 1–15 narration words before generating.'
+    : review ? 'Narration updated. Review your custom image prompts below.'
+    : 'Clips are up to date. Custom image prompts are preserved.';
+  syncGenActionBarV3();
+}
+
 // ---- Script word-count cap: scales with duration so the narration fits the video (~1.875 words/sec) ----
 function getMaxScriptWords(){
   return Math.round(((window.__videoDuration || 8) / 8) * 15);
 }
 function countScriptWords(text){
-  return text.trim().replace(/^"|"$/g, '').replace(/[!?.,]/g, '').trim().split(/\s+/).filter(Boolean).length;
+  return (text.match(/[\p{L}\p{N}]+(?:['’\-][\p{L}\p{N}]+)*/gu) || []).length;
 }
+
 // Greedily keeps whole sentences until the next one would exceed the limit; falls back to a hard word-cut only if a single sentence is already over.
 function fitScriptToWordLimit(text, maxWords){
   const bare = text.trim().replace(/^"|"$/g, '');
@@ -4610,29 +4693,22 @@ function validateScriptLength(){
   const max = getMaxScriptWords();
   const count = countScriptWords(ta.value);
   const over = count > max;
-  const wasOver = row.classList.contains('over');
   ta.classList.toggle('error', over);
   row.classList.toggle('over', over);
   countEl.textContent = `${count} / ${max} words`;
+  // Figma node 7606-229127: the over-limit state draws its own inline "Shorten" button next
+  // to the warning, rather than routing the fix through the chat (the earlier node
+  // 7254-136585 had no button here, so that version leaned on a chat quick-chip instead).
   errEl.innerHTML = over
-    ? `<img src="../../../../components/ai-social-media/icons/alert-sm.svg" class="icon-inline" alt="">You've gone over the word limit (${count}/${max} words). For a ${window.__videoDuration || 8}s video, up to ${max} words is safe. Tap "Make it shorter" in the chat and we'll trim what you wrote down to ${max} words.`
+    ? `<img src="../../../../components/ai-social-media/icons/alert-sm.svg" class="icon-inline" alt="">You've gone over the word limit (${count}/${max} words). For a ${window.__videoDuration || 8}s video, up to ${max} words is safe.<button type="button" class="pub-refine-chip" onclick="refineScriptWithAI()">Shorten</button>`
     : '';
-  // Figma node 7254-136585's dev note: "no separate Make it shorter button is drawn in this
-  // fragment — reuse whatever chip/button already trims a script elsewhere on this screen" —
-  // surface it as a chat quick-chip (only while actually over the limit) instead of a second
-  // button glued to the field.
-  if(over && !wasOver){
-    renderChatQuickChips([{ label: 'Make it shorter', direct: refineScriptWithAI, aiSweep: true }]);
-  } else if(!over && wasOver){
-    renderChatQuickChips([]);
-  }
 }
 function refineScriptWithAI(){
   const ta = document.getElementById('fullScript');
   if(!ta) return;
   const fitted = fitScriptToWordLimit(ta.value, getMaxScriptWords());
   ta.value = `"${fitted}"`;
-  validateScriptLength();
+  reelOnScriptInput();
 }
 
 // ---- Advanced settings (Goal / Tone / Target audience / Call to action) ----
@@ -4685,15 +4761,13 @@ function renderScriptProposalMessage(scriptText, introText){
 }
 
 function handleScriptProposalClick(btn){
-  const box = btn.closest('.script-proposal-box');
-  if(box.classList.contains('applied')){
-    btn.disabled = true;
-    reelConfirmScript();
-    return;
-  }
+  if(btn.disabled) return;
   applyScriptDraft(Number(btn.dataset.draftId), btn);
 }
 
+// Scenes/voice are always visible below the script (see #reelSceneSection), so applying a
+// draft both fills the field and immediately re-splits the scenes from it in one click —
+// there's no separate "confirm" step to chain into any more.
 function applyScriptDraft(id, btn){
   const text = window.__scriptDrafts[id];
   if(text === undefined) return;
@@ -4702,64 +4776,72 @@ function applyScriptDraft(id, btn){
   document.querySelectorAll('.script-proposal-box').forEach(box => {
     box.classList.remove('applied');
     const b = box.querySelector('.btn-dark');
-    if(b) b.textContent = 'Use this script';
+    if(b){ b.textContent = 'Use this script'; b.disabled = false; }
   });
   const box = document.getElementById('scriptProposal' + id);
   box.classList.add('applied');
-  btn.textContent = 'Continue to timeline';
+  btn.textContent = '✓ Applied';
+  btn.disabled = true;
+  reelConfirmScript();
+}
+
+// Masks a field's already-set text behind a spinner (rather than emptying it), so the reveal
+// after loading is instant with no flicker — used for the Script screen's first-time generation.
+function showFieldSpinner(wrapEl){
+  if(!wrapEl || wrapEl.querySelector('.field-fill-spinner')) return;
+  const s = document.createElement('div');
+  s.className = 'field-fill-spinner';
+  s.innerHTML = '<div class="chat-loading-spinner"></div>';
+  wrapEl.appendChild(s);
+}
+function hideFieldSpinners(){
+  document.querySelectorAll('.field-fill-spinner').forEach(el => el.remove());
 }
 
 function runBriefToScript(){
+  const log = document.getElementById('chatLog');
   const briefText = document.getElementById('briefSummary').value.trim();
-  const chatLog = document.getElementById('chatLog');
+  log.innerHTML = `
+    <div class="msg user"><div class="bubble">${escapeHtml(briefText)}</div><div class="avatar">DV</div></div>
+    <div class="msg ai loading" id="briefToScriptLoading"><div class="chat-loading-card"><div class="chat-loading-spinner"></div><div class="chat-loading-text"><span class="chat-loading-title">Generating script, scenes &amp; narration...</span><span class="chat-loading-sub">Turning your brief into a ${window.__videoDuration}s script</span></div></div></div>`;
 
-  document.getElementById('fullScript').value = '';
+  // Build the real script + scenes right away — the full script box, every clip's card frame,
+  // labels and reference chips all show immediately, exactly as normal. Only the text-filling
+  // areas (already holding the real, final text) get masked behind a spinner for the loading
+  // window, instead of leaving the whole panel blank.
+  const text = buildDurationScript();
+  document.getElementById('fullScript').value = text;
+  window.__reelScriptEdited = false;
+  syncReelClipsFromScript();
+  const count = getSceneCount();
 
-  chatLog.innerHTML = `<div class="msg ai loading" id="loadingMsg"><div class="chat-loading-card"><div class="chat-loading-spinner"></div><div class="chat-loading-text"><span class="chat-loading-title">Writing the script...</span><span class="chat-loading-sub">Preparing your script based on what you shared</span></div></div></div>`;
+  showFieldSpinner(document.getElementById('fullScriptFieldWrap'));
+  for(let i = 1; i <= count; i++){
+    showFieldSpinner(document.getElementById(`descFieldWrap_${i}`));
+    showFieldSpinner(document.getElementById(`narrFieldWrap_tl_${i}`));
+  }
 
   setTimeout(() => {
-    let refinedScript, introHTML;
-    if(window.__brandMode === 'set'){
-      refinedScript = "Watch how this lip tint performs — swatched on the hand first, then applied for the true finish. See the color, see the difference.";
-      introHTML = `Tuned the tone to match your Formee Express brand voice (Clear and authoritative · Less jargon). Swapped the casual slang for clear, confident phrasing.
-        <div class="brand-applied-box">
-          <div class="brand-applied-title">🏷 Applied from your Brand Setup</div>
-          <div class="brand-applied-item">✓ Brand voice — <b>Clear and authoritative</b></div>
-          <div class="brand-applied-item">✓ Tone — <b>Less jargon</b></div>
-          <div class="brand-applied-item">✓ Never use — <s>"cheap"</s> avoided</div>
-        </div>`;
-    } else {
-      refinedScript = "Okay wait, you guys have to see this new lip tint... watch — first on my hand, then on my lips. Look at that color!";
-      introHTML = `Prepared an 8-second script in a bright, upbeat UGC style. It's structured to show the color on the hand first, then on the lips for the final look.`;
-    }
+    hideFieldSpinners();
 
-    refinedScript = fitScriptToWordLimit(refinedScript, getMaxScriptWords());
-
-    const details = getBriefDetails();
-    const detailParts = [];
-    if(details.goal) detailParts.push(`goal: <b>${escapeHtml(details.goal)}</b>`);
-    if(details.tone) detailParts.push(`tone: <b>${escapeHtml(details.tone)}</b>`);
-    if(details.audience) detailParts.push(`audience: <b>${escapeHtml(details.audience)}</b>`);
-    if(details.cta) detailParts.push(`call to action: <b>${escapeHtml(details.cta)}</b>`);
-    if(detailParts.length) introHTML += ` Written with your ${detailParts.join(', ')} in mind.`;
-
-    chatLog.innerHTML = `
-      <div class="msg user"><div class="bubble">${escapeHtml(briefText)}</div><div class="avatar">DV</div></div>
-      <div class="msg-status"><span class="worked-label">Worked</span> <span class="worked-time">for 2s</span></div>
-      <div class="msg ai">${introHTML}</div>
-    `;
-    chatLog.scrollTop = chatLog.scrollHeight;
-
-    setTimeout(() => {
-      const wrap = document.createElement('div');
-      wrap.innerHTML = renderScriptProposalMessage(refinedScript).trim();
-      chatLog.appendChild(wrap.firstElementChild);
-      chatLog.scrollTop = chatLog.scrollHeight;
-    }, 900);
-  }, 1500);
+    const loadingEl = document.getElementById('briefToScriptLoading');
+    if(loadingEl) loadingEl.remove();
+    const status = document.createElement('div');
+    status.className = 'msg-status';
+    status.innerHTML = '<span class="worked-label">Worked</span> <span class="worked-time">for 1s</span>';
+    log.appendChild(status);
+    const aiMsg = document.createElement('div');
+    aiMsg.className = 'msg ai';
+    aiMsg.textContent = `Your ${window.__videoDuration}s script and ${count} clip${count > 1 ? 's are' : ' is'} ready. Each 8-second clip has an image prompt and up to 15 narration words. Edit the script to update the clips automatically.`;
+    log.appendChild(aiMsg);
+    log.scrollTop = log.scrollHeight;
+    setChatGuideHint('e.g. "make the script warmer" or "clip 2 narration shorter"');
+  }, 1100);
 }
 
-// ---- Chat-driven script revision (available while Script is still unconfirmed) ----
+// ---- Chat-driven text revision — used both for the full script (while still unconfirmed,
+// see reviseScript()) and, once confirmed, for a single clip's scene description or
+// narration (see reviseSceneOrNarration()). Same lightweight keyword matching either way. ----
 function buildRevisedScript(base, requestText){
   const req = requestText.toLowerCase();
   if(req.includes('short') || req.includes('짧') || req.includes('줄여')){
@@ -4771,6 +4853,12 @@ function buildRevisedScript(base, requestText){
   }
   if(req.includes('fun') || req.includes('energetic') || req.includes('신나')){
     return base.replace(/\.$/, '!') + ' ✨';
+  }
+  if(req.includes('warm') || req.includes('따뜻')){
+    return base.replace(/^okay wait,\s*/i, '').replace(/\.$/, '') + ' — just for you.';
+  }
+  if(req.includes('dramatic') || req.includes('드라마틱') || req.includes('강렬')){
+    return base.replace(/\.$/, '...') + ' Everything changes here.';
   }
   return base.replace(/[.!]$/, '') + ` — ${requestText.charAt(0).toUpperCase()}${requestText.slice(1)}.`;
 }
@@ -4784,7 +4872,7 @@ function reviseScript(requestText){
   log.scrollTop = log.scrollHeight;
 
   setTimeout(() => {
-    const base = window.__latestScriptText || document.getElementById('fullScript').value.replace(/^"|"$/g, '');
+    const base = document.getElementById('fullScript').value.replace(/^"|"$/g, '');
     const revised = fitScriptToWordLimit(buildRevisedScript(base, requestText), getMaxScriptWords());
     loadingEl.remove();
 
@@ -4858,6 +4946,13 @@ document.addEventListener('click', (e) => {
 // ---- Reference image attach + @mention tagging (Brief & Style) ----
 let referenceImages = [];
 let refImageCounter = 0;
+// First/last frame — Reel/Short & Story Video's Brief & Style prompt box only
+// (#referenceImagesRow). Each clip has exactly one first frame and one last frame, so
+// unlike the Reference list above these are single-slot toggles, not a growable list.
+// They're mutually exclusive with Reference (pick one attachment mode or the other) —
+// the Figma component still needs this same rule; this is HTML-only for now.
+let firstFrameAdded = false;
+let lastFrameAdded = false;
 
 function addReferenceImage(btn){
   let guideTarget = null;
@@ -4877,23 +4972,56 @@ function removeReferenceImage(num){
   referenceImages = referenceImages.filter(n => n !== num);
   renderReferenceImages();
 }
+function addFirstFrameImage(){ firstFrameAdded = true; renderReferenceImages(); }
+function removeFirstFrameImage(){ firstFrameAdded = false; renderReferenceImages(); }
+function addLastFrameImage(){ lastFrameAdded = true; renderReferenceImages(); }
+function removeLastFrameImage(){ lastFrameAdded = false; renderReferenceImages(); }
 function renderReferenceImages(){
   const chips = referenceImages.map(n => `
     <div class="ref-image-chip">
       <div class="thumb"></div>
       <span class="label">Image ${n}</span>
-      <span class="remove" onclick="removeReferenceImage(${n})"><img src="../../../../components/ai-social-media/icons/close-x.svg" class="icon-inline" alt=""></span>
+      <button type="button" class="remove" onclick="event.stopPropagation(); removeReferenceImage(${n})" aria-label="Remove reference image ${n}" title="Remove reference"><img src="../../../../components/ai-social-media/icons/controls/chip-close-x.svg" class="icon-inline" alt=""></button>
     </div>
   `).join('');
-  const refIcon = `<svg class="ic-svg" width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1.5" y="1.5" width="11" height="11" rx="1.6" stroke="currentColor" stroke-width="1.3"/><circle cx="5" cy="5.3" r="1.1" stroke="currentColor" stroke-width="1.1"/><path d="M2 10.3L5 7.6L7 9.2L9.5 6.6L12 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  const refIcon = `<img class="ref-add-icon" src="../../../../components/ai-social-media/icons/content-image-plus.svg" alt="">`;
   const fullHtml = chips + `
-    <div class="ref-image-add" onclick="addReferenceImage(this)">${refIcon}<span>+ Reference</span></div>
+    <div class="ref-image-add" onclick="addReferenceImage(this)">${refIcon}<span>Reference</span></div>
   `;
   const compactHtml = chips + `
-    <div class="ref-image-add-compact" onclick="addReferenceImage(this)" title="Add reference image">${refIcon}<span>+ Reference</span></div>
+    <div class="ref-image-add-compact" onclick="addReferenceImage(this)" title="Add reference image">${refIcon}<span>Reference</span></div>
   `;
+
+  // Reel/Short & Story Video's Brief & Style prompt box (#referenceImagesRow) only:
+  // Reference vs first/last frame are mutually exclusive attachment modes.
+  const hasReference = referenceImages.length > 0;
+  const hasFrame = firstFrameAdded || lastFrameAdded;
+  const referenceChipBrief = chips + (hasFrame
+    ? `<div class="ref-image-add disabled" title="Remove the first/last frame image to attach a reference instead">${refIcon}<span>Reference</span></div>`
+    : `<div class="ref-image-add" onclick="addReferenceImage(this)">${refIcon}<span>Reference</span></div>`);
+  const firstFrameChipBrief = firstFrameAdded ? `
+    <div class="ref-image-chip">
+      <div class="thumb"></div>
+      <span class="label">First frame</span>
+      <button type="button" class="remove" onclick="event.stopPropagation(); removeFirstFrameImage()" aria-label="Remove first frame" title="Remove first frame"><img src="../../../../components/ai-social-media/icons/controls/chip-close-x.svg" class="icon-inline" alt=""></button>
+    </div>
+  ` : `
+    <div class="ref-image-add${hasReference ? ' disabled' : ''}" ${hasReference ? 'title="Remove the reference image to attach a first frame instead"' : 'onclick="addFirstFrameImage()"'}>${refIcon}<span>First frame</span></div>
+  `;
+  const lastFrameChipBrief = lastFrameAdded ? `
+    <div class="ref-image-chip">
+      <div class="thumb"></div>
+      <span class="label">Last frame</span>
+      <button type="button" class="remove" onclick="event.stopPropagation(); removeLastFrameImage()" aria-label="Remove last frame" title="Remove last frame"><img src="../../../../components/ai-social-media/icons/controls/chip-close-x.svg" class="icon-inline" alt=""></button>
+    </div>
+  ` : `
+    <div class="ref-image-add${hasReference ? ' disabled' : ''}" ${hasReference ? 'title="Remove the reference image to attach a last frame instead"' : 'onclick="addLastFrameImage()"'}>${refIcon}<span>Last frame</span></div>
+  `;
+  const briefHtml = firstFrameChipBrief + lastFrameChipBrief + referenceChipBrief;
+
   document.querySelectorAll('.reference-images-row').forEach(row => {
-    row.innerHTML = row.classList.contains('compact') ? compactHtml : fullHtml;
+    if(row.id === 'referenceImagesRow') row.innerHTML = briefHtml;
+    else row.innerHTML = row.classList.contains('compact') ? compactHtml : fullHtml;
   });
 }
 renderReferenceImages();
@@ -5072,11 +5200,7 @@ function selectSettingVoice(el, label){
   document.getElementById('settingVoice').textContent = label;
   document.getElementById('voiceSettingPopover').style.display = 'none';
   ['tl', 'vid'].forEach(scope => {
-    if(window.__voiceMode === 'split'){
-      for(let i = 1; i <= getSceneCount(); i++) updateVoicePreviewButton(scope, i);
-    } else {
-      updateWholeVoiceButton(scope);
-    }
+    for(let i = 1; i <= getSceneCount(); i++) updateVoicePreviewButton(scope, i);
   });
 }
 
@@ -5090,49 +5214,37 @@ function appendChatCta(title, desc, buttonsHtml){
 }
 
 function reelConfirmScript(){
-  if(window.__scriptConfirmed) return;
-  window.__scriptConfirmed = true;
-  document.getElementById('tabReelScript').innerHTML = '<span class="check">✓</span> Script';
-  document.getElementById('tabReelTimeline').classList.remove('locked');
-  window.__approvedFullScript = document.getElementById('fullScript').value.trim().replace(/^"|"$/g, '');
-  showSub('reelTimeline');
-  renderTimelineScenes();
-  const durationSec = window.__videoDuration || 8;
-  const sceneCount = getSceneCount();
-  document.getElementById('chatLog').innerHTML += `<div class="msg ai"><span class="tag">AI</span>Script confirmed. I'll split the ${durationSec} seconds into ${sceneCount} 4-second segments and design the scenes.</div>`;
-  const unitCount = getVideoUnitCount();
-  const totalCost = unitCount * VIDEO_COST_PER_UNIT;
-  const videoMsg = unitCount > 1
-    ? `Once you're happy with the scenes, I'll generate ${unitCount} 8-second video clips — the current minimum length — and combine them into your final ${durationSec}s video.`
-    : `Once you're happy with the scenes, I'll generate your ${durationSec}-second video.`;
-  appendChatCta('Generate Video', videoMsg, `<button class="btn btn-dark" onclick="this.disabled=true; proceedToStudio()">Generate video <img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">${totalCost} →</button>`);
-  renderChatQuickChips([
-    { label: 'Regenerate all', direct: () => quickAction('regen-all-scenes') },
-    { label: 'Add a scene', direct: () => quickAction('add-scene') }
-  ]);
+  window.__reelScriptEdited = true;
+  syncReelClipsFromScript();
 }
 
 // Distributes the approved full-script sentences across `count` scene slots —
 // evenly grouped if there are more sentences than scenes, one-per-scene otherwise.
 function splitScriptIntoScenes(text, count){
-  const sentences = text.split(/(?<=[.!?])\s+/).map(s => s.trim()).filter(Boolean);
-  if(sentences.length === 0) return Array(count).fill('');
-  if(sentences.length <= count){
-    return Array.from({ length: count }, (_, i) => sentences[i] || '');
-  }
-  const perBucket = Math.floor(sentences.length / count);
-  const remainder = sentences.length % count;
+  const words = text.trim().split(/\s+/).filter(Boolean);
   const result = [];
-  let idx = 0;
-  for(let i = 0; i < count; i++){
-    const bucketSize = perBucket + (i < remainder ? 1 : 0);
-    result.push(sentences.slice(idx, idx + bucketSize).join(' '));
-    idx += bucketSize;
+  for(let slot = 0; slot < count; slot++){
+    const remaining = count - slot;
+    const total = countScriptWords(words.join(' '));
+    const budget = Math.max(15, Math.ceil(total / remaining));
+    const target = Math.ceil(total / remaining);
+    let best = 0, bestScore = Infinity;
+    for(let end = 1; end <= words.length; end++){
+      const used = countScriptWords(words.slice(0, end).join(' '));
+      if(used > budget) break;
+      if(total - used > budget * (remaining - 1)) continue;
+      if(total >= remaining && total - used < remaining - 1) continue;
+      const boundary = /[.!?]["”']?$/.test(words[end-1]);
+      const score = Math.abs(used - target) - (boundary ? 3 : 0);
+      if(score < bestScore){best = end; bestScore = score;}
+    }
+    if(remaining === 1) best = words.length;
+    result.push(words.splice(0,best).join(' '));
   }
   return result;
 }
 
-// ---- Duration (drives scene count: 8s→2, 16s→4, 24s→6) ----
+// ---- Duration (drives scene count — one scene per 8s clip: 8s→1, 16s→2, 24s→3) ----
 const SCENE_TEMPLATES = [
   { time:'0:00–0:04', script:'This one serum changes your skin!', desc:'Bright studio, close-up — holding up the product with a big smile' },
   { time:'0:04–0:08', script:'See for yourself right now!', desc:'Close-up on the product packaging — reaching it toward the camera' },
@@ -5141,19 +5253,24 @@ const SCENE_TEMPLATES = [
   { time:'0:16–0:20', script:'Skin texture transformed in two weeks', desc:'Touching skin in front of a mirror with a satisfied expression' },
   { time:'0:20–0:24', script:'Discover it for yourself now', desc:'Closing shot — lifting the product straight to the camera' }
 ];
-function getSceneCount(){
-  const seconds = window.__videoDuration || 8;
-  return Math.min(6, Math.max(1, Math.round(seconds / 4)));
-}
-// AI video generation currently has an 8-second minimum clip length, so actual video
-// generation is grouped into 8s units (each covering 2 consecutive 4s Timeline scenes) —
-// e.g. a 16s video generates as 2 clips, which then get combined into the final cut.
+// AI video generation currently has an 8-second minimum clip length, so a video is always
+// generated as one 8s clip per "scene" — e.g. a 16s video generates as 2 clips, which then
+// get combined into the final cut. Scene count and video-clip count are the same number.
 function getVideoUnitCount(){
   const seconds = window.__videoDuration || 8;
   return Math.max(1, Math.round(seconds / 8));
 }
+function getSceneCount(){
+  return getVideoUnitCount();
+}
 function getVideoUnitScenes(unit){
   return [unit * 2 - 1, unit * 2];
+}
+// Seed narration text for a scene that hasn't been edited yet — joins the pair of 4s
+// SCENE_TEMPLATES beats that fall inside this scene's 8s clip.
+function getUnitDefaultScript(unit){
+  const [first, last] = getVideoUnitScenes(unit);
+  return [SCENE_TEMPLATES[first - 1]?.script, SCENE_TEMPLATES[last - 1]?.script].filter(Boolean).join(' ');
 }
 function getVideoUnitTimeLabel(unit){
   const [first, last] = getVideoUnitScenes(unit);
@@ -5164,7 +5281,11 @@ function getVideoUnitTimeLabel(unit){
 // Scene & character action description is edited per 8s video unit (matching what actually
 // gets generated), not per 4s dialogue scene — narration keeps its own finer granularity in
 // the Voice section below, but the action/blocking direction only needs to be set once per
-// clip. Defaults to the first paired scene's description; independently editable after that.
+// clip. Before any script is confirmed there's nothing to base it on yet, so it starts as a
+// generic placeholder; once a script exists, renderReelSceneEditors() rewrites it to actually
+// match that clip's line (see buildSceneDescFromNarration()) — full script first, then the
+// per-clip visuals, matching how a real shoot would work. Independently editable after that.
+window.__unitDescTouched = window.__unitDescTouched || {}; // unit -> true once the user (or an AI rewrite) has set it explicitly, so the script-confirm refresh won't clobber it
 function getVideoUnitDesc(unit){
   if(!window.__unitDescriptions) window.__unitDescriptions = {};
   if(window.__unitDescriptions[unit] === undefined){
@@ -5173,9 +5294,24 @@ function getVideoUnitDesc(unit){
   }
   return window.__unitDescriptions[unit];
 }
+const SCENE_SHOT_STYLES = ['Close-up, natural lighting', 'Medium shot, soft daylight', 'Close-up, warm studio light'];
+function buildSceneDescFromNarration(unit, line){
+  const shot = SCENE_SHOT_STYLES[(unit - 1) % SCENE_SHOT_STYLES.length];
+  return `${shot} — showing the moment described: "${line}"`;
+}
 function updateVideoUnitDesc(unit, value){
   if(!window.__unitDescriptions) window.__unitDescriptions = {};
   window.__unitDescriptions[unit] = value;
+  window.__unitDescTouched[unit] = true;
+}
+// Programmatic version of the above (AI chat rewrites, "Regenerate all") that also has to
+// push the new text into whichever textarea(s) are on screen, since — unlike a live oninput
+// edit — the field itself doesn't already show the new value.
+function setVideoUnitDesc(unit, value){
+  updateVideoUnitDesc(unit, value);
+  document.querySelectorAll(`.scene-desc[data-unit="${unit}"]`).forEach(ta => { ta.value = value; });
+  const videoPromptEl = document.getElementById('videoPrompt' + unit);
+  if(videoPromptEl) videoPromptEl.value = buildVideoPrompt(unit);
 }
 function toggleDurationPopover(e){
   e.stopPropagation();
@@ -5210,293 +5346,154 @@ function selectDuration(seconds){
     const existingScript = document.getElementById('fullScript')?.value.trim();
     if(existingScript) autoAdjustScriptForDuration(oldSeconds, seconds);
   }
+
+  // Scene/clip count derives from duration (see getVideoUnitCount()) — scenes are visible
+  // from the moment Script loads (not gated behind confirming), so re-render regardless of
+  // whether a script has been confirmed yet.
+  if(oldSeconds !== seconds) validateScriptLength();
 }
 
 function autoAdjustScriptForDuration(oldSeconds, newSeconds){
-  const log = document.getElementById('chatLog');
-  if(!log) return;
-  const loadingEl = document.createElement('div');
-  loadingEl.className = 'msg ai loading';
-  loadingEl.innerHTML = `<div class="chat-loading-card"><div class="chat-loading-spinner"></div><div class="chat-loading-text"><span class="chat-loading-title">Adjusting the script...</span><span class="chat-loading-sub">Duration changed to ${newSeconds}s</span></div></div>`;
-  log.appendChild(loadingEl);
-  log.scrollTop = log.scrollHeight;
-
-  setTimeout(() => {
-    loadingEl.remove();
-    const base = document.getElementById('fullScript').value.replace(/^"|"$/g, '');
-    const max = getMaxScriptWords();
-    const count = countScriptWords(base);
-
-    const status = document.createElement('div');
-    status.className = 'msg-status';
-    status.innerHTML = `<span class="worked-label">Worked</span> <span class="worked-time">for 1s</span>`;
-    log.appendChild(status);
-
-    if(count > max){
-      const fitted = fitScriptToWordLimit(base, max);
-      const wrap = document.createElement('div');
-      wrap.innerHTML = renderScriptProposalMessage(fitted, `Duration changed to ${newSeconds}s (was ${oldSeconds}s), so I trimmed the script from ${count} to ${countScriptWords(fitted)} words to fit.`).trim();
-      log.appendChild(wrap.firstElementChild);
-    } else {
-      const msg = document.createElement('div');
-      msg.className = 'msg ai';
-      msg.innerHTML = `<span class="tag">AI</span>Duration changed to ${newSeconds}s — your script already fits (${count}/${max} words), so no changes needed.`;
-      log.appendChild(msg);
-    }
-    log.scrollTop = log.scrollHeight;
-  }, 900);
-}
-
-// ---- Timeline: scene grid + selected-scene editor (rebuilt per duration) ----
-function wordCountGuideText(script){
-  const n = script.replace(/[!?.,]/g, '').trim().split(/\s+/).length;
-  return `💡 4-second pacing guide · about 8–10 words (currently ${n} words)`;
-}
-// Whole-take word count — same "N / 30 words" convention as the Image/Carousel prompt fields.
-function wholeWordCountText(text){
-  const n = text.replace(/[!?.,]/g, '').trim().split(/\s+/).filter(Boolean).length;
-  return `${n} / 30 words`;
-}
-function updateWholeScriptText(value){
-  window.__wholeScriptText = value;
-  document.querySelectorAll('[id^="wholeWordCount_"]').forEach(el => { el.textContent = wholeWordCountText(value); });
-  updateWholeVoiceButton('tl');
-  updateWholeVoiceButton('vid');
-}
-function renderTimelineScenes(){
-  const count = getSceneCount();
-  const scenes = SCENE_TEMPLATES.slice(0, count).map(s => ({ ...s }));
-  if(window.__approvedFullScript){
-    const splitScripts = splitScriptIntoScenes(window.__approvedFullScript, count);
-    scenes.forEach((s, i) => { s.script = splitScripts[i] || s.script; });
+  if(!window.__reelScriptEdited){
+    document.getElementById('fullScript').value = buildDurationScript();
   }
-  window.__sceneScripts = {}; // re-derive per-scene text from the (possibly re-approved) script on every fresh confirm
-  scenes.forEach((s, i) => { window.__sceneScripts[i + 1] = s.script; });
-  window.__wholeScriptText = null;
+  // Preserve authored text on duration changes; show over-limit feedback instead of cutting it.
+  syncReelClipsFromScript();
+}
 
-  // Canvas preview tiles are grouped by 8s video unit (2 for a 16s video), matching what
-  // actually gets generated/combined by the video API — not by individual 4s scene, even
-  // though scenes stay the finer editing granularity below (dialogue/blocking still
-  // benefits from a beat every 4s). Each tile shows both paired scenes' dialogue joined.
-  const unitCount = getVideoUnitCount();
-  const cols = Math.min(unitCount, 3);
-  const rows = Math.ceil(unitCount / cols);
-  const sceneGridEl = document.getElementById('sceneGrid');
-  sceneGridEl.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-  sceneGridEl.classList.toggle('single-row', rows <= 1);
+// ---- Scene editors: per-clip image prompt + narration (rebuilt per duration) ----
+// Narration is always one field per 8s clip now — for an 8s video that's a single field
+// (equivalent to what used to be a separate "whole take" mode), for 16s/24s it's one field
+// per clip (what used to be "split by scene") — so there's no separate mode to toggle any
+// more, just however many clips the duration produces (see getSceneCount()).
+function wordCountGuideText(script){
+  const n = countScriptWords(script);
+  return `8 seconds · ${n} / 15 words${n > 15 ? ' — shorten narration to continue' : n === 0 ? ' — add narration to continue' : ''}`;
+}
 
-  document.getElementById('sceneGrid').innerHTML = Array.from({ length: unitCount }, (_, u) => {
-    const unit = u + 1;
-    const unitScenes = getVideoUnitScenes(unit).filter(n => n <= count);
-    const caption = unitScenes.map(n => getSceneScript(n)).join(' ');
-    return `
-    <div class="scene-tile${u === 0 ? ' selected' : ''}" id="sceneTile${unit}" onclick="selectScene(${unit})">
-      <div class="scene-tile-preview">
-        <span class="scene-tile-badge">Video ${unit}<span class="dot"></span>${getVideoUnitTimeLabel(unit)}</span>
+// Shared by both the Script stage's scene cards (scope 'tl') and the Video stage's clip
+// cards (scope 'vid') — narration for a given clip stays in sync between the two (see
+// updateSceneScript()'s data-scene lookup) since it's the same underlying video.
+function renderSceneNarrationHTML(scope, unit){
+  const script = getSceneScript(unit);
+  return `
+    <div class="scene-narration-block">
+      <div class="scene-narration-head">
+        <label class="scene-desc-label-reel" style="margin-bottom:0;">Narration</label>
+        <button class="voice-preview-btn compact" id="voicePreviewBtn_${scope}_${unit}" onclick="previewSceneVoice('${scope}', ${unit})">
+          <span class="vp-icon"><img src="../../../../components/ai-social-media/icons/audio-play.svg" class="icon-inline icon-16" alt=""></span> Preview <span class="vp-cost"><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">${SEGMENT_VOICE_CREDIT}</span>
+        </button>
       </div>
-      <div class="scene-tile-line" id="tileLine${unit}">${escapeHtml(caption)}</div>
-    </div>`;
-  }).join('');
+      <div class="field-fill-wrap" id="narrFieldWrap_${scope}_${unit}">
+        <textarea class="voice-script-text" data-scene="${unit}" oninput="updateSceneScript(${unit}, this.value)" aria-invalid="${countScriptWords(script) > 15 || countScriptWords(script) === 0}">${escapeHtml(script)}</textarea>
+      </div>
+      <span class="scene-guide voice-guide-${unit}">${wordCountGuideText(script)}</span>
+    </div>
+  `;
+}
+function renderReelSceneEditors(){
+  const count = getSceneCount();
+  ensureSceneScripts(count);
 
-  // One description card per video unit (2 for a 16s video) — matching the canvas above,
-  // not one per 4s dialogue scene (see getVideoUnitDesc's comment).
-  document.getElementById('sceneEditorPanel').innerHTML = Array.from({ length: unitCount }, (_, u) => {
+  document.getElementById('reelSceneSectionSub').textContent = count > 1
+    ? `Set the scene description and narration for each of the ${count} clips. Narration ⚡${estimateSplitVoiceCredits(count)} total.`
+    : `Set the scene description and narration for your clip. Narration ⚡${SEGMENT_VOICE_CREDIT}.`;
+
+  // One card per 8s video clip — no thumbnail canvas here (this prototype doesn't render
+  // scene thumbnails), so every card is shown at once instead of one-at-a-time behind a nav.
+  // Each card holds both the image prompt and the narration for that clip together, since
+  // they're both properties of the same clip rather than two separate parallel lists.
+  document.getElementById('sceneEditorPanel').innerHTML = Array.from({ length: count }, (_, u) => {
     const unit = u + 1;
     return `
-    <div class="scene-card scene-editor" id="sceneEditor${unit}" style="${u === 0 ? '' : 'display:none;'}">
+    <div class="carousel-card-block scene-editor" id="sceneEditor${unit}">
+      <div class="carousel-card-block-header">
+        <span class="carousel-card-block-title">Clip ${unit} <span class="scene-time-badge">${getVideoUnitTimeLabel(unit)}</span></span>
+      </div>
       <div class="scene-desc-block">
-        <label class="scene-desc-label-reel">Scene &amp; character action description</label>
+        <label class="scene-desc-label-reel">Image prompt</label>
         <div class="scene-desc-box">
           <div class="reference-images-row compact"></div>
-          <div class="mention-wrap">
-            <textarea class="scene-desc" oninput="updateVideoUnitDesc(${unit}, this.value)">${escapeHtml(getVideoUnitDesc(unit))}</textarea>
+          <div class="mention-wrap field-fill-wrap" id="descFieldWrap_${unit}">
+            <textarea class="scene-desc" data-unit="${unit}" oninput="updateVideoUnitDesc(${unit}, this.value)">${escapeHtml(getVideoUnitDesc(unit))}</textarea>
             <div class="mention-popover" style="display:none;"></div>
           </div>
         </div>
-        <p class="scene-note">AI automatically builds a scene to match this line</p>
+        <p class="scene-note">${window.__reelPromptReview[unit] ? 'Script changed. Your custom image prompt was preserved — review it before generating.' : 'Image prompt follows narration. Your manual edits are preserved.'}</p>
+        ${window.__reelPromptReview[unit] ? `<div class="stage-cta-row prompt-review-actions"><button class="btn btn-secondary" onclick="resolveReelPromptReview(${unit}, false)">Keep my prompt</button><button class="btn btn-secondary" onclick="resolveReelPromptReview(${unit}, true)">Update from narration</button></div>` : ''}
       </div>
+      ${renderSceneNarrationHTML('tl', unit)}
     </div>
   `;
   }).join('');
 
   renderReferenceImages();
   document.querySelectorAll('#sceneEditorPanel .mention-wrap textarea').forEach(bindMentionTextarea);
-  buildSegmentNav(unitCount);
-  selectScene(1);
-  updateTimelineCta();
-  renderVoiceSection('tl');
-}
-// Segment nav is one button per video unit now (2 for a 16s video) — matching the canvas
-// tiles and the description cards 1:1, so "Scene" here just means "Scene ≈ Video unit".
-// Dialogue/narration keeps its own finer 4s-scene granularity, entirely inside the Voice
-// section below (renderVoiceSection), which this nav doesn't touch.
-function buildSegmentNav(count){
-  const nav = document.getElementById('segmentNav');
-  if(!nav || !count) return;
-  const buttons = Array.from({ length: count }, (_, i) => {
-    const n = i + 1;
-    return `<div class="segment-nav-btn${n === 1 ? ' active' : ''}" data-target="${n}" onclick="selectScene(${n})">${n}</div>`;
-  }).join('');
-  nav.innerHTML = `<span class="scene-nav-label">Scene</span>${buttons}`;
-}
-function selectScene(n){
-  n = Number(n);
-  document.querySelectorAll('#subReelTimeline .scene-tile').forEach(t => {
-    t.classList.toggle('selected', t.id === 'sceneTile' + n);
-  });
-  document.querySelectorAll('.scene-editor').forEach(e => e.style.display = 'none');
-  const editor = document.getElementById('sceneEditor' + n);
-  if(editor) editor.style.display = 'block';
-  document.querySelectorAll('.segment-nav-btn').forEach(b => b.classList.toggle('active', Number(b.dataset.target) === n));
-  const tile = document.getElementById('sceneTile' + n);
-  if(tile) tile.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
-}
-// ---- Voice: one narration for the whole video, or split per scene — both TTS-cached ----
-window.__voiceMode = window.__voiceMode || 'whole';
-window.__voicePreviewCache = window.__voicePreviewCache || {}; // split mode, keyed by scene id
-window.__wholeVoiceCache = window.__wholeVoiceCache || null;   // whole mode, single cache
-window.__sceneScripts = window.__sceneScripts || null;         // per-scene narration text, source of truth
-window.__wholeScriptText = window.__wholeScriptText ?? null;   // merged narration text (whole mode)
-window.__voiceAccOpen = window.__voiceAccOpen || { tl: null, vid: null }; // which segment's accordion row is expanded, per scope
-window.__voiceSectionCollapsed = window.__voiceSectionCollapsed || { tl: false, vid: false }; // whether the whole Voice card is collapsed, per scope
+  for(let i = 1; i <= count; i++) updateVoicePreviewButton('tl', i);
 
-function toggleVoiceSectionCollapse(scope){
-  window.__voiceSectionCollapsed[scope] = !window.__voiceSectionCollapsed[scope];
-  const el = document.getElementById('voiceSection_' + scope);
-  if(el) el.classList.toggle('collapsed', window.__voiceSectionCollapsed[scope]);
+  const genBtn = document.getElementById('reelGenerateVideoBtn');
+  if(genBtn) genBtn.textContent = `Generate video ⚡${getVideoUnitCount() * VIDEO_COST_PER_UNIT}`;
+  // No stage switch happens here any more (Script holds this content directly), so the bottom
+  // action bar needs an explicit refresh — showSub() used to trigger it as a side effect.
+  updateReelReadiness();
 }
 
-// ---- Voice credit estimates (dummy placeholders — real numbers land once TTS provider pricing is confirmed) ----
+window.__voicePreviewCache = window.__voicePreviewCache || {}; // keyed by clip/scene id, TTS-cached
+window.__sceneScripts = window.__sceneScripts || null;         // per-clip narration text, source of truth
+
+// ---- Voice credit estimate (dummy placeholder — real numbers land once TTS provider pricing is confirmed) ----
 const SEGMENT_VOICE_CREDIT = 5;
-const WHOLE_CREDIT_PER_SEC = 1.5;
-function estimateWholeVoiceCredits(){
-  return Math.round((window.__videoDuration || 8) * WHOLE_CREDIT_PER_SEC);
-}
 function estimateSplitVoiceCredits(count){
   return count * SEGMENT_VOICE_CREDIT;
-}
-function renderVoiceCostSummary(scope){
-  const el = document.getElementById('voiceCostSummary_' + scope);
-  if(!el) return;
-  if(window.__voiceMode === 'whole'){
-    el.innerHTML = `Whole take · ~${window.__videoDuration || 8}s`;
-  } else {
-    const count = getSceneCount();
-    el.innerHTML = `Split by scene · ${count} segment${count > 1 ? 's' : ''} · <b><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">${estimateSplitVoiceCredits(count)}</b> total`;
-  }
 }
 
 function ensureSceneScripts(count){
   if(!window.__sceneScripts) window.__sceneScripts = {};
   for(let i = 1; i <= count; i++){
-    if(window.__sceneScripts[i] === undefined) window.__sceneScripts[i] = SCENE_TEMPLATES[i - 1]?.script || '';
+    if(window.__sceneScripts[i] === undefined) window.__sceneScripts[i] = '';
   }
 }
 
 function getSceneScript(n){
-  return (window.__sceneScripts && window.__sceneScripts[n] !== undefined) ? window.__sceneScripts[n] : (SCENE_TEMPLATES[n - 1]?.script || '');
-}
-
-function getAllSceneScriptsJoined(){
-  const count = getSceneCount();
-  ensureSceneScripts(count);
-  return Array.from({ length: count }, (_, i) => getSceneScript(i + 1)).join(' ');
+  return (window.__sceneScripts && window.__sceneScripts[n] !== undefined) ? window.__sceneScripts[n] : '';
 }
 
 function updateSceneScript(n, value){
+  if(window.__reelSyncPending) syncReelClipsFromScript();
   ensureSceneScripts(getSceneCount());
   window.__sceneScripts[n] = value;
-  window.__wholeScriptText = null; // merged view is now stale — recompute next time whole mode renders
-
-  // Canvas tiles are keyed by video unit (pairs of scenes), not by scene — rebuild the
-  // owning tile's combined caption from all scenes in its pair, not just this one.
-  const unit = Math.ceil(n / 2);
-  const tileLine = document.getElementById('tileLine' + unit);
-  if(tileLine) tileLine.textContent = getVideoUnitScenes(unit).filter(s => s <= getSceneCount()).map(s => getSceneScript(s)).join(' ');
-  document.querySelectorAll(`.voice-guide-${n}`).forEach(g => { g.textContent = wordCountGuideText(value); });
-  document.querySelectorAll(`.voice-script-text[data-scene="${n}"]`).forEach(ta => { if(ta.value !== value) ta.value = value; });
-  document.querySelectorAll(`[data-summary-scene="${n}"]`).forEach(el => { el.textContent = value; });
-
-  if(window.__voiceMode === 'split'){
-    updateVoicePreviewButton('tl', n);
-    updateVoicePreviewButton('vid', n);
-  } else {
-    updateWholeVoiceButton('tl');
-    updateWholeVoiceButton('vid');
+  window.__reelScriptEdited = true;
+  if(window.__unitDescTouched[n]) window.__reelPromptReview[n] = true;
+  else {
+    window.__unitDescriptions[n] = value ? buildSceneDescFromNarration(n, value) : '';
+    document.querySelectorAll(`.scene-desc[data-unit="${n}"]`).forEach(ta => { ta.value = window.__unitDescriptions[n]; });
   }
+  const full = Array.from({length:getSceneCount()}, (_,i)=>getSceneScript(i+1)).join(' ').trim();
+  document.getElementById('fullScript').value = full;
+  window.__approvedFullScript = full;
+  window.__latestScriptText = full;
+  validateScriptLength();
+  // Keep the active textarea intact while showing prompt review actions.
+  const card = document.getElementById('sceneEditor'+n);
+  if(card && window.__reelPromptReview[n] && !card.querySelector('.prompt-review-actions')){
+    card.querySelector('.scene-note').textContent = 'Narration changed. Review your custom image prompt before generating.';
+    const actions = document.createElement('div');
+    actions.className = 'stage-cta-row prompt-review-actions';
+    actions.innerHTML = `<button class="btn btn-secondary" onclick="resolveReelPromptReview(${n}, false)">Keep my prompt</button><button class="btn btn-secondary" onclick="resolveReelPromptReview(${n}, true)">Update from narration</button>`;
+    card.querySelector('.scene-desc-block').appendChild(actions);
+  }
+  updateReelReadiness();
+
+  document.querySelectorAll(`.voice-guide-${n}`).forEach(g => { g.textContent = wordCountGuideText(value); });
+  document.querySelectorAll(`.voice-script-text[data-scene="${n}"]`).forEach(ta => { if(ta.value !== value) ta.value = value; ta.setAttribute('aria-invalid', String(countScriptWords(value) > 15 || countScriptWords(value) === 0)); });
+
+  updateVoicePreviewButton('tl', n);
+  updateVoicePreviewButton('vid', n);
 }
 
 function getCurrentVoiceLabel(){
   const el = document.getElementById('settingVoice');
   return el ? el.textContent.trim() : '';
-}
-
-function setVoiceMode(mode){
-  window.__voiceMode = mode;
-  renderVoiceSection('tl');
-  renderVoiceSection('vid');
-}
-
-function renderVoiceSection(scope){
-  const body = document.getElementById('voiceSectionBody_' + scope);
-  if(!body) return;
-  const toggle = document.getElementById('voiceModeToggle_' + scope);
-  if(toggle){
-    toggle.querySelectorAll('.voice-mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === window.__voiceMode));
-  }
-  const count = getSceneCount();
-  ensureSceneScripts(count);
-
-  if(window.__voiceMode === 'split'){
-    if(window.__voiceAccOpen[scope] !== null && window.__voiceAccOpen[scope] > count) window.__voiceAccOpen[scope] = null;
-    const openN = window.__voiceAccOpen[scope];
-    body.innerHTML = `<div class="voice-acc-list">` + Array.from({ length: count }, (_, i) => {
-      const n = i + 1;
-      const time = SCENE_TEMPLATES[i]?.time || '';
-      const script = getSceneScript(n);
-      const cached = isVoicePreviewCached(n);
-      const isOpen = openN === n;
-      return `
-        <div class="voice-accordion-row${isOpen ? ' expanded' : ''}" data-acc-scene="${n}">
-          <div class="voice-acc-header" onclick="toggleVoiceAccordion('${scope}', ${n})">
-            <span class="voice-acc-status ${cached ? 'ready' : 'pending'}" data-status-scene="${n}" data-status-scope="${scope}" title="${cached ? 'Ready' : 'Needs generation'}">${cached ? '✓' : '○'}</span>
-            <span class="voice-acc-time">${time}</span>
-            <span class="voice-acc-summary" data-summary-scene="${n}">${escapeHtml(script)}</span>
-            <span class="voice-credit-pill"><span class="cost"><img src="../../../../components/ai-social-media/icons/zap-sm.svg" alt=""><span>${SEGMENT_VOICE_CREDIT}</span></span></span>
-            <img class="voice-acc-caret" src="../../../../components/ai-social-media/icons/caret-down-filled.svg" alt="">
-          </div>
-          <div class="voice-acc-body">
-            <textarea class="voice-script-text" data-scene="${n}" oninput="updateSceneScript(${n}, this.value)">${escapeHtml(script)}</textarea>
-            <div class="voice-acc-bottom">
-              <span class="scene-guide voice-guide-${n}">${wordCountGuideText(script)}</span>
-              <button class="voice-preview-btn" id="voicePreviewBtn_${scope}_${n}" onclick="previewSceneVoice('${scope}', ${n})">
-                <span class="vp-icon"><img src="../../../../components/ai-social-media/icons/audio-play.svg" class="icon-inline icon-16" alt=""></span> Preview <span class="vp-cost"><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">${SEGMENT_VOICE_CREDIT}</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      `;
-    }).join('') + `</div>`;
-    for(let i = 1; i <= count; i++) updateVoicePreviewButton(scope, i);
-  } else {
-    if(window.__wholeScriptText === null) window.__wholeScriptText = getAllSceneScriptsJoined();
-    body.innerHTML = `
-      <div class="voice-acc-script-wrap">
-        <textarea class="voice-script-text whole" oninput="updateWholeScriptText(this.value)">${escapeHtml(window.__wholeScriptText)}</textarea>
-        <span class="voice-acc-wordcount" id="wholeWordCount_${scope}">${wholeWordCountText(window.__wholeScriptText)}</span>
-      </div>
-      <button class="voice-preview-btn" id="voicePreviewBtnWhole_${scope}" onclick="previewWholeVoice('${scope}')">
-        <span class="vp-icon"><img src="../../../../components/ai-social-media/icons/audio-play.svg" class="icon-inline icon-16" alt=""></span> Preview <span class="vp-cost"><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">${estimateWholeVoiceCredits()}</span>
-      </button>
-    `;
-    updateWholeVoiceButton(scope);
-  }
-  renderVoiceCostSummary(scope);
-}
-
-function toggleVoiceAccordion(scope, n){
-  window.__voiceAccOpen[scope] = (window.__voiceAccOpen[scope] === n) ? null : n;
-  renderVoiceSection(scope);
 }
 
 function isVoicePreviewCached(n){
@@ -5509,14 +5506,9 @@ function updateVoicePreviewButton(scope, n){
   const hasCache = !!window.__voicePreviewCache[n];
   const stale = hasCache && !cached;
 
-  const statusEl = document.querySelector(`[data-status-scene="${n}"][data-status-scope="${scope}"]`);
-  if(statusEl){
-    statusEl.textContent = cached ? '✓' : '○';
-    statusEl.className = 'voice-acc-status ' + (cached ? 'ready' : 'pending');
-    statusEl.title = cached ? 'Ready' : 'Needs generation';
-  }
   const btn = document.getElementById(`voicePreviewBtn_${scope}_${n}`);
   if(!btn || btn.classList.contains('loading') || btn.classList.contains('playing')) return;
+  btn.disabled = countScriptWords(getSceneScript(n)) === 0 || countScriptWords(getSceneScript(n)) > 15 || !!window.__reelSyncPending;
   btn.classList.toggle('cached', cached);
   btn.classList.toggle('stale', stale);
   if(cached){
@@ -5532,6 +5524,7 @@ function updateVoicePreviewButton(scope, n){
 }
 
 function previewSceneVoice(scope, n){
+  if(countScriptWords(getSceneScript(n)) === 0 || countScriptWords(getSceneScript(n)) > 15 || window.__reelSyncPending) return;
   const btn = document.getElementById(`voicePreviewBtn_${scope}_${n}`);
   if(!btn || btn.disabled) return;
 
@@ -5556,59 +5549,6 @@ function previewSceneVoice(scope, n){
   }, 1100);
 }
 
-function isWholeVoiceCached(){
-  const cache = window.__wholeVoiceCache;
-  const currentText = window.__wholeScriptText !== null ? window.__wholeScriptText : getAllSceneScriptsJoined();
-  return !!cache && cache.text === currentText && cache.voice === getCurrentVoiceLabel();
-}
-
-function updateWholeVoiceButton(scope){
-  const cached = isWholeVoiceCached();
-  const hasCache = !!window.__wholeVoiceCache;
-  const stale = hasCache && !cached;
-  const wholeCredits = estimateWholeVoiceCredits();
-
-  const btn = document.getElementById('voicePreviewBtnWhole_' + scope);
-  if(!btn || btn.classList.contains('loading') || btn.classList.contains('playing')) return;
-  btn.classList.toggle('cached', cached);
-  btn.classList.toggle('stale', stale);
-  if(cached){
-    btn.innerHTML = `<span class="vp-icon"><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt=""></span> Preview`;
-    btn.title = 'Replay the cached preview — no extra cost';
-  } else if(stale){
-    btn.innerHTML = `<span class="vp-icon"><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt=""></span> Regenerate <span class="vp-cost"><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">${wholeCredits}</span>`;
-    btn.title = `Text changed since the last generation · ${wholeCredits} credits to regenerate`;
-  } else {
-    btn.innerHTML = `<span class="vp-icon"><img src="../../../../components/ai-social-media/icons/audio-play.svg" class="icon-inline icon-16" alt=""></span> Preview <span class="vp-cost"><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">${wholeCredits}</span>`;
-    btn.title = `Generate the full narration · ${wholeCredits} credits`;
-  }
-}
-
-function previewWholeVoice(scope){
-  const btn = document.getElementById('voicePreviewBtnWhole_' + scope);
-  if(!btn || btn.disabled) return;
-
-  if(isWholeVoiceCached()){
-    playVoiceButton(btn, false, () => updateWholeVoiceButton(scope));
-    return;
-  }
-
-  const text = window.__wholeScriptText !== null ? window.__wholeScriptText : getAllSceneScriptsJoined();
-  const voice = getCurrentVoiceLabel();
-
-  btn.disabled = true;
-  btn.classList.add('loading');
-  btn.innerHTML = `<span class="vp-spinner"></span> Generating voice…`;
-
-  setTimeout(() => {
-    window.__wholeVoiceCache = { text, voice };
-    btn.classList.remove('loading');
-    btn.disabled = false;
-    playVoiceButton(btn, true, () => updateWholeVoiceButton(scope));
-    updateWholeVoiceButton(scope === 'tl' ? 'vid' : 'tl');
-  }, 1100);
-}
-
 function playVoiceButton(btn, justGenerated, onDone){
   btn.classList.add('playing');
   btn.innerHTML = `<span class="vp-icon"><img src="../../../../components/ai-social-media/icons/nav-voices.svg" class="icon-inline" alt=""></span> ${justGenerated ? 'Playing…' : 'Replaying…'}`;
@@ -5618,25 +5558,9 @@ function playVoiceButton(btn, justGenerated, onDone){
   }, 1300);
 }
 
-// ---- Timeline CTA: no generation happens here anymore — confirming scene content moves
-// straight to Video, where actual generation runs in 8s units (see startVideoGeneration). ----
-function updateTimelineCta(){
-  const btn = document.getElementById('timelineCtaBtn');
-  const meta = document.getElementById('timelineCtaMeta');
-  if(!btn) return;
-  const unitCount = getVideoUnitCount();
-  const total = unitCount * VIDEO_COST_PER_UNIT;
-  btn.textContent = `Generate video ⚡${total}`;
-  btn.title = unitCount > 1 ? `${unitCount} × 8s clips × ⚡${VIDEO_COST_PER_UNIT}` : `⚡${VIDEO_COST_PER_UNIT}`;
-  btn.disabled = false;
-  btn.onclick = proceedToStudio;
-  meta.style.display = '';
-  meta.textContent = unitCount > 1
-    ? `Generates ${unitCount} 8-second clips and combines them into your final video.`
-    : 'Generates your video.';
-}
 function proceedToStudio(){
-  document.getElementById('tabReelTimeline').innerHTML = '<span class="check">✓</span> Timeline';
+  if(window.__reelSyncPending) syncReelClipsFromScript();
+  if(reelHasInvalidNarration() || reelNeedsPromptReview()) { updateReelReadiness(); return; }
   document.getElementById('tabReelVideo').classList.remove('locked');
   const unitCount = getVideoUnitCount();
   const log = document.getElementById('chatLog');
@@ -5749,24 +5673,23 @@ function startVideoGeneration(){
 
   document.getElementById('videoEditorPanel').innerHTML = Array.from({ length: count }, (_, i) => `
     <div class="video-scene-editor" id="videoSceneEditor${i + 1}" style="${i === 0 ? '' : 'display:none;'}">
-      <div class="video-scene-header-row">
-        <div class="scene-time"><span class="dot"></span>${getVideoUnitTimeLabel(i + 1)} · Scenes ${getVideoUnitScenes(i + 1).join('–')}</div>
-      </div>
-      <div class="scene-card">
+      <div class="carousel-card-block">
+        <div class="carousel-card-block-header">
+          <span class="carousel-card-block-title">Clip ${i + 1} <span class="scene-time-badge">${getVideoUnitTimeLabel(i + 1)}</span></span>
+        </div>
         <div class="scene-card-head-row">
           <span class="scene-card-head-label">Video prompt</span>
           <button type="button" class="img-prompt-regen-btn used" onclick="regenerateVideoScene(${i + 1})"><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt="">Regenerate <span class="cost"><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">${VIDEO_COST_PER_UNIT}</span></button>
         </div>
         <div class="scene-desc-box"><textarea class="scene-desc" id="videoPrompt${i + 1}">${escapeHtml(buildVideoPrompt(i + 1))}</textarea></div>
+        ${renderSceneNarrationHTML('vid', i + 1)}
       </div>
     </div>
   `).join('');
 
   buildVideoSegmentNav();
   selectVideoScene(1);
-  window.__voiceSectionCollapsed.vid = true;
-  document.getElementById('voiceSection_vid')?.classList.add('collapsed');
-  renderVoiceSection('vid');
+  for(let i = 1; i <= count; i++) updateVoicePreviewButton('vid', i);
 
   document.getElementById('videoCtaRow').style.display = 'none';
   document.getElementById('combineStaleBanner').style.display = 'none';
@@ -5790,16 +5713,16 @@ function applySampleVideoFrame(tile, index){
   if(preview) preview.style.backgroundImage = `url('assets/video/scene${(index % 2) + 1}.png')`;
 }
 
-// A video unit's prompt is its Timeline description (see getVideoUnitDesc) plus a fixed
-// cinematography/motion suffix — turning a still-image action description into an actual
+// A video unit's prompt is its scene description (see getVideoUnitDesc, set on Script) plus a
+// fixed cinematography/motion suffix — turning a still-image action description into an actual
 // video-generation prompt. Figma: node 6077-107146's Video prompt box.
 const VIDEO_PROMPT_MOTION_SUFFIX = ' Realistic beauty UGC style — natural daylight, shallow depth of field, handheld camera feel, true-to-life skin texture and color. Animate naturally with subtle movement — keep framing and character consistent with the still image.';
 function buildVideoPrompt(unit){
   return getVideoUnitDesc(unit) + VIDEO_PROMPT_MOTION_SUFFIX;
 }
 
-// Nav label is "Scene" (not "Video") on this tab too — matches Timeline's own nav exactly,
-// even though what's being edited here is called "Video prompt" (Figma: node 6077-107146).
+// Nav label is "Scene" (not "Video"), even though what's being edited here is called
+// "Video prompt" (Figma: node 6077-107146).
 function buildVideoSegmentNav(){
   const tiles = document.querySelectorAll('#subReelVideo .video-tile');
   const nav = document.getElementById('videoSegmentNav');
@@ -5850,7 +5773,7 @@ function combineVideo(){
   window.__videoCombineStale = false;
   updateVideoCta();
   document.getElementById('tabReelVideo').innerHTML = '<span class="check">✓</span> Video';
-  document.getElementById('chatLog').innerHTML += '<div class="msg ai"><span class="tag">AI</span>Combined all scenes into the final cut — free, no credits used. Your narration track from Timeline is already mixed in.</div>';
+  document.getElementById('chatLog').innerHTML += '<div class="msg ai"><span class="tag">AI</span>Combined all scenes into the final cut — free, no credits used. Your narration track from Script is already mixed in.</div>';
   appendChatCta('Your video is ready. What\'s next?', '', '<button class="btn btn-dark" onclick="this.parentElement.querySelectorAll(\'button\').forEach(b => b.disabled = true); goToDevelop()">Continue to editing →</button><button class="btn btn-secondary" onclick="this.parentElement.querySelectorAll(\'button\').forEach(b => b.disabled = true); goToPublish()">Skip to publish</button>');
   showCombineResult();
 }
@@ -5961,7 +5884,10 @@ function regenerateAllScenesFromChat(){
   log.scrollTop = log.scrollHeight;
   setTimeout(() => {
     loadingEl.remove();
-    renderTimelineScenes();
+    window.__unitDescTouched = {};
+    window.__reelPromptReview = {};
+    for(let n = 1; n <= getSceneCount(); n++) window.__unitDescriptions[n] = buildSceneDescFromNarration(n, getSceneScript(n));
+    renderReelSceneEditors();
     const status = document.createElement('div');
     status.className = 'msg-status';
     status.innerHTML = '<span class="worked-label">Worked</span> <span class="worked-time">for 2s</span>';
@@ -6010,12 +5936,16 @@ function getPublishHookText(){
 }
 window.__platformConnections = window.__platformConnections || { instagram: true, tiktok: true, facebook: false, youtube: false, linkedin: false };
 
+// Real per-platform logo icons (components/ai-social-media/icons/social-*.svg) — the
+// previous inline base64 set had a corrupted TikTok PNG (bad IDAT checksum, rendered blank)
+// that only got noticed once someone looked for it; these are the same files the rest of
+// the design system already uses, so a broken one here can't silently drift again.
 const PUBLISH_PLATFORM_ICONS = {
-  instagram: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAHeElEQVR4nOWXXaxUVxXHf/vjfMzMnfsBF8pcUEBaSlJjIRiNVZtiSCxN1VK1rVof1NJgjPqkxo/0RWOiD2rTNFpbJalao+GhhWgK0lgVU60Qi9SGUjBY4F6+LnC/Zs7MOXtvs/e5d+YiNyQ+9cGd7Jwza/bZ67//67/WWUc45xxv4JC8wUPP/3HmQsF3fn6OY6faTDcNUWFQhUEbg8oNkSnvdW7Q1qALb7Noa9HOonFo55C2PJlEIpwAFHEtZtWGIbZ8fg2Dy5KuTzEXgjPjBdu+/TozMwZpLJEp0H7zYtaRtah8zlYEW+wskTVE+KsHAMpfBQjDLASJReGcxIiIuC9l2471DDSSKwF885GT/OXARDiBmjvpHAN++o1NyULpzANwRK4E4hnw9shZlAN/bmzJA1JjrMYITS5iGhuGue/Rm64MwYmD5xmaLpCe7uDQoTzN3lnY2ITNu47wIMurt5fTEdmiywaz9BcoDAm5jMiEY+Lopas1EI9NUAnx804cGn811GqKd314NavXL2JoWZXBZdVriqo5NkVrdIqzz7zKhV1HMAhymdCWlpY1COFoTS4gwsXtJtKLyE9/chxDyyrc8/B7GWhc2+n8UW3Uw1y8cYRs+0ZefuBpmqPNMiSizHhnxQIA8hZKOFSg2SCd476H30+9UaU5Osmh773A5NGLZKOXifyDIda2VLtzpQMPYGSQ6trFrPnyraQj/bz1ibs4dO+vYCoLwnDSK1QtAMDMhFMr509vWXXn9cF5NjrB3+5/EjeVUcFRnXPmwLpSZC5MFexLPnAjK7e/k9NPvcTwpjUBROP+mzn1wxfBtXHWP9orP3LuZkkxzXBxmevMRZbYcdbc8ZZgf/37z1JpjlOV06SySaKaRKpFpFvoKEPrNpHMUKKNECY492P5x9dz/Lt/DPcDG5d7vGgKUtchcu2rGRh0EwhpkKJACkd1ZCDYO8dPoGXm8zVs4kffhutpfGYzlbUNdD1l8uAJzv3mMOd2Hebkj/fzpgffw78f+yvTR8+H9clIvYz9HIiQnv8FQKsMGQBYBAVxY7B86OwYsZylXcCST29h6aduv0J4/RtXhZk26px+/PecfOxPpStXbu/D4OGLsIsXen41gEh1kCIPADyQnj3D68Y/2H/7LV3n4zt2c+HXfwjbDWx5B40v3M2KbbfR/PsxJg+cxHjnrldyZ/VfOp3Nhis0EPlYKj8zIpF1F8TeJlvEKmNwSxnf8UefYuLJp1HZZWTzIpM793J+x2/Df40HNiFVhlYdtOzFupuCfrqFAMiMSPZAdAHEGXHaIUoz0vXrgq393HNEUUYsM5Kwvs3kzj3hv+raEWLZQYs2et5BlOh0NTR/6C4AkaGUQcgCqeeFoM/nb1ncbXMGWa2h+7woM5yRuEKiCoWbBa36KiGcwmtJ2B4A5eMusdZXkQUY0FEHnbTR1Ta6r0edqmXoemmzJ48HW+2uO8JvXcnCelltU7/z3eG/7KUjgXrPZum0x4BPVZ9l85nQ3ZtqB6kLRFwg46K3oK+DkJ4BR3vPT9E3/oDa3Z9A5JNk+/eBUdRu20rfPR8L65v7nkfLTkjb+cODCQXL5fMJoAtApm1UWqDiAjEvBLqWhcoZ6Bx7kc6+x4k3b6N672fDnD9mdv6SbP/v0EkEnsTeNig6OOFfzSL0BlcBUNUOKsmRSYGMDPbSGHKoQbxiEW5ilNDmCIl74UfkzVOomz+IXLkRl01hTx+j9czPaL/8T3Q1wQjfmDj0suGwd2dsHCU9q+3g3L+grwaQdtBpjgwsGJg8DUMNxMobEP86E2p9WUccvLab4sguXEdgOwrbVtg8QVd6HZ5flqxbHu7N2RJAcC5znF3gZaSr3nmO8iBiiz19ELny7aj3fYn80mvYzsxsl+N3L5CFD1UnhExqi8+4wrcevvh4yaQ1BrZ/Muw99eyfyyInNdI/O6/Q6R4DRWBBpD75E4pXdiPfthXZ3yD6yE/IDzyBuXgCO3UGYQucB1B0kIWvlB0QpeLt0BKi4XWkH/0cangpxdnztPY+jxIJVuQoIbFigRDIpI1IHTZJIa5SSIfZ+xCV27+FrC8l2fQ1/tdRnD/H+DceQqocYTVSGEwo9W4BALGFJMXGVUir2KgKtsXknq8Sr76V+M23ICuLkJWhazp1l8ew42coXv0HM7t3wyUv6gRlCoxVJYiFREh9CCtmQSRViPy1go0qtC4cpjn+ShChb9mFzaHdQuUtZNZEtGdQ2TSyNY1rgmlF5NMJ5ClCJyGtfdx9a+p9RP3xAgAaN2HHj2JVgtUlCBvXsLEHkYCWQYDOGsjbIZZGCDAudNIuKrCFT+MW5BahXVlPlPE9W1nOpf9esNQ3rFqgFG/+OlSHsFGE1R5EJYTD+nCkNUw6gKnWMZW+ElxUAZVgohinI6yKQGuEFCjfV2j/XnEoBVJaxOxU9ZTrvrh1AQ30N0g/9AjZoV+QT5zCRWoWTIpN+7Da0yZQefnSsZ6JIkIVGqe1r7WzlU7iv0xC7+lP7b9SpEPWK1RW3MDwVx5ENxZ1AYj/+6/j/wAPhn1YLjniagAAAABJRU5ErkJggg==',
-  facebook: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAADzUlEQVR4nMVXW0hUQRj+ZvbifXe1O+paERmYihFBpdkNIroY+GKQFvTQ5bmnqLeIHhKiHuqheqqMoOhCBQWRYUERRGaBkJSrJSXUaqmp58zEnNuey5xtpcJvd5g5/8z/zzfzz/wzQzjnHNMIimlGcCqNn33luP8ZeDbI0D8KDE3o8mgYqIgSVMQINhcDq2aRjG2STFxw9QNDaxdHYiQzb5XmERyqIGhaSP+OQN8IR0u7irdJDkII3E1NmaxOJwLc3BjS8ikTaOtRcfQlw/Ak/grREHB6JcXmeCBzAvcSKnY/UvEvcaY2gKZFgT8T6PvJUH9zAsPGApOC2BaZqS5kaZZTNAt43BBGaT5NT6Dm6jgSP1ja0QifC5TkAfsrQ9hSRlFaoMuGxjn6fnLU3xj36C0tImhvzPbfhm3dCnqT/lNPKAFnHOIXL6C4vTWs5c6REi1xlTt0RP5mkKGtexI7y0NWe2pXPvF8Qu/AlSD+jIMpzJLd3u7t3AG3jqrrnXihyGeg45OC3mG/qddHY/qqtjgg7bzjk4qEYYOpek4MPTFrAokhFR39KmpLAk4Cd98rgCJfRG5pPN8b6Q4+GMOVd4pXlxJAzKLN1t0exUug84uqT3eGkc6Ny10+AUNis6NfEM1yEfiaOQEZpqL78VtqoQfNwtAI07axbDt7ZJLOuI/7ZDaStrZBy6axbWRmhOzctlRAr5rtjWhnt+RaZbHQjj/55bEhQ9AsiCM1OeY/il2VYd86d/2d7gkrDsgQzSZeAvECguSILQj9IbSmQ+eAAjDXlrbZq5ydin/ULNTFg1o9Z0bSAkfqeyp4PaA4dN32quakCATNwtYlYZx5OuoxRkC0ILLpQtKS7VqWheaaHEc7e33nwGRaF2wvz/ISWLMgjHiEGmeBGb/0CCZItPekDpe6+alYbkLUm2RlAzARLwygboHPWXBkfR4gmIswquV60kZjJZ89r7Vz6nllwJF1zusRtX80L8/R/KP5S0uG71TmKEvjgKVj6rllHPEIQctyp+uo29C1PTFEwsTWMfeUZZva2Rlz6XJEwsDDAzM8etQtmF8UROuOiH6EGkeqJ0m2p7SdLZ1viqGsKJDZu6BlRa52qdh76bs8OPnMgAyxXIrWxhgaqpxTn5aAQEN1DqqLQ9hwahAfvzmPWdkilMlqSkK4vm8mymb4v3+ob41wx8wgeo7Nw8XmQpQVUn2Uxg3JQ8C+2GIBTefl4blpOxfI6GVk4nH3L9x6NYbq0hD2rM635MlRhvUnv6B+cTYaanKwttx58fxnBPAfMO2v49/QJ28HrQ9A9QAAAABJRU5ErkJggg==',
-  tiktok: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAADKklEQVR4nMVXX0hTURj+tq7bnHebzDRXdJ2g1UMLk5oPm86sF7dAkEwKe1DyoSaDHkoSAimQfNQIpIdJ9CAIPhg03yonCvWQkJMKBfOmJqxWm5uhMhfn7u62pe5Pbu2Dw3b+ft/5/c7vd+4RhUKhELIIMbIMKrrCsiysVitcLhe8Xm/aycxmM3p6esAwjNAmiriAkJtMpowQR0OlUmF8fFwQIY50dHV1ZZycgHB0dHTstIBarU55MTGdB7rpolAPjL1EcNWdlBUWFhZ2noFUIVbkQdnWjDPyfK7u8/3C3PMxfNnaijsv2tIU0gB7aUX4zw0bet/NoJff3f8Pw8pKGCp4MVkRAMDY14eWW7bsCQBNo/9eN26/eY3CR/ezIIDH3fJTeNV0Hc/0ehzNyUFaBOSUlUJeXweZsWr3AdPTwOqqUD0skcFC02DiCKCSIZYZ9ci3tYHSFHH1Q4srcL+dxsouAmba26GqrQWj1wPl5YDfH3dtKhG5qrUZirZmaCS5uKY+gob8Yig23gNGI4o+uHaMd21swGq348rICCxKJRiJ5N8FyOvPceTHZDQGtRVQHEg+bQx5vVxJBCpep7I1vHOB3OEAJiYSmjUVUHt1SE+f5Hx+s7AkTG63c4UtKMDA7CwXbhkVICnTcsTE5xwcDrAlJTBNTYVzuccjHMqMCCA4IY3apd+PgUAg5iIht+F+Id6rY3P+rwvFbIZXLo9poi9ZYsfMz6fPAltzn7Hk+Q6U8g02G0wH1Rj54eZ2Lq8+C7m5Dg0q3kUkATmdYBOEXdICtv0BfHzyFJ/6q3Ccd8Xlqy34dqEaoz+/Ym07iPN0Ae5oysITyCEF8GJtLSUBokRfRA02Kwa7H8RfhY8QEvfW5eWkiD0eD/dLJRo42v8YM0Ua6BobgWLe3BGQfEDIh4fBSqV4uL6OVCFK9puwU6tFp8HwRwTxObl8FAoMLC6i1+2GNxhMmjhiAVFEgFarhc/nizuJ5HVDbq6Q30lUDC0tpUS8pwt0Oh0mJyfjTmI3N7myX1gslt0fJjU1NQmtkLGHCcMwcDqd3PMpU8QGgyGGnECwQLaQ9dfxb0DGJOiHEi3OAAAAAElFTkSuQmCC',
-  youtube: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAOdEVYdFNvZnR3YXJlAEZpZ21hnrGWYwAAASBJREFUeAHtl8ENgjAUhv8aj3pXt9CzC+gAMgVrMAADwJkF4M4AMAbc4a6+EGxLkaSU0gtfQtI2JO+jvJfXsvcXOGQHx2wCm8BeWSlLIE2Buu7mbds9PU0jz4ecz3x8Osnj2w14PKTXmVSGQdAFt4nnAb7/m/JfQIFtByeSBMiyEQFh0Tp5DlVgTfr8kgSqCqtBiawI6BCGwPWKJeBlOFVaQ6ic6CkKII670tVBiDVPwFRkVMAEgx1ZtgoYgy7L7AB9cRTp54IkcDjo58HcwBTLSMDgi/8L6CA0E1N4EgpW1hFaNhe4XOACLnC/YzWeT6gCtPh6wToURzgVMeViQocSym6hZUrjqa55PMq5RON+TkcyCj5oYmy7GcExm4BzgQ9Q12mViqZ3vgAAAABJRU5ErkJggg==',
-  linkedin: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAOdEVYdFNvZnR3YXJlAEZpZ21hnrGWYwAAAbBJREFUeAHtlz9IAlEcx7+W0B8HBZ0kMwhySoRoKHCppeBcW2vKoJYmQWh0aailIjdba8yxGjKo0ZQGjaJImzK6KAsq6v0OfDxKuAve3RX4gePufry735f33u/73nN8MmAjbbAZp/hydfeKua0yCpU61PobZKNEvFie6kfQ28FjjsYQUPLRVN6UxCLurnYcLw1xEXwIEjuXpicn1JcPzGZK/J0LyOZrsIrizRN+CLAS6gVbBYgYEjA/7kd1dQRnqWEEfZ2QiSEBVDqebif6WPKkEoBMDAnIlR7482FJhUycRhpNrBQ1E1Hr78iVbRBAyclA6KI5cM1MqxEjjs4fQX4Wi/i0GM3y7GlNaydFwMKYH9GQR3uOZ8raj8XYLvOQGBMkklR6Mcl6riDUfDOklOH35ARNWhKhhxQBtI74F0/giuewvnfL4+GAS/dbKQI29qt8HVk7qPB40KvvGVIEiNb6W/6HFbcEmAnfklEJWclzOqrdW0PwdwSQd9sqYLBH37dloQiLFxewOT1gSS+4WQ7a4jVwiIdTWtUS2xdsM3EP2VDiMOvl9Eyo+dHMLmyvgi/Fy5Nml0vBSgAAAABJRU5ErkJggg=='
+  instagram: '../../../../components/ai-social-media/icons/social-instagram.svg',
+  facebook: '../../../../components/ai-social-media/icons/social-facebook.svg',
+  tiktok: '../../../../components/ai-social-media/icons/social-tiktok.svg',
+  youtube: '../../../../components/ai-social-media/icons/social-youtube.svg',
+  linkedin: '../../../../components/ai-social-media/icons/social-linkedin.svg'
 };
 
 const PUBLISH_PLATFORMS = [
@@ -6053,7 +5983,7 @@ function getPublishMetaText(){
   if(window.__contentType === 'image') return `Image post · ${window.__imageRatio || '4:5'}`;
   if(window.__contentType === 'carousel') return `Carousel · ${window.__imageRatio || '4:5'} · ${window.__cardCount || 5} cards`;
   if(window.__isStoryVideo) return `Story Video · 9:16 · ${window.__videoDuration || 16}s`;
-  return `Reel/Short · 9:16 · ${window.__videoDuration || 16}s`;
+  return `${window.__isStoryVideo ? 'Story Video' : 'Reel/Short'} · 9:16 · ${window.__videoDuration || 16}s`;
 }
 
 // key -> {post: bool, story: bool}. Connected platforms default to every surface the
@@ -6081,6 +6011,8 @@ function populatePublishView(){
   updateWhenSelection();
   if(document.getElementById('pubCaptionCustomToggle').checked) renderPerPlatformCaptions();
   if(document.getElementById('pubWhenCustomToggle').checked) renderWhenPlatformList();
+  // Posting a video to Story has no caption field at all — Reel/Short (feed) keeps it.
+  document.getElementById('pubCaptionBlock').style.display = window.__isStoryVideo ? 'none' : '';
 }
 
 function toggleDestinationFormat(key, surface){
@@ -7105,9 +7037,13 @@ function reelGoToBrief(){
 function reelGoToGenerate(){
   showView('generateView'); setStep('stepGenerate'); showSub('reelScript');
   document.getElementById('briefActionBarReel').style.display = 'none';
+  // Scenes/voice show immediately (with default per-clip text — see getUnitDefaultScript())
+  // rather than waiting on the script to be drafted/confirmed first.
   if(!reelScriptDraftStarted){
     reelScriptDraftStarted = true;
     runBriefToScript();
+  } else {
+    syncReelClipsFromScript();
   }
 }
 // Redirect to image-editing.html (see imgGoToDevelop()) — shared by both Reel/Short and
@@ -7173,9 +7109,9 @@ function reelApplyBrandMode(mode){
 // ---- Draft/Versions <-> Script/Storyboard/Preview sub-stage tabs — combined tab/sub map
 // (the two source files' id sets don't overlap, so one implementation covers both). ----
 function showSub(name){
-  const tabs = {draft:'tabDraft', versions:'tabVersions', previewImage:'tabPreviewImage', script:'tabScript', storyboard:'tabStoryboard', preview:'tabPreview', reelScript:'tabReelScript', reelTimeline:'tabReelTimeline', reelVideo:'tabReelVideo'};
-  const subs = {draft:'subDraft', versions:'subVersions', previewImage:'subPreviewImage', script:'subScript', storyboard:'subStoryboard', preview:'subPreview', reelScript:'subReelScript', reelTimeline:'subReelTimeline', reelVideo:'subReelVideo'};
-  const displays = {draft:'flex', versions:'flex', previewImage:'flex', script:'flex', storyboard:'block', preview:'block', reelScript:'block', reelTimeline:'block', reelVideo:'block'};
+  const tabs = {draft:'tabDraft', versions:'tabVersions', previewImage:'tabPreviewImage', script:'tabScript', storyboard:'tabStoryboard', preview:'tabPreview', reelScript:'tabReelScript', reelVideo:'tabReelVideo'};
+  const subs = {draft:'subDraft', versions:'subVersions', previewImage:'subPreviewImage', script:'subScript', storyboard:'subStoryboard', preview:'subPreview', reelScript:'subReelScript', reelVideo:'subReelVideo'};
+  const displays = {draft:'flex', versions:'flex', previewImage:'flex', script:'flex', storyboard:'block', preview:'block', reelScript:'flex', reelVideo:'flex'};
   const tabEl = document.getElementById(tabs[name]);
   if(!tabEl || tabEl.classList.contains('locked')) return;
   Object.values(tabs).forEach(id => { const el = document.getElementById(id); if(el) el.classList.remove('active'); });
@@ -7226,11 +7162,11 @@ function syncGenActionBarV3(){
       sourceBtn = document.getElementById('continueToEditingBtn');
     }
   } else if(window.__contentType === 'reel'){
-    document.getElementById('genMetaV3').textContent = `Reel/Short · 9:16 · ${window.__videoDuration || 16}s`;
+    document.getElementById('genMetaV3').textContent = `${window.__isStoryVideo ? 'Story Video' : 'Reel/Short'} · 9:16 · ${window.__videoDuration || 16}s`;
     if(document.getElementById('subReelScript').style.display !== 'none'){
-      sourceBtn = document.querySelector('#scriptPanel .stage-cta-row .btn-dark');
-    } else if(document.getElementById('subReelTimeline').style.display !== 'none'){
-      sourceBtn = document.getElementById('timelineCtaBtn');
+      sourceBtn = window.__scriptConfirmed
+        ? document.getElementById('reelGenerateVideoBtn')
+        : document.querySelector('#scriptPanel .stage-cta-row .btn-dark');
     } else if(document.getElementById('subReelVideo').style.display !== 'none'){
       if(document.getElementById('combineResultView').style.display !== 'none'){
         secondaryBtn.textContent = 'Skip to publish';
@@ -7266,12 +7202,60 @@ function sendChatMessage(){
 }
 
 function reelHandleChatSend(text){
-  const timelineTab = document.getElementById('tabReelTimeline');
-  if(timelineTab && timelineTab.classList.contains('locked')){
+  if(!window.__scriptConfirmed || /script|스크립트/i.test(text)){
     reviseScript(text);
   } else {
-    setTimeout(() => addChatMsg('ai', '<span class="tag">AI</span>Got it — this is a prototype, so I won\'t actually revise this, but in the real flow this is where that request would land.'), 500);
+    reviseSceneOrNarration(text);
   }
+}
+
+// ---- Post-confirm chat revisions: "clip 2 narration warmer", "scene description more
+// dramatic", etc. — same lightweight keyword-based rewrite reviseScript() already uses
+// (buildRevisedScript), just aimed at a specific clip's field instead of the whole script,
+// so editing any clip is as easy as typing what to change instead of hunting for a button. ----
+function reviseSceneOrNarration(text){
+  const count = getSceneCount();
+  const req = text.toLowerCase();
+
+  const clipMatch = req.match(/(?:clip|scene|클립|씬)\s*(\d+)/) || req.match(/\d+/);
+  const clipNum = clipMatch ? Math.min(count, Math.max(1, parseInt(clipMatch[0].match(/\d+/)[0], 10))) : null;
+  const targets = clipNum ? [clipNum] : Array.from({ length: count }, (_, i) => i + 1);
+
+  const isNarration = /narration|voice|line|내레이션|보이스|대사/.test(req);
+  const isSceneDesc = !isNarration && /scene|description|visual|action|장면|묘사|비주얼/.test(req);
+
+  if(!isNarration && !isSceneDesc){
+    setTimeout(() => addChatMsg('ai', '<span class="tag">AI</span>I can rewrite a clip\'s scene description or narration — try something like "clip 1 narration warmer" or "scene description more dramatic".'), 500);
+    return;
+  }
+
+  const log = document.getElementById('chatLog');
+  const loadingEl = document.createElement('div');
+  loadingEl.className = 'msg ai loading';
+  loadingEl.innerHTML = `<span class="tag">AI</span>Rewriting ${isNarration ? 'narration' : 'the scene description'}<span class="dots"><span>.</span><span>.</span><span>.</span></span>`;
+  log.appendChild(loadingEl);
+  log.scrollTop = log.scrollHeight;
+
+  setTimeout(() => {
+    loadingEl.remove();
+    targets.forEach(n => {
+      if(isNarration){
+        updateSceneScript(n, fitScriptToWordLimit(buildRevisedScript(getSceneScript(n), text), 15));
+      } else {
+        setVideoUnitDesc(n, buildRevisedScript(getVideoUnitDesc(n), text));
+      }
+    });
+    const status = document.createElement('div');
+    status.className = 'msg-status';
+    status.innerHTML = '<span class="worked-label">Worked</span> <span class="worked-time">for 1s</span>';
+    log.appendChild(status);
+    const msg = document.createElement('div');
+    msg.className = 'msg ai';
+    const whichClip = clipNum ? `Clip ${clipNum}` : (count > 1 ? 'every clip' : 'your clip');
+    msg.textContent = `Updated the ${isNarration ? 'narration' : 'scene description'} for ${whichClip}.`;
+    log.appendChild(msg);
+    log.scrollTop = log.scrollHeight;
+  }, 900);
 }
 
 // ---- init ----
@@ -7322,7 +7306,9 @@ fitScreenToViewport();
 /* Content Library 딥링크
    #ref=<제목>&thumb=<경로>&ratio=<9:16|4:5|1:1>&stage=<brief|script|reelTimeline|publish>
    초안 이어서 편집: #stage=publish&edit=<제목>&caption=<캡션>[&perplatform=1]
-   stage 는 "돈 쓰기 직전의 마지막 무료 단계"를 가리킨다. */
+   stage 는 "돈 쓰기 직전의 마지막 무료 단계"를 가리킨다.
+   reelTimeline 은 Timeline 탭이 있던 시절의 값 — Timeline 이 Script 로 합쳐진 뒤에도
+   기존 링크가 깨지지 않도록 reelScript 와 동일하게 처리한다(아래 go() 참고). */
 (function(){
   var q = new URLSearchParams((location.hash || '').replace(/^#/, ''));
   var ref = q.get('ref'), thumb = q.get('thumb'), ratio = q.get('ratio'), stage = q.get('stage');
@@ -7355,8 +7341,8 @@ fitScreenToViewport();
       var type = pickType();
       var chip = document.querySelector('#contentTypeToggle .seg-chip[data-type="' + type + '"]');
       if (chip && typeof selectContentType === 'function') selectContentType(chip);
-      /* Timeline 은 사용자가 대본을 승인해야(Use this script → Continue to Timeline)
-         열린다. 그 승인을 대신 눌러주지는 않는다 — 둘 다 무료 단계라 여기서 멈춰도
+      /* 씬 설명/내레이션은 사용자가 대본을 승인해야(Use this script → Continue) 열린다.
+         그 승인을 대신 눌러주지는 않는다 — 둘 다 무료 단계라 여기서 멈춰도
          "돈 쓰기 전"이라는 목적은 지켜진다. */
       if (stage === 'publish' && typeof goToPublish === 'function'){
         /* 라이브러리 초안의 "Edit & Publish" 가 오는 곳. 캡션·해시태그·플랫폼별 문구·
