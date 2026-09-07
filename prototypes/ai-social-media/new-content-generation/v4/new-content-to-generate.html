@@ -29,6 +29,8 @@
 <link rel="stylesheet" href="../../../../components/ai-social-media/date-picker.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/carousel-card-block.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/brand-kit-summary.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/editor-cell.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/brand-logo.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/image-scene-card.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/storyboard-card.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/destination-account.css">
@@ -350,7 +352,9 @@
   .size-variant-placeholder .mini-spinner{width:12px; height:12px; border-width:2px;}
 
   /* ---- Script stage (Carousel): brand kit + one full-width, always-expanded block per card ---- */
-  .script-global-brand{border:1px solid var(--color-neutral-300); border-radius:10px; padding:14px 16px; margin-bottom:18px;}
+  /* Now just a spacing wrapper (the .brand-kit-card inside carries its own border) —
+     the old bordered/padded outer box didn't match the updated Figma design. */
+  .script-global-brand{display:flex; flex-direction:column;}
   /* Base look (.carousel-card-block border/radius/padding/gap, header, title, char
      toggle label, script text field) now comes from
      components/ai-social-media/carousel-card-block.css. .script-card-msg's real
@@ -1857,40 +1861,9 @@
               <div class="draft-section">
                 <div class="draft-section-label">Visual concept</div>
                 <textarea class="visual-concept-text" id="visualConceptText" placeholder="Not drafted yet — I'll work this out once the copy is confirmed." oninput="onVisualConceptEdited()"></textarea>
-
-                <div class="brand-kit-row">
-                  <button type="button" class="field-switch" id="brandKitSwitch" role="switch" aria-label="Use brand kit" aria-checked="false" onclick="toggleBrandKit()"><span class="knob"></span></button>
-                  <span class="brand-kit-label">Use brand kit</span>
-                </div>
-                <div class="brand-kit-summary" id="brandKitSummary">
-                  <div class="brand-kit-summary-col">
-                    <div class="brand-kit-summary-label">Palette · Formee Express <span class="chevron"><img src="../../../../components/ai-social-media/icons/caret-down-filled.svg" class="icon-inline" alt=""></span></div>
-                    <div class="brand-kit-swatch-row">
-                      <span style="background:#2b6a6c"></span>
-                      <span style="background:#b80d48"></span>
-                      <span style="background:#f29724"></span>
-                      <span style="background:#444444"></span>
-                      <span style="background:#6d9697"></span>
-                      <span style="background:#aa5a77"></span>
-                      <span style="background:#ffffff; border:1px solid var(--color-neutral-200);"></span>
-                    </div>
-                  </div>
-                  <div class="brand-kit-divider"></div>
-                  <div class="brand-kit-summary-col">
-                    <div class="brand-kit-fonts-title">Fonts</div>
-                    <div class="brand-kit-fonts">
-                      <div class="brand-kit-font-row"><span class="brand-kit-font-tag" style="font-family:'Playfair Display',Georgia,serif; font-weight:700; font-size:18px;">Heading</span><span class="brand-kit-font-meta">Playfair<span class="dot"></span>Bold</span></div>
-                      <div class="brand-kit-font-row"><span class="brand-kit-font-tag" style="font-family:Georgia,serif; font-weight:700; font-size:16px;">Subheading</span><span class="brand-kit-font-meta">Georgia<span class="dot"></span>SemiBold</span></div>
-                      <div class="brand-kit-font-row"><span class="brand-kit-font-tag" style="font-family:Georgia,serif; font-weight:400; font-size:16px;">Body</span><span class="brand-kit-font-meta">Georgia<span class="dot"></span>Regular</span></div>
-                    </div>
-                  </div>
-                </div>
-                <div class="brand-kit-empty" id="brandKitEmpty" style="display:none;">
-                  <span>Set up your brand kit to apply it here automatically</span>
-                  <button type="button" class="btn btn-secondary" onclick="imgGoToBrandSetup()">Brand Setup</button>
-                </div>
               </div>
 
+              <!-- Figma node 6390-106611: Text placement now comes before Use brand kit. -->
               <div class="draft-section draft-section-placement">
                 <div class="draft-section-label">Text placement</div>
                 <p class="draft-section-hint">How the headline, subhead, and call to action should appear on the image.</p>
@@ -1901,6 +1874,18 @@
                 <div class="baked-in-warning" id="bakedInWarningImage">
                   <img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiB2aWV3Qm94PSIwIDAgMjAgMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gdHJpYW5nbGUtYWxlcnQiPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNMTguMTA4MyAxNUwxMS40NDE3IDMuMzMzMzNDMTEuMjk2MyAzLjA3Njg0IDExLjA4NTUgMi44NjM0OSAxMC44MzA4IDIuNzE1MDZDMTAuNTc2IDIuNTY2NjIgMTAuMjg2NSAyLjQ4ODQyIDkuOTkxNjcgMi40ODg0MkM5LjY5Njg0IDIuNDg4NDIgOS40MDczIDIuNTY2NjIgOS4xNTI1NiAyLjcxNTA2QzguODk3ODMgMi44NjM0OSA4LjY4NzAzIDMuMDc2ODQgOC41NDE2NyAzLjMzMzMzTDEuODc1IDE1QzEuNzI4MDcgMTUuMjU0NSAxLjY1MTAyIDE1LjU0MzMgMS42NTE2NyAxNS44MzcxQzEuNjUyMzIgMTYuMTMwOSAxLjczMDY1IDE2LjQxOTQgMS44Nzg3MSAxNi42NzMyQzIuMDI2NzYgMTYuOTI3IDIuMjM5MjkgMTcuMTM3MiAyLjQ5NDc1IDE3LjI4MjRDMi43NTAyIDE3LjQyNzYgMy4wMzk1MSAxNy41MDI2IDMuMzMzMzMgMTcuNUgxNi42NjY3QzE2Ljk1OTEgMTcuNDk5NyAxNy4yNDYzIDE3LjQyMjUgMTcuNDk5NCAxNy4yNzYxQzE3Ljc1MjUgMTcuMTI5NyAxNy45NjI3IDE2LjkxOTIgMTguMTA4OCAxNi42NjU5QzE4LjI1NDggMTYuNDEyNiAxOC4zMzE3IDE2LjEyNTMgMTguMzMxNiAxNS44MzI5QzE4LjMzMTUgMTUuNTQwNSAxOC4yNTQ1IDE1LjI1MzIgMTguMTA4MyAxNVoiIHN0cm9rZT0iIzc4NzMzMSIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzIiIGQ9Ik0xMCA3LjVWMTAuODMzMyIgc3Ryb2tlPSIjNzg3MzMxIiBzdHJva2Utd2lkdGg9IjEuNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxwYXRoIGlkPSJWZWN0b3JfMyIgZD0iTTEwIDE0LjE2NjdIMTAuMDA4MyIgc3Ryb2tlPSIjNzg3MzMxIiBzdHJva2Utd2lkdGg9IjEuNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjwvZz4KPC9zdmc+Cg==" alt="">
                   <span>If you edit the copy later, the image will need to be regenerated — and your brand font may not be reproduced exactly.</span>
+                </div>
+              </div>
+
+              <div class="draft-section" id="imgBrandKitSection">
+                <div class="brand-kit-toggle-row">
+                  <button type="button" class="field-switch" id="brandKitSwitch" role="switch" aria-label="Use brand kit" aria-checked="false" onclick="toggleBrandKit()"><span class="knob"></span></button>
+                  <span class="brand-kit-label">Use brand kit</span>
+                </div>
+                <div id="brandKitSummary"></div>
+                <div class="brand-kit-empty" id="brandKitEmpty" style="display:none;">
+                  <span>Set up your brand kit to apply it here automatically</span>
+                  <button type="button" class="btn btn-secondary" onclick="imgGoToBrandSetup()">Brand Setup</button>
                 </div>
               </div>
             </div></div>
@@ -2033,41 +2018,7 @@
 
               <div class="script-card-list" id="scriptCardList"></div>
 
-              <div class="script-global-brand" id="scriptGlobalBrand">
-                <div class="brand-kit-row" style="margin-top:0;">
-                  <button type="button" class="field-switch" id="globalBrandKitSwitch" role="switch" aria-label="Use brand kit" aria-checked="false" onclick="toggleGlobalBrandKit()"><span class="knob"></span></button>
-                  <span class="brand-kit-label">Use brand kit</span>
-                </div>
-                <!-- Same card as the Image flow's Draft screen (identical markup/classes — see
-                     #stageAreaImage's brand-kit-summary, node 6236-205 "Brand kit on"). -->
-                <div class="brand-kit-summary" id="globalBrandKitSummary" style="display:none;">
-                  <div class="brand-kit-summary-col">
-                    <div class="brand-kit-summary-label">Palette · Formee Express <span class="chevron"><img src="../../../../components/ai-social-media/icons/caret-down-filled.svg" class="icon-inline" alt=""></span></div>
-                    <div class="brand-kit-swatch-row">
-                      <span style="background:#2b6a6c"></span>
-                      <span style="background:#b80d48"></span>
-                      <span style="background:#f29724"></span>
-                      <span style="background:#444444"></span>
-                      <span style="background:#6d9697"></span>
-                      <span style="background:#aa5a77"></span>
-                      <span style="background:#ffffff; border:1px solid var(--color-neutral-200);"></span>
-                    </div>
-                  </div>
-                  <div class="brand-kit-divider"></div>
-                  <div class="brand-kit-summary-col">
-                    <div class="brand-kit-fonts-title">Fonts</div>
-                    <div class="brand-kit-fonts">
-                      <div class="brand-kit-font-row"><span class="brand-kit-font-tag" style="font-family:'Playfair Display',Georgia,serif; font-weight:700; font-size:18px;">Heading</span><span class="brand-kit-font-meta">Playfair<span class="dot"></span>Bold</span></div>
-                      <div class="brand-kit-font-row"><span class="brand-kit-font-tag" style="font-family:Georgia,serif; font-weight:700; font-size:16px;">Subheading</span><span class="brand-kit-font-meta">Georgia<span class="dot"></span>SemiBold</span></div>
-                      <div class="brand-kit-font-row"><span class="brand-kit-font-tag" style="font-family:Georgia,serif; font-weight:400; font-size:16px;">Body</span><span class="brand-kit-font-meta">Georgia<span class="dot"></span>Regular</span></div>
-                    </div>
-                  </div>
-                </div>
-                <div class="brand-kit-empty" id="globalBrandKitEmpty" style="display:none;">
-                  Set up your brand kit to apply it here automatically → <a onclick="carGoToBrandSetup()">Brand Setup</a>
-                </div>
-              </div>
-
+              <!-- Figma node 6390-106611: Text placement now comes before Use brand kit. -->
               <div class="draft-section">
                 <div class="draft-section-label">Text placement</div>
                 <p class="draft-section-hint">How the headline, subhead/body, and call to action should appear on each card.</p>
@@ -2077,6 +2028,17 @@
                 </div>
                 <div class="baked-in-warning" id="bakedInWarningCarousel">
                   <img src="../../../../components/ai-social-media/icons/alert-sm.svg" class="icon-inline" alt=""> If you edit the copy later, that card's image will need to be regenerated — and your brand font may not be reproduced exactly.
+                </div>
+              </div>
+
+              <div class="draft-section script-global-brand" id="scriptGlobalBrand">
+                <div class="brand-kit-toggle-row">
+                  <button type="button" class="field-switch" id="globalBrandKitSwitch" role="switch" aria-label="Use brand kit" aria-checked="false" onclick="toggleGlobalBrandKit()"><span class="knob"></span></button>
+                  <span class="brand-kit-label">Use brand kit</span>
+                </div>
+                <div id="globalBrandKitSummary" style="display:none;"></div>
+                <div class="brand-kit-empty" id="globalBrandKitEmpty" style="display:none;">
+                  Set up your brand kit to apply it here automatically → <a onclick="carGoToBrandSetup()">Brand Setup</a>
                 </div>
               </div>
 
@@ -2256,6 +2218,22 @@
                   <div class="script-limit-row" id="scriptLimitRow">
                     <span class="script-limit-error" id="scriptLimitError"></span>
                     <span class="script-limit-count" id="scriptLimitCount"></span>
+                  </div>
+                </div>
+
+                <!-- Figma node 8727:219504/8860:138784 — new for Reel/Short & Story Video
+                     (both content types share this one DOM/JS, see window.__isStoryVideo).
+                     Sits right after the script input so it applies the same regardless of
+                     __thumbnailMode (with-thumbnail hides #reelSceneSection below, not this). -->
+                <div class="draft-section" id="reelBrandKitSection">
+                  <div class="brand-kit-toggle-row">
+                    <button type="button" class="field-switch" id="reelBrandKitSwitch" role="switch" aria-label="Use brand kit" aria-checked="false" onclick="toggleReelBrandKit()"><span class="knob"></span></button>
+                    <span class="brand-kit-label">Use brand kit</span>
+                  </div>
+                  <div id="reelBrandKitSummary" style="display:none;"></div>
+                  <div class="brand-kit-empty" id="reelBrandKitEmpty" style="display:none;">
+                    <span>Set up your brand kit to apply it here automatically</span>
+                    <button type="button" class="btn btn-secondary" onclick="reelGoToBrandSetup()">Brand Setup</button>
                   </div>
                 </div>
 
@@ -3015,6 +2993,50 @@ function onCopyFieldInput(i, value){
 // ---- Brand kit (Visual concept > Use brand kit) ----
 // window.__brandMode ('none' | 'set') is set by imgApplyBrandMode(), reused from the video/carousel flow's
 // demo role-switch so this screen can preview both brand-setup states.
+// Brand Kit summary card — shared by Image post, Carousel, Reel/Short and Story Video
+// (Figma node 8860:138841). Rendered once into each screen's own container so every
+// screen's markup only needs to carry the toggle row + this container + the empty state.
+function buildBrandKitCardHtml(){
+  const realLogos = ['Primary', 'Dark', 'SCG-HE', 'SCG VST'];
+  const logoItems = realLogos.map(label => `
+        <div class="brand-kit-logo-item">
+          <div class="editor-cell type-logo"><img src="../../../../components/ai-social-media/icons/fmx-logo-sample.svg" alt=""></div>
+          <span class="brand-kit-logo-item-label">${label}</span>
+        </div>`).join('') + `
+        <div class="brand-kit-logo-item">
+          <div class="editor-cell type-upload" onclick="event.stopPropagation();"><img src="../../../../components/ai-social-media/icons/panel-upload.svg" alt=""><span>Upload</span></div>
+          <span class="brand-kit-logo-item-label">Add logo</span>
+        </div>`;
+  const swatches = ['#0e5c55', '#c81856', '#e8891f', '#33383f', '#5a8b8a', '#9c5a72', '#ffffff'];
+  const swatchHtml = swatches.map(c => `<span style="background:${c};${c === '#ffffff' ? ' border-left:1px solid var(--color-neutral-200);' : ''}"></span>`).join('');
+  return `
+    <div class="brand-kit-card">
+      <div class="brand-kit-section">
+        <div class="brand-kit-section-header"><span class="brand-kit-section-title">Logos</span></div>
+        <div class="brand-kit-logos">${logoItems}</div>
+      </div>
+      <div class="brand-kit-section">
+        <div class="brand-kit-section-header">
+          <span class="brand-kit-section-title">Colours</span>
+          <div class="brand-kit-palette-select"><span>Palette · Formee Express</span><span class="chevron"><img src="../../../../components/ai-social-media/icons/caret-down-filled.svg" alt=""></span></div>
+        </div>
+        <div class="brand-kit-swatch-row">${swatchHtml}</div>
+      </div>
+      <div class="brand-kit-section">
+        <div class="brand-kit-section-header"><span class="brand-kit-section-title">Fonts</span></div>
+        <div class="brand-kit-fonts">
+          <div class="brand-kit-font-card"><span class="sample heading">Heading</span><span class="meta">Georgia Bold</span></div>
+          <div class="brand-kit-font-card"><span class="sample subheading">Subheading</span><span class="meta">Georgia Semibold</span></div>
+          <div class="brand-kit-font-card"><span class="sample body">Body</span><span class="meta">Impact Regular</span></div>
+        </div>
+      </div>
+    </div>`;
+}
+['brandKitSummary', 'globalBrandKitSummary', 'reelBrandKitSummary'].forEach(id => {
+  const el = document.getElementById(id);
+  if(el) el.innerHTML = buildBrandKitCardHtml();
+});
+
 let brandKitOn = false;
 function imgApplyBrandMode(mode){
   window.__brandMode = mode;
@@ -3027,7 +3049,7 @@ function imgApplyBrandMode(mode){
     brandSwitch.classList.remove('disabled');
     brandKitOn = true;
     brandSwitch.classList.add('on');
-    summary.style.display = 'flex';
+    summary.style.display = 'block';
     empty.style.display = 'none';
     chip.style.display = 'flex';
   } else {
@@ -3044,7 +3066,7 @@ function imgApplyBrandMode(mode){
 function toggleBrandKit(){
   brandKitOn = !brandKitOn;
   document.getElementById('brandKitSwitch').classList.toggle('on', brandKitOn);
-  document.getElementById('brandKitSummary').style.display = brandKitOn ? 'flex' : 'none';
+  document.getElementById('brandKitSummary').style.display = brandKitOn ? 'block' : 'none';
   document.getElementById('brandKitEmpty').style.display = !brandKitOn && window.__brandMode !== 'set' ? 'block' : 'none';
   document.getElementById('brandKitSwitch').setAttribute('aria-checked', String(brandKitOn));
   updateVisualConceptPrompt();
@@ -4175,8 +4197,30 @@ function updateGlobalBrandKitUI(){
   sw.classList.remove('disabled');
   sw.classList.toggle('on', on);
   sw.setAttribute('aria-checked', String(on));
-  summary.style.display = on ? 'flex' : 'none';
+  summary.style.display = on ? 'block' : 'none';
   empty.style.display = !on && window.__brandMode !== 'set' ? 'block' : 'none';
+}
+
+// ---- Reel/Short & Story Video's own "Use brand kit" toggle (same pattern as Carousel's
+// __globalBrandKitOn) -- lives on the Script sub-stage, applies regardless of __thumbnailMode. ----
+function toggleReelBrandKit(){
+  window.__reelBrandKitOn = !window.__reelBrandKitOn;
+  updateReelBrandKitUI();
+}
+function updateReelBrandKitUI(){
+  const sw = document.getElementById('reelBrandKitSwitch');
+  const summary = document.getElementById('reelBrandKitSummary');
+  const empty = document.getElementById('reelBrandKitEmpty');
+  if(!sw) return;
+  const on = !!window.__reelBrandKitOn;
+  sw.classList.remove('disabled');
+  sw.classList.toggle('on', on);
+  sw.setAttribute('aria-checked', String(on));
+  summary.style.display = on ? 'block' : 'none';
+  empty.style.display = !on && window.__brandMode !== 'set' ? 'block' : 'none';
+}
+function reelGoToBrandSetup(){
+  alert('This would open Brand Setup — outside this prototype\'s scope.');
 }
 
 // ---- Image generation (manual "Generate images" click — mirrors the video flow's "Generate thumbnails") ----
@@ -7316,6 +7360,8 @@ function reelGoToBrief(){
 function reelGoToGenerate(){
   showView('generateView'); setStep('stepGenerate'); showSub('reelScript');
   document.getElementById('briefActionBarReel').style.display = 'none';
+  if(window.__reelBrandKitOn === undefined) window.__reelBrandKitOn = window.__brandMode === 'set';
+  updateReelBrandKitUI();
   // Scenes/voice show immediately (with default per-clip text — see getUnitDefaultScript())
   // rather than waiting on the script to be drafted/confirmed first.
   if(!reelScriptDraftStarted){
