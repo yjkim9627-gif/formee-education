@@ -2490,6 +2490,7 @@
            the functions that still read it (composePubCaption() etc. just see an empty string). -->
       <div class="pub-block" id="pubCaptionBlock">
         <label class="pub-block-label">Caption</label>
+        <p class="pub-block-sub" id="pubCaptionSubtitle"></p>
         <div class="pub-card">
           <div class="pub-caption-actions-row">
             <button type="button" class="pub-suggest-btn" id="pubHashtagSeoBtn" onclick="generateHashtagsSEO()">
@@ -6175,6 +6176,12 @@ function populatePublishView(){
   if(document.getElementById('pubWhenCustomToggle').checked) renderWhenPlatformList();
   // Posting a video to Story has no caption field at all — Reel/Short (feed) keeps it.
   document.getElementById('pubCaptionBlock').style.display = window.__isStoryVideo ? 'none' : '';
+  // Image post only: Post and Story can both be selected per platform, and Story never
+  // carries a caption -- make that explicit so writing one here isn't mistaken for
+  // something that will actually go out with a Story-only publish.
+  document.getElementById('pubCaptionSubtitle').textContent = window.__contentType === 'image'
+    ? "Only used for Post — Story doesn't have a caption, so anything written here won't actually be published if you're only posting to Story."
+    : '';
 }
 
 function toggleDestinationFormat(key, surface){
@@ -6496,7 +6503,9 @@ function renderPublishDestinationsTable(el){
     // Connection status no longer disables these -- you can select a not-connected platform
     // as a destination (it just shows the "Not connected" Connect prompt in the Publish
     // modal instead of the normal preview/confirm box once you get there).
-    const allChecked = surfaces.every(s => formats[s]);
+    // Leading checkbox reflects "is this platform used at all", not "every surface on" --
+    // checking just Post or just Story alone should keep it checked, not clear it.
+    const allChecked = surfaces.some(s => formats[s]);
     const cols = surfaces.map(s => `
       <div class="pub-dest-col">
         <input type="checkbox" class="pub-dest-checkbox checkbox" ${formats[s] ? 'checked' : ''} onchange="toggleDestinationFormat('${p.key}','${s}')">
