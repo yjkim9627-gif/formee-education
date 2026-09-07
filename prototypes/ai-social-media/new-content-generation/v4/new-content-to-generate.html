@@ -6553,7 +6553,13 @@ function renderPublishDestinationsSimple(el){
     // matching comment: selecting a not-connected platform is what makes its "Not connected"
     // state reachable in the Publish modal instead of permanently dead code.
     const checked = window.__platformFormats[p.key][surface];
-    const checkbox = `<span class="destination-checkbox${checked ? ' checked' : ''}" onclick="toggleDestinationFormat('${p.key}','${surface}');">${checked ? '<img src="../../../../components/ai-social-media/icons/wh-check.svg" alt="">' : ''}</span>`;
+    // Figma's Checkbox component (node 6320:129248) forces a Not Connected row's checkbox
+    // into its inactive look — always the empty neutral-150/neutral-400/opacity-50 box,
+    // never a checkmark, regardless of the underlying selected state. Still clickable (see
+    // comment above): only the visual is forced, not the interaction.
+    const checkbox = !connected
+      ? `<span class="destination-checkbox disabled" onclick="toggleDestinationFormat('${p.key}','${surface}');"></span>`
+      : `<span class="destination-checkbox${checked ? ' checked' : ''}" onclick="toggleDestinationFormat('${p.key}','${surface}');">${checked ? '<img src="../../../../components/ai-social-media/icons/wh-check.svg" alt="">' : ''}</span>`;
     const status = connected
       ? `<span class="destination-account-status connected">Connected</span>`
       : `<span class="destination-account-status not-connected">Not connected</span><button class="destination-account-connect-btn" type="button" onclick="connectPlatform('${p.key}')">Connect</button>`;
