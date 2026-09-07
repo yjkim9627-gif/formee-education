@@ -6955,6 +6955,7 @@ function openPublishSocialModal(mode){
   window.__socialModalActive = destinations[0];
   window.__socialModalConfirmed = {};
   window.__socialModalMode = mode;
+  window.__pubSocialActiveFormat = 'Post';
   document.getElementById('pubSocialModalSubtitle').textContent = mode === 'schedule'
     ? 'Preview is live. Scheduling requires typing the handle to confirm.'
     : 'Preview is live. Publishing requires typing the handle to confirm.';
@@ -6983,6 +6984,7 @@ function renderSocialTabs(){
 
 function switchSocialTab(key){
   window.__socialModalActive = key;
+  window.__pubSocialActiveFormat = 'Post';
   renderSocialTabs();
   renderSocialTabContent();
 }
@@ -7029,34 +7031,21 @@ function renderSocialTabContent(){
          <span>${actionLabel} live to ${platform.label}</span>
        </button>`;
 
-  const formats = getSelectedFormatsForPlatform(key).join(' + ');
-  const whenText = tabMode === 'schedule'
-    ? `Scheduled for ${getScheduleForPlatform(key) || '—'}`
-    : 'Publishing now';
-
-  // Image post only, for now: show the actual creative (+ caption for Post; Story has none,
-  // see populatePublishView()'s pubCaptionBlock hide) instead of a generic icon+meta row, so
-  // what's about to go live is genuinely checkable per surface — a 1:1/4:5 image doesn't
-  // fill a 9:16 Story, so the Story preview composites it centered on the real Story canvas
-  // the same way Instagram would, rather than pretending it's already 9:16.
-  const previewHtml = (window.__contentType === 'image')
-    ? renderImagePostPublishPreview(key, platform)
-    : `
-    <div class="pub-social-preview-card">
-      <div class="pub-social-preview-thumb"><img src="../../../../components/ai-social-media/icons/content-image-outline-sm.svg" alt=""></div>
-      <div class="pub-social-preview-meta">
-        <div class="pub-social-preview-title">
-          <span class="pub-social-preview-handle">${platform.label}</span>
-          <span class="dot-sep"></span>
-          <span class="pub-social-preview-handle">@${PUBLISH_FAKE_HANDLE}</span>
-        </div>
-        <div class="pub-social-preview-format">Format: ${formats}</div>
-        <div class="pub-social-preview-when">${whenText}</div>
-      </div>
+  // Figma "Publish confirmation modal" (nodes 8780:270482 Reel/Short, 8780:247642/247744
+  // Image Post/Story, 8780:249092 Carousel) — same skeleton for every content type: an
+  // "Account · @handle" row, then (Image only, and only when both formats are selected —
+  // a single-format platform just shows that one directly, no tabs) a Post/Story tab row,
+  // then the media tile + caption card, matching whichever format is active.
+  const accountRow = `
+    <div class="pub-social-account-row">
+      <span class="pub-social-account-label">Account</span>
+      <span class="pub-social-account-dot"></span>
+      <span class="pub-social-account-handle">@${PUBLISH_FAKE_HANDLE}</span>
     </div>`;
 
   wrap.innerHTML = `
-    ${previewHtml}
+    ${accountRow}
+    ${renderPublishPreviewSection(key, platform)}
     <div class="pub-social-confirm-box">
       <div class="pub-social-confirm-warning">This will post live to @${PUBLISH_FAKE_HANDLE}</div>
       <p class="pub-social-confirm-note">Heads up: this isn't a dry run. Confirming ${verb} the content above straight to ${platform.label}. Type the handle below to unlock the button.</p>
@@ -7067,39 +7056,92 @@ function renderSocialTabContent(){
 }
 
 // Stand-in for the actual generated creative — this prototype has no real generated-image
-// asset for the Image post flow (versions/versionState are simulated placeholders only), so
-// reuse the same sample photo already used for the Reel/Short Timeline thumbnails.
+// or video asset for any content type (versions/versionState are simulated placeholders
+// only), so reuse the same sample photo already used for the Reel/Short Timeline thumbnails.
 function getPublishPreviewImageSrc(){
   return 'assets/video/scene1.png';
 }
 function ratioToAspectCss(ratio){
   return (ratio || '4:5').replace(':', ' / ');
 }
-function renderImagePostPublishPreview(key, platform){
-  const ratio = window.__imageRatio || '4:5';
-  const img = getPublishPreviewImageSrc();
+
+function renderPublishPreviewSection(key, platform){
+  const isImage = window.__contentType === 'image';
+  const formats = isImage ? getSelectedFormatsForPlatform(key) : ['Post'];
+  const showTabs = isImage && formats.length > 1;
+  const activeFormat = showTabs ? window.__pubSocialActiveFormat : formats[0];
+
+  const tabsHtml = showTabs ? `
+    <div class="pub-social-format-tabs">
+      <button type="button" class="pub-social-format-tab${activeFormat === 'Post' ? ' active' : ''}" onclick="switchSocialFormatTab('Post')">Post</button>
+      <button type="button" class="pub-social-format-tab${activeFormat === 'Story' ? ' active' : ''}" onclick="switchSocialFormatTab('Story')">Story</button>
+    </div>` : '';
+
   const caption = getCaptionForPlatform(key).trim();
-  const captionHtml = escapeHtml(caption || 'Draft your caption — or generate suggestions above and tap a chip to add it.');
-  const blocks = getSelectedFormatsForPlatform(key).map(fmt => {
-    if(fmt === 'Post'){
-      return `
-        <div class="pub-social-preview-format-block">
-          <div class="pub-social-preview-format-label">${platform.label} · Post</div>
-          <div class="pub-social-post-card">
-            <img class="pub-social-post-image" style="aspect-ratio:${ratioToAspectCss(ratio)};" src="${img}" alt="">
-            <p class="pub-social-post-caption">${captionHtml}</p>
-          </div>
-        </div>`;
-    }
+  const captionText = escapeHtml(caption || 'Draft your caption — or generate suggestions above and tap a chip to add it.');
+  // Story never carries a caption for Image post (see populatePublishView()'s pubCaptionBlock
+  // hide, which is the Story-Video case) -- mute the card here too so it reads as "won't
+  // actually publish", not just missing.
+  const isStoryTab = isImage && activeFormat === 'Story';
+  const captionCardClass = isStoryTab ? 'pub-social-preview-card pub-social-preview-card--muted' : 'pub-social-preview-card';
+  // Figma caps this card at max-h-316 (Reel/Image) or max-h-300 (Carousel) -- without an
+  // explicit cap, a long caption's un-clipped natural height still inflates the flex row's
+  // stretch basis (a classic flexbox sizing quirk: overflow:auto doesn't shrink the
+  // hypothetical cross size used for align-items:stretch), so the card grows past the tile.
+  const cardMaxHeight = window.__contentType === 'carousel' ? 300 : 316;
+
+  return `
+    ${tabsHtml}
+    <div class="pub-social-media-row">
+      ${renderPublishMediaTile(activeFormat)}
+      <div class="${captionCardClass}" style="max-height:${cardMaxHeight}px;">
+        <div class="pub-social-preview-meta">${captionText}</div>
+      </div>
+    </div>`;
+}
+
+function switchSocialFormatTab(fmt){
+  window.__pubSocialActiveFormat = fmt;
+  renderSocialTabContent();
+}
+
+function renderPublishMediaTile(activeFormat){
+  const img = getPublishPreviewImageSrc();
+  if(window.__contentType === 'reel'){
     return `
-      <div class="pub-social-preview-format-block">
-        <div class="pub-social-preview-format-label">${platform.label} · Story</div>
-        <div class="pub-social-story-frame">
-          <div class="pub-social-story-media" style="aspect-ratio:${ratioToAspectCss(ratio)};"><img src="${img}" alt=""></div>
-        </div>
+      <div class="pub-social-video-tile">
+        <img src="${img}" alt="">
+        <div class="pub-social-video-play"><img src="../../../../components/ai-social-media/icons/video-play-glyph.svg" alt=""></div>
       </div>`;
-  }).join('');
-  return `<div class="pub-social-preview-formats">${blocks}</div>`;
+  }
+  if(window.__contentType === 'carousel'){
+    const total = window.__cardCount || 5;
+    return `
+      <div class="pub-social-carousel-tile">
+        <img src="${img}" alt="">
+        <button type="button" class="pub-social-carousel-nav prev" onclick="event.stopPropagation();"><img src="../../../../components/ai-social-media/icons/chevron-right.svg" style="transform:scaleX(-1);" alt="Previous"></button>
+        <button type="button" class="pub-social-carousel-nav next" onclick="event.stopPropagation();"><img src="../../../../components/ai-social-media/icons/chevron-right.svg" alt="Next"></button>
+        <div class="pub-social-carousel-badge"><span class="cur">1</span><span class="sep">/</span><span class="total">${total}</span></div>
+      </div>`;
+  }
+  const ratio = window.__imageRatio || '4:5';
+  if(activeFormat === 'Story'){
+    return `
+      <div class="pub-social-story-tile">
+        <div class="pub-social-story-chrome">
+          <div class="pub-social-story-progress"></div>
+          <div class="pub-social-story-header">
+            <div class="pub-social-story-account"><img class="pub-social-story-avatar" src="assets/characters/elena.png" alt=""><span>Your Account</span></div>
+            <div class="pub-social-story-actions"><img class="more" src="../../../../components/ai-social-media/icons/ui-ellipsis.svg" alt=""><img class="close" src="../../../../components/ai-social-media/icons/panel-close.svg" alt=""></div>
+          </div>
+        </div>
+        <div class="pub-social-story-media-wrap"><img src="${img}" alt=""></div>
+      </div>`;
+  }
+  return `
+    <div class="pub-social-post-tile" style="aspect-ratio:${ratioToAspectCss(ratio)};">
+      <img src="${img}" alt="">
+    </div>`;
 }
 
 function onSocialConfirmInput(value){
