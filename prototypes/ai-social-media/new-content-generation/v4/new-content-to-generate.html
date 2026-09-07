@@ -83,6 +83,14 @@
   .role-btn{font-weight:600; font-size:12px; line-height:18px; color:rgba(255,255,255,.72); padding:5px 11px; border-radius:9999px; white-space:nowrap; border:none; background:transparent; cursor:pointer; font-family:var(--font-family-text);}
   .role-btn:hover{color:#fff; background:rgba(255,255,255,.1);}
   .role-btn.on{background:#fff; color:var(--color-neutral-900);}
+  /* Second, identical demo-control switch stacked above the brand-setup one — previews the
+     Script stage's per-clip cards with vs. without a generated thumbnail. Only the Script
+     stage (renderReelSceneEditors()) is affected; the Video stage's tiles already show a
+     thumbnail unconditionally (applySampleVideoFrame(), never redesigned away), so this
+     switch just governs whether that same "generate a still first, animate from it" framing
+     is *also* visible one step earlier, on Script's clip cards. */
+  .thumb-mode-switch{position:fixed; right:16px; bottom:64px; z-index:9999; display:flex; gap:6px; align-items:center; background:rgba(15,23,41,.92); border-radius:9999px; padding:6px 8px 6px 14px; box-shadow:0 6px 20px rgba(0,0,0,.28); backdrop-filter:blur(6px);}
+  .scene-thumb-preview{width:100%; max-width:160px; aspect-ratio:9/16; border-radius:var(--radius-lg); background:linear-gradient(135deg,var(--color-brand-primary-mid),var(--color-brand-accent)); background-size:cover; background-position:center; background-repeat:no-repeat; margin-bottom:var(--spacing-md); flex-shrink:0;}
 
   /* display:inline-flex alone still stretches full-width inside any column-flex parent (its
      "hug" behavior only holds against a block/row parent) — .char-panel is exactly that kind
@@ -2671,6 +2679,12 @@
   <p class="role-cap">Signed in as</p>
   <button type="button" class="role-btn on" data-brand="none" onclick="setBrandMode('none')">No brand setup</button>
   <button type="button" class="role-btn" data-brand="set" onclick="setBrandMode('set')">Brand set up</button>
+</div>
+
+<div class="thumb-mode-switch" id="thumbModeSwitch" role="group" aria-label="Script clip thumbnail preview">
+  <p class="role-cap">Script clips</p>
+  <button type="button" class="role-btn on" data-thumb="off" onclick="setThumbnailMode('off')">No thumbnail</button>
+  <button type="button" class="role-btn" data-thumb="on" onclick="setThumbnailMode('on')">With thumbnail</button>
 </div>
 
 <script>
@@ -5399,17 +5413,24 @@ function renderReelSceneEditors(){
     ? `Set the scene description and narration for each of the ${count} clips. Narration ⚡${estimateSplitVoiceCredits(count)} total.`
     : `Set the scene description and narration for your clip. Narration ⚡${SEGMENT_VOICE_CREDIT}.`;
 
-  // One card per 8s video clip — no thumbnail canvas here (this prototype doesn't render
-  // scene thumbnails), so every card is shown at once instead of one-at-a-time behind a nav.
-  // Each card holds both the image prompt and the narration for that clip together, since
-  // they're both properties of the same clip rather than two separate parallel lists.
+  // One card per 8s video clip — every card is shown at once instead of one-at-a-time behind
+  // a nav. Each card holds both the image prompt and the narration for that clip together,
+  // since they're both properties of the same clip rather than two separate parallel lists.
+  // Thumbnail preview is gated on window.__thumbnailMode (demo control, bottom-right) — off
+  // by default per v4's redesign; 'on' restores the still-image-first framing (generate a
+  // thumbnail, then the clip's video comes from it) on these cards specifically. The Video
+  // stage's tiles (applySampleVideoFrame()) show a thumbnail either way, unaffected by this.
   document.getElementById('sceneEditorPanel').innerHTML = Array.from({ length: count }, (_, u) => {
     const unit = u + 1;
+    const thumb = window.__thumbnailMode === 'on'
+      ? `<div class="scene-thumb-preview" style="background-image:url('assets/video/scene${(u % 2) + 1}.png')"></div>`
+      : '';
     return `
     <div class="carousel-card-block scene-editor" id="sceneEditor${unit}">
       <div class="carousel-card-block-header">
         <span class="carousel-card-block-title">Clip ${unit} <span class="scene-time-badge">${getVideoUnitTimeLabel(unit)}</span></span>
       </div>
+      ${thumb}
       <div class="scene-desc-block">
         <label class="scene-desc-label-reel">Image prompt</label>
         <div class="scene-desc-box">
@@ -7104,6 +7125,17 @@ function reelApplyBrandMode(mode){
   const brandSettingChip = document.getElementById('brandSettingChip');
   if(brandSettingChip) brandSettingChip.style.display = mode === 'set' ? 'flex' : 'none';
   document.querySelectorAll('#roleSwitch .role-btn').forEach(b => b.classList.toggle('on', b.dataset.brand === mode));
+}
+
+// ---- Demo control: Script clip thumbnail preview (default 'off', matching v4's redesign —
+// see renderReelSceneEditors()'s own comment on why it dropped the thumbnail canvas). 'on'
+// restores that still-image-first framing on Script's clip cards specifically; the Video
+// stage's tiles show a thumbnail either way (applySampleVideoFrame() was never touched). ----
+window.__thumbnailMode = 'off';
+function setThumbnailMode(mode){
+  window.__thumbnailMode = mode;
+  document.querySelectorAll('#thumbModeSwitch .role-btn').forEach(b => b.classList.toggle('on', b.dataset.thumb === mode));
+  if(document.getElementById('sceneEditorPanel')) renderReelSceneEditors();
 }
 
 // ---- Draft/Versions <-> Script/Storyboard/Preview sub-stage tabs — combined tab/sub map
