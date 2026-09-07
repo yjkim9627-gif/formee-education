@@ -1018,9 +1018,8 @@
      class since JS toggles an "applied" state/note this specific card needs that
      appendChatCta()'s cards don't). .script-applied-note is that state's checklist row. */
   .script-proposal-box{margin-top:12px; background:var(--color-neutral-75); border:1px solid var(--color-neutral-400); border-radius:var(--radius-xl); padding:12px; display:flex; flex-direction:column; gap:12px;}
-  .script-proposal-header{display:flex; align-items:center; justify-content:space-between; gap:12px;}
   .script-proposal-text{font-size:14px; color:var(--color-neutral-700); line-height:1.57;}
-  .script-proposal-box .btn-dark{width:auto; flex:none; justify-content:center; padding:7px 14px; font-size:13px; white-space:nowrap;}
+  .script-proposal-box .btn-dark{width:100%; justify-content:center; padding:9px 14px; font-size:13px;}
   .script-applied-note{display:none; align-items:center; gap:8px; font-size:12px; font-weight:600; color:var(--color-brand-primary); background:var(--color-badge-blue-bg); border:1px solid var(--color-brand-primary-mid); border-radius:var(--radius-lg); padding:6px 8px;}
   .script-proposal-box.applied .script-applied-note{display:flex;}
   .script-proposal-box.applied{border-color:var(--color-brand-primary-mid);}
@@ -4782,12 +4781,10 @@ function renderScriptProposalMessage(scriptText, introText){
     <div class="msg ai">
       ${introText ? `<span class="tag">AI</span>${escapeHtml(introText)}` : ''}
       <div class="script-proposal-box" id="scriptProposal${id}">
-        <div class="script-proposal-header">
-          <span class="script-proposal-title">${introText ? 'Updated Script' : 'Generate Script'}</span>
-          <button class="btn btn-dark" data-draft-id="${id}" onclick="handleScriptProposalClick(this)">Use this script</button>
-        </div>
+        <span class="script-proposal-title">${introText ? 'Updated Script' : 'Generate Script'}</span>
         <div class="script-proposal-text">"${escapeHtml(scriptText)}"</div>
         <span class="script-applied-note">✓ Applied to Script panel</span>
+        <button class="btn btn-dark" data-draft-id="${id}" onclick="handleScriptProposalClick(this)">Use this script</button>
       </div>
       <span class="chat-edit-hint">Want changes? Type them below (e.g. "make it shorter") and I'll revise it.</span>
     </div>
