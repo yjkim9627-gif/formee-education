@@ -90,7 +90,7 @@
      switch just governs whether that same "generate a still first, animate from it" framing
      is *also* visible one step earlier, on Script's clip cards. */
   .thumb-mode-switch{position:fixed; right:16px; bottom:64px; z-index:9999; display:flex; gap:6px; align-items:center; background:rgba(15,23,41,.92); border-radius:9999px; padding:6px 8px 6px 14px; box-shadow:0 6px 20px rgba(0,0,0,.28); backdrop-filter:blur(6px);}
-  .scene-thumb-preview{width:100%; max-width:160px; aspect-ratio:9/16; border-radius:var(--radius-lg); background:linear-gradient(135deg,var(--color-brand-primary-mid),var(--color-brand-accent)); background-size:cover; background-position:center; background-repeat:no-repeat; margin-bottom:var(--spacing-md); flex-shrink:0;}
+  .scene-thumb-editor-wrap{margin-top:var(--spacing-lg);}
 
   /* display:inline-flex alone still stretches full-width inside any column-flex parent (its
      "hug" behavior only holds against a block/row parent) — .char-panel is exactly that kind
@@ -5413,24 +5413,106 @@ function renderReelSceneEditors(){
     ? `Set the scene description and narration for each of the ${count} clips. Narration ⚡${estimateSplitVoiceCredits(count)} total.`
     : `Set the scene description and narration for your clip. Narration ⚡${SEGMENT_VOICE_CREDIT}.`;
 
-  // One card per 8s video clip — every card is shown at once instead of one-at-a-time behind
-  // a nav. Each card holds both the image prompt and the narration for that clip together,
-  // since they're both properties of the same clip rather than two separate parallel lists.
   // Thumbnail preview is gated on window.__thumbnailMode (demo control, bottom-right) — off
-  // by default per v4's redesign; 'on' restores the still-image-first framing (generate a
-  // thumbnail, then the clip's video comes from it) on these cards specifically. The Video
-  // stage's tiles (applySampleVideoFrame()) show a thumbnail either way, unaffected by this.
-  document.getElementById('sceneEditorPanel').innerHTML = Array.from({ length: count }, (_, u) => {
-    const unit = u + 1;
-    const thumb = window.__thumbnailMode === 'on'
-      ? `<div class="scene-thumb-preview" style="background-image:url('assets/video/scene${(u % 2) + 1}.png')"></div>`
-      : '';
-    return `
+  // by default per v4's redesign. 'off' keeps the plain always-all-visible list of cards
+  // (each holding both the image prompt and the narration for that clip together, since
+  // they're both properties of the same clip rather than two separate parallel lists). 'on'
+  // swaps in a tile grid instead (renderScriptThumbGrid) — restores the pre-redesign
+  // still-image-first framing (generate a thumbnail, then the clip's video comes from it) by
+  // reusing the Video stage's own .video-tile/applySampleVideoFrame visual language, with
+  // only the selected tile's editor shown below the grid. Narration itself is untouched
+  // either way — still exactly one panel per 8s clip (renderSceneNarrationHTML), no separate
+  // whole-take/split-by-scene toggle (that's gone for good, see the comment above
+  // wordCountGuideText()).
+  if(window.__thumbnailMode === 'on'){
+    renderScriptThumbGrid(count);
+  } else {
+    document.getElementById('sceneEditorPanel').innerHTML = Array.from({ length: count }, (_, u) => {
+      const unit = u + 1;
+      return `
+      <div class="carousel-card-block scene-editor" id="sceneEditor${unit}">
+        <div class="carousel-card-block-header">
+          <span class="carousel-card-block-title">Clip ${unit} <span class="scene-time-badge">${getVideoUnitTimeLabel(unit)}</span></span>
+        </div>
+        <div class="scene-desc-block">
+          <label class="scene-desc-label-reel">Image prompt</label>
+          <div class="scene-desc-box">
+            <div class="reference-images-row compact"></div>
+            <div class="mention-wrap field-fill-wrap" id="descFieldWrap_${unit}">
+              <textarea class="scene-desc" data-unit="${unit}" oninput="updateVideoUnitDesc(${unit}, this.value)">${escapeHtml(getVideoUnitDesc(unit))}</textarea>
+              <div class="mention-popover" style="display:none;"></div>
+            </div>
+          </div>
+          <p class="scene-note">${window.__reelPromptReview[unit] ? 'Script changed. Your custom image prompt was preserved — review it before generating.' : 'Image prompt follows narration. Your manual edits are preserved.'}</p>
+          ${window.__reelPromptReview[unit] ? `<div class="stage-cta-row prompt-review-actions"><button class="btn btn-secondary" onclick="resolveReelPromptReview(${unit}, false)">Keep my prompt</button><button class="btn btn-secondary" onclick="resolveReelPromptReview(${unit}, true)">Update from narration</button></div>` : ''}
+        </div>
+        ${renderSceneNarrationHTML('tl', unit)}
+      </div>
+    `;
+    }).join('');
+  }
+
+  renderReferenceImages();
+  document.querySelectorAll('#sceneEditorPanel .mention-wrap textarea').forEach(bindMentionTextarea);
+  for(let i = 1; i <= count; i++) updateVoicePreviewButton('tl', i);
+
+  const genBtn = document.getElementById('reelGenerateVideoBtn');
+  if(genBtn) genBtn.textContent = `Generate video ⚡${getVideoUnitCount() * VIDEO_COST_PER_UNIT}`;
+  // No stage switch happens here any more (Script holds this content directly), so the bottom
+  // action bar needs an explicit refresh — showSub() used to trigger it as a side effect.
+  updateReelReadiness();
+}
+
+// ---- Script "with thumbnail" tile grid — window.__thumbnailMode === 'on' path of
+// renderReelSceneEditors(). One tile per 8s clip, reusing the Video stage's own tile/reveal
+// mechanics (.video-tile, applySampleVideoFrame(), showQueuePanel()) so a thumbnail "finishes
+// generating" the same way it does there; only the selected tile's editor (image prompt +
+// its one narration panel — see renderSceneNarrationHTML) renders below the grid, same
+// click-to-reveal pattern as the Video stage's selectVideoScene(). ----
+function renderScriptThumbGrid(count){
+  const cols = Math.min(count, 3);
+  const rows = Math.ceil(count / cols);
+  document.getElementById('sceneEditorPanel').innerHTML = `
+    <div class="video-grid${rows <= 1 ? ' single-row' : ''}" id="scriptThumbGrid" style="grid-template-columns:repeat(${cols}, 1fr);">
+      ${Array.from({ length: count }, (_, i) => `
+        <div class="video-tile generating${i === 0 ? ' active' : ''}" data-unit="${i + 1}" id="scriptThumbTile${i + 1}" onclick="selectScriptThumbTile(${i + 1})">
+          <div class="video-tile-preview">
+            <div class="video-tile-overlay-top">
+              <span class="video-tile-ready-badge">✓ Ready</span>
+              <button class="video-tile-regen-btn" onclick="event.stopPropagation(); regenerateScriptThumb(${i + 1})" title="Regenerate thumbnail"><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt=""></button>
+            </div>
+            <div class="spinner-mini"></div>
+            <span class="video-tile-badge">Clip ${i + 1} · ${getVideoUnitTimeLabel(i + 1)}</span>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="scene-thumb-editor-wrap" id="scriptThumbEditorWrap"></div>
+  `;
+
+  showQueuePanel('#scriptThumbGrid .video-tile', 'thumbnail generation', () => {
+    document.querySelectorAll('#scriptThumbGrid .video-tile').forEach((t, i) => {
+      t.classList.remove('generating'); t.classList.add('ready');
+      applySampleVideoFrame(t, i);
+    });
+  }, 'Clip');
+
+  renderScriptThumbEditor(1);
+}
+
+function selectScriptThumbTile(n){
+  document.querySelectorAll('#scriptThumbGrid .video-tile').forEach(t => t.classList.toggle('active', Number(t.dataset.unit) === n));
+  renderScriptThumbEditor(n);
+  const tile = document.getElementById('scriptThumbTile' + n);
+  if(tile) tile.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+}
+
+function renderScriptThumbEditor(unit){
+  document.getElementById('scriptThumbEditorWrap').innerHTML = `
     <div class="carousel-card-block scene-editor" id="sceneEditor${unit}">
       <div class="carousel-card-block-header">
         <span class="carousel-card-block-title">Clip ${unit} <span class="scene-time-badge">${getVideoUnitTimeLabel(unit)}</span></span>
       </div>
-      ${thumb}
       <div class="scene-desc-block">
         <label class="scene-desc-label-reel">Image prompt</label>
         <div class="scene-desc-box">
@@ -5446,17 +5528,21 @@ function renderReelSceneEditors(){
       ${renderSceneNarrationHTML('tl', unit)}
     </div>
   `;
-  }).join('');
-
   renderReferenceImages();
-  document.querySelectorAll('#sceneEditorPanel .mention-wrap textarea').forEach(bindMentionTextarea);
-  for(let i = 1; i <= count; i++) updateVoicePreviewButton('tl', i);
+  document.querySelectorAll('#scriptThumbEditorWrap .mention-wrap textarea').forEach(bindMentionTextarea);
+  updateVoicePreviewButton('tl', unit);
+}
 
-  const genBtn = document.getElementById('reelGenerateVideoBtn');
-  if(genBtn) genBtn.textContent = `Generate video ⚡${getVideoUnitCount() * VIDEO_COST_PER_UNIT}`;
-  // No stage switch happens here any more (Script holds this content directly), so the bottom
-  // action bar needs an explicit refresh — showSub() used to trigger it as a side effect.
-  updateReelReadiness();
+function regenerateScriptThumb(n){
+  const tile = document.getElementById('scriptThumbTile' + n);
+  if(!tile) return;
+  tile.classList.remove('ready');
+  tile.classList.add('generating');
+  setTimeout(() => {
+    tile.classList.remove('generating');
+    tile.classList.add('ready');
+    applySampleVideoFrame(tile, n - 1);
+  }, 1400);
 }
 
 window.__voicePreviewCache = window.__voicePreviewCache || {}; // keyed by clip/scene id, TTS-cached
