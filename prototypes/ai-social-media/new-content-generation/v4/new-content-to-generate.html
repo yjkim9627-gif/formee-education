@@ -2656,41 +2656,45 @@
     </div>
   </div>
 
-</div>
-
-<div class="modal-overlay pub-social-modal-overlay" id="pubSocialModalOverlay" style="display:none;">
-  <div class="modal modal--form pub-social-modal">
-    <div class="modal__content">
-      <div class="pub-social-title-group">
-        <div class="pub-social-title-row">
-          <h2 class="modal__title">Publish to social</h2>
-          <button type="button" class="modal__close" onclick="closePublishSocialModal()"><img src="../../../../components/ai-social-media/icons/button-x-dark.svg" class="icon-inline" alt=""></button>
+  <!-- Both modals live inside .app (not after it) so .modal-overlay's position:absolute
+       resolves against .app's own box (see .app{position:relative} below) instead of the
+       real unscaled viewport — .app is scaled down to fit the window via fitScreenToViewport(),
+       so a modal placed outside it renders full native size covering the whole real screen. -->
+  <div class="modal-overlay pub-social-modal-overlay" id="pubSocialModalOverlay" style="display:none;">
+    <div class="modal modal--form pub-social-modal">
+      <div class="modal__content">
+        <div class="pub-social-title-group">
+          <div class="pub-social-title-row">
+            <h2 class="modal__title">Publish to social</h2>
+            <button type="button" class="modal__close" onclick="closePublishSocialModal()"><img src="../../../../components/ai-social-media/icons/button-x-dark.svg" class="icon-inline" alt=""></button>
+          </div>
+          <p class="modal__body" id="pubSocialModalSubtitle">Preview is live. Publishing requires typing the handle to confirm.</p>
         </div>
-        <p class="modal__body" id="pubSocialModalSubtitle">Preview is live. Publishing requires typing the handle to confirm.</p>
+        <div class="seg-control" id="pubSocialTabs"></div>
+        <div id="pubSocialTabContent"></div>
       </div>
-      <div class="seg-control" id="pubSocialTabs"></div>
-      <div id="pubSocialTabContent"></div>
-    </div>
-    <div class="modal__footer">
-      <button type="button" class="actions-btn actions-btn--secondary" onclick="quickSaveDraftFromModal()">Save as draft instead</button>
-      <button type="button" class="actions-btn actions-btn--primary" onclick="closePublishSocialModal()">Cancel</button>
+      <div class="modal__footer">
+        <button type="button" class="actions-btn actions-btn--secondary" onclick="quickSaveDraftFromModal()">Save as draft instead</button>
+        <button type="button" class="actions-btn actions-btn--primary" onclick="closePublishSocialModal()">Cancel</button>
+      </div>
     </div>
   </div>
-</div>
 
-<div class="modal-overlay img-lightbox-overlay" id="imgLightboxOverlay" style="display:none;" onclick="if(event.target===this) closeImageLightbox();">
-  <div class="modal img-lightbox-modal">
-    <div class="img-lightbox-header">
-      <button type="button" class="img-lightbox-icon-btn" onclick="downloadImage(window.__lightboxDownloadId)"><img src="../../../../components/ai-social-media/icons/download-ui.svg" alt="Download"></button>
-      <button type="button" class="img-lightbox-icon-btn" onclick="closeImageLightbox()"><img src="../../../../components/ai-social-media/icons/close-x.svg" alt="Close"></button>
+  <div class="modal-overlay img-lightbox-overlay" id="imgLightboxOverlay" style="display:none;" onclick="if(event.target===this) closeImageLightbox();">
+    <div class="modal img-lightbox-modal">
+      <div class="img-lightbox-header">
+        <button type="button" class="img-lightbox-icon-btn" onclick="downloadImage(window.__lightboxDownloadId)"><img src="../../../../components/ai-social-media/icons/download-ui.svg" alt="Download"></button>
+        <button type="button" class="img-lightbox-icon-btn" onclick="closeImageLightbox()"><img src="../../../../components/ai-social-media/icons/close-x.svg" alt="Close"></button>
+      </div>
+      <div class="img-lightbox-stage">
+        <button type="button" class="img-lightbox-nav prev" id="imgLightboxPrev" onclick="lightboxPrev()"><img src="../../../../components/ai-social-media/icons/chevron-left.svg" alt="Previous version"></button>
+        <div class="img-lightbox-image"></div>
+        <button type="button" class="img-lightbox-nav next" id="imgLightboxNext" onclick="lightboxNext()"><img src="../../../../components/ai-social-media/icons/chevron-right.svg" alt="Next version"></button>
+      </div>
+      <div class="img-lightbox-pills" id="imgLightboxPills"></div>
     </div>
-    <div class="img-lightbox-stage">
-      <button type="button" class="img-lightbox-nav prev" id="imgLightboxPrev" onclick="lightboxPrev()"><img src="../../../../components/ai-social-media/icons/chevron-left.svg" alt="Previous version"></button>
-      <div class="img-lightbox-image"></div>
-      <button type="button" class="img-lightbox-nav next" id="imgLightboxNext" onclick="lightboxNext()"><img src="../../../../components/ai-social-media/icons/chevron-right.svg" alt="Next version"></button>
-    </div>
-    <div class="img-lightbox-pills" id="imgLightboxPills"></div>
   </div>
+
 </div>
 
 <a class="home-fab" href="../../../../index.html" title="Back to all screens">
