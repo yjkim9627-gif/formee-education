@@ -1081,7 +1081,6 @@
   .field-fill-wrap{position:relative;}
   .field-fill-spinner{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:var(--color-neutral-0); border-radius:var(--radius-lg); z-index:2;}
   .field-fill-spinner .chat-loading-spinner{margin-top:0;}
-  #reelScriptSyncStatus{margin:0; font-size:var(--font-size-text-xs); line-height:var(--line-height-text-xs);}
   .voice-script-text[aria-invalid="true"]{border-color:var(--color-error-text);}
   .voice-script-text[aria-invalid="true"] + .scene-guide{color:var(--color-error-text);}
   #stageAreaReel .stage-body-inner{max-width:960px; margin:0 auto; width:100%; flex:1; min-height:0; display:flex; flex-direction:column;}
@@ -2259,15 +2258,6 @@
                     <span class="script-limit-error" id="scriptLimitError"></span>
                     <span class="script-limit-count" id="scriptLimitCount"></span>
                   </div>
-                </div>
-
-                <!-- Re-splits the scenes below from whatever's currently in the script field —
-                     useful after typing a custom script by hand instead of using the chat
-                     draft's "Use this script" (which already applies this as part of its own
-                     click). Scenes/voice are always visible (see #reelSceneSection below), not
-                     gated behind this. -->
-                <div class="stage-cta-row">
-                  <p class="scene-note" id="reelScriptSyncStatus" role="status" aria-live="polite">Clips are up to date.</p>
                 </div>
 
                 <div id="reelSceneSection">
@@ -4610,7 +4600,6 @@ function reelOnScriptInput(){
   window.__reelScriptEdited = true;
   window.__reelSyncPending = true;
   validateScriptLength();
-  document.getElementById('reelScriptSyncStatus').textContent = 'Updating clips when you pause typing…';
   updateReelReadiness();
   clearTimeout(reelScriptSyncTimer);
   reelScriptSyncTimer = setTimeout(syncReelClipsFromScript, 700);
@@ -4665,11 +4654,6 @@ function updateReelReadiness(){
   const blocked = invalid || review || window.__reelSyncPending;
   const button = document.getElementById('reelGenerateVideoBtn');
   if(button) button.disabled = !!blocked;
-  const status = document.getElementById('reelScriptSyncStatus');
-  if(status && !window.__reelSyncPending) status.textContent = invalid
-    ? 'Each clip needs 1–15 narration words before generating.'
-    : review ? 'Narration updated. Review your custom image prompts below.'
-    : 'Clips are up to date. Custom image prompts are preserved.';
   syncGenActionBarV3();
 }
 
