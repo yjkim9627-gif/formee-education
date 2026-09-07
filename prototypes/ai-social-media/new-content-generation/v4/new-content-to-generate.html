@@ -7051,8 +7051,10 @@ function renderSocialTabContent(){
     ${accountRow}
     ${renderPublishPreviewSection(key, platform)}
     <div class="pub-social-confirm-box">
-      <div class="pub-social-confirm-warning">This will post live to @${PUBLISH_FAKE_HANDLE}</div>
-      <p class="pub-social-confirm-note">Heads up: this isn't a dry run. Confirming ${verb} the content above straight to ${platform.label}. Type the handle below to unlock the button.</p>
+      <div class="pub-social-confirm-text-group">
+        <div class="pub-social-confirm-warning">This will post live to @${PUBLISH_FAKE_HANDLE}</div>
+        <p class="pub-social-confirm-note">Heads up: this isn't a dry run. Confirming ${verb} the content above straight to ${platform.label}. Type the handle below to unlock the button.</p>
+      </div>
       <input type="text" class="input-field input-field--sm input-field--text" id="pubSocialConfirmInput" value="${done ? PUBLISH_FAKE_HANDLE : ''}" ${done ? 'disabled' : ''} placeholder='Type &quot;${PUBLISH_FAKE_HANDLE}&quot; to confirm' oninput="onSocialConfirmInput(this.value)">
       ${btnHtml}
     </div>

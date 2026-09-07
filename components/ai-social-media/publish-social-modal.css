@@ -14,12 +14,14 @@
    bespoke button class. */
 
 .pub-social-modal-overlay{position:fixed;}
-/* Figma's real modal (7606:231998 etc.) is 520px/24px padding/20px gap, not the shared
-   .modal--form default (which is tuned looser for the generic Confirm/Success/Form shells —
-   scoped here instead of changed globally). Its outer frame is also align-items:flex-end
-   (title/segmented-control/cards stretch full width via modal__content below, but the
-   footer's button pair stays shrink-to-fit and right-aligned — not spread edge-to-edge). */
-.pub-social-modal{max-width:520px; padding:var(--spacing-2xl); gap:var(--spacing-xl); align-items:flex-end; border-radius:var(--radius-2xl);}
+/* Figma's real modal (8780:270482 Reel/Short, 8780:247642/247744 Image Post/Story,
+   8780:249092 Carousel — all measured via get_metadata at 705x{782-802}) is 705px wide with
+   24px padding/20px gap, not the shared .modal--form default (520px, tuned looser for the
+   generic Confirm/Success/Form shells — scoped here instead of changed globally). Its outer
+   frame is also align-items:flex-end (title/segmented-control/cards stretch full width via
+   modal__content below, but the footer's button pair stays shrink-to-fit and right-aligned —
+   not spread edge-to-edge). */
+.pub-social-modal{max-width:705px; padding:var(--spacing-2xl); gap:var(--spacing-xl); align-items:flex-end; border-radius:var(--radius-2xl);}
 .pub-social-modal .modal__content{align-self:stretch;}
 .pub-social-modal .modal__title{font-size:16px; line-height:24px; font-weight:600;}
 .pub-social-modal .modal__body{color:var(--color-neutral-500);}
@@ -108,6 +110,9 @@
    Style=Blue) / State=Confirmed (button becomes a disabled checkmark button) — the box
    itself (warning + note + input) stays on screen across all three; only the button changes. */
 .pub-social-confirm-box{display:flex; flex-direction:column; gap:var(--spacing-md); background:var(--color-neutral-75); border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl); padding:var(--spacing-lg); margin-top:var(--spacing-lg);}
+/* Figma nests warning+note in their own sub-frame with an 8px gap, separate from the 12px
+   gap the box above uses between [this group, input, button]. */
+.pub-social-confirm-text-group{display:flex; flex-direction:column; gap:var(--spacing-sm);}
 .pub-social-confirm-warning{font-size:13px; font-weight:600; line-height:20px; color:var(--color-brand-primary-dark);}
 .pub-social-confirm-note{font-size:13px; line-height:20px; color:var(--color-neutral-900); margin:0;}
 /* Type-to-confirm input reuses the real Input component (input.css: .input-field
