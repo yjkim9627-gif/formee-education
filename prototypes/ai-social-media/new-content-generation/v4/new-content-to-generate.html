@@ -7083,24 +7083,32 @@ function renderPublishPreviewSection(key, platform){
       <button type="button" class="pub-social-format-tab${activeFormat === 'Story' ? ' active' : ''}" onclick="switchSocialFormatTab('Story')">Story</button>
     </div>` : '';
 
+  // Story Video, and Image's Story tab, never carry a caption (see populatePublishView()'s
+  // pubCaptionBlock hide for the Story-Video case) -- Figma drops the preview card entirely
+  // for these rather than showing a muted one, so the media tile renders alone, centered.
+  const isStoryVideo = window.__contentType === 'reel' && window.__isStoryVideo;
+  const isImageStoryTab = isImage && activeFormat === 'Story';
+  if(isStoryVideo || isImageStoryTab){
+    return `
+      ${tabsHtml}
+      <div class="pub-social-media-row pub-social-media-row--solo">
+        ${renderPublishMediaTile(activeFormat)}
+      </div>`;
+  }
+
   const caption = getCaptionForPlatform(key).trim();
   const captionText = escapeHtml(caption || 'Draft your caption — or generate suggestions above and tap a chip to add it.');
-  // Story never carries a caption for Image post (see populatePublishView()'s pubCaptionBlock
-  // hide, which is the Story-Video case) -- mute the card here too so it reads as "won't
-  // actually publish", not just missing.
-  const isStoryTab = isImage && activeFormat === 'Story';
-  const captionCardClass = isStoryTab ? 'pub-social-preview-card pub-social-preview-card--muted' : 'pub-social-preview-card';
-  // Figma caps this card at max-h-316 (Reel/Image) or max-h-300 (Carousel) -- without an
-  // explicit cap, a long caption's un-clipped natural height still inflates the flex row's
-  // stretch basis (a classic flexbox sizing quirk: overflow:auto doesn't shrink the
-  // hypothetical cross size used for align-items:stretch), so the card grows past the tile.
-  const cardMaxHeight = window.__contentType === 'carousel' ? 300 : 316;
+  // Figma caps this card at max-h-398 (Reel/Story Video) or max-h-397 (Image/Carousel) --
+  // without an explicit cap, a long caption's un-clipped natural height still inflates the
+  // flex row's stretch basis (a classic flexbox sizing quirk: overflow:auto doesn't shrink
+  // the hypothetical cross size used for align-items:stretch), so the card grows past the tile.
+  const cardMaxHeight = window.__contentType === 'reel' ? 398 : 397;
 
   return `
     ${tabsHtml}
     <div class="pub-social-media-row">
       ${renderPublishMediaTile(activeFormat)}
-      <div class="${captionCardClass}" style="max-height:${cardMaxHeight}px;">
+      <div class="pub-social-preview-card" style="max-height:${cardMaxHeight}px;">
         <div class="pub-social-preview-meta">${captionText}</div>
       </div>
     </div>`;

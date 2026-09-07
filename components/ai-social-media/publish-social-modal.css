@@ -54,26 +54,28 @@
 .pub-social-format-tab.active{border-bottom:2px solid var(--color-neutral-800); font-weight:700; color:var(--color-neutral-800);}
 
 /* ---------- Media + caption row (Figma: media tile at left, caption card at right,
-   height fixed by content type — 316px for Reel/Short & Image, 300px for Carousel) ----------
+   height fixed by content type — 398px for Reel/Short & Story Video, 397px for Image &
+   Carousel) ----------
    Reuses .pub-social-preview-card/.pub-social-preview-meta for the caption side across every
    content type instead of the old bespoke .pub-social-post-card, so Reel/Carousel/Image all
    share one caption-card look; only the media tile at left differs by content type. */
 .pub-social-media-row{display:flex; gap:var(--spacing-md); align-items:stretch; width:100%; margin-top:var(--spacing-lg);}
-.pub-social-preview-card--muted{background:var(--color-neutral-150);}
-.pub-social-preview-card--muted .pub-social-preview-meta{color:var(--color-neutral-450);}
+/* Story Video, and Image's Story tab, never carry a caption -- Figma drops the preview card
+   entirely for these (not a muted version of it) and centers the media tile alone. */
+.pub-social-media-row--solo{justify-content:center;}
 .pub-social-preview-meta{flex:1 0 0; min-height:0; min-width:0; overflow-y:auto; white-space:pre-wrap; font-size:12px; line-height:18px; color:var(--color-neutral-700);}
 .pub-social-preview-meta::-webkit-scrollbar{width:6px;}
 .pub-social-preview-meta::-webkit-scrollbar-thumb{background:var(--color-neutral-400); border-radius:3px;}
 .pub-social-preview-meta::-webkit-scrollbar-track{background:transparent;}
 
 /* Reel/Short & Story Video: video thumbnail + centered translucent play button */
-.pub-social-video-tile{position:relative; width:178px; height:316px; flex-shrink:0; border-radius:var(--radius-xl); overflow:hidden; background:var(--color-neutral-150);}
+.pub-social-video-tile{position:relative; width:224px; height:398px; flex-shrink:0; border-radius:var(--radius-xl); overflow:hidden; background:var(--color-neutral-150);}
 .pub-social-video-tile img{width:100%; height:100%; object-fit:cover; display:block;}
 .pub-social-video-play{position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:32px; height:32px; border-radius:999px; background:rgba(255,255,255,.75); backdrop-filter:blur(5px); opacity:.9; display:flex; align-items:center; justify-content:center;}
 .pub-social-video-play img{width:14px; height:14px; object-fit:contain;}
 
 /* Carousel: image + prev/next nav + page counter badge */
-.pub-social-carousel-tile{position:relative; width:240px; height:300px; flex-shrink:0; border-radius:var(--radius-xl); overflow:hidden;}
+.pub-social-carousel-tile{position:relative; width:318px; height:397px; flex-shrink:0; border-radius:var(--radius-xl); overflow:hidden;}
 .pub-social-carousel-tile img{width:100%; height:100%; object-fit:cover; display:block;}
 .pub-social-carousel-nav{position:absolute; top:50%; transform:translateY(-50%); width:32px; height:32px; border-radius:999px; background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); box-shadow:0 4px 8px rgba(15,23,41,.08), 0 2px 4px rgba(15,23,41,.05); display:flex; align-items:center; justify-content:center;}
 .pub-social-carousel-nav.prev{left:8px;}
@@ -84,25 +86,25 @@
 .pub-social-carousel-badge .sep, .pub-social-carousel-badge .total{font-weight:500; color:var(--color-neutral-400);}
 
 /* Image · Post tab: creative at its own ratio, height-boxed to match the row */
-.pub-social-post-tile{height:316px; flex-shrink:0; border-radius:var(--radius-xl); overflow:hidden;}
+.pub-social-post-tile{height:397px; flex-shrink:0; border-radius:var(--radius-xl); overflow:hidden;}
 .pub-social-post-tile img{height:100%; display:block; object-fit:cover;}
 
 /* Image · Story tab: real Instagram-Story mockup — dark canvas, progress bar, account
    row, creative composited (matted, not stretched) underneath. */
-.pub-social-story-tile{width:178px; height:316px; flex-shrink:0; box-sizing:border-box; padding:4px 0; border-radius:var(--radius-xl); background:var(--color-neutral-900); display:flex; flex-direction:column; align-items:center; gap:10px; overflow:hidden;}
-.pub-social-story-chrome{width:170px; display:flex; flex-direction:column; gap:3px; flex-shrink:0;}
-.pub-social-story-progress{position:relative; width:170px; height:1px;}
+.pub-social-story-tile{width:224px; height:397px; flex-shrink:0; box-sizing:border-box; padding:4px 0; border-radius:var(--radius-xl); background:var(--color-neutral-900); display:flex; flex-direction:column; align-items:center; gap:10px; overflow:hidden;}
+.pub-social-story-chrome{width:100%; box-sizing:border-box; padding:0 7px; display:flex; flex-direction:column; gap:6px; flex-shrink:0;}
+.pub-social-story-progress{position:relative; width:100%; height:1px;}
 .pub-social-story-progress::before{content:''; position:absolute; inset:0; background:var(--color-neutral-0); opacity:.5; border-radius:2px;}
 .pub-social-story-progress::after{content:''; position:absolute; inset:0; width:66%; background:var(--color-neutral-0); opacity:.8; border-radius:2px;}
 .pub-social-story-header{display:flex; align-items:center; justify-content:space-between; padding:0 1px;}
 .pub-social-story-account{display:flex; align-items:center; gap:5px;}
-.pub-social-story-avatar{width:14px; height:14px; border-radius:999px; display:block;}
+.pub-social-story-avatar{width:20px; height:20px; border-radius:999px; display:block;}
 .pub-social-story-account span{font-size:6px; color:var(--color-neutral-0); font-family:var(--font-family-text);}
 .pub-social-story-actions{display:flex; align-items:center; gap:5px;}
 .pub-social-story-actions img{display:block;}
-.pub-social-story-actions .more{width:10px; height:10px;}
-.pub-social-story-actions .close{width:16px; height:16px;}
-.pub-social-story-media-wrap{flex:1 0 0; width:178px; min-height:0; display:flex; align-items:center; justify-content:center; overflow:hidden;}
+.pub-social-story-actions .more{width:14px; height:14px;}
+.pub-social-story-actions .close{width:20px; height:20px;}
+.pub-social-story-media-wrap{flex:1 0 0; width:224px; min-height:0; display:flex; align-items:center; justify-content:center; overflow:hidden;}
 .pub-social-story-media-wrap img{width:100%; height:100%; object-fit:cover; display:block;}
 
 /* ---------- Type-to-confirm box ----------
