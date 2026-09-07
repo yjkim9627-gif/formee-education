@@ -31,6 +31,7 @@
 <link rel="stylesheet" href="../../../../components/ai-social-media/storyboard-card.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/destination-account.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/publish-social-modal.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/action-bar-feedback.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/controls-misc.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/controls-toggles.css">
 <!-- Playfair Display: only used live for the Draft screen's brand-kit font-preview tags (Formee
@@ -135,7 +136,12 @@
   /* Feedback bar sits as a normal flex-shrink:0 row below .gen-body (not an absolute overlay)
      so it never covers the chat panel's own pinned input box, and stays visible on every
      Generate sub-stage (Draft/Versions/Preview, Script/Storyboard/Preview) for both content types. */
-  #genActionBarV3{position:static; flex-shrink:0;}
+  /* #genActionBarV3 uses the "Generating" variant of Action Bar · Feedback (Figma 5990:101033,
+     components/ai-social-media/action-bar-feedback.css) rather than the shared .action-bar
+     class the 3 Brief-step bars use — the Generate step has the AI Assistant chat panel
+     (.chat, 324px) on the left, and this variant's leading spacer keeps the readiness/meta/
+     buttons row aligned under the main column instead of running under the chat panel. */
+  #genActionBarV3{flex-shrink:0;}
   .msg-status{font-size:13px; font-family:var(--font-family-text);}
   .msg-status .worked-label{font-weight:600; color:var(--color-neutral-700);}
   .msg-status .worked-time{font-weight:400; color:var(--color-neutral-500);}
@@ -2383,15 +2389,20 @@
         <span class="credit-label">Estimated cost</span>
         <span class="credit-value" id="creditEstValue">~6 credits <span class="credit-sub">(2 versions)</span></span>
       </div>
-      <div class="action-bar" id="genActionBarV3">
-        <div class="readiness">
-          <div class="readiness-top"><span>Brief readiness</span><span>79%</span></div>
-          <div class="readiness-bar"><div class="readiness-fill" style="width:79%"></div></div>
-        </div>
-        <div class="meta-text" id="genMetaV3">Image post · 4:5 · English</div>
-        <div class="bar-actions">
-          <button class="btn btn-secondary" onclick="quickAction('rework')" id="genSecondaryBtnV3">Save as draft</button>
-          <button class="btn btn-dark" id="genActionBtnV3">Continue</button>
+      <div class="ab-feedback ab-feedback--generating" id="genActionBarV3">
+        <div class="ab-feedback-spacer"></div>
+        <div class="ab-feedback-content">
+          <div class="ab-feedback-row">
+            <div class="ab-feedback-readiness">
+              <div class="ab-feedback-readiness-top"><span class="ab-feedback-readiness-label">Brief readiness</span><span class="ab-feedback-readiness-pct">79%</span></div>
+              <div class="ab-feedback-readiness-track"><div class="ab-feedback-readiness-fill" style="width:79%"></div></div>
+            </div>
+            <span class="ab-feedback-meta" id="genMetaV3">Image post · 4:5 · English</span>
+            <div class="ab-feedback-actions">
+              <button class="ab-feedback-btn-secondary" onclick="quickAction('rework')" id="genSecondaryBtnV3">Save as draft</button>
+              <button class="ab-feedback-btn-primary" id="genActionBtnV3">Continue</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
