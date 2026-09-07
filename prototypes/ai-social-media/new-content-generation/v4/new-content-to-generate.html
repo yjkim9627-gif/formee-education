@@ -1018,8 +1018,9 @@
      class since JS toggles an "applied" state/note this specific card needs that
      appendChatCta()'s cards don't). .script-applied-note is that state's checklist row. */
   .script-proposal-box{margin-top:12px; background:var(--color-neutral-75); border:1px solid var(--color-neutral-400); border-radius:var(--radius-xl); padding:12px; display:flex; flex-direction:column; gap:12px;}
+  .script-proposal-header{display:flex; align-items:center; justify-content:space-between; gap:12px;}
   .script-proposal-text{font-size:14px; color:var(--color-neutral-700); line-height:1.57;}
-  .script-proposal-box .btn-dark{width:100%; justify-content:center; padding:9px 14px; font-size:13px;}
+  .script-proposal-box .btn-dark{width:auto; flex:none; justify-content:center; padding:7px 14px; font-size:13px; white-space:nowrap;}
   .script-applied-note{display:none; align-items:center; gap:8px; font-size:12px; font-weight:600; color:var(--color-brand-primary); background:var(--color-badge-blue-bg); border:1px solid var(--color-brand-primary-mid); border-radius:var(--radius-lg); padding:6px 8px;}
   .script-proposal-box.applied .script-applied-note{display:flex;}
   .script-proposal-box.applied{border-color:var(--color-brand-primary-mid);}
@@ -4781,10 +4782,12 @@ function renderScriptProposalMessage(scriptText, introText){
     <div class="msg ai">
       ${introText ? `<span class="tag">AI</span>${escapeHtml(introText)}` : ''}
       <div class="script-proposal-box" id="scriptProposal${id}">
-        <span class="script-proposal-title">${introText ? 'Updated Script' : 'Generate Script'}</span>
+        <div class="script-proposal-header">
+          <span class="script-proposal-title">${introText ? 'Updated Script' : 'Generate Script'}</span>
+          <button class="btn btn-dark" data-draft-id="${id}" onclick="handleScriptProposalClick(this)">Use this script</button>
+        </div>
         <div class="script-proposal-text">"${escapeHtml(scriptText)}"</div>
         <span class="script-applied-note">✓ Applied to Script panel</span>
-        <button class="btn btn-dark" data-draft-id="${id}" onclick="handleScriptProposalClick(this)">Use this script</button>
       </div>
       <span class="chat-edit-hint">Want changes? Type them below (e.g. "make it shorter") and I'll revise it.</span>
     </div>
@@ -4866,7 +4869,7 @@ function runBriefToScript(){
     aiMsg.textContent = `Your ${window.__videoDuration}s script and ${count} clip${count > 1 ? 's are' : ' is'} ready. Each 8-second clip has an image prompt and up to 15 narration words. Edit the script to update the clips automatically.`;
     log.appendChild(aiMsg);
     log.scrollTop = log.scrollHeight;
-    setChatGuideHint('e.g. "make the script warmer" or "clip 2 narration shorter"');
+    setChatGuideHint('e.g. "make the script more hooking" or "make it shorter"');
   }, 1100);
 }
 
@@ -4878,6 +4881,12 @@ function buildRevisedScript(base, requestText){
   if(req.includes('short') || req.includes('짧') || req.includes('줄여')){
     const sentences = base.split(/(?<=[.!?])\s+/);
     return sentences.slice(0, Math.max(1, Math.ceil(sentences.length / 2))).join(' ');
+  }
+  if(req.includes('hook') || req.includes('후킹') || req.includes('훅')){
+    const sentences = base.split(/(?<=[.!?])\s+/);
+    const first = sentences[0].replace(/[.!?]+$/, '');
+    sentences[0] = `Wait — ${first.charAt(0).toLowerCase()}${first.slice(1)}!`;
+    return sentences.join(' ');
   }
   if(req.includes('formal') || req.includes('격식') || req.includes('정중')){
     return base.replace(/!/g, '.').replace(/you guys/gi, 'everyone').replace(/^okay wait,\s*/i, '');
@@ -7352,11 +7361,22 @@ function sendChatMessage(){
 }
 
 function reelHandleChatSend(text){
-  if(!window.__scriptConfirmed || /script|스크립트/i.test(text)){
+  if(!window.__scriptConfirmed || /script|스크립트/i.test(text) || !mentionsClipOrField(text)){
     reviseScript(text);
   } else {
     reviseSceneOrNarration(text);
   }
+}
+
+// A message only means "just this clip's narration/description" once it actually names a
+// clip/scene number or the narration/description field itself (e.g. "clip 2 narration
+// shorter", "scene description more dramatic"). Anything else — "make it shorter", "more
+// hooking" — is a whole-script note and belongs in reviseScript()'s card flow instead;
+// without this check every non-clip-specific note fell through to reviseSceneOrNarration's
+// "I can't understand that" fallback below, since it has no whole-script path of its own.
+function mentionsClipOrField(text){
+  const req = text.toLowerCase();
+  return /(?:clip|scene|클립|씬)\s*\d+/.test(req) || /narration|voice|line|내레이션|보이스|대사|description|visual|action|묘사|비주얼/.test(req);
 }
 
 // ---- Post-confirm chat revisions: "clip 2 narration warmer", "scene description more
