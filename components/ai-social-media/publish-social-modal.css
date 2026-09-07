@@ -47,6 +47,21 @@
 .pub-social-preview-handle{font-size:14px; font-weight:600; line-height:22px; color:var(--color-neutral-900);}
 .pub-social-preview-format, .pub-social-preview-when{font-size:13px; line-height:20px; color:var(--color-neutral-500);}
 
+/* ---------- Image post preview: creative + caption per selected format ----------
+   Image post only (renderImagePostPublishPreview) — Post shows the creative at its own
+   ratio with the caption underneath; Story composites that same creative, unchanged, onto
+   the actual 9:16 Story canvas (matted/centered, not stretched) since a 1:1 or 4:5 image
+   never really fills a Story the way it does a feed Post. */
+.pub-social-preview-formats{display:flex; gap:var(--spacing-lg); flex-wrap:wrap;}
+.pub-social-preview-format-block{display:flex; flex-direction:column; gap:var(--spacing-sm); align-items:flex-start;}
+.pub-social-preview-format-label{font-size:12px; font-weight:600; color:var(--color-neutral-500);}
+.pub-social-post-card{width:180px; border:1px solid var(--color-neutral-300); border-radius:var(--radius-lg); overflow:hidden; background:var(--color-neutral-0);}
+.pub-social-post-image{width:100%; display:block; object-fit:cover;}
+.pub-social-post-caption{margin:0; padding:var(--spacing-sm) var(--spacing-md); font-size:12px; line-height:1.5; color:var(--color-neutral-700); max-height:4.5em; overflow:hidden;}
+.pub-social-story-frame{width:104px; aspect-ratio:9/16; border-radius:var(--radius-lg); background:var(--color-neutral-900); display:flex; align-items:center; justify-content:center; overflow:hidden;}
+.pub-social-story-media{max-width:100%; max-height:100%; display:flex;}
+.pub-social-story-media img{width:100%; height:100%; object-fit:cover; display:block;}
+
 /* ---------- Type-to-confirm box ----------
    State=Default (input empty, button Inactive) / State=Enabled (handle matches, button
    Style=Blue) / State=Confirmed (button becomes a disabled checkmark button) — the box

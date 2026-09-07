@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="../../../../tokens/tokens.css">
 <link rel="stylesheet" href="../../../../components/shared/button.css">
 <link rel="stylesheet" href="../../../../components/shared/modal.css">
+<link rel="stylesheet" href="../../../../components/shared/checkbox.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/nav.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/topbar-stepper.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/chat-panel.css">
@@ -21,6 +22,7 @@
 <link rel="stylesheet" href="../../../../components/ai-social-media/controls-filter-select.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/actions-button.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/scene-tile.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/reference-chip.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/voice-accordion-row.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/queue-panel.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/video-summary-card.css">
@@ -236,18 +238,16 @@
   .ref-image-chip .remove img{width:var(--spacing-md); height:var(--spacing-md);}
   /* Prompt Reference Chip, empty state — Figma node 5991:95700. Real spec: bg
      neutral-100, 12/20 padding, 6px gap, radius-lg, neutral-450 13px/500 label, and the
-     real icon/content/image-plus glyph (not a plain placeholder square). Compact variant
-     (used inline above a smaller prompt box, e.g. Reel/Story's scene cards) is the exact
-     same chip — Figma has no separate compact spec — just without align-self:flex-start
-     since it already sits alone at the top of its own box. */
-  .ref-image-add, .ref-image-add-compact{display:flex; align-items:center; justify-content:center; gap:6px; background:var(--color-neutral-100); border-radius:var(--radius-lg); padding:var(--spacing-xl) var(--spacing-md); cursor:pointer; color:var(--color-neutral-450); font-size:13px; font-weight:500; font-family:var(--font-family-text);}
-  .ref-image-add{align-self:flex-start;}
-  .ref-image-add:hover, .ref-image-add-compact:hover{background:var(--color-neutral-150);}
-  .ref-image-add .ref-add-icon, .ref-image-add-compact .ref-add-icon{width:20px; height:20px; flex-shrink:0; display:block;}
+     real icon/content/image-plus glyph (not a plain placeholder square). The compact
+     square variant (Script/Timeline scene editors) now uses its own updated component,
+     see components/ai-social-media/reference-chip.css. */
+  .ref-image-add{display:flex; align-items:center; justify-content:center; gap:6px; background:var(--color-neutral-100); border-radius:var(--radius-lg); padding:var(--spacing-xl) var(--spacing-md); cursor:pointer; color:var(--color-neutral-450); font-size:13px; font-weight:500; font-family:var(--font-family-text); align-self:flex-start;}
+  .ref-image-add:hover{background:var(--color-neutral-150);}
+  .ref-image-add .ref-add-icon{width:20px; height:20px; flex-shrink:0; display:block;}
   /* Reel/Short & Story Video Brief & Style prompt box: Reference vs first/last frame are
      mutually exclusive attachment modes — the inactive option greys out instead of disappearing,
      so it's clear it's still there once the other is removed. */
-  .ref-image-add.disabled, .ref-image-add-compact.disabled{opacity:.4; cursor:not-allowed; pointer-events:none;}
+  .ref-image-add.disabled{opacity:.4; cursor:not-allowed; pointer-events:none;}
 
   /* -- Character section (Brief & Style) — .char-section/.char-panel/.char-filters/.char-grid/
      .char-card + Filter Chip now in components/ai-social-media/character-card.css + filter-chip.css. -- */
@@ -788,9 +788,8 @@
   .pub-dest-status--not-connected{background:var(--color-neutral-400); color:var(--color-neutral-700); border-radius:var(--radius-full);}
   .pub-dest-connect-btn{flex-shrink:0; display:inline-flex; align-items:center; justify-content:center; padding:9px 14px; background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); font-family:var(--font-family-text); font-size:13px; font-weight:600; line-height:20px; color:var(--color-neutral-700); cursor:pointer;}
   .pub-dest-connect-btn:hover{border-color:var(--color-neutral-450);}
-  .pub-dest-checkbox{width:16px; height:16px; flex-shrink:0; border-radius:var(--radius-sm); appearance:none; -webkit-appearance:none; margin:0; border:1px solid var(--color-neutral-400); background:var(--color-neutral-0); cursor:pointer; background-repeat:no-repeat; background-position:center;}
-  .pub-dest-checkbox:checked{background-color:var(--color-brand-primary); border-color:var(--color-brand-primary); background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgdmlld0JveD0iMCAwIDEyIDEyIiBmaWxsPSJub25lIj48cGF0aCBkPSJNMTAgM0w0LjUgOC41TDIgNiIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjwvc3ZnPg==");}
-  .pub-dest-checkbox:disabled{opacity:.5; background-color:var(--color-neutral-150); cursor:not-allowed;}
+  /* Checkbox look itself now comes from the shared .checkbox component (components/shared/
+     checkbox.css) — .pub-dest-checkbox only carries layout, no appearance overrides. */
 
   /* -- Simple destinations grid — Reel/Short, Story Video and Carousel don't offer a Post/
      Story choice per platform (only Image does), so their Publish screen uses the plain
@@ -5035,8 +5034,23 @@ function renderReferenceImages(){
   const fullHtml = chips + `
     <div class="ref-image-add" onclick="addReferenceImage(this)">${refIcon}<span>Reference</span></div>
   `;
-  const compactHtml = chips + `
-    <div class="ref-image-add-compact" onclick="addReferenceImage(this)" title="Add reference image">${refIcon}<span>Reference</span></div>
+
+  // Compact rows (Script/Timeline scene editors) use the actual Figma "Prompt Reference
+  // Chip" component (components/ai-social-media/reference-chip.css, node 8620:121242)
+  // instead of the wider Brief-row pill above -- a square chip that reveals the Remove (X)
+  // corner button once attached and the More (...) button on hover, matching Figma's
+  // empty/hover/Remove states. Attaching (click) goes straight to the Remove state, same
+  // as if the reference had just been updated.
+  const refChipIcon = `<img class="ref-chip-icon" src="../../../../components/ai-social-media/icons/content-image-plus.svg" alt="">`;
+  const compactChips = referenceImages.map(n => `
+    <div class="ref-chip" data-attached="true">
+      ${refChipIcon}<span class="ref-chip-label">Image ${n}</span>
+      <button type="button" class="ref-chip-more" onclick="event.stopPropagation();" title="More options"><img src="../../../../components/ai-social-media/icons/ui-ellipsis.svg" class="icon-inline" alt=""></button>
+      <button type="button" class="ref-chip-remove" onclick="event.stopPropagation(); removeReferenceImage(${n})" aria-label="Remove reference image ${n}" title="Remove reference"><img src="../../../../components/ai-social-media/icons/controls/chip-close-x.svg" class="icon-inline" alt=""></button>
+    </div>
+  `).join('');
+  const compactHtml = compactChips + `
+    <div class="ref-chip" onclick="addReferenceImage(this)" title="Add reference image">${refChipIcon}<span class="ref-chip-label">Reference</span></div>
   `;
 
   // Reel/Short & Story Video's Brief & Style prompt box (#referenceImagesRow) only:
@@ -6485,7 +6499,7 @@ function renderPublishDestinationsTable(el){
     const allChecked = surfaces.every(s => formats[s]);
     const cols = surfaces.map(s => `
       <div class="pub-dest-col">
-        <input type="checkbox" class="pub-dest-checkbox" ${formats[s] ? 'checked' : ''} onchange="toggleDestinationFormat('${p.key}','${s}')">
+        <input type="checkbox" class="pub-dest-checkbox checkbox" ${formats[s] ? 'checked' : ''} onchange="toggleDestinationFormat('${p.key}','${s}')">
       </div>
     `).join(gap);
     const status = connected
@@ -6494,7 +6508,7 @@ function renderPublishDestinationsTable(el){
     return `
       <div class="pub-dest-row${connected ? '' : ' not-connected'}">
         <div class="pub-dest-select-col">
-          <input type="checkbox" class="pub-dest-checkbox" ${allChecked ? 'checked' : ''} onchange="toggleDestinationAllSurfaces('${p.key}', this.checked)">
+          <input type="checkbox" class="pub-dest-checkbox checkbox" ${allChecked ? 'checked' : ''} onchange="toggleDestinationAllSurfaces('${p.key}', this.checked)">
         </div>
         <div class="pub-dest-meta">
           ${icon}
@@ -7011,7 +7025,14 @@ function renderSocialTabContent(){
     ? `Scheduled for ${getScheduleForPlatform(key) || '—'}`
     : 'Publishing now';
 
-  wrap.innerHTML = `
+  // Image post only, for now: show the actual creative (+ caption for Post; Story has none,
+  // see populatePublishView()'s pubCaptionBlock hide) instead of a generic icon+meta row, so
+  // what's about to go live is genuinely checkable per surface — a 1:1/4:5 image doesn't
+  // fill a 9:16 Story, so the Story preview composites it centered on the real Story canvas
+  // the same way Instagram would, rather than pretending it's already 9:16.
+  const previewHtml = (window.__contentType === 'image')
+    ? renderImagePostPublishPreview(key, platform)
+    : `
     <div class="pub-social-preview-card">
       <div class="pub-social-preview-thumb"><img src="../../../../components/ai-social-media/icons/content-image-outline-sm.svg" alt=""></div>
       <div class="pub-social-preview-meta">
@@ -7023,7 +7044,10 @@ function renderSocialTabContent(){
         <div class="pub-social-preview-format">Format: ${formats}</div>
         <div class="pub-social-preview-when">${whenText}</div>
       </div>
-    </div>
+    </div>`;
+
+  wrap.innerHTML = `
+    ${previewHtml}
     <div class="pub-social-confirm-box">
       <div class="pub-social-confirm-warning">This will post live to @${PUBLISH_FAKE_HANDLE}</div>
       <p class="pub-social-confirm-note">Heads up: this isn't a dry run. Confirming ${verb} the content above straight to ${platform.label}. Type the handle below to unlock the button.</p>
@@ -7031,6 +7055,42 @@ function renderSocialTabContent(){
       ${btnHtml}
     </div>
   `;
+}
+
+// Stand-in for the actual generated creative — this prototype has no real generated-image
+// asset for the Image post flow (versions/versionState are simulated placeholders only), so
+// reuse the same sample photo already used for the Reel/Short Timeline thumbnails.
+function getPublishPreviewImageSrc(){
+  return 'assets/video/scene1.png';
+}
+function ratioToAspectCss(ratio){
+  return (ratio || '4:5').replace(':', ' / ');
+}
+function renderImagePostPublishPreview(key, platform){
+  const ratio = window.__imageRatio || '4:5';
+  const img = getPublishPreviewImageSrc();
+  const caption = getCaptionForPlatform(key).trim();
+  const captionHtml = escapeHtml(caption || 'Draft your caption — or generate suggestions above and tap a chip to add it.');
+  const blocks = getSelectedFormatsForPlatform(key).map(fmt => {
+    if(fmt === 'Post'){
+      return `
+        <div class="pub-social-preview-format-block">
+          <div class="pub-social-preview-format-label">${platform.label} · Post</div>
+          <div class="pub-social-post-card">
+            <img class="pub-social-post-image" style="aspect-ratio:${ratioToAspectCss(ratio)};" src="${img}" alt="">
+            <p class="pub-social-post-caption">${captionHtml}</p>
+          </div>
+        </div>`;
+    }
+    return `
+      <div class="pub-social-preview-format-block">
+        <div class="pub-social-preview-format-label">${platform.label} · Story</div>
+        <div class="pub-social-story-frame">
+          <div class="pub-social-story-media" style="aspect-ratio:${ratioToAspectCss(ratio)};"><img src="${img}" alt=""></div>
+        </div>
+      </div>`;
+  }).join('');
+  return `<div class="pub-social-preview-formats">${blocks}</div>`;
 }
 
 function onSocialConfirmInput(value){
