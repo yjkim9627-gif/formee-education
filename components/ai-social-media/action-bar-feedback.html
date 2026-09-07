@@ -2,19 +2,20 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
-<title>W:ActionBar — Shared Component</title>
+<title>Action Bar · Feedback — Shared Component</title>
 <link rel="stylesheet" href="../../tokens/tokens.css" />
 <link rel="stylesheet" href="../demo-nav.css" />
-<link rel="stylesheet" href="actions-button.css" />
-<link rel="stylesheet" href="w-action-bar.css" />
+<link rel="stylesheet" href="action-bar-feedback.css" />
 <style>
   body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
   .demo-main { padding: var(--spacing-4xl); }
   h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-sm); }
   h2 { font-size: var(--font-size-text-md); font-weight: 700; color: var(--color-neutral-700); margin: var(--spacing-3xl) 0 var(--spacing-md); }
   h2:first-of-type { margin-top: 0; }
-  .demo-note { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); max-width: 720px; margin: 0 0 var(--spacing-3xl); line-height: 1.6; }
+  .demo-note { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); max-width: 760px; margin: 0 0 var(--spacing-3xl); line-height: 1.6; }
   .demo-frame { border: 1px solid var(--color-neutral-200); border-radius: 12px; overflow: hidden; background: var(--color-neutral-25); }
+  .demo-frame--with-chat { display: flex; overflow-x: auto; min-width: 1348px; }
+  .demo-chat-stub { width: 324px; flex-shrink: 0; background: var(--color-neutral-0); border-right: 1px solid var(--color-neutral-200); display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--color-neutral-400); }
 </style>
 </head>
 <body>
@@ -72,8 +73,8 @@
         <a href="nav.html">Nav / Navigation</a>
         <a href="topbar-stepper.html">Topbar + Stepper</a>
         <a href="avatar.html">Avatar</a>
-        <a href="w-action-bar.html" class="active">W:ActionBar</a>
-        <a href="action-bar-feedback.html">Action Bar · Feedback</a>
+        <a href="w-action-bar.html">W:ActionBar</a>
+        <a href="action-bar-feedback.html" class="active">Action Bar · Feedback</a>
       </div>
     </div>
     <div class="demo-sidebar-group collapsed" data-group="ai-assistant">
@@ -143,91 +144,66 @@
     </div>
   </nav>
   <main class="demo-main">
-  <h1>W:ActionBar</h1>
-  <p class="demo-note">Figma: "04 Navigation" → "W:ActionBar" (2259:59621), Content Type=Image/Carousel/Video — the Editor canvas's bottom bar. Live in <code>prototypes/ai-social-media/editing/image-editing.html</code> (<code>.actionbar</code>) and reached from the "Continue to editing" step of <code>new-content-to-generate.html</code>. The Publish button now shows the updated Actions / Publish Button (777:7362) — trailing chevron-<strong>right</strong> instead of chevron-down, no leading icon.</p>
+  <h1>Action Bar · Feedback</h1>
+  <p class="demo-note">Figma: node 5990:101033, component "Feedback" — prop <code>type</code> = "Brief readiness" | "Generating". Same content both ways (readiness bar, ratio/duration meta, Save as draft / Continue); what changes is the outer layout. "Brief readiness" is used on the Brief &amp; Style step (no left AI panel) — centered 960px row, 64px side padding. "Generating" is used on the Generate step, where the AI Assistant chat panel (<a href="chat-panel.html">Chat Panel</a>, 324px) occupies the left column above this bar — a matching 324px spacer keeps the bar's content aligned under the main column instead of running under the chat panel, then a centered 1024px row lays out readiness / meta / buttons with space-between. Live in <code>prototypes/ai-social-media/new-content-generation/v3/new-content-to-generate.html</code> (<code>#briefActionBarImage</code>/<code>Carousel</code>/<code>Reel</code> use "Brief readiness"; <code>#genActionBarV3</code> uses "Generating").</p>
 
-  <h2>Content Type = Image</h2>
+  <h2>type = Brief readiness</h2>
   <div class="demo-frame">
-    <div class="w-actionbar">
-      <div class="w-ab-left">
-        <div class="w-readiness">
-          <div class="w-readiness__row"><span class="w-readiness__label">Content readiness</span><span class="w-readiness__value">100%</span></div>
-          <div class="w-readiness__track"><div class="w-readiness__fill"></div></div>
+    <div class="ab-feedback ab-feedback--brief">
+      <div class="ab-feedback-row">
+        <div class="ab-feedback-readiness">
+          <div class="ab-feedback-readiness-top"><span class="ab-feedback-readiness-label">Brief readiness</span><span class="ab-feedback-readiness-pct">79%</span></div>
+          <div class="ab-feedback-readiness-track"><div class="ab-feedback-readiness-fill" style="width:79%"></div></div>
         </div>
-        <span class="w-ready-badge">Ready</span>
-      </div>
-      <div class="w-ab-center">
-        <span class="w-pb-left__label">1 page · 9:16</span>
-        <div class="w-pb-zoom">
-          <img src="icons/pagebar-minus.svg" alt="">
-          <input type="range" class="w-pb-zoom__slider" min="50" max="150" value="100">
-          <img src="icons/pagebar-plus.svg" alt="">
-          <span class="w-pb-zoom__value">100%</span>
+        <span class="ab-feedback-meta">Reel / Short · 9:16 · 16s</span>
+        <div class="ab-feedback-actions">
+          <button type="button" class="ab-feedback-btn-secondary">Save as draft</button>
+          <button type="button" class="ab-feedback-btn-primary">Continue</button>
         </div>
-      </div>
-      <div class="w-ab-right">
-        <button class="actions-btn actions-btn--secondary">Save draft</button>
-        <button class="actions-publish-btn"><span>Publish</span><img src="icons/content-preview-publish.svg" alt=""></button>
       </div>
     </div>
   </div>
 
-  <h2>Content Type = Carousel</h2>
-  <div class="demo-frame">
-    <div class="w-actionbar">
-      <div class="w-ab-left">
-        <div class="w-readiness">
-          <div class="w-readiness__row"><span class="w-readiness__label">Content readiness</span><span class="w-readiness__value">100%</span></div>
-          <div class="w-readiness__track"><div class="w-readiness__fill"></div></div>
+  <h2>type = Generating (with Continue-to-Publish link)</h2>
+  <p class="demo-note" style="margin-bottom:var(--spacing-md);">Shown here alongside a chat-panel-width stub on the left so the alignment is visible — the real screen has the actual Chat Panel there, not this placeholder.</p>
+  <div class="demo-frame demo-frame--with-chat">
+    <div class="demo-chat-stub">Chat Panel · 324px</div>
+    <div class="ab-feedback ab-feedback--generating" style="flex:1;">
+      <div class="ab-feedback-spacer"></div>
+      <div class="ab-feedback-content">
+        <div class="ab-feedback-row">
+          <div class="ab-feedback-readiness">
+            <div class="ab-feedback-readiness-top"><span class="ab-feedback-readiness-label">Brief readiness</span><span class="ab-feedback-readiness-pct">79%</span></div>
+            <div class="ab-feedback-readiness-track"><div class="ab-feedback-readiness-fill" style="width:79%"></div></div>
+          </div>
+          <span class="ab-feedback-meta">Reel / Short · 9:16 · 16s</span>
+          <button type="button" class="ab-feedback-continue-link">Continue to Edit &amp; Publish  →</button>
+          <div class="ab-feedback-actions">
+            <button type="button" class="ab-feedback-btn-secondary">Save as draft</button>
+            <button type="button" class="ab-feedback-btn-primary">Continue</button>
+          </div>
         </div>
-        <span class="w-ready-badge">Ready</span>
-      </div>
-      <div class="w-ab-center">
-        <div class="w-pb-left">
-          <span class="w-pb-left__label">3 pages · 4:5</span>
-          <div class="w-page-thumb"><span>1</span></div>
-          <div class="w-page-thumb"><span>2</span></div>
-          <div class="w-page-thumb w-page-thumb--current"><span>3</span></div>
-          <div class="w-page-thumb w-page-thumb--add"><img src="icons/pagebar-plus.svg" alt=""></div>
-        </div>
-        <div class="w-pb-zoom">
-          <img src="icons/pagebar-minus.svg" alt="">
-          <input type="range" class="w-pb-zoom__slider" min="50" max="150" value="100">
-          <img src="icons/pagebar-plus.svg" alt="">
-          <span class="w-pb-zoom__value">100%</span>
-        </div>
-      </div>
-      <div class="w-ab-right">
-        <button class="actions-btn actions-btn--secondary">Save draft</button>
-        <button class="actions-publish-btn"><span>Publish</span><img src="icons/content-preview-publish.svg" alt=""></button>
       </div>
     </div>
   </div>
 
-  <h2>Content Type = Video</h2>
-  <div class="demo-frame">
-    <div class="w-actionbar">
-      <div class="w-ab-left">
-        <div class="w-readiness">
-          <div class="w-readiness__row"><span class="w-readiness__label">Content readiness</span><span class="w-readiness__value">100%</span></div>
-          <div class="w-readiness__track"><div class="w-readiness__fill"></div></div>
+  <h2>type = Generating (no Continue-to-Publish link — used by #genActionBarV3)</h2>
+  <div class="demo-frame demo-frame--with-chat">
+    <div class="demo-chat-stub">Chat Panel · 324px</div>
+    <div class="ab-feedback ab-feedback--generating" style="flex:1;">
+      <div class="ab-feedback-spacer"></div>
+      <div class="ab-feedback-content">
+        <div class="ab-feedback-row">
+          <div class="ab-feedback-readiness">
+            <div class="ab-feedback-readiness-top"><span class="ab-feedback-readiness-label">Brief readiness</span><span class="ab-feedback-readiness-pct">79%</span></div>
+            <div class="ab-feedback-readiness-track"><div class="ab-feedback-readiness-fill" style="width:79%"></div></div>
+          </div>
+          <span class="ab-feedback-meta">Image post · 4:5 · English</span>
+          <div class="ab-feedback-actions">
+            <button type="button" class="ab-feedback-btn-secondary">Save as draft</button>
+            <button type="button" class="ab-feedback-btn-primary">Continue</button>
+          </div>
         </div>
-        <span class="w-ready-badge">Ready</span>
-      </div>
-      <div class="w-ab-center">
-        <div class="w-pb-left w-pb-left--video">
-          <span class="w-pb-left__label">9:16 · 0:15</span>
-        </div>
-        <div class="w-pb-zoom">
-          <img src="icons/pagebar-minus.svg" alt="">
-          <input type="range" class="w-pb-zoom__slider" min="50" max="150" value="100">
-          <img src="icons/pagebar-plus.svg" alt="">
-          <span class="w-pb-zoom__value">100%</span>
-        </div>
-      </div>
-      <div class="w-ab-right">
-        <button class="actions-btn actions-btn--secondary">Save draft</button>
-        <button class="actions-publish-btn"><span>Publish</span><img src="icons/content-preview-publish.svg" alt=""></button>
       </div>
     </div>
   </div>
