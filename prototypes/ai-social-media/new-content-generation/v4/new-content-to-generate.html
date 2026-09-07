@@ -2176,6 +2176,7 @@
         <div class="stage-area" id="stageAreaReel" style="display:none;">
           <div class="stage-tabs">
             <div class="stage-tab" id="tabReelScript" onclick="showSub('reelScript')">Script</div>
+            <div class="stage-tab locked" id="tabReelTimeline" onclick="showSub('reelTimeline')" style="display:none;">Timeline</div>
             <div class="stage-tab locked" id="tabReelVideo" onclick="showSub('reelVideo')">Video</div>
           </div>
 
@@ -2271,6 +2272,39 @@
                        pattern as every other Generate sub-stage's forward-progress action. -->
                   <div style="display:none;">
                     <button class="btn btn-dark" id="reelGenerateVideoBtn" onclick="proceedToStudio()">Generate video</button>
+                    <button class="btn btn-dark" id="reelContinueToTimelineBtn" onclick="showSub('reelTimeline')">Continue to timeline</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            </div>
+          </div>
+
+          <!-- SUB-STAGE: Timeline (window.__thumbnailMode === 'on' only) — the pre-redesign
+               scene/thumbnail step, restored to match Figma 8727-219846 exactly: a real third
+               tab between Script and Video (not folded into Script, like the 'off' mode's
+               plain card list is). Tiles start as data-type="default" (plain gradient
+               placeholder, no thumbnail yet) until "Generate Thumbnails" runs; Voice stays
+               v4's current one-panel-per-8s-clip design (renderSceneNarrationHTML) -- Figma's
+               own Voice Section still shows the old Whole take/Split by scene toggle, but
+               that's deliberately not reproduced here (removed for good per this feature's
+               own instructions). -->
+          <div class="stage-sub" id="subReelTimeline" style="display:none;">
+            <div class="stage-body">
+            <div class="stage-body-inner">
+              <h2 class="stage-title">Timeline</h2>
+              <p class="stage-sub-text">Confirm the dialogue and scene description for each segment, then generate thumbnails.</p>
+              <div class="timeline-stage">
+                <div class="timeline-canvas">
+                  <div class="video-grid" id="timelineGrid"></div>
+                </div>
+                <div class="scene-editor-col">
+                  <div class="scene-nav" id="timelineSegmentNav"></div>
+                  <div class="scene-editor-panel" id="timelineEditorPanel"></div>
+                  <!-- Hidden — mirrors syncGenActionBarV3()'s forward-progress pattern; the
+                       bottom action bar's CTA on this tab is "Generate Thumbnails". -->
+                  <div style="display:none;">
+                    <button class="btn btn-dark" id="timelineGenerateThumbsBtn" onclick="generateScriptThumbnails()">Generate Thumbnails</button>
                   </div>
                 </div>
               </div>
@@ -3519,7 +3553,7 @@ function imgGoToGenerate(){
 function imgGoToDevelop(){
   const pages = versionState.length || window.__versionCount || 1;
   const ratio = window.__imageRatio || '4:5';
-  window.location.href = `../../editing/image-editing.html?mode=image&ratio=${encodeURIComponent(ratio)}&pages=${pages}`;
+  window.location.href = `../../editing/image-editing.html?mode=image&ratio=${encodeURIComponent(ratio)}&pages=${pages}&v=4`;
 }
 
 // Publish is shared with the video/carousel flow — hand off to that file's Publish screen
@@ -3716,7 +3750,7 @@ function carUpdateDevelopPreview(){
 function carGoToDevelop(){
   const pages = window.__cardCount || 5;
   const ratio = window.__carouselRatio || '4:5';
-  window.location.href = `../../editing/image-editing.html?mode=carousel&ratio=${encodeURIComponent(ratio)}&pages=${pages}`;
+  window.location.href = `../../editing/image-editing.html?mode=carousel&ratio=${encodeURIComponent(ratio)}&pages=${pages}&v=4`;
 }
 function backToStoryboard(){
   showView('generateView');
@@ -5393,106 +5427,34 @@ function renderReelSceneEditors(){
   const count = getSceneCount();
   ensureSceneScripts(count);
 
+  // Thumbnail preview is gated on window.__thumbnailMode (demo control, bottom-right) — off
+  // by default per v4's redesign. 'off' keeps Script holding the plain always-all-visible
+  // list of cards directly (each card holds both the image prompt and the narration for that
+  // clip together, since they're both properties of the same clip rather than two separate
+  // parallel lists) — no Timeline tab. 'on' restores Timeline as a real third tab (Figma
+  // 8727-219846) instead: Script goes back to just the full-script textarea,
+  // #reelSceneSection hides, and the Timeline tab's tile grid (renderTimelineGrid) takes over
+  // clip editing, gated behind an explicit "Generate Thumbnails" action. Narration itself is
+  // untouched either way — still exactly one panel per 8s clip (renderSceneNarrationHTML), no
+  // separate whole-take/split-by-scene toggle (that's gone for good, see the comment above
+  // wordCountGuideText()).
+  const sceneSection = document.getElementById('reelSceneSection');
+  if(window.__thumbnailMode === 'on'){
+    sceneSection.style.display = 'none';
+    document.getElementById('tabReelTimeline').style.display = '';
+    document.getElementById('tabReelTimeline').classList.remove('locked');
+    renderTimelineGrid(count);
+    updateReelReadiness();
+    return;
+  }
+  document.getElementById('tabReelTimeline').style.display = 'none';
+  sceneSection.style.display = '';
   document.getElementById('reelSceneSectionSub').textContent = count > 1
     ? `Set the scene description and narration for each of the ${count} clips. Narration ⚡${estimateSplitVoiceCredits(count)} total.`
     : `Set the scene description and narration for your clip. Narration ⚡${SEGMENT_VOICE_CREDIT}.`;
-
-  // Thumbnail preview is gated on window.__thumbnailMode (demo control, bottom-right) — off
-  // by default per v4's redesign. 'off' keeps the plain always-all-visible list of cards
-  // (each holding both the image prompt and the narration for that clip together, since
-  // they're both properties of the same clip rather than two separate parallel lists). 'on'
-  // swaps in a tile grid instead (renderScriptThumbGrid) — restores the pre-redesign
-  // still-image-first framing (generate a thumbnail, then the clip's video comes from it) by
-  // reusing the Video stage's own .video-tile/applySampleVideoFrame visual language, with
-  // only the selected tile's editor shown below the grid. Narration itself is untouched
-  // either way — still exactly one panel per 8s clip (renderSceneNarrationHTML), no separate
-  // whole-take/split-by-scene toggle (that's gone for good, see the comment above
-  // wordCountGuideText()).
-  if(window.__thumbnailMode === 'on'){
-    renderScriptThumbGrid(count);
-  } else {
-    document.getElementById('sceneEditorPanel').innerHTML = Array.from({ length: count }, (_, u) => {
-      const unit = u + 1;
-      return `
-      <div class="carousel-card-block scene-editor" id="sceneEditor${unit}">
-        <div class="carousel-card-block-header">
-          <span class="carousel-card-block-title">Clip ${unit} <span class="scene-time-badge">${getVideoUnitTimeLabel(unit)}</span></span>
-        </div>
-        <div class="scene-desc-block">
-          <label class="scene-desc-label-reel">Image prompt</label>
-          <div class="scene-desc-box">
-            <div class="reference-images-row compact"></div>
-            <div class="mention-wrap field-fill-wrap" id="descFieldWrap_${unit}">
-              <textarea class="scene-desc" data-unit="${unit}" oninput="updateVideoUnitDesc(${unit}, this.value)">${escapeHtml(getVideoUnitDesc(unit))}</textarea>
-              <div class="mention-popover" style="display:none;"></div>
-            </div>
-          </div>
-          <p class="scene-note">${window.__reelPromptReview[unit] ? 'Script changed. Your custom image prompt was preserved — review it before generating.' : 'Image prompt follows narration. Your manual edits are preserved.'}</p>
-          ${window.__reelPromptReview[unit] ? `<div class="stage-cta-row prompt-review-actions"><button class="btn btn-secondary" onclick="resolveReelPromptReview(${unit}, false)">Keep my prompt</button><button class="btn btn-secondary" onclick="resolveReelPromptReview(${unit}, true)">Update from narration</button></div>` : ''}
-        </div>
-        ${renderSceneNarrationHTML('tl', unit)}
-      </div>
-    `;
-    }).join('');
-  }
-
-  renderReferenceImages();
-  document.querySelectorAll('#sceneEditorPanel .mention-wrap textarea').forEach(bindMentionTextarea);
-  for(let i = 1; i <= count; i++) updateVoicePreviewButton('tl', i);
-
-  const genBtn = document.getElementById('reelGenerateVideoBtn');
-  if(genBtn) genBtn.textContent = `Generate video ⚡${getVideoUnitCount() * VIDEO_COST_PER_UNIT}`;
-  // No stage switch happens here any more (Script holds this content directly), so the bottom
-  // action bar needs an explicit refresh — showSub() used to trigger it as a side effect.
-  updateReelReadiness();
-}
-
-// ---- Script "with thumbnail" tile grid — window.__thumbnailMode === 'on' path of
-// renderReelSceneEditors(). One tile per 8s clip, reusing the Video stage's own tile/reveal
-// mechanics (.video-tile, applySampleVideoFrame(), showQueuePanel()) so a thumbnail "finishes
-// generating" the same way it does there; only the selected tile's editor (image prompt +
-// its one narration panel — see renderSceneNarrationHTML) renders below the grid, same
-// click-to-reveal pattern as the Video stage's selectVideoScene(). ----
-function renderScriptThumbGrid(count){
-  const cols = Math.min(count, 3);
-  const rows = Math.ceil(count / cols);
-  document.getElementById('sceneEditorPanel').innerHTML = `
-    <div class="video-grid${rows <= 1 ? ' single-row' : ''}" id="scriptThumbGrid" style="grid-template-columns:repeat(${cols}, 1fr);">
-      ${Array.from({ length: count }, (_, i) => `
-        <div class="video-tile generating${i === 0 ? ' active' : ''}" data-unit="${i + 1}" id="scriptThumbTile${i + 1}" onclick="selectScriptThumbTile(${i + 1})">
-          <div class="video-tile-preview">
-            <div class="video-tile-overlay-top">
-              <span class="video-tile-ready-badge">✓ Ready</span>
-              <button class="video-tile-regen-btn" onclick="event.stopPropagation(); regenerateScriptThumb(${i + 1})" title="Regenerate thumbnail"><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt=""></button>
-            </div>
-            <div class="spinner-mini"></div>
-            <span class="video-tile-badge">Clip ${i + 1} · ${getVideoUnitTimeLabel(i + 1)}</span>
-          </div>
-        </div>
-      `).join('')}
-    </div>
-    <div class="scene-thumb-editor-wrap" id="scriptThumbEditorWrap"></div>
-  `;
-
-  showQueuePanel('#scriptThumbGrid .video-tile', 'thumbnail generation', () => {
-    document.querySelectorAll('#scriptThumbGrid .video-tile').forEach((t, i) => {
-      t.classList.remove('generating'); t.classList.add('ready');
-      applySampleVideoFrame(t, i);
-    });
-  }, 'Clip');
-
-  renderScriptThumbEditor(1);
-}
-
-function selectScriptThumbTile(n){
-  document.querySelectorAll('#scriptThumbGrid .video-tile').forEach(t => t.classList.toggle('active', Number(t.dataset.unit) === n));
-  renderScriptThumbEditor(n);
-  const tile = document.getElementById('scriptThumbTile' + n);
-  if(tile) tile.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
-}
-
-function renderScriptThumbEditor(unit){
-  document.getElementById('scriptThumbEditorWrap').innerHTML = `
+  document.getElementById('sceneEditorPanel').innerHTML = Array.from({ length: count }, (_, u) => {
+    const unit = u + 1;
+    return `
     <div class="carousel-card-block scene-editor" id="sceneEditor${unit}">
       <div class="carousel-card-block-header">
         <span class="carousel-card-block-title">Clip ${unit} <span class="scene-time-badge">${getVideoUnitTimeLabel(unit)}</span></span>
@@ -5512,21 +5474,100 @@ function renderScriptThumbEditor(unit){
       ${renderSceneNarrationHTML('tl', unit)}
     </div>
   `;
+  }).join('');
+
   renderReferenceImages();
-  document.querySelectorAll('#scriptThumbEditorWrap .mention-wrap textarea').forEach(bindMentionTextarea);
+  document.querySelectorAll('#sceneEditorPanel .mention-wrap textarea').forEach(bindMentionTextarea);
+  for(let i = 1; i <= count; i++) updateVoicePreviewButton('tl', i);
+
+  const genBtn = document.getElementById('reelGenerateVideoBtn');
+  if(genBtn) genBtn.textContent = `Generate video ⚡${getVideoUnitCount() * VIDEO_COST_PER_UNIT}`;
+  // No stage switch happens here any more (Script holds this content directly), so the bottom
+  // action bar needs an explicit refresh — showSub() used to trigger it as a side effect.
+  updateReelReadiness();
+}
+
+// ---- Timeline tab (window.__thumbnailMode === 'on' only) — restored to match Figma
+// 8727-219846: a real third tab, not folded into Script. Tiles use the shared Scene Tile
+// component (components/ai-social-media/scene-tile.css) exactly as Figma specs it —
+// data-type="default" (plain gradient, no thumbnail yet) until "Generate Thumbnails" runs
+// (generateScriptThumbnails()), then data-type="thumbnail" with a real preview + Ready badge.
+// Narration is v4's current design either way — one panel per 8s clip
+// (renderSceneNarrationHTML), no whole-take/split-by-scene toggle. ----
+function renderTimelineGrid(count){
+  const cols = Math.min(count, 3);
+  const rows = Math.ceil(count / cols);
+  const grid = document.getElementById('timelineGrid');
+  grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+  grid.classList.toggle('single-row', rows <= 1);
+  grid.innerHTML = Array.from({ length: count }, (_, i) => {
+    const unit = i + 1;
+    return `
+    <div class="scene-tile${i === 0 ? ' selected' : ''}" data-type="default" data-unit="${unit}" id="timelineTile${unit}" onclick="selectTimelineTile(${unit})">
+      <div class="scene-tile-preview">
+        <span class="scene-tile-badge">Scene ${unit}<span class="dot"></span>${getVideoUnitTimeLabel(unit)}</span>
+      </div>
+      <div class="scene-tile-line">${escapeHtml(getSceneScript(unit))}</div>
+    </div>`;
+  }).join('');
+
+  buildTimelineSegmentNav(count);
+  selectTimelineTile(1);
+}
+
+function buildTimelineSegmentNav(count){
+  const nav = document.getElementById('timelineSegmentNav');
+  if(!nav || !count) return;
+  const buttons = Array.from({ length: count }, (_, i) => {
+    const n = i + 1;
+    return `<div class="segment-nav-btn${n === 1 ? ' active' : ''}" data-target="${n}" onclick="selectTimelineTile(${n})">${n}</div>`;
+  }).join('');
+  nav.innerHTML = `<span class="scene-nav-label">Scene</span>${buttons}`;
+}
+
+function selectTimelineTile(n){
+  n = Number(n);
+  document.querySelectorAll('#timelineGrid .scene-tile').forEach(t => t.classList.toggle('selected', Number(t.dataset.unit) === n));
+  document.querySelectorAll('#timelineSegmentNav .segment-nav-btn').forEach(b => b.classList.toggle('active', Number(b.dataset.target) === n));
+  renderTimelineEditor(n);
+  const tile = document.getElementById('timelineTile' + n);
+  if(tile) tile.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+}
+
+function renderTimelineEditor(unit){
+  document.getElementById('timelineEditorPanel').innerHTML = `
+    <div class="scene-card scene-editor" id="timelineSceneEditor${unit}">
+      <div class="scene-desc-block">
+        <label class="scene-desc-label-reel">Scene &amp; character action description</label>
+        <div class="scene-desc-box">
+          <div class="reference-images-row compact"></div>
+          <div class="mention-wrap field-fill-wrap" id="descFieldWrap_${unit}">
+            <textarea class="scene-desc" data-unit="${unit}" oninput="updateVideoUnitDesc(${unit}, this.value)">${escapeHtml(getVideoUnitDesc(unit))}</textarea>
+            <div class="mention-popover" style="display:none;"></div>
+          </div>
+        </div>
+        <p class="scene-note">AI automatically builds a scene to match this line</p>
+      </div>
+      ${renderSceneNarrationHTML('tl', unit)}
+    </div>
+  `;
+  renderReferenceImages();
+  document.querySelectorAll('#timelineEditorPanel .mention-wrap textarea').forEach(bindMentionTextarea);
   updateVoicePreviewButton('tl', unit);
 }
 
-function regenerateScriptThumb(n){
-  const tile = document.getElementById('scriptThumbTile' + n);
-  if(!tile) return;
-  tile.classList.remove('ready');
-  tile.classList.add('generating');
-  setTimeout(() => {
-    tile.classList.remove('generating');
-    tile.classList.add('ready');
-    applySampleVideoFrame(tile, n - 1);
-  }, 1400);
+// "Generate Thumbnails" CTA (bottom action bar, Timeline tab) — reveals a thumbnail on every
+// tile (data-type default -> thumbnail), same queue-panel simulation as the Video stage's own
+// generation, then advances to Video the same way the old proceedToStudio() did.
+function generateScriptThumbnails(){
+  showQueuePanel('#timelineGrid .scene-tile', 'thumbnail generation', () => {
+    document.querySelectorAll('#timelineGrid .scene-tile').forEach((t, i) => {
+      t.dataset.type = 'thumbnail';
+      t.querySelector('.scene-tile-preview').style.backgroundImage = `url('assets/video/scene${(i % 2) + 1}.png')`;
+      t.querySelector('.scene-tile-preview').insertAdjacentHTML('afterbegin', '<div class="scene-tile-top-row"><span class="scene-tile-ready-badge">Ready</span></div>');
+    });
+    proceedToStudio();
+  }, 'Scene');
 }
 
 window.__voicePreviewCache = window.__voicePreviewCache || {}; // keyed by clip/scene id, TTS-cached
@@ -7145,7 +7186,7 @@ function reelGoToGenerate(){
 function reelGoToDevelop(){
   const duration = window.__videoDuration || 16;
   const story = window.__isStoryVideo ? '&story=1' : '';
-  window.location.href = `../../editing/image-editing.html?mode=video&ratio=9:16&duration=${duration}${story}`;
+  window.location.href = `../../editing/image-editing.html?mode=video&ratio=9:16&duration=${duration}${story}&v=4`;
 }
 
 // Publish doesn't differ by content type (verified: the only content-type-specific bits
@@ -7205,15 +7246,19 @@ window.__thumbnailMode = 'off';
 function setThumbnailMode(mode){
   window.__thumbnailMode = mode;
   document.querySelectorAll('#thumbModeSwitch .role-btn').forEach(b => b.classList.toggle('on', b.dataset.thumb === mode));
-  if(document.getElementById('sceneEditorPanel')) renderReelSceneEditors();
+  if(!document.getElementById('sceneEditorPanel')) return;
+  renderReelSceneEditors();
+  // Always land back on Script after switching -- avoids being stranded on the Timeline tab
+  // right after it's hidden (mode 'on' -> 'off').
+  showSub('reelScript');
 }
 
 // ---- Draft/Versions <-> Script/Storyboard/Preview sub-stage tabs — combined tab/sub map
 // (the two source files' id sets don't overlap, so one implementation covers both). ----
 function showSub(name){
-  const tabs = {draft:'tabDraft', versions:'tabVersions', previewImage:'tabPreviewImage', script:'tabScript', storyboard:'tabStoryboard', preview:'tabPreview', reelScript:'tabReelScript', reelVideo:'tabReelVideo'};
-  const subs = {draft:'subDraft', versions:'subVersions', previewImage:'subPreviewImage', script:'subScript', storyboard:'subStoryboard', preview:'subPreview', reelScript:'subReelScript', reelVideo:'subReelVideo'};
-  const displays = {draft:'flex', versions:'flex', previewImage:'flex', script:'flex', storyboard:'block', preview:'block', reelScript:'flex', reelVideo:'flex'};
+  const tabs = {draft:'tabDraft', versions:'tabVersions', previewImage:'tabPreviewImage', script:'tabScript', storyboard:'tabStoryboard', preview:'tabPreview', reelScript:'tabReelScript', reelTimeline:'tabReelTimeline', reelVideo:'tabReelVideo'};
+  const subs = {draft:'subDraft', versions:'subVersions', previewImage:'subPreviewImage', script:'subScript', storyboard:'subStoryboard', preview:'subPreview', reelScript:'subReelScript', reelTimeline:'subReelTimeline', reelVideo:'subReelVideo'};
+  const displays = {draft:'flex', versions:'flex', previewImage:'flex', script:'flex', storyboard:'block', preview:'block', reelScript:'flex', reelTimeline:'flex', reelVideo:'flex'};
   const tabEl = document.getElementById(tabs[name]);
   if(!tabEl || tabEl.classList.contains('locked')) return;
   Object.values(tabs).forEach(id => { const el = document.getElementById(id); if(el) el.classList.remove('active'); });
@@ -7266,9 +7311,13 @@ function syncGenActionBarV3(){
   } else if(window.__contentType === 'reel'){
     document.getElementById('genMetaV3').textContent = `${window.__isStoryVideo ? 'Story Video' : 'Reel/Short'} · 9:16 · ${window.__videoDuration || 16}s`;
     if(document.getElementById('subReelScript').style.display !== 'none'){
-      sourceBtn = window.__scriptConfirmed
-        ? document.getElementById('reelGenerateVideoBtn')
-        : document.querySelector('#scriptPanel .stage-cta-row .btn-dark');
+      sourceBtn = !window.__scriptConfirmed
+        ? document.querySelector('#scriptPanel .stage-cta-row .btn-dark')
+        : window.__thumbnailMode === 'on'
+        ? document.getElementById('reelContinueToTimelineBtn')
+        : document.getElementById('reelGenerateVideoBtn');
+    } else if(document.getElementById('subReelTimeline').style.display !== 'none'){
+      sourceBtn = document.getElementById('timelineGenerateThumbsBtn');
     } else if(document.getElementById('subReelVideo').style.display !== 'none'){
       if(document.getElementById('combineResultView').style.display !== 'none'){
         secondaryBtn.textContent = 'Skip to publish';
