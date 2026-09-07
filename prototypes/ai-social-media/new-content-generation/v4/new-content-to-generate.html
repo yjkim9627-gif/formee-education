@@ -2706,8 +2706,8 @@
 
 <div class="thumb-mode-switch" id="thumbModeSwitch" role="group" aria-label="Script clip thumbnail preview">
   <p class="role-cap">Script clips</p>
-  <button type="button" class="role-btn on" data-thumb="off" onclick="setThumbnailMode('off')">No thumbnail</button>
   <button type="button" class="role-btn" data-thumb="on" onclick="setThumbnailMode('on')">With thumbnail</button>
+  <button type="button" class="role-btn on" data-thumb="off" onclick="setThumbnailMode('off')">No thumbnail</button>
 </div>
 
 <script>
@@ -4867,6 +4867,16 @@ function runBriefToScript(){
     log.appendChild(aiMsg);
     log.scrollTop = log.scrollHeight;
     setChatGuideHint('e.g. "make the script more hooking" or "make it shorter"');
+    // With-thumbnail mode goes straight into the Timeline tab next (see syncGenActionBarV3's
+    // reel branch), so surface the same two edits the placeholder above suggests as chips too —
+    // the no-thumbnail flow instead confirms into the scene list below, which has its own chips.
+    if(window.__thumbnailMode === 'on'){
+      renderChatQuickChips([
+        { label: 'Make it shorter' },
+        { label: 'Make it more hooking' }
+      ]);
+    }
+    syncGenActionBarV3();
   }, 1100);
 }
 
@@ -5253,6 +5263,7 @@ function appendChatCta(title, desc, buttonsHtml){
 function reelConfirmScript(){
   window.__reelScriptEdited = true;
   syncReelClipsFromScript();
+  syncGenActionBarV3();
 }
 
 // Distributes the approved full-script sentences across `count` scene slots —
