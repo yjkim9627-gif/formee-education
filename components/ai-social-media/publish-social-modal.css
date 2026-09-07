@@ -19,9 +19,10 @@
    scoped here instead of changed globally). Its outer frame is also align-items:flex-end
    (title/segmented-control/cards stretch full width via modal__content below, but the
    footer's button pair stays shrink-to-fit and right-aligned — not spread edge-to-edge). */
-.pub-social-modal{max-width:520px; padding:var(--spacing-2xl); gap:var(--spacing-xl); align-items:flex-end;}
+.pub-social-modal{max-width:520px; padding:var(--spacing-2xl); gap:var(--spacing-xl); align-items:flex-end; border-radius:var(--radius-2xl);}
 .pub-social-modal .modal__content{align-self:stretch;}
 .pub-social-modal .modal__title{font-size:16px; line-height:24px; font-weight:600;}
+.pub-social-modal .modal__body{color:var(--color-neutral-500);}
 /* Figma has the × inline in the title row (space-between), not floating top-right over the
    whole modal like the shared .modal__close default — override position for this modal only. */
 .pub-social-modal .modal__close{position:static; width:24px; height:24px; flex-shrink:0;}
@@ -34,10 +35,7 @@
 .pub-social-title-group{display:flex; flex-direction:column; gap:var(--spacing-xs);}
 .pub-social-title-row{display:flex; align-items:center; justify-content:space-between; gap:var(--spacing-lg);}
 
-/* ---------- Caption preview card (Figma: "pub-social-preview-card", every content type) ----------
-   No margin-top here — the 16px gap above this section already comes from modal__content's
-   own flex gap (between the segmented control and #pubSocialTabContent); this is the first
-   thing inside that wrapper, so an extra margin-top would double the gap to 32px. */
+/* ---------- Caption preview card (Figma: "pub-social-preview-card", every content type) ---------- */
 .pub-social-preview-card{display:flex; flex:1 0 0; min-width:0; gap:var(--spacing-lg); background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-xl); padding:var(--spacing-md); box-sizing:border-box;}
 
 /* ---------- Account row (Figma: "Account · @handle", all content types) ---------- */
@@ -49,7 +47,7 @@
 /* ---------- Post/Story format tabs (Figma: "tab-row" · Image post only, both formats) ----------
    Only rendered when a platform has BOTH Post and Story selected — a single-format platform
    just shows that one format's preview directly, no tabs (see renderPreviewMediaSection). */
-.pub-social-format-tabs{display:flex; align-items:flex-start; width:100%; padding-bottom:2px;}
+.pub-social-format-tabs{display:flex; align-items:flex-start; width:100%; padding-bottom:2px; margin-top:var(--spacing-lg);}
 .pub-social-format-tab{flex:1 0 0; min-width:0; display:flex; align-items:center; justify-content:center; padding:5px 16px 9px; font-size:14px; font-family:var(--font-family-text); background:none; cursor:pointer; border:none; border-bottom:1px solid var(--color-neutral-300); font-weight:500; color:var(--color-neutral-500);}
 .pub-social-format-tab.active{border-bottom:2px solid var(--color-neutral-800); font-weight:700; color:var(--color-neutral-800);}
 
@@ -58,7 +56,7 @@
    Reuses .pub-social-preview-card/.pub-social-preview-meta for the caption side across every
    content type instead of the old bespoke .pub-social-post-card, so Reel/Carousel/Image all
    share one caption-card look; only the media tile at left differs by content type. */
-.pub-social-media-row{display:flex; gap:var(--spacing-lg); align-items:stretch; width:100%;}
+.pub-social-media-row{display:flex; gap:var(--spacing-md); align-items:stretch; width:100%; margin-top:var(--spacing-lg);}
 .pub-social-preview-card--muted{background:var(--color-neutral-150);}
 .pub-social-preview-card--muted .pub-social-preview-meta{color:var(--color-neutral-450);}
 .pub-social-preview-meta{flex:1 0 0; min-height:0; min-width:0; overflow-y:auto; white-space:pre-wrap; font-size:12px; line-height:18px; color:var(--color-neutral-700);}
