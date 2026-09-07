@@ -6413,7 +6413,9 @@ function renderPublishDestinationsTable(el){
     // Connection status no longer disables these -- you can select a not-connected platform
     // as a destination (it just shows the "Not connected" Connect prompt in the Publish
     // modal instead of the normal preview/confirm box once you get there).
-    const allChecked = surfaces.every(s => formats[s]);
+    // Leading checkbox reflects "is this platform used at all", not "every surface on" --
+    // checking just Post or just Story alone should keep it checked, not clear it.
+    const allChecked = surfaces.some(s => formats[s]);
     const cols = surfaces.map(s => `
       <div class="pub-dest-col">
         <input type="checkbox" class="pub-dest-checkbox" ${formats[s] ? 'checked' : ''} onchange="toggleDestinationFormat('${p.key}','${s}')">
