@@ -1,0 +1,45 @@
+/* AI / Response Card — Figma node 7164:15
+   Response card shown in the AI Assistant chat log after an action finishes (e.g. "Script
+   Drafted", "Storyboard Ready", "Use brand Kit"). One "State" property covers 6 looks in
+   Figma; .chat-cta-card only needs to support whichever pieces a given state actually uses
+   (title+text / checklist row / 1 button / 2 buttons / toggle row) since callers compose
+   their own title+text+content themselves — see appendChatCta()/carAppendChatCta() in the
+   v4 prototype.
+
+   .chat-cta-row is a different, older pattern — a plain flex-wrap row (no card chrome) used
+   only for the version-pill picker, not a proposal card.
+*/
+
+.chat-cta-row{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;}
+.chat-cta-row .btn-dark, .chat-cta-row .btn-secondary{padding:8px 14px; font-size:12px;}
+.chat-cta-card{display:flex; flex-direction:column; gap:12px; margin-top:10px; background:var(--color-neutral-75); border:1px solid var(--color-neutral-400); border-radius:var(--radius-xl); padding:12px;}
+.chat-cta-title{font-size:14px; font-weight:700; line-height:20px; color:var(--color-neutral-900);}
+.chat-cta-text{font-size:14px; color:var(--color-neutral-700); line-height:1.57;}
+.chat-cta-card .btn-dark, .chat-cta-card .btn-secondary{width:100%; justify-content:center; padding:9px 14px; font-size:13px;}
+
+/* State = "Buttons 1row"/"Buttons 2rows" — the version-pick buttons (V1/V2/…) are fixed
+   128px, not full-width like every other chat CTA button, and lay out as a plain row up to
+   2 versions or a 2-column grid from 3 versions on. */
+.ai-version-buttons{display:flex; gap:12px;}
+.ai-version-buttons.rows-2{display:grid; grid-template-columns:repeat(2, 1fr);}
+.chat-cta-card .ai-version-buttons .btn-dark{width:auto; flex:1;}
+
+/* State = "1 Button + Checklist(, Disabled)" — the confirmation badge row (e.g. "Applied to
+   Script panel") shown above that state's button. */
+.chat-cta-checklist{display:flex; align-items:center; gap:8px; width:100%; box-sizing:border-box; background:var(--color-badge-blue-bg); border:1px solid var(--color-brand-primary-mid); border-radius:var(--radius-lg); padding:6px 8px;}
+.chat-cta-checklist img{width:16px; height:16px; flex-shrink:0;}
+.chat-cta-checklist span{font-size:13px; font-weight:600; color:var(--color-brand-primary); font-family:var(--font-family-text);}
+
+/* State = "2 Buttons" — side-by-side equal-width buttons (e.g. picking V1/V2), as opposed to
+   "Title Only + 2 Buttons"'s stacked full-width pair (already covered by the default
+   width:100% rule above). */
+.chat-cta-buttons-row{display:flex; gap:12px; width:100%;}
+.chat-cta-buttons-row .btn-dark, .chat-cta-buttons-row .btn-secondary{flex:1; width:auto;}
+
+/* State = "Toggle" (node 7725:326789) — title + description text, then a bordered pill row
+   holding a label + the real Controls/Switch (switch.css's .field-switch), used for setting
+   up Brand Kit directly from chat instead of only from the Draft/Script panel's own toggle
+   row. Distinct from that plain .brand-kit-toggle-row — this one draws its own border/
+   background/padding since it sits inside the card rather than a page section. */
+.chat-cta-toggle-row{display:flex; align-items:center; justify-content:center; gap:var(--spacing-lg); width:100%; box-sizing:border-box; background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); padding:9px 14px;}
+.chat-cta-toggle-row .chat-cta-toggle-label{font-size:14px; font-weight:600; line-height:22px; color:var(--color-neutral-900); white-space:nowrap;}
