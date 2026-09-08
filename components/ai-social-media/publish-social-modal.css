@@ -14,14 +14,17 @@
    bespoke button class. */
 
 .pub-social-modal-overlay{position:fixed;}
-/* Figma's real modal (7606:231998 etc.) is 520px/24px padding/20px gap, not the shared
-   .modal--form default (which is tuned looser for the generic Confirm/Success/Form shells —
-   scoped here instead of changed globally). Its outer frame is also align-items:flex-end
-   (title/segmented-control/cards stretch full width via modal__content below, but the
-   footer's button pair stays shrink-to-fit and right-aligned — not spread edge-to-edge). */
-.pub-social-modal{max-width:520px; padding:var(--spacing-2xl); gap:var(--spacing-xl); align-items:flex-end;}
+/* Figma's real modal (8780:270482 Reel/Short, 8780:247642/247744 Image Post/Story,
+   8780:249092 Carousel — all measured via get_metadata at 705x{782-802}) is 705px wide with
+   24px padding/20px gap, not the shared .modal--form default (520px, tuned looser for the
+   generic Confirm/Success/Form shells — scoped here instead of changed globally). Its outer
+   frame is also align-items:flex-end (title/segmented-control/cards stretch full width via
+   modal__content below, but the footer's button pair stays shrink-to-fit and right-aligned —
+   not spread edge-to-edge). */
+.pub-social-modal{max-width:705px; padding:var(--spacing-2xl); gap:var(--spacing-xl); align-items:flex-end; border-radius:var(--radius-2xl);}
 .pub-social-modal .modal__content{align-self:stretch;}
 .pub-social-modal .modal__title{font-size:16px; line-height:24px; font-weight:600;}
+.pub-social-modal .modal__body{color:var(--color-neutral-500);}
 /* Figma has the × inline in the title row (space-between), not floating top-right over the
    whole modal like the shared .modal__close default — override position for this modal only. */
 .pub-social-modal .modal__close{position:static; width:24px; height:24px; flex-shrink:0;}
@@ -34,24 +37,84 @@
 .pub-social-title-group{display:flex; flex-direction:column; gap:var(--spacing-xs);}
 .pub-social-title-row{display:flex; align-items:center; justify-content:space-between; gap:var(--spacing-lg);}
 
-/* ---------- Destination preview row (Figma: "Editor / cell" 80x80 thumb) ----------
-   No margin-top here — the 16px gap above this card already comes from modal__content's
-   own flex gap (between the segmented control and #pubSocialTabContent); this card is the
-   first thing inside that wrapper, so an extra margin-top would double the gap to 32px. */
-.pub-social-preview-card{display:flex; gap:var(--spacing-lg); border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl); padding:var(--spacing-lg);}
-.pub-social-preview-thumb{width:80px; height:80px; box-sizing:border-box; padding:var(--spacing-sm); border-radius:var(--radius-md); background:var(--color-neutral-25); border:1px solid var(--color-neutral-400); flex-shrink:0; display:flex; align-items:center; justify-content:center;}
-.pub-social-preview-thumb img{width:36px; height:36px; display:block;}
-.pub-social-preview-meta{display:flex; flex-direction:column; gap:var(--spacing-xs); justify-content:center; min-width:0;}
-.pub-social-preview-title{display:flex; align-items:center; gap:var(--spacing-xs);}
-.pub-social-preview-title .dot-sep{width:2px; height:2px; border-radius:999px; background:var(--color-neutral-400); flex-shrink:0;}
-.pub-social-preview-handle{font-size:14px; font-weight:600; line-height:22px; color:var(--color-neutral-900);}
-.pub-social-preview-format, .pub-social-preview-when{font-size:13px; line-height:20px; color:var(--color-neutral-500);}
+/* ---------- Caption preview card (Figma: "pub-social-preview-card", every content type) ---------- */
+.pub-social-preview-card{display:flex; flex:1 0 0; min-width:0; gap:var(--spacing-lg); background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-xl); padding:var(--spacing-md); box-sizing:border-box;}
+
+/* ---------- Account row (Figma: "Account · @handle", all content types) ---------- */
+.pub-social-account-row{display:flex; align-items:center; gap:var(--spacing-xs);}
+.pub-social-account-label{font-size:13px; line-height:20px; color:var(--color-neutral-700);}
+.pub-social-account-handle{font-size:13px; font-weight:600; line-height:20px; color:var(--color-neutral-700);}
+.pub-social-account-dot{width:2px; height:2px; border-radius:999px; background:var(--color-neutral-400); flex-shrink:0;}
+
+/* ---------- Post/Story format tabs (Figma: "tab-row" · Image post only, both formats) ----------
+   Only rendered when a platform has BOTH Post and Story selected — a single-format platform
+   just shows that one format's preview directly, no tabs (see renderPreviewMediaSection). */
+.pub-social-format-tabs{display:flex; align-items:flex-start; width:100%; padding-bottom:2px; margin-top:var(--spacing-lg);}
+.pub-social-format-tab{flex:1 0 0; min-width:0; display:flex; align-items:center; justify-content:center; padding:5px 16px 9px; font-size:14px; font-family:var(--font-family-text); background:none; cursor:pointer; border:none; border-bottom:1px solid var(--color-neutral-300); font-weight:500; color:var(--color-neutral-500);}
+.pub-social-format-tab.active{border-bottom:2px solid var(--color-neutral-800); font-weight:700; color:var(--color-neutral-800);}
+
+/* ---------- Media + caption row (Figma: media tile at left, caption card at right,
+   height fixed by content type — 398px for Reel/Short & Story Video, 397px for Image &
+   Carousel) ----------
+   Reuses .pub-social-preview-card/.pub-social-preview-meta for the caption side across every
+   content type instead of the old bespoke .pub-social-post-card, so Reel/Carousel/Image all
+   share one caption-card look; only the media tile at left differs by content type. */
+.pub-social-media-row{display:flex; gap:var(--spacing-md); align-items:stretch; width:100%; margin-top:var(--spacing-lg);}
+/* Story Video, and Image's Story tab, never carry a caption -- Figma drops the preview card
+   entirely for these (not a muted version of it) and centers the media tile alone. */
+.pub-social-media-row--solo{justify-content:center;}
+.pub-social-preview-meta{flex:1 0 0; min-height:0; min-width:0; overflow-y:auto; white-space:pre-wrap; font-size:12px; line-height:18px; color:var(--color-neutral-700);}
+.pub-social-preview-meta::-webkit-scrollbar{width:6px;}
+.pub-social-preview-meta::-webkit-scrollbar-thumb{background:var(--color-neutral-400); border-radius:3px;}
+.pub-social-preview-meta::-webkit-scrollbar-track{background:transparent;}
+
+/* Reel/Short & Story Video: video thumbnail + centered translucent play button */
+.pub-social-video-tile{position:relative; width:224px; height:398px; flex-shrink:0; border-radius:var(--radius-xl); overflow:hidden; background:var(--color-neutral-150);}
+.pub-social-video-tile img{width:100%; height:100%; object-fit:cover; display:block;}
+.pub-social-video-play{position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:32px; height:32px; border-radius:999px; background:rgba(255,255,255,.75); backdrop-filter:blur(5px); opacity:.9; display:flex; align-items:center; justify-content:center;}
+.pub-social-video-play img{width:14px; height:14px; object-fit:contain;}
+
+/* Carousel: image + prev/next nav + page counter badge */
+.pub-social-carousel-tile{position:relative; width:318px; height:397px; flex-shrink:0; border-radius:var(--radius-xl); overflow:hidden;}
+.pub-social-carousel-tile img{width:100%; height:100%; object-fit:cover; display:block;}
+.pub-social-carousel-nav{position:absolute; top:50%; transform:translateY(-50%); width:32px; height:32px; border-radius:999px; background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); box-shadow:0 4px 8px rgba(15,23,41,.08), 0 2px 4px rgba(15,23,41,.05); display:flex; align-items:center; justify-content:center;}
+.pub-social-carousel-nav.prev{left:8px;}
+.pub-social-carousel-nav.next{right:8px;}
+.pub-social-carousel-nav img{width:20px; height:20px;}
+.pub-social-carousel-badge{position:absolute; right:8px; bottom:8px; display:flex; align-items:center; gap:4px; padding:4px 8px; border-radius:var(--radius-sm); background:rgba(15,23,41,.8); font-size:11px; line-height:16px;}
+.pub-social-carousel-badge .cur{font-weight:600; color:var(--color-neutral-0);}
+.pub-social-carousel-badge .sep, .pub-social-carousel-badge .total{font-weight:500; color:var(--color-neutral-400);}
+
+/* Image · Post tab: creative at its own ratio, height-boxed to match the row */
+.pub-social-post-tile{height:397px; flex-shrink:0; border-radius:var(--radius-xl); overflow:hidden;}
+.pub-social-post-tile img{height:100%; display:block; object-fit:cover;}
+
+/* Image · Story tab: real Instagram-Story mockup — dark canvas, progress bar, account
+   row, creative composited (matted, not stretched) underneath. */
+.pub-social-story-tile{width:224px; height:397px; flex-shrink:0; box-sizing:border-box; padding:4px 0; border-radius:var(--radius-xl); background:var(--color-neutral-900); display:flex; flex-direction:column; align-items:center; gap:10px; overflow:hidden;}
+.pub-social-story-chrome{width:100%; box-sizing:border-box; padding:0 7px; display:flex; flex-direction:column; gap:6px; flex-shrink:0;}
+.pub-social-story-progress{position:relative; width:100%; height:1px;}
+.pub-social-story-progress::before{content:''; position:absolute; inset:0; background:var(--color-neutral-0); opacity:.5; border-radius:2px;}
+.pub-social-story-progress::after{content:''; position:absolute; inset:0; width:66%; background:var(--color-neutral-0); opacity:.8; border-radius:2px;}
+.pub-social-story-header{display:flex; align-items:center; justify-content:space-between; padding:0 1px;}
+.pub-social-story-account{display:flex; align-items:center; gap:5px;}
+.pub-social-story-avatar{width:20px; height:20px; border-radius:999px; display:block;}
+.pub-social-story-account span{font-size:6px; color:var(--color-neutral-0); font-family:var(--font-family-text);}
+.pub-social-story-actions{display:flex; align-items:center; gap:5px;}
+.pub-social-story-actions img{display:block;}
+.pub-social-story-actions .more{width:14px; height:14px;}
+.pub-social-story-actions .close{width:20px; height:20px;}
+.pub-social-story-media-wrap{flex:1 0 0; width:224px; min-height:0; display:flex; align-items:center; justify-content:center; overflow:hidden;}
+.pub-social-story-media-wrap img{width:100%; height:100%; object-fit:cover; display:block;}
 
 /* ---------- Type-to-confirm box ----------
    State=Default (input empty, button Inactive) / State=Enabled (handle matches, button
    Style=Blue) / State=Confirmed (button becomes a disabled checkmark button) — the box
    itself (warning + note + input) stays on screen across all three; only the button changes. */
 .pub-social-confirm-box{display:flex; flex-direction:column; gap:var(--spacing-md); background:var(--color-neutral-75); border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl); padding:var(--spacing-lg); margin-top:var(--spacing-lg);}
+/* Figma nests warning+note in their own sub-frame with an 8px gap, separate from the 12px
+   gap the box above uses between [this group, input, button]. */
+.pub-social-confirm-text-group{display:flex; flex-direction:column; gap:var(--spacing-sm);}
 .pub-social-confirm-warning{font-size:13px; font-weight:600; line-height:20px; color:var(--color-brand-primary-dark);}
 .pub-social-confirm-note{font-size:13px; line-height:20px; color:var(--color-neutral-900); margin:0;}
 /* Type-to-confirm input reuses the real Input component (input.css: .input-field
