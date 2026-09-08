@@ -50,7 +50,12 @@
 .brand-kit-font-card .sample.body{font-family:Impact,'Arial Narrow Bold',sans-serif; font-weight:400; font-size:13px;}
 .brand-kit-font-card .meta{font-size:12px; font-weight:500; line-height:18px; color:var(--color-neutral-500);}
 
-.brand-kit-empty{padding:12px 16px; background:#fff; border:1px dashed var(--color-neutral-400); border-radius:var(--radius-xl); font-size:14px; color:var(--color-neutral-500); display:flex; align-items:center; justify-content:space-between; gap:16px; width:100%; box-sizing:border-box;}
-/* Only the Carousel screen's empty state uses a text link here (Image post's/Reel's use a
-   .btn.btn-secondary instead, already styled elsewhere) — harmless no-op where unused. */
-.brand-kit-empty a{color:var(--color-brand-primary); font-weight:600; cursor:pointer; text-decoration:underline;}
+/* Empty state (Figma: Brand Kit settings page's own "Overview - empty" node 8479:139483) --
+   mirrors the real card's own Logos/Colours/Fonts section layout, each section's populated
+   content replaced by a dashed "+ Manage X" box (8479:139506 "empty · logos" et al) instead
+   of one generic message for the whole card. Populated by buildBrandKitEmptyCardHtml(), same
+   pattern as buildBrandKitCardHtml() below. */
+.brand-kit-empty{width:100%; box-sizing:border-box;}
+.brand-kit-empty-box{display:flex; align-items:center; justify-content:center; gap:var(--spacing-sm); width:100%; height:74px; box-sizing:border-box; background:var(--color-neutral-0); border:1px dashed var(--color-neutral-400); border-radius:var(--radius-xl); cursor:pointer; font-family:var(--font-family-text); font-size:13px; font-weight:600; color:var(--color-neutral-700); padding:0;}
+.brand-kit-empty-box:hover{background:var(--color-neutral-50); border-color:var(--color-neutral-500);}
+.brand-kit-empty-box img{width:20px; height:20px; display:block;}

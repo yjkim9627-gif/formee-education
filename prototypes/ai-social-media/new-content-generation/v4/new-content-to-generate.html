@@ -1861,10 +1861,7 @@
                   <p class="brand-kit-description">Use your brand kit to generate the image — AI applies your logo, colours, and fonts automatically.</p>
                 </div>
                 <div id="brandKitSummary"></div>
-                <div class="brand-kit-empty" id="brandKitEmpty" style="display:none;">
-                  <span>Set up your brand kit to apply it here automatically</span>
-                  <button type="button" class="btn btn-secondary" onclick="imgGoToBrandSetup()">Brand Setup</button>
-                </div>
+                <div class="brand-kit-empty" id="brandKitEmpty" style="display:none;"></div>
               </div>
             </div></div>
           </div>
@@ -2018,10 +2015,7 @@
                   <p class="brand-kit-description">Use your brand kit to generate the image — AI applies your logo, colours, and fonts automatically.</p>
                 </div>
                 <div id="globalBrandKitSummary" style="display:none;"></div>
-                <div class="brand-kit-empty" id="globalBrandKitEmpty" style="display:none;">
-                  <span>Set up your brand kit to apply it here automatically</span>
-                  <button type="button" class="btn btn-secondary" onclick="carGoToBrandSetup()">Brand Setup</button>
-                </div>
+                <div class="brand-kit-empty" id="globalBrandKitEmpty" style="display:none;"></div>
               </div>
 
               <!-- Hidden — per Figma (that CTA lives only in the persistent bottom action bar,
@@ -2216,10 +2210,7 @@
                     <p class="brand-kit-description">Use your brand kit to generate the image — AI applies your logo, colours, and fonts automatically.</p>
                   </div>
                   <div id="reelBrandKitSummary" style="display:none;"></div>
-                  <div class="brand-kit-empty" id="reelBrandKitEmpty" style="display:none;">
-                    <span>Set up your brand kit to apply it here automatically</span>
-                    <button type="button" class="btn btn-secondary" onclick="reelGoToBrandSetup()">Brand Setup</button>
-                  </div>
+                  <div class="brand-kit-empty" id="reelBrandKitEmpty" style="display:none;"></div>
                 </div>
 
                 <div id="reelSceneSection">
@@ -3018,6 +3009,33 @@ function buildBrandKitCardHtml(){
   if(el) el.innerHTML = buildBrandKitCardHtml();
 });
 
+// Empty state (Figma: Brand Kit settings page's "Overview - empty" node 8479:139483) --
+// same Logos/Colours/Fonts section shell as buildBrandKitCardHtml(), each section's content
+// replaced by a dashed "+ Manage X" box (8479:139506 "empty · logos" et al) instead of one
+// generic message for the whole card.
+function buildBrandKitEmptyCardHtml(goToSetupFn){
+  const emptyBox = label => `
+      <button type="button" class="brand-kit-empty-box" onclick="${goToSetupFn}()">
+        <img src="../../../../components/ai-social-media/icons/pagebar-plus.svg" alt="">
+        <span>${label}</span>
+      </button>`;
+  const section = (title, label) => `
+      <div class="brand-kit-section">
+        <div class="brand-kit-section-header"><span class="brand-kit-section-title">${title}</span></div>
+        ${emptyBox(label)}
+      </div>`;
+  return `
+    <div class="brand-kit-card">
+      ${section('Logos', 'Manage logos')}
+      ${section('Colours', 'Manage colours')}
+      ${section('Fonts', 'Manage fonts')}
+    </div>`;
+}
+[['brandKitEmpty', 'imgGoToBrandSetup'], ['globalBrandKitEmpty', 'carGoToBrandSetup'], ['reelBrandKitEmpty', 'reelGoToBrandSetup']].forEach(([id, fn]) => {
+  const el = document.getElementById(id);
+  if(el) el.innerHTML = buildBrandKitEmptyCardHtml(fn);
+});
+
 let brandKitOn = false;
 function imgApplyBrandMode(mode){
   window.__brandMode = mode;
@@ -3046,9 +3064,10 @@ function imgApplyBrandMode(mode){
 }
 function toggleBrandKit(){
   brandKitOn = !brandKitOn;
+  const hasBrand = window.__brandMode === 'set';
   document.getElementById('brandKitSwitch').classList.toggle('on', brandKitOn);
-  document.getElementById('brandKitSummary').style.display = brandKitOn ? 'block' : 'none';
-  document.getElementById('brandKitEmpty').style.display = !brandKitOn && window.__brandMode !== 'set' ? 'flex' : 'none';
+  document.getElementById('brandKitSummary').style.display = brandKitOn && hasBrand ? 'block' : 'none';
+  document.getElementById('brandKitEmpty').style.display = brandKitOn && !hasBrand ? 'flex' : 'none';
   document.getElementById('brandKitSwitch').setAttribute('aria-checked', String(brandKitOn));
   updateVisualConceptPrompt();
 }
@@ -4175,11 +4194,12 @@ function updateGlobalBrandKitUI(){
   const empty = document.getElementById('globalBrandKitEmpty');
   if(!sw) return;
   const on = !!window.__globalBrandKitOn;
+  const hasBrand = window.__brandMode === 'set';
   sw.classList.remove('disabled');
   sw.classList.toggle('on', on);
   sw.setAttribute('aria-checked', String(on));
-  summary.style.display = on ? 'block' : 'none';
-  empty.style.display = !on && window.__brandMode !== 'set' ? 'flex' : 'none';
+  summary.style.display = on && hasBrand ? 'block' : 'none';
+  empty.style.display = on && !hasBrand ? 'flex' : 'none';
 }
 
 // ---- Reel/Short & Story Video's own "Use brand kit" toggle (same pattern as Carousel's
@@ -4194,11 +4214,12 @@ function updateReelBrandKitUI(){
   const empty = document.getElementById('reelBrandKitEmpty');
   if(!sw) return;
   const on = !!window.__reelBrandKitOn;
+  const hasBrand = window.__brandMode === 'set';
   sw.classList.remove('disabled');
   sw.classList.toggle('on', on);
   sw.setAttribute('aria-checked', String(on));
-  summary.style.display = on ? 'block' : 'none';
-  empty.style.display = !on && window.__brandMode !== 'set' ? 'flex' : 'none';
+  summary.style.display = on && hasBrand ? 'block' : 'none';
+  empty.style.display = on && !hasBrand ? 'flex' : 'none';
 }
 function reelGoToBrandSetup(){
   alert('This would open Brand Setup — outside this prototype\'s scope.');
