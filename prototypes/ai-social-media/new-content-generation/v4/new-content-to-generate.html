@@ -1222,9 +1222,16 @@
   .video-tile-regen-btn:hover{background:#fff; color:var(--color-neutral-900);}
   .video-tile.ready .video-tile-regen-btn{display:flex;}
   .video-tile.generating .video-tile-badge{display:none;}
-  .video-play-btn{display:none; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:40px; height:40px; border-radius:999px; border:none; background:rgba(255,255,255,0.92); align-items:center; justify-content:center; font-size:15px; color:var(--color-neutral-900); cursor:pointer;}
+  .video-play-btn{display:none; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:40px; height:40px; border-radius:999px; border:none; background:rgba(255,255,255,0.92); align-items:center; justify-content:center; cursor:pointer;}
   .video-play-btn:hover{background:#fff;}
   .video-tile.ready .video-play-btn{display:flex;}
+  /* Figma Video/Play button (6077-107620): a bare triangle/bars glyph, not a circle-outline
+     icon — the circular backdrop is this button's own background, not baked into the icon.
+     Play insets 26.67% and Pause insets 25% of the 40px button, matching Figma's own component
+     exactly (this button is authored at the master's native 40px, no scaling needed). */
+  .video-play-btn img{display:block;}
+  .video-play-btn img.play{width:18.6667px; height:18.6667px;}
+  .video-play-btn img.pause{width:20px; height:20px;}
   .video-tile.generating .spinner-mini{display:block;}
 
   .video-editor-panel{width:100%; display:flex; flex-direction:column; gap:8px;}
@@ -2328,7 +2335,7 @@
                 <div class="timeline-stage">
                   <div class="timeline-canvas combine-canvas">
                     <div class="combine-player">
-                      <button class="video-play-btn" onclick="playCombineResult(this)" title="Play"><img src="../../../../components/ai-social-media/icons/audio-play.svg" class="icon-inline icon-16" alt=""></button>
+                      <button class="video-play-btn" onclick="playCombineResult(this)" title="Play"><img class="play" src="../../../../components/ai-social-media/icons/video-play-glyph.svg" alt=""></button>
                       <span class="combine-player-duration" id="combineResultDuration">8s</span>
                     </div>
                     <div class="combine-timeline-ticks" id="combineResultTicks"></div>
@@ -5897,7 +5904,7 @@ function startVideoGeneration(){
           <button class="video-tile-regen-btn" onclick="event.stopPropagation(); regenerateVideoScene(${i + 1})" title="Regenerate · ⚡${VIDEO_COST_PER_UNIT}"><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt=""></button>
         </div>
         <div class="spinner-mini"></div>
-        <button class="video-play-btn" onclick="event.stopPropagation(); playVideoScene(${i + 1})" title="Play"><img src="../../../../components/ai-social-media/icons/audio-play.svg" class="icon-inline icon-16" alt=""></button>
+        <button class="video-play-btn" onclick="event.stopPropagation(); playVideoScene(${i + 1})" title="Play"><img class="play" src="../../../../components/ai-social-media/icons/video-play-glyph.svg" alt=""></button>
         <span class="video-tile-badge">Video ${i + 1} · ${getVideoUnitTimeLabel(i + 1)}</span>
       </div>
     </div>
@@ -5996,8 +6003,8 @@ function playVideoScene(n){
   const tile = document.getElementById('videoTile' + n);
   if(!tile || !tile.classList.contains('ready')) return;
   const btn = tile.querySelector('.video-play-btn');
-  btn.innerHTML = '<img src="../../../../components/ai-social-media/icons/audio-pause.svg" class="icon-inline icon-16" alt="">';
-  setTimeout(() => { btn.innerHTML = '<img src="../../../../components/ai-social-media/icons/audio-play.svg" class="icon-inline icon-16" alt="">'; }, 1400);
+  btn.innerHTML = '<img class="pause" src="../../../../components/ai-social-media/icons/video-pause-glyph.svg" alt="">';
+  setTimeout(() => { btn.innerHTML = '<img class="play" src="../../../../components/ai-social-media/icons/video-play-glyph.svg" alt="">'; }, 1400);
 }
 
 function combineVideo(){
@@ -6100,8 +6107,8 @@ function backToSceneVideos(){
 }
 
 function playCombineResult(btn){
-  btn.innerHTML = '<img src="../../../../components/ai-social-media/icons/audio-pause.svg" class="icon-inline icon-16" alt="">';
-  setTimeout(() => { btn.innerHTML = '<img src="../../../../components/ai-social-media/icons/audio-play.svg" class="icon-inline icon-16" alt="">'; }, 1400);
+  btn.innerHTML = '<img class="pause" src="../../../../components/ai-social-media/icons/video-pause-glyph.svg" alt="">';
+  setTimeout(() => { btn.innerHTML = '<img class="play" src="../../../../components/ai-social-media/icons/video-play-glyph.svg" alt="">'; }, 1400);
 }
 
 
