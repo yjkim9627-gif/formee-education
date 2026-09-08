@@ -29,6 +29,9 @@
 <link rel="stylesheet" href="../../../../components/ai-social-media/date-picker.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/carousel-card-block.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/brand-kit-summary.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/ai-response-card.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/editor-cell.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/brand-logo.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/image-scene-card.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/storyboard-card.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/destination-account.css">
@@ -152,36 +155,8 @@
   .msg-status .worked-label{font-weight:600; color:var(--color-neutral-700);}
   .msg-status .worked-time{font-weight:400; color:var(--color-neutral-500);}
 
-  /* .chat-cta-row = plain flex-wrap row, used only for the version-pill picker (not a proposal
-     card). Every stage-progress CTA (Script Drafted / Ready to Generate / Storyboard Ready / etc.,
-     for reel-short, image post AND carousel alike) renders as the bordered .chat-cta-card instead —
-     now a genuine Figma component, "AI / Response Card" (Components section, node 7164-15),
-     combining every ad hoc version of this card that used to be scattered across the file's
-     screens. Its "State" variant covers 6 looks; .chat-cta-card only needs to support whichever
-     pieces a given state uses (checklist row / 1 button / 2 buttons) since callers already
-     compose the title+text+buttonsHtml themselves. */
-  .chat-cta-row{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;}
-  .chat-cta-row .btn-dark, .chat-cta-row .btn-secondary{padding:8px 14px; font-size:12px;}
-  .chat-cta-card{display:flex; flex-direction:column; gap:12px; margin-top:10px; background:var(--color-neutral-75); border:1px solid var(--color-neutral-400); border-radius:var(--radius-xl); padding:12px;}
-  .chat-cta-title{font-size:14px; font-weight:700; color:var(--color-neutral-900);}
-  .chat-cta-text{font-size:14px; color:var(--color-neutral-700); line-height:1.57;}
-  .chat-cta-card .btn-dark, .chat-cta-card .btn-secondary{width:100%; justify-content:center; padding:9px 14px; font-size:13px;}
-  /* AI / Response Card (7164:15) "Buttons 1row"/"Buttons 2rows" states — the version-pick
-     buttons (V1/V2/…) are fixed 128px, not full-width like every other chat CTA button, and
-     lay out as a plain row up to 2 versions or a 2-column grid from 3 versions on. */
-  .ai-version-buttons{display:flex; gap:12px;}
-  .ai-version-buttons.rows-2{display:grid; grid-template-columns:repeat(2, 1fr);}
-  .chat-cta-card .ai-version-buttons .btn-dark{width:auto; flex:1;}
-  /* State = "1 Button + Checklist(, Disabled)" — the confirmation badge row (e.g. "Applied to
-     Script panel") shown above that state's button. */
-  .chat-cta-checklist{display:flex; align-items:center; gap:8px; width:100%; box-sizing:border-box; background:var(--color-badge-blue-bg); border:1px solid var(--color-brand-primary-mid); border-radius:var(--radius-lg); padding:6px 8px;}
-  .chat-cta-checklist img{width:16px; height:16px; flex-shrink:0;}
-  .chat-cta-checklist span{font-size:13px; font-weight:600; color:var(--color-brand-primary); font-family:var(--font-family-text);}
-  /* State = "2 Buttons" — side-by-side equal-width buttons (e.g. picking V1/V2), as opposed to
-     "Title Only + 2 Buttons"'s stacked full-width pair (already covered by the default
-     width:100% rule above). */
-  .chat-cta-buttons-row{display:flex; gap:12px; width:100%;}
-  .chat-cta-buttons-row .btn-dark, .chat-cta-buttons-row .btn-secondary{flex:1; width:auto;}
+  /* .chat-cta-row/.chat-cta-card/etc. now come from the shared
+     components/ai-social-media/ai-response-card.css ("AI / Response Card", node 7164:15). */
 
   .visual-proposal-box{margin-top:8px; background:#fff; border:1px solid var(--color-neutral-300); border-radius:var(--radius-lg); padding:14px; display:flex; flex-direction:column; gap:10px;}
   .visual-proposal-heading{font-size:13px; font-weight:700; color:var(--color-neutral-900);}
@@ -353,7 +328,9 @@
   .size-variant-placeholder .mini-spinner{width:12px; height:12px; border-width:2px;}
 
   /* ---- Script stage (Carousel): brand kit + one full-width, always-expanded block per card ---- */
-  .script-global-brand{border:1px solid var(--color-neutral-300); border-radius:10px; padding:14px 16px; margin-bottom:18px;}
+  /* Now just a spacing wrapper (the .brand-kit-card inside carries its own border) —
+     the old bordered/padded outer box didn't match the updated Figma design. */
+  .script-global-brand{display:flex; flex-direction:column;}
   /* Base look (.carousel-card-block border/radius/padding/gap, header, title, char
      toggle label, script text field) now comes from
      components/ai-social-media/carousel-card-block.css. .script-card-msg's real
@@ -506,15 +483,7 @@
   #stageAreaCarousel .stage-body-inner{max-width:960px; margin:0 auto; width:100%; flex:1; min-height:0; display:flex; flex-direction:column;}
   #stageAreaCarousel .stage-sub-text{font-size:12px; color:var(--color-neutral-500); margin:0 0 24px;}
 
-  /* Brand kit on — Figma 7606:230710. Keep the shared summary component. */
   #stageAreaImage #subDraft .stage-body-inner{max-width:calc(var(--spacing-7xl) * 16);}
-  #brandKitSummary{flex-wrap:wrap; gap:var(--spacing-xl); padding:var(--spacing-lg);}
-  #brandKitSummary .brand-kit-summary-col{flex-basis:calc(var(--spacing-7xl) * 4); gap:var(--spacing-md);}
-  #brandKitSummary .brand-kit-fonts{display:flex; flex-wrap:wrap; gap:var(--spacing-sm);}
-  #brandKitSummary .brand-kit-font-row{max-width:100%; box-sizing:border-box; flex-wrap:wrap; gap:var(--spacing-sm);}
-  #brandKitSummary .brand-kit-font-tag,
-  #brandKitSummary .brand-kit-font-meta{line-height:var(--line-height-text-xs);}
-  #brandKitSummary .brand-kit-fonts-title{min-height:var(--line-height-text-2xl); display:flex; align-items:center;}
 
   /* Image post · Draft — Figma 7606:323920; reuse Controls / Setting Chip. */
   #stageAreaImage:has(#tabDraft.active) .stage-tabs{margin-bottom:var(--spacing-2);}
@@ -1229,9 +1198,16 @@
   .video-tile-regen-btn:hover{background:#fff; color:var(--color-neutral-900);}
   .video-tile.ready .video-tile-regen-btn{display:flex;}
   .video-tile.generating .video-tile-badge{display:none;}
-  .video-play-btn{display:none; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:40px; height:40px; border-radius:999px; border:none; background:rgba(255,255,255,0.92); align-items:center; justify-content:center; font-size:15px; color:var(--color-neutral-900); cursor:pointer;}
+  .video-play-btn{display:none; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:40px; height:40px; border-radius:999px; border:none; background:rgba(255,255,255,0.92); align-items:center; justify-content:center; cursor:pointer;}
   .video-play-btn:hover{background:#fff;}
   .video-tile.ready .video-play-btn{display:flex;}
+  /* Figma Video/Play button (6077-107620): a bare triangle/bars glyph, not a circle-outline
+     icon — the circular backdrop is this button's own background, not baked into the icon.
+     Play insets 26.67% and Pause insets 25% of the 40px button, matching Figma's own component
+     exactly (this button is authored at the master's native 40px, no scaling needed). */
+  .video-play-btn img{display:block;}
+  .video-play-btn img.play{width:18.6667px; height:18.6667px;}
+  .video-play-btn img.pause{width:20px; height:20px;}
   .video-tile.generating .spinner-mini{display:block;}
 
   .video-editor-panel{width:100%; display:flex; flex-direction:column; gap:8px;}
@@ -1860,40 +1836,9 @@
               <div class="draft-section">
                 <div class="draft-section-label">Visual concept</div>
                 <textarea class="visual-concept-text" id="visualConceptText" placeholder="Not drafted yet — I'll work this out once the copy is confirmed." oninput="onVisualConceptEdited()"></textarea>
-
-                <div class="brand-kit-row">
-                  <button type="button" class="field-switch" id="brandKitSwitch" role="switch" aria-label="Use brand kit" aria-checked="false" onclick="toggleBrandKit()"><span class="knob"></span></button>
-                  <span class="brand-kit-label">Use brand kit</span>
-                </div>
-                <div class="brand-kit-summary" id="brandKitSummary">
-                  <div class="brand-kit-summary-col">
-                    <div class="brand-kit-summary-label">Palette · Formee Express <span class="chevron"><img src="../../../../components/ai-social-media/icons/caret-down-filled.svg" class="icon-inline" alt=""></span></div>
-                    <div class="brand-kit-swatch-row">
-                      <span style="background:#2b6a6c"></span>
-                      <span style="background:#b80d48"></span>
-                      <span style="background:#f29724"></span>
-                      <span style="background:#444444"></span>
-                      <span style="background:#6d9697"></span>
-                      <span style="background:#aa5a77"></span>
-                      <span style="background:#ffffff; border:1px solid var(--color-neutral-200);"></span>
-                    </div>
-                  </div>
-                  <div class="brand-kit-divider"></div>
-                  <div class="brand-kit-summary-col">
-                    <div class="brand-kit-fonts-title">Fonts</div>
-                    <div class="brand-kit-fonts">
-                      <div class="brand-kit-font-row"><span class="brand-kit-font-tag" style="font-family:'Playfair Display',Georgia,serif; font-weight:700; font-size:18px;">Heading</span><span class="brand-kit-font-meta">Playfair<span class="dot"></span>Bold</span></div>
-                      <div class="brand-kit-font-row"><span class="brand-kit-font-tag" style="font-family:Georgia,serif; font-weight:700; font-size:16px;">Subheading</span><span class="brand-kit-font-meta">Georgia<span class="dot"></span>SemiBold</span></div>
-                      <div class="brand-kit-font-row"><span class="brand-kit-font-tag" style="font-family:Georgia,serif; font-weight:400; font-size:16px;">Body</span><span class="brand-kit-font-meta">Georgia<span class="dot"></span>Regular</span></div>
-                    </div>
-                  </div>
-                </div>
-                <div class="brand-kit-empty" id="brandKitEmpty" style="display:none;">
-                  <span>Set up your brand kit to apply it here automatically</span>
-                  <button type="button" class="btn btn-secondary" onclick="imgGoToBrandSetup()">Brand Setup</button>
-                </div>
               </div>
 
+              <!-- Figma node 6390-106611: Text placement now comes before Use brand kit. -->
               <div class="draft-section draft-section-placement">
                 <div class="draft-section-label">Text placement</div>
                 <p class="draft-section-hint">How the headline, subhead, and call to action should appear on the image.</p>
@@ -1904,6 +1849,21 @@
                 <div class="baked-in-warning" id="bakedInWarningImage">
                   <img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiB2aWV3Qm94PSIwIDAgMjAgMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gdHJpYW5nbGUtYWxlcnQiPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNMTguMTA4MyAxNUwxMS40NDE3IDMuMzMzMzNDMTEuMjk2MyAzLjA3Njg0IDExLjA4NTUgMi44NjM0OSAxMC44MzA4IDIuNzE1MDZDMTAuNTc2IDIuNTY2NjIgMTAuMjg2NSAyLjQ4ODQyIDkuOTkxNjcgMi40ODg0MkM5LjY5Njg0IDIuNDg4NDIgOS40MDczIDIuNTY2NjIgOS4xNTI1NiAyLjcxNTA2QzguODk3ODMgMi44NjM0OSA4LjY4NzAzIDMuMDc2ODQgOC41NDE2NyAzLjMzMzMzTDEuODc1IDE1QzEuNzI4MDcgMTUuMjU0NSAxLjY1MTAyIDE1LjU0MzMgMS42NTE2NyAxNS44MzcxQzEuNjUyMzIgMTYuMTMwOSAxLjczMDY1IDE2LjQxOTQgMS44Nzg3MSAxNi42NzMyQzIuMDI2NzYgMTYuOTI3IDIuMjM5MjkgMTcuMTM3MiAyLjQ5NDc1IDE3LjI4MjRDMi43NTAyIDE3LjQyNzYgMy4wMzk1MSAxNy41MDI2IDMuMzMzMzMgMTcuNUgxNi42NjY3QzE2Ljk1OTEgMTcuNDk5NyAxNy4yNDYzIDE3LjQyMjUgMTcuNDk5NCAxNy4yNzYxQzE3Ljc1MjUgMTcuMTI5NyAxNy45NjI3IDE2LjkxOTIgMTguMTA4OCAxNi42NjU5QzE4LjI1NDggMTYuNDEyNiAxOC4zMzE3IDE2LjEyNTMgMTguMzMxNiAxNS44MzI5QzE4LjMzMTUgMTUuNTQwNSAxOC4yNTQ1IDE1LjI1MzIgMTguMTA4MyAxNVoiIHN0cm9rZT0iIzc4NzMzMSIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzIiIGQ9Ik0xMCA3LjVWMTAuODMzMyIgc3Ryb2tlPSIjNzg3MzMxIiBzdHJva2Utd2lkdGg9IjEuNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxwYXRoIGlkPSJWZWN0b3JfMyIgZD0iTTEwIDE0LjE2NjdIMTAuMDA4MyIgc3Ryb2tlPSIjNzg3MzMxIiBzdHJva2Utd2lkdGg9IjEuNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjwvZz4KPC9zdmc+Cg==" alt="">
                   <span>If you edit the copy later, the image will need to be regenerated — and your brand font may not be reproduced exactly.</span>
+                </div>
+              </div>
+
+              <div class="draft-section brand-kit-row" id="imgBrandKitSection">
+                <div class="brand-kit-header">
+                  <div class="brand-kit-toggle-row">
+                    <span class="brand-kit-label">Use brand kit</span>
+                    <button type="button" class="field-switch" id="brandKitSwitch" role="switch" aria-label="Use brand kit" aria-checked="false" onclick="toggleBrandKit()"><span class="knob"></span></button>
+                  </div>
+                  <p class="brand-kit-description">Use your brand kit to generate the image — AI applies your logo, colours, and fonts automatically.</p>
+                </div>
+                <div id="brandKitSummary"></div>
+                <div class="brand-kit-empty" id="brandKitEmpty" style="display:none;">
+                  <span>Set up your brand kit to apply it here automatically</span>
+                  <button type="button" class="btn btn-secondary" onclick="imgGoToBrandSetup()">Brand Setup</button>
                 </div>
               </div>
             </div></div>
@@ -2036,41 +1996,7 @@
 
               <div class="script-card-list" id="scriptCardList"></div>
 
-              <div class="script-global-brand" id="scriptGlobalBrand">
-                <div class="brand-kit-row" style="margin-top:0;">
-                  <button type="button" class="field-switch" id="globalBrandKitSwitch" role="switch" aria-label="Use brand kit" aria-checked="false" onclick="toggleGlobalBrandKit()"><span class="knob"></span></button>
-                  <span class="brand-kit-label">Use brand kit</span>
-                </div>
-                <!-- Same card as the Image flow's Draft screen (identical markup/classes — see
-                     #stageAreaImage's brand-kit-summary, node 6236-205 "Brand kit on"). -->
-                <div class="brand-kit-summary" id="globalBrandKitSummary" style="display:none;">
-                  <div class="brand-kit-summary-col">
-                    <div class="brand-kit-summary-label">Palette · Formee Express <span class="chevron"><img src="../../../../components/ai-social-media/icons/caret-down-filled.svg" class="icon-inline" alt=""></span></div>
-                    <div class="brand-kit-swatch-row">
-                      <span style="background:#2b6a6c"></span>
-                      <span style="background:#b80d48"></span>
-                      <span style="background:#f29724"></span>
-                      <span style="background:#444444"></span>
-                      <span style="background:#6d9697"></span>
-                      <span style="background:#aa5a77"></span>
-                      <span style="background:#ffffff; border:1px solid var(--color-neutral-200);"></span>
-                    </div>
-                  </div>
-                  <div class="brand-kit-divider"></div>
-                  <div class="brand-kit-summary-col">
-                    <div class="brand-kit-fonts-title">Fonts</div>
-                    <div class="brand-kit-fonts">
-                      <div class="brand-kit-font-row"><span class="brand-kit-font-tag" style="font-family:'Playfair Display',Georgia,serif; font-weight:700; font-size:18px;">Heading</span><span class="brand-kit-font-meta">Playfair<span class="dot"></span>Bold</span></div>
-                      <div class="brand-kit-font-row"><span class="brand-kit-font-tag" style="font-family:Georgia,serif; font-weight:700; font-size:16px;">Subheading</span><span class="brand-kit-font-meta">Georgia<span class="dot"></span>SemiBold</span></div>
-                      <div class="brand-kit-font-row"><span class="brand-kit-font-tag" style="font-family:Georgia,serif; font-weight:400; font-size:16px;">Body</span><span class="brand-kit-font-meta">Georgia<span class="dot"></span>Regular</span></div>
-                    </div>
-                  </div>
-                </div>
-                <div class="brand-kit-empty" id="globalBrandKitEmpty" style="display:none;">
-                  Set up your brand kit to apply it here automatically → <a onclick="carGoToBrandSetup()">Brand Setup</a>
-                </div>
-              </div>
-
+              <!-- Figma node 6390-106611: Text placement now comes before Use brand kit. -->
               <div class="draft-section">
                 <div class="draft-section-label">Text placement</div>
                 <p class="draft-section-hint">How the headline, subhead/body, and call to action should appear on each card.</p>
@@ -2080,6 +2006,21 @@
                 </div>
                 <div class="baked-in-warning" id="bakedInWarningCarousel">
                   <img src="../../../../components/ai-social-media/icons/alert-sm.svg" class="icon-inline" alt=""> If you edit the copy later, that card's image will need to be regenerated — and your brand font may not be reproduced exactly.
+                </div>
+              </div>
+
+              <div class="draft-section script-global-brand brand-kit-row" id="scriptGlobalBrand">
+                <div class="brand-kit-header">
+                  <div class="brand-kit-toggle-row">
+                    <span class="brand-kit-label">Use brand kit</span>
+                    <button type="button" class="field-switch" id="globalBrandKitSwitch" role="switch" aria-label="Use brand kit" aria-checked="false" onclick="toggleGlobalBrandKit()"><span class="knob"></span></button>
+                  </div>
+                  <p class="brand-kit-description">Use your brand kit to generate the image — AI applies your logo, colours, and fonts automatically.</p>
+                </div>
+                <div id="globalBrandKitSummary" style="display:none;"></div>
+                <div class="brand-kit-empty" id="globalBrandKitEmpty" style="display:none;">
+                  <span>Set up your brand kit to apply it here automatically</span>
+                  <button type="button" class="btn btn-secondary" onclick="carGoToBrandSetup()">Brand Setup</button>
                 </div>
               </div>
 
@@ -2262,6 +2203,25 @@
                   </div>
                 </div>
 
+                <!-- Figma node 8727:219504/8860:138784 — new for Reel/Short & Story Video
+                     (both content types share this one DOM/JS, see window.__isStoryVideo).
+                     Sits right after the script input so it applies the same regardless of
+                     __thumbnailMode (with-thumbnail hides #reelSceneSection below, not this). -->
+                <div class="draft-section brand-kit-row" id="reelBrandKitSection">
+                  <div class="brand-kit-header">
+                    <div class="brand-kit-toggle-row">
+                      <span class="brand-kit-label">Use brand kit</span>
+                      <button type="button" class="field-switch" id="reelBrandKitSwitch" role="switch" aria-label="Use brand kit" aria-checked="false" onclick="toggleReelBrandKit()"><span class="knob"></span></button>
+                    </div>
+                    <p class="brand-kit-description">Use your brand kit to generate the image — AI applies your logo, colours, and fonts automatically.</p>
+                  </div>
+                  <div id="reelBrandKitSummary" style="display:none;"></div>
+                  <div class="brand-kit-empty" id="reelBrandKitEmpty" style="display:none;">
+                    <span>Set up your brand kit to apply it here automatically</span>
+                    <button type="button" class="btn btn-secondary" onclick="reelGoToBrandSetup()">Brand Setup</button>
+                  </div>
+                </div>
+
                 <div id="reelSceneSection">
                   <div class="draft-section">
                     <div class="draft-section-label">Scenes</div>
@@ -2351,7 +2311,7 @@
                 <div class="timeline-stage">
                   <div class="timeline-canvas combine-canvas">
                     <div class="combine-player">
-                      <button class="video-play-btn" onclick="playCombineResult(this)" title="Play"><img src="../../../../components/ai-social-media/icons/audio-play.svg" class="icon-inline icon-16" alt=""></button>
+                      <button class="video-play-btn" onclick="playCombineResult(this)" title="Play"><img class="play" src="../../../../components/ai-social-media/icons/video-play-glyph.svg" alt=""></button>
                       <span class="combine-player-duration" id="combineResultDuration">8s</span>
                     </div>
                     <div class="combine-timeline-ticks" id="combineResultTicks"></div>
@@ -2713,8 +2673,8 @@
 
 <div class="thumb-mode-switch" id="thumbModeSwitch" role="group" aria-label="Script clip thumbnail preview">
   <p class="role-cap">Script clips</p>
-  <button type="button" class="role-btn" data-thumb="on" onclick="setThumbnailMode('on')">With thumbnail</button>
-  <button type="button" class="role-btn on" data-thumb="off" onclick="setThumbnailMode('off')">No thumbnail</button>
+  <button type="button" class="role-btn on" data-thumb="on" onclick="setThumbnailMode('on')">With thumbnail</button>
+  <button type="button" class="role-btn" data-thumb="off" onclick="setThumbnailMode('off')">No thumbnail</button>
 </div>
 
 <script>
@@ -3018,6 +2978,46 @@ function onCopyFieldInput(i, value){
 // ---- Brand kit (Visual concept > Use brand kit) ----
 // window.__brandMode ('none' | 'set') is set by imgApplyBrandMode(), reused from the video/carousel flow's
 // demo role-switch so this screen can preview both brand-setup states.
+// Brand Kit summary card — shared by Image post, Carousel, Reel/Short and Story Video
+// (Figma node 8860:138841). Rendered once into each screen's own container so every
+// screen's markup only needs to carry the toggle row + this container + the empty state.
+function buildBrandKitCardHtml(){
+  const realLogos = ['Primary', 'Dark', 'SCG-HE', 'SCG VST'];
+  const logoItems = realLogos.map(label => `
+        <div class="brand-kit-logo-item">
+          <div class="editor-cell type-logo"><img src="../../../../components/ai-social-media/icons/fmx-logo-sample.svg" alt=""></div>
+          <span class="brand-kit-logo-item-label">${label}</span>
+        </div>`).join('');
+  const swatches = ['#0e5c55', '#c81856', '#e8891f', '#33383f', '#5a8b8a', '#9c5a72', '#ffffff'];
+  const swatchHtml = swatches.map(c => `<span style="background:${c};${c === '#ffffff' ? ' border-left:1px solid var(--color-neutral-200);' : ''}"></span>`).join('');
+  return `
+    <div class="brand-kit-card">
+      <div class="brand-kit-section">
+        <div class="brand-kit-section-header"><span class="brand-kit-section-title">Logos</span></div>
+        <div class="brand-kit-logos">${logoItems}</div>
+      </div>
+      <div class="brand-kit-section">
+        <div class="brand-kit-section-header">
+          <span class="brand-kit-section-title">Colours</span>
+          <div class="brand-kit-palette-select"><span>Palette · Formee Express</span><span class="chevron"><img src="../../../../components/ai-social-media/icons/caret-down-filled.svg" alt=""></span></div>
+        </div>
+        <div class="brand-kit-swatch-row">${swatchHtml}</div>
+      </div>
+      <div class="brand-kit-section">
+        <div class="brand-kit-section-header"><span class="brand-kit-section-title">Fonts</span></div>
+        <div class="brand-kit-fonts">
+          <div class="brand-kit-font-card"><span class="sample heading">Heading</span><span class="meta">Georgia Bold</span></div>
+          <div class="brand-kit-font-card"><span class="sample subheading">Subheading</span><span class="meta">Georgia Semibold</span></div>
+          <div class="brand-kit-font-card"><span class="sample body">Body</span><span class="meta">Impact Regular</span></div>
+        </div>
+      </div>
+    </div>`;
+}
+['brandKitSummary', 'globalBrandKitSummary', 'reelBrandKitSummary'].forEach(id => {
+  const el = document.getElementById(id);
+  if(el) el.innerHTML = buildBrandKitCardHtml();
+});
+
 let brandKitOn = false;
 function imgApplyBrandMode(mode){
   window.__brandMode = mode;
@@ -3030,7 +3030,7 @@ function imgApplyBrandMode(mode){
     brandSwitch.classList.remove('disabled');
     brandKitOn = true;
     brandSwitch.classList.add('on');
-    summary.style.display = 'flex';
+    summary.style.display = 'block';
     empty.style.display = 'none';
     chip.style.display = 'flex';
   } else {
@@ -3038,7 +3038,7 @@ function imgApplyBrandMode(mode){
     brandKitOn = false;
     brandSwitch.classList.remove('on');
     summary.style.display = 'none';
-    empty.style.display = 'block';
+    empty.style.display = 'flex';
     chip.style.display = 'none';
   }
   brandSwitch.setAttribute('aria-checked', String(brandKitOn));
@@ -3047,8 +3047,8 @@ function imgApplyBrandMode(mode){
 function toggleBrandKit(){
   brandKitOn = !brandKitOn;
   document.getElementById('brandKitSwitch').classList.toggle('on', brandKitOn);
-  document.getElementById('brandKitSummary').style.display = brandKitOn ? 'flex' : 'none';
-  document.getElementById('brandKitEmpty').style.display = !brandKitOn && window.__brandMode !== 'set' ? 'block' : 'none';
+  document.getElementById('brandKitSummary').style.display = brandKitOn ? 'block' : 'none';
+  document.getElementById('brandKitEmpty').style.display = !brandKitOn && window.__brandMode !== 'set' ? 'flex' : 'none';
   document.getElementById('brandKitSwitch').setAttribute('aria-checked', String(brandKitOn));
   updateVisualConceptPrompt();
 }
@@ -4178,8 +4178,30 @@ function updateGlobalBrandKitUI(){
   sw.classList.remove('disabled');
   sw.classList.toggle('on', on);
   sw.setAttribute('aria-checked', String(on));
-  summary.style.display = on ? 'flex' : 'none';
-  empty.style.display = !on && window.__brandMode !== 'set' ? 'block' : 'none';
+  summary.style.display = on ? 'block' : 'none';
+  empty.style.display = !on && window.__brandMode !== 'set' ? 'flex' : 'none';
+}
+
+// ---- Reel/Short & Story Video's own "Use brand kit" toggle (same pattern as Carousel's
+// __globalBrandKitOn) -- lives on the Script sub-stage, applies regardless of __thumbnailMode. ----
+function toggleReelBrandKit(){
+  window.__reelBrandKitOn = !window.__reelBrandKitOn;
+  updateReelBrandKitUI();
+}
+function updateReelBrandKitUI(){
+  const sw = document.getElementById('reelBrandKitSwitch');
+  const summary = document.getElementById('reelBrandKitSummary');
+  const empty = document.getElementById('reelBrandKitEmpty');
+  if(!sw) return;
+  const on = !!window.__reelBrandKitOn;
+  sw.classList.remove('disabled');
+  sw.classList.toggle('on', on);
+  sw.setAttribute('aria-checked', String(on));
+  summary.style.display = on ? 'block' : 'none';
+  empty.style.display = !on && window.__brandMode !== 'set' ? 'flex' : 'none';
+}
+function reelGoToBrandSetup(){
+  alert('This would open Brand Setup — outside this prototype\'s scope.');
 }
 
 // ---- Image generation (manual "Generate images" click — mirrors the video flow's "Generate thumbnails") ----
@@ -4882,6 +4904,26 @@ function runBriefToScript(){
         { label: 'Make it shorter' },
         { label: 'Make it more hooking' }
       ]);
+      // AI / Response Card, State = "Toggle" (Figma 7725:326789) — lets brand kit be set up
+      // right from chat instead of only from the toggle row further down the Script panel.
+      // Only worth surfacing once a brand kit actually exists to apply (window.__brandMode
+      // === 'set') — same demo-only flag updateReelBrandKitUI() already gates its own
+      // empty-state text on.
+      if(window.__brandMode === 'set'){
+        appendChatCta(
+          'Use brand Kit',
+          'Apply your saved brand colors, fonts, and logo to this video automatically.',
+          `<div class="chat-cta-toggle-row">
+            <span class="chat-cta-toggle-label">Use brand kit</span>
+            <button type="button" class="field-switch${window.__reelBrandKitOn ? ' on' : ''}" role="switch" aria-checked="${!!window.__reelBrandKitOn}" onclick="toggleReelBrandKit(); this.classList.toggle('on'); this.setAttribute('aria-checked', this.classList.contains('on'));"><span class="knob"></span></button>
+          </div>`
+        );
+      }
+      appendChatCta(
+        'Ready to generate thumbnails?',
+        'Review each scene’s dialogue and description on the Timeline tab, then generate a thumbnail to preview how it looks.',
+        '<button class="btn btn-dark" onclick="showSub(\'reelTimeline\')">Continue to timeline</button>'
+      );
     }
     syncGenActionBarV3();
   }, 1100);
@@ -5544,6 +5586,13 @@ function renderTimelineGrid(count){
     <div class="scene-tile${i === 0 ? ' selected' : ''}" data-type="default" data-unit="${unit}" id="timelineTile${unit}" onclick="selectTimelineTile(${unit})">
       <div class="scene-tile-preview">
         <span class="scene-tile-badge">Scene ${unit}<span class="dot"></span>${getVideoUnitTimeLabel(unit)}</span>
+        <div class="scene-tile-placeholder">
+          <div class="scene-tile-placeholder-icon sparkle"><img src="../../../../components/ai-social-media/icons/sparkle-single-neutral.svg" alt=""></div>
+          <div class="scene-tile-placeholder-text">
+            <span class="scene-tile-placeholder-title">Your thumbnail will appear here</span>
+            <span class="scene-tile-placeholder-sub"><p>Generate one to preview</p><p>how this scene looks.</p></span>
+          </div>
+        </div>
       </div>
       <div class="scene-tile-line">${escapeHtml(getSceneScript(unit))}</div>
     </div>`;
@@ -5594,13 +5643,25 @@ function renderTimelineEditor(unit){
   updateVoicePreviewButton('tl', unit);
 }
 
-// "Generate Thumbnails" CTA (bottom action bar, Timeline tab) — reveals a thumbnail on every
-// tile (data-type default -> thumbnail), same queue-panel simulation as the Video stage's own
-// generation, then advances to Video the same way the old proceedToStudio() did.
+// "Generate Thumbnails" CTA (bottom action bar, Timeline tab) — every tile runs through
+// data-type default -> generating (spinner placeholder, for the queue-panel's duration) ->
+// thumbnail (real photo + Ready badge), then advances to Video the same way the old
+// proceedToStudio() did.
 function generateScriptThumbnails(){
+  document.querySelectorAll('#timelineGrid .scene-tile').forEach(t => {
+    t.dataset.type = 'generating';
+    const placeholder = t.querySelector('.scene-tile-placeholder');
+    if(placeholder) placeholder.innerHTML = `
+      <div class="scene-tile-placeholder-icon spinner"><img src="../../../../components/ai-social-media/icons/ui-spinner-lg.svg" alt=""></div>
+      <div class="scene-tile-placeholder-text">
+        <span class="scene-tile-placeholder-title">Creating your thumbnail…</span>
+        <span class="scene-tile-placeholder-sub"><p>Making the first frame of your video</p></span>
+      </div>`;
+  });
   showQueuePanel('#timelineGrid .scene-tile', 'thumbnail generation', () => {
     document.querySelectorAll('#timelineGrid .scene-tile').forEach((t, i) => {
       t.dataset.type = 'thumbnail';
+      t.querySelector('.scene-tile-placeholder')?.remove();
       t.querySelector('.scene-tile-preview').style.backgroundImage = `url('assets/video/scene${(i % 2) + 1}.png')`;
       t.querySelector('.scene-tile-preview').insertAdjacentHTML('afterbegin', '<div class="scene-tile-top-row"><span class="scene-tile-ready-badge">Ready</span></div>');
     });
@@ -5835,7 +5896,7 @@ function startVideoGeneration(){
           <button class="video-tile-regen-btn" onclick="event.stopPropagation(); regenerateVideoScene(${i + 1})" title="Regenerate · ⚡${VIDEO_COST_PER_UNIT}"><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt=""></button>
         </div>
         <div class="spinner-mini"></div>
-        <button class="video-play-btn" onclick="event.stopPropagation(); playVideoScene(${i + 1})" title="Play"><img src="../../../../components/ai-social-media/icons/audio-play.svg" class="icon-inline icon-16" alt=""></button>
+        <button class="video-play-btn" onclick="event.stopPropagation(); playVideoScene(${i + 1})" title="Play"><img class="play" src="../../../../components/ai-social-media/icons/video-play-glyph.svg" alt=""></button>
         <span class="video-tile-badge">Video ${i + 1} · ${getVideoUnitTimeLabel(i + 1)}</span>
       </div>
     </div>
@@ -5934,8 +5995,8 @@ function playVideoScene(n){
   const tile = document.getElementById('videoTile' + n);
   if(!tile || !tile.classList.contains('ready')) return;
   const btn = tile.querySelector('.video-play-btn');
-  btn.innerHTML = '<img src="../../../../components/ai-social-media/icons/audio-pause.svg" class="icon-inline icon-16" alt="">';
-  setTimeout(() => { btn.innerHTML = '<img src="../../../../components/ai-social-media/icons/audio-play.svg" class="icon-inline icon-16" alt="">'; }, 1400);
+  btn.innerHTML = '<img class="pause" src="../../../../components/ai-social-media/icons/video-pause-glyph.svg" alt="">';
+  setTimeout(() => { btn.innerHTML = '<img class="play" src="../../../../components/ai-social-media/icons/video-play-glyph.svg" alt="">'; }, 1400);
 }
 
 function combineVideo(){
@@ -6038,8 +6099,8 @@ function backToSceneVideos(){
 }
 
 function playCombineResult(btn){
-  btn.innerHTML = '<img src="../../../../components/ai-social-media/icons/audio-pause.svg" class="icon-inline icon-16" alt="">';
-  setTimeout(() => { btn.innerHTML = '<img src="../../../../components/ai-social-media/icons/audio-play.svg" class="icon-inline icon-16" alt="">'; }, 1400);
+  btn.innerHTML = '<img class="pause" src="../../../../components/ai-social-media/icons/video-pause-glyph.svg" alt="">';
+  setTimeout(() => { btn.innerHTML = '<img class="play" src="../../../../components/ai-social-media/icons/video-play-glyph.svg" alt="">'; }, 1400);
 }
 
 
@@ -6556,7 +6617,13 @@ function renderPublishDestinationsSimple(el){
     // matching comment: selecting a not-connected platform is what makes its "Not connected"
     // state reachable in the Publish modal instead of permanently dead code.
     const checked = window.__platformFormats[p.key][surface];
-    const checkbox = `<span class="destination-checkbox${checked ? ' checked' : ''}" onclick="toggleDestinationFormat('${p.key}','${surface}');">${checked ? '<img src="../../../../components/ai-social-media/icons/wh-check.svg" alt="">' : ''}</span>`;
+    // Figma's Checkbox component (node 6320:129248) forces a Not Connected row's checkbox
+    // into its inactive look — always the empty neutral-150/neutral-400/opacity-50 box,
+    // never a checkmark, regardless of the underlying selected state. Still clickable (see
+    // comment above): only the visual is forced, not the interaction.
+    const checkbox = !connected
+      ? `<span class="destination-checkbox disabled" onclick="toggleDestinationFormat('${p.key}','${surface}');"></span>`
+      : `<span class="destination-checkbox${checked ? ' checked' : ''}" onclick="toggleDestinationFormat('${p.key}','${surface}');">${checked ? '<img src="../../../../components/ai-social-media/icons/wh-check.svg" alt="">' : ''}</span>`;
     const status = connected
       ? `<span class="destination-account-status connected">Connected</span>`
       : `<span class="destination-account-status not-connected">Not connected</span><button class="destination-account-connect-btn" type="button" onclick="connectPlatform('${p.key}')">Connect</button>`;
@@ -7313,6 +7380,8 @@ function reelGoToBrief(){
 function reelGoToGenerate(){
   showView('generateView'); setStep('stepGenerate'); showSub('reelScript');
   document.getElementById('briefActionBarReel').style.display = 'none';
+  if(window.__reelBrandKitOn === undefined) window.__reelBrandKitOn = window.__brandMode === 'set';
+  updateReelBrandKitUI();
   // Scenes/voice show immediately (with default per-clip text — see getUnitDefaultScript())
   // rather than waiting on the script to be drafted/confirmed first.
   if(!reelScriptDraftStarted){
@@ -7382,11 +7451,11 @@ function reelApplyBrandMode(mode){
   document.querySelectorAll('#roleSwitch .role-btn').forEach(b => b.classList.toggle('on', b.dataset.brand === mode));
 }
 
-// ---- Demo control: Script clip thumbnail preview (default 'off', matching v4's redesign —
-// see renderReelSceneEditors()'s own comment on why it dropped the thumbnail canvas). 'on'
-// restores that still-image-first framing on Script's clip cards specifically; the Video
-// stage's tiles show a thumbnail either way (applySampleVideoFrame() was never touched). ----
-window.__thumbnailMode = 'off';
+// ---- Demo control: Script clip thumbnail preview (default 'on' — the with-thumbnail Timeline
+// flow is what this prototype should show first). 'on' restores the still-image-first framing
+// on Script's clip cards specifically; the Video stage's tiles show a thumbnail either way
+// (applySampleVideoFrame() was never touched). ----
+window.__thumbnailMode = 'on';
 function setThumbnailMode(mode){
   window.__thumbnailMode = mode;
   document.querySelectorAll('#thumbModeSwitch .role-btn').forEach(b => b.classList.toggle('on', b.dataset.thumb === mode));

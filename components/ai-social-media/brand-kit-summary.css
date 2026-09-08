@@ -1,36 +1,56 @@
 /* Brand kit summary — shared component
-   Figma: FME_AI-Social-Media, "Image post · Draft — Brand kit on" (node 6236-205), the
-   brand-kit-row/brand-kit-summary block under Visual concept. Byte-identical CSS was
-   duplicated under #stageAreaImage and #stageAreaCarousel in new-content-to-generate.html
-   (same "Use brand kit" row + Colour/Fonts summary card + empty state on both the Image
-   post Draft screen and the Carousel Script screen) — extracted here like this file's other
-   genuinely-shared blocks (chat-panel.css, carousel-card-block.css, switch.css).
+   Figma: FME_AI-Social-Media, "Reel/Short · Script (brand kit on)" node 8860:138841 —
+   Logos / Colours / Fonts sections inside a bordered card, used on Image post, Carousel,
+   Reel/Short and Story Video alike (the same brand-kit-row markup, switch, and empty state
+   everywhere — only the surrounding stage differs).
+
+   Logos section reuses the real Editor / cell (editor-cell.css) + Brand / Logo
+   (brand-logo.css) components instead of a bespoke box, per Figma's own "Editor / cell"
+   instances there.
+
+   Figma's Colours section shows the palette as one continuous strip of flat color cells
+   (node 8860:139169) — .brand-kit-swatch-row matches that, same convention as the
+   previous (Colours + Fonts only) version of this card.
 
    The switch itself is the real [DS] Controls / Switch component (switch.css's
-   .field-switch) — this file only covers the row/label/summary-card/empty-state chrome
-   around it, not the switch.
+   .field-switch) — this file only covers the row/label/card/empty-state chrome around it. */
 
-   Figma's "Colour" column shows the swatch strip as one continuous row of flat color
-   cells (node 6367:101132) rather than the individually-bordered "Editor / Color Swatch"
-   component instances also present on that frame (hidden in this state) — .brand-kit-
-   swatch-row matches the visible continuous-strip version. */
-
-.brand-kit-row{display:flex; align-items:center; gap:16px; margin-top:14px;}
+/* align-items:stretch (the flex default) so #brandKitSummary/etc — plain divs with no width
+   of their own — stretch to the row's full width instead of shrinking to fit their content;
+   flex-start here silently broke the card down to ~content-width instead of the full stage
+   width Figma shows. */
+.brand-kit-row{display:flex; flex-direction:column; gap:var(--spacing-md); align-items:stretch; width:100%;}
+.brand-kit-header{display:flex; flex-direction:column; gap:var(--spacing-xs); align-items:flex-start; width:100%;}
+.brand-kit-toggle-row{display:flex; align-items:center; gap:var(--spacing-lg);}
 .brand-kit-label{font-size:14px; line-height:22px; font-weight:600; color:var(--color-neutral-900);}
-.brand-kit-summary{margin-top:12px; padding:16px; background:#fff; border:1px solid var(--color-neutral-200); border-radius:var(--radius-xl); display:flex; align-items:flex-start; gap:20px;}
-.brand-kit-summary-col{flex:1; min-width:0; display:flex; flex-direction:column; gap:12px;}
-.brand-kit-divider{align-self:stretch; width:1px; background:var(--color-neutral-200); flex-shrink:0;}
-.brand-kit-summary-label{display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:500; color:var(--color-neutral-700); border:1px solid var(--color-neutral-400); border-radius:999px; padding:5px 10px 5px 12px; width:fit-content;}
-.brand-kit-summary-label .chevron{width:16px; height:16px; display:flex;}
-.brand-kit-fonts-title{font-size:14px; line-height:22px; font-weight:600; color:var(--color-neutral-900);}
-.brand-kit-swatch-row{display:flex; height:38px; border:1px solid var(--color-neutral-300); border-radius:var(--radius-lg); overflow:hidden;}
+.brand-kit-description{font-size:13px; line-height:20px; font-weight:400; color:var(--color-neutral-500); width:100%;}
+
+.brand-kit-card{box-sizing:border-box; width:100%; display:flex; flex-direction:column; gap:var(--spacing-lg); padding:var(--spacing-2xl); background:var(--color-neutral-0); border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl);}
+.brand-kit-section{display:flex; flex-direction:column; gap:var(--spacing-md); align-items:flex-start; width:100%;}
+.brand-kit-section-header{display:flex; align-items:center; gap:var(--spacing-lg); width:100%;}
+.brand-kit-section-title{font-size:14px; font-weight:600; line-height:22px; color:var(--color-neutral-800);}
+
+.brand-kit-logos{display:flex; align-items:flex-start; gap:var(--spacing-lg);}
+.brand-kit-logo-item{display:flex; flex-direction:column; align-items:center; gap:var(--spacing-sm);}
+.brand-kit-logo-item-label{font-size:13px; font-weight:600; line-height:20px; color:var(--color-neutral-700); white-space:nowrap;}
+/* Figma's logo cells measure 92px (editor-cell.css's own size-md is 90px — 2px off, not
+   worth a new size variant for). */
+.brand-kit-logo-item .editor-cell{width:92px; height:92px;}
+
+.brand-kit-palette-select{display:inline-flex; align-items:center; gap:4px; padding:5px 10px 5px 12px; background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:999px; font-family:var(--font-family-text); font-size:12px; font-weight:500; color:var(--color-neutral-700); cursor:pointer;}
+.brand-kit-palette-select .chevron{width:16px; height:16px; display:flex; flex-shrink:0;}
+.brand-kit-swatch-row{display:flex; height:34px; border:1px solid var(--color-neutral-300); border-radius:var(--radius-md); overflow:hidden; width:100%;}
 .brand-kit-swatch-row span{flex:1;}
-.brand-kit-fonts{display:grid; grid-template-columns:repeat(2, auto); gap:8px; align-items:start;}
-.brand-kit-font-row{display:flex; align-items:center; gap:8px; border:1px solid var(--color-neutral-300); border-radius:var(--radius-lg); padding:6px 8px 6px 6px; width:fit-content;}
-.brand-kit-font-tag{display:flex; align-items:center; justify-content:center; background:var(--color-neutral-150); border-radius:var(--radius-md); padding:4px 8px; color:var(--color-neutral-900); white-space:nowrap;}
-.brand-kit-font-meta{display:flex; align-items:center; gap:6px; font-size:12px; font-weight:500; color:var(--color-neutral-500); white-space:nowrap;}
-.brand-kit-font-meta .dot{width:2px; height:2px; border-radius:999px; background:var(--color-neutral-500);}
-.brand-kit-empty{margin-top:8px; padding:12px 16px; background:#fff; border:1px dashed var(--color-neutral-400); border-radius:var(--radius-xl); font-size:14px; color:var(--color-neutral-500); display:flex; align-items:center; justify-content:space-between; gap:16px;}
-/* Only the Carousel screen's empty state uses a text link here (Image post's uses a
+
+.brand-kit-fonts{display:flex; align-items:stretch; gap:var(--spacing-md); width:100%;}
+.brand-kit-font-card{flex:1; min-width:0; box-sizing:border-box; display:flex; flex-direction:column; gap:4px; padding:var(--spacing-sm) var(--spacing-md); background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg);}
+.brand-kit-font-card .sample{line-height:1.2; color:var(--color-neutral-900); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.brand-kit-font-card .sample.heading{font-family:Georgia,serif; font-weight:700; font-size:23px;}
+.brand-kit-font-card .sample.subheading{font-family:Georgia,serif; font-weight:600; font-size:17px;}
+.brand-kit-font-card .sample.body{font-family:Impact,'Arial Narrow Bold',sans-serif; font-weight:400; font-size:13px;}
+.brand-kit-font-card .meta{font-size:12px; font-weight:500; line-height:18px; color:var(--color-neutral-500);}
+
+.brand-kit-empty{padding:12px 16px; background:#fff; border:1px dashed var(--color-neutral-400); border-radius:var(--radius-xl); font-size:14px; color:var(--color-neutral-500); display:flex; align-items:center; justify-content:space-between; gap:16px; width:100%; box-sizing:border-box;}
+/* Only the Carousel screen's empty state uses a text link here (Image post's/Reel's use a
    .btn.btn-secondary instead, already styled elsewhere) — harmless no-op where unused. */
 .brand-kit-empty a{color:var(--color-brand-primary); font-weight:600; cursor:pointer; text-decoration:underline;}
