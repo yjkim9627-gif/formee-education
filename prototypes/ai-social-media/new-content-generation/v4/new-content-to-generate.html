@@ -4928,6 +4928,11 @@ function runBriefToScript(){
         { label: 'Make it shorter' },
         { label: 'Make it more hooking' }
       ]);
+      appendChatCta(
+        'Ready to generate thumbnails?',
+        'Review each scene’s dialogue and description on the Timeline tab, then generate a thumbnail to preview how it looks.',
+        '<button class="btn btn-dark" onclick="showSub(\'reelTimeline\')">Continue to timeline</button>'
+      );
     }
     syncGenActionBarV3();
   }, 1100);
