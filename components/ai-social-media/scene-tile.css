@@ -63,7 +63,12 @@
   width:40px; height:40px; display:flex; align-items:center; justify-content:center; flex-shrink:0;
 }
 .scene-tile-placeholder-icon img{display:block;}
-.scene-tile-placeholder-icon.sparkle img{width:36px; height:36px; padding:2px; box-sizing:border-box;}
+/* sparkle ships at its native 36px (Figma: icon/ai/sparkle-single, fill+stroke neutral-400) —
+   the wrapper's 40px box + center alignment is what creates the 2px margin, no padding needed */
+.scene-tile-placeholder-icon.sparkle img{width:36px; height:36px;}
+/* this is a dedicated 40px asset (ui-spinner-lg.svg, stroke-width 2.2) — NOT the 16px
+   ui-spinner.svg used elsewhere in this app scaled up, which stretches its 1.6px stroke to
+   ~4px and reads far too bold next to Figma's actual spinner here */
 .scene-tile-placeholder-icon.spinner img{width:40px; height:40px; animation:scene-tile-spin 1s linear infinite;}
 @keyframes scene-tile-spin{to{transform:rotate(360deg);}}
 .scene-tile-placeholder-text{display:flex; flex-direction:column; align-items:center; gap:2px; text-align:center; white-space:nowrap;}
