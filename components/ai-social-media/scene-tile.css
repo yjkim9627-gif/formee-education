@@ -1,10 +1,15 @@
 /* Scene Tile — Figma node 5992:96180
-   Variants: Type = Default / Thumbnail / Video / Player, each × Selected true/false
+   Variants: Type = Default / Generating / Thumbnail / Video / Player, each × Selected true/false
    (Player only ships as Selected=True in Figma — used for the single "now playing" tile.)
+   Default and Generating are the two "no photo yet" states of a Timeline scene tile before
+   "Generate Thumbnails" runs (and while it's running) — both show the same light gradient
+   background as Thumbnail/Video/Player show their darker one, with a centered
+   .scene-tile-placeholder (icon + copy) telling the two apart. Once a photo exists, the tile
+   switches to data-type="thumbnail".
 
-   Selection uses the neutral border-darkening pattern (neutral-400 -> neutral-500),
-   NOT a brand-color ring — see style-reference.md "카드 선택은 배경/보더로만 표현되고
-   텍스트는 그대로 유지된다".
+   Selection uses the neutral border-darkening pattern (neutral-400 -> neutral-500) plus a
+   thicker stroke (1.2px -> 1.6px, except Player which stays thin) — NOT a brand-color ring —
+   see style-reference.md "카드 선택은 배경/보더로만 표현되고 텍스트는 그대로 유지된다".
 
    Thumbnail/Video/Player preview photography isn't available as a downloadable asset
    (real character photo) — like character-card.css elsewhere in this library, the
@@ -19,10 +24,15 @@
   overflow:hidden;
   background:var(--color-neutral-0);
   cursor:pointer;
-  transition:border-color .15s;
+  transition:border-color .15s, border-width .15s;
 }
 .scene-tile:hover{border-color:var(--color-neutral-500);}
-.scene-tile.selected{border-color:var(--color-neutral-500);}
+/* Figma: selecting a tile that has no photo yet or is mid-generation, or one whose photo IS
+   ready, thickens the stroke (1.2px -> 1.6px) as well as darkening it — the "now playing"
+   combined-video tile (data-type="player") is the one exception, staying at the thin stroke
+   even when selected. */
+.scene-tile.selected{border-color:var(--color-neutral-500); border-width:1.6px;}
+.scene-tile.selected[data-type="player"]{border-color:var(--color-neutral-500); border-width:1.2px;}
 
 /* preview area */
 .scene-tile-preview{
@@ -41,6 +51,25 @@
      placeholder is tinted down so those same white icons stay legible here too */
   background:linear-gradient(135deg,var(--color-neutral-500),var(--color-neutral-300));
 }
+
+/* Default (nothing generated yet) and Generating keep the same light gradient — only the
+   centered placeholder content (icon + copy) below tells them apart. */
+.scene-tile-placeholder{
+  position:absolute; left:50%; top:221px; transform:translateX(-50%);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:var(--spacing-md); overflow:hidden;
+}
+.scene-tile-placeholder-icon{
+  width:40px; height:40px; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.scene-tile-placeholder-icon img{display:block;}
+.scene-tile-placeholder-icon.sparkle img{width:36px; height:36px; padding:2px; box-sizing:border-box;}
+.scene-tile-placeholder-icon.spinner img{width:40px; height:40px; animation:scene-tile-spin 1s linear infinite;}
+@keyframes scene-tile-spin{to{transform:rotate(360deg);}}
+.scene-tile-placeholder-text{display:flex; flex-direction:column; align-items:center; gap:2px; text-align:center; white-space:nowrap;}
+.scene-tile-placeholder-title{font-family:var(--font-family-text); font-size:13px; font-weight:600; line-height:20px; color:var(--color-neutral-700);}
+.scene-tile-placeholder-sub{font-family:var(--font-family-text); font-size:12px; font-weight:400; line-height:18px; color:var(--color-neutral-500);}
+.scene-tile-placeholder-sub p{margin:0; line-height:18px;}
 
 .scene-tile-top-row{display:flex; align-items:center; justify-content:space-between; width:100%;}
 
