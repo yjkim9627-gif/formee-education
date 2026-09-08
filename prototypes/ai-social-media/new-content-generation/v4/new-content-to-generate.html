@@ -507,15 +507,7 @@
   #stageAreaCarousel .stage-body-inner{max-width:960px; margin:0 auto; width:100%; flex:1; min-height:0; display:flex; flex-direction:column;}
   #stageAreaCarousel .stage-sub-text{font-size:12px; color:var(--color-neutral-500); margin:0 0 24px;}
 
-  /* Brand kit on — Figma 7606:230710. Keep the shared summary component. */
   #stageAreaImage #subDraft .stage-body-inner{max-width:calc(var(--spacing-7xl) * 16);}
-  #brandKitSummary{flex-wrap:wrap; gap:var(--spacing-xl); padding:var(--spacing-lg);}
-  #brandKitSummary .brand-kit-summary-col{flex-basis:calc(var(--spacing-7xl) * 4); gap:var(--spacing-md);}
-  #brandKitSummary .brand-kit-fonts{display:flex; flex-wrap:wrap; gap:var(--spacing-sm);}
-  #brandKitSummary .brand-kit-font-row{max-width:100%; box-sizing:border-box; flex-wrap:wrap; gap:var(--spacing-sm);}
-  #brandKitSummary .brand-kit-font-tag,
-  #brandKitSummary .brand-kit-font-meta{line-height:var(--line-height-text-xs);}
-  #brandKitSummary .brand-kit-fonts-title{min-height:var(--line-height-text-2xl); display:flex; align-items:center;}
 
   /* Image post · Draft — Figma 7606:323920; reuse Controls / Setting Chip. */
   #stageAreaImage:has(#tabDraft.active) .stage-tabs{margin-bottom:var(--spacing-2);}
@@ -1877,10 +1869,13 @@
                 </div>
               </div>
 
-              <div class="draft-section" id="imgBrandKitSection">
-                <div class="brand-kit-toggle-row">
-                  <button type="button" class="field-switch" id="brandKitSwitch" role="switch" aria-label="Use brand kit" aria-checked="false" onclick="toggleBrandKit()"><span class="knob"></span></button>
-                  <span class="brand-kit-label">Use brand kit</span>
+              <div class="draft-section brand-kit-row" id="imgBrandKitSection">
+                <div class="brand-kit-header">
+                  <div class="brand-kit-toggle-row">
+                    <button type="button" class="field-switch" id="brandKitSwitch" role="switch" aria-label="Use brand kit" aria-checked="false" onclick="toggleBrandKit()"><span class="knob"></span></button>
+                    <span class="brand-kit-label">Use brand kit</span>
+                  </div>
+                  <p class="brand-kit-description">Use your brand kit to generate the image — AI applies your logo, colours, and fonts automatically.</p>
                 </div>
                 <div id="brandKitSummary"></div>
                 <div class="brand-kit-empty" id="brandKitEmpty" style="display:none;">
@@ -2031,10 +2026,13 @@
                 </div>
               </div>
 
-              <div class="draft-section script-global-brand" id="scriptGlobalBrand">
-                <div class="brand-kit-toggle-row">
-                  <button type="button" class="field-switch" id="globalBrandKitSwitch" role="switch" aria-label="Use brand kit" aria-checked="false" onclick="toggleGlobalBrandKit()"><span class="knob"></span></button>
-                  <span class="brand-kit-label">Use brand kit</span>
+              <div class="draft-section script-global-brand brand-kit-row" id="scriptGlobalBrand">
+                <div class="brand-kit-header">
+                  <div class="brand-kit-toggle-row">
+                    <button type="button" class="field-switch" id="globalBrandKitSwitch" role="switch" aria-label="Use brand kit" aria-checked="false" onclick="toggleGlobalBrandKit()"><span class="knob"></span></button>
+                    <span class="brand-kit-label">Use brand kit</span>
+                  </div>
+                  <p class="brand-kit-description">Use your brand kit to generate the image — AI applies your logo, colours, and fonts automatically.</p>
                 </div>
                 <div id="globalBrandKitSummary" style="display:none;"></div>
                 <div class="brand-kit-empty" id="globalBrandKitEmpty" style="display:none;">
@@ -2225,10 +2223,13 @@
                      (both content types share this one DOM/JS, see window.__isStoryVideo).
                      Sits right after the script input so it applies the same regardless of
                      __thumbnailMode (with-thumbnail hides #reelSceneSection below, not this). -->
-                <div class="draft-section" id="reelBrandKitSection">
-                  <div class="brand-kit-toggle-row">
-                    <button type="button" class="field-switch" id="reelBrandKitSwitch" role="switch" aria-label="Use brand kit" aria-checked="false" onclick="toggleReelBrandKit()"><span class="knob"></span></button>
-                    <span class="brand-kit-label">Use brand kit</span>
+                <div class="draft-section brand-kit-row" id="reelBrandKitSection">
+                  <div class="brand-kit-header">
+                    <div class="brand-kit-toggle-row">
+                      <button type="button" class="field-switch" id="reelBrandKitSwitch" role="switch" aria-label="Use brand kit" aria-checked="false" onclick="toggleReelBrandKit()"><span class="knob"></span></button>
+                      <span class="brand-kit-label">Use brand kit</span>
+                    </div>
+                    <p class="brand-kit-description">Use your brand kit to generate the image — AI applies your logo, colours, and fonts automatically.</p>
                   </div>
                   <div id="reelBrandKitSummary" style="display:none;"></div>
                   <div class="brand-kit-empty" id="reelBrandKitEmpty" style="display:none;">
