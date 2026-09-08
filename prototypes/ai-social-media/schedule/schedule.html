@@ -1,0 +1,880 @@
+<!DOCTYPE html><html lang="en"><meta charset="utf-8">
+<title>Schedule — Calendar · List · Reschedule · Unschedule</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../tokens/tokens.css">
+<!--
+  Schedule — Figma `FME_AI-Social-Media` › schedule_to be › Scheduled (8861:150390)
+  14개 화면 전부를 한 파일의 상태로 담았다. 정적 복사본 14장이 아니라 상태 전환이라
+  플로우가 실제로 이어진다. 각 화면은 해시 딥링크가 있고 우측 상단 "Screens" 패널에서 바로 열린다.
+
+  Default (8956:136455)
+    D1 schedule · no selection            8826:126982   #s=calendar
+    D2 Schedule · List View               8739:121320   #s=list
+  A · Schedule something new (8949:133770)
+    A1 Schedule new · menu open           8892:130642   #s=calendar&menu=1
+    A2 Schedule new · pick from Library   8861:151032   #s=calendar&modal=library
+    A3 schedule · edit & publish          8741:250771   #s=editpublish
+    A4 Schedule new · done                8892:130830   #s=calendar&toast=scheduled
+  B · Manage what's scheduled (8949:133771)
+    B1 schedule · Scheduled selected      8861:150391   #s=calendar&sel=lip
+    B2 schedule · reschedule dialog       8956:135243   #s=calendar&sel=lip&pop=1
+    B3 schedule · reschedule done         8894:131564   #s=calendar&sel=lip&moved=1&toast=resched
+    B4 schedule · unschedule confirm      8861:150615   #s=calendar&sel=lip&modal=unschedule
+    B5 schedule · unschedule done         8861:150843   #s=calendar&gone=1&toast=unscheduled
+  C · Exception states (8949:133772)
+    C1 schedule · failed selected         8920:133369   #s=calendar&sel=uk
+    C2 schedule · List · failed           8921:134145   #s=list&sel=uk
+    C3 schedule · List · no results       8921:133612   #s=list&q=fishing+tips
+
+  두 가지 결정이 이 화면들에 박혀 있다.
+  1) Reschedule 은 스크림 모달이 아니라 **앵커드 팝오버**다. 날짜를 고르려면 주변 주의
+     일정을 봐야 하는데 스크림이 정확히 그걸 가린다. 되돌릴 수 있는 액션이라 모달일
+     이유도 없다. 반대로 Unschedule 은 파괴적이고 뒤를 볼 필요가 없어 스크림을 유지한다.
+  2) Draft 는 publish date 가 없으므로 캘린더 격자에 올라올 수 없다. Draft 는 Library
+     피커(A2)와 Unschedule 이 되돌려 보내는 목적지(B4→B5)에만 등장한다.
+
+  ⚠️ A3(Edit & Publish)는 Publish 화면을 재활용하는 자리다. 여기 있는 건 Schedule 이
+     관여하는 When 블록 위주의 축약본이고, 정본은
+     ../new-content-generation/v3/new-content-to-generate.html 의 Publish 단계다.
+-->
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+[hidden]{display:none !important;}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;}
+body{
+  background:var(--color-neutral-200);padding:40px 0;
+  font-family:'DM Sans',-apple-system,'Helvetica Neue',sans-serif;
+  font-variation-settings:'opsz' 14;-webkit-font-smoothing:antialiased;
+  color:var(--color-neutral-900);
+}
+
+/* ── frame ─────────────────────────────────────────────────────────────── */
+.frame{
+  position:relative;width:1920px;height:1162px;margin:0 auto;
+  display:flex;align-items:flex-start;overflow:hidden;
+  background:var(--color-neutral-50);
+  font-size:var(--font-size-text-md);line-height:var(--line-height-text-md);
+}
+
+/* ── sidebar (Nav / Navigation) ────────────────────────────────────────── */
+.sidebar{width:262px;height:100%;flex:none;display:flex;flex-direction:column;
+  background:var(--color-neutral-0);border-right:1px solid var(--color-neutral-300);}
+.brand{display:flex;align-items:center;gap:var(--spacing-sm);padding:var(--spacing-lg) var(--spacing-xl);}
+.brand-mark{width:28px;height:28px;flex:none;border-radius:var(--radius-lg);
+  background:linear-gradient(135deg,var(--color-brand-primary),var(--color-brand-accent));}
+.brand-name{font-size:var(--font-size-text-sm);line-height:var(--line-height-text-sm);font-weight:var(--font-weight-bold);}
+.brand-sub{font-size:var(--font-size-text-2xs);line-height:var(--line-height-text-2xs);color:var(--color-neutral-500);}
+.acct{margin:0 var(--spacing-lg) var(--spacing-md);padding:var(--spacing-sm) var(--spacing-md);
+  border:1px solid var(--color-neutral-400);border-radius:var(--radius-lg);
+  font-size:var(--font-size-text-xs);line-height:var(--line-height-text-xs);color:var(--color-neutral-700);
+  display:flex;align-items:center;justify-content:space-between;}
+.nav-items{display:flex;flex-direction:column;gap:var(--spacing-xs);padding:0 var(--spacing-md);}
+.nav-sec-head{padding:var(--spacing-md) var(--spacing-sm) var(--spacing-xs);
+  font-size:var(--font-size-overline-xs,10px);line-height:var(--line-height-overline-xs,14px);
+  font-weight:var(--font-weight-semibold);letter-spacing:.06em;text-transform:uppercase;color:var(--color-neutral-450);}
+.nav-item{display:flex;align-items:center;gap:var(--spacing-md);width:100%;
+  padding:var(--spacing-sm) var(--spacing-md);border-radius:var(--radius-lg);
+  font-size:var(--font-size-text-sm);line-height:var(--line-height-text-sm);
+  font-weight:var(--font-weight-medium);color:var(--color-neutral-700);text-align:left;}
+.nav-item:hover{background:var(--color-neutral-50);}
+.nav-item.active{background:var(--color-brand-primary-light);color:var(--color-neutral-900);font-weight:var(--font-weight-semibold);}
+.nav-item svg{width:20px;height:20px;flex:none;stroke:currentColor;fill:none;
+  stroke-width:var(--icon-stroke-width,1.6);stroke-linecap:round;stroke-linejoin:round;}
+
+/* ── right column ──────────────────────────────────────────────────────── */
+.right{flex:1 1 auto;min-width:0;height:100%;display:flex;flex-direction:column;}
+.topbar{height:56px;flex:none;display:flex;align-items:center;gap:var(--spacing-xl);
+  padding:0 var(--spacing-2xl);background:var(--color-neutral-0);
+  box-shadow:inset 0 -1px 0 0 var(--color-neutral-300);}
+.crumb{font-size:var(--font-size-text-sm);line-height:var(--line-height-text-sm);font-weight:var(--font-weight-semibold);}
+.topbar-spacer{flex:1 1 auto;}
+.topbar-search{width:240px;height:36px;display:flex;align-items:center;gap:var(--spacing-sm);
+  padding:0 var(--spacing-md);border:1px solid var(--color-neutral-400);border-radius:var(--radius-lg);
+  font-size:var(--font-size-text-xs);color:var(--color-neutral-500);}
+.avatar{width:32px;height:32px;flex:none;border-radius:var(--radius-full);
+  background:var(--color-brand-primary-mid);color:var(--color-neutral-800);
+  display:flex;align-items:center;justify-content:center;
+  font-size:var(--font-size-text-xs);font-weight:var(--font-weight-semibold);}
+
+.main{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;padding:var(--spacing-3xl) var(--spacing-3xl) var(--spacing-2xl);gap:var(--spacing-xl);}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--spacing-lg);flex:none;}
+.page-title{font-size:var(--font-size-display-sm,24px);line-height:var(--line-height-display-sm,32px);font-weight:var(--font-weight-bold);}
+.page-sub{margin-top:var(--spacing-xs);font-size:var(--font-size-text-sm);line-height:var(--line-height-text-sm);color:var(--color-neutral-500);}
+
+/* ── Actions / Button ──────────────────────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--spacing-sm);
+  height:38px;padding:0 var(--spacing-lg);border-radius:var(--radius-lg);
+  font-size:var(--font-size-text-sm);line-height:var(--line-height-text-sm);font-weight:var(--font-weight-medium);
+  border:1px solid var(--color-neutral-400);background:var(--color-neutral-0);color:var(--color-neutral-700);white-space:nowrap;}
+.btn:hover{border-color:var(--color-neutral-500);}
+.btn.primary{border:0;color:var(--color-neutral-0);font-weight:var(--font-weight-semibold);
+  background:linear-gradient(180deg,var(--color-action-primary-dark-gradient-start,#323232),var(--color-action-primary-dark-gradient-end,#222));}
+.btn.primary:hover{filter:brightness(1.15);}
+.btn.ghost{border-color:transparent;background:none;color:var(--color-neutral-700);}
+.btn.ghost:hover{background:var(--color-neutral-100);border-color:transparent;}
+.btn.danger{border:0;background:var(--color-badge-red-text);color:var(--color-neutral-0);font-weight:var(--font-weight-semibold);}
+.btn.sm{height:32px;padding:0 var(--spacing-md);font-size:var(--font-size-text-xs);}
+.btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ── filter bar ────────────────────────────────────────────────────────── */
+.filterbar{flex:none;display:flex;align-items:center;gap:var(--spacing-md);flex-wrap:wrap;}
+.seg{display:inline-flex;align-items:center;gap:var(--spacing-xs);padding:var(--spacing-xs);
+  background:var(--color-neutral-100);border-radius:var(--radius-xl);}
+.seg button{padding:var(--spacing-xs) var(--spacing-lg);border-radius:var(--radius-lg);
+  font-size:var(--font-size-text-sm);line-height:var(--line-height-text-sm);
+  font-weight:var(--font-weight-medium);color:var(--color-neutral-700);}
+.seg button[aria-pressed="true"]{background:var(--color-neutral-0);color:var(--color-neutral-900);
+  font-weight:var(--font-weight-semibold);box-shadow:var(--shadow-toggle-pill,0 1px 1.5px rgba(15,23,41,.1));}
+.fchip{height:32px;display:inline-flex;align-items:center;gap:var(--spacing-xs);padding:0 var(--spacing-md);
+  border:1px solid var(--color-neutral-400);border-radius:var(--radius-full);background:var(--color-neutral-0);
+  font-size:var(--font-size-text-xs);line-height:var(--line-height-text-xs);
+  font-weight:var(--font-weight-medium);color:var(--color-neutral-700);}
+.fchip:hover{border-color:var(--color-neutral-500);}
+.fchip[aria-pressed="true"]{background:var(--color-neutral-150);border-color:var(--color-neutral-500);
+  color:var(--color-neutral-900);font-weight:var(--font-weight-semibold);}
+.fchip svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.searchfield{height:32px;flex:1 1 240px;max-width:320px;display:flex;align-items:center;gap:var(--spacing-sm);
+  padding:0 var(--spacing-md);border:1px solid var(--color-neutral-400);border-radius:var(--radius-lg);background:var(--color-neutral-0);}
+.searchfield input{flex:1 1 auto;min-width:0;border:0;outline:0;background:none;
+  font:inherit;font-size:var(--font-size-text-xs);color:var(--color-neutral-900);}
+.searchfield input::placeholder{color:var(--color-neutral-500);}
+.count{font-size:var(--font-size-text-xs);line-height:var(--line-height-text-xs);color:var(--color-neutral-500);
+  font-variant-numeric:tabular-nums;}
+
+/* ── split: view + side peek ───────────────────────────────────────────── */
+.split{flex:1 1 auto;min-height:0;display:flex;gap:var(--spacing-lg);}
+.viewport{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;
+  background:var(--color-neutral-0);border:1px solid var(--color-neutral-300);border-radius:var(--radius-xl);overflow:hidden;}
+
+/* ── calendar ──────────────────────────────────────────────────────────── */
+.calhead{flex:none;display:flex;align-items:center;justify-content:center;gap:var(--spacing-lg);
+  padding:var(--spacing-md);border-bottom:1px solid var(--color-neutral-200);}
+.calhead .month{min-width:140px;text-align:center;font-size:var(--font-size-text-lg);
+  line-height:var(--line-height-text-lg);font-weight:var(--font-weight-bold);}
+.calhead .nudge{width:32px;height:32px;border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center;
+  color:var(--color-neutral-500);}
+.calhead .nudge:hover{background:var(--color-neutral-100);}
+.calhead .today-btn{position:absolute;right:var(--spacing-md);}
+.calhead{position:relative;}
+.dow{flex:none;display:grid;grid-template-columns:repeat(7,1fr);background:var(--color-neutral-50);
+  border-bottom:1px solid var(--color-neutral-200);}
+.dow span{padding:var(--spacing-sm) var(--spacing-md);font-size:var(--font-size-text-2xs);
+  line-height:var(--line-height-text-2xs);font-weight:var(--font-weight-medium);color:var(--color-neutral-500);}
+.weeks{flex:1 1 auto;min-height:0;display:grid;grid-template-rows:repeat(5,1fr);}
+.wk{display:grid;grid-template-columns:repeat(7,1fr);}
+.cell{min-width:0;display:flex;flex-direction:column;gap:var(--spacing-xs);
+  padding:var(--spacing-sm);border-right:1px solid var(--color-neutral-200);border-bottom:1px solid var(--color-neutral-200);}
+.wk:last-child .cell{border-bottom:0;}
+.cell:nth-child(7n){border-right:0;}
+.cell.out{background:var(--color-neutral-50);}
+.daynum{align-self:flex-start;min-width:22px;height:22px;padding:0 var(--spacing-xs);border-radius:var(--radius-full);
+  display:flex;align-items:center;justify-content:center;
+  font-size:var(--font-size-text-xs);line-height:var(--line-height-text-xs);color:var(--color-neutral-700);
+  font-variant-numeric:tabular-nums;}
+.cell.out .daynum{color:var(--color-neutral-450);}
+/* today = 아웃라인 primary. Selected(채움)는 날짜 선택 표현이라 today 와 겹치면 안 된다. */
+.cell.today .daynum{box-shadow:inset 0 0 0 1.5px var(--color-brand-primary);color:var(--color-brand-primary-dark);
+  font-weight:var(--font-weight-semibold);}
+
+/* event pill — 상태는 좌측 점 하나로만. 파선/틴트는 이 제품에서 "빈 슬롯" 언어라 못 쓴다. */
+.ev{display:flex;align-items:center;gap:var(--spacing-sm);width:100%;padding:var(--spacing-xs) var(--spacing-sm);
+  border-radius:var(--radius-md);text-align:left;min-width:0;}
+.ev:hover{background:var(--color-neutral-100);}
+.ev .dot{width:6px;height:6px;flex:none;border-radius:var(--radius-full);background:var(--color-brand-primary);}
+.ev.published .dot{background:var(--color-badge-green-text);}
+.ev.failed .dot{background:var(--color-badge-red-text);}
+.ev .time{flex:none;font-size:var(--font-size-text-2xs);line-height:var(--line-height-text-2xs);
+  color:var(--color-neutral-500);font-variant-numeric:tabular-nums;}
+.ev .name{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  font-size:var(--font-size-text-2xs);line-height:var(--line-height-text-2xs);
+  font-weight:var(--font-weight-medium);color:var(--color-neutral-900);}
+.ev[aria-selected="true"]{background:var(--color-neutral-150);box-shadow:inset 0 0 0 1px var(--color-neutral-500);}
+
+/* ── list ──────────────────────────────────────────────────────────────── */
+.listwrap{flex:1 1 auto;min-height:0;overflow:auto;padding:var(--spacing-xl) var(--spacing-2xl) var(--spacing-2xl);}
+.group{margin-bottom:var(--spacing-2xl);}
+.group:last-child{margin-bottom:0;}
+.group-head{display:flex;align-items:center;gap:var(--spacing-sm);padding-bottom:var(--spacing-sm);}
+.group-head h3{font-size:var(--font-size-text-md);line-height:var(--line-height-text-md);font-weight:var(--font-weight-bold);}
+.col-head,.lrow{display:grid;grid-template-columns:minmax(0,1fr) 200px 200px 140px 142px;gap:var(--spacing-md);align-items:center;}
+.col-head{padding:var(--spacing-sm) 0;border-bottom:1px solid var(--color-neutral-200);}
+.col-head span{font-size:var(--font-size-text-2xs);line-height:var(--line-height-text-2xs);color:var(--color-neutral-500);}
+.lrow{padding:var(--spacing-md) 0;border-bottom:1px solid var(--color-neutral-150);text-align:left;width:100%;}
+.lrow:hover{background:var(--color-neutral-50);}
+.lrow[aria-selected="true"]{background:var(--color-neutral-100);}
+.cell-post{display:flex;align-items:center;gap:var(--spacing-md);min-width:0;}
+.thumb{width:48px;height:60px;flex:none;border-radius:var(--radius-md);overflow:hidden;
+  background:var(--color-neutral-150);border:1px solid var(--color-neutral-200);}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.post-t{font-size:var(--font-size-text-sm);line-height:var(--line-height-text-sm);font-weight:var(--font-weight-semibold);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.post-m,.cell-sub{font-size:var(--font-size-text-2xs);line-height:var(--line-height-text-2xs);color:var(--color-neutral-500);}
+.cell-main{font-size:var(--font-size-text-sm);line-height:var(--line-height-text-sm);font-variant-numeric:tabular-nums;}
+.rowacts{display:flex;gap:var(--spacing-sm);justify-content:flex-end;}
+.iconbtn{width:28px;height:28px;border-radius:var(--radius-lg);border:1px solid var(--color-neutral-400);
+  display:flex;align-items:center;justify-content:center;color:var(--color-neutral-700);background:var(--color-neutral-0);}
+.iconbtn:hover{border-color:var(--color-neutral-500);}
+.iconbtn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ── Feedback / Status Chip ────────────────────────────────────────────── */
+.chip{display:inline-flex;align-items:center;padding:var(--spacing-2) var(--spacing-sm);border-radius:var(--radius-lg);
+  font-family:var(--font-family-badge,inherit);
+  font-size:var(--font-size-badge-sm,11px);line-height:16px;font-weight:var(--font-weight-semibold);}
+.chip.scheduled{background:var(--color-badge-blue-bg);color:var(--color-badge-blue-text);}
+.chip.published{background:var(--color-badge-green-bg);color:var(--color-badge-green-text);}
+.chip.failed{background:var(--color-badge-red-bg);color:var(--color-badge-red-text);}
+.chip.draft,.chip.count{background:var(--color-badge-gray-bg);color:var(--color-badge-gray-text);}
+
+/* ── side peek ─────────────────────────────────────────────────────────── */
+.peek{width:336px;flex:none;display:flex;flex-direction:column;gap:var(--spacing-lg);
+  padding:var(--spacing-lg);background:var(--color-neutral-0);
+  border:1px solid var(--color-neutral-300);border-radius:var(--radius-xl);overflow:auto;}
+.peek-head{display:flex;align-items:flex-start;gap:var(--spacing-sm);}
+.peek-title{flex:1 1 auto;font-size:var(--font-size-text-md);line-height:var(--line-height-text-md);font-weight:var(--font-weight-bold);}
+.peek-media{aspect-ratio:9/16;max-height:300px;border-radius:var(--radius-lg);overflow:hidden;
+  background:var(--color-neutral-150);border:1px solid var(--color-neutral-200);}
+.peek-media img{width:100%;height:100%;object-fit:cover;display:block;}
+.meta{display:flex;flex-direction:column;gap:var(--spacing-sm);}
+.meta-row{display:flex;align-items:center;justify-content:space-between;gap:var(--spacing-md);
+  font-size:var(--font-size-text-xs);line-height:var(--line-height-text-xs);}
+.meta-row dt{color:var(--color-neutral-500);}
+.meta-row dd{font-weight:var(--font-weight-semibold);text-align:right;}
+.peek-acts{display:flex;flex-direction:column;gap:var(--spacing-sm);margin-top:auto;}
+.peek-acts .btn{width:100%;}
+.notice{display:flex;gap:var(--spacing-sm);padding:var(--spacing-md);border-radius:var(--radius-lg);
+  background:var(--color-badge-red-bg);color:var(--color-badge-red-text);
+  font-size:var(--font-size-text-xs);line-height:var(--line-height-text-xs);}
+.notice svg{width:16px;height:16px;flex:none;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ── empty state ───────────────────────────────────────────────────────── */
+.empty{flex:1 1 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:var(--spacing-md);padding:var(--spacing-5xl);text-align:center;}
+.empty .glyph{width:48px;height:48px;border-radius:var(--radius-full);background:var(--color-neutral-100);
+  display:flex;align-items:center;justify-content:center;color:var(--color-neutral-450);}
+.empty .glyph svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+.empty h3{font-size:var(--font-size-text-xl);line-height:var(--line-height-text-xl);font-weight:var(--font-weight-bold);}
+.empty p{max-width:44ch;font-size:var(--font-size-text-sm);line-height:var(--line-height-text-sm);color:var(--color-neutral-500);}
+
+/* ── overlays ──────────────────────────────────────────────────────────── */
+.scrim{position:absolute;inset:0;z-index:40;background:rgba(15,23,41,.42);}
+.modal{position:absolute;z-index:50;left:50%;top:50%;transform:translate(-50%,-50%);
+  display:flex;flex-direction:column;gap:var(--spacing-lg);padding:var(--spacing-2xl);
+  background:var(--color-neutral-0);border-radius:var(--radius-xl);box-shadow:var(--shadow-modal);}
+.modal h2{font-size:var(--font-size-text-2xl);line-height:var(--line-height-text-2xl);font-weight:var(--font-weight-bold);}
+.modal p{font-size:var(--font-size-text-sm);line-height:var(--line-height-text-sm);color:var(--color-neutral-500);}
+.modal-acts{display:flex;justify-content:flex-end;gap:var(--spacing-sm);}
+.menu{position:absolute;z-index:50;min-width:200px;padding:var(--spacing-xs);
+  background:var(--color-neutral-0);border:1px solid var(--color-neutral-200);border-radius:var(--radius-xl);
+  box-shadow:var(--shadow-popover);display:flex;flex-direction:column;gap:var(--spacing-2);}
+.menu button{display:flex;align-items:center;gap:var(--spacing-md);padding:var(--spacing-sm) var(--spacing-md);
+  border-radius:var(--radius-lg);text-align:left;
+  font-size:var(--font-size-text-sm);line-height:var(--line-height-text-sm);color:var(--color-neutral-700);}
+.menu button:hover{background:var(--color-neutral-100);}
+.menu svg{width:16px;height:16px;flex:none;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+
+/* Date Picker (with time) — 6367:102563 (376×523).
+   스크림 없이 Reschedule 버튼 옆에 붙는 팝오버. 뒤 캘린더가 계속 읽혀야 한다. */
+.picker{position:absolute;z-index:50;width:376px;display:flex;flex-direction:column;gap:var(--spacing-lg);
+  padding:var(--spacing-xl);background:var(--color-neutral-0);
+  border:1px solid var(--color-neutral-200);border-radius:var(--radius-xl);box-shadow:var(--shadow-popover);}
+.picker-head{display:flex;align-items:center;justify-content:space-between;}
+.picker-head .m{font-size:var(--font-size-text-md);line-height:var(--line-height-text-md);font-weight:var(--font-weight-bold);}
+.picker-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:var(--spacing-xs);}
+.picker-grid span{text-align:center;font-size:var(--font-size-text-2xs);line-height:20px;color:var(--color-neutral-500);}
+.picker-grid button{aspect-ratio:1;border-radius:var(--radius-full);
+  font-size:var(--font-size-text-xs);color:var(--color-neutral-900);font-variant-numeric:tabular-nums;}
+.picker-grid button:hover:not(:disabled){background:var(--color-neutral-100);}
+.picker-grid button:disabled{color:var(--color-neutral-450);cursor:not-allowed;}
+.picker-grid button.today{box-shadow:inset 0 0 0 1.5px var(--color-brand-primary);color:var(--color-brand-primary-dark);}
+.picker-grid button[aria-selected="true"]{background:var(--color-brand-primary);color:var(--color-neutral-0);
+  font-weight:var(--font-weight-semibold);box-shadow:none;}
+.picker-time{display:flex;align-items:center;gap:var(--spacing-sm);}
+.picker-time label{flex:none;font-size:var(--font-size-text-xs);color:var(--color-neutral-500);}
+.picker-time select{height:36px;padding:0 var(--spacing-sm);border:1px solid var(--color-neutral-400);
+  border-radius:var(--radius-lg);background:var(--color-neutral-0);font:inherit;font-size:var(--font-size-text-sm);}
+.picker-acts{display:flex;justify-content:flex-end;gap:var(--spacing-sm);}
+
+.toast{position:absolute;z-index:60;left:50%;bottom:var(--spacing-3xl);transform:translateX(-50%);
+  display:flex;align-items:center;gap:var(--spacing-lg);padding:var(--spacing-md) var(--spacing-xl);
+  background:var(--color-neutral-900);color:var(--color-neutral-0);border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-md);font-size:var(--font-size-text-sm);line-height:var(--line-height-text-sm);white-space:nowrap;}
+.toast button{color:var(--color-brand-primary-mid);font-weight:var(--font-weight-semibold);}
+
+/* ── Edit & Publish (A3, 재활용 화면의 축약본) ──────────────────────────── */
+.pub{flex:1 1 auto;min-height:0;overflow:auto;display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:var(--spacing-2xl);}
+.card{padding:var(--spacing-xl);background:var(--color-neutral-0);
+  border:1px solid var(--color-neutral-300);border-radius:var(--radius-xl);
+  display:flex;flex-direction:column;gap:var(--spacing-md);}
+.card h3{font-size:var(--font-size-text-md);line-height:var(--line-height-text-md);font-weight:var(--font-weight-bold);}
+.field{min-height:88px;padding:var(--spacing-md);border:1px solid var(--color-neutral-400);border-radius:var(--radius-lg);
+  font-size:var(--font-size-text-sm);line-height:var(--line-height-text-sm);color:var(--color-neutral-700);}
+.radio-row{display:flex;align-items:center;gap:var(--spacing-md);padding:var(--spacing-sm) 0;}
+.radio{width:20px;height:20px;flex:none;border-radius:var(--radius-full);border:1.5px solid var(--color-neutral-400);
+  display:flex;align-items:center;justify-content:center;}
+.radio[aria-checked="true"]{background:var(--color-brand-primary);border-color:var(--color-brand-primary);}
+.radio[aria-checked="true"]::after{content:'';width:7px;height:7px;border-radius:var(--radius-full);background:var(--color-neutral-0);}
+.radio-row .lab{font-size:var(--font-size-text-sm);line-height:var(--line-height-text-sm);color:var(--color-neutral-700);}
+.radio-row[data-on="true"] .lab{font-weight:var(--font-weight-semibold);color:var(--color-neutral-900);}
+
+/* ── screens launcher (프로토타입 전용, 제품 UI 아님) ───────────────────── */
+.launcher{position:fixed;z-index:100;left:16px;bottom:16px;width:300px;max-height:calc(100vh - 32px);
+  display:flex;flex-direction:column;background:var(--color-neutral-0);
+  border:1px solid var(--color-neutral-300);border-radius:var(--radius-xl);box-shadow:var(--shadow-popover);
+  font-size:var(--font-size-text-xs);line-height:var(--line-height-text-xs);}
+.launcher > summary{list-style:none;cursor:pointer;padding:var(--spacing-md) var(--spacing-lg);
+  font-weight:var(--font-weight-bold);display:flex;align-items:center;justify-content:space-between;}
+.launcher > summary::-webkit-details-marker{display:none;}
+.launcher > summary::after{content:'▾';color:var(--color-neutral-450);}
+.launcher:not([open]) > summary::after{content:'▸';}
+.launcher-body{overflow:auto;padding:0 var(--spacing-sm) var(--spacing-sm);}
+.launcher h4{padding:var(--spacing-md) var(--spacing-sm) var(--spacing-xs);
+  font-size:var(--font-size-text-3xs,10px);letter-spacing:.06em;text-transform:uppercase;color:var(--color-neutral-450);}
+.launcher a{display:flex;gap:var(--spacing-sm);padding:var(--spacing-sm);border-radius:var(--radius-md);
+  color:var(--color-neutral-700);text-decoration:none;}
+.launcher a:hover{background:var(--color-neutral-100);}
+.launcher a b{flex:none;width:22px;color:var(--color-neutral-900);font-weight:var(--font-weight-semibold);}
+.launcher a.on{background:var(--color-brand-primary-light);color:var(--color-neutral-900);}
+</style>
+
+<div class="frame">
+
+  <!-- ══ Nav / Navigation ══════════════════════════════════════════════ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark"></div>
+      <div>
+        <div class="brand-name">Formee Education</div>
+        <div class="brand-sub">AI Social Media</div>
+      </div>
+    </div>
+    <div class="acct"><span>Super admin (All)</span><span>▾</span></div>
+    <nav class="nav-items">
+      <button type="button" class="nav-item">
+        <svg viewBox="0 0 20 20"><path d="M3 8.5 10 3l7 5.5V16a1 1 0 0 1-1 1h-3v-5H7v5H4a1 1 0 0 1-1-1z"/></svg>
+        <span>Home</span></button>
+      <div class="nav-sec-head">Create</div>
+      <button type="button" class="nav-item">
+        <svg viewBox="0 0 20 20"><path d="m10 3 1.6 3.9L15.5 8.5l-3.9 1.6L10 14l-1.6-3.9L4.5 8.5l3.9-1.6z"/><path d="M15.5 13.5 16 15l1.5.5L16 16l-.5 1.5L15 16l-1.5-.5L15 15z"/></svg>
+        <span>New Content</span></button>
+      <div class="nav-sec-head">Content</div>
+      <button type="button" class="nav-item">
+        <svg viewBox="0 0 20 20"><path d="M4 5v10M8 4v12M12 5v10M16 6v8"/></svg>
+        <span>Library</span></button>
+      <button type="button" class="nav-item active" aria-current="page">
+        <svg viewBox="0 0 20 20"><path d="M6.5 2v3M13.5 2v3"/><rect x="3" y="4" width="14" height="14" rx="2.5"/><path d="M3 8.5h14"/></svg>
+        <span>Schedule</span></button>
+      <button type="button" class="nav-item">
+        <svg viewBox="0 0 20 20"><path d="M3 14 8 9l3 3 6-6"/><path d="M13 6h4v4"/></svg>
+        <span>Trends</span></button>
+      <button type="button" class="nav-item">
+        <svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="7.5"/><path d="M10 10V4M10 10l4.5 3"/></svg>
+        <span>Analytics</span></button>
+      <div class="nav-sec-head">Asset</div>
+      <button type="button" class="nav-item">
+        <svg viewBox="0 0 20 20"><path d="M10 3.5v3M10 13.5v3M3.5 10h3M13.5 10h3"/><circle cx="10" cy="10" r="3"/></svg>
+        <span>Brands</span></button>
+      <button type="button" class="nav-item">
+        <svg viewBox="0 0 20 20"><circle cx="10" cy="7" r="3"/><path d="M4.5 17c.6-3 2.8-4.5 5.5-4.5S15 14 15.5 17"/></svg>
+        <span>Characters</span></button>
+      <button type="button" class="nav-item">
+        <svg viewBox="0 0 20 20"><rect x="7.5" y="2.5" width="5" height="9" rx="2.5"/><path d="M5 9.5a5 5 0 0 0 10 0M10 14.5v3"/></svg>
+        <span>Voices</span></button>
+      <button type="button" class="nav-item">
+        <svg viewBox="0 0 20 20"><path d="M7.5 14V4l9-1.5v10"/><circle cx="5.5" cy="14.5" r="2"/><circle cx="14.5" cy="12.5" r="2"/></svg>
+        <span>Audio Library</span></button>
+    </nav>
+  </aside>
+
+  <!-- ══ right column ══════════════════════════════════════════════════ -->
+  <div class="right">
+    <div class="topbar">
+      <div class="crumb">Schedule</div>
+      <div class="topbar-spacer"></div>
+      <div class="topbar-search">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3 3"/></svg>
+        <span>Search</span>
+      </div>
+      <div class="avatar">JN</div>
+    </div>
+
+    <main class="main">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Schedule</h1>
+          <p class="page-sub">Everything with a publish date — scheduled and published.</p>
+        </div>
+        <div style="position:relative">
+          <button type="button" class="btn primary" id="btnNew">
+            <svg viewBox="0 0 16 16"><path d="m8 2.5 1.3 3.2L12.5 7 9.3 8.3 8 11.5 6.7 8.3 3.5 7l3.2-1.3z"/></svg>
+            Schedule new
+          </button>
+          <!-- A1 · Schedule new · menu open (8892:130642) -->
+          <div class="menu" id="menuNew" style="right:0;top:46px" hidden>
+            <button type="button" id="miLibrary">
+              <svg viewBox="0 0 16 16"><path d="M3 4v8M6.5 3v10M10 4v8M13 5v6"/></svg>
+              Pick from Library
+            </button>
+            <button type="button" id="miCreate">
+              <svg viewBox="0 0 16 16"><path d="m8 2.5 1.3 3.2L12.5 7 9.3 8.3 8 11.5 6.7 8.3 3.5 7l3.2-1.3z"/></svg>
+              Create new
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── filter bar ── -->
+      <div class="filterbar" id="filterbar">
+        <div class="seg">
+          <button type="button" id="segCal" aria-pressed="true">Calendar</button>
+          <button type="button" id="segList" aria-pressed="false">List</button>
+        </div>
+        <div class="searchfield">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="var(--color-neutral-500)" stroke-width="1.6" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="m10.5 10.5 3 3"/></svg>
+          <input type="text" id="q" placeholder="Search scheduled and published content…" autocomplete="off">
+        </div>
+        <button type="button" class="fchip">Platform <svg viewBox="0 0 12 12"><path d="m3 4.5 3 3 3-3"/></svg></button>
+        <button type="button" class="fchip">Status <svg viewBox="0 0 12 12"><path d="m3 4.5 3 3 3-3"/></svg></button>
+        <button type="button" class="fchip">Type <svg viewBox="0 0 12 12"><path d="m3 4.5 3 3 3-3"/></svg></button>
+        <button type="button" class="fchip">Date range <svg viewBox="0 0 12 12"><path d="m3 4.5 3 3 3-3"/></svg></button>
+        <span class="count" id="count">8 posts</span>
+        <button type="button" class="fchip" style="margin-left:auto">Sort <svg viewBox="0 0 12 12"><path d="m3 4.5 3 3 3-3"/></svg></button>
+      </div>
+
+      <!-- ── split ── -->
+      <div class="split" id="split">
+        <section class="viewport" id="viewport"><!-- calendar / list / empty rendered here --></section>
+        <aside class="peek" id="peek" hidden></aside>
+      </div>
+
+      <!-- ── A3 · Edit & Publish (재활용 화면 축약본) ── -->
+      <div class="pub" id="pubView" hidden>
+        <div style="display:flex;flex-direction:column;gap:var(--spacing-xl)">
+          <div class="card">
+            <h3>Caption</h3>
+            <div class="field">Swipe for the shades everyone's asking about ✨ Which one are you picking? #lipTint #formee</div>
+          </div>
+          <div class="card">
+            <h3>Destinations</h3>
+            <div class="meta-row"><dt>Instagram</dt><dd>@formee.express</dd></div>
+            <div class="meta-row"><dt>TikTok</dt><dd>@formee.express</dd></div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:var(--spacing-xl)">
+          <div class="card">
+            <h3>When</h3>
+            <!-- Draft = publish date 없음. 이 라디오가 그 근거다. -->
+            <div class="radio-row"><span class="radio" role="radio" aria-checked="false"></span><span class="lab">Publish now</span></div>
+            <div class="radio-row" data-on="true"><span class="radio" role="radio" aria-checked="true"></span><span class="lab">Schedule</span><span class="chip scheduled" style="margin-left:auto">Sep 8, 9:00 AM</span></div>
+            <div class="radio-row"><span class="radio" role="radio" aria-checked="false"></span><span class="lab">Save as draft</span></div>
+          </div>
+          <div style="display:flex;justify-content:flex-end;gap:var(--spacing-sm)">
+            <button type="button" class="btn" data-go="#s=calendar">Save as draft</button>
+            <button type="button" class="btn primary" data-go="#s=calendar&amp;toast=scheduled">Update schedule</button>
+          </div>
+          <p class="page-sub">⚠️ 이 화면은 Publish 화면을 재활용하는 자리다. 정본은 <code>new-content-generation/v3/new-content-to-generate.html</code> 의 Publish 단계.</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ══ overlays ══════════════════════════════════════════════════════ -->
+
+  <!-- B2 · Reschedule — 앵커드 팝오버, 스크림 없음 (8956:135243) -->
+  <div class="picker" id="picker" hidden>
+    <div class="picker-head">
+      <button type="button" class="iconbtn" aria-label="Previous month"><svg viewBox="0 0 14 14"><path d="m8.5 3-4 4 4 4"/></svg></button>
+      <span class="m">September 2026</span>
+      <button type="button" class="iconbtn" aria-label="Next month"><svg viewBox="0 0 14 14"><path d="m5.5 3 4 4-4 4"/></svg></button>
+    </div>
+    <div class="picker-grid" id="pickerGrid"></div>
+    <div class="picker-time">
+      <label for="pkHour">Time</label>
+      <select id="pkHour"><option>09</option><option>10</option><option>12</option><option selected>14</option><option>18</option></select>
+      <select id="pkMin"><option selected>00</option><option>30</option></select>
+    </div>
+    <div class="picker-acts">
+      <button type="button" class="btn sm" id="pkCancel">Cancel</button>
+      <button type="button" class="btn primary sm" id="pkSave">Save</button>
+    </div>
+  </div>
+
+  <div class="scrim" id="scrim" hidden></div>
+
+  <!-- A2 · Pick from Library — drafts only (8861:151032) -->
+  <div class="modal" id="modalLibrary" style="width:900px" hidden>
+    <div style="display:flex;align-items:flex-start;gap:var(--spacing-md)">
+      <div style="flex:1 1 auto">
+        <h2>Pick from Library</h2>
+        <p>Choose a draft to put on the calendar. Published and scheduled posts are already dated.</p>
+      </div>
+      <span class="chip draft">Drafts only</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:var(--spacing-lg)">
+      <button type="button" style="aspect-ratio:4/5;border-radius:var(--radius-lg);background:var(--color-neutral-150);box-shadow:inset 0 0 0 2px var(--color-brand-primary)"></button>
+      <button type="button" style="aspect-ratio:4/5;border-radius:var(--radius-lg);background:var(--color-neutral-150)"></button>
+      <button type="button" style="aspect-ratio:4/5;border-radius:var(--radius-lg);background:var(--color-neutral-150)"></button>
+      <button type="button" style="aspect-ratio:4/5;border-radius:var(--radius-lg);background:var(--color-neutral-150)"></button>
+    </div>
+    <div class="modal-acts">
+      <button type="button" class="btn" data-go="#s=calendar">Cancel</button>
+      <button type="button" class="btn primary" data-go="#s=editpublish">Continue</button>
+    </div>
+  </div>
+
+  <!-- B4 · Unschedule confirm — 스크림 유지 (8861:150615) -->
+  <div class="modal" id="modalUnschedule" style="width:520px" hidden>
+    <h2 id="unschTitle">Unschedule this post?</h2>
+    <p>The post moves back to Drafts and leaves the Schedule. Its content and settings are kept, so you can schedule it again later.</p>
+    <div class="modal-acts">
+      <button type="button" class="btn" id="unschCancel">Cancel</button>
+      <button type="button" class="btn danger" id="unschConfirm">Unschedule</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" hidden><span id="toastText"></span><button type="button" id="toastUndo" hidden>Undo</button></div>
+</div>
+
+<!-- ══ screens launcher — 프로토타입 탐색용, 제품 UI 아님 ══════════════ -->
+<details class="launcher">
+  <summary>Screens · 14</summary>
+  <div class="launcher-body">
+    <h4>Default</h4>
+    <a href="#s=calendar"><b>D1</b><span>Calendar, no selection</span></a>
+    <a href="#s=list"><b>D2</b><span>List view</span></a>
+    <h4>A · Schedule something new</h4>
+    <a href="#s=calendar&menu=1"><b>A1</b><span>Schedule new · menu open</span></a>
+    <a href="#s=calendar&modal=library"><b>A2</b><span>Pick from Library</span></a>
+    <a href="#s=editpublish"><b>A3</b><span>Edit &amp; Publish (reused)</span></a>
+    <a href="#s=calendar&toast=scheduled"><b>A4</b><span>Scheduled · done</span></a>
+    <h4>B · Manage what’s scheduled</h4>
+    <a href="#s=calendar&sel=lip"><b>B1</b><span>Scheduled selected</span></a>
+    <a href="#s=calendar&sel=lip&pop=1"><b>B2</b><span>Reschedule popover</span></a>
+    <a href="#s=calendar&sel=lip&moved=1&toast=resched"><b>B3</b><span>Reschedule · done</span></a>
+    <a href="#s=calendar&sel=lip&modal=unschedule"><b>B4</b><span>Unschedule confirm</span></a>
+    <a href="#s=calendar&gone=1&toast=unscheduled"><b>B5</b><span>Unschedule · done</span></a>
+    <h4>C · Exception states</h4>
+    <a href="#s=calendar&sel=uk"><b>C1</b><span>Failed selected</span></a>
+    <a href="#s=list&sel=uk"><b>C2</b><span>List · failed</span></a>
+    <a href="#s=list&q=fishing+tips"><b>C3</b><span>List · no results</span></a>
+  </div>
+</details>
+
+<script>
+/* ────────────────────────────────────────────────────────────────────────
+   데이터. 8건 = Failed 1 · Scheduled 5 · Published 2.
+   Figma `List · failed` 는 프레임 높이에 맞추려고 2행을 뺐지만, HTML 리스트는
+   스크롤되므로 여기서는 잘라내지 않고 8건 전부 유지한다.
+   ──────────────────────────────────────────────────────────────────────── */
+var TODAY = 7;                       /* 2026-09-07 (월). Figma 프레임과 동일 기준일 */
+var EVENTS = [
+  {id:'visa', day:1,  time:'9:00 AM',  hh:'09:00', status:'published', title:'Your Visa Checklist, Step by Step', type:'Image',    brand:'Formee Express', platforms:'Instagram · LinkedIn', rel:'6 days ago'},
+  {id:'study',day:3,  time:'8:00 AM',  hh:'08:00', status:'published', title:'Study in the UK — Applications Open', type:'Image',   brand:'Formee Express', platforms:'Instagram',            rel:'4 days ago'},
+  {id:'uk',   day:4,  time:'12:00 PM', hh:'12:00', status:'failed',    title:'UK Applications — January Intake',   type:'Carousel', brand:'Formee Express', platforms:'Instagram · LinkedIn', rel:'failed 3 days ago',
+              reason:'Instagram rejected this post — the caption exceeds the 2,200 character limit.'},
+  {id:'lip',  day:8,  time:'9:00 AM',  hh:'09:00', status:'scheduled', title:'This New Lip Tint Is Everything',    type:'Reel · 9:16', brand:'Formee Express', platforms:'Instagram · TikTok',  rel:'in 1 day'},
+  {id:'campus',day:9, time:'6:00 PM',  hh:'18:00', status:'scheduled', title:'A Day on Campus in the UK',          type:'Reel · 9:16', brand:'Formee Express', platforms:'Instagram · Facebook',rel:'in 2 days'},
+  {id:'meet', day:12, time:'10:00 AM', hh:'10:00', status:'scheduled', title:'Meet Your Future Classmates',        type:'Reel · 9:16', brand:'Formee Express', platforms:'TikTok · YouTube',    rel:'in 5 days'},
+  {id:'toronto',day:16,time:'9:00 AM', hh:'09:00', status:'scheduled', title:'First Week in Toronto',              type:'Reel · 9:16', brand:'Formee Express', platforms:'Instagram',           rel:'in 9 days'},
+  {id:'couns',day:22, time:'2:00 PM',  hh:'14:00', status:'scheduled', title:'Free 1:1 Counselling, Book Anytime', type:'Image',    brand:'Formee Express', platforms:'Instagram · LinkedIn', rel:'in 15 days'}
+];
+var LABEL = {scheduled:'Scheduled', published:'Published', failed:'Failed'};
+
+/* ── 상태 ──────────────────────────────────────────────────────────────── */
+var S = {view:'calendar', sel:null, menu:false, modal:null, pop:false,
+         toast:null, moved:false, gone:false, added:false, q:''};
+
+function readHash(){
+  var h = location.hash.replace(/^#/,'');
+  var p = {};
+  h.split('&').forEach(function(kv){
+    if(!kv) return;
+    var i = kv.indexOf('='), k = i<0 ? kv : kv.slice(0,i), v = i<0 ? '1' : decodeURIComponent(kv.slice(i+1).replace(/\+/g,' '));
+    p[k] = v;
+  });
+  S.view  = p.s || 'calendar';
+  S.sel   = p.sel || null;
+  S.menu  = p.menu === '1';
+  S.modal = p.modal || null;
+  S.pop   = p.pop === '1';
+  S.moved = p.moved === '1';
+  S.gone  = p.gone === '1';
+  S.added = p.toast === 'scheduled';
+  S.toast = p.toast || null;
+  S.q     = p.q || '';
+  render();
+}
+function go(patch){
+  var next = Object.assign({}, {s:S.view, sel:S.sel, menu:S.menu?'1':null, modal:S.modal,
+    pop:S.pop?'1':null, moved:S.moved?'1':null, gone:S.gone?'1':null, toast:S.toast, q:S.q||null}, patch);
+  var parts = [];
+  Object.keys(next).forEach(function(k){
+    if(next[k]===null || next[k]===undefined || next[k]==='' || next[k]===false) return;
+    parts.push(k + '=' + encodeURIComponent(next[k]).replace(/%20/g,'+'));
+  });
+  location.hash = parts.join('&');
+}
+
+/* 화면에 실제로 보이는 이벤트 목록 (moved / gone / added 반영) */
+function visibleEvents(){
+  return EVENTS.filter(function(e){
+    return !(S.gone && e.id==='lip');
+  }).map(function(e){
+    if(S.moved && e.id==='lip') return Object.assign({}, e, {day:11, time:'2:00 PM', hh:'14:00', rel:'in 4 days'});
+    return e;
+  }).filter(function(e){
+    if(!S.q) return true;
+    return (e.title + ' ' + e.platforms + ' ' + e.type).toLowerCase().indexOf(S.q.toLowerCase()) > -1;
+  });
+}
+
+/* ── 렌더 ──────────────────────────────────────────────────────────────── */
+var $ = function(id){ return document.getElementById(id); };
+
+function render(){
+  var evs = visibleEvents();
+
+  /* A3 는 앱 셸만 공유하고 본문이 통째로 다르다 */
+  var isPub = S.view === 'editpublish';
+  $('pubView').hidden = !isPub;
+  $('split').hidden = isPub;
+  $('filterbar').hidden = isPub;
+  document.querySelector('.page-title').textContent = isPub ? 'Edit & Publish' : 'Schedule';
+  document.querySelector('.page-sub').textContent = isPub
+    ? 'Opened from Schedule — When is already set to Schedule.'
+    : 'Everything with a publish date — scheduled and published.';
+  $('btnNew').hidden = isPub;
+  if(isPub){ paintOverlays(); return; }
+
+  $('segCal').setAttribute('aria-pressed', S.view==='calendar');
+  $('segList').setAttribute('aria-pressed', S.view==='list');
+  $('q').value = S.q;
+  $('count').textContent = evs.length + (evs.length===1 ? ' post' : ' posts');
+
+  $('viewport').innerHTML = S.view==='calendar' ? calendarHTML(evs)
+                          : (evs.length ? listHTML(evs) : emptyHTML());
+  paintPeek(evs);
+  paintOverlays();
+  wireViewport();
+}
+
+function calendarHTML(evs){
+  var byDay = {};
+  evs.forEach(function(e){ (byDay[e.day] = byDay[e.day] || []).push(e); });
+  /* 2026-09-01 = 화요일. 월요일 시작 격자라 8/31 부터 5주. */
+  var cells = [], d = new Date(2026,7,31);
+  for(var i=0;i<35;i++){
+    var m = d.getMonth(), day = d.getDate(), out = m!==8;
+    var evHTML = (out ? [] : (byDay[day]||[])).map(function(e){
+      return '<button type="button" class="ev ' + e.status + '" data-ev="' + e.id + '"' +
+             (S.sel===e.id ? ' aria-selected="true"' : '') + '>' +
+             '<span class="dot"></span><span class="time">' + e.time.replace(':00','') + '</span>' +
+             '<span class="name">' + e.title + '</span></button>';
+    }).join('');
+    cells.push('<div class="cell' + (out?' out':'') + (!out && day===TODAY ? ' today':'') + '">' +
+      '<span class="daynum">' + day + '</span>' + evHTML + '</div>');
+    d.setDate(d.getDate()+1);
+  }
+  var weeks = '';
+  for(var w=0;w<5;w++) weeks += '<div class="wk">' + cells.slice(w*7,w*7+7).join('') + '</div>';
+  return '<div class="calhead">' +
+      '<button type="button" class="nudge" aria-label="Previous month"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m10 3-5 5 5 5"/></svg></button>' +
+      '<span class="month">September 2026</span>' +
+      '<button type="button" class="nudge" aria-label="Next month"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m6 3 5 5-5 5"/></svg></button>' +
+      '<button type="button" class="btn sm today-btn">Today</button>' +
+    '</div>' +
+    '<div class="dow"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>' +
+    '<div class="weeks">' + weeks + '</div>';
+}
+
+function listHTML(evs){
+  /* Failed 가 맨 위 — 먼저 봐야 하는 것이 먼저 온다 */
+  var order = ['failed','scheduled','published'], out = '';
+  order.forEach(function(st){
+    var rows = evs.filter(function(e){ return e.status===st; });
+    if(!rows.length) return;
+    out += '<section class="group"><div class="group-head"><h3>' + LABEL[st] + '</h3>' +
+           '<span class="chip count">' + rows.length + '</span></div>' +
+           '<div class="col-head"><span>Post</span><span>When</span><span>Platforms</span><span>Status</span><span style="text-align:right">Actions</span></div>';
+    rows.forEach(function(e){
+      out += '<button type="button" class="lrow" data-ev="' + e.id + '"' + (S.sel===e.id ? ' aria-selected="true"' : '') + '>' +
+        '<span class="cell-post"><span class="thumb"></span>' +
+          '<span style="min-width:0"><span class="post-t" style="display:block">' + e.title + '</span>' +
+          '<span class="post-m">' + e.type + ' · ' + e.brand + '</span></span></span>' +
+        '<span><span class="cell-main" style="display:block">Sep ' + e.day + ', ' + e.time + '</span>' +
+          '<span class="cell-sub">' + e.rel + '</span></span>' +
+        '<span class="cell-main">' + e.platforms + '</span>' +
+        '<span><span class="chip ' + e.status + '">' + LABEL[e.status] + '</span></span>' +
+        '<span class="rowacts">' +
+          '<span class="iconbtn" aria-hidden="true"><svg viewBox="0 0 14 14"><path d="M11.5 7a4.5 4.5 0 1 1-1.3-3.2"/><path d="M11.5 1.5V4H9"/></svg></span>' +
+          '<span class="iconbtn" aria-hidden="true"><svg viewBox="0 0 14 14"><circle cx="3" cy="7" r=".9" fill="currentColor" stroke="none"/><circle cx="7" cy="7" r=".9" fill="currentColor" stroke="none"/><circle cx="11" cy="7" r=".9" fill="currentColor" stroke="none"/></svg></span>' +
+        '</span></button>';
+    });
+    out += '</section>';
+  });
+  return '<div class="listwrap">' + out + '</div>';
+}
+
+/* C3 — 리스트에만 빈 상태가 필요하다. 캘린더는 격자 자체가 "아무것도 없음"을 이미 말한다. */
+function emptyHTML(){
+  return '<div class="empty">' +
+    '<span class="glyph"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 4 4"/></svg></span>' +
+    '<h3>No posts match “' + S.q + '”</h3>' +
+    '<p>Nothing scheduled or published matches this search. Try a different word, or clear the filters to see all 8 posts.</p>' +
+    '<button type="button" class="btn" id="clearFilters">Clear filters</button>' +
+  '</div>';
+}
+
+function paintPeek(evs){
+  var e = evs.filter(function(x){ return x.id===S.sel; })[0];
+  var peek = $('peek');
+  if(!e){ peek.hidden = true; peek.innerHTML = ''; return; }
+  peek.hidden = false;
+  var isFailed = e.status==='failed', isPublished = e.status==='published';
+  peek.innerHTML =
+    '<div class="peek-head"><span class="peek-title">' + e.title + '</span>' +
+      '<button type="button" class="iconbtn" id="peekClose" aria-label="Close"><svg viewBox="0 0 14 14"><path d="m3.5 3.5 7 7M10.5 3.5l-7 7"/></svg></button></div>' +
+    '<div class="peek-media"></div>' +
+    (isFailed ? '<div class="notice"><svg viewBox="0 0 16 16"><path d="M8 5v4M8 11h.01"/><circle cx="8" cy="8" r="6.5"/></svg><span>' + e.reason + '</span></div>' : '') +
+    '<dl class="meta">' +
+      '<div class="meta-row"><dt>Status</dt><dd><span class="chip ' + e.status + '">' + LABEL[e.status] + '</span></dd></div>' +
+      '<div class="meta-row"><dt>Type / Aspect</dt><dd>' + e.type + '</dd></div>' +
+      '<div class="meta-row"><dt>Brand</dt><dd>' + e.brand + '</dd></div>' +
+      '<div class="meta-row"><dt>Platforms</dt><dd>' + e.platforms + '</dd></div>' +
+      '<div class="meta-row"><dt>' + (isPublished ? 'Published' : 'Scheduled for') + '</dt><dd>Sep ' + e.day + ', 2026 ' + e.time + '</dd></div>' +
+      '<div class="meta-row"><dt>Created by</dt><dd>Jenny</dd></div>' +
+    '</dl>' +
+    '<div class="peek-acts">' +
+      (isFailed
+        ? '<button type="button" class="btn primary">Retry now</button>' +
+          '<button type="button" class="btn" data-go="#s=editpublish">Edit &amp; Publish</button>'
+        : isPublished
+        ? '<button type="button" class="btn primary">Duplicate</button>' +
+          '<button type="button" class="btn">View post</button>'
+        : '<button type="button" class="btn primary" id="btnReschedule">Reschedule</button>' +
+          '<button type="button" class="btn" data-go="#s=editpublish">Edit &amp; Publish</button>' +
+          '<button type="button" class="btn ghost" id="btnUnschedule">Unschedule</button>') +
+    '</div>';
+}
+
+function paintOverlays(){
+  $('menuNew').hidden = !S.menu;
+
+  var modalOpen = S.modal==='library' || S.modal==='unschedule';
+  $('scrim').hidden = !modalOpen;
+  $('modalLibrary').hidden = S.modal!=='library';
+  $('modalUnschedule').hidden = S.modal!=='unschedule';
+  if(S.modal==='unschedule'){
+    var e = EVENTS.filter(function(x){ return x.id===S.sel; })[0];
+    $('unschTitle').textContent = e ? 'Unschedule “' + e.title + '”?' : 'Unschedule this post?';
+  }
+
+  /* 팝오버는 스크림 없이 Reschedule 버튼 옆에 붙는다 */
+  var pop = $('picker');
+  pop.hidden = !(S.pop && S.sel);
+  if(!pop.hidden){ buildPickerGrid(); positionPicker(); }
+
+  var t = $('toast'), msg = null, undo = false;
+  if(S.toast==='scheduled')       msg = 'Scheduled — goes out Sep 8, 9:00 AM';
+  else if(S.toast==='resched')    { msg = 'Rescheduled — now Sep 11, 2:00 PM'; undo = true; }
+  else if(S.toast==='unscheduled'){ msg = 'Moved to Drafts'; undo = true; }
+  t.hidden = !msg;
+  if(msg){ $('toastText').textContent = msg; $('toastUndo').hidden = !undo; }
+}
+
+function buildPickerGrid(){
+  var g = $('pickerGrid'), html = '';
+  ['M','T','W','T','F','S','S'].forEach(function(x){ html += '<span>' + x + '</span>'; });
+  var d = new Date(2026,7,31);
+  var cur = S.moved ? 11 : 8;
+  for(var i=0;i<35;i++){
+    var m = d.getMonth(), day = d.getDate(), out = m!==8;
+    var past = !out && day < TODAY;
+    html += '<button type="button" data-day="' + day + '"' +
+            (out || past ? ' disabled' : '') +
+            (!out && day===TODAY ? ' class="today"' : '') +
+            (!out && day===cur ? ' aria-selected="true"' : '') +
+            '>' + (out ? '' : day) + '</button>';
+    d.setDate(d.getDate()+1);
+  }
+  g.innerHTML = html;
+  Array.prototype.forEach.call(g.querySelectorAll('button:not(:disabled)'), function(b){
+    b.addEventListener('click', function(){
+      Array.prototype.forEach.call(g.querySelectorAll('button'), function(x){ x.removeAttribute('aria-selected'); });
+      b.setAttribute('aria-selected','true');
+    });
+  });
+}
+
+/* Reschedule 버튼 왼쪽에 붙이되, 프레임 밖으로 나가면 안쪽으로 당긴다 */
+function positionPicker(){
+  var btn = $('btnReschedule'), pop = $('picker'), frame = document.querySelector('.frame');
+  if(!btn) { pop.hidden = true; return; }
+  var fb = frame.getBoundingClientRect(), bb = btn.getBoundingClientRect();
+  var pw = 376, ph = pop.offsetHeight || 460;
+  var left = bb.left - fb.left - pw - 12;
+  var top  = bb.top - fb.top + bb.height - ph;
+  pop.style.left = Math.max(16, left) + 'px';
+  pop.style.top  = Math.min(Math.max(16, top), fb.height - ph - 16) + 'px';
+}
+
+/* ── 이벤트 배선 ───────────────────────────────────────────────────────── */
+function wireViewport(){
+  Array.prototype.forEach.call($('viewport').querySelectorAll('[data-ev]'), function(el){
+    el.addEventListener('click', function(){ go({sel:el.dataset.ev, pop:null, toast:null}); });
+  });
+  var cf = $('clearFilters');
+  if(cf) cf.addEventListener('click', function(){ go({q:null}); });
+
+  var peek = $('peek');
+  var close = $('peekClose');
+  if(close) close.addEventListener('click', function(){ go({sel:null, pop:null}); });
+  var resch = $('btnReschedule');
+  if(resch) resch.addEventListener('click', function(){ go({pop:'1', toast:null}); });
+  var unsch = $('btnUnschedule');
+  if(unsch) unsch.addEventListener('click', function(){ go({modal:'unschedule'}); });
+  Array.prototype.forEach.call(peek.querySelectorAll('[data-go]'), function(el){
+    el.addEventListener('click', function(){ location.hash = el.dataset.go; });
+  });
+}
+
+$('segCal').addEventListener('click', function(){ go({s:'calendar'}); });
+$('segList').addEventListener('click', function(){ go({s:'list'}); });
+$('q').addEventListener('input', function(){ S.q = this.value; go({q:this.value||null}); this.focus(); });
+
+$('btnNew').addEventListener('click', function(e){ e.stopPropagation(); go({menu:S.menu?null:'1'}); });
+$('miLibrary').addEventListener('click', function(){ go({menu:null, modal:'library'}); });
+$('miCreate').addEventListener('click', function(){ go({menu:null, s:'editpublish'}); });
+
+$('scrim').addEventListener('click', function(){ go({modal:null}); });
+$('unschCancel').addEventListener('click', function(){ go({modal:null}); });
+$('unschConfirm').addEventListener('click', function(){ go({modal:null, sel:null, gone:'1', toast:'unscheduled'}); });
+
+$('pkCancel').addEventListener('click', function(){ go({pop:null}); });
+$('pkSave').addEventListener('click', function(){ go({pop:null, moved:'1', toast:'resched'}); });
+$('toastUndo').addEventListener('click', function(){ go({moved:null, gone:null, toast:null}); });
+
+document.addEventListener('click', function(ev){
+  if(S.menu && !ev.target.closest('#menuNew') && !ev.target.closest('#btnNew')) go({menu:null});
+  if(S.pop && !ev.target.closest('#picker') && !ev.target.closest('#btnReschedule')) go({pop:null});
+});
+document.addEventListener('keydown', function(ev){
+  if(ev.key !== 'Escape') return;
+  if(S.pop) go({pop:null});
+  else if(S.modal) go({modal:null});
+  else if(S.menu) go({menu:null});
+  else if(S.sel) go({sel:null});
+});
+
+/* 런처의 현재 화면 표시 */
+function markLauncher(){
+  var h = location.hash || '#s=calendar';
+  Array.prototype.forEach.call(document.querySelectorAll('.launcher a'), function(a){
+    a.classList.toggle('on', a.getAttribute('href') === h);
+  });
+}
+
+window.addEventListener('hashchange', function(){ readHash(); markLauncher(); });
+readHash();
+markLauncher();
+</script>
