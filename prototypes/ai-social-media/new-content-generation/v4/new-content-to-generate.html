@@ -81,6 +81,9 @@
 
   /* ---- role switch (demo control, previews brand-setup state) ---- */
   .role-switch{position:fixed; right:16px; bottom:16px; z-index:9999; display:flex; gap:6px; align-items:center; background:rgba(15,23,41,.92); border-radius:9999px; padding:6px 8px 6px 14px; box-shadow:0 6px 20px rgba(0,0,0,.28); backdrop-filter:blur(6px);}
+  /* Hidden for now (setBrandMode()/window.__brandMode itself stays wired up -- this just
+     hides the demo bottom-right switcher bar; remove this rule to bring it back). */
+  #roleSwitch{display:none;}
   .role-cap{font-weight:600; font-size:11px; line-height:16px; letter-spacing:.4px; text-transform:uppercase; color:rgba(255,255,255,.55); white-space:nowrap; margin:0 2px 0 0;}
   .role-btn{font-weight:600; font-size:12px; line-height:18px; color:rgba(255,255,255,.72); padding:5px 11px; border-radius:9999px; white-space:nowrap; border:none; background:transparent; cursor:pointer; font-family:var(--font-family-text);}
   .role-btn:hover{color:#fff; background:rgba(255,255,255,.1);}
