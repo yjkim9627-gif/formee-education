@@ -3011,11 +3011,7 @@ function buildBrandKitCardHtml(){
         <div class="brand-kit-logo-item">
           <div class="editor-cell type-logo"><img src="../../../../components/ai-social-media/icons/fmx-logo-sample.svg" alt=""></div>
           <span class="brand-kit-logo-item-label">${label}</span>
-        </div>`).join('') + `
-        <div class="brand-kit-logo-item">
-          <div class="editor-cell type-upload" onclick="event.stopPropagation();"><img src="../../../../components/ai-social-media/icons/panel-upload.svg" alt=""><span>Upload</span></div>
-          <span class="brand-kit-logo-item-label">Add logo</span>
-        </div>`;
+        </div>`).join('');
   const swatches = ['#0e5c55', '#c81856', '#e8891f', '#33383f', '#5a8b8a', '#9c5a72', '#ffffff'];
   const swatchHtml = swatches.map(c => `<span style="background:${c};${c === '#ffffff' ? ' border-left:1px solid var(--color-neutral-200);' : ''}"></span>`).join('');
   return `
