@@ -43,7 +43,16 @@
 .editor-cell.type-upload.uploading img{animation:editor-cell-spin 0.9s linear infinite;}
 @keyframes editor-cell-spin{from{transform:rotate(0deg);} to{transform:rotate(360deg);}}
 
-/* Optional overlays -- a leading select checkbox and/or a trailing "more" action */
-.editor-cell-checkbox{position:absolute; top:4px; left:4px; width:16px; height:16px; box-sizing:border-box; background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-sm); flex-shrink:0; padding:0; cursor:pointer; appearance:none; -webkit-appearance:none;}
+/* Optional overlays -- a leading select checkbox and/or a trailing "more" action.
+   .editor-cell-checkbox only positions the box -- its look (unchecked/checked/disabled) comes
+   from the shared Checkbox component (components/shared/checkbox.css: input.checkbox), so
+   pair the classes on the element: <input type="checkbox" class="checkbox editor-cell-checkbox">.
+   Figma's "Selected" (Logo) / "Focused" (Image) states are this same overlay with :checked --
+   not a separate look of their own. */
+.editor-cell-checkbox{position:absolute; top:4px; left:4px;}
 .editor-cell-action{position:absolute; top:4px; right:4px; width:24px; height:24px; box-sizing:border-box; display:flex; align-items:center; justify-content:center; background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-md); box-shadow:var(--shadow-cell-action); cursor:pointer; padding:0;}
 .editor-cell-action img{width:16px; height:16px; display:block;}
+/* type=Logo's "more" action (Figma "Hover-more"/Hover states) sits near the logo graphic's own
+   right edge, not the cell's top-right corner -- a wide 41:8 logo doesn't reach that corner. */
+.editor-cell.type-logo.size-md .editor-cell-action{top:3px; right:auto; left:60px;}
+.editor-cell.type-logo.size-lg .editor-cell-action{top:6px; right:auto; left:111px;}
