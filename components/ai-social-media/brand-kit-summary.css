@@ -15,7 +15,11 @@
    The switch itself is the real [DS] Controls / Switch component (switch.css's
    .field-switch) — this file only covers the row/label/card/empty-state chrome around it. */
 
-.brand-kit-row{display:flex; flex-direction:column; gap:var(--spacing-md); align-items:flex-start; width:100%;}
+/* align-items:stretch (the flex default) so #brandKitSummary/etc — plain divs with no width
+   of their own — stretch to the row's full width instead of shrinking to fit their content;
+   flex-start here silently broke the card down to ~content-width instead of the full stage
+   width Figma shows. */
+.brand-kit-row{display:flex; flex-direction:column; gap:var(--spacing-md); align-items:stretch; width:100%;}
 .brand-kit-header{display:flex; flex-direction:column; gap:var(--spacing-xs); align-items:flex-start; width:100%;}
 .brand-kit-toggle-row{display:flex; align-items:center; gap:var(--spacing-lg);}
 .brand-kit-label{font-size:14px; line-height:22px; font-weight:600; color:var(--color-neutral-900);}
