@@ -1872,8 +1872,8 @@
               <div class="draft-section brand-kit-row" id="imgBrandKitSection">
                 <div class="brand-kit-header">
                   <div class="brand-kit-toggle-row">
-                    <button type="button" class="field-switch" id="brandKitSwitch" role="switch" aria-label="Use brand kit" aria-checked="false" onclick="toggleBrandKit()"><span class="knob"></span></button>
                     <span class="brand-kit-label">Use brand kit</span>
+                    <button type="button" class="field-switch" id="brandKitSwitch" role="switch" aria-label="Use brand kit" aria-checked="false" onclick="toggleBrandKit()"><span class="knob"></span></button>
                   </div>
                   <p class="brand-kit-description">Use your brand kit to generate the image — AI applies your logo, colours, and fonts automatically.</p>
                 </div>
@@ -2029,14 +2029,15 @@
               <div class="draft-section script-global-brand brand-kit-row" id="scriptGlobalBrand">
                 <div class="brand-kit-header">
                   <div class="brand-kit-toggle-row">
-                    <button type="button" class="field-switch" id="globalBrandKitSwitch" role="switch" aria-label="Use brand kit" aria-checked="false" onclick="toggleGlobalBrandKit()"><span class="knob"></span></button>
                     <span class="brand-kit-label">Use brand kit</span>
+                    <button type="button" class="field-switch" id="globalBrandKitSwitch" role="switch" aria-label="Use brand kit" aria-checked="false" onclick="toggleGlobalBrandKit()"><span class="knob"></span></button>
                   </div>
                   <p class="brand-kit-description">Use your brand kit to generate the image — AI applies your logo, colours, and fonts automatically.</p>
                 </div>
                 <div id="globalBrandKitSummary" style="display:none;"></div>
                 <div class="brand-kit-empty" id="globalBrandKitEmpty" style="display:none;">
-                  Set up your brand kit to apply it here automatically → <a onclick="carGoToBrandSetup()">Brand Setup</a>
+                  <span>Set up your brand kit to apply it here automatically</span>
+                  <button type="button" class="btn btn-secondary" onclick="carGoToBrandSetup()">Brand Setup</button>
                 </div>
               </div>
 
@@ -2226,8 +2227,8 @@
                 <div class="draft-section brand-kit-row" id="reelBrandKitSection">
                   <div class="brand-kit-header">
                     <div class="brand-kit-toggle-row">
-                      <button type="button" class="field-switch" id="reelBrandKitSwitch" role="switch" aria-label="Use brand kit" aria-checked="false" onclick="toggleReelBrandKit()"><span class="knob"></span></button>
                       <span class="brand-kit-label">Use brand kit</span>
+                      <button type="button" class="field-switch" id="reelBrandKitSwitch" role="switch" aria-label="Use brand kit" aria-checked="false" onclick="toggleReelBrandKit()"><span class="knob"></span></button>
                     </div>
                     <p class="brand-kit-description">Use your brand kit to generate the image — AI applies your logo, colours, and fonts automatically.</p>
                   </div>
@@ -3058,7 +3059,7 @@ function imgApplyBrandMode(mode){
     brandKitOn = false;
     brandSwitch.classList.remove('on');
     summary.style.display = 'none';
-    empty.style.display = 'block';
+    empty.style.display = 'flex';
     chip.style.display = 'none';
   }
   brandSwitch.setAttribute('aria-checked', String(brandKitOn));
@@ -3068,7 +3069,7 @@ function toggleBrandKit(){
   brandKitOn = !brandKitOn;
   document.getElementById('brandKitSwitch').classList.toggle('on', brandKitOn);
   document.getElementById('brandKitSummary').style.display = brandKitOn ? 'block' : 'none';
-  document.getElementById('brandKitEmpty').style.display = !brandKitOn && window.__brandMode !== 'set' ? 'block' : 'none';
+  document.getElementById('brandKitEmpty').style.display = !brandKitOn && window.__brandMode !== 'set' ? 'flex' : 'none';
   document.getElementById('brandKitSwitch').setAttribute('aria-checked', String(brandKitOn));
   updateVisualConceptPrompt();
 }
@@ -4199,7 +4200,7 @@ function updateGlobalBrandKitUI(){
   sw.classList.toggle('on', on);
   sw.setAttribute('aria-checked', String(on));
   summary.style.display = on ? 'block' : 'none';
-  empty.style.display = !on && window.__brandMode !== 'set' ? 'block' : 'none';
+  empty.style.display = !on && window.__brandMode !== 'set' ? 'flex' : 'none';
 }
 
 // ---- Reel/Short & Story Video's own "Use brand kit" toggle (same pattern as Carousel's
@@ -4218,7 +4219,7 @@ function updateReelBrandKitUI(){
   sw.classList.toggle('on', on);
   sw.setAttribute('aria-checked', String(on));
   summary.style.display = on ? 'block' : 'none';
-  empty.style.display = !on && window.__brandMode !== 'set' ? 'block' : 'none';
+  empty.style.display = !on && window.__brandMode !== 'set' ? 'flex' : 'none';
 }
 function reelGoToBrandSetup(){
   alert('This would open Brand Setup — outside this prototype\'s scope.');
