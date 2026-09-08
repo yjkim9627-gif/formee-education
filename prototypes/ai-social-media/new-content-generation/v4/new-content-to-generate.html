@@ -29,6 +29,7 @@
 <link rel="stylesheet" href="../../../../components/ai-social-media/date-picker.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/carousel-card-block.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/brand-kit-summary.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/ai-response-card.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/editor-cell.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/brand-logo.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/image-scene-card.css">
@@ -151,36 +152,8 @@
   .msg-status .worked-label{font-weight:600; color:var(--color-neutral-700);}
   .msg-status .worked-time{font-weight:400; color:var(--color-neutral-500);}
 
-  /* .chat-cta-row = plain flex-wrap row, used only for the version-pill picker (not a proposal
-     card). Every stage-progress CTA (Script Drafted / Ready to Generate / Storyboard Ready / etc.,
-     for reel-short, image post AND carousel alike) renders as the bordered .chat-cta-card instead —
-     now a genuine Figma component, "AI / Response Card" (Components section, node 7164-15),
-     combining every ad hoc version of this card that used to be scattered across the file's
-     screens. Its "State" variant covers 6 looks; .chat-cta-card only needs to support whichever
-     pieces a given state uses (checklist row / 1 button / 2 buttons) since callers already
-     compose the title+text+buttonsHtml themselves. */
-  .chat-cta-row{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;}
-  .chat-cta-row .btn-dark, .chat-cta-row .btn-secondary{padding:8px 14px; font-size:12px;}
-  .chat-cta-card{display:flex; flex-direction:column; gap:12px; margin-top:10px; background:var(--color-neutral-75); border:1px solid var(--color-neutral-400); border-radius:var(--radius-xl); padding:12px;}
-  .chat-cta-title{font-size:14px; font-weight:700; color:var(--color-neutral-900);}
-  .chat-cta-text{font-size:14px; color:var(--color-neutral-700); line-height:1.57;}
-  .chat-cta-card .btn-dark, .chat-cta-card .btn-secondary{width:100%; justify-content:center; padding:9px 14px; font-size:13px;}
-  /* AI / Response Card (7164:15) "Buttons 1row"/"Buttons 2rows" states — the version-pick
-     buttons (V1/V2/…) are fixed 128px, not full-width like every other chat CTA button, and
-     lay out as a plain row up to 2 versions or a 2-column grid from 3 versions on. */
-  .ai-version-buttons{display:flex; gap:12px;}
-  .ai-version-buttons.rows-2{display:grid; grid-template-columns:repeat(2, 1fr);}
-  .chat-cta-card .ai-version-buttons .btn-dark{width:auto; flex:1;}
-  /* State = "1 Button + Checklist(, Disabled)" — the confirmation badge row (e.g. "Applied to
-     Script panel") shown above that state's button. */
-  .chat-cta-checklist{display:flex; align-items:center; gap:8px; width:100%; box-sizing:border-box; background:var(--color-badge-blue-bg); border:1px solid var(--color-brand-primary-mid); border-radius:var(--radius-lg); padding:6px 8px;}
-  .chat-cta-checklist img{width:16px; height:16px; flex-shrink:0;}
-  .chat-cta-checklist span{font-size:13px; font-weight:600; color:var(--color-brand-primary); font-family:var(--font-family-text);}
-  /* State = "2 Buttons" — side-by-side equal-width buttons (e.g. picking V1/V2), as opposed to
-     "Title Only + 2 Buttons"'s stacked full-width pair (already covered by the default
-     width:100% rule above). */
-  .chat-cta-buttons-row{display:flex; gap:12px; width:100%;}
-  .chat-cta-buttons-row .btn-dark, .chat-cta-buttons-row .btn-secondary{flex:1; width:auto;}
+  /* .chat-cta-row/.chat-cta-card/etc. now come from the shared
+     components/ai-social-media/ai-response-card.css ("AI / Response Card", node 7164:15). */
 
   .visual-proposal-box{margin-top:8px; background:#fff; border:1px solid var(--color-neutral-300); border-radius:var(--radius-lg); padding:14px; display:flex; flex-direction:column; gap:10px;}
   .visual-proposal-heading{font-size:13px; font-weight:700; color:var(--color-neutral-900);}
@@ -2697,8 +2670,8 @@
 
 <div class="thumb-mode-switch" id="thumbModeSwitch" role="group" aria-label="Script clip thumbnail preview">
   <p class="role-cap">Script clips</p>
-  <button type="button" class="role-btn" data-thumb="on" onclick="setThumbnailMode('on')">With thumbnail</button>
-  <button type="button" class="role-btn on" data-thumb="off" onclick="setThumbnailMode('off')">No thumbnail</button>
+  <button type="button" class="role-btn on" data-thumb="on" onclick="setThumbnailMode('on')">With thumbnail</button>
+  <button type="button" class="role-btn" data-thumb="off" onclick="setThumbnailMode('off')">No thumbnail</button>
 </div>
 
 <script>
@@ -4928,6 +4901,21 @@ function runBriefToScript(){
         { label: 'Make it shorter' },
         { label: 'Make it more hooking' }
       ]);
+      // AI / Response Card, State = "Toggle" (Figma 7725:326789) — lets brand kit be set up
+      // right from chat instead of only from the toggle row further down the Script panel.
+      // Only worth surfacing once a brand kit actually exists to apply (window.__brandMode
+      // === 'set') — same demo-only flag updateReelBrandKitUI() already gates its own
+      // empty-state text on.
+      if(window.__brandMode === 'set'){
+        appendChatCta(
+          'Use brand Kit',
+          'Apply your saved brand colors, fonts, and logo to this video automatically.',
+          `<div class="chat-cta-toggle-row">
+            <span class="chat-cta-toggle-label">Use brand kit</span>
+            <button type="button" class="field-switch${window.__reelBrandKitOn ? ' on' : ''}" role="switch" aria-checked="${!!window.__reelBrandKitOn}" onclick="toggleReelBrandKit(); this.classList.toggle('on'); this.setAttribute('aria-checked', this.classList.contains('on'));"><span class="knob"></span></button>
+          </div>`
+        );
+      }
       appendChatCta(
         'Ready to generate thumbnails?',
         'Review each scene’s dialogue and description on the Timeline tab, then generate a thumbnail to preview how it looks.',
@@ -7460,11 +7448,11 @@ function reelApplyBrandMode(mode){
   document.querySelectorAll('#roleSwitch .role-btn').forEach(b => b.classList.toggle('on', b.dataset.brand === mode));
 }
 
-// ---- Demo control: Script clip thumbnail preview (default 'off', matching v4's redesign —
-// see renderReelSceneEditors()'s own comment on why it dropped the thumbnail canvas). 'on'
-// restores that still-image-first framing on Script's clip cards specifically; the Video
-// stage's tiles show a thumbnail either way (applySampleVideoFrame() was never touched). ----
-window.__thumbnailMode = 'off';
+// ---- Demo control: Script clip thumbnail preview (default 'on' — the with-thumbnail Timeline
+// flow is what this prototype should show first). 'on' restores the still-image-first framing
+// on Script's clip cards specifically; the Video stage's tiles show a thumbnail either way
+// (applySampleVideoFrame() was never touched). ----
+window.__thumbnailMode = 'on';
 function setThumbnailMode(mode){
   window.__thumbnailMode = mode;
   document.querySelectorAll('#thumbModeSwitch .role-btn').forEach(b => b.classList.toggle('on', b.dataset.thumb === mode));

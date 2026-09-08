@@ -2,11 +2,12 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
-<title>Voice Accordion Row — AI Social Media Component</title>
+<title>AI Response Card — AI Social Media Component</title>
 <link rel="stylesheet" href="../../tokens/tokens.css" />
 <link rel="stylesheet" href="../demo-nav.css" />
-<link rel="stylesheet" href="actions-button.css" />
-<link rel="stylesheet" href="voice-accordion-row.css" />
+<link rel="stylesheet" href="../shared/button.css" />
+<link rel="stylesheet" href="switch.css" />
+<link rel="stylesheet" href="ai-response-card.css" />
 <style>
   body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
   .demo-main { padding: var(--spacing-4xl); }
@@ -14,6 +15,13 @@
   .demo-row { display: flex; flex-direction: column; gap: var(--spacing-sm); margin-bottom: var(--spacing-3xl); }
   .demo-label { font-size: var(--font-size-text-xs); color: var(--color-neutral-500); }
   .demo-grid { display: flex; flex-wrap: wrap; gap: var(--spacing-2xl); align-items: flex-start; }
+  /* 292px matches Figma's own card width (node 7725:326789) — roughly the real AI Assistant
+     chat panel's usable width. */
+  .demo-cell { display: flex; flex-direction: column; gap: var(--spacing-sm); width: 292px; }
+  /* .btn-dark is the v4 prototype's own dark-gradient primary variant, layered on top of
+     shared/button.css's base .btn — not part of that shared file itself. Reproduced here so
+     this demo matches v4's real chat cards exactly. */
+  .btn-dark{background:linear-gradient(180deg, var(--color-action-primary-dark-gradient-start), var(--color-action-primary-dark-gradient-end)); border-color:transparent; color:var(--color-neutral-0); box-shadow:0 1px 2px rgba(13,13,13,0.1), var(--shadow-action-primary-dark-inset), inset 0 0.5px 1px rgba(255,255,255,.15);}
 </style>
 </head>
 <body>
@@ -74,12 +82,12 @@
         <a href="w-action-bar.html">W:ActionBar</a>
       </div>
     </div>
-    <div class="demo-sidebar-group collapsed" data-group="ai-assistant">
+    <div class="demo-sidebar-group" data-group="ai-assistant">
       <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>AI Assistant</span><span class="demo-sidebar-group-caret">▾</span></button>
       <div class="demo-sidebar-group-items">
         <a href="chat-panel.html">Chat Panel</a>
         <a href="prompt-box.html">AI Prompt Box</a>
-        <a href="ai-response-card.html">AI Response Card</a>
+        <a href="ai-response-card.html" class="active">AI Response Card</a>
       </div>
     </div>
     <div class="demo-sidebar-group collapsed" data-group="upload">
@@ -88,7 +96,7 @@
         <a href="upload-dropzone.html">Upload Dropzone / Dashed Upload Row</a>
       </div>
     </div>
-    <div class="demo-sidebar-group" data-group="editor">
+    <div class="demo-sidebar-group collapsed" data-group="editor">
       <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Editor</span><span class="demo-sidebar-group-caret">▾</span></button>
       <div class="demo-sidebar-group-items">
         <a href="brand-kit.html">Brand Kit</a>
@@ -106,7 +114,7 @@
         <a href="storyboard-card.html">Storyboard Card</a>
         <a href="uploads-rows.html">Uploads Panel Rows</a>
         <a href="video-summary-card.html">Video Summary Card</a>
-        <a href="voice-accordion-row.html" class="active">Voice Accordion Row</a>
+        <a href="voice-accordion-row.html">Voice Accordion Row</a>
       </div>
     </div>
     <div class="demo-sidebar-group collapsed" data-group="product-selectors">
@@ -142,46 +150,76 @@
     </div>
   </nav>
   <main class="demo-main">
-  <h1>Voice Accordion Row</h1>
+  <h1>AI Response Card</h1>
 
   <div class="demo-row">
-    <span class="demo-label">State</span>
+    <span class="demo-label">State = Title Only + 1 Button (e.g. "Script Drafted" → Continue to Storyboard)</span>
     <div class="demo-grid">
-
-      <div class="voice-accordion-row" data-state="collapsed">
-        <button class="voice-acc-header" type="button">
-          <span class="voice-acc-time">0:00–0:08</span>
-          <span class="voice-acc-summary">Okay wait, you guys have to see this new lip tint — I'm already obsessed...</span>
-          <span class="voice-credit-pill"><span class="cost"><img src="icons/zap-sm.svg" alt="">5</span></span>
-          <img class="voice-acc-caret" src="icons/caret-down-filled.svg" alt="">
-        </button>
-      </div>
-
-      <div class="voice-accordion-row expanded" data-state="expanded">
-        <button class="voice-acc-header" type="button">
-          <span class="voice-acc-time">0:00–0:08</span>
-          <span class="voice-acc-summary">Okay wait, you guys ha...</span>
-          <span class="voice-credit-pill"><span class="cost"><img src="icons/zap-sm.svg" alt="">5</span></span>
-          <img class="voice-acc-caret" src="icons/caret-down-filled.svg" alt="">
-        </button>
-        <div class="voice-acc-body">
-          <div class="voice-acc-script-wrap">
-            <div class="voice-script-text">Okay wait, you guys have to see this new lip tint — I'm already obsessed...</div>
-            <span class="voice-acc-wordcount">9 / 15 words</span>
-          </div>
-          <div class="voice-acc-bottom">
-            <button class="actions-btn" type="button"><span class="play-icon"></span><span>Preview</span></button>
-          </div>
+      <div class="demo-cell">
+        <div class="chat-cta-card">
+          <div class="chat-cta-title">Script Drafted</div>
+          <p class="chat-cta-text">Each card's text is ready — see Card 1-5 on the right. Edit any card directly, or tell me here for a different angle.</p>
+          <button type="button" class="btn btn-dark">Continue to Storyboard</button>
         </div>
       </div>
-
     </div>
   </div>
 
   <div class="demo-row">
-    <span class="demo-label">Credit pill — with "Regenerate" label (used once a script has been edited)</span>
+    <span class="demo-label">State = Toggle (node 7725:326789) — setting up Brand Kit directly from chat</span>
     <div class="demo-grid">
-      <span class="voice-credit-pill"><span class="label">Regenerate</span><span class="cost"><img src="icons/zap-sm.svg" alt="">5</span></span>
+      <div class="demo-cell">
+        <div class="chat-cta-card">
+          <div class="chat-cta-title">Use brand Kit</div>
+          <p class="chat-cta-text">Apply your saved brand colors, fonts, and logo to this image automatically.</p>
+          <div class="chat-cta-toggle-row">
+            <span class="chat-cta-toggle-label">Use brand kit</span>
+            <button type="button" class="field-switch on" role="switch" aria-checked="true"><span class="knob"></span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-row">
+    <span class="demo-label">State = Title Only + 2 Buttons (e.g. "Your video is ready" → Continue to editing / Skip to publish)</span>
+    <div class="demo-grid">
+      <div class="demo-cell">
+        <div class="chat-cta-card">
+          <div class="chat-cta-title">Your video is ready. What's next?</div>
+          <button type="button" class="btn btn-dark">Continue to editing →</button>
+          <button type="button" class="btn btn-secondary">Skip to publish</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-row">
+    <span class="demo-label">State = Buttons 1row (version pick, e.g. "All 2 versions ready")</span>
+    <div class="demo-grid">
+      <div class="demo-cell">
+        <div class="chat-cta-card">
+          <div class="chat-cta-title">All 2 versions ready</div>
+          <p class="chat-cta-text">Pick your favorite to move into Develop, or regenerate any one individually.</p>
+          <div class="ai-version-buttons">
+            <button type="button" class="btn btn-dark">V1</button>
+            <button type="button" class="btn btn-dark">V2</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-row">
+    <span class="demo-label">State = 1 Button + Checklist</span>
+    <div class="demo-grid">
+      <div class="demo-cell">
+        <div class="chat-cta-card">
+          <div class="chat-cta-title">Copy updated</div>
+          <div class="chat-cta-checklist"><img src="icons/circle-check.svg" alt=""><span>Applied to Script panel</span></div>
+          <button type="button" class="btn btn-dark">Continue</button>
+        </div>
+      </div>
     </div>
   </div>
   </main>
