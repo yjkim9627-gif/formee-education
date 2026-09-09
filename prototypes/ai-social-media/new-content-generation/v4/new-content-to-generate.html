@@ -7795,10 +7795,14 @@ fitScreenToViewport();
   color:var(--color-neutral-900,#0f1729);white-space:nowrap;}
 .fmx-back:hover{background:var(--color-neutral-50,#f6f8fc);}
 .fmx-back i{font-style:normal;color:var(--color-neutral-500,#8a93a8);}
-/* 화면 안 제자리. Figma(8741:250771 · 9026:254025 · 9154:132414)는 이 알약을
-   페이지 제목 바로 위에 두므로 여기서도 같은 자리에 붙인다. 붙일 제목을 못 찾으면
-   위의 떠 있는 버전이 대신 뜬다 — 돌아갈 길이 아예 없는 것보다는 낫다. */
-.fmx-back--inline{position:static;margin:0 0 16px;box-shadow:none;align-self:flex-start;}
+/* 상단 바 왼쪽, 스테퍼 앞. Figma 는 Nav / App TopBar 의 "Show back" 토글로
+   같은 자리를 낸다. 제목 위가 아니라 여기인 이유는 하나 — Publish 는 길어서
+   본문에 두면 한 번 스크롤에 사라진다. 상단 바는 남는다.
+   스테퍼(지금 어디냐)와 역할이 달라서 구분선으로 갈라 둔다.
+   상단 바를 못 찾으면 아래 떠 있는 버전이 대신 뜬다. */
+.fmx-back-slot{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.fmx-back--bar{position:static;box-shadow:none;}
+.fmx-back-rule{width:1px;height:24px;background:var(--color-neutral-300,#d6ddeb);flex:none;}
 </style>
 <script id="fmx-deeplink-js">
 /* Content Library 딥링크
@@ -7831,25 +7835,29 @@ fitScreenToViewport();
     if (!home) return;
     /* back 은 해시 조각만 받는다. 콜론이나 // 가 섞여 있으면 URL 을 밀어넣은 것이라 버린다. */
     var safe = /[:]|\/\//.test(back) ? '' : back;
-    function pill(inline){
+    function pill(){
       var a = document.createElement('a');
-      a.className = 'fmx-back' + (inline ? ' fmx-back--inline' : '');
+      a.className = 'fmx-back';
       a.href = home.href + (safe ? '#' + safe : '');
       a.innerHTML = '<i>\u2190</i>';
       a.appendChild(document.createTextNode('Back to ' + home.label));
       return a;
     }
-    /* Brief 와 Publish 는 서로 다른 view 라 양쪽에 하나씩 둔다 — 보이는 쪽만 눈에 띈다 */
-    var heads = document.querySelectorAll('.brief-heading, .pub-page-heading');
-    if (heads.length){
-      Array.prototype.forEach.call(heads, function(h){
-        if (h.previousElementSibling &&
-            h.previousElementSibling.classList.contains('fmx-back')) return;
-        h.parentNode.insertBefore(pill(true), h);
-      });
+    /* 상단 바는 모든 view 가 함께 쓰는 껍데기라 한 번만 넣으면 된다 */
+    var bar = document.querySelector('.topbar');
+    if (bar && !bar.querySelector('.fmx-back-slot')){
+      var slot = document.createElement('div');
+      slot.className = 'fmx-back-slot';
+      var a = pill(false);
+      a.classList.add('fmx-back--bar');
+      slot.appendChild(a);
+      var rule = document.createElement('span');
+      rule.className = 'fmx-back-rule';
+      slot.appendChild(rule);
+      bar.insertBefore(slot, bar.firstChild);
       return;
     }
-    document.body.appendChild(pill(false));
+    if (!bar) document.body.appendChild(pill(false));
   }
   function banner(){
     if (!ref) return;
