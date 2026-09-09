@@ -2,19 +2,19 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
-<title>Controls / Multi Select — Shared Component</title>
+<title>Reference Chip — AI Social Media Component</title>
 <link rel="stylesheet" href="../../tokens/tokens.css" />
 <link rel="stylesheet" href="../demo-nav.css" />
-<link rel="stylesheet" href="controls-multi-select.css" />
+<link rel="stylesheet" href="reference-chip.css" />
 <style>
   body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
   .demo-main { padding: var(--spacing-4xl); }
   h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-sm); }
   h2 { font-size: var(--font-size-text-md); font-weight: 700; color: var(--color-neutral-700); margin: var(--spacing-3xl) 0 var(--spacing-md); }
   h2:first-of-type { margin-top: 0; }
-  .demo-note { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); max-width: 640px; margin: 0 0 var(--spacing-3xl); line-height: 1.6; }
-  .row { padding: var(--spacing-xl); background: var(--color-neutral-0); border: 1px solid var(--color-neutral-200); border-radius: 12px; }
-  .row + .row { margin-top: var(--spacing-lg); }
+  .demo-note { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); max-width: 720px; margin: 0 0 var(--spacing-3xl); line-height: 1.6; }
+  .demo-sub { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); margin: 0 0 var(--spacing-lg); }
+  .demo-grid { display: flex; flex-wrap: wrap; gap: var(--spacing-2xl); align-items: flex-start; }
 </style>
 </head>
 <body>
@@ -39,7 +39,7 @@
         <a href="actions-button.html">Actions / Button</a>
       </div>
     </div>
-    <div class="demo-sidebar-group" data-group="inputs">
+    <div class="demo-sidebar-group collapsed" data-group="inputs">
       <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>03 Inputs & Controls</span><span class="demo-sidebar-group-caret">▾</span></button>
       <div class="demo-sidebar-group-items">
         <a href="controls-field-ai-assisted-text.html">Controls / Field / AI assisted text</a>
@@ -48,7 +48,7 @@
         <a href="controls-filter-toggle.html">Controls / Filter / Toggle</a>
         <a href="controls-menu.html">Menu / Context Menu / Size Dropdown</a>
         <a href="controls-misc.html">Controls — Icon Action, Popover, Carousel Arrow, Scrollbar, Segmented Control</a>
-        <a href="controls-multi-select.html" class="active">Controls / Multi Select</a>
+        <a href="controls-multi-select.html">Controls / Multi Select</a>
         <a href="controls-option-card.html">Controls / Option Card</a>
         <a href="controls-search-field.html">Controls / Search Field</a>
         <a href="controls-social-profile-row.html">Controls / Social profile row</a>
@@ -81,7 +81,7 @@
         <a href="chat-panel.html">Chat Panel</a>
         <a href="prompt-box.html">AI Prompt Box</a>
         <a href="ai-response-card.html">AI Response Card</a>
-        <a href="reference-chip.html">Reference Chip</a>
+        <a href="reference-chip.html" class="active">Reference Chip</a>
       </div>
     </div>
     <div class="demo-sidebar-group collapsed" data-group="upload">
@@ -90,7 +90,7 @@
         <a href="upload-dropzone.html">Upload Dropzone / Dashed Upload Row</a>
       </div>
     </div>
-    <div class="demo-sidebar-group collapsed" data-group="editor">
+    <div class="demo-sidebar-group" data-group="editor">
       <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Editor</span><span class="demo-sidebar-group-caret">▾</span></button>
       <div class="demo-sidebar-group-items">
         <a href="brand-kit.html">Brand Kit</a>
@@ -144,59 +144,41 @@
     </div>
   </nav>
   <main class="demo-main">
-  <h1>Controls / Multi Select</h1>
-  <p class="demo-note">Figma: "03 Inputs &amp; Controls" (1124:30) — "Controls / Multi Select" (4666:99418), 4 states: default (4666:99346), focused (4666:99357), overflow (4666:99367), expanded (4666:99385).</p>
+  <h1>Reference Chip</h1>
+  <p class="demo-note">Figma: "Prompt Reference Chip" (node 8727:220714, 9191:135045) — the reference-image chip used in the AI Prompt Box across Reel/Short, Story Video, Image post and Carousel's Brief &amp; Style stage. Empty state prompts "Reference"/"First frame"/"Last frame"; once attached it shows the Remove (✕) corner and a More (…) button on hover. The wide "image" state (<code>.ref-chip--detail</code>) is the Content Library "Use as reference" hand-off card.</p>
 
-  <h2>State=default</h2>
-  <div class="row">
-    <div class="multi-select">
-      <div class="multi-select-tag"><span>Korea</span><img src="icons/panel-close.svg" alt=""></div>
-      <div class="multi-select-tag"><span>Japan</span><img src="icons/panel-close.svg" alt=""></div>
-      <span class="multi-select__placeholder">Add a country or city</span>
-      <img class="multi-select__chevron" src="icons/chevron-down.svg" alt="">
+  <h2>Empty / Hover / Remove (square chip, 120×~68px)</h2>
+  <p class="demo-sub">Used compactly (one chip per attachment) in the Brief prompt box and Script/Timeline scene editors.</p>
+  <div class="demo-grid">
+    <div class="ref-chip" title="Empty">
+      <img class="ref-chip-icon" src="icons/content-image-plus.svg" alt="">
+      <span class="ref-chip-label">Reference</span>
+    </div>
+    <div class="ref-chip" data-attached="true" title="Hover to reveal the More button">
+      <img class="ref-chip-icon" src="icons/content-image-plus.svg" alt="">
+      <span class="ref-chip-label">First frame</span>
+      <button type="button" class="ref-chip-more" title="More options"><img src="icons/ui-ellipsis.svg" class="icon-inline" alt=""></button>
+      <button type="button" class="ref-chip-remove" aria-label="Remove reference" title="Remove reference"><img src="icons/controls/chip-close-x.svg" class="icon-inline" alt=""></button>
+    </div>
+    <div class="ref-chip" title="Empty">
+      <img class="ref-chip-icon" src="icons/content-image-plus.svg" alt="">
+      <span class="ref-chip-label">Last frame</span>
     </div>
   </div>
 
-  <h2>State=focused</h2>
-  <div class="row">
-    <div class="multi-select multi-select--focused">
-      <div class="multi-select-tag"><span>Korea</span><img src="icons/panel-close.svg" alt=""></div>
-      <input class="multi-select__input" type="text" value="ko" />
-      <div class="multi-select__divider"></div>
-      <div class="multi-select__spacer"></div>
-      <img class="multi-select__chevron" src="icons/chevron-down.svg" alt="">
-    </div>
-  </div>
-
-  <h2>State=overflow</h2>
-  <div class="row">
-    <div class="multi-select">
-      <div class="multi-select-tag"><span>Korea</span><img src="icons/panel-close.svg" alt=""></div>
-      <div class="multi-select-tag"><span>Japan</span><img src="icons/panel-close.svg" alt=""></div>
-      <div class="multi-select-tag"><span>Singapore</span><img src="icons/panel-close.svg" alt=""></div>
-      <span class="multi-select__more">+4 more</span>
-      <div class="multi-select__spacer"></div>
-      <img class="multi-select__chevron" src="icons/chevron-down.svg" alt="">
-    </div>
-  </div>
-
-  <h2>State=expanded</h2>
-  <div class="row">
-    <div class="multi-select multi-select--expanded">
-      <div class="multi-select__row">
-        <div class="multi-select-tag"><span>Korea</span><img src="icons/panel-close.svg" alt=""></div>
-        <div class="multi-select-tag"><span>Japan</span><img src="icons/panel-close.svg" alt=""></div>
-        <div class="multi-select-tag"><span>Singapore</span><img src="icons/panel-close.svg" alt=""></div>
+  <h2>Image (wide detail card, 387px)</h2>
+  <p class="demo-sub">Figma 8614:18 — the Content Library "Use as reference" hand-off. Clicking it opens the strength/match/frame-picker popover (see new-content-to-generate.html's fmxref-js for the working implementation).</p>
+  <div class="demo-grid">
+    <div class="ref-chip ref-chip--detail">
+      <img class="ref-chip-detail-thumb" src="icons/content-image-plus.svg" alt="" style="object-fit:contain; background:var(--color-neutral-100); padding:8px;">
+      <div class="ref-chip-detail-labels">
+        <div class="ref-chip-detail-line1">
+          <span class="ref-chip-detail-badge">REF</span>
+          <span class="ref-chip-detail-title">from "This New Lip Tint Is Everything"</span>
+        </div>
+        <span class="ref-chip-detail-sub">Cover frame · Balanced · Style, Composition, Colors</span>
       </div>
-      <div class="multi-select__row">
-        <div class="multi-select-tag"><span>Taiwan</span><img src="icons/panel-close.svg" alt=""></div>
-        <div class="multi-select-tag"><span>Vietnam</span><img src="icons/panel-close.svg" alt=""></div>
-        <div class="multi-select-tag"><span>Thailand</span><img src="icons/panel-close.svg" alt=""></div>
-      </div>
-      <div class="multi-select__row">
-        <div class="multi-select-tag"><span>Malaysia</span><img src="icons/panel-close.svg" alt=""></div>
-        <span class="multi-select__placeholder">Add a country or city</span>
-      </div>
+      <img class="ref-chip-detail-remove" src="icons/button-x-dark.svg" alt="Remove reference">
     </div>
   </div>
   </main>
