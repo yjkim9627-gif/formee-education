@@ -7858,9 +7858,12 @@ fitScreenToViewport();
    Figma: library 섹션 8093:227085(도착) · 8124:128280(팝오버) ·
           8124:128886(프레임 선택) · 8128:129254(프레임 반영)
 
-   기존 마크업은 고치지 않는다. 칩 한 줄을 .prompt-top 맨 앞에 끼워 넣을 뿐이다.
+   기존 마크업은 고치지 않는다. 칩 한 줄(.fmxref-row)을 새로 만들어 넣을 뿐이다.
    .reference-images-row 안에는 넣지 않는다 — renderReferenceImages() 가 그 행의
-   innerHTML 을 통째로 갈아치우기 때문에 넣는 족족 지워진다. 형제로 둔다.
+   innerHTML 을 통째로 갈아치우기 때문에 넣는 족족 지워진다. 형제로 둔다. 다만 Figma
+   9191:135045 처럼 First frame/Last frame 과 한 줄에 나란히 보여야 해서, 그 형제 관계는
+   유지한 채로 둘을 .fmxref-line 이라는 flex-row 래퍼 하나로 같이 감싼다 (mountRows() 참고) —
+   기존 .reference-images-row 노드 자체는 옮겨지기만 할 뿐 다시 그려지지 않는다.
 
    모달·버튼은 공용 컴포넌트(components/shared/modal.css, button.css)를 그대로 쓰고,
    세그먼트는 이 파일의 .seg-control/.seg-chip 을 쓴다. 새로 정의한 건 칩·팝오버·
@@ -7871,7 +7874,11 @@ fitScreenToViewport();
 .app{position:relative;}
 
 /* ---------- 브리프 안의 레퍼런스 칩 ---------- */
-.fmxref-row{position:relative; display:flex; margin-bottom:var(--spacing-md);}
+/* .fmxref-line wraps the existing .reference-images-row + the wide .fmxref-row side by
+   side (Figma 9191:135045: First frame / Last frame / the wide REF chip all sit in one
+   row) -- mounted dynamically by mountRows(), see that function's own comment. */
+.fmxref-line{display:flex; align-items:flex-start; gap:8px; flex-wrap:wrap;}
+.fmxref-row{position:relative; display:flex;}
 .fmxref-row:empty{display:none;}
 .fmxref-chip{display:flex; align-items:center; gap:var(--spacing-sm);
   padding:var(--spacing-sm) var(--spacing-sm) var(--spacing-sm) var(--spacing-sm);
@@ -8123,10 +8130,24 @@ fitScreenToViewport();
   }
   function mountRows(){
     document.querySelectorAll('.prompt-top').forEach(function(top){
-      if (top.querySelector(':scope > .fmxref-row')) return;
+      if (top.querySelector('.fmxref-row')) return;
       var row = document.createElement('div');
       row.className = 'fmxref-row';
-      top.insertBefore(row, top.firstChild);
+      /* Figma 9191:135045: the wide reference chip sits INLINE next to First frame/Last
+         frame, not stacked in its own row above them -- wrap the existing
+         .reference-images-row (untouched, still owned by renderReferenceImages()) and the
+         new .fmxref-row together in one flex-row line, re-parenting the live node rather
+         than rewriting its markup. */
+      var refRow = top.querySelector(':scope > .reference-images-row');
+      if (refRow){
+        var line = document.createElement('div');
+        line.className = 'fmxref-line';
+        refRow.parentNode.insertBefore(line, refRow);
+        line.appendChild(refRow);
+        line.appendChild(row);
+      } else {
+        top.insertBefore(row, top.firstChild);
+      }
     });
   }
   function toast(msg){
