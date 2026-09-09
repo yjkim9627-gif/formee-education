@@ -690,7 +690,7 @@ body{
   <div class="launcher-body">
     <h4>01 Default</h4>
     <a href="#s=calendar"><b>1</b><span>calendar</span></a>
-    <a href="#s=list"><b>2</b><span>list</span></a>
+    <a href="#s=list&sel=lip"><b>2</b><span>list</span></a>
     <h4>02 Schedule new · from Library</h4>
     <a href="#s=calendar&new=1"><b>1</b><span>menu open</span></a>
     <a href="#s=calendar&modal=library"><b>2</b><span>pick from Library</span></a>
@@ -803,10 +803,11 @@ function go(patch){
   location.hash = parts.join('&');
 }
 
-/* A1(menu open)은 아직 추가 전이라 7 posts. 나머지는 8 posts. */
+/* menu open / pick from Library 는 아직 추가 전이라 7 posts. 나머지는 8 posts. */
 function visibleEvents(){
+  var notYetAdded = S.menu || S.modal === 'library';
   return EVENTS
-    .filter(function(e){ return !((S.gone || S.menu) && e.id === 'lip'); })
+    .filter(function(e){ return !((S.gone || notYetAdded) && e.id === 'lip'); })
     .map(function(e){
       var o = Object.assign({}, e);
       if(S.failed && o.id === 'uk'){ o.status = 'failed'; o.rel = 'failed 3 days ago'; }
@@ -923,6 +924,53 @@ function emptyHTML(){
     '<button type="button" class="btn" id="clearFilters">Clear filters</button></div>';
 }
 
+/* 화면마다 보이는 메타 줄이 다르다 — 피그마 프레임 그대로 맞춘다.
+   기본 peek 은 Scheduled for 를 배너가 이미 보여주므로 메타에서 뺀다. */
+function metaRows(e, failed, published){
+  var rows = [];
+  var when = failed ? 'Failed at' : (published ? 'Published' : 'Scheduled for');
+  function row(k, v){ return '<div class="meta-row"><dt>' + k + '</dt><dd>' + v + '</dd></div>'; }
+  var status = '<span class="chip ' + e.status + '">' + LABEL[e.status] + '</span>';
+  var typeV  = e.type + ' · ' + e.ratio;
+  var plats  = '<dd class="plats">' + platsHTML(e.plats) + '</dd>';
+  var platRow = '<div class="meta-row"><dt>Platforms</dt>' + plats + '</div>';
+
+  if (failed){
+    rows.push(row('Status', status), row('Type / Aspect', typeV), row('Brand', e.brand), platRow,
+      row(when, 'Sep ' + e.day + ', 2026 ' + e.time));
+    if (S.view !== 'list') rows.push(row('Created by','Jenny'), row('Created','Sep 7, 2026 3:00 PM'));
+  } else if (S.modal === 'unschedule'){
+    rows.push(row('Status', status), row('Type / Aspect', typeV), row('Brand', e.brand), platRow,
+      row('Created by','Jenny'));
+  } else if (published){
+    rows.push(row('Type / Aspect', typeV), row('Brand', e.brand), platRow,
+      row(when, 'Sep ' + e.day + ', 2026 ' + e.time), row('Created by','Jenny'));
+  } else {
+    rows.push(row('Type / Aspect', typeV), row('Brand', e.brand), platRow, row('Created by','Jenny'));
+  }
+  return '<dl class="meta">' + rows.join('') + '</dl>';
+}
+/* 액션도 화면별로 다르다. Unschedule 확인 화면의 peek 은 3버튼 세트를 쓴다. */
+function peekActions(e, failed, published){
+  var edit = '<a class="btn" href="' + editPublishURL(e) + '">Edit post</a>';
+  var body;
+  if (failed){
+    body = '<button type="button" class="btn primary">Retry now</button>' + edit +
+      '<button type="button" class="btn ghost" id="btnUnschedule">Unschedule</button>';
+  } else if (S.modal === 'unschedule'){
+    body = '<button type="button" class="btn primary" id="btnBanner2">Reschedule</button>' + edit +
+      '<button type="button" class="btn ghost" id="btnUnschedule">Unschedule</button>';
+  } else if (published){
+    body = '<button type="button" class="btn primary">Duplicate</button>' +
+      '<button type="button" class="btn">View post</button>';
+  } else {
+    /* 예약된 글: 날짜 바꾸기는 위 배너에서, 여기는 내용 수정과 삭제 */
+    body = '<a class="btn primary" href="' + editPublishURL(e) + '">Edit post</a>' +
+      '<button type="button" class="btn" id="btnUnschedule">Delete</button>';
+  }
+  return '<div class="peek-acts">' + body + '</div>';
+}
+
 function paintPeek(evs){
   var e = evs.filter(function(x){ return x.id === S.sel; })[0], peek = $('peek');
   if(!e){ peek.hidden = true; peek.innerHTML = ''; return; }
@@ -948,31 +996,12 @@ function paintPeek(evs){
         '<svg viewBox="0 0 14 14"><path d="M2 5.5h2.2L7 3v8L4.2 8.5H2zM9.5 4.5l3 5M12.5 4.5l-3 5"/></svg>' +
         '<svg viewBox="0 0 14 14"><path d="M2 5V2.5h2.5M12 5V2.5H9.5M2 9v2.5h2.5M12 9v2.5H9.5"/></svg>' +
       '</span></div>' +
-    '<dl class="meta">' +
-      (failed ? '<div class="meta-row"><dt>Status</dt><dd><span class="chip failed">Failed</span></dd></div>' : '') +
-      '<div class="meta-row"><dt>Type / Aspect</dt><dd>' + e.type + ' · ' + e.ratio + '</dd></div>' +
-      '<div class="meta-row"><dt>Brand</dt><dd>' + e.brand + '</dd></div>' +
-      '<div class="meta-row"><dt>Platforms</dt><dd class="plats">' + platsHTML(e.plats) + '</dd></div>' +
-      '<div class="meta-row"><dt>' + whenLabel + '</dt><dd>Sep ' + e.day + ', 2026 ' + e.time + '</dd></div>' +
-      (failed ? '' :
-        '<div class="meta-row"><dt>Created by</dt><dd>Jenny</dd></div>' +
-        '<div class="meta-row"><dt>Created</dt><dd>Sep 7, 2026 3:00 PM</dd></div>') +
-    '</dl>' +
+    metaRows(e, failed, published) +
     (failed ? '<div class="notice"><b>Instagram rejected this post</b>' +
       '<span>The connected account lost access. Reconnect it in Settings, then retry.</span></div>' : '') +
     '</div>' +
-    '<div class="peek-acts">' +
-      (failed
-        ? '<button type="button" class="btn primary">Retry now</button>' +
-          '<a class="btn" href="' + editPublishURL(e) + '">Edit post</a>' +
-          '<button type="button" class="btn ghost" id="btnUnschedule">Unschedule</button>'
-        : published
-        ? '<button type="button" class="btn primary">Duplicate</button>' +
-          '<button type="button" class="btn">View post</button>'
-        /* 예약된 글: 날짜 바꾸기는 위 배너에서, 여기는 내용 수정과 삭제 */
-        : '<a class="btn primary" href="' + editPublishURL(e) + '">Edit post</a>' +
-          '<button type="button" class="btn" id="btnUnschedule">Delete</button>') +
-    '</div>';
+    peekActions(e, failed, published) +
+    '';
 }
 
 function paintOverlays(){
