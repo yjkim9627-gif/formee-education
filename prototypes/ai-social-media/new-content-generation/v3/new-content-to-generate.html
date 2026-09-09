@@ -7330,6 +7330,18 @@ fitScreenToViewport();
 .fmx-ref span{color:var(--color-neutral-500,#8a93a8);}
 .fmx-ref button{margin-left:4px;border:0;background:none;cursor:pointer;
   color:var(--color-neutral-500,#8a93a8);font-size:14px;line-height:1;padding:2px 4px;}
+/* 딥링크로 들어온 화면에는 돌아갈 길이 없다. 보낸 쪽이 from/back 을 실어 보내면
+   상단 바 왼쪽에 이 알약이 뜨고, back 의 해시 그대로 원래 화면으로 되돌린다.
+   본문이 아니라 상단 바인 이유는 하나 — 본문에 두면 한 번 스크롤에 사라진다. */
+.fmx-back{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;
+  background:var(--color-neutral-0,#fff);border:1px solid var(--color-neutral-300,#d6ddeb);
+  border-radius:9999px;text-decoration:none;
+  font-family:var(--font-family-text),-apple-system,sans-serif;font-size:13px;font-weight:600;
+  color:var(--color-neutral-900,#0f1729);white-space:nowrap;}
+.fmx-back:hover{background:var(--color-neutral-50,#f6f8fc);}
+.fmx-back i{font-style:normal;color:var(--color-neutral-500,#8a93a8);}
+.fmx-back-slot{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.fmx-back-rule{width:1px;height:24px;background:var(--color-neutral-300,#d6ddeb);flex:none;}
 </style>
 <script id="fmx-deeplink-js">
 /* Content Library 딥링크
@@ -7342,12 +7354,40 @@ fitScreenToViewport();
   /* 라이브러리 초안을 이어서 편집할 때 넘어오는 값. ref 와 달리 "참고"가 아니라
      같은 콘텐츠라서 배너를 띄우지 않고 캡션 필드를 그대로 채운다. */
   var editTitle = q.get('edit'), caption = q.get('caption');
-  if (!ref && !stage && !editTitle) return;
+  /* 어디서 왔는지 + 어느 화면으로 되돌릴지. 값은 해시 조각이지 URL 이 아니다 —
+     from 이 아는 이름일 때만 경로를 이쪽에서 정한다. */
+  var from = q.get('from'), back = q.get('back') || '';
+  var HOMES = {
+    schedule: {href:'../../schedule/schedule.html', label:'Schedule'},
+    library:  {href:'../../brand-characters/brand-setup-kit-character-library.html', label:'Library'}
+  };
+  if (!ref && !stage && !editTitle && !from) return;
 
   function pickType(){
     if (stage === 'script') return 'carousel';
     if (stage === 'reelTimeline') return 'reel';
     return (ratio && ratio !== '9:16') ? 'image' : 'reel';
+  }
+  function backPill(){
+    var home = HOMES[from];
+    if (!home) return;
+    /* back 은 해시 조각만 받는다. 콜론이나 // 가 섞여 있으면 URL 을 밀어넣은 것이라 버린다. */
+    var safe = /[:]|\/\//.test(back) ? '' : back;
+    var a = document.createElement('a');
+    a.className = 'fmx-back';
+    a.href = home.href + (safe ? '#' + safe : '');
+    a.innerHTML = '<i>\u2190</i>';
+    a.appendChild(document.createTextNode('Back to ' + home.label));
+    var bar = document.querySelector('.topbar');
+    if (bar && !bar.querySelector('.fmx-back-slot')){
+      var slot = document.createElement('div');
+      slot.className = 'fmx-back-slot';
+      slot.appendChild(a);
+      var rule = document.createElement('span');
+      rule.className = 'fmx-back-rule';
+      slot.appendChild(rule);
+      bar.insertBefore(slot, bar.firstChild);
+    }
   }
   function banner(){
     if (!ref) return;
@@ -7399,6 +7439,7 @@ fitScreenToViewport();
       }
     } catch(e){ /* 진입만 실패해도 브리프는 정상으로 열린다 */ }
     banner();
+    backPill();
   }
   if (document.readyState === 'complete') setTimeout(go, 60);
   else window.addEventListener('load', function(){ setTimeout(go, 60); });
