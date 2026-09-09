@@ -15,7 +15,7 @@
   A · Schedule something new (8949:133770)
     A1 Schedule new · menu open           8892:130642   #s=calendar&new=1        (7 posts — 추가 전)
     A2 Schedule new · pick from Library   8861:151032   #s=calendar&modal=library
-    A3 schedule · edit & publish          8741:250771   #s=editpublish
+    A3 schedule · edit & publish          8741:250771   → v4 프로토타입으로 이동
     A4 Schedule new · done                8892:130830   #s=calendar&toast=scheduled
   B · Manage what's scheduled (8949:133771)
     B1 schedule · Scheduled selected      8861:150391   #s=calendar&sel=lip
@@ -36,9 +36,16 @@
   2) Draft 는 publish date 가 없어 캘린더 격자에 올라오지 못한다. Draft 는 Library
      피커(A2)와 Unschedule 이 되돌려 보내는 목적지(B4→B5)에만 등장한다.
 
-  ⚠️ A3(Edit & Publish)는 Publish 화면을 재활용하는 자리다. 여기 있는 건 Schedule 이
-     관여하는 When 블록 위주의 축약본이고, 정본은
-     ../new-content-generation/v4/new-content-to-generate.html 의 Publish 단계.
+  A3(Edit & Publish)는 이 파일에 없다. 예진님이 만든 New Content 생성 플로우의 3단계
+  (Brief & Style → Generate → Edit & Publish)를 그대로 쓰는 자리라 복제하지 않고 v4 로 넘긴다.
+  v4 에 이미 그 용도의 딥링크 규약이 있다(fmx-deeplink-js):
+
+      ../new-content-generation/v4/new-content-to-generate.html
+        #stage=publish&edit=<제목>&caption=<캡션>[&perplatform=1]
+
+  stage=publish 는 goToPublish() 로 3단계를 열고, edit/caption 은 빈 칸이 아니라 이어서
+  고치는 화면임을 알린다. Schedule 은 "언제"만 소유하고 "무엇/어디"는 Publish 가 소유하므로,
+  캡션·해시태그·목적지를 이 파일로 복제해 오지 않는다.
 -->
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -113,6 +120,7 @@ body{
 
 /* ══ Actions / Button ═══════════════════════════════════════════════════ */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:38px;padding:0 16px;
+  text-decoration:none;cursor:pointer;
   border-radius:var(--radius-lg);font-size:var(--font-size-text-sm);line-height:20px;
   font-weight:var(--font-weight-medium);border:1px solid var(--color-neutral-400);
   background:var(--color-neutral-0);color:var(--color-neutral-700);white-space:nowrap;}
@@ -424,25 +432,6 @@ body{
   background:var(--color-neutral-900);color:var(--color-neutral-0);box-shadow:var(--shadow-md);
   font-size:var(--font-size-text-xs);line-height:18px;white-space:nowrap;}
 
-/* ══ A3 · Edit & Publish (재활용 화면의 축약본) ═════════════════════════ */
-.pub{flex:1 1 auto;min-height:0;overflow:auto;display:grid;grid-template-columns:minmax(0,1fr) 460px;gap:20px;}
-.card{padding:20px;background:var(--color-neutral-0);border:1px solid var(--color-neutral-300);
-  border-radius:var(--radius-lg);display:flex;flex-direction:column;gap:12px;}
-.card h3{font-size:var(--font-size-text-sm);line-height:20px;font-weight:var(--font-weight-bold);}
-.field{min-height:88px;padding:12px;border:1px solid var(--color-neutral-400);
-  border-radius:var(--radius-lg);font-size:var(--font-size-text-xs);line-height:18px;
-  color:var(--color-neutral-700);}
-.radio-row{display:flex;align-items:center;gap:12px;padding:6px 0;}
-.radio{width:20px;height:20px;flex:none;border-radius:var(--radius-full);
-  border:1.5px solid var(--color-neutral-400);display:flex;align-items:center;justify-content:center;}
-.radio[aria-checked="true"]{background:var(--color-brand-primary);border-color:var(--color-brand-primary);}
-.radio svg{width:11px;height:11px;stroke:#fff;fill:none;stroke-width:2.2;
-  stroke-linecap:round;stroke-linejoin:round;}
-.radio-row .lab{font-size:var(--font-size-text-xs);line-height:18px;color:var(--color-neutral-700);}
-.radio-row[data-on="true"] .lab{font-weight:var(--font-weight-semibold);color:var(--color-neutral-900);}
-.pub-note{font-size:var(--font-size-text-2xs);line-height:16px;color:var(--color-neutral-500);}
-.pub-note code{font-family:var(--font-family-mono,ui-monospace,monospace);}
-
 /* ══ screens launcher — 프로토타입 탐색용, 제품 UI 아님 ══════════════════ */
 .launcher{position:fixed;z-index:100;left:16px;bottom:16px;width:296px;
   max-height:calc(100vh - 32px);display:flex;flex-direction:column;
@@ -559,38 +548,6 @@ body{
       </div>
       </div>
 
-      <!-- A3 · Edit & Publish -->
-      <div class="pub" id="pubView" hidden>
-        <div style="display:flex;flex-direction:column;gap:20px">
-          <div class="card">
-            <h3>Caption</h3>
-            <div class="field">Swipe for the shades everyone’s asking about ✨ Which one are you picking? #lipTint #formee</div>
-          </div>
-          <div class="card">
-            <h3>Destinations</h3>
-            <div class="meta-row"><dt>Instagram</dt><dd>@formee.express</dd></div>
-            <div class="meta-row"><dt>TikTok</dt><dd>@formee.express</dd></div>
-          </div>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:20px">
-          <div class="card">
-            <h3>When</h3>
-            <!-- Draft = publish date 없음. 이 라디오 그룹이 그 근거다. -->
-            <div class="radio-row"><span class="radio" role="radio" aria-checked="false"></span><span class="lab">Publish now</span></div>
-            <div class="radio-row" data-on="true">
-              <span class="radio" role="radio" aria-checked="true"><svg viewBox="0 0 12 12"><path d="m2.5 6.2 2.3 2.3L9.5 3.8"/></svg></span>
-              <span class="lab">Schedule</span>
-              <span class="chip scheduled" style="margin-left:auto">Sep 8, 9:00 AM</span>
-            </div>
-            <div class="radio-row"><span class="radio" role="radio" aria-checked="false"></span><span class="lab">Save as draft</span></div>
-          </div>
-          <div style="display:flex;justify-content:flex-end;gap:8px">
-            <button type="button" class="btn" data-go="#s=calendar">Save as draft</button>
-            <button type="button" class="btn primary" data-go="#s=calendar&amp;toast=scheduled">Update schedule</button>
-          </div>
-          <p class="pub-note">⚠️ Publish 화면을 재활용하는 자리. 정본은 <code>new-content-generation/v4/new-content-to-generate.html</code> 의 Publish 단계.</p>
-        </div>
-      </div>
     </main>
   </div>
 
@@ -633,7 +590,7 @@ body{
     </div>
     <div class="modal-foot">
       <button type="button" class="btn" data-go="#s=calendar">Cancel</button>
-      <button type="button" class="btn primary" data-go="#s=editpublish">Continue</button>
+      <a class="btn primary" id="pickContinue" href="../new-content-generation/v4/new-content-to-generate.html#stage=publish">Continue</a>
     </div>
   </div>
 
@@ -660,7 +617,7 @@ body{
     <h4>A · Schedule something new</h4>
     <a href="#s=calendar&new=1"><b>A1</b><span>Schedule new · menu open</span></a>
     <a href="#s=calendar&modal=library"><b>A2</b><span>Pick from Library</span></a>
-    <a href="#s=editpublish"><b>A3</b><span>Edit &amp; Publish (reused)</span></a>
+    <a href="../new-content-generation/v4/new-content-to-generate.html#stage=publish&edit=This+New+Lip+Tint+Is+Everything"><b>A3</b><span>Edit &amp; Publish → v4</span></a>
     <a href="#s=calendar&toast=scheduled"><b>A4</b><span>Schedule new · done</span></a>
     <h4>B · Manage what’s scheduled</h4>
     <a href="#s=calendar&sel=lip"><b>B1</b><span>Scheduled selected</span></a>
@@ -682,6 +639,17 @@ body{
    (8920:133369 · 8921:134145 가 그 상태다).
    ───────────────────────────────────────────────────────────────────────── */
 var TODAY = 7;                                    /* 2026-09-07 (월) */
+/* v4 Publish 로 넘길 때 캡션 칸을 채우는 값 — 빈 화면이 아니라 이어서 고치는 화면이라는 표시 */
+var CAPTIONS = {
+  visa:    'Visa paperwork, in the order you actually need it. Save this for later 📌',
+  study:   'Applications for the 2026 January intake are open. Link in bio to start.',
+  uk:      'Everything the January intake asks for, one card at a time. Swipe →',
+  lip:     'Swipe for the shades everyone’s asking about ✨ Which one are you picking?',
+  campus:  'A normal Tuesday on campus — lectures, coffee, and the walk home 🍂',
+  meet:    'Meet the people you’ll be starting with. New intake, same nerves.',
+  toronto: 'Week one in Toronto: paperwork, groceries, and one very cold morning.',
+  couns:   'Free 1:1 counselling, whenever suits you. Booking takes a minute.'
+};
 var EVENTS = [
   {id:'visa',    day:1,  time:'9:00 AM',  status:'published', title:'Your Visa Checklist, Step by Step',   type:'Image',    ratio:'4:5',  brand:'Formee Express', plats:['ig','li'],      rel:'6 days ago', img:'visa-checklist'},
   {id:'study',   day:3,  time:'8:00 AM',  status:'published', title:'Study in the UK — Applications Open', type:'Image',    ratio:'4:5',  brand:'Formee Express', plats:['ig'],           rel:'4 days ago', img:'study-uk'},
@@ -692,7 +660,21 @@ var EVENTS = [
   {id:'toronto', day:16, time:'8:00 AM',  status:'scheduled', title:'First Week in Toronto',               type:'Reel',     ratio:'9:16', brand:'Formee Express', plats:['ig','tt'],      rel:'in 9 days',  img:'toronto'},
   {id:'couns',   day:22, time:'2:00 PM',  status:'scheduled', title:'Free 1:1 Counselling, Book Anytime',  type:'Image',    ratio:'1:1',  brand:'Formee Express', plats:['ig','tt','yt'], rel:'in 15 days', img:'counselling'}
 ];
+EVENTS.forEach(function(e){ e.caption = CAPTIONS[e.id]; });
 var LABEL = {scheduled:'Scheduled', published:'Published', failed:'Failed'};
+
+/* Edit & Publish 는 이 파일에 없다 — 예진님의 v4 Publish 단계(Figma 8741:250771)로 넘긴다.
+   v4 의 fmx-deeplink-js 가 stage=publish 를 받아 goToPublish() 를 열고,
+   edit/caption 으로 "이어서 고치는 초안"임을 표시한다. */
+var V4 = '../new-content-generation/v4/new-content-to-generate.html';
+function editPublishURL(e){
+  if(!e) return V4;
+  var q = 'stage=publish&edit=' + encodeURIComponent(e.title);
+  if(e.caption) q += '&caption=' + encodeURIComponent(e.caption);
+  if(e.plats && e.plats.length > 1) q += '&perplatform=1';
+  if(e.ratio) q += '&ratio=' + encodeURIComponent(e.ratio);
+  return V4 + '#' + q;
+}
 var PLAT_NAME = {ig:'Instagram', tt:'TikTok', yt:'YouTube', fb:'Facebook', li:'LinkedIn'};
 /* icon / social / * — 로고 마크. UI 아이콘 스케일(16/20/24) 밖이라 별도 취급한다. */
 var PLAT_SVG = {
@@ -757,21 +739,11 @@ var platsText = function(l){ return l.map(function(p){ return PLAT_NAME[p]; }).j
 
 /* ── 렌더 ─────────────────────────────────────────────────────────────── */
 function render(){
-  var evs = visibleEvents(), isPub = S.view === 'editpublish', isList = S.view === 'list';
+  var evs = visibleEvents(), isList = S.view === 'list';
 
-  $('pubView').hidden   = !isPub;
-  $('vlib').hidden      = isPub;
-  $('split').hidden     = isPub;
-  $('filterbar').hidden = isPub;
-  $('searchrow').hidden = isPub || !isList;
+  $('searchrow').hidden = !isList;
   $('chipRange').hidden = !isList;
   $('chipSort').hidden  = !isList;
-  $('newWrap').hidden   = isPub;
-  document.querySelector('.page-title').textContent = isPub ? 'Edit & Publish' : 'Schedule';
-  document.querySelector('.page-sub').textContent = isPub
-    ? 'Opened from Schedule — When is already set to Schedule'
-    : 'Everything with a publish date — scheduled and published';
-  if(isPub){ paintOverlays(); return; }
 
   $('segCal').setAttribute('aria-pressed', !isList);
   $('segList').setAttribute('aria-pressed', isList);
@@ -899,13 +871,13 @@ function paintPeek(evs){
     '<div class="peek-acts">' +
       (failed
         ? '<button type="button" class="btn primary">Retry now</button>' +
-          '<button type="button" class="btn" data-go="#s=editpublish">Edit &amp; Publish</button>' +
+          '<a class="btn" href="' + editPublishURL(e) + '">Edit &amp; Publish</a>' +
           '<button type="button" class="btn ghost" id="btnUnschedule">Unschedule</button>'
         : published
         ? '<button type="button" class="btn primary">Duplicate</button>' +
           '<button type="button" class="btn">View post</button>'
         : '<button type="button" class="btn primary" id="btnReschedule">Reschedule</button>' +
-          '<button type="button" class="btn" data-go="#s=editpublish">Edit &amp; Publish</button>' +
+          '<a class="btn" href="' + editPublishURL(e) + '">Edit &amp; Publish</a>' +
           '<button type="button" class="btn ghost" id="btnUnschedule">Unschedule</button>') +
     '</div>';
 }
@@ -940,14 +912,14 @@ function buildPickGrid(){
   var g = $('pickGrid');
   if(g.dataset.built) return;
   var drafts = [
-    {img:'lip-tint',        ratio:'9:16', title:'This New Lip Tint Is Everything'},
-    {img:'study-uk',        ratio:'4:5',  title:'Study in the UK — Applications Open'},
-    {img:'uk-applications', ratio:'1:1',  title:'UK Applications — January Intake'},
-    {img:'campus-uk',       ratio:'9:16', title:'A Day on Campus in the UK'},
-    {img:'counselling',     ratio:'4:5',  title:'Free 1:1 Counselling, Book Anytime'},
-    {img:'classmates',      ratio:'1:1',  title:'Meet Your Future Classmates'},
-    {img:'toronto',         ratio:'9:16', title:'First Week in Toronto'},
-    {img:'visa-checklist',  ratio:'4:5',  title:'Your Visa Checklist, Step by Step'}
+    {id:'lip',     img:'lip-tint',        ratio:'9:16', title:'This New Lip Tint Is Everything'},
+    {id:'study',   img:'study-uk',        ratio:'4:5',  title:'Study in the UK — Applications Open'},
+    {id:'uk',      img:'uk-applications', ratio:'1:1',  title:'UK Applications — January Intake'},
+    {id:'campus',  img:'campus-uk',       ratio:'9:16', title:'A Day on Campus in the UK'},
+    {id:'couns',   img:'counselling',     ratio:'4:5',  title:'Free 1:1 Counselling, Book Anytime'},
+    {id:'meet',    img:'classmates',      ratio:'1:1',  title:'Meet Your Future Classmates'},
+    {id:'toronto', img:'toronto',         ratio:'9:16', title:'First Week in Toronto'},
+    {id:'visa',    img:'visa-checklist',  ratio:'4:5',  title:'Your Visa Checklist, Step by Step'}
   ];
   g.innerHTML = drafts.map(function(d, i){
     return '<button type="button" class="pick"' + (i === 0 ? ' aria-selected="true"' : '') + '>' +
@@ -957,12 +929,20 @@ function buildPickGrid(){
       '<span class="cap">' + d.title + '</span></button>';
   }).join('');
   g.dataset.built = '1';
+  /* 고른 초안이 그대로 v4 Publish 로 넘어가야 한다 — 링크를 선택에 맞춰 갱신 */
+  function syncContinue(){
+    var sel = g.querySelector('[aria-selected="true"]');
+    var d = sel ? drafts[[].indexOf.call(g.children, sel)] : null;
+    $('pickContinue').href = editPublishURL(d && {title:d.title, ratio:d.ratio, caption:CAPTIONS[d.id]});
+  }
   Array.prototype.forEach.call(g.children, function(b){
     b.addEventListener('click', function(){
       Array.prototype.forEach.call(g.children, function(x){ x.removeAttribute('aria-selected'); });
       b.setAttribute('aria-selected','true');
+      syncContinue();
     });
   });
+  syncContinue();
 }
 
 function buildPickerGrid(){
@@ -1018,7 +998,7 @@ $('segList').addEventListener('click', function(){ go({s:'list'}); });
 $('q').addEventListener('input', function(){ S.q = this.value; go({q:this.value || null}); this.focus(); });
 $('btnNew').addEventListener('click', function(e){ e.stopPropagation(); go({'new':S.menu ? null : '1'}); });
 $('miLibrary').addEventListener('click', function(){ go({'new':null, modal:'library'}); });
-$('miCreate').addEventListener('click', function(){ go({'new':null, s:'editpublish'}); });
+$('miCreate').addEventListener('click', function(){ location.href = V4; });   /* Start from New Content */
 $('scrim').addEventListener('click', function(){ go({modal:null}); });
 $('unschCancel').addEventListener('click', function(){ go({modal:null}); });
 $('unschConfirm').addEventListener('click', function(){ go({modal:null, sel:null, gone:'1', toast:'unscheduled'}); });
