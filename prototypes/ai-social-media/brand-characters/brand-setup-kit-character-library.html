@@ -1555,7 +1555,14 @@ input.card-name{background:var(--neutral-0);box-shadow:0 0 0 1px var(--neutral-4
      그 위에 얹힌다 — 아래 흰 영역은 제목/날짜/상태뿐이다. -->
 <div class="main" id="libMain" hidden>
   <div class="lib-head">
-    <h1 class="lib-title">Content Library</h1>
+    <div class="lib-head-copy">
+      <h1 class="lib-title">Content Library</h1>
+      <p class="lib-subtitle">Videos, images and carousels across all brands in this account.</p>
+    </div>
+    <button type="button" class="lib-new" id="libNewContent">
+      <svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.7"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M8 3.2v9.6M3.2 8h9.6"/></svg>New Content</button>
   </div>
 
   <div class="lib-toolbar">
@@ -1569,6 +1576,15 @@ input.card-name{background:var(--neutral-0);box-shadow:0 0 0 1px var(--neutral-4
          칩은 두 모습이다 — 안 걸렸을 땐 흰 알약 + 캐럿, 걸렸을 땐 남색 알약 +
          ✕ + 라벨 | 값. ✕ 를 누르면 그 필터만 해제된다.
          Status 만 다중선택(체크박스)이고 Created by · Date 는 단일선택이다. -->
+  </div>
+
+  <div class="lib-controls">
+    <div class="lib-seg" role="tablist" aria-label="Content type">
+      <button type="button" class="lib-seg-i on" role="tab" aria-selected="true">All</button>
+      <button type="button" class="lib-seg-i" role="tab" aria-selected="false">Videos</button>
+      <button type="button" class="lib-seg-i" role="tab" aria-selected="false">Images</button>
+      <button type="button" class="lib-seg-i" role="tab" aria-selected="false">Carousels</button>
+    </div>
     <div class="lib-filters">
       <div class="lib-fwrap">
         <button type="button" class="lib-fchip" data-lfilter="status" aria-expanded="false"><span class="lib-fx"><svg viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round"><path d="m5.5 5.5 7 7m0-7-7 7"/></svg></span><span class="lib-flabel">Status</span><span class="lib-fdiv"></span><span class="lib-fval"></span><i></i></button>
@@ -1589,8 +1605,9 @@ input.card-name{background:var(--neutral-0);box-shadow:0 0 0 1px var(--neutral-4
         </div>
       </div>
       <div class="lib-fwrap">
-        <button type="button" class="lib-fchip" data-lfilter="date" aria-expanded="false"><span class="lib-fx"><svg viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round"><path d="m5.5 5.5 7 7m0-7-7 7"/></svg></span><span class="lib-flabel">Date</span><span class="lib-fdiv"></span><span class="lib-fval"></span><i></i></button>
+        <button type="button" class="lib-fchip" data-lfilter="date" aria-expanded="false"><span class="lib-fx"><svg viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round"><path d="m5.5 5.5 7 7m0-7-7 7"/></svg></span><span class="lib-flabel">Date range</span><span class="lib-fdiv"></span><span class="lib-fval"></span><i></i></button>
         <div class="lib-fmenu" data-lmenu="date" role="menu" hidden>
+        <button type="button" class="lib-fitem" role="menuitemcheckbox" aria-checked="false" data-v="all"><span>All time</span></button>
         <button type="button" class="lib-fitem" role="menuitemcheckbox" aria-checked="false" data-v="7"><span>Last 7 days</span></button>
         <button type="button" class="lib-fitem" role="menuitemcheckbox" aria-checked="false" data-v="30"><span>Last 30 days</span></button>
         <button type="button" class="lib-fitem" role="menuitemcheckbox" aria-checked="false" data-v="90"><span>Last 90 days</span></button>
@@ -1599,13 +1616,6 @@ input.card-name{background:var(--neutral-0);box-shadow:0 0 0 1px var(--neutral-4
       </div>
       <span class="lib-count">24 items</span>
     </div>
-  </div>
-
-  <div class="lib-seg" role="tablist" aria-label="Content type">
-    <button type="button" class="lib-seg-i on" role="tab" aria-selected="true">All</button>
-    <button type="button" class="lib-seg-i" role="tab" aria-selected="false">Videos</button>
-    <button type="button" class="lib-seg-i" role="tab" aria-selected="false">Images</button>
-    <button type="button" class="lib-seg-i" role="tab" aria-selected="false">Carousels</button>
   </div>
 
   <!-- 2026-09-04 Figma `Content Library · empty` 7891:125077 / `· no results` 8479:140946.
@@ -1625,128 +1635,28 @@ input.card-name{background:var(--neutral-0);box-shadow:0 0 0 1px var(--neutral-4
     </button>
   </div>
 
-  <div class="lib-groups">
-    <section class="lib-group">
-      <div class="lib-group-head"><h2>Formee Express</h2><span class="lib-rule"></span></div>
-      <div class="lib-grid">
+  <!-- 카드는 LIB_ITEMS 에서 그린다. Figma 8401:121822 기준으로 브랜드 두 그룹
+       12장 + Show 12 more 이고, 손으로 12장을 적어 두면 한 장 고칠 때 열두 번
+       고쳐야 한다. 마크업 모양은 예전과 같아서 libFilter·미리보기가 그대로 쓴다. -->
+  <div class="lib-groups" id="libGroups"></div>
 
-        <!-- 9:16 릴스 — 영상이라 재생 버튼과 스크러버가 있다 -->
-        <article class="lib-card r916" data-format="video" data-status="published"
-                 data-title="This New Lip Tint Is Everything" data-thumb="assets/imgLibLipTint.png"
-                 data-author="Me" data-date="2026-08-26">
-          <div class="lib-tile">
-            <img class="lib-thumb" src="assets/imgLibLipTint.png" alt="">
-            <div class="lib-tile-ov">
-              <div class="lib-tile-top">
-                <span class="lib-fmt">
-                  <svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.4" aria-hidden="true">
-                    <rect x="4.5" y="1.8" width="7" height="12.4" rx="1.6"/></svg>9:16</span>
-                <span class="lib-acts">
-                  <button type="button" class="lib-iconbtn" aria-label="Download">
-                    <svg viewBox="0 0 20 20" fill="none" stroke="#0F1729" stroke-width="1.6"
-                         stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M10 3.5v8m0 0 3-3m-3 3-3-3M4 14.5h12"/></svg></button>
-                  <button type="button" class="lib-iconbtn" aria-label="More">
-                    <svg viewBox="0 0 20 20" fill="#0F1729" aria-hidden="true">
-                      <circle cx="5" cy="10" r="1.5"/><circle cx="10" cy="10" r="1.5"/>
-                      <circle cx="15" cy="10" r="1.5"/></svg></button>
-                </span>
-              </div>
-              <button type="button" class="lib-play" aria-label="Play">
-                <svg viewBox="0 0 22 22" fill="#475069" aria-hidden="true">
-                  <path d="M6 3.2v15.6L19 11z"/></svg></button>
-              <div class="lib-scrub">
-                <div class="lib-scrub-row">
-                  <span class="lib-time">0:03 <b>/</b> 0:08</span>
-                  <span class="lib-scrub-ct">
-                    <button type="button" class="lib-sbtn" aria-label="Unmute">
-                      <svg viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="1.5"
-                           stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M4 6.8h2.4L9.6 4v10L6.4 11.2H4z"/><path d="m12.2 7 3.4 4m0-4-3.4 4"/></svg></button>
-                    <button type="button" class="lib-sbtn" aria-label="Full screen">
-                      <svg viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="1.5"
-                           stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M6.6 2.6H2.6v4m8.8-4h4v4m0 4.8v4h-4m-4.8 0h-4v-4"/></svg></button>
-                  </span>
-                </div>
-                <div class="lib-bar"><span class="lib-bar-fill"></span><i class="lib-playhead"></i></div>
-              </div>
-            </div>
-          </div>
-          <div class="lib-meta">
-            <p class="lib-name">This New Lip Tint Is Everything</p>
-            <p class="lib-sub"><span class="lib-date">Aug 26, 2026</span>
-              <span class="lib-badge ok">Published</span></p>
-          </div>
-        </article>
-
-        <!-- 4:5 이미지 포스트 -->
-        <article class="lib-card r45" data-format="image" data-status="scheduled"
-                 data-title="Study in the UK — Applications Open" data-thumb="assets/imgLibStudyUK.png"
-                 data-author="Tabir" data-date="2026-08-24">
-          <div class="lib-tile">
-            <img class="lib-thumb" src="assets/imgLibStudyUK.png" alt="">
-            <div class="lib-tile-ov">
-              <div class="lib-tile-top">
-                <span class="lib-fmt">
-                  <svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.4" aria-hidden="true">
-                    <rect x="3" y="2.4" width="10" height="11.2" rx="1.6"/></svg>4:5</span>
-                <span class="lib-acts">
-                  <button type="button" class="lib-iconbtn" aria-label="Download">
-                    <svg viewBox="0 0 20 20" fill="none" stroke="#0F1729" stroke-width="1.6"
-                         stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M10 3.5v8m0 0 3-3m-3 3-3-3M4 14.5h12"/></svg></button>
-                  <button type="button" class="lib-iconbtn" aria-label="More">
-                    <svg viewBox="0 0 20 20" fill="#0F1729" aria-hidden="true">
-                      <circle cx="5" cy="10" r="1.5"/><circle cx="10" cy="10" r="1.5"/>
-                      <circle cx="15" cy="10" r="1.5"/></svg></button>
-                </span>
-              </div>
-            </div>
-          </div>
-          <div class="lib-meta">
-            <p class="lib-name">Study in the UK — Applications Open</p>
-            <p class="lib-sub"><span class="lib-date">Aug 24, 2026</span>
-              <span class="lib-badge sched">Scheduled</span></p>
-          </div>
-        </article>
-
-        <!-- 1:1 이미지 포스트 -->
-        <article class="lib-card r11" data-format="image" data-status="draft"
-                 data-title="UK Applications — January Intake" data-thumb="assets/imgLibJanIntake.png"
-                 data-author="Norimi" data-date="2026-08-21">
-          <div class="lib-tile">
-            <img class="lib-thumb" src="assets/imgLibJanIntake.png" alt="">
-            <div class="lib-tile-ov">
-              <div class="lib-tile-top">
-                <span class="lib-fmt">
-                  <svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.4" aria-hidden="true">
-                    <rect x="2.6" y="2.6" width="10.8" height="10.8" rx="1.6"/></svg>1:1</span>
-                <span class="lib-acts">
-                  <button type="button" class="lib-iconbtn" aria-label="Download">
-                    <svg viewBox="0 0 20 20" fill="none" stroke="#0F1729" stroke-width="1.6"
-                         stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M10 3.5v8m0 0 3-3m-3 3-3-3M4 14.5h12"/></svg></button>
-                  <button type="button" class="lib-iconbtn" aria-label="More">
-                    <svg viewBox="0 0 20 20" fill="#0F1729" aria-hidden="true">
-                      <circle cx="5" cy="10" r="1.5"/><circle cx="10" cy="10" r="1.5"/>
-                      <circle cx="15" cy="10" r="1.5"/></svg></button>
-                </span>
-              </div>
-            </div>
-          </div>
-          <div class="lib-meta">
-            <p class="lib-name">UK Applications — January Intake</p>
-            <p class="lib-sub"><span class="lib-date">Aug 21, 2026</span>
-              <span class="lib-badge draft">Draft</span></p>
-          </div>
-        </article>
-
-      </div>
-    </section>
-  </div>
+  <button type="button" class="lib-more" id="libShowMore">Show 12 more</button>
 </div>
 
+
+<!-- Content Library 삭제 확인 — Figma `Content Library · delete confirm` 8463:123179.
+     캐릭터 삭제와 같은 .confirm 옷을 쓰되, 지우는 대상이 달라 레이어를 따로 둔다. -->
+<div class="confirm-layer" id="libConfirm" hidden>
+  <div class="scrim" data-libconfirm="cancel"></div>
+  <div class="confirm">
+    <p class="confirm-title" id="libConfirmTitle"></p>
+    <p class="confirm-body" id="libConfirmBody"></p>
+    <div class="confirm-actions">
+      <button type="button" class="btn-sec" data-libconfirm="cancel">Cancel</button>
+      <button type="button" class="btn-danger" data-libconfirm="ok">Delete content</button>
+    </div>
+  </div>
+</div>
 
 <div class="main" id="genMain" hidden>
 <div class="gen-var" data-fmt="reel">
@@ -25258,18 +25168,132 @@ if (_libNav) _libNav.addEventListener('click', () => { if (detail) closeDetail()
 /* ── 라이브러리 카드 액션 ────────────────────────────────────────────────────
    ⋯ 메뉴는 상태에 따라 항목이 달라진다. 발행된 글에 "Publish now" 를 띄우거나
    실패한 생성에 "Schedule" 을 띄우면 안 되기 때문이다. */
-const LIB_MENU = {
-  draft:     ['Edit','Regenerate','Use as reference','Download','-',
-              'Publish now','Schedule','-','Delete'],
-  scheduled: ['Edit','Regenerate','Use as reference','Download','-',
-              'Reschedule','Unschedule','-','Delete'],
-  published: ['View post','Regenerate','Use as reference','Download','-','Delete'],
-  failed:    ['Try again','Use as reference','-','Delete']
+/* ── 카드 데이터 ────────────────────────────────────────────────────────────
+   Figma `Content Library · full list · top` 8401:121822.
+   브랜드 두 그룹 · 12장이 먼저 보이고 나머지 12장은 Show 12 more 로 연다.
+   비율이 종류를 정한다 — 9:16 은 영상(재생·스크러버), 4:5 는 이미지, 1:1 은 캐러셀.
+   플랫폼은 상태를 따라간다: 발행됨 IG·TikTok·YouTube / 예약됨 IG·Meta /
+   초안 IG·LinkedIn. 썸네일은 Schedule 이 같은 게시물로 이미 내보낸 것을 쓴다. */
+const LIB_PLAT_SVG = {
+  ig:'<svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="libIg" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#fdc468"/><stop offset=".45" stop-color="#e1306c"/><stop offset="1" stop-color="#7b3fe4"/></linearGradient></defs><rect x="2" y="2" width="20" height="20" rx="6" fill="url(#libIg)"/><circle cx="12" cy="12" r="4.6" fill="none" stroke="#fff" stroke-width="1.9"/><circle cx="17.4" cy="6.6" r="1.3" fill="#fff"/></svg>',
+  tt:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="6" fill="#010101"/><path d="M13.4 6v6.9a2 2 0 1 1-1.7-2v-2a4 4 0 1 0 3.7 4V9.7a5 5 0 0 0 2.7.8v-2a3 3 0 0 1-2.9-2.5z" fill="#fff"/></svg>',
+  yt:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="4" fill="#ff0000"/><path d="M10.4 9.2v5.6l4.6-2.8z" fill="#fff"/></svg>',
+  fb:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#1877f2"/><path d="M13.2 21.9V13.9h2.6l.5-3.1h-3.1V8.8c0-.9.3-1.5 1.6-1.5h1.6V4.5c-.3 0-1.3-.1-2.4-.1-2.4 0-4 1.4-4 4.1v2.3H7.4v3.1h2.6v8z" fill="#fff"/></svg>',
+  li:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="4" fill="#0a66c2"/><path d="M7.6 9.6h2.5V18H7.6zM8.85 5.9a1.45 1.45 0 1 1 0 2.9 1.45 1.45 0 0 1 0-2.9zM11.9 9.6h2.4v1.15h.03c.34-.62 1.16-1.28 2.4-1.28 2.56 0 3.03 1.6 3.03 3.7V18h-2.5v-4.3c0-1.03-.02-2.35-1.47-2.35-1.47 0-1.7 1.12-1.7 2.28V18h-2.2z" fill="#fff"/></svg>'
 };
+const LIB_PLATS  = { published:['ig','tt','yt'], scheduled:['ig','fb'], draft:['ig','li'] };
+const LIB_RATIO  = { '9:16':{cls:'r916', fmt:'video'},
+                     '4:5' :{cls:'r45',  fmt:'image'},
+                     '1:1' :{cls:'r11',  fmt:'carousel'} };
+const LIB_BADGE  = { published:'ok', scheduled:'sched', draft:'draft' };
+const LIB_SHOT   = '../schedule/assets/';
+const LIB_GROUPS = [
+  { brand:'Formee Express', items:[
+    ['9:16','This New Lip Tint Is Everything','Aug 26, 2026','2026-08-26','published','Me',    'assets/imgLibLipTint.png'],
+    ['4:5', 'Study in the UK — Applications Open','Aug 24, 2026','2026-08-24','scheduled','Tabir','assets/imgLibStudyUK.png'],
+    ['1:1', 'UK Applications — January Intake','Aug 21, 2026','2026-08-21','draft','Norimi',  'assets/imgLibJanIntake.png'],
+    ['9:16','A Day on Campus in the UK','Aug 26, 2026','2026-08-26','published','Yejin',      LIB_SHOT+'campus-uk.jpg'],
+    ['4:5', 'Your Visa Checklist, Step by Step','Aug 24, 2026','2026-08-24','scheduled','Me', LIB_SHOT+'visa-checklist.jpg'],
+    ['1:1', 'Free 1:1 Counselling, Book Anytime','Aug 21, 2026','2026-08-21','draft','Abeer', LIB_SHOT+'counselling.jpg'],
+    ['9:16','First Week in Toronto','Aug 26, 2026','2026-08-26','published','Tabir',          LIB_SHOT+'toronto.jpg'],
+    ['4:5', 'Meet Your Future Classmates','Aug 24, 2026','2026-08-24','scheduled','Norimi',   LIB_SHOT+'classmates.jpg']
+  ]},
+  { brand:'SCEI', items:[
+    ['9:16','This New Lip Tint Is Everything','Aug 26, 2026','2026-08-26','published','Me',    'assets/imgLibLipTint.png'],
+    ['4:5', 'Study in the UK — Applications Open','Aug 24, 2026','2026-08-24','scheduled','Yejin','assets/imgLibStudyUK.png'],
+    ['1:1', 'UK Applications — January Intake','Aug 21, 2026','2026-08-21','draft','Abeer',   'assets/imgLibJanIntake.png'],
+    ['9:16','This New Lip Tint Is Everything','Aug 26, 2026','2026-08-26','published','Me',    LIB_SHOT+'lip-tint.jpg']
+  ]}
+];
+const LIB_TOTAL = 24;                     /* 목록에 12장, Show 12 more 뒤로 12장 */
+/* 아직 안 연 장수. 개수 표시에 더해진다 — 복제해서 한 장 늘면 25가 되어야 하므로
+   남은 장수는 고정해 두고 화면에 있는 장수만 세서 더한다. */
+let LIB_PENDING = 0;
+
+function libEsc(t){ return String(t).replace(/[&<>"]/g, function(c){
+  return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+function libCardHTML(it){
+  const ratio=it[0], title=it[1], dateLabel=it[2], dateIso=it[3], status=it[4],
+        author=it[5], thumb=it[6];
+  const r = LIB_RATIO[ratio], video = r.fmt === 'video';
+  const plats = (LIB_PLATS[status] || []).map(function(k){ return LIB_PLAT_SVG[k]; }).join('');
+  const label = status.charAt(0).toUpperCase() + status.slice(1);
+  return '' +
+  '<article class="lib-card ' + r.cls + '" data-format="' + r.fmt + '" data-status="' + status + '"' +
+  ' data-title="' + libEsc(title) + '" data-thumb="' + thumb + '"' +
+  ' data-author="' + author + '" data-date="' + dateIso + '">' +
+    '<div class="lib-tile">' +
+      '<img class="lib-thumb" src="' + thumb + '" alt="">' +
+      '<div class="lib-tile-ov">' +
+        '<div class="lib-tile-top">' +
+          '<span class="lib-fmt">' + libRatioIcon(ratio) + ratio + '</span>' +
+          '<span class="lib-acts">' +
+            '<button type="button" class="lib-iconbtn" aria-label="Download">' +
+              '<svg viewBox="0 0 20 20" fill="none" stroke="#0F1729" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3.5v8m0 0 3-3m-3 3-3-3M4 14.5h12"/></svg></button>' +
+            '<button type="button" class="lib-iconbtn" aria-label="More">' +
+              '<svg viewBox="0 0 20 20" fill="#0F1729" aria-hidden="true"><circle cx="5" cy="10" r="1.5"/><circle cx="10" cy="10" r="1.5"/><circle cx="15" cy="10" r="1.5"/></svg></button>' +
+          '</span>' +
+        '</div>' +
+        (video ?
+          '<button type="button" class="lib-play" aria-label="Play"><svg viewBox="0 0 22 22" fill="#475069" aria-hidden="true"><path d="M6 3.2v15.6L19 11z"/></svg></button>' +
+          '<div class="lib-scrub"><div class="lib-scrub-row">' +
+            '<span class="lib-time">0:03 <b>/</b> 0:08</span>' +
+            '<span class="lib-scrub-ct">' +
+              '<button type="button" class="lib-sbtn" aria-label="Unmute"><svg viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6.8h2.4L9.6 4v10L6.4 11.2H4z"/><path d="m12.2 7 3.4 4m0-4-3.4 4"/></svg></button>' +
+              '<button type="button" class="lib-sbtn" aria-label="Full screen"><svg viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6.6 2.6H2.6v4m8.8-4h4v4m0 4.8v4h-4m-4.8 0h-4v-4"/></svg></button>' +
+            '</span></div>' +
+            '<div class="lib-bar"><span class="lib-bar-fill"></span><i class="lib-playhead"></i></div>' +
+          '</div>' : '') +
+      '</div>' +
+    '</div>' +
+    '<div class="lib-meta">' +
+      '<p class="lib-name">' + libEsc(title) + '</p>' +
+      '<p class="lib-sub">' +
+        '<span class="lib-datewrap"><span class="lib-date">' + dateLabel + '</span>' +
+        '<span class="lib-plats">' + plats + '</span></span>' +
+        '<span class="lib-badge ' + LIB_BADGE[status] + '">' + label + '</span>' +
+      '</p>' +
+    '</div>' +
+  '</article>';
+}
+function libRatioIcon(ratio){
+  const box = ratio === '9:16' ? '<rect x="4.5" y="1.8" width="7" height="12.4" rx="1.6"/>'
+            : ratio === '4:5'  ? '<rect x="3" y="2.4" width="10" height="11.2" rx="1.6"/>'
+            :                    '<rect x="2.4" y="2.4" width="11.2" height="11.2" rx="1.6"/>';
+  return '<svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.4" aria-hidden="true">' + box + '</svg>';
+}
+function libRenderCards(){
+  const host = document.getElementById('libGroups');
+  if (!host) return;
+  host.innerHTML = LIB_GROUPS.map(function(g){
+    return '<section class="lib-group" data-brand="' + libEsc(g.brand) + '">' +
+             '<div class="lib-group-head"><h2>' + libEsc(g.brand) + '</h2><span class="lib-rule"></span></div>' +
+             '<div class="lib-grid">' + g.items.map(libCardHTML).join('') + '</div>' +
+           '</section>';
+  }).join('');
+  const more = document.getElementById('libShowMore');
+  if (more){
+    const shown = LIB_GROUPS.reduce(function(n,g){ return n + g.items.length; }, 0);
+    LIB_PENDING = Math.max(0, LIB_TOTAL - shown);
+    more.hidden = LIB_PENDING <= 0;
+    more.textContent = 'Show ' + LIB_PENDING + ' more';
+  }
+}
+libRenderCards();
+
+/* Figma `Card · more menu open` 8456:123106 기준으로 줄었다. Edit·Regenerate·
+   Publish now·Schedule 은 빠지고 Duplicate 가 들어왔다 — 라이브러리는 보관함이지
+   발행 도구가 아니어서, 손대는 일은 전부 New Content 나 Schedule 이 맡는다.
+   View post 는 실제 게시물로 나가는 것이라 발행된 글에만 뜬다. */
+const LIB_MENU_BASE = ['Use as reference','Duplicate','Download','-','Delete'];
+function libMenuFor(status){
+  return status === 'published' ? ['View post'].concat(LIB_MENU_BASE) : LIB_MENU_BASE.slice();
+}
 function libCloseMenu(){ const m = $('#libMenu'); if (m) m.remove(); }
 function libOpenMenu(btn, card){
   libCloseMenu();
-  const items = LIB_MENU[card.dataset.status] || LIB_MENU.draft;
+  const items = libMenuFor(card.dataset.status);
   const pop = document.createElement('div');
   pop.className = 'lib-menu'; pop.id = 'libMenu'; pop.setAttribute('role','menu');
   pop.innerHTML = items.map(x => x === '-' ? '<hr>' :
@@ -25283,25 +25307,119 @@ function libOpenMenu(btn, card){
   pop.style.left = Math.round(b.right - t.left - pop.offsetWidth) + 'px';
 }
 
-/* Regenerate 는 예진님 v3 생성 화면으로 넘긴다. 착지 지점은 포맷마다 다른데,
+/* Regenerate 는 예진님 v4 생성 화면으로 넘긴다. 착지 지점은 포맷마다 다른데,
    기준은 "돈 쓰기 직전의 마지막 무료 단계"다.
-   v3 는 Timeline 을 대본 승인 뒤에만 열기 때문에 릴스는 Script 까지만 보낸다. */
-const NC_V3_STAGE = { video:'reelScript', carousel:'script', image:'brief' };
+   v4 는 Timeline 이 Script 로 합쳐졌지만 reelTimeline 을 예전 값으로 받아주므로
+   릴스는 그대로 Script 까지만 보낸다. */
+const NC_STAGE = { video:'reelScript', carousel:'script', image:'brief' };
 function libRegenerate(card){
-  const stage = NC_V3_STAGE[card.dataset.format] || 'brief';
+  const stage = NC_STAGE[card.dataset.format] || 'brief';
   /* Regenerate 도 같은 파라미터를 쓴다 — 받는 쪽에서 출처 칩을 그리려면
      제목만으로는 부족하다. regen=1 로 "다시 뽑기"라는 것만 구분한다. */
   const r = card.classList.contains('r916') ? '9:16'
           : card.classList.contains('r11')  ? '1:1' : '4:5';
-  const url = NC_V3_URL
+  const url = NC_URL
     + '#ref=' + encodeURIComponent(card.dataset.title || '')
     + '&thumb=' + encodeURIComponent(libThumbUrl(card.dataset.thumb))
     + '&ratio=' + encodeURIComponent(r)
     + '&stage=' + stage
-    + '&regen=1';
+    + '&regen=1'
+    + '&from=library&back=' + encodeURIComponent('view=library');
   libToast('Opening a new take in New Content Generation…');
   window.open(url, '_blank', 'noopener');
 }
+/* ── 카드 동작 ──────────────────────────────────────────────────────────────
+   Figma `download toast` 8465:125154 · `delete confirm` 8463:123179 ·
+   `Duplicate · 1 menu open / 2 duplicated` 8907:131500 / 131782. */
+const LIB_SOCIAL_URL = 'https://www.instagram.com/';
+const LIB_NOUN = { video:'video', image:'image', carousel:'carousel' };
+
+function libDownload(card){
+  if (!card) return;
+  libToast('Download started — “' + (card.dataset.title || '') + '”');
+}
+
+/* 복제본은 초안으로 들어간다. 원본 브랜드 그룹 맨 앞에 붙고, Schedule 의
+   Pick from Library 목록에도 초안으로 나타난다(Figma 주석). */
+function libDuplicate(card){
+  if (!card) return;
+  const grid = card.closest('.lib-grid');
+  if (!grid) return;
+  const copy = card.cloneNode(true);
+  const title = (card.dataset.title || '') + ' (copy)';
+  copy.dataset.title  = title;
+  copy.dataset.status = 'draft';
+  copy.dataset.date   = '2026-09-08';
+  copy.hidden = false;
+  const name = copy.querySelector('.lib-name'); if (name) name.textContent = title;
+  const date = copy.querySelector('.lib-date'); if (date) date.textContent = 'Sep 8, 2026';
+  const plat = copy.querySelector('.lib-plats');
+  if (plat) plat.innerHTML = LIB_PLATS.draft.map(function(k){ return LIB_PLAT_SVG[k]; }).join('');
+  const badge = copy.querySelector('.lib-badge');
+  if (badge){ badge.className = 'lib-badge draft'; badge.textContent = 'Draft'; }
+  const menu = copy.querySelector('#libMenu'); if (menu) menu.remove();
+  grid.insertBefore(copy, grid.firstChild);
+  if (typeof libFilter === 'function') libFilter();
+  libToast('Duplicated — “' + (card.dataset.title || '') + '” saved to Drafts');
+}
+
+/* 되돌릴 수 없는 일이라 토스트가 아니라 확인 창이다 */
+let libPendingDelete = null;
+function libAskDelete(card){
+  if (!card) return;
+  libPendingDelete = card;
+  const layer = document.getElementById('libConfirm');
+  if (!layer) return;
+  const noun = LIB_NOUN[card.dataset.format] || 'item';
+  document.getElementById('libConfirmTitle').textContent =
+    'Delete “' + (card.dataset.title || '') + '”?';
+  document.getElementById('libConfirmBody').textContent =
+    'This ' + noun + ' will be removed from your Content Library. ' +
+    'Posts already published to social channels stay unchanged. This cannot be undone.';
+  layer.hidden = false;
+  const cancel = layer.querySelector('[data-libconfirm="cancel"]');
+  if (cancel) cancel.focus();
+}
+(function(){
+  const layer = document.getElementById('libConfirm');
+  if (!layer) return;
+  layer.addEventListener('click', function(e){
+    const hit = e.target.closest('[data-libconfirm]');
+    if (!hit) return;
+    if (hit.dataset.libconfirm === 'ok' && libPendingDelete){
+      libPendingDelete.remove();
+      if (typeof libFilter === 'function') libFilter();
+    }
+    libPendingDelete = null;
+    layer.hidden = true;
+  });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && !layer.hidden){ libPendingDelete = null; layer.hidden = true; }
+  });
+})();
+
+/* Show 12 more — 나머지 12장은 같은 브랜드에 이어 붙는다. 라이브러리에는 같은
+   게시물이 여러 벌 있는 게 정상이라 Figma 목록에도 같은 제목이 반복해서 나온다. */
+(function(){
+  const more = document.getElementById('libShowMore');
+  if (!more) return;
+  more.addEventListener('click', function(){
+    LIB_GROUPS.forEach(function(g){
+      const sec = document.querySelector('#libGroups .lib-group[data-brand="' + g.brand + '"] .lib-grid');
+      if (sec) sec.insertAdjacentHTML('beforeend', g.items.map(libCardHTML).join(''));
+    });
+    more.hidden = true;
+    LIB_PENDING = 0;
+    if (typeof libFilter === 'function') libFilter();
+  });
+})();
+
+/* 머리의 New Content — 빈 상태 버튼과 같은 곳으로 간다 */
+(function(){
+  const b = document.getElementById('libNewContent');
+  if (b) b.addEventListener('click', function(){ window.open(NC_URL, '_blank', 'noopener'); });
+})();
+
 function libToast(msg){
   let t = $('#libToast');
   if (!t){ t = document.createElement('div'); t.id = 'libToast'; t.className = 'lib-toast';
@@ -25310,12 +25428,14 @@ function libToast(msg){
   clearTimeout(libToast._t);
   libToast._t = setTimeout(() => { t.hidden = true; }, 2400);
 }
-/* New Content 는 이 앱에서 빠지고 예진님 v3 로 갔다. 레퍼런스도 그쪽에서 쓰는
-   것이라 새 탭으로 넘긴다 — 교차 출처라 값까지 실어 보낼 수는 없다. */
-const NC_V3_URL = 'https://yjkim9627-gif.github.io/formee-education/' +
-  'prototypes/ai-social-media/new-content-generation/v3/new-content-to-generate.html';
+/* New Content 는 이 앱에서 빠지고 예진님 v4 로 갔다. 레퍼런스도 그쪽에서 쓰는
+   것이라 새 탭으로 넘긴다. v4 가 최신 통합본이고, ref·stage·edit·caption 에
+   from/back 까지 같은 규약을 받는다. */
+/* 절대 URL 이 아니라 상대경로다 — 같은 저장소 안이라 배포본에서도 같은 곳을
+   가리키고, 로컬에서 열었을 때도 배포본으로 튀지 않는다. */
+const NC_URL = '../new-content-generation/v4/new-content-to-generate.html';
 
-/* 받는 쪽(v3)은 다른 폴더라 `assets/…` 상대경로가 안 맞는다. 저장소 루트 기준
+/* 받는 쪽(v4)은 다른 폴더라 `assets/…` 상대경로가 안 맞는다. 저장소 루트 기준
    절대경로로 넘겨서 어느 화면에서 열든 같은 파일을 가리키게 한다. */
 const LIB_ASSET_BASE = '/formee-education/prototypes/ai-social-media/brand-characters/';
 function libThumbUrl(src){
@@ -25324,20 +25444,21 @@ function libThumbUrl(src){
   return LIB_ASSET_BASE + src;
 }
 /* 2026-09-04 Figma `use as reference` 4화면(8224:131295)에서 확정된 기본값.
-   v3 쪽 팝오버가 이 값으로 열리도록 URL 에 같이 실어 보낸다. 마크업·동작은
+   v4 쪽 팝오버가 이 값으로 열리도록 URL 에 같이 실어 보낸다. 마크업·동작은
    `useasreference-module.html` 에 따로 빼 뒀다 — 이 앱엔 New Content 가 없다. */
 const LIB_REF_DEFAULTS = { strength: 'Balanced', match: 'Style,Composition,Colors', frame: 'cover' };
 function libUseAsReference(card){
   const r = card.classList.contains('r916') ? '9:16'
           : card.classList.contains('r11')  ? '1:1' : '4:5';
-  const url = NC_V3_URL
+  const url = NC_URL
     + '#ref=' + encodeURIComponent(card.dataset.title || '')
     + '&strength=' + encodeURIComponent(LIB_REF_DEFAULTS.strength)
     + '&match=' + encodeURIComponent(LIB_REF_DEFAULTS.match)
     + '&frame=' + encodeURIComponent(LIB_REF_DEFAULTS.frame)
     + '&thumb=' + encodeURIComponent(libThumbUrl(card.dataset.thumb))
     + '&ratio=' + encodeURIComponent(r)
-    + '&stage=brief';
+    + '&stage=brief'
+    + '&from=library&back=' + encodeURIComponent('view=library');
   libToast('Opening New Content with this reference…');
   window.open(url, '_blank', 'noopener');
 }
@@ -25358,8 +25479,14 @@ if (_libMain){
     if (act){ const card = act.closest('.lib-card'), what = act.dataset.libact;
               libCloseMenu();
               if (what === 'Use as reference') libUseAsReference(card);
-              if (what === 'Regenerate' || what === 'Try again') libRegenerate(card);
+              if (what === 'Duplicate')  libDuplicate(card);
+              if (what === 'Download')   libDownload(card);
+              if (what === 'Delete')     libAskDelete(card);
+              if (what === 'View post')  window.open(LIB_SOCIAL_URL, '_blank', 'noopener');
               return; }
+    /* 타일 위의 내려받기 아이콘도 메뉴의 Download 와 같은 일을 한다 */
+    const dl = e.target.closest('.lib-iconbtn[aria-label="Download"]');
+    if (dl){ libDownload(dl.closest('.lib-card')); libCloseMenu(); return; }
     libCloseMenu();
   });
 }
@@ -25405,14 +25532,26 @@ function libFilter(){
   document.querySelectorAll('#libMain .lib-group').forEach(g => {
     g.hidden = !g.querySelector('.lib-card:not([hidden])');
   });
+  /* 아직 안 연 12장도 라이브러리에 있는 것이라 개수에 든다 — Figma 는 12장만
+     보이는 화면에서도 24 items 라고 적는다. 거르는 중일 땐 보이는 것만 센다. */
+  const loaded = document.querySelectorAll('#libMain .lib-card').length;
+  const filtering = !!(q || LIB_F.status.length || LIB_F.author || LIB_F.date || want || favOn);
+  const wholeEmpty = window.libForceEmpty || loaded === 0;
+  const total = wholeEmpty ? 0 : shown + (filtering ? 0 : LIB_PENDING);
   const count = document.querySelector('#libMain .lib-count');
-  if (count) count.textContent = shown + (shown === 1 ? ' item' : ' items');
+  if (count) count.textContent = total + (total === 1 ? ' item' : ' items');
+  /* 결과가 없을 땐 목록에 딸린 것도 같이 접는다 — Figma 의 `· empty` 7891:125077 과
+     `· no results` 8724:120735 는 둘 다 빈 화면 하나뿐이다. 머리의 New Content 는
+     빈 화면 버튼과 겹쳐서 empty 에서만 내린다. */
+  const moreBtn = document.getElementById('libShowMore');
+  if (moreBtn) moreBtn.hidden = LIB_PENDING <= 0 || shown === 0 || wholeEmpty;
+  const newBtn = document.getElementById('libNewContent');
+  if (newBtn) newBtn.hidden = wholeEmpty || shown === 0;
   /* 라이브러리가 통째로 빈 것과, 필터 때문에 결과가 없는 것은 다른 화면이다.
      total 은 필터 이전의 카드 수 — libForceEmpty 는 캡처용 딥링크(#libempty=1). */
-  const total = document.querySelectorAll('#libMain .lib-card').length;
   const empty = $('#libNoResults');
   if (empty){
-    const isEmpty = window.libForceEmpty || total === 0;
+    const isEmpty = window.libForceEmpty || loaded === 0;
     empty.hidden = shown > 0 && !isEmpty;
     empty.dataset.mode = isEmpty ? 'empty' : 'nores';
     if (isEmpty){
@@ -25504,11 +25643,11 @@ document.addEventListener('click', e => {
 document.addEventListener('keydown', e => { if (e.key === 'Escape') libCloseMenus(null); });
 ['status','author','date'].forEach(libSyncChip);
 
-/* 빈 상태의 버튼 — empty 면 New Content(v3), nores 면 필터 전체 해제 */
+/* 빈 상태의 버튼 — empty 면 New Content(v4), nores 면 필터 전체 해제 */
 const _libEmptyBtn = $('#libEmptyBtn');
 if (_libEmptyBtn) _libEmptyBtn.addEventListener('click', () => {
   const mode = $('#libNoResults').dataset.mode;
-  if (mode === 'empty'){ window.open(NC_V3_URL, '_blank', 'noopener'); return; }
+  if (mode === 'empty'){ window.open(NC_URL, '_blank', 'noopener'); return; }
   LIB_F.status = []; LIB_F.author = null; LIB_F.date = null;
   ['status','author','date'].forEach(libSyncChip);
   const q = document.querySelector('#libMain .lib-search input'); if (q) q.value = '';
@@ -25547,6 +25686,9 @@ if (/^#view=generate/.test(location.hash||'')) {
 }
 if (/^#view=newcontent/.test(location.hash||'')) { showView('newcontent');
   if (/full/.test(location.hash)) document.body.classList.add('nc-full'); }
+/* New Content 쪽에서 "Back to Library" 로 돌아올 때 쓰는 자리. 지금까지 이 화면은
+   좌측 nav 클릭으로만 열려서 주소로 가리킬 방법이 없었다. */
+if (/^#view=library/.test(location.hash||'')) showView('library');
 
 
 render();
@@ -34156,12 +34298,23 @@ body.bk2-clean #roleSwitch { display:none !important; }
    실제 비율은 좌상단 배지가 알려주고, 원본은 프리뷰·다운로드에서 그대로 나간다. */
 #libMain{--lib-card-w:303px;--lib-tile-h:380px;
   padding:28px;display:flex;flex-direction:column;gap:20px;align-items:stretch;overflow:auto;}
-.lib-head{display:flex;align-items:flex-start;justify-content:space-between;}
+.lib-head{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;}
+.lib-head-copy{display:flex;flex-direction:column;gap:2px;min-width:0;}
 .lib-title{margin:0;font-size:22px;line-height:30px;font-weight:700;color:var(--neutral-900);}
+.lib-subtitle{margin:0;font-size:13px;line-height:20px;color:var(--neutral-500);}
+/* 머리 오른쪽의 New Content — 빈 상태 버튼(.lib-empty-btn)과 같은 규격이다 */
+.lib-new{display:inline-flex;align-items:center;gap:8px;flex:none;padding:9px 14px;cursor:pointer;
+  border:0;border-radius:8px;background:var(--neutral-900);color:var(--neutral-0);
+  font-family:inherit;font-size:13px;font-weight:600;line-height:20px;}
+.lib-new:hover{background:#1b2436;}
+.lib-new svg{width:16px;height:16px;flex:none;}
 
+/* 검색은 한 줄을 다 쓰고, 그 아래 줄에 세그먼트와 필터 칩이 나란히 온다 */
 .lib-toolbar{display:flex;align-items:center;gap:46px;justify-content:flex-start;}
-.lib-head,.lib-toolbar,.lib-seg{flex:none;}
-.lib-seg{align-self:flex-start;}
+.lib-toolbar .lib-search{width:auto;flex:1 1 auto;}
+.lib-controls{display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+.lib-head,.lib-toolbar,.lib-controls,.lib-seg{flex:none;}
+.lib-seg{align-self:center;}
 .lib-search{display:flex;align-items:center;gap:8px;width:339px;height:36px;padding:8px 12px;
   background:var(--neutral-0);border:1px solid var(--neutral-300);border-radius:8px;}
 .lib-search svg{width:16px;height:16px;flex:none;}
@@ -34216,12 +34369,20 @@ body.bk2-clean #roleSwitch { display:none !important; }
   box-shadow:0 1px 2px rgba(15,23,41,.06);}
 
 .lib-groups{display:flex;flex-direction:column;gap:28px;}
+/* 목록은 12장까지만 보여주고 나머지는 이 버튼으로 연다 — 24개가 한 번에
+   쏟아지면 브랜드 그룹이 안 읽힌다. */
+.lib-more{align-self:flex-start;margin-top:4px;padding:9px 16px;cursor:pointer;
+  background:var(--neutral-0);border:1px solid var(--neutral-300);border-radius:8px;
+  font-family:inherit;font-size:13px;font-weight:600;color:var(--neutral-800);}
+.lib-more:hover{background:var(--neutral-50);}
+.lib-more[hidden]{display:none;}
 .lib-group{display:flex;flex-direction:column;gap:14px;}
 .lib-group-head{display:flex;align-items:center;gap:8px;}
 .lib-group-head h2{margin:0;font-size:16px;line-height:24px;font-weight:600;color:var(--neutral-900);}
 .lib-rule{flex:1;height:1px;background:var(--neutral-200);}
 /* 카드는 늘어나지 않는다 — 남는 폭은 오른쪽에 그대로 둔다(Figma 와 동일) */
-.lib-grid{display:grid;grid-template-columns:repeat(auto-fill,var(--lib-card-w));gap:24px;
+/* Figma 는 열 간격 16 · 행 간격 24 (8401:121822 카드 좌표에서 나온 값) */
+.lib-grid{display:grid;grid-template-columns:repeat(auto-fill,var(--lib-card-w));gap:24px 16px;
   justify-content:start;}
 
 .lib-card{position:relative;display:flex;flex-direction:column;gap:8px;min-width:0;}
@@ -34266,6 +34427,11 @@ body.bk2-clean #roleSwitch { display:none !important; }
 .lib-name{margin:0;font-size:14px;line-height:22px;font-weight:600;color:var(--neutral-900);
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .lib-sub{margin:0;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+/* 날짜 옆의 플랫폼 마크. 어디로 나간 글인지가 상태만큼 자주 읽히는 정보다.
+   UI 아이콘 스케일(16/20/24) 밖이라 로고는 따로 취급한다. */
+.lib-plats{display:inline-flex;align-items:center;gap:4px;flex:none;}
+.lib-plats svg{width:14px;height:14px;display:block;}
+.lib-datewrap{display:inline-flex;align-items:center;gap:8px;min-width:0;}
 .lib-date{font-size:13px;line-height:20px;color:var(--neutral-450);}
 .lib-badge{flex:none;padding:4px 8px;border-radius:999px;font-size:10px;font-weight:600;}
 .lib-badge.ok{background:var(--badge-green-bg);color:var(--badge-green-text);}
@@ -34462,14 +34628,17 @@ body{margin:0;padding:0;background:#e5e5e5;overflow:hidden;}
    1920×1162 프레임 안에서 1400×860. 안쪽 여백 16, 미디어 774 정사각(라운드), 정보 열 578. */
 .libprev-layer{position:absolute;inset:0;z-index:120;}
 .libprev-scrim{position:absolute;inset:0;background:rgba(15,23,41,.38);}
-.libprev{position:absolute;left:260px;top:151px;width:1400px;height:860px;
+/* 좌표를 박아 두면 1920 프레임 밖에서 왼쪽으로 쏠린다. 담는 상자가 얼마든
+   가운데에 서도록 옮기고, 좁아지면 상자를 따라 줄어들게 한다. */
+.libprev{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:min(1400px, calc(100% - 64px));height:min(860px, calc(100% - 64px));
   display:flex;flex-direction:column;padding:16px;
   background:var(--neutral-0);border-radius:16px;
   box-shadow:0 28px 72px rgba(15,23,41,.30);}
 .libprev-body{display:flex;gap:16px;flex:1 1 auto;min-height:0;}
 
 /* ── 좌측 미디어 ── */
-.libprev-media{width:774px;flex:none;position:relative;overflow:hidden;
+.libprev-media{width:774px;max-width:57%;flex:none;position:relative;overflow:hidden;
   border-radius:var(--radius-xl);background:var(--neutral-100);}
 .libprev-media img{width:100%;height:100%;object-fit:cover;display:block;}
 .libprev-fmt{position:absolute;right:28px;top:20px;display:inline-flex;align-items:center;gap:5px;
@@ -34562,8 +34731,8 @@ body{margin:0;padding:0;background:#e5e5e5;overflow:hidden;}
       <div class="libprev-detail">
         <span class="libprev-bar"></span>
         <div class="libprev-head">
+          <!-- 상태 칩 하나뿐이다 — `From your idea` 는 새 디자인에서 빠졌다 -->
           <span class="libprev-badge" id="libprevStatus">Published</span>
-          <span class="libprev-badge muted">From your idea</span>
           <span class="libprev-sp"></span>
           <button type="button" class="libprev-close" data-libprev="close" aria-label="Close">
             <svg viewBox="0 0 16 16" fill="none" stroke="#8A93A8" stroke-width="1.6" stroke-linecap="round">
@@ -34577,12 +34746,6 @@ body{margin:0;padding:0;background:#e5e5e5;overflow:hidden;}
 
         <p class="libprev-label">Original prompt</p>
         <p class="libprev-prompt" id="libprevPrompt"></p>
-
-        <span class="libprev-div"></span>
-
-        <p class="libprev-label">Details</p>
-        <p class="libprev-meta" id="libprevMeta"></p>
-        <div class="libprev-dest" id="libprevDest"></div>
 
         <span class="libprev-grow"></span>
       </div>
@@ -34653,10 +34816,6 @@ body{margin:0;padding:0;background:#e5e5e5;overflow:hidden;}
     var badge = $('#libprevStatus');
     badge.textContent = LABEL[st] || st;
     badge.className = 'libprev-badge' + (st === 'published' ? ' ok' : ' muted');
-    $('#libprevMeta').textContent = META[st] || '';
-    $('#libprevDest').innerHTML = (DEST[st] || []).map(function(d){
-      return '<span class="' + d[2] + '">' + d[0] + ' · ' + d[1] + '</span>';
-    }).join('');
   }
 
   function open(card, st){
@@ -34672,19 +34831,19 @@ body{margin:0;padding:0;background:#e5e5e5;overflow:hidden;}
   }
   function close(){ layer.hidden = true; }
 
-  /* 편집은 v3 의 Edit & Publish 단계로 보낸다. 캡션·해시태그·플랫폼별 문구·목적지·시점이
+  /* 편집은 v4 의 Edit & Publish 단계로 보낸다. 캡션·해시태그·플랫폼별 문구·목적지·시점이
      전부 거기 모여 있어서, 모달에 옮겨오면 같은 UI 가 두 곳으로 갈라진다. */
   /* TODO: 발행 기록에서 온 실제 게시물 URL 로 교체할 것. */
   var SOCIAL_URL = 'https://www.instagram.com/';
-  var V3 = 'https://yjkim9627-gif.github.io/formee-education/' +
-           'prototypes/ai-social-media/new-content-generation/v3/new-content-to-generate.html';
+  var V4 = '../new-content-generation/v4/new-content-to-generate.html';
   function editAndPublish(){
     /* 캡션을 실어 보낸다 — 빈 칸에서 다시 쓰는 게 아니라 이어서 고치는 화면이어야 한다.
        ref 가 아니라 edit 으로 보내는 이유는, 이건 "참고할 다른 글"이 아니라
-       같은 콘텐츠이기 때문이다. ref 로 보내면 v3 가 "Based on" 배너를 띄운다. */
-    var url = V3 + '#stage=publish'
+       같은 콘텐츠이기 때문이다. ref 로 보내면 v4 가 "Based on" 배너를 띄운다. */
+    var url = V4 + '#stage=publish'
             + '&edit=' + encodeURIComponent(box.dataset.title || '')
-            + '&caption=' + encodeURIComponent($('#libprevCap').textContent || '');
+            + '&caption=' + encodeURIComponent($('#libprevCap').textContent || '')
+            + '&from=library&back=' + encodeURIComponent('view=library');
     window.open(url, '_blank', 'noopener');
   }
   function todo(what){

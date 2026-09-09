@@ -33,6 +33,10 @@
 }
 .ref-chip[data-attached="true"] .ref-chip-remove{display:flex;}
 
+/* disabled — shown instead of the empty state while a mutually-exclusive attachment
+   (e.g. Reference vs. First/Last frame in the Brief prompt box) is already in place */
+.ref-chip.disabled{opacity:.4; cursor:not-allowed; pointer-events:none;}
+
 /* image state — wide reference-detail card (Figma node 8614:18) */
 .ref-chip--detail{
   width:387px; padding:var(--spacing-sm); gap:16px; justify-content:flex-start;
