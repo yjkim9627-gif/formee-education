@@ -17,19 +17,17 @@
 .brand-kit-label{font-size:14px; line-height:22px; font-weight:600; color:var(--color-neutral-900);}
 .brand-kit-description{font-size:13px; line-height:20px; font-weight:400; color:var(--color-neutral-500); width:100%;}
 
-/* Empty state (Figma: Brand Kit settings page's own "Overview - empty" node 8479:139483) --
-   shown instead of the compact summary below when window.__brandMode !== 'set'. Mirrors a
-   Logos/Colours/Fonts section shell, each section's content replaced by a dashed
-   "+ Manage X" box (8479:139506 "empty · logos" et al) instead of one generic message.
-   Populated by buildBrandKitEmptyCardHtml() in the v4 prototype. */
-.brand-kit-card{box-sizing:border-box; width:100%; display:flex; flex-direction:column; gap:var(--spacing-lg); padding:var(--spacing-2xl); background:var(--color-neutral-0); border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl);}
-.brand-kit-section{display:flex; flex-direction:column; gap:var(--spacing-md); align-items:flex-start; width:100%;}
-.brand-kit-section-header{display:flex; align-items:center; gap:var(--spacing-lg); width:100%;}
-.brand-kit-section-title{font-size:14px; font-weight:600; line-height:22px; color:var(--color-neutral-800);}
+/* Empty state (Figma node 8860:138213 "brand-kit-empty", part of the "Brand kit off" screen
+   8727:219504) -- shown instead of the compact summary below when window.__brandMode !== 'set'.
+   One dashed row: message + a "Brand Setup" CTA (reuses the real .btn.btn-dark, not a
+   bespoke button). Populated by buildBrandKitEmptyCardHtml() in the v4 prototype. */
 .brand-kit-empty{width:100%; box-sizing:border-box;}
-.brand-kit-empty-box{display:flex; align-items:center; justify-content:center; gap:var(--spacing-sm); width:100%; height:74px; box-sizing:border-box; background:var(--color-neutral-0); border:1px dashed var(--color-neutral-400); border-radius:var(--radius-xl); cursor:pointer; font-family:var(--font-family-text); font-size:13px; font-weight:600; color:var(--color-neutral-700); padding:0;}
-.brand-kit-empty-box:hover{background:var(--color-neutral-50); border-color:var(--color-neutral-500);}
-.brand-kit-empty-box img{width:20px; height:20px; display:block;}
+.brand-kit-empty-row{
+  box-sizing:border-box; width:100%; display:flex; align-items:center; gap:var(--spacing-lg);
+  padding:12px var(--spacing-lg); background:var(--color-neutral-0);
+  border:1px dashed var(--color-neutral-400); border-radius:var(--radius-xl);
+}
+.brand-kit-empty-row p{flex:1 0 0; min-width:0; margin:0; font-size:14px; line-height:22px; color:var(--color-neutral-500);}
 
 /* Empty state, single-row variant (Figma: Reel/Short · Script (Brand kit off) 8727:219504,
    node 8860:138213 "brand-kit-empty") -- one dashed row with a message + a real "Brand Setup"
@@ -46,17 +44,25 @@
    Brand Kit / Text Style Card previews, all in one row. ==================================== */
 .brand-kit-summary-compact{
   box-sizing:border-box; width:100%; display:flex; align-items:center; gap:16px;
-  padding:14px 16px; background:var(--color-neutral-0); border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl);
+  padding:14px 16px; background:var(--color-neutral-0); border:1px solid var(--color-neutral-300);
+  border-radius:10px; /* Figma's own literal value here -- doesn't land on the radius-lg(8)/xl(12) scale */
 }
 .brand-kit-summary-divider{width:1px; height:28px; flex-shrink:0; background:var(--color-neutral-300);}
 
 .brand-picker{position:relative; flex-shrink:0;}
+/* logo-picker / colour-picker (Figma 8988:133081 / 9059:224498) are their own bordered boxes,
+   not a plain borderless button -- .brand-picker-btn carries that box; the two size/padding
+   variants (--logo square-ish 8px padding, --colour 60px-tall px-8/py-6) come from the two
+   call sites in buildBrandKitSummaryCompactHtml(). */
 .brand-picker-btn{
-  display:flex; align-items:center; gap:8px; padding:8px; border:none; background:none; border-radius:var(--radius-md);
-  cursor:pointer; font-family:var(--font-family-text);
+  display:flex; align-items:center; gap:10px; border:1px solid var(--color-neutral-400);
+  background:var(--color-neutral-0); border-radius:var(--radius-lg);
+  cursor:pointer; font-family:var(--font-family-text); box-sizing:border-box;
 }
+.brand-picker-btn--logo{padding:8px;}
+.brand-picker-btn--colour{padding:6px 8px; height:60px;}
 .brand-picker-btn:hover{background:var(--color-neutral-50);}
-.brand-picker-label{font-size:14px; font-weight:500; line-height:18px; color:var(--color-neutral-900); white-space:nowrap;}
+.brand-picker-label{font-size:12px; font-weight:500; line-height:18px; color:var(--color-neutral-500); white-space:nowrap;}
 .brand-picker-chevron{width:20px; height:20px; flex-shrink:0; display:block;}
 .brand-picker-dots{display:flex; align-items:center; gap:4px;}
 .brand-picker-popover{position:absolute; top:calc(100% + 4px); left:0; z-index:50; min-width:169px;}
@@ -66,6 +72,6 @@
 .brand-kit-text-style-pill{display:flex; align-items:center; justify-content:center; padding:2px 8px; background:var(--color-neutral-150); border-radius:var(--radius-md);}
 .brand-kit-text-style-pill span{line-height:22px; font-size:16px; color:var(--color-neutral-900); white-space:nowrap;}
 .brand-kit-text-style-pill span.heading{font-family:Georgia,serif; font-weight:700;}
-.brand-kit-text-style-pill span.subheading{font-family:Georgia,serif; font-weight:600;}
+.brand-kit-text-style-pill span.subheading{font-family:'Lora',Georgia,serif; font-weight:700;}
 .brand-kit-text-style-pill span.body{font-family:Impact,'Arial Narrow Bold',sans-serif; font-weight:400;}
 .brand-kit-text-style-meta{font-size:11px; font-weight:500; line-height:16px; color:var(--color-neutral-500); white-space:nowrap;}
