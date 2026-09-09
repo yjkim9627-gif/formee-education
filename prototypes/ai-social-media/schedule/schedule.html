@@ -175,6 +175,33 @@ body{
 .count{flex:none;font-size:var(--font-size-text-2xs);line-height:16px;color:var(--color-neutral-500);
   font-variant-numeric:tabular-nums;}
 
+/* Controls / Context Menu · filter — 200 wide, padding 6, gap 2, radius 10 */
+.fwrap{position:relative;}
+.fmenu{position:absolute;left:0;top:36px;z-index:60;width:200px;
+  display:flex;flex-direction:column;gap:var(--spacing-2);padding:var(--spacing-6,6px);
+  background:var(--color-neutral-0);border:1px solid var(--color-neutral-400);
+  border-radius:10px;box-shadow:var(--shadow-popover);}
+/* Menu / Item — 188x36, padding 7/12, gap 10, radius 6 */
+.fmenu button{display:flex;align-items:center;gap:10px;width:100%;height:36px;
+  padding:0 var(--spacing-md);border-radius:var(--radius-md);text-align:left;
+  font-size:var(--font-size-text-md);line-height:var(--line-height-text-md);
+  color:var(--color-neutral-900);}
+.fmenu button:hover{background:var(--color-neutral-50);}
+/* 체크박스: 선택 시 neutral/950 채움 + 흰 체크 */
+.fmenu .cb{width:16px;height:16px;flex:none;border-radius:var(--radius-sm);
+  border:1px solid var(--color-neutral-400);background:var(--color-neutral-0);
+  display:flex;align-items:center;justify-content:center;}
+.fmenu button[aria-checked="true"] .cb{background:var(--color-neutral-900);border-color:var(--color-neutral-900);}
+.fmenu .cb svg{width:12px;height:12px;stroke:#fff;fill:none;stroke-width:2;
+  stroke-linecap:round;stroke-linejoin:round;display:none;}
+.fmenu button[aria-checked="true"] .cb svg{display:block;}
+/* 단일 선택(Date range)은 선택 행 자체가 강조되고 우측에 체크 */
+.fmenu button.single[aria-checked="true"]{background:var(--color-neutral-100);}
+.fmenu button.single .tick{margin-left:auto;width:16px;height:16px;flex:none;
+  stroke:var(--color-neutral-900);fill:none;stroke-width:2;stroke-linecap:round;
+  stroke-linejoin:round;display:none;}
+.fmenu button.single[aria-checked="true"] .tick{display:block;}
+
 /* ══ split: view + side peek ════════════════════════════════════════════ */
 /* split · calendar + peek — 1602 = calendar 1266 + peek 336, gap 0.
    calendar 의 우측 패딩 24 가 시각적 간격이 된다. */
@@ -604,11 +631,11 @@ body{
           <button type="button" id="segCal" aria-pressed="true">Calendar</button>
           <button type="button" id="segList" aria-pressed="false">List</button>
         </div>
-        <div class="filters">
-          <button type="button" class="fchip">Platform <svg viewBox="0 0 12 12"><path d="m3 4.5 3 3 3-3"/></svg></button>
-          <button type="button" class="fchip">Status <svg viewBox="0 0 12 12"><path d="m3 4.5 3 3 3-3"/></svg></button>
-          <button type="button" class="fchip">Type <svg viewBox="0 0 12 12"><path d="m3 4.5 3 3 3-3"/></svg></button>
-          <button type="button" class="fchip" id="chipRange" hidden>Date range <svg viewBox="0 0 12 12"><path d="m3 4.5 3 3 3-3"/></svg></button>
+        <div class="filters" id="filters">
+          <span class="fwrap"><button type="button" class="fchip" data-filter="platform">Platform <svg viewBox="0 0 12 12"><path d="m3 4.5 3 3 3-3"/></svg></button></span>
+          <span class="fwrap"><button type="button" class="fchip" data-filter="status">Status <svg viewBox="0 0 12 12"><path d="m3 4.5 3 3 3-3"/></svg></button></span>
+          <span class="fwrap"><button type="button" class="fchip" data-filter="type">Type <svg viewBox="0 0 12 12"><path d="m3 4.5 3 3 3-3"/></svg></button></span>
+          <span class="fwrap" id="wrapRange" hidden><button type="button" class="fchip" data-filter="date">Date range <svg viewBox="0 0 12 12"><path d="m3 4.5 3 3 3-3"/></svg></button></span>
           <span class="count" id="count">8 posts</span>
           <button type="button" class="fchip" id="chipSort" hidden>Sort <svg viewBox="0 0 12 12"><path d="m3 4.5 3 3 3-3"/></svg></button>
         </div>
@@ -750,6 +777,46 @@ var LABEL = {scheduled:'Scheduled', published:'Published', failed:'Failed'};
 /* 드래그로 옮긴 날짜 — 화면을 다시 그려도 유지된다 */
 var DROPPED = {};
 
+/* ── 필터 (menus & dropdowns) ──────────────────────────────────────────
+   Platform·Status·Type 은 체크박스 다중선택, Date range 는 단일선택이다.
+   해시가 아니라 메모리에 두어 딥링크가 늘 같은 화면을 열게 한다. */
+var FILTER_DEFS = {
+  platform: { label:'Platform',   multi:true,
+    options:['Instagram','TikTok','YouTube','Facebook','LinkedIn'] },
+  status:   { label:'Status',     multi:true,  options:['Scheduled','Published'] },
+  type:     { label:'Type',       multi:true,  options:['Reel','Story Video','Image','Carousel'] },
+  date:     { label:'Date range', multi:false,
+    options:['All time','Next 7 days','Next 30 days','Last 7 days','Last 30 days','Last 90 days','This year'] }
+};
+var FILTERS = { platform:[], status:[], type:[], date:'All time' };
+var openFilter = null;
+
+function filterChipLabel(key){
+  const d = FILTER_DEFS[key];
+  if (!d.multi) return FILTERS[key] === 'All time' ? d.label : FILTERS[key];
+  const n = FILTERS[key].length;
+  return n === 0 ? d.label : n + ' selected';
+}
+/* 날짜 범위는 오늘(9/7) 기준으로 해석한다 */
+function inDateRange(day){
+  const r = FILTERS.date;
+  if (r === 'All time' || r === 'This year') return true;
+  if (r === 'Next 7 days')   return day >= TODAY && day <= TODAY + 7;
+  if (r === 'Next 30 days')  return day >= TODAY;
+  if (r === 'Last 7 days')   return day <= TODAY && day >= TODAY - 7;
+  if (r === 'Last 30 days')  return day <= TODAY;
+  if (r === 'Last 90 days')  return day <= TODAY;
+  return true;
+}
+function passesFilters(e){
+  if (FILTERS.platform.length &&
+      !e.plats.some(function(p){ return FILTERS.platform.indexOf(PLAT_NAME[p]) > -1; })) return false;
+  if (FILTERS.status.length && FILTERS.status.indexOf(LABEL[e.status]) === -1) return false;
+  if (FILTERS.type.length && FILTERS.type.indexOf(e.type) === -1) return false;
+  if (!inDateRange(e.day)) return false;
+  return true;
+}
+
 /* Edit & Publish 는 이 파일에 없다 — 예진님의 v4 Publish 단계(Figma 8741:250771)로 넘긴다.
    v4 의 fmx-deeplink-js 가 stage=publish 를 받아 goToPublish() 를 열고,
    edit/caption 으로 "이어서 고치는 초안"임을 표시한다. */
@@ -815,6 +882,7 @@ function visibleEvents(){
       if(DROPPED[o.id]){ o.day = DROPPED[o.id]; o.rel = 'moved to Sep ' + o.day; }
       return o;
     })
+    .filter(passesFilters)
     .filter(function(e){
       if(!S.q) return true;
       var hay = (e.title + ' ' + e.type + ' ' +
@@ -831,13 +899,14 @@ function render(){
   var evs = visibleEvents(), isList = S.view === 'list';
 
   $('searchrow').hidden = !isList;
-  $('chipRange').hidden = !isList;
+  $('wrapRange').hidden = !isList;
   $('chipSort').hidden  = !isList;
 
   $('segCal').setAttribute('aria-pressed', !isList);
   $('segList').setAttribute('aria-pressed', isList);
   $('q').value = S.q;
   $('count').textContent = evs.length + (evs.length === 1 ? ' post' : ' posts');
+  paintFilters();
 
   $('viewport').classList.toggle('list-view', isList);
   $('viewport').innerHTML = isList ? (evs.length ? listHTML(evs) : emptyHTML()) : calendarHTML(evs);
@@ -1002,6 +1071,44 @@ function paintPeek(evs){
     '</div>' +
     peekActions(e, failed, published) +
     '';
+}
+
+/* 칩 라벨과 열린 메뉴를 다시 그린다 */
+function paintFilters(){
+  Array.prototype.forEach.call(document.querySelectorAll('.fchip[data-filter]'), function(chip){
+    const key = chip.dataset.filter;
+    const on = FILTER_DEFS[key].multi ? FILTERS[key].length > 0 : FILTERS[key] !== 'All time';
+    chip.firstChild.nodeValue = filterChipLabel(key) + ' ';
+    chip.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('.fmenu'), function(m){ m.remove(); });
+  if (!openFilter) return;
+  const chip = document.querySelector('.fchip[data-filter="' + openFilter + '"]');
+  if (!chip) { openFilter = null; return; }
+  const d = FILTER_DEFS[openFilter], key = openFilter;
+  const menu = document.createElement('div');
+  menu.className = 'fmenu';
+  menu.innerHTML = d.options.map(function(opt){
+    const sel = d.multi ? FILTERS[key].indexOf(opt) > -1 : FILTERS[key] === opt;
+    return '<button type="button" role="menuitemcheckbox" class="' + (d.multi ? '' : 'single') + '"' +
+      ' aria-checked="' + sel + '" data-opt="' + opt + '">' +
+      (d.multi ? '<span class="cb"><svg viewBox="0 0 12 12"><path d="m2.5 6.2 2.3 2.3L9.5 3.8"/></svg></span>' : '') +
+      '<span>' + opt + '</span>' +
+      (d.multi ? '' : '<svg class="tick" viewBox="0 0 16 16"><path d="m3.5 8.5 3 3 6-6"/></svg>') +
+      '</button>';
+  }).join('');
+  chip.parentElement.appendChild(menu);
+  Array.prototype.forEach.call(menu.children, function(b){
+    b.addEventListener('click', function(ev){
+      ev.stopPropagation();
+      const opt = b.dataset.opt;
+      if (d.multi){
+        const i = FILTERS[key].indexOf(opt);
+        if (i > -1) FILTERS[key].splice(i,1); else FILTERS[key].push(opt);
+      } else { FILTERS[key] = opt; openFilter = null; }
+      render();
+    });
+  });
 }
 
 function paintOverlays(){
@@ -1173,6 +1280,13 @@ function wire(){
   });
 }
 
+document.getElementById('filters').addEventListener('click', function(ev){
+  const chip = ev.target.closest('.fchip[data-filter]');
+  if (!chip) return;
+  ev.stopPropagation();
+  openFilter = (openFilter === chip.dataset.filter) ? null : chip.dataset.filter;
+  paintFilters();
+});
 $('segCal').addEventListener('click', function(){ go({s:'calendar'}); });
 $('segList').addEventListener('click', function(){ go({s:'list'}); });
 $('q').addEventListener('input', function(){ S.q = this.value; go({q:this.value || null}); this.focus(); });
@@ -1189,11 +1303,13 @@ Array.prototype.forEach.call(document.querySelectorAll('.modal [data-go], .pub [
 });
 
 document.addEventListener('click', function(ev){
+  if(openFilter && !ev.target.closest('.fwrap')){ openFilter = null; paintFilters(); }
   if(S.menu && !ev.target.closest('#menuNew') && !ev.target.closest('#btnNew')) go({'new':null});
   if(S.pop && !ev.target.closest('#picker') && !ev.target.closest('#btnBanner')) go({pop:null});
 });
 document.addEventListener('keydown', function(ev){
   if(ev.key !== 'Escape') return;
+  if(openFilter){ openFilter = null; paintFilters(); return; }
   if(S.pop) go({pop:null});
   else if(S.modal) go({modal:null});
   else if(S.menu) go({'new':null});
