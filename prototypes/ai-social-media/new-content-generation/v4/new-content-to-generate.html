@@ -3110,24 +3110,10 @@ function buildBrandKitEmptyCardHtml(goToSetupFn){
       <button type="button" class="btn btn-dark" onclick="${goToSetupFn}()">Brand Setup</button>
     </div>`;
 }
-[['brandKitEmpty', 'imgGoToBrandSetup'], ['globalBrandKitEmpty', 'carGoToBrandSetup']].forEach(([id, fn]) => {
+[['brandKitEmpty', 'imgGoToBrandSetup'], ['globalBrandKitEmpty', 'carGoToBrandSetup'], ['reelBrandKitEmpty', 'reelGoToBrandSetup']].forEach(([id, fn]) => {
   const el = document.getElementById(id);
   if(el) el.innerHTML = buildBrandKitEmptyCardHtml(fn);
 });
-
-// Reel/Short's own empty state is the simpler single-row design (Figma 8727:219504, node
-// 8860:138213), not the Logos/Colours/Fonts section shell above.
-function buildBrandKitEmptySimpleHtml(goToSetupFn){
-  return `
-    <div class="brand-kit-empty-simple">
-      <p>Set up your brand kit to apply it here automatically</p>
-      <button type="button" class="btn btn-dark" onclick="${goToSetupFn}()">Brand Setup</button>
-    </div>`;
-}
-(() => {
-  const el = document.getElementById('reelBrandKitEmpty');
-  if(el) el.innerHTML = buildBrandKitEmptySimpleHtml('reelGoToBrandSetup');
-})();
 
 let brandKitOn = false;
 function imgApplyBrandMode(mode){
