@@ -51,14 +51,18 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 [hidden]{display:none !important;}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;}
+/* 1920x1162 프레임을 실제 창 크기에 맞춰 축소한다 — 노트북에서 아래·오른쪽이 잘리던 문제.
+   v4(new-content-to-generate.html)의 fitScreenToViewport() 와 같은 방식이다. */
+html{display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;
+  background:var(--color-neutral-200);}
 body{
-  background:var(--color-neutral-200);padding:40px 0;
+  margin:0;overflow:hidden;
   font-family:'DM Sans',-apple-system,'Helvetica Neue',sans-serif;
   font-variation-settings:'opsz' 14;-webkit-font-smoothing:antialiased;
   color:var(--color-neutral-900);
 }
 .frame{
-  position:relative;width:1920px;height:1162px;margin:0 auto;
+  position:relative;width:1920px;height:1162px;flex-shrink:0;transform-origin:top left;
   display:flex;align-items:flex-start;overflow:hidden;background:var(--color-neutral-50);
   font-size:var(--font-size-text-md);line-height:var(--line-height-text-md);
 }
@@ -1036,9 +1040,12 @@ function positionPicker(){
   var btn = $('btnReschedule'), pop = $('picker'), frame = document.querySelector('.frame');
   if(!btn){ pop.hidden = true; return; }
   var fb = frame.getBoundingClientRect(), bb = btn.getBoundingClientRect();
+  /* 프레임이 창에 맞춰 축소돼 있으면 rect 값도 같이 줄어든다 — 프레임 좌표로 되돌린다 */
+  var k = fb.width / 1920 || 1;
   var ph = pop.offsetHeight || 470;
-  pop.style.left = Math.max(16, bb.left - fb.left - 376 - 12) + 'px';
-  pop.style.top  = Math.min(Math.max(16, bb.top - fb.top + bb.height - ph), fb.height - ph - 16) + 'px';
+  var bx = (bb.left - fb.left) / k, by = (bb.top - fb.top) / k, bh = bb.height / k;
+  pop.style.left = Math.max(16, bx - 376 - 12) + 'px';
+  pop.style.top  = Math.min(Math.max(16, by + bh - ph), 1162 - ph - 16) + 'px';
 }
 
 /* ── 배선 ─────────────────────────────────────────────────────────────── */
@@ -1093,6 +1100,20 @@ function markLauncher(){
     a.classList.toggle('on', a.getAttribute('href') === h);
   });
 }
+/* 프레임을 창에 맞춰 축소 — 비율은 그대로 두고 가로·세로 둘 다 들어가게 한다.
+   내부 스크롤 영역(리스트·피크·피커)은 이 배율과 무관하게 각자 스크롤하므로
+   잘리는 건 없고 전체 크기만 줄어든다. */
+function fitFrameToViewport(){
+  var M = 40, frame = document.querySelector('.frame');
+  var scale = Math.min(1, (window.innerWidth - M * 2) / 1920, (window.innerHeight - M * 2) / 1162);
+  frame.style.transform = 'scale(' + scale + ')';
+  document.body.style.width  = Math.round(1920 * scale) + 'px';
+  document.body.style.height = Math.round(1162 * scale) + 'px';
+  return scale;
+}
+window.addEventListener('resize', function(){ fitFrameToViewport(); if(S.pop) positionPicker(); });
+fitFrameToViewport();
+
 window.addEventListener('hashchange', readHash);
 readHash();
 </script>
