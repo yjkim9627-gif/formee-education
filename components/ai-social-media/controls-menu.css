@@ -70,6 +70,61 @@
 }
 .context-menu--option-list{ width:296px; }
 
+/* ---------- Menu / Popover wrapper (used by Logo/Colour picker dropdowns below) ----------
+   Figma: "Menu / Logo Picker" (9059:226477) / "Menu / Colour Picker" (9059:227472) — both just
+   the real Menu / Item component's Type=Logo/Colour variants inside this same plain popover
+   shell, not a separate component. */
+.menu-popover{
+  display:flex; flex-direction:column; gap:2px; align-items:stretch;
+  width:max-content; padding:var(--spacing-sm); box-sizing:border-box;
+  background:var(--color-neutral-0); border:1px solid var(--color-neutral-400);
+  border-radius:var(--radius-md-lg); box-shadow:var(--shadow-popover);
+}
+.menu-divider{ height:1px; width:100%; flex-shrink:0; background:var(--color-neutral-300); }
+
+/* ---------- Menu / Item, Type=Logo (9059:226563 family) ----------
+   Logo thumbnail (Editor / cell, size=xs) + label, single-select — the row furthest right
+   shows a checkmark when it's the current selection. */
+.menu-item--logo{
+  display:flex; align-items:center; gap:var(--spacing-sm); width:100%; box-sizing:border-box;
+  padding:7px var(--spacing-sm); border-radius:var(--radius-md); border:none; background:none;
+  cursor:pointer; text-align:left;
+}
+.menu-item--logo.selected{ background:var(--color-neutral-100); }
+.menu-item--logo .menu-item-label{
+  flex:1 0 0; font-family:var(--font-family-text); font-size:var(--font-size-text-md);
+  line-height:var(--line-height-text-md); font-weight:var(--font-weight-medium); color:var(--color-neutral-900);
+  white-space:nowrap;
+}
+.menu-item--logo .menu-item-check{ width:16px; height:16px; flex-shrink:0; display:none; }
+.menu-item--logo.selected .menu-item-check{ display:block; }
+/* "None" row — same row shape, but its thumbnail slot holds a muted ban icon (Editor / cell has
+   no "empty" Type of its own, so this is drawn locally to that exact spec rather than adding one
+   to the shared component — see figma_use.md notes on this file). */
+.menu-item-none-icon{
+  box-sizing:border-box; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  width:44px; height:44px; padding:6px; background:var(--color-neutral-25);
+  border:1px solid var(--color-neutral-400); border-radius:var(--radius-md);
+}
+.menu-item-none-icon img{ width:20px; height:20px; display:block; }
+
+/* ---------- Menu / Item, Type=Colour (9059:227340 family) ----------
+   Checkbox + colour swatch (Editor / Color Swatch, size=md) + hex label — multi-select. */
+.menu-item--colour{
+  display:flex; align-items:center; gap:var(--spacing-sm); width:100%; box-sizing:border-box;
+  padding:7px var(--spacing-md); border-radius:var(--radius-md); border:none; background:none;
+  cursor:pointer; text-align:left;
+}
+.menu-item--colour.selected{ background:var(--color-neutral-100); }
+.menu-item--colour .menu-item-swatch-label{
+  display:flex; align-items:center; gap:var(--spacing-sm);
+}
+.menu-item--colour .menu-item-label{
+  font-family:var(--font-family-text); font-size:var(--font-size-text-md);
+  line-height:var(--line-height-text-md); font-weight:var(--font-weight-medium); color:var(--color-neutral-900);
+  white-space:nowrap;
+}
+
 /* ---------- Size Dropdown ---------- */
 .size-dropdown{
   position:relative; width:140px; height:238px; box-sizing:border-box; overflow:hidden;

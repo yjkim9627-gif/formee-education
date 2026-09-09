@@ -31,6 +31,8 @@
 <link rel="stylesheet" href="../../../../components/ai-social-media/brand-kit-summary.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/ai-response-card.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/editor-cell.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/editor-color-swatch.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/controls-menu.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/brand-logo.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/image-scene-card.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/storyboard-card.css">
@@ -84,6 +86,9 @@
 
   /* ---- role switch (demo control, previews brand-setup state) ---- */
   .role-switch{position:fixed; right:16px; bottom:16px; z-index:9999; display:flex; gap:6px; align-items:center; background:rgba(15,23,41,.92); border-radius:9999px; padding:6px 8px 6px 14px; box-shadow:0 6px 20px rgba(0,0,0,.28); backdrop-filter:blur(6px);}
+  /* Hidden for now (setBrandMode()/window.__brandMode itself stays wired up -- this just
+     hides the demo bottom-right switcher bar; remove this rule to bring it back). */
+  #roleSwitch{display:none;}
   .role-cap{font-weight:600; font-size:11px; line-height:16px; letter-spacing:.4px; text-transform:uppercase; color:rgba(255,255,255,.55); white-space:nowrap; margin:0 2px 0 0;}
   .role-btn{font-weight:600; font-size:12px; line-height:18px; color:rgba(255,255,255,.72); padding:5px 11px; border-radius:9999px; white-space:nowrap; border:none; background:transparent; cursor:pointer; font-family:var(--font-family-text);}
   .role-btn:hover{color:#fff; background:rgba(255,255,255,.1);}
@@ -1858,10 +1863,7 @@
                   <p class="brand-kit-description">Use your brand kit to generate the image — AI applies your logo, colours, and fonts automatically.</p>
                 </div>
                 <div id="brandKitSummary"></div>
-                <div class="brand-kit-empty" id="brandKitEmpty" style="display:none;">
-                  <span>Set up your brand kit to apply it here automatically</span>
-                  <button type="button" class="btn btn-secondary" onclick="imgGoToBrandSetup()">Brand Setup</button>
-                </div>
+                <div class="brand-kit-empty" id="brandKitEmpty" style="display:none;"></div>
               </div>
             </div></div>
           </div>
@@ -2015,10 +2017,7 @@
                   <p class="brand-kit-description">Use your brand kit to generate the image — AI applies your logo, colours, and fonts automatically.</p>
                 </div>
                 <div id="globalBrandKitSummary" style="display:none;"></div>
-                <div class="brand-kit-empty" id="globalBrandKitEmpty" style="display:none;">
-                  <span>Set up your brand kit to apply it here automatically</span>
-                  <button type="button" class="btn btn-secondary" onclick="carGoToBrandSetup()">Brand Setup</button>
-                </div>
+                <div class="brand-kit-empty" id="globalBrandKitEmpty" style="display:none;"></div>
               </div>
 
               <!-- Hidden — per Figma (that CTA lives only in the persistent bottom action bar,
@@ -2213,10 +2212,7 @@
                     <p class="brand-kit-description">Use your brand kit to generate the image — AI applies your logo, colours, and fonts automatically.</p>
                   </div>
                   <div id="reelBrandKitSummary" style="display:none;"></div>
-                  <div class="brand-kit-empty" id="reelBrandKitEmpty" style="display:none;">
-                    <span>Set up your brand kit to apply it here automatically</span>
-                    <button type="button" class="btn btn-secondary" onclick="reelGoToBrandSetup()">Brand Setup</button>
-                  </div>
+                  <div class="brand-kit-empty" id="reelBrandKitEmpty" style="display:none;"></div>
                 </div>
 
                 <div id="reelSceneSection">
@@ -2975,44 +2971,157 @@ function onCopyFieldInput(i, value){
 // ---- Brand kit (Visual concept > Use brand kit) ----
 // window.__brandMode ('none' | 'set') is set by imgApplyBrandMode(), reused from the video/carousel flow's
 // demo role-switch so this screen can preview both brand-setup states.
-// Brand Kit summary card — shared by Image post, Carousel, Reel/Short and Story Video
-// (Figma node 8860:138841). Rendered once into each screen's own container so every
-// screen's markup only needs to carry the toggle row + this container + the empty state.
-function buildBrandKitCardHtml(){
-  const realLogos = ['Primary', 'Dark', 'SCG-HE', 'SCG VST'];
-  const logoItems = realLogos.map(label => `
-        <div class="brand-kit-logo-item">
-          <div class="editor-cell type-logo"><img src="../../../../components/ai-social-media/icons/fmx-logo-sample.svg" alt=""></div>
-          <span class="brand-kit-logo-item-label">${label}</span>
-        </div>`).join('');
-  const swatches = ['#0e5c55', '#c81856', '#e8891f', '#33383f', '#5a8b8a', '#9c5a72', '#ffffff'];
-  const swatchHtml = swatches.map(c => `<span style="background:${c};${c === '#ffffff' ? ' border-left:1px solid var(--color-neutral-200);' : ''}"></span>`).join('');
+// ---- Brand kit summary — COMPACT bar (final design, Figma "brand-kit-summary-compact"
+// 8988:133080) — real working Logo/Colour picker dropdowns + the three Text Style Card
+// previews. Replaces buildBrandKitCardHtml() above per-screen as each one is migrated;
+// 'reel' (shared by Reel/Short + Story Video) is migrated first, Image post ('img') and
+// Carousel ('car') follow the same pattern once verified. ----
+const BRAND_KIT_LOGO_OPTIONS = ['Primary', 'Dark', 'SCG-HE', 'SCG'];
+const BRAND_KIT_COLOUR_OPTIONS = ['#0e5c55', '#c81856', '#e8891f', '#33383f', '#9c5a72', '#ffffff'];
+const BRAND_KIT_SUMMARY_CONTAINER_IDS = { img: 'brandKitSummary', car: 'globalBrandKitSummary', reel: 'reelBrandKitSummary' };
+window.__brandKitPickerState = {
+  img: { logo: 'Primary', colours: ['#0e5c55', '#c81856', '#e8891f'], logoMenuOpen: false, colourMenuOpen: false },
+  car: { logo: 'Primary', colours: ['#0e5c55', '#c81856', '#e8891f'], logoMenuOpen: false, colourMenuOpen: false },
+  reel: { logo: 'Primary', colours: ['#0e5c55', '#c81856', '#e8891f'], logoMenuOpen: false, colourMenuOpen: false }
+};
+
+function brandKitLogoThumbHtml(name){
+  if(name === 'None'){
+    return `<div class="menu-item-none-icon"><img src="../../../../components/ai-social-media/icons/ban.svg" alt=""></div>`;
+  }
+  return `<div class="editor-cell size-xs type-logo"><img src="../../../../components/ai-social-media/icons/fmx-logo-sample.svg" alt=""></div>`;
+}
+
+function buildBrandKitLogoMenuHtml(scope){
+  const st = window.__brandKitPickerState[scope];
+  const items = BRAND_KIT_LOGO_OPTIONS.map(name => `
+      <button type="button" class="menu-item--logo${st.logo === name ? ' selected' : ''}" onclick="event.stopPropagation(); selectBrandKitLogo('${scope}','${name}')">
+        ${brandKitLogoThumbHtml(name)}
+        <span class="menu-item-label">${name}</span>
+        <img class="menu-item-check" src="../../../../components/ai-social-media/icons/panel-check.svg" alt="">
+      </button>`).join('');
+  const noneItem = `
+      <button type="button" class="menu-item--logo${st.logo === 'None' ? ' selected' : ''}" onclick="event.stopPropagation(); selectBrandKitLogo('${scope}','None')">
+        ${brandKitLogoThumbHtml('None')}
+        <span class="menu-item-label">None</span>
+        <img class="menu-item-check" src="../../../../components/ai-social-media/icons/panel-check.svg" alt="">
+      </button>`;
+  return `<div class="menu-popover brand-picker-popover" onclick="event.stopPropagation();">${items}<div class="menu-divider"></div>${noneItem}</div>`;
+}
+
+function buildBrandKitColourMenuHtml(scope){
+  const st = window.__brandKitPickerState[scope];
+  const items = BRAND_KIT_COLOUR_OPTIONS.map(hex => {
+    const checked = st.colours.includes(hex);
+    return `
+      <button type="button" class="menu-item--colour${checked ? ' selected' : ''}" onclick="event.stopPropagation(); toggleBrandKitColour('${scope}','${hex}')">
+        <input type="checkbox" class="checkbox" ${checked ? 'checked' : ''} onclick="event.preventDefault();" tabindex="-1">
+        <div class="menu-item-swatch-label">
+          <div class="editor-color-swatch" style="--sw-color:${hex};"></div>
+          <span class="menu-item-label">${hex.toUpperCase()}</span>
+        </div>
+      </button>`;
+  }).join('');
+  return `<div class="menu-popover brand-picker-popover" onclick="event.stopPropagation();">${items}</div>`;
+}
+
+function buildBrandKitSummaryCompactHtml(scope){
+  const st = window.__brandKitPickerState[scope];
+  const dots = st.colours.map(hex => `<div class="editor-color-swatch" style="--sw-color:${hex};"></div>`).join('');
   return `
-    <div class="brand-kit-card">
-      <div class="brand-kit-section">
-        <div class="brand-kit-section-header"><span class="brand-kit-section-title">Logos</span></div>
-        <div class="brand-kit-logos">${logoItems}</div>
+    <div class="brand-kit-summary-compact">
+      <div class="brand-picker">
+        <button type="button" class="brand-picker-btn" onclick="toggleBrandKitLogoMenu(event,'${scope}')">
+          ${brandKitLogoThumbHtml(st.logo)}
+          <span class="brand-picker-label">${st.logo}</span>
+          <img class="brand-picker-chevron" src="../../../../components/ai-social-media/icons/chevron-down.svg" alt="">
+        </button>
+        ${st.logoMenuOpen ? buildBrandKitLogoMenuHtml(scope) : ''}
       </div>
-      <div class="brand-kit-section">
-        <div class="brand-kit-section-header">
-          <span class="brand-kit-section-title">Colours</span>
-          <div class="brand-kit-palette-select"><span>Palette · Formee Express</span><span class="chevron"><img src="../../../../components/ai-social-media/icons/caret-down-filled.svg" alt=""></span></div>
-        </div>
-        <div class="brand-kit-swatch-row">${swatchHtml}</div>
+      <div class="brand-kit-summary-divider"></div>
+      <div class="brand-picker">
+        <button type="button" class="brand-picker-btn" onclick="toggleBrandKitColourMenu(event,'${scope}')">
+          <div class="brand-picker-dots">${dots}</div>
+          <span class="brand-picker-label">Primary</span>
+          <img class="brand-picker-chevron" src="../../../../components/ai-social-media/icons/chevron-down.svg" alt="">
+        </button>
+        ${st.colourMenuOpen ? buildBrandKitColourMenuHtml(scope) : ''}
       </div>
-      <div class="brand-kit-section">
-        <div class="brand-kit-section-header"><span class="brand-kit-section-title">Fonts</span></div>
-        <div class="brand-kit-fonts">
-          <div class="brand-kit-font-card"><span class="sample heading">Heading</span><span class="meta">Georgia Bold</span></div>
-          <div class="brand-kit-font-card"><span class="sample subheading">Subheading</span><span class="meta">Georgia Semibold</span></div>
-          <div class="brand-kit-font-card"><span class="sample body">Body</span><span class="meta">Impact Regular</span></div>
-        </div>
+      <div class="brand-kit-summary-divider"></div>
+      <div class="brand-kit-text-style-row">
+        <div class="brand-kit-text-style-card"><div class="brand-kit-text-style-pill"><span class="heading">Heading</span></div><span class="brand-kit-text-style-meta">Georgia Bold</span></div>
+        <div class="brand-kit-text-style-card"><div class="brand-kit-text-style-pill"><span class="subheading">Subheading</span></div><span class="brand-kit-text-style-meta">Georgia Semibold</span></div>
+        <div class="brand-kit-text-style-card"><div class="brand-kit-text-style-pill"><span class="body">Body</span></div><span class="brand-kit-text-style-meta">Impact Regular</span></div>
       </div>
     </div>`;
 }
-['brandKitSummary', 'globalBrandKitSummary', 'reelBrandKitSummary'].forEach(id => {
+
+function renderBrandKitSummaryCompact(scope){
+  const el = document.getElementById(BRAND_KIT_SUMMARY_CONTAINER_IDS[scope]);
+  if(el) el.innerHTML = buildBrandKitSummaryCompactHtml(scope);
+}
+function toggleBrandKitLogoMenu(e, scope){
+  e.stopPropagation();
+  const st = window.__brandKitPickerState[scope];
+  st.logoMenuOpen = !st.logoMenuOpen;
+  st.colourMenuOpen = false;
+  renderBrandKitSummaryCompact(scope);
+}
+function toggleBrandKitColourMenu(e, scope){
+  e.stopPropagation();
+  const st = window.__brandKitPickerState[scope];
+  st.colourMenuOpen = !st.colourMenuOpen;
+  st.logoMenuOpen = false;
+  renderBrandKitSummaryCompact(scope);
+}
+function selectBrandKitLogo(scope, name){
+  const st = window.__brandKitPickerState[scope];
+  st.logo = name;
+  st.logoMenuOpen = false;
+  renderBrandKitSummaryCompact(scope);
+}
+function toggleBrandKitColour(scope, hex){
+  const st = window.__brandKitPickerState[scope];
+  const idx = st.colours.indexOf(hex);
+  if(idx > -1) st.colours.splice(idx, 1); else st.colours.push(hex);
+  renderBrandKitSummaryCompact(scope);
+}
+// Click-anywhere-else closes any open picker popover.
+document.addEventListener('click', () => {
+  let changed = false;
+  Object.values(window.__brandKitPickerState).forEach(st => {
+    if(st.logoMenuOpen || st.colourMenuOpen){ st.logoMenuOpen = false; st.colourMenuOpen = false; changed = true; }
+  });
+  if(changed) Object.keys(BRAND_KIT_SUMMARY_CONTAINER_IDS).forEach(renderBrandKitSummaryCompact);
+});
+
+Object.keys(BRAND_KIT_SUMMARY_CONTAINER_IDS).forEach(renderBrandKitSummaryCompact);
+
+// Empty state (Figma: Brand Kit settings page's "Overview - empty" node 8479:139483) --
+// shown instead of the compact summary above when window.__brandMode !== 'set' -- mirrors
+// the Logos/Colours/Fonts section shell, each section's content replaced by a dashed
+// "+ Manage X" box (8479:139506 "empty · logos" et al) instead of one generic message.
+function buildBrandKitEmptyCardHtml(goToSetupFn){
+  const emptyBox = label => `
+      <button type="button" class="brand-kit-empty-box" onclick="${goToSetupFn}()">
+        <img src="../../../../components/ai-social-media/icons/pagebar-plus.svg" alt="">
+        <span>${label}</span>
+      </button>`;
+  const section = (title, label) => `
+      <div class="brand-kit-section">
+        <div class="brand-kit-section-header"><span class="brand-kit-section-title">${title}</span></div>
+        ${emptyBox(label)}
+      </div>`;
+  return `
+    <div class="brand-kit-card">
+      ${section('Logos', 'Manage logos')}
+      ${section('Colours', 'Manage colours')}
+      ${section('Fonts', 'Manage fonts')}
+    </div>`;
+}
+[['brandKitEmpty', 'imgGoToBrandSetup'], ['globalBrandKitEmpty', 'carGoToBrandSetup'], ['reelBrandKitEmpty', 'reelGoToBrandSetup']].forEach(([id, fn]) => {
   const el = document.getElementById(id);
-  if(el) el.innerHTML = buildBrandKitCardHtml();
+  if(el) el.innerHTML = buildBrandKitEmptyCardHtml(fn);
 });
 
 let brandKitOn = false;
@@ -3043,9 +3152,10 @@ function imgApplyBrandMode(mode){
 }
 function toggleBrandKit(){
   brandKitOn = !brandKitOn;
+  const hasBrand = window.__brandMode === 'set';
   document.getElementById('brandKitSwitch').classList.toggle('on', brandKitOn);
-  document.getElementById('brandKitSummary').style.display = brandKitOn ? 'block' : 'none';
-  document.getElementById('brandKitEmpty').style.display = !brandKitOn && window.__brandMode !== 'set' ? 'flex' : 'none';
+  document.getElementById('brandKitSummary').style.display = brandKitOn && hasBrand ? 'block' : 'none';
+  document.getElementById('brandKitEmpty').style.display = brandKitOn && !hasBrand ? 'flex' : 'none';
   document.getElementById('brandKitSwitch').setAttribute('aria-checked', String(brandKitOn));
   updateVisualConceptPrompt();
 }
@@ -4172,11 +4282,12 @@ function updateGlobalBrandKitUI(){
   const empty = document.getElementById('globalBrandKitEmpty');
   if(!sw) return;
   const on = !!window.__globalBrandKitOn;
+  const hasBrand = window.__brandMode === 'set';
   sw.classList.remove('disabled');
   sw.classList.toggle('on', on);
   sw.setAttribute('aria-checked', String(on));
-  summary.style.display = on ? 'block' : 'none';
-  empty.style.display = !on && window.__brandMode !== 'set' ? 'flex' : 'none';
+  summary.style.display = on && hasBrand ? 'block' : 'none';
+  empty.style.display = on && !hasBrand ? 'flex' : 'none';
 }
 
 // ---- Reel/Short & Story Video's own "Use brand kit" toggle (same pattern as Carousel's
@@ -4191,11 +4302,12 @@ function updateReelBrandKitUI(){
   const empty = document.getElementById('reelBrandKitEmpty');
   if(!sw) return;
   const on = !!window.__reelBrandKitOn;
+  const hasBrand = window.__brandMode === 'set';
   sw.classList.remove('disabled');
   sw.classList.toggle('on', on);
   sw.setAttribute('aria-checked', String(on));
-  summary.style.display = on ? 'block' : 'none';
-  empty.style.display = !on && window.__brandMode !== 'set' ? 'flex' : 'none';
+  summary.style.display = on && hasBrand ? 'block' : 'none';
+  empty.style.display = on && !hasBrand ? 'flex' : 'none';
 }
 function reelGoToBrandSetup(){
   alert('This would open Brand Setup — outside this prototype\'s scope.');
