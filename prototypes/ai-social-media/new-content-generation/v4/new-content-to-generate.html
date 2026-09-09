@@ -7795,6 +7795,10 @@ fitScreenToViewport();
   color:var(--color-neutral-900,#0f1729);white-space:nowrap;}
 .fmx-back:hover{background:var(--color-neutral-50,#f6f8fc);}
 .fmx-back i{font-style:normal;color:var(--color-neutral-500,#8a93a8);}
+/* 화면 안 제자리. Figma(8741:250771 · 9026:254025 · 9154:132414)는 이 알약을
+   페이지 제목 바로 위에 두므로 여기서도 같은 자리에 붙인다. 붙일 제목을 못 찾으면
+   위의 떠 있는 버전이 대신 뜬다 — 돌아갈 길이 아예 없는 것보다는 낫다. */
+.fmx-back--inline{position:static;margin:0 0 16px;box-shadow:none;align-self:flex-start;}
 </style>
 <script id="fmx-deeplink-js">
 /* Content Library 딥링크
@@ -7827,12 +7831,25 @@ fitScreenToViewport();
     if (!home) return;
     /* back 은 해시 조각만 받는다. 콜론이나 // 가 섞여 있으면 URL 을 밀어넣은 것이라 버린다. */
     var safe = /[:]|\/\//.test(back) ? '' : back;
-    var a = document.createElement('a');
-    a.className = 'fmx-back';
-    a.href = home.href + (safe ? '#' + safe : '');
-    a.innerHTML = '<i>\u2190</i>';
-    a.appendChild(document.createTextNode('Back to ' + home.label));
-    document.body.appendChild(a);
+    function pill(inline){
+      var a = document.createElement('a');
+      a.className = 'fmx-back' + (inline ? ' fmx-back--inline' : '');
+      a.href = home.href + (safe ? '#' + safe : '');
+      a.innerHTML = '<i>\u2190</i>';
+      a.appendChild(document.createTextNode('Back to ' + home.label));
+      return a;
+    }
+    /* Brief 와 Publish 는 서로 다른 view 라 양쪽에 하나씩 둔다 — 보이는 쪽만 눈에 띈다 */
+    var heads = document.querySelectorAll('.brief-heading, .pub-page-heading');
+    if (heads.length){
+      Array.prototype.forEach.call(heads, function(h){
+        if (h.previousElementSibling &&
+            h.previousElementSibling.classList.contains('fmx-back')) return;
+        h.parentNode.insertBefore(pill(true), h);
+      });
+      return;
+    }
+    document.body.appendChild(pill(false));
   }
   function banner(){
     if (!ref) return;
