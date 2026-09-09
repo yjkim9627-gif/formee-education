@@ -7937,30 +7937,33 @@ fitScreenToViewport();
 /* ---------- 브리프 안의 레퍼런스 칩 ---------- */
 .fmxref-row{position:relative; display:flex; margin-bottom:var(--spacing-md);}
 .fmxref-row:empty{display:none;}
-.fmxref-chip{display:flex; align-items:center; gap:var(--spacing-sm);
-  padding:var(--spacing-sm) var(--spacing-sm) var(--spacing-sm) var(--spacing-sm);
-  background:var(--color-brand-primary-light,#eef2fb);
-  border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl);
-  font-family:var(--font-family-text); text-align:left;}
-.fmxref-chip:hover{border-color:var(--color-neutral-450);}
-.fmxref-hit{display:flex; align-items:center; gap:var(--spacing-md); min-width:0;
-  cursor:pointer; padding-right:var(--spacing-sm);}
-.fmxref-chip .th{width:40px; flex:none; aspect-ratio:9/16; border-radius:var(--radius-md);
+/* Restyled to match the real Prompt / Reference Chip component's "image" state exactly
+   (components/ai-social-media/reference-chip.css: .ref-chip--detail, Figma node 8614:18 /
+   9191:135045) -- this chip's own interactive logic (popover, strength, match, frame picker)
+   is untouched, only its visual chrome changed. */
+.fmxref-chip{display:flex; align-items:center; gap:16px;
+  padding:10px 8px;
+  background:var(--color-neutral-150);
+  border:1px solid var(--color-neutral-500); border-radius:var(--radius-xl);
+  font-family:var(--font-family-text); text-align:left; width:387px; box-sizing:border-box;}
+.fmxref-hit{display:flex; align-items:center; gap:16px; min-width:0;
+  cursor:pointer; flex:1 0 0;}
+.fmxref-chip .th{width:38px; height:48px; flex:none; border-radius:7px;
   object-fit:cover; display:block; background:var(--color-neutral-150);}
-.fmxref-chip[data-r="4:5"] .th{aspect-ratio:4/5;}
-.fmxref-chip[data-r="1:1"] .th{aspect-ratio:1/1;}
 .fmxref-chip .tx{display:flex; flex-direction:column; gap:2px; min-width:0;}
-.fmxref-chip .t1{display:flex; align-items:center; gap:var(--spacing-sm);
-  font-size:var(--font-size-text-sm); font-weight:var(--font-weight-semibold);
+.fmxref-chip .t1{display:flex; align-items:center; gap:6px;
+  font-size:13px; font-weight:var(--font-weight-semibold);
   color:var(--color-neutral-900); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-.fmxref-chip .t2{font-size:var(--font-size-text-xs); color:var(--color-neutral-600);
+.fmxref-chip .t2{font-size:11px; color:var(--color-neutral-600);
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-.fmxref-tag{flex:none; padding:2px 6px; border-radius:var(--radius-sm);
-  background:var(--color-neutral-900); color:var(--color-neutral-0);
-  font-size:10px; font-weight:var(--font-weight-semibold); letter-spacing:.04em;}
-.fmxref-x{flex:none; margin-left:var(--spacing-sm); width:24px; height:24px; border:0;
-  border-radius:var(--radius-sm); background:none; cursor:pointer; line-height:1;
-  color:var(--color-neutral-500); font-size:15px; font-family:inherit;}
+.fmxref-tag{flex:none; display:inline-flex; align-items:center; justify-content:center;
+  padding:2px 8px; border-radius:var(--radius-full);
+  background:var(--color-neutral-950); color:var(--color-neutral-0);
+  font-size:11px; font-weight:var(--font-weight-semibold); line-height:14px;}
+.fmxref-x{flex:none; width:16px; height:16px; border:0; padding:0;
+  border-radius:var(--radius-full); background:none; cursor:pointer; line-height:1;
+  color:var(--color-neutral-600); font-size:12px; font-family:inherit;
+  display:flex; align-items:center; justify-content:center;}
 .fmxref-x:hover{background:var(--color-neutral-100); color:var(--color-neutral-800);}
 
 /* ---------- Use as reference 팝오버 ---------- */
