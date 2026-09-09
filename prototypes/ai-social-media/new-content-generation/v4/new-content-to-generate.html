@@ -5203,9 +5203,9 @@ function renderReferenceImages(){
     : `<div class="ref-chip" onclick="toggleRefUploadMenu(event)" title="Add reference image">${refChipIcon}<span class="ref-chip-label">Reference</span>${window.__refUploadMenuOpen ? buildRefUploadMenuHtml() : ''}</div>`;
 
   // A Content Library / My Library reference already attached via window.fmxRefMount()
-  // (fmxref-js, further down this file) renders its own wide .fmxref-chip in the sibling
-  // .fmxref-row mounted just above this one -- suppress the plain empty chip here so the
-  // two reference indicators don't show side by side. See window.__fmxrefActive.
+  // (fmxref-js, further down this file) renders its own wide .ref-chip--detail in the
+  // sibling .fmxref-row mounted just above this one -- suppress the plain empty chip here
+  // so the two reference indicators don't show side by side. See window.__fmxrefActive.
   const fmxActive = !!window.__fmxrefActive;
   const compactHtml = fmxActive ? '' : (chips + referenceEmptyChip(false));
 
@@ -7987,29 +7987,14 @@ fitScreenToViewport();
 .fmxref-line{display:flex; align-items:flex-start; gap:8px; flex-wrap:wrap;}
 .fmxref-row{position:relative; display:flex;}
 .fmxref-row:empty{display:none;}
-/* Restyled to match the real Prompt / Reference Chip component's "image" state exactly
-   (components/ai-social-media/reference-chip.css: .ref-chip--detail, Figma node 8614:18 /
-   9191:135045) -- this chip's own interactive logic (popover, strength, match, frame picker)
-   is untouched, only its visual chrome changed. */
-.fmxref-chip{display:flex; align-items:center; gap:16px;
-  padding:10px 8px;
-  background:var(--color-neutral-150);
-  border:1px solid var(--color-neutral-500); border-radius:var(--radius-xl);
-  font-family:var(--font-family-text); text-align:left; width:387px; box-sizing:border-box;}
-.fmxref-hit{display:flex; align-items:center; gap:16px; min-width:0;
-  cursor:pointer; flex:1 0 0;}
-.fmxref-chip .th{width:38px; height:48px; flex:none; border-radius:7px;
-  object-fit:cover; display:block; background:var(--color-neutral-150);}
-.fmxref-chip .tx{display:flex; flex-direction:column; gap:2px; min-width:0;}
-.fmxref-chip .t1{display:flex; align-items:center; gap:6px;
-  font-size:13px; font-weight:var(--font-weight-semibold);
-  color:var(--color-neutral-900); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-.fmxref-chip .t2{font-size:11px; color:var(--color-neutral-600);
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-.fmxref-tag{flex:none; display:inline-flex; align-items:center; justify-content:center;
-  padding:2px 8px; border-radius:var(--radius-full);
-  background:var(--color-neutral-950); color:var(--color-neutral-0);
-  font-size:11px; font-weight:var(--font-weight-semibold); line-height:14px;}
+/* The chip itself now renders as the real Prompt / Reference Chip's "image" state
+   (components/ai-social-media/reference-chip.css: .ref-chip .ref-chip--detail, Figma node
+   8614:18 / 8620:121242) -- this chip's own interactive logic (popover, strength, match,
+   frame picker) is untouched, only its markup/classes changed. .fmxref-hit is local-only:
+   the shared component has no separate "click to open" hit-area, but this feature does, so
+   it wraps just the thumb+labels (leaving the remove icon as its own click target). */
+.fmxref-hit{display:flex; align-items:center; gap:12px; min-width:0;
+  cursor:pointer; flex:1 1 auto;}
 .fmxref-x{flex:none; width:16px; height:16px; border:0; padding:0;
   border-radius:var(--radius-full); background:none; cursor:pointer; line-height:1;
   color:var(--color-neutral-600); font-size:12px; font-family:inherit;
@@ -8150,14 +8135,14 @@ fitScreenToViewport();
 
   /* ---------- 칩 ---------- */
   function chipHTML(){
-    return '<div class="fmxref-chip" data-r="' + esc(S.ratio) + '">' +
+    return '<div class="ref-chip ref-chip--detail" data-r="' + esc(S.ratio) + '">' +
       '<div class="fmxref-hit" data-fmxref="open" role="button" tabindex="0">' +
-        (S.thumb ? '<img class="th" src="' + esc(thumbSrc(S.thumb)) + '" alt=""' + onerr() + '>'
-                 : '<span class="th"></span>') +
-        '<span class="tx">' +
-          '<span class="t1"><span class="fmxref-tag">REF</span>from “' + esc(S.title) + '”</span>' +
-          '<span class="t2">' + esc(subline()) + '</span>' +
-        '</span></div>' +
+        (S.thumb ? '<img class="ref-chip-detail-thumb" src="' + esc(thumbSrc(S.thumb)) + '" alt=""' + onerr() + '>'
+                 : '<span class="ref-chip-detail-thumb"></span>') +
+        '<div class="ref-chip-detail-labels">' +
+          '<div class="ref-chip-detail-line1"><span class="ref-chip-detail-badge">REF</span><span class="ref-chip-detail-title">from “' + esc(S.title) + '”</span></div>' +
+          '<span class="ref-chip-detail-sub">' + esc(subline()) + '</span>' +
+        '</div></div>' +
       '<button type="button" class="fmxref-x" data-fmxref="remove" aria-label="Remove reference">✕</button>' +
     '</div>';
   }
