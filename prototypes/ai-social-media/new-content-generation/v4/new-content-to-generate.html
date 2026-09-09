@@ -43,6 +43,9 @@
 <!-- Playfair Display: only used live for the Draft screen's brand-kit font-preview tags (Formee
      Express's Heading face, matching brand-setup-kit-character-library.html's own import). -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap">
+<!-- Lora: brand-kit-summary-compact's Subheading preview card (Figma 8987:236932 uses
+     Lora Bold there, not Georgia). -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:wght@700&display=swap">
 <style>
   *{box-sizing:border-box;}
   /* Real Figma icons (components/ai-social-media/icons/), replacing emoji/ad-hoc glyphs. See
@@ -3031,7 +3034,7 @@ function buildBrandKitSummaryCompactHtml(scope){
   return `
     <div class="brand-kit-summary-compact">
       <div class="brand-picker">
-        <button type="button" class="brand-picker-btn" onclick="toggleBrandKitLogoMenu(event,'${scope}')">
+        <button type="button" class="brand-picker-btn brand-picker-btn--logo" onclick="toggleBrandKitLogoMenu(event,'${scope}')">
           ${brandKitLogoThumbHtml(st.logo)}
           <span class="brand-picker-label">${st.logo}</span>
           <img class="brand-picker-chevron" src="../../../../components/ai-social-media/icons/chevron-down.svg" alt="">
@@ -3040,7 +3043,7 @@ function buildBrandKitSummaryCompactHtml(scope){
       </div>
       <div class="brand-kit-summary-divider"></div>
       <div class="brand-picker">
-        <button type="button" class="brand-picker-btn" onclick="toggleBrandKitColourMenu(event,'${scope}')">
+        <button type="button" class="brand-picker-btn brand-picker-btn--colour" onclick="toggleBrandKitColourMenu(event,'${scope}')">
           <div class="brand-picker-dots">${dots}</div>
           <span class="brand-picker-label">Primary</span>
           <img class="brand-picker-chevron" src="../../../../components/ai-social-media/icons/chevron-down.svg" alt="">
@@ -3097,26 +3100,14 @@ document.addEventListener('click', () => {
 
 Object.keys(BRAND_KIT_SUMMARY_CONTAINER_IDS).forEach(renderBrandKitSummaryCompact);
 
-// Empty state (Figma: Brand Kit settings page's "Overview - empty" node 8479:139483) --
-// shown instead of the compact summary above when window.__brandMode !== 'set' -- mirrors
-// the Logos/Colours/Fonts section shell, each section's content replaced by a dashed
-// "+ Manage X" box (8479:139506 "empty · logos" et al) instead of one generic message.
+// Empty state (Figma node 8860:138213 "brand-kit-empty", the "Brand kit off" screen
+// 8727:219504) -- shown instead of the compact summary above when window.__brandMode
+// !== 'set'. One dashed row: message + a real .btn.btn-dark "Brand Setup" CTA.
 function buildBrandKitEmptyCardHtml(goToSetupFn){
-  const emptyBox = label => `
-      <button type="button" class="brand-kit-empty-box" onclick="${goToSetupFn}()">
-        <img src="../../../../components/ai-social-media/icons/pagebar-plus.svg" alt="">
-        <span>${label}</span>
-      </button>`;
-  const section = (title, label) => `
-      <div class="brand-kit-section">
-        <div class="brand-kit-section-header"><span class="brand-kit-section-title">${title}</span></div>
-        ${emptyBox(label)}
-      </div>`;
   return `
-    <div class="brand-kit-card">
-      ${section('Logos', 'Manage logos')}
-      ${section('Colours', 'Manage colours')}
-      ${section('Fonts', 'Manage fonts')}
+    <div class="brand-kit-empty-row">
+      <p>Set up your brand kit to apply it here automatically</p>
+      <button type="button" class="btn btn-dark" onclick="${goToSetupFn}()">Brand Setup</button>
     </div>`;
 }
 [['brandKitEmpty', 'imgGoToBrandSetup'], ['globalBrandKitEmpty', 'carGoToBrandSetup'], ['reelBrandKitEmpty', 'reelGoToBrandSetup']].forEach(([id, fn]) => {
