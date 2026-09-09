@@ -45,7 +45,14 @@
   details.group .group-note{margin-top:0;}
   details.group ul{margin-top:12px;}
   .archive-sub-title{font-size:12px; font-weight:700; color:var(--color-neutral-700); margin:20px 0 8px;}
-  .group-note + .archive-sub-title{margin-top:0;}
+  .group-note + .archive-sub-title, summary + .archive-sub-title{margin-top:0;}
+  /* Summary variant that shows its group-note description even while the <details> is
+     closed -- a plain <p class="group-note"> after </summary> is hidden until opened, so
+     this folds the description into the summary itself instead. */
+  details.group summary.summary-with-desc{align-items:flex-start;}
+  summary.summary-with-desc .summary-col{display:flex; flex-direction:column; gap:2px;}
+  summary.summary-with-desc .summary-title{font-size:14px; font-weight:700; color:var(--color-neutral-500);}
+  summary.summary-with-desc .summary-desc{font-size:12px; font-weight:400; color:var(--color-neutral-500);}
 </style>
 </head>
 <body>
@@ -101,8 +108,7 @@
   </div>
 
   <details class="group">
-    <summary>Archiving</summary>
-    <p class="group-note">Previous versions and other supporting screens kept around for implementation reference — not the current working baseline.</p>
+    <summary class="summary-with-desc"><span class="summary-col"><span class="summary-title">Archiving</span><span class="summary-desc">Previous versions and other supporting screens kept around for implementation reference — not the current working baseline.</span></span></summary>
 
     <p class="archive-sub-title">New Content Generation · v3</p>
     <ul>
