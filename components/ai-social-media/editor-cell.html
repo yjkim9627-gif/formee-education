@@ -5,6 +5,7 @@
 <title>Editor Cell — AI Social Media Component</title>
 <link rel="stylesheet" href="../../tokens/tokens.css" />
 <link rel="stylesheet" href="../demo-nav.css" />
+<link rel="stylesheet" href="../shared/checkbox.css" />
 <link rel="stylesheet" href="editor-cell.css" />
 <style>
   body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
@@ -179,9 +180,43 @@
   <p class="demo-sub">Brand Kit / Image Preview's Hover state.</p>
   <div class="demo-grid">
     <div class="editor-cell size-lg type-image">
-      <input type="checkbox" class="editor-cell-checkbox" aria-label="Select">
+      <input type="checkbox" class="checkbox editor-cell-checkbox" aria-label="Select">
       <button type="button" class="editor-cell-action"><img src="icons/ui-ellipsis.svg" alt="More"></button>
       <img src="icons/menu-image.svg" alt="">
+    </div>
+  </div>
+
+  <h2>Selected (Figma 2598:68625)</h2>
+  <p class="demo-sub">Checkbox checked -- reuses the shared Checkbox component's own :checked look (dark fill + checkmark), not a bespoke one.</p>
+  <div class="demo-grid">
+    <div class="editor-cell size-md type-image focused">
+      <input type="checkbox" class="checkbox editor-cell-checkbox" checked aria-label="Select">
+      <img src="icons/menu-image.svg" alt="">
+    </div>
+    <div class="editor-cell size-lg type-image focused">
+      <input type="checkbox" class="checkbox editor-cell-checkbox" checked aria-label="Select">
+      <img src="icons/menu-image.svg" alt="">
+    </div>
+    <div class="editor-cell size-md type-logo focused">
+      <input type="checkbox" class="checkbox editor-cell-checkbox" checked aria-label="Select">
+      <img src="icons/fmx-logo-sample.svg" alt="">
+    </div>
+  </div>
+
+  <h2>Hover-more / Hover-selectable (type=Logo)</h2>
+  <p class="demo-sub">A wide 41:8 logo doesn't fill the cell, so its "more" action sits near the logo's own right edge instead of the cell's top-right corner (Hover-more); Hover-selectable is the same cell with the select checkbox showing instead.</p>
+  <div class="demo-grid">
+    <div class="editor-cell size-md type-logo">
+      <button type="button" class="editor-cell-action"><img src="icons/ui-ellipsis.svg" alt="More"></button>
+      <img src="icons/fmx-logo-sample.svg" alt="">
+    </div>
+    <div class="editor-cell size-lg type-logo">
+      <button type="button" class="editor-cell-action"><img src="icons/ui-ellipsis.svg" alt="More"></button>
+      <img src="icons/fmx-logo-sample.svg" alt="">
+    </div>
+    <div class="editor-cell size-md type-logo">
+      <input type="checkbox" class="checkbox editor-cell-checkbox" aria-label="Select">
+      <img src="icons/fmx-logo-sample.svg" alt="">
     </div>
   </div>
   </main>
