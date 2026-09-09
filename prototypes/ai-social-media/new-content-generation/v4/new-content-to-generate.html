@@ -31,6 +31,8 @@
 <link rel="stylesheet" href="../../../../components/ai-social-media/brand-kit-summary.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/ai-response-card.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/editor-cell.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/editor-color-swatch.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/controls-menu.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/brand-logo.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/image-scene-card.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/storyboard-card.css">
@@ -2975,45 +2977,131 @@ function onCopyFieldInput(i, value){
 // ---- Brand kit (Visual concept > Use brand kit) ----
 // window.__brandMode ('none' | 'set') is set by imgApplyBrandMode(), reused from the video/carousel flow's
 // demo role-switch so this screen can preview both brand-setup states.
-// Brand Kit summary card — shared by Image post, Carousel, Reel/Short and Story Video
-// (Figma node 8860:138841). Rendered once into each screen's own container so every
-// screen's markup only needs to carry the toggle row + this container + the empty state.
-function buildBrandKitCardHtml(){
-  const realLogos = ['Primary', 'Dark', 'SCG-HE', 'SCG VST'];
-  const logoItems = realLogos.map(label => `
-        <div class="brand-kit-logo-item">
-          <div class="editor-cell type-logo"><img src="../../../../components/ai-social-media/icons/fmx-logo-sample.svg" alt=""></div>
-          <span class="brand-kit-logo-item-label">${label}</span>
-        </div>`).join('');
-  const swatches = ['#0e5c55', '#c81856', '#e8891f', '#33383f', '#5a8b8a', '#9c5a72', '#ffffff'];
-  const swatchHtml = swatches.map(c => `<span style="background:${c};${c === '#ffffff' ? ' border-left:1px solid var(--color-neutral-200);' : ''}"></span>`).join('');
+// ---- Brand kit summary — COMPACT bar (final design, Figma "brand-kit-summary-compact"
+// 8988:133080) — real working Logo/Colour picker dropdowns + the three Text Style Card
+// previews. Replaces buildBrandKitCardHtml() above per-screen as each one is migrated;
+// 'reel' (shared by Reel/Short + Story Video) is migrated first, Image post ('img') and
+// Carousel ('car') follow the same pattern once verified. ----
+const BRAND_KIT_LOGO_OPTIONS = ['Primary', 'Dark', 'SCG-HE', 'SCG'];
+const BRAND_KIT_COLOUR_OPTIONS = ['#0e5c55', '#c81856', '#e8891f', '#33383f', '#9c5a72', '#ffffff'];
+const BRAND_KIT_SUMMARY_CONTAINER_IDS = { img: 'brandKitSummary', car: 'globalBrandKitSummary', reel: 'reelBrandKitSummary' };
+window.__brandKitPickerState = {
+  img: { logo: 'Primary', colours: ['#0e5c55', '#c81856', '#e8891f'], logoMenuOpen: false, colourMenuOpen: false },
+  car: { logo: 'Primary', colours: ['#0e5c55', '#c81856', '#e8891f'], logoMenuOpen: false, colourMenuOpen: false },
+  reel: { logo: 'Primary', colours: ['#0e5c55', '#c81856', '#e8891f'], logoMenuOpen: false, colourMenuOpen: false }
+};
+
+function brandKitLogoThumbHtml(name){
+  if(name === 'None'){
+    return `<div class="menu-item-none-icon"><img src="../../../../components/ai-social-media/icons/ban.svg" alt=""></div>`;
+  }
+  return `<div class="editor-cell size-xs type-logo"><img src="../../../../components/ai-social-media/icons/fmx-logo-sample.svg" alt=""></div>`;
+}
+
+function buildBrandKitLogoMenuHtml(scope){
+  const st = window.__brandKitPickerState[scope];
+  const items = BRAND_KIT_LOGO_OPTIONS.map(name => `
+      <button type="button" class="menu-item--logo${st.logo === name ? ' selected' : ''}" onclick="event.stopPropagation(); selectBrandKitLogo('${scope}','${name}')">
+        ${brandKitLogoThumbHtml(name)}
+        <span class="menu-item-label">${name}</span>
+        <img class="menu-item-check" src="../../../../components/ai-social-media/icons/panel-check.svg" alt="">
+      </button>`).join('');
+  const noneItem = `
+      <button type="button" class="menu-item--logo${st.logo === 'None' ? ' selected' : ''}" onclick="event.stopPropagation(); selectBrandKitLogo('${scope}','None')">
+        ${brandKitLogoThumbHtml('None')}
+        <span class="menu-item-label">None</span>
+        <img class="menu-item-check" src="../../../../components/ai-social-media/icons/panel-check.svg" alt="">
+      </button>`;
+  return `<div class="menu-popover brand-picker-popover" onclick="event.stopPropagation();">${items}<div class="menu-divider"></div>${noneItem}</div>`;
+}
+
+function buildBrandKitColourMenuHtml(scope){
+  const st = window.__brandKitPickerState[scope];
+  const items = BRAND_KIT_COLOUR_OPTIONS.map(hex => {
+    const checked = st.colours.includes(hex);
+    return `
+      <button type="button" class="menu-item--colour${checked ? ' selected' : ''}" onclick="event.stopPropagation(); toggleBrandKitColour('${scope}','${hex}')">
+        <input type="checkbox" class="checkbox" ${checked ? 'checked' : ''} onclick="event.preventDefault();" tabindex="-1">
+        <div class="menu-item-swatch-label">
+          <div class="editor-color-swatch" style="--sw-color:${hex};"></div>
+          <span class="menu-item-label">${hex.toUpperCase()}</span>
+        </div>
+      </button>`;
+  }).join('');
+  return `<div class="menu-popover brand-picker-popover" onclick="event.stopPropagation();">${items}</div>`;
+}
+
+function buildBrandKitSummaryCompactHtml(scope){
+  const st = window.__brandKitPickerState[scope];
+  const dots = st.colours.map(hex => `<div class="editor-color-swatch" style="--sw-color:${hex};"></div>`).join('');
   return `
-    <div class="brand-kit-card">
-      <div class="brand-kit-section">
-        <div class="brand-kit-section-header"><span class="brand-kit-section-title">Logos</span></div>
-        <div class="brand-kit-logos">${logoItems}</div>
+    <div class="brand-kit-summary-compact">
+      <div class="brand-picker">
+        <button type="button" class="brand-picker-btn" onclick="toggleBrandKitLogoMenu(event,'${scope}')">
+          ${brandKitLogoThumbHtml(st.logo)}
+          <span class="brand-picker-label">${st.logo}</span>
+          <img class="brand-picker-chevron" src="../../../../components/ai-social-media/icons/chevron-down.svg" alt="">
+        </button>
+        ${st.logoMenuOpen ? buildBrandKitLogoMenuHtml(scope) : ''}
       </div>
-      <div class="brand-kit-section">
-        <div class="brand-kit-section-header">
-          <span class="brand-kit-section-title">Colours</span>
-          <div class="brand-kit-palette-select"><span>Palette · Formee Express</span><span class="chevron"><img src="../../../../components/ai-social-media/icons/caret-down-filled.svg" alt=""></span></div>
-        </div>
-        <div class="brand-kit-swatch-row">${swatchHtml}</div>
+      <div class="brand-kit-summary-divider"></div>
+      <div class="brand-picker">
+        <button type="button" class="brand-picker-btn" onclick="toggleBrandKitColourMenu(event,'${scope}')">
+          <div class="brand-picker-dots">${dots}</div>
+          <span class="brand-picker-label">Primary</span>
+          <img class="brand-picker-chevron" src="../../../../components/ai-social-media/icons/chevron-down.svg" alt="">
+        </button>
+        ${st.colourMenuOpen ? buildBrandKitColourMenuHtml(scope) : ''}
       </div>
-      <div class="brand-kit-section">
-        <div class="brand-kit-section-header"><span class="brand-kit-section-title">Fonts</span></div>
-        <div class="brand-kit-fonts">
-          <div class="brand-kit-font-card"><span class="sample heading">Heading</span><span class="meta">Georgia Bold</span></div>
-          <div class="brand-kit-font-card"><span class="sample subheading">Subheading</span><span class="meta">Georgia Semibold</span></div>
-          <div class="brand-kit-font-card"><span class="sample body">Body</span><span class="meta">Impact Regular</span></div>
-        </div>
+      <div class="brand-kit-summary-divider"></div>
+      <div class="brand-kit-text-style-row">
+        <div class="brand-kit-text-style-card"><div class="brand-kit-text-style-pill"><span class="heading">Heading</span></div><span class="brand-kit-text-style-meta">Georgia Bold</span></div>
+        <div class="brand-kit-text-style-card"><div class="brand-kit-text-style-pill"><span class="subheading">Subheading</span></div><span class="brand-kit-text-style-meta">Georgia Semibold</span></div>
+        <div class="brand-kit-text-style-card"><div class="brand-kit-text-style-pill"><span class="body">Body</span></div><span class="brand-kit-text-style-meta">Impact Regular</span></div>
       </div>
     </div>`;
 }
-['brandKitSummary', 'globalBrandKitSummary', 'reelBrandKitSummary'].forEach(id => {
-  const el = document.getElementById(id);
-  if(el) el.innerHTML = buildBrandKitCardHtml();
+
+function renderBrandKitSummaryCompact(scope){
+  const el = document.getElementById(BRAND_KIT_SUMMARY_CONTAINER_IDS[scope]);
+  if(el) el.innerHTML = buildBrandKitSummaryCompactHtml(scope);
+}
+function toggleBrandKitLogoMenu(e, scope){
+  e.stopPropagation();
+  const st = window.__brandKitPickerState[scope];
+  st.logoMenuOpen = !st.logoMenuOpen;
+  st.colourMenuOpen = false;
+  renderBrandKitSummaryCompact(scope);
+}
+function toggleBrandKitColourMenu(e, scope){
+  e.stopPropagation();
+  const st = window.__brandKitPickerState[scope];
+  st.colourMenuOpen = !st.colourMenuOpen;
+  st.logoMenuOpen = false;
+  renderBrandKitSummaryCompact(scope);
+}
+function selectBrandKitLogo(scope, name){
+  const st = window.__brandKitPickerState[scope];
+  st.logo = name;
+  st.logoMenuOpen = false;
+  renderBrandKitSummaryCompact(scope);
+}
+function toggleBrandKitColour(scope, hex){
+  const st = window.__brandKitPickerState[scope];
+  const idx = st.colours.indexOf(hex);
+  if(idx > -1) st.colours.splice(idx, 1); else st.colours.push(hex);
+  renderBrandKitSummaryCompact(scope);
+}
+// Click-anywhere-else closes any open picker popover.
+document.addEventListener('click', () => {
+  let changed = false;
+  Object.values(window.__brandKitPickerState).forEach(st => {
+    if(st.logoMenuOpen || st.colourMenuOpen){ st.logoMenuOpen = false; st.colourMenuOpen = false; changed = true; }
+  });
+  if(changed) Object.keys(BRAND_KIT_SUMMARY_CONTAINER_IDS).forEach(renderBrandKitSummaryCompact);
 });
+
+Object.keys(BRAND_KIT_SUMMARY_CONTAINER_IDS).forEach(renderBrandKitSummaryCompact);
 
 let brandKitOn = false;
 function imgApplyBrandMode(mode){
