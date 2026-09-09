@@ -34628,14 +34628,17 @@ body{margin:0;padding:0;background:#e5e5e5;overflow:hidden;}
    1920×1162 프레임 안에서 1400×860. 안쪽 여백 16, 미디어 774 정사각(라운드), 정보 열 578. */
 .libprev-layer{position:absolute;inset:0;z-index:120;}
 .libprev-scrim{position:absolute;inset:0;background:rgba(15,23,41,.38);}
-.libprev{position:absolute;left:260px;top:151px;width:1400px;height:860px;
+/* 좌표를 박아 두면 1920 프레임 밖에서 왼쪽으로 쏠린다. 담는 상자가 얼마든
+   가운데에 서도록 옮기고, 좁아지면 상자를 따라 줄어들게 한다. */
+.libprev{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:min(1400px, calc(100% - 64px));height:min(860px, calc(100% - 64px));
   display:flex;flex-direction:column;padding:16px;
   background:var(--neutral-0);border-radius:16px;
   box-shadow:0 28px 72px rgba(15,23,41,.30);}
 .libprev-body{display:flex;gap:16px;flex:1 1 auto;min-height:0;}
 
 /* ── 좌측 미디어 ── */
-.libprev-media{width:774px;flex:none;position:relative;overflow:hidden;
+.libprev-media{width:774px;max-width:57%;flex:none;position:relative;overflow:hidden;
   border-radius:var(--radius-xl);background:var(--neutral-100);}
 .libprev-media img{width:100%;height:100%;object-fit:cover;display:block;}
 .libprev-fmt{position:absolute;right:28px;top:20px;display:inline-flex;align-items:center;gap:5px;
