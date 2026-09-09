@@ -9,24 +9,32 @@
   플로우가 실제로 이어진다. 각 화면에 해시 딥링크가 있고 좌하단 Screens 패널로 이동한다.
   사진·문구·수치는 전부 피그마 프레임에서 그대로 가져왔다(이미지는 assets/ 에 리사이즈해 보관).
 
-  Default (8956:136455)
-    D1 schedule · no selection            8826:126982   #s=calendar
-    D2 Schedule · List View               8739:121320   #s=list
-  A · Schedule something new (8949:133770)
-    A1 Schedule new · menu open           8892:130642   #s=calendar&new=1        (7 posts — 추가 전)
-    A2 Schedule new · pick from Library   8861:151032   #s=calendar&modal=library
-    A3 schedule · edit & publish          8741:250771   → v4 프로토타입으로 이동
-    A4 Schedule new · done                8892:130830   #s=calendar&toast=scheduled
-  B · Manage what's scheduled (8949:133771)
-    B1 schedule · Scheduled selected      8861:150391   #s=calendar&sel=lip
-    B2 schedule · reschedule dialog       8956:135243   #s=calendar&sel=lip&pop=1
-    B3 schedule · reschedule done         8894:131564   #s=calendar&sel=lip&moved=1&toast=resched
-    B4 schedule · unschedule confirm      8861:150615   #s=calendar&sel=lip&modal=unschedule
-    B5 schedule · unschedule done         8861:150843   #s=calendar&gone=1&toast=unscheduled
-  C · Exception states (8949:133772)
-    C1 schedule · failed selected         8920:133369   #s=calendar&failed=1&sel=uk
-    C2 schedule · List · failed           8921:134145   #s=list&failed=1&sel=uk
-    C3 schedule · List · no results       8921:133612   #s=list&q=fishing+tips
+  01_Default
+    1 calendar                #s=calendar
+    2 list                    #s=list
+  02_Schedule new · from Library
+    1 menu open               #s=calendar&new=1      (7 posts — 추가 전)
+    2 pick from Library       #s=calendar&modal=library
+    3 edit & publish          → v4 (#stage=publish)
+    4 done                    #s=calendar&toast=scheduled
+  03_Schedule new · create new
+    1 menu open               #s=calendar&new=1
+    2 brief & style           → v4 (Brief & Style 1단계)
+  04_Manage · edit
+    1 selected                #s=calendar&sel=lip
+    2 edit post               → v4 (#stage=publish)
+  05_Manage · reschedule
+    1 selected                #s=calendar&sel=lip
+    2 picker open             #s=calendar&sel=lip&pop=1     (배너를 눌러 진입)
+    3 reschedule done         #s=calendar&sel=lip&moved=1&toast=resched
+    + 드래그 앤 드롭          예약된 글을 다른 날짜 칸으로 끌어다 놓으면 날짜만 바뀐다
+  06_Manage · unschedule
+    1 unschedule confirm      #s=calendar&sel=lip&modal=unschedule
+    2 unschedule done         #s=calendar&gone=1&toast=unscheduled
+  07_Exception states
+    1 failed selected         #s=calendar&failed=1&sel=uk
+    2 list failed             #s=list&failed=1&sel=uk
+    3 list no results         #s=list&q=fishing+tips
 
   화면에 박혀 있는 결정 두 가지.
   1) Reschedule 은 스크림 모달이 아니라 앵커드 팝오버다(8956:135243). 날짜를 고르려면
@@ -225,8 +233,11 @@ body{
 .ev{display:flex;align-items:center;gap:6px;width:100%;height:36px;padding:2px 4px;
   border-radius:var(--radius-sm);border:1px solid transparent;text-align:left;min-width:0;}
 .ev:hover{background:var(--color-neutral-50);}
-.ev[aria-selected="true"]{background:var(--color-brand-primary-light);
-  border-color:var(--color-brand-primary-mid);}
+.ev[aria-selected="true"]{background:var(--color-neutral-150);
+  border-color:var(--color-neutral-400);}
+/* 드래그 중 — 들린 느낌만 주고, 놓을 자리는 셀 쪽에서 표시한다 */
+.ev.dragging{opacity:.4;}
+.cell.drop-target{background:var(--color-brand-primary-light);}
 .ev .th{width:24px;height:32px;flex:none;border-radius:var(--radius-sm);overflow:hidden;
   background:var(--color-neutral-150);border:1px solid var(--color-neutral-200);}
 .ev .th img{width:100%;height:100%;object-fit:cover;display:block;}
@@ -252,10 +263,10 @@ body{
 .group-head{height:36px;box-sizing:border-box;display:flex;align-items:center;
   gap:var(--spacing-sm);padding-bottom:var(--spacing-md);}
 .group-head h3{font-size:var(--font-size-text-lg);line-height:22px;font-weight:var(--font-weight-bold);}
-/* col-head 34 / row 84 — Post 는 FILL(488), 나머지 200/200/140/142, gap 12.
-   Figma 원본은 Post 가 560 고정이라 합계 1290 > 1218 로 Actions 가 잘렸다 —
-   List · failed(8921:134145)에서 FILL 로 고쳐둔 값을 따른다. */
-.col-head,.lrow{display:grid;grid-template-columns:minmax(0,1fr) 200px 200px 140px 142px;
+/* col-head 34 / row 84 — Post FILL, When/Platforms 200, Status 140, gap 12.
+   Actions 컬럼은 뺐다: 행을 누르면 peek 이 열리고 거기에 같은 액션이 다 있어서
+   아이콘 두 개가 그걸 라벨 없이 반복할 뿐이었다. */
+.col-head,.lrow{display:grid;grid-template-columns:minmax(0,1fr) 200px 200px 140px;
   gap:var(--spacing-md);align-items:center;}
 .col-head{height:34px;box-sizing:border-box;padding:var(--spacing-sm) 0;
   border-bottom:1px solid var(--color-neutral-200);}
@@ -263,7 +274,8 @@ body{
 .lrow{width:100%;height:84px;padding:var(--spacing-md) 0;
   border-bottom:1px solid var(--color-neutral-150);text-align:left;}
 .lrow:hover{background:var(--color-neutral-50);}
-.lrow[aria-selected="true"]{background:var(--color-brand-primary-light);}
+/* 선택은 뉴트럴 틴트 — 이 제품은 카드·리스트 선택에 브랜드 컬러를 쓰지 않는다 */
+.lrow[aria-selected="true"]{background:var(--color-neutral-150);}
 .cell-post{display:flex;align-items:center;gap:12px;min-width:0;}
 .cell-post .th{width:48px;height:60px;flex:none;border-radius:var(--radius-md);overflow:hidden;
   background:var(--color-neutral-150);}
@@ -324,6 +336,18 @@ body{
 .media .track i{display:block;width:38%;height:100%;border-radius:2px;background:#fff;}
 .media .bar svg{width:12px;height:12px;flex:none;stroke:currentColor;fill:none;stroke-width:1.5;
   stroke-linecap:round;stroke-linejoin:round;}
+
+/* banner · scheduled at — 예약 시각을 보여주고 여기서 리스케줄로 들어간다 */
+.peek-banner{display:flex;align-items:center;gap:var(--spacing-sm);width:100%;
+  padding:var(--spacing-sm) 10px;border-radius:var(--radius-lg);
+  background:var(--color-neutral-100);text-align:left;}
+.peek-banner:hover{background:var(--color-neutral-150);}
+.peek-banner svg{width:16px;height:16px;flex:none;stroke:var(--color-neutral-500);fill:none;
+  stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+.peek-banner .k{font-size:var(--font-size-text-xs);line-height:20px;color:var(--color-neutral-500);}
+.peek-banner .v{flex:1 1 auto;font-size:var(--font-size-text-xs);line-height:20px;
+  font-weight:var(--font-weight-semibold);color:var(--color-neutral-800);}
+.peek-banner .pencil{stroke:var(--color-neutral-700);}
 
 /* peek 본문은 스크롤, 액션은 하단 고정 */
 /* viewport · peek 304 안의 scroll content 는 292 — 우측 12px 스크롤바 거터 */
@@ -662,26 +686,34 @@ body{
 
 <!-- ══ screens launcher — 프로토타입 탐색용, 제품 UI 아님 ═══════════════ -->
 <details class="launcher">
-  <summary>Screens · 14</summary>
+  <summary>Screens · 15</summary>
   <div class="launcher-body">
-    <h4>Default</h4>
-    <a href="#s=calendar"><b>D1</b><span>Calendar, no selection</span></a>
-    <a href="#s=list"><b>D2</b><span>List view</span></a>
-    <h4>A · Schedule something new</h4>
-    <a href="#s=calendar&new=1"><b>A1</b><span>Schedule new · menu open</span></a>
-    <a href="#s=calendar&modal=library"><b>A2</b><span>Pick from Library</span></a>
-    <a href="../new-content-generation/v4/new-content-to-generate.html#stage=publish&edit=This+New+Lip+Tint+Is+Everything"><b>A3</b><span>Edit &amp; Publish → v4</span></a>
-    <a href="#s=calendar&toast=scheduled"><b>A4</b><span>Schedule new · done</span></a>
-    <h4>B · Manage what’s scheduled</h4>
-    <a href="#s=calendar&sel=lip"><b>B1</b><span>Scheduled selected</span></a>
-    <a href="#s=calendar&sel=lip&pop=1"><b>B2</b><span>Reschedule popover</span></a>
-    <a href="#s=calendar&sel=lip&moved=1&toast=resched"><b>B3</b><span>Reschedule · done</span></a>
-    <a href="#s=calendar&sel=lip&modal=unschedule"><b>B4</b><span>Unschedule confirm</span></a>
-    <a href="#s=calendar&gone=1&toast=unscheduled"><b>B5</b><span>Unschedule · done</span></a>
-    <h4>C · Exception states</h4>
-    <a href="#s=calendar&failed=1&sel=uk"><b>C1</b><span>Failed selected</span></a>
-    <a href="#s=list&failed=1&sel=uk"><b>C2</b><span>List · failed</span></a>
-    <a href="#s=list&q=fishing+tips"><b>C3</b><span>List · no results</span></a>
+    <h4>01 Default</h4>
+    <a href="#s=calendar"><b>1</b><span>calendar</span></a>
+    <a href="#s=list"><b>2</b><span>list</span></a>
+    <h4>02 Schedule new · from Library</h4>
+    <a href="#s=calendar&new=1"><b>1</b><span>menu open</span></a>
+    <a href="#s=calendar&modal=library"><b>2</b><span>pick from Library</span></a>
+    <a href="../new-content-generation/v4/new-content-to-generate.html#stage=publish&edit=This+New+Lip+Tint+Is+Everything"><b>3</b><span>edit &amp; publish → v4</span></a>
+    <a href="#s=calendar&toast=scheduled"><b>4</b><span>done</span></a>
+    <h4>03 Schedule new · create new</h4>
+    <a href="#s=calendar&new=1"><b>1</b><span>menu open</span></a>
+    <a href="../new-content-generation/v4/new-content-to-generate.html"><b>2</b><span>brief &amp; style → v4</span></a>
+    <h4>04 Manage · edit</h4>
+    <a href="#s=calendar&sel=lip"><b>1</b><span>selected</span></a>
+    <a href="../new-content-generation/v4/new-content-to-generate.html#stage=publish&edit=This+New+Lip+Tint+Is+Everything"><b>2</b><span>edit post → v4</span></a>
+    <h4>05 Manage · reschedule</h4>
+    <a href="#s=calendar&sel=lip"><b>1</b><span>selected</span></a>
+    <a href="#s=calendar&sel=lip&pop=1"><b>2</b><span>picker open</span></a>
+    <a href="#s=calendar&sel=lip&moved=1&toast=resched"><b>3</b><span>reschedule done</span></a>
+    <a href="#s=calendar&sel=lip"><b>+</b><span>drag a post to another day</span></a>
+    <h4>06 Manage · unschedule</h4>
+    <a href="#s=calendar&sel=lip&modal=unschedule"><b>1</b><span>unschedule confirm</span></a>
+    <a href="#s=calendar&gone=1&toast=unscheduled"><b>2</b><span>unschedule done</span></a>
+    <h4>07 Exception states</h4>
+    <a href="#s=calendar&failed=1&sel=uk"><b>1</b><span>failed selected</span></a>
+    <a href="#s=list&failed=1&sel=uk"><b>2</b><span>list failed</span></a>
+    <a href="#s=list&q=fishing+tips"><b>3</b><span>list no results</span></a>
   </div>
 </details>
 
@@ -715,6 +747,8 @@ var EVENTS = [
 ];
 EVENTS.forEach(function(e){ e.caption = CAPTIONS[e.id]; });
 var LABEL = {scheduled:'Scheduled', published:'Published', failed:'Failed'};
+/* 드래그로 옮긴 날짜 — 화면을 다시 그려도 유지된다 */
+var DROPPED = {};
 
 /* Edit & Publish 는 이 파일에 없다 — 예진님의 v4 Publish 단계(Figma 8741:250771)로 넘긴다.
    v4 의 fmx-deeplink-js 가 stage=publish 를 받아 goToPublish() 를 열고,
@@ -777,6 +811,7 @@ function visibleEvents(){
       var o = Object.assign({}, e);
       if(S.failed && o.id === 'uk'){ o.status = 'failed'; o.rel = 'failed 3 days ago'; }
       if(S.moved && o.id === 'lip'){ o.day = 15; o.rel = 'in 8 days'; }
+      if(DROPPED[o.id]){ o.day = DROPPED[o.id]; o.rel = 'moved to Sep ' + o.day; }
       return o;
     })
     .filter(function(e){
@@ -812,6 +847,7 @@ function render(){
 
 function evPill(e){
   return '<button type="button" class="ev ' + e.status + '" data-ev="' + e.id + '"' +
+    (e.status === 'scheduled' ? ' draggable="true"' : '') +
     (S.sel === e.id ? ' aria-selected="true"' : '') + '>' +
     '<span class="th"><img src="assets/' + e.img + '.jpg" alt=""></span>' +
     '<span class="lines"><span class="l1"><span class="dot"></span>' +
@@ -826,7 +862,8 @@ function calendarHTML(evs){
   var cells = [], d = new Date(2026, 7, 31);
   for(var i = 0; i < 35; i++){
     var out = d.getMonth() !== 8, day = d.getDate();
-    cells.push('<div class="cell' + (out ? ' out' : '') + (!out && day === TODAY ? ' today' : '') + '">' +
+    cells.push('<div class="cell' + (out ? ' out' : '') + (!out && day === TODAY ? ' today' : '') + '"' +
+      (out ? '' : ' data-day="' + day + '"') + '>' +
       '<span class="daynum">' + day + '</span>' +
       (out ? '' : (byDay[day] || []).map(evPill).join('')) + '</div>');
     d.setDate(d.getDate() + 1);
@@ -860,7 +897,7 @@ function listHTML(evs){
     if(!rows.length) return;
     out += '<section class="group"><div class="group-head"><h3>' + LABEL[st] + '</h3>' +
       '<span class="chip n">' + rows.length + '</span></div>' +
-      '<div class="col-head"><span>Post</span><span>When</span><span>Platforms</span><span>Status</span><span>Actions</span></div>';
+      '<div class="col-head"><span>Post</span><span>When</span><span>Platforms</span><span>Status</span></div>';
     rows.forEach(function(e){
       out += '<button type="button" class="lrow" data-ev="' + e.id + '"' +
         (S.sel === e.id ? ' aria-selected="true"' : '') + '>' +
@@ -870,11 +907,7 @@ function listHTML(evs){
         '<span><span class="cell-main">Sep ' + e.day + ', ' + e.time + '</span>' +
           '<span class="cell-sub">' + e.rel + '</span></span>' +
         '<span class="cell-plain">' + platsText(e.plats) + '</span>' +
-        '<span><span class="chip ' + e.status + '">' + LABEL[e.status] + '</span></span>' +
-        '<span class="rowacts">' +
-          '<span class="iconbtn"><svg viewBox="0 0 14 14"><path d="M11.5 7a4.5 4.5 0 1 1-1.3-3.2"/><path d="M11.5 1.8V4.3H9"/></svg></span>' +
-          '<span class="iconbtn"><svg viewBox="0 0 14 14"><circle cx="3.2" cy="7" r=".9" fill="currentColor" stroke="none"/><circle cx="7" cy="7" r=".9" fill="currentColor" stroke="none"/><circle cx="10.8" cy="7" r=".9" fill="currentColor" stroke="none"/></svg></span>' +
-        '</span></button>';
+        '<span><span class="chip ' + e.status + '">' + LABEL[e.status] + '</span></span></button>';
     });
     out += '</section>';
   });
@@ -901,6 +934,13 @@ function paintPeek(evs){
     '<div class="peek-head"><span class="peek-title">' + e.title + '</span>' +
       '<button type="button" class="peek-x" id="peekClose" aria-label="Close"><svg viewBox="0 0 12 12" stroke-linecap="round"><path d="m3 3 6 6M9 3 3 9"/></svg></button></div>' +
     '<div class="peek-scroll">' +
+    (published ? '' :
+      '<button type="button" class="peek-banner" id="btnBanner">' +
+        '<svg viewBox="0 0 16 16"><path d="M5.5 1.5v2M10.5 1.5v2"/><rect x="2" y="3" width="12" height="11" rx="2"/><path d="M2 6.5h12"/></svg>' +
+        '<span class="k">' + (failed ? 'Failed at' : 'Scheduled for') + '</span>' +
+        '<span class="v">Sep ' + e.day + ', 2026 ' + e.time + '</span>' +
+        (failed ? '' : '<svg class="pencil" viewBox="0 0 16 16"><path d="M11.5 2.5a1.6 1.6 0 0 1 2.3 2.3L5.6 13 2.5 13.5 3 10.4z"/></svg>') +
+      '</button>') +
     '<div class="media"><img src="assets/' + e.img + '.jpg" alt="">' +
       '<span class="ratio"><svg viewBox="0 0 10 12"><rect x="1" y="1" width="8" height="10" rx="1.6"/></svg>' + e.ratio + '</span>' +
       '<span class="play"><svg viewBox="0 0 16 16"><path d="M5.5 3.5v9l7.5-4.5z"/></svg></span>' +
@@ -924,14 +964,14 @@ function paintPeek(evs){
     '<div class="peek-acts">' +
       (failed
         ? '<button type="button" class="btn primary">Retry now</button>' +
-          '<a class="btn" href="' + editPublishURL(e) + '">Edit &amp; Publish</a>' +
+          '<a class="btn" href="' + editPublishURL(e) + '">Edit post</a>' +
           '<button type="button" class="btn ghost" id="btnUnschedule">Unschedule</button>'
         : published
         ? '<button type="button" class="btn primary">Duplicate</button>' +
           '<button type="button" class="btn">View post</button>'
-        : '<button type="button" class="btn primary" id="btnReschedule">Reschedule</button>' +
-          '<a class="btn" href="' + editPublishURL(e) + '">Edit &amp; Publish</a>' +
-          '<button type="button" class="btn ghost" id="btnUnschedule">Unschedule</button>') +
+        /* 예약된 글: 날짜 바꾸기는 위 배너에서, 여기는 내용 수정과 삭제 */
+        : '<a class="btn primary" href="' + editPublishURL(e) + '">Edit post</a>' +
+          '<button type="button" class="btn" id="btnUnschedule">Delete</button>') +
     '</div>';
 }
 
@@ -956,6 +996,11 @@ function paintOverlays(){
   if(S.toast === 'scheduled')        msg = 'Scheduled — ' + name + ' goes out Sep 8, 9:00 AM';
   else if(S.toast === 'resched')     msg = 'Rescheduled — ' + name + ' moved to Sep 15, 9:00 AM';
   else if(S.toast === 'unscheduled') msg = 'Unscheduled — ' + name + ' moved to Drafts';
+  else if(S.toast === 'moved'){
+    var mv = EVENTS.filter(function(x){ return DROPPED[x.id]; })[0];
+    msg = mv ? 'Rescheduled — “' + mv.title + '” moved to Sep ' + DROPPED[mv.id] + ', ' + mv.time
+             : 'Rescheduled';
+  }
   t.hidden = !msg;
   if(msg) t.textContent = msg;
 }
@@ -1035,9 +1080,9 @@ function buildPickerGrid(){
   });
 }
 
-/* Reschedule 버튼 왼쪽에 붙되, 프레임을 벗어나면 안쪽으로 당긴다 */
+/* 배너 왼쪽에 붙되, 프레임을 벗어나면 안쪽으로 당긴다 */
 function positionPicker(){
-  var btn = $('btnReschedule'), pop = $('picker'), frame = document.querySelector('.frame');
+  var btn = $('btnBanner'), pop = $('picker'), frame = document.querySelector('.frame');
   if(!btn){ pop.hidden = true; return; }
   var fb = frame.getBoundingClientRect(), bb = btn.getBoundingClientRect();
   /* 프레임이 창에 맞춰 축소돼 있으면 rect 값도 같이 줄어든다 — 프레임 좌표로 되돌린다 */
@@ -1056,9 +1101,41 @@ function wire(){
   var cf = $('clearFilters');
   if(cf) cf.addEventListener('click', function(){ go({q:null}); });
 
+  /* 드래그 앤 드롭 — 예약된 글을 다른 날짜로 옮긴다. 시각은 그대로. */
+  var dragId = null;
+  Array.prototype.forEach.call($('viewport').querySelectorAll('.ev[draggable]'), function(el){
+    el.addEventListener('dragstart', function(ev){
+      dragId = el.dataset.ev;
+      el.classList.add('dragging');
+      ev.dataTransfer.effectAllowed = 'move';
+      try { ev.dataTransfer.setData('text/plain', dragId); } catch(e){}
+    });
+    el.addEventListener('dragend', function(){ el.classList.remove('dragging'); dragId = null;
+      Array.prototype.forEach.call(document.querySelectorAll('.cell.drop-target'),
+        function(c){ c.classList.remove('drop-target'); }); });
+  });
+  Array.prototype.forEach.call($('viewport').querySelectorAll('.cell[data-day]'), function(cell){
+    cell.addEventListener('dragover', function(ev){
+      if(!dragId) return;
+      ev.preventDefault(); ev.dataTransfer.dropEffect = 'move';
+      cell.classList.add('drop-target');
+    });
+    cell.addEventListener('dragleave', function(){ cell.classList.remove('drop-target'); });
+    cell.addEventListener('drop', function(ev){
+      ev.preventDefault();
+      var id = dragId || ev.dataTransfer.getData('text/plain');
+      cell.classList.remove('drop-target');
+      if(!id) return;
+      var day = parseInt(cell.dataset.day, 10);
+      if(!day) return;
+      DROPPED[id] = day;                       /* 옮긴 날짜를 기억한다 */
+      go({ sel:id, toast:'moved', pop:null });
+    });
+  });
+
   var close = $('peekClose');
   if(close) close.addEventListener('click', function(){ go({sel:null, pop:null}); });
-  var r = $('btnReschedule');
+  var r = $('btnBanner');   /* 배너 = 리스케줄 진입점 */
   if(r) r.addEventListener('click', function(ev){ ev.stopPropagation(); go({pop:'1', toast:null}); });
   var u = $('btnUnschedule');
   if(u) u.addEventListener('click', function(){ go({modal:'unschedule'}); });
@@ -1084,7 +1161,7 @@ Array.prototype.forEach.call(document.querySelectorAll('.modal [data-go], .pub [
 
 document.addEventListener('click', function(ev){
   if(S.menu && !ev.target.closest('#menuNew') && !ev.target.closest('#btnNew')) go({'new':null});
-  if(S.pop && !ev.target.closest('#picker') && !ev.target.closest('#btnReschedule')) go({pop:null});
+  if(S.pop && !ev.target.closest('#picker') && !ev.target.closest('#btnBanner')) go({pop:null});
 });
 document.addEventListener('keydown', function(ev){
   if(ev.key !== 'Escape') return;
