@@ -93,7 +93,7 @@ body{
   text-transform:uppercase;font-weight:var(--font-weight-semibold);color:var(--color-neutral-450);}
 .nav-item{display:flex;align-items:center;gap:10px;width:100%;height:34px;padding:0 10px;
   border-radius:var(--radius-lg);font-size:var(--font-size-text-sm);line-height:20px;
-  color:var(--color-neutral-700);text-align:left;margin-bottom:2px;}
+  color:var(--color-neutral-700);text-align:left;margin-bottom:2px;text-decoration:none;}
 .nav-item:hover{background:var(--color-neutral-50);}
 .nav-item.active{background:var(--color-brand-primary-light);color:var(--color-neutral-900);
   font-weight:var(--font-weight-medium);}
@@ -568,7 +568,7 @@ body{
       <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 4.5 3 3 3-3"/></svg>
     </div>
     <nav class="nav-items">
-      <button type="button" class="nav-item"><svg viewBox="0 0 20 20"><path d="M12.5 17.5V10.8333C12.5 10.6123 12.4122 10.4004 12.2559 10.2441C12.0996 10.0878 11.8877 10 11.6667 10H8.33333C8.11232 10 7.90036 10.0878 7.74408 10.2441C7.5878 10.4004 7.5 10.6123 7.5 10.8333V17.5"/><path d="M2.5 8.33504C2.49994 8.09259 2.55278 7.85305 2.65482 7.63313C2.75687 7.41321 2.90566 7.2182 3.09083 7.0617L8.92417 2.0617C9.22499 1.80746 9.60613 1.66797 10 1.66797C10.3939 1.66797 10.775 1.80746 11.0758 2.0617L16.9092 7.0617C17.0943 7.2182 17.2431 7.41321 17.3452 7.63313C17.4472 7.85305 17.5001 8.09259 17.5 8.33504V15.835C17.5 16.2771 17.3244 16.701 17.0118 17.0135C16.6993 17.3261 16.2754 17.5017 15.8333 17.5017H4.16667C3.72464 17.5017 3.30072 17.3261 2.98816 17.0135C2.67559 16.701 2.5 16.2771 2.5 15.835V8.33504Z"/></svg><span>Home</span></button>
+      <a class="nav-item" href="../../../index.html" title="Back to the prototype index"><svg viewBox="0 0 20 20"><path d="M12.5 17.5V10.8333C12.5 10.6123 12.4122 10.4004 12.2559 10.2441C12.0996 10.0878 11.8877 10 11.6667 10H8.33333C8.11232 10 7.90036 10.0878 7.74408 10.2441C7.5878 10.4004 7.5 10.6123 7.5 10.8333V17.5"/><path d="M2.5 8.33504C2.49994 8.09259 2.55278 7.85305 2.65482 7.63313C2.75687 7.41321 2.90566 7.2182 3.09083 7.0617L8.92417 2.0617C9.22499 1.80746 9.60613 1.66797 10 1.66797C10.3939 1.66797 10.775 1.80746 11.0758 2.0617L16.9092 7.0617C17.0943 7.2182 17.2431 7.41321 17.3452 7.63313C17.4472 7.85305 17.5001 8.09259 17.5 8.33504V15.835C17.5 16.2771 17.3244 16.701 17.0118 17.0135C16.6993 17.3261 16.2754 17.5017 15.8333 17.5017H4.16667C3.72464 17.5017 3.30072 17.3261 2.98816 17.0135C2.67559 16.701 2.5 16.2771 2.5 15.835V8.33504Z"/></svg><span>Home</span></a>
       <div class="nav-sec-head">Create</div>
       <button type="button" class="nav-item"><svg viewBox="0 0 20 20"><path d="M8.28086 12.9182C8.20647 12.6298 8.05615 12.3666 7.84555 12.156C7.63494 11.9454 7.37176 11.7951 7.08336 11.7207L1.97086 10.4023C1.88364 10.3776 1.80687 10.3251 1.75221 10.2527C1.69754 10.1804 1.66797 10.0922 1.66797 10.0015C1.66797 9.91084 1.69754 9.82264 1.75221 9.75031C1.80687 9.67797 1.88364 9.62543 1.97086 9.60068L7.08336 8.28151C7.37166 8.20718 7.63477 8.05699 7.84537 7.84654C8.05596 7.6361 8.20634 7.37308 8.28086 7.08484L9.5992 1.97234C9.6237 1.88478 9.67618 1.80763 9.74863 1.75267C9.82108 1.69772 9.90951 1.66797 10.0004 1.66797C10.0914 1.66797 10.1798 1.69772 10.2523 1.75267C10.3247 1.80763 10.3772 1.88478 10.4017 1.97234L11.7192 7.08484C11.7936 7.37324 11.9439 7.63642 12.1545 7.84702C12.3651 8.05763 12.6283 8.20795 12.9167 8.28234L18.0292 9.59984C18.1171 9.62409 18.1946 9.67652 18.2499 9.74907C18.3052 9.82163 18.3351 9.91031 18.3351 10.0015C18.3351 10.0927 18.3052 10.1814 18.2499 10.2539C18.1946 10.3265 18.1171 10.3789 18.0292 10.4032L12.9167 11.7207C12.6283 11.7951 12.3651 11.9454 12.1545 12.156C11.9439 12.3666 11.7936 12.6298 11.7192 12.9182L10.4009 18.0307C10.3764 18.1182 10.3239 18.1954 10.2514 18.2503C10.179 18.3053 10.0905 18.3351 9.99961 18.3351C9.90868 18.3351 9.82025 18.3053 9.7478 18.2503C9.67535 18.1954 9.62287 18.1182 9.59836 18.0307L8.28086 12.9182Z"/></svg><span>New Content</span></button>
       <div class="nav-sec-head">Content</div>
@@ -721,14 +721,14 @@ body{
     <h4>02 Schedule new · from Library</h4>
     <a href="#s=calendar&new=1"><b>1</b><span>menu open</span></a>
     <a href="#s=calendar&modal=library"><b>2</b><span>pick from Library</span></a>
-    <a href="../new-content-generation/v4/new-content-to-generate.html#stage=publish&edit=This+New+Lip+Tint+Is+Everything"><b>3</b><span>edit &amp; publish → v4</span></a>
+    <a href="../new-content-generation/v4/new-content-to-generate.html#stage=publish&edit=This+New+Lip+Tint+Is+Everything&from=schedule&back=s%3Dcalendar%26sel%3Dlip"><b>3</b><span>edit &amp; publish → v4</span></a>
     <a href="#s=calendar&toast=scheduled"><b>4</b><span>done</span></a>
     <h4>03 Schedule new · create new</h4>
     <a href="#s=calendar&new=1"><b>1</b><span>menu open</span></a>
-    <a href="../new-content-generation/v4/new-content-to-generate.html"><b>2</b><span>brief &amp; style → v4</span></a>
+    <a href="../new-content-generation/v4/new-content-to-generate.html#from=schedule&back=s%3Dcalendar"><b>2</b><span>brief &amp; style → v4</span></a>
     <h4>04 Manage · edit</h4>
     <a href="#s=calendar&sel=lip"><b>1</b><span>selected</span></a>
-    <a href="../new-content-generation/v4/new-content-to-generate.html#stage=publish&edit=This+New+Lip+Tint+Is+Everything"><b>2</b><span>edit post → v4</span></a>
+    <a href="../new-content-generation/v4/new-content-to-generate.html#stage=publish&edit=This+New+Lip+Tint+Is+Everything&from=schedule&back=s%3Dcalendar%26sel%3Dlip"><b>2</b><span>edit post → v4</span></a>
     <h4>05 Manage · reschedule</h4>
     <a href="#s=calendar&sel=lip"><b>1</b><span>selected</span></a>
     <a href="#s=calendar&sel=lip&pop=1"><b>2</b><span>picker open</span></a>
@@ -821,13 +821,19 @@ function passesFilters(e){
    v4 의 fmx-deeplink-js 가 stage=publish 를 받아 goToPublish() 를 열고,
    edit/caption 으로 "이어서 고치는 초안"임을 표시한다. */
 var V4 = '../new-content-generation/v4/new-content-to-generate.html';
+/* v4 는 이 파일의 화면이 아니라서 돌아올 길이 없다. from/back 을 실어 보내면
+   v4 의 fmx-deeplink-js 가 왼쪽 위에 "← Schedule" 알약을 띄우고, back 에 담긴
+   해시 그대로 원래 보던 화면(선택된 포스트·리스트뷰 등)으로 되돌린다. */
+function backParams(){
+  return '&from=schedule&back=' + encodeURIComponent(location.hash.replace(/^#/, ''));
+}
 function editPublishURL(e){
-  if(!e) return V4;
+  if(!e) return V4 + '#from=schedule&back=' + encodeURIComponent(location.hash.replace(/^#/, ''));
   var q = 'stage=publish&edit=' + encodeURIComponent(e.title);
   if(e.caption) q += '&caption=' + encodeURIComponent(e.caption);
   if(e.plats && e.plats.length > 1) q += '&perplatform=1';
   if(e.ratio) q += '&ratio=' + encodeURIComponent(e.ratio);
-  return V4 + '#' + q;
+  return V4 + '#' + q + backParams();
 }
 var PLAT_NAME = {ig:'Instagram', tt:'TikTok', yt:'YouTube', fb:'Facebook', li:'LinkedIn'};
 /* icon / social / * — 로고 마크. UI 아이콘 스케일(16/20/24) 밖이라 별도 취급한다. */
@@ -1292,7 +1298,7 @@ $('segList').addEventListener('click', function(){ go({s:'list'}); });
 $('q').addEventListener('input', function(){ S.q = this.value; go({q:this.value || null}); this.focus(); });
 $('btnNew').addEventListener('click', function(e){ e.stopPropagation(); go({'new':S.menu ? null : '1'}); });
 $('miLibrary').addEventListener('click', function(){ go({'new':null, modal:'library'}); });
-$('miCreate').addEventListener('click', function(){ location.href = V4; });   /* Start from New Content */
+$('miCreate').addEventListener('click', function(){ location.href = V4 + '#from=schedule&back=' + encodeURIComponent(location.hash.replace(/^#/, '')); });   /* Start from New Content */
 $('scrim').addEventListener('click', function(){ go({modal:null}); });
 $('unschCancel').addEventListener('click', function(){ go({modal:null}); });
 $('unschConfirm').addEventListener('click', function(){ go({modal:null, sel:null, gone:'1', toast:'unscheduled'}); });
