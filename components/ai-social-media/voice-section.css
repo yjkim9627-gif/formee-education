@@ -3,9 +3,9 @@
    State = Collapsed / Expanded / Error, Mode = Whole take / Split by scene.
 
    Whole take: a single script box (reuses the Scene Desc Box look, no reference chip)
-   + word count + full-width Preview button. Optional Regenerate button and a
-   Voiceover Card voice-sample row (NOT wired into any real screen yet -- see
-   voice-section.html's own note on why).
+   + word count + full-width Preview button. Once a take exists, Regenerate + a Voiceover
+   Card voice-sample row also show (wired into the real Timeline tab -- see
+   renderVoiceButtonAreaHTML() in new-content-to-generate.html v4).
 
    Split by scene: a stack of .voice-accordion-row instances (voice-accordion-row.css),
    one per scene -- that component's own CSS already matched this spec exactly with no
@@ -21,6 +21,10 @@
   padding:12px 16px; display:flex; flex-direction:column; gap:var(--spacing-sm);
 }
 .voice-section-header{display:flex; align-items:center; justify-content:space-between; width:100%;}
+/* Header doubles as the real collapse/expand control (button.voice-section-header) --
+   reset button chrome so it still lays out exactly like the plain div version. */
+button.voice-section-header{border:none; background:transparent; padding:0; margin:0; font:inherit; color:inherit; cursor:pointer;}
+button.voice-section-header:focus-visible{outline:2px solid var(--color-brand-primary); outline-offset:2px; border-radius:4px;}
 .voice-section-title{font-family:var(--font-family-text); font-size:14px; font-weight:600; line-height:22px; color:var(--color-neutral-900);}
 .voice-section-header-right{display:flex; align-items:center; gap:12px;}
 .voice-section-spacer{width:212px; height:1px; background:transparent;}
@@ -43,12 +47,16 @@
   font-family:var(--font-family-text); font-size:14px; font-weight:400; line-height:22px; color:var(--color-neutral-900);
 }
 textarea.voice-section-script:focus{border-color:var(--color-brand-primary);}
-/* Timeline's Preview button reuses the app's existing .voice-preview-btn (state machine
-   intact -- cached/stale/loading/playing, see updateVoicePreviewButton()); this just stretches
-   it to the card's full width instead of Figma's separate Preview/Regenerate two-button
-   layout, since mapping cache state onto two simultaneous buttons + the voice-sample row is
-   still an open question -- see the app's own note on this. */
-.voice-section-body .voice-preview-btn{width:100%; justify-content:center;}
+/* Timeline's Preview/Regenerate buttons are real .voice-preview-btn elements (existing
+   cached/stale/loading state machine, see updateVoicePreviewButton()) that also carry
+   .voice-section-preview-btn so they render with Figma's own icon-circle + full-width look
+   instead of the compact inline style used elsewhere (Script/Video stage). */
+.voice-section-actions{display:flex; flex-direction:column; gap:var(--spacing-md); width:100%;}
+/* Combined-class selector bumps specificity over the plain .voice-preview-btn rule (v4's own
+   inline stylesheet) so Figma's full-width icon-circle look always wins regardless of
+   stylesheet load order -- same defensive pattern as .voice-section-script above. */
+.voice-preview-btn.voice-section-preview-btn{display:flex; width:100%; justify-content:center; gap:var(--spacing-sm);}
+.voice-section-sample-play{cursor:pointer;}
 .voice-section-wordcount{width:100%; text-align:right; font-family:var(--font-family-text); font-size:11px; font-weight:400; line-height:16px; color:var(--color-neutral-500);}
 
 /* Error state: replaces the plain word-count row */

@@ -5742,17 +5742,75 @@ function renderVoiceWordcountRowHTML(unit, script){
 function refineSceneScript(unit){
   updateSceneScript(unit, fitScriptToWordLimit(getSceneScript(unit), 15));
 }
+// Toggle the Voice Section's own collapse/expand -- decorative nowhere else in the app,
+// this is the one place the chevron actually does something (per explicit go-ahead).
+function toggleVoiceSection(headerEl){
+  const section = headerEl.closest('.voice-section');
+  if(!section) return;
+  const collapsed = section.classList.toggle('collapsed');
+  const caret = section.querySelector('.voice-section-caret');
+  if(caret) caret.src = `../../../../components/ai-social-media/icons/chevron-${collapsed ? 'down' : 'up'}.svg`;
+}
+// Voiceover Card row shown once a take exists -- name/time aren't tracked anywhere real yet
+// (no audio pipeline), so name falls back to the currently selected voice and the time is
+// estimated from word count at the same ~1.875 words/sec used by getMaxScriptWords().
+function renderVoiceSampleRowHTML(unit){
+  const cache = window.__voicePreviewCache[unit] || {};
+  const voiceName = cache.voice || getCurrentVoiceLabel() || 'Voice';
+  const totalSec = Math.max(1, Math.round(countScriptWords(getSceneScript(unit)) / 1.875));
+  return `
+    <div class="voice-section-sample" id="voiceSample_tl_${unit}">
+      <span class="voice-section-sample-play" onclick="document.getElementById('voicePreviewBtn_tl_${unit}').click()"><img src="../../../../components/ai-social-media/icons/audio-play.svg" alt=""></span>
+      <span class="voice-section-sample-name">${escapeHtml(voiceName)}</span>
+      <span class="voice-section-sample-time">00:00 / 00:${String(totalSec).padStart(2, '0')}</span>
+    </div>`;
+}
+// Preview replays whatever take already exists (even a stale one); Regenerate is the
+// separate button that pays to refresh it to match the current script -- see previewSceneVoice()
+// and updateVoicePreviewButton()'s figmaStyle branch for how Preview's own state differs here
+// from the single-button model still used by the Script/Video stage.
+function renderVoiceButtonAreaHTML(unit){
+  const hasCache = !!window.__voicePreviewCache[unit];
+  const invalid = countScriptWords(getSceneScript(unit)) === 0 || countScriptWords(getSceneScript(unit)) > 15 || !!window.__reelSyncPending;
+  const previewBtn = `<button class="voice-preview-btn voice-section-preview-btn" id="voicePreviewBtn_tl_${unit}" onclick="previewSceneVoice('tl', ${unit})"></button>`;
+  if(!hasCache) return `<div class="voice-section-actions" id="voiceButtonArea_${unit}">${previewBtn}</div>`;
+  return `
+    <div class="voice-section-actions" id="voiceButtonArea_${unit}">
+      ${previewBtn}
+      <button class="voice-preview-btn voice-section-preview-btn" id="voiceRegenBtn_tl_${unit}" onclick="regenerateSceneVoice(${unit})" ${invalid ? 'disabled' : ''} title="Generate a fresh take to match the current script · ${SEGMENT_VOICE_CREDIT} credits">
+        <span class="voice-section-preview-play"><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" alt=""></span> Regenerate
+      </button>
+      ${renderVoiceSampleRowHTML(unit)}
+    </div>`;
+}
+function regenerateSceneVoice(unit){
+  if(countScriptWords(getSceneScript(unit)) === 0 || countScriptWords(getSceneScript(unit)) > 15 || window.__reelSyncPending) return;
+  const btn = document.getElementById(`voiceRegenBtn_tl_${unit}`);
+  if(!btn || btn.disabled) return;
+  const scriptText = getSceneScript(unit);
+  const voice = getCurrentVoiceLabel();
+  btn.disabled = true;
+  btn.classList.add('loading');
+  btn.innerHTML = `<span class="vp-spinner"></span> Generating…`;
+  setTimeout(() => {
+    window.__voicePreviewCache[unit] = { script: scriptText, voice };
+    const area = document.getElementById(`voiceButtonArea_${unit}`);
+    if(area) area.outerHTML = renderVoiceButtonAreaHTML(unit);
+    updateVoicePreviewButton('tl', unit);
+    updateVoicePreviewButton('vid', unit);
+  }, 1100);
+}
 function renderTimelineVoiceSectionHTML(unit){
   const script = getSceneScript(unit);
   return `
     <div class="voice-section">
-      <div class="voice-section-header">
+      <button type="button" class="voice-section-header" onclick="toggleVoiceSection(this)">
         <span class="voice-section-title">Voice</span>
         <div class="voice-section-header-right">
           <span class="voice-section-spacer"></span>
           <img class="voice-section-caret" src="../../../../components/ai-social-media/icons/chevron-up.svg" alt="">
         </div>
-      </div>
+      </button>
       <div class="voice-section-body">
         <div class="voice-section-script-wrap">
           <div class="field-fill-wrap" id="narrFieldWrap_tl_${unit}">
@@ -5760,7 +5818,7 @@ function renderTimelineVoiceSectionHTML(unit){
           </div>
           ${renderVoiceWordcountRowHTML(unit, script)}
         </div>
-        <button class="voice-preview-btn" id="voicePreviewBtn_tl_${unit}" onclick="previewSceneVoice('tl', ${unit})"></button>
+        ${renderVoiceButtonAreaHTML(unit)}
       </div>
     </div>
   `;
@@ -5981,6 +6039,10 @@ function updateSceneScript(n, value){
   document.querySelectorAll(`.voice-script-text[data-scene="${n}"]`).forEach(ta => { if(ta.value !== value) ta.value = value; ta.setAttribute('aria-invalid', String(countScriptWords(value) > 15 || countScriptWords(value) === 0)); });
   const voiceWordcountRow = document.getElementById(`voiceWordcountRow_${n}`);
   if(voiceWordcountRow) voiceWordcountRow.outerHTML = renderVoiceWordcountRowHTML(n, value);
+  // Refreshes Regenerate's disabled state + the sample row's estimated time; skipped mid-generate
+  // so a live "Generating…" button isn't yanked out from under itself.
+  const voiceButtonArea = document.getElementById(`voiceButtonArea_${n}`);
+  if(voiceButtonArea && !voiceButtonArea.querySelector('.loading')) voiceButtonArea.outerHTML = renderVoiceButtonAreaHTML(n);
 
   updateVoicePreviewButton('tl', n);
   updateVoicePreviewButton('vid', n);
@@ -6004,16 +6066,29 @@ function updateVoicePreviewButton(scope, n){
   const btn = document.getElementById(`voicePreviewBtn_${scope}_${n}`);
   if(!btn || btn.classList.contains('loading') || btn.classList.contains('playing')) return;
   btn.disabled = countScriptWords(getSceneScript(n)) === 0 || countScriptWords(getSceneScript(n)) > 15 || !!window.__reelSyncPending;
-  btn.classList.toggle('cached', cached);
-  btn.classList.toggle('stale', stale);
-  if(cached){
-    btn.innerHTML = `<span class="vp-icon"><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt=""></span> Preview`;
+
+  // Timeline's split Preview/Regenerate layout (voice-section-preview-btn): Preview always
+  // just replays whatever take exists, even a stale one -- the separate Regenerate button
+  // (renderVoiceButtonAreaHTML) owns "text changed, pay to refresh". The single-button
+  // model below (Script/Video stage) still folds staleness into this same button.
+  const figmaStyle = btn.classList.contains('voice-section-preview-btn');
+  const showCached = figmaStyle ? hasCache : cached;
+  btn.classList.toggle('cached', showCached);
+  btn.classList.toggle('stale', !figmaStyle && stale);
+
+  const icon = (src, sizeCls) => figmaStyle
+    ? `<span class="voice-section-preview-play"><img src="../../../../components/ai-social-media/icons/${src}" alt=""></span>`
+    : `<span class="vp-icon"><img src="../../../../components/ai-social-media/icons/${src}" class="icon-inline${sizeCls ? ' ' + sizeCls : ''}" alt=""></span>`;
+  const cost = figmaStyle ? '' : ` <span class="vp-cost"><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">${SEGMENT_VOICE_CREDIT}</span>`;
+
+  if(showCached){
+    btn.innerHTML = `${icon('refresh-ccw.svg')} Preview`;
     btn.title = 'Replay the cached preview — no extra cost';
-  } else if(stale){
-    btn.innerHTML = `<span class="vp-icon"><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt=""></span> Regenerate <span class="vp-cost"><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">${SEGMENT_VOICE_CREDIT}</span>`;
+  } else if(!figmaStyle && stale){
+    btn.innerHTML = `${icon('refresh-ccw.svg')} Regenerate${cost}`;
     btn.title = `Text changed since the last generation · ${SEGMENT_VOICE_CREDIT} credits to regenerate`;
   } else {
-    btn.innerHTML = `<span class="vp-icon"><img src="../../../../components/ai-social-media/icons/audio-play.svg" class="icon-inline icon-16" alt=""></span> Preview <span class="vp-cost"><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">${SEGMENT_VOICE_CREDIT}</span>`;
+    btn.innerHTML = `${icon('audio-play.svg', 'icon-16')} Preview${cost}`;
     btn.title = `Generate a voice preview · ${SEGMENT_VOICE_CREDIT} credits`;
   }
 }
@@ -6023,7 +6098,10 @@ function previewSceneVoice(scope, n){
   const btn = document.getElementById(`voicePreviewBtn_${scope}_${n}`);
   if(!btn || btn.disabled) return;
 
-  if(isVoicePreviewCached(n)){
+  // Timeline's Preview button (voice-section-preview-btn) replays any existing take, even a
+  // stale one -- see updateVoicePreviewButton()'s figmaStyle branch for why.
+  const figmaStyle = btn.classList.contains('voice-section-preview-btn');
+  if(isVoicePreviewCached(n) || (figmaStyle && window.__voicePreviewCache[n])){
     playVoiceButton(btn, false, () => updateVoicePreviewButton(scope, n));
     return;
   }
@@ -6039,7 +6117,16 @@ function previewSceneVoice(scope, n){
     window.__voicePreviewCache[n] = { script: scriptText, voice };
     btn.classList.remove('loading');
     btn.disabled = false;
-    playVoiceButton(btn, true, () => updateVoicePreviewButton(scope, n));
+    // Wait for the "Playing…" animation to finish before swapping in Regenerate + the
+    // sample row (a first-time generation just flipped hasCache true) -- replacing
+    // voiceButtonArea any earlier would detach `btn` mid-animation.
+    playVoiceButton(btn, true, () => {
+      if(figmaStyle){
+        const area = document.getElementById(`voiceButtonArea_${n}`);
+        if(area) area.outerHTML = renderVoiceButtonAreaHTML(n);
+      }
+      updateVoicePreviewButton(scope, n);
+    });
     updateVoicePreviewButton(scope === 'tl' ? 'vid' : 'tl', n);
   }, 1100);
 }
