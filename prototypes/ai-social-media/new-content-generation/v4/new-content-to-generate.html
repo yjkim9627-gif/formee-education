@@ -22,6 +22,7 @@
 <link rel="stylesheet" href="../../../../components/ai-social-media/controls-filter-select.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/actions-button.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/scene-tile.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/reference-scene-tile.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/reference-chip.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/voice-accordion-row.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/queue-panel.css">
@@ -213,13 +214,20 @@
   .reference-images-row{display:flex; gap:8px; flex-wrap:wrap;}
   .reference-images-row:empty{display:none;}
 
-  /* -- My Library picker modal (Figma 8727:238504) — grid of library items; selecting one
-     hands off to window.fmxRefMount() (see reference-images-row above / fmxref-js below). -- */
-  .mylib-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:var(--spacing-lg); max-height:60vh; overflow-y:auto;}
-  .mylib-tile{display:flex; flex-direction:column; gap:var(--spacing-sm); padding:0; border:1px solid var(--color-neutral-300); border-radius:var(--radius-lg); background:var(--color-neutral-0); cursor:pointer; overflow:hidden; text-align:left; font-family:var(--font-family-text);}
-  .mylib-tile:hover{border-color:var(--color-neutral-500);}
-  .mylib-tile img{width:100%; aspect-ratio:4/5; object-fit:cover; display:block; background:var(--color-neutral-100);}
-  .mylib-tile-title{padding:0 var(--spacing-md) var(--spacing-md); font-size:13px; font-weight:600; color:var(--color-neutral-900); line-height:1.4;}
+  /* -- My Library picker modal (Figma 9198:133913 "Reference - My Library") — real
+     Controls/Segmented Control + Controls/Filter/Select + Reference/Scene Tile·Selectable
+     grid (multi-select) + Actions/Button footer. Selecting tiles then clicking "Add"
+     hands off to window.fmxRefMount() (see reference-images-row above / fmxref-js below),
+     same as the Content Library "Use as reference" deep-link. -- */
+  .mylib-modal{max-width:1088px; width:100%; padding:var(--spacing-xl); border-radius:16px; gap:var(--spacing-sm);}
+  .mylib-header-top{display:flex; align-items:flex-start; justify-content:space-between; width:100%;}
+  .mylib-header-top .modal__close{position:static; width:36px; height:36px; border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); box-shadow:0 1px 1.5px rgba(15,23,41,.1),0 1px 0.5px rgba(15,23,41,.04);}
+  .mylib-filter-bar{display:flex; align-items:center; justify-content:space-between; height:64px; width:100%;}
+  .mylib-filter-left{display:flex; align-items:center; gap:8px;}
+  .mylib-filter-row{display:flex; align-items:center; gap:var(--spacing-md);}
+  .mylib-item-count{font-family:var(--font-family-text); font-size:12px; font-weight:500; color:var(--color-neutral-500); white-space:nowrap;}
+  .mylib-content{display:flex; flex-wrap:wrap; gap:var(--spacing-md); max-height:60vh; overflow-y:auto;}
+  .mylib-footer{display:flex; align-items:center; justify-content:flex-end; gap:var(--spacing-md); padding-top:16px; width:100%;}
 
   /* -- Character section (Brief & Style) — .char-section/.char-panel/.char-filters/.char-grid/
      .char-card + Filter Chip now in components/ai-social-media/character-card.css + filter-chip.css. -- */
@@ -5244,29 +5252,66 @@ function renderReferenceImages(){
 }
 renderReferenceImages();
 
-// ---- My Library picker modal (Figma 8727:238504) -- selecting a tile hands off to
-// window.fmxRefMount() (fmxref-js below), the same reference-attach flow the Content
-// Library "Use as reference" deep-link uses, pre-filled with the default strength/match. ----
+// ---- My Library picker modal (Figma 9198:133913 "Reference - My Library") -- a real
+// Controls/Segmented Control + Controls/Filter/Select filter bar, a grid of the real
+// Reference/Scene Tile·Selectable component (components/ai-social-media/reference-scene-tile.css)
+// supporting multi-select, and an Actions/Button footer. Clicking "Add" hands off to
+// window.fmxRefMount() (fmxref-js below) using the first selected item -- same entry point
+// the Content Library "Use as reference" deep-link uses, pre-filled with the default
+// strength/match. The content-type tabs and Status/Created by/Date range filters are
+// decorative here (no sample data to actually filter by), matching this prototype's usual
+// treatment of peripheral filter chrome elsewhere. ----
 const MY_LIBRARY_ITEMS = [
-  { title: 'This New Lip Tint Is Everything', thumb: '../../brand-characters/assets/imgLibLipTint.png' },
-  { title: 'January Intake — Apply Now', thumb: '../../brand-characters/assets/imgLibJanIntake.png' },
-  { title: 'Study in the UK', thumb: '../../brand-characters/assets/imgLibStudyUK.png' }
+  { title: 'This New Lip Tint Is Everything', thumb: '../../brand-characters/assets/imgLibLipTint.png', ratio: '9:16', isVideo: true },
+  { title: 'January Intake — Apply Now', thumb: '../../brand-characters/assets/imgLibJanIntake.png', ratio: '9:16', isVideo: false },
+  { title: 'Study in the UK', thumb: '../../brand-characters/assets/imgLibStudyUK.png', ratio: '9:16', isVideo: true },
+  { title: 'This New Lip Tint Is Everything', thumb: '../../brand-characters/assets/imgLibLipTint.png', ratio: '9:16', isVideo: false },
+  { title: 'January Intake — Apply Now', thumb: '../../brand-characters/assets/imgLibJanIntake.png', ratio: '9:16', isVideo: true },
+  { title: 'Study in the UK', thumb: '../../brand-characters/assets/imgLibStudyUK.png', ratio: '9:16', isVideo: false }
 ];
+window.__myLibrarySelected = new Set();
+function buildMyLibraryTileHtml(item, i){
+  const selected = window.__myLibrarySelected.has(i);
+  return `
+    <div class="ref-scene-tile${selected ? ' selected' : ''}" onclick="toggleMyLibraryItem(${i})">
+      <img class="ref-scene-tile-thumb" src="${item.thumb}" alt="">
+      <div class="ref-scene-tile-preview">
+        <div class="ref-scene-tile-top-row">
+          <span class="ref-scene-tile-badge"><span class="ref-scene-tile-badge-icon"><span></span></span><span class="ref-scene-tile-badge-label">${item.ratio}</span></span>
+          <input type="checkbox" class="checkbox checkbox--lg" ${selected ? 'checked' : ''} onclick="event.stopPropagation(); toggleMyLibraryItem(${i});" tabindex="-1">
+        </div>
+      </div>
+      ${item.isVideo ? '<button type="button" class="scene-tile-play-btn" onclick="event.stopPropagation();"><img class="play" src="../../../../components/ai-social-media/icons/video-play-glyph.svg" alt=""></button>' : ''}
+    </div>`;
+}
 function buildMyLibraryModalHtml(){
-  const tiles = MY_LIBRARY_ITEMS.map((item, i) => `
-    <button type="button" class="mylib-tile" onclick="selectMyLibraryItem(${i})">
-      <img src="${item.thumb}" alt="">
-      <span class="mylib-tile-title">${item.title}</span>
-    </button>`).join('');
   return `
     <div class="modal-overlay" id="myLibraryModalOverlay" style="display:none;" onclick="if(event.target===this) closeMyLibraryModal();">
-      <div class="modal" style="max-width:900px;">
-        <div class="modal__content">
-          <div class="pub-social-title-row">
-            <h2 class="modal__title">My Library</h2>
-            <button type="button" class="modal__close" onclick="closeMyLibraryModal()"><img src="../../../../components/ai-social-media/icons/button-x-dark.svg" class="icon-inline" alt=""></button>
+      <div class="modal mylib-modal">
+        <div class="mylib-header-top">
+          <h2 class="modal__title">My Library</h2>
+          <button type="button" class="modal__close" onclick="closeMyLibraryModal()"><img src="../../../../components/ai-social-media/icons/button-x-dark.svg" class="icon-inline" alt=""></button>
+        </div>
+        <div class="mylib-filter-bar">
+          <div class="mylib-filter-left">
+            <div class="controls-segmented-control">
+              <button type="button" class="controls-segment-chip controls-segment-chip--selected">All</button>
+              <button type="button" class="controls-segment-chip">Videos</button>
+              <button type="button" class="controls-segment-chip">Images</button>
+              <button type="button" class="controls-segment-chip">Carousels</button>
+            </div>
+            <div class="mylib-filter-row">
+              <div class="filter-select"><span class="filter-select__label">Status</span><img class="filter-select__caret" src="../../../../components/ai-social-media/icons/caret-down-filled.svg" alt=""></div>
+              <div class="filter-select"><span class="filter-select__label">Created by</span><img class="filter-select__caret" src="../../../../components/ai-social-media/icons/caret-down-filled.svg" alt=""></div>
+              <div class="filter-select"><span class="filter-select__label">Date range</span><img class="filter-select__caret" src="../../../../components/ai-social-media/icons/caret-down-filled.svg" alt=""></div>
+              <span class="mylib-item-count">${MY_LIBRARY_ITEMS.length} items</span>
+            </div>
           </div>
-          <div class="mylib-grid">${tiles}</div>
+        </div>
+        <div class="mylib-content" id="myLibraryContent">${MY_LIBRARY_ITEMS.map((item, i) => buildMyLibraryTileHtml(item, i)).join('')}</div>
+        <div class="mylib-footer">
+          <button type="button" class="actions-btn actions-btn--secondary" onclick="clearMyLibrarySelection()">Clear all</button>
+          <button type="button" class="actions-btn actions-btn--primary" id="myLibraryAddBtn" onclick="addMyLibrarySelection()">Add 0</button>
         </div>
       </div>
     </div>`;
@@ -5277,16 +5322,30 @@ function mountMyLibraryModal(){
   el.innerHTML = buildMyLibraryModalHtml();
   document.querySelector('.app').appendChild(el.firstElementChild);
 }
-function openMyLibraryModal(){ mountMyLibraryModal(); document.getElementById('myLibraryModalOverlay').style.display = 'flex'; }
+function openMyLibraryModal(){ window.__myLibrarySelected = new Set(); mountMyLibraryModal(); renderMyLibraryTiles(); document.getElementById('myLibraryModalOverlay').style.display = 'flex'; }
 function closeMyLibraryModal(){ const el = document.getElementById('myLibraryModalOverlay'); if(el) el.style.display = 'none'; }
-function selectMyLibraryItem(i){
-  const item = MY_LIBRARY_ITEMS[i];
+function renderMyLibraryTiles(){
+  const content = document.getElementById('myLibraryContent');
+  if(content) content.innerHTML = MY_LIBRARY_ITEMS.map((item, i) => buildMyLibraryTileHtml(item, i)).join('');
+  const addBtn = document.getElementById('myLibraryAddBtn');
+  if(addBtn) addBtn.textContent = 'Add ' + window.__myLibrarySelected.size;
+}
+function toggleMyLibraryItem(i){
+  if(window.__myLibrarySelected.has(i)) window.__myLibrarySelected.delete(i); else window.__myLibrarySelected.add(i);
+  renderMyLibraryTiles();
+}
+function clearMyLibrarySelection(){ window.__myLibrarySelected = new Set(); renderMyLibraryTiles(); }
+function addMyLibrarySelection(){
+  const indices = Array.from(window.__myLibrarySelected);
+  if(!indices.length) return;
   closeMyLibraryModal();
   // Hand off exactly like the Content Library "Use as reference" deep-link does: same
   // fmxRefMount() entry point, same wide chip + strength/match/frame-picker popover
-  // (fmxref-js, further down this file). This modal only opens from the Reel/Short &
-  // Story Video Brief row, so the reference is always the 9:16 (video) kind.
-  if(window.fmxRefMount) window.fmxRefMount({ ref: item.title, thumb: item.thumb, ratio: '9:16' });
+  // (fmxref-js, further down this file). fmxRefMount only carries a single reference, so
+  // a multi-select here still only attaches the first item picked -- this modal only opens
+  // from the Reel/Short & Story Video Brief row, so the reference is always the 9:16 (video) kind.
+  const item = MY_LIBRARY_ITEMS[indices[0]];
+  if(window.fmxRefMount) window.fmxRefMount({ ref: item.title, thumb: item.thumb, ratio: item.ratio });
 }
 
 let activeMentionEl = null;

@@ -2,16 +2,21 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
-<title>Controls / Field / AI assisted text — Shared Component</title>
+<title>Reference Scene Tile — AI Social Media Component</title>
 <link rel="stylesheet" href="../../tokens/tokens.css" />
 <link rel="stylesheet" href="../demo-nav.css" />
-<link rel="stylesheet" href="controls-field-ai-assisted-text.css" />
+<link rel="stylesheet" href="../shared/checkbox.css" />
+<link rel="stylesheet" href="scene-tile.css" />
+<link rel="stylesheet" href="reference-scene-tile.css" />
 <style>
   body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
   .demo-main { padding: var(--spacing-4xl); }
   h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-sm); }
-  .demo-note { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); max-width: 640px; margin: 0 0 var(--spacing-3xl); line-height: 1.6; }
-  .row { padding: var(--spacing-xl); background: var(--color-neutral-0); border: 1px solid var(--color-neutral-200); border-radius: 12px; }
+  h2 { font-size: var(--font-size-text-md); font-weight: 700; color: var(--color-neutral-700); margin: var(--spacing-3xl) 0 var(--spacing-md); }
+  h2:first-of-type { margin-top: 0; }
+  .demo-note { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); max-width: 720px; margin: 0 0 var(--spacing-3xl); line-height: 1.6; }
+  .demo-sub { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); margin: 0 0 var(--spacing-lg); }
+  .demo-grid { display: flex; flex-wrap: wrap; gap: var(--spacing-2xl); align-items: flex-start; }
 </style>
 </head>
 <body>
@@ -36,10 +41,10 @@
         <a href="actions-button.html">Actions / Button</a>
       </div>
     </div>
-    <div class="demo-sidebar-group" data-group="inputs">
+    <div class="demo-sidebar-group collapsed" data-group="inputs">
       <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>03 Inputs & Controls</span><span class="demo-sidebar-group-caret">▾</span></button>
       <div class="demo-sidebar-group-items">
-        <a href="controls-field-ai-assisted-text.html" class="active">Controls / Field / AI assisted text</a>
+        <a href="controls-field-ai-assisted-text.html">Controls / Field / AI assisted text</a>
         <a href="controls-field.html">Controls / Field</a>
         <a href="controls-filter-select.html">Controls / Filter / Select</a>
         <a href="controls-filter-toggle.html">Controls / Filter / Toggle</a>
@@ -87,7 +92,7 @@
         <a href="upload-dropzone.html">Upload Dropzone / Dashed Upload Row</a>
       </div>
     </div>
-    <div class="demo-sidebar-group collapsed" data-group="editor">
+    <div class="demo-sidebar-group" data-group="editor">
       <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Editor</span><span class="demo-sidebar-group-caret">▾</span></button>
       <div class="demo-sidebar-group-items">
         <a href="brand-kit.html">Brand Kit</a>
@@ -102,7 +107,7 @@
         <a href="music-track-row.html">Music Track Row</a>
         <a href="queue-panel.html">Queue Job Row / Queue Panel</a>
         <a href="scene-tile.html">Scene Tile</a>
-        <a href="reference-scene-tile.html">Reference / Scene Tile · Selectable</a>
+        <a href="reference-scene-tile.html" class="active">Reference / Scene Tile · Selectable</a>
         <a href="storyboard-card.html">Storyboard Card</a>
         <a href="uploads-rows.html">Uploads Panel Rows</a>
         <a href="video-summary-card.html">Video Summary Card</a>
@@ -142,20 +147,36 @@
     </div>
   </nav>
   <main class="demo-main">
-  <h1>Controls / Field / AI assisted text</h1>
-  <p class="demo-note">Figma: "03 Inputs &amp; Controls" (1124:30) — "Controls / Field /AI assisted text" (4651:68446), a single-symbol AI-assisted textarea variant: label + multi-line input + helper text + a trailing "Refine with AI" pill.</p>
+  <h1>Reference / Scene Tile · Selectable</h1>
+  <p class="demo-note">Figma: "Reference / Scene Tile · Selectable" (component set 8792:124326, node 9198:133913 "Reference - My Library") — the content tile used in the Content Library "My Library" reference-picker modal. Distinct from Timeline's own Scene Tile (different size, different selection treatment — a brand-tinted ring, not neutral border-darkening). Default shows no overlay; Hover/Selected reveal a format badge (aspect ratio) and a large (28px) checkbox for multi-select.</p>
 
-  <div class="row">
-    <div class="controls-field-ai">
-      <p class="controls-field-ai__label">Describe Your Brand *</p>
-      <textarea class="controls-field-ai__textarea" placeholder="In 2&ndash;3 sentences, describe what your brand offers, who it serves and what makes it different."></textarea>
-      <p class="controls-field-ai__helper">We&rsquo;ll use your website to suggest brand details, visual assets and writing style.</p>
-      <div class="controls-field-ai__chips">
-        <button class="controls-field-ai__refine-btn" type="button">
-          <img src="icons/ai-refine.svg" alt="">
-          <span>Refine with AI</span>
-        </button>
+  <h2>Default / Hover / Selected (200×250px)</h2>
+  <p class="demo-sub">Used in the My Library picker's tile grid (new-content-to-generate.html's buildMyLibraryModalHtml()).</p>
+  <div class="demo-grid">
+    <div class="ref-scene-tile" title="Default">
+      <img class="ref-scene-tile-thumb" src="../../prototypes/ai-social-media/brand-characters/assets/imgLibLipTint.png" alt="">
+    </div>
+    <div class="ref-scene-tile hover" title="Hover">
+      <img class="ref-scene-tile-thumb" src="../../prototypes/ai-social-media/brand-characters/assets/imgLibJanIntake.png" alt="">
+      <div class="ref-scene-tile-preview">
+        <div class="ref-scene-tile-top-row">
+          <span class="ref-scene-tile-badge"><span class="ref-scene-tile-badge-icon"><span></span></span><span class="ref-scene-tile-badge-label">9:16</span></span>
+          <input type="checkbox" class="checkbox checkbox--lg" onclick="event.preventDefault();" tabindex="-1">
+        </div>
       </div>
+    </div>
+    <div class="ref-scene-tile selected" title="Selected">
+      <img class="ref-scene-tile-thumb" src="../../prototypes/ai-social-media/brand-characters/assets/imgLibStudyUK.png" alt="">
+      <div class="ref-scene-tile-preview">
+        <div class="ref-scene-tile-top-row">
+          <span class="ref-scene-tile-badge"><span class="ref-scene-tile-badge-icon"><span></span></span><span class="ref-scene-tile-badge-label">9:16</span></span>
+          <input type="checkbox" class="checkbox checkbox--lg" checked onclick="event.preventDefault();" tabindex="-1">
+        </div>
+      </div>
+    </div>
+    <div class="ref-scene-tile" title="Video, Default (Play button)">
+      <img class="ref-scene-tile-thumb" src="../../prototypes/ai-social-media/brand-characters/assets/imgLibLipTint.png" alt="">
+      <button class="scene-tile-play-btn" type="button"><img class="play" src="icons/video-play-glyph.svg" alt=""></button>
     </div>
   </div>
   </main>
