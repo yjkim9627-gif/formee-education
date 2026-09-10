@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>Schedule — Section Components</title>
+<link rel="stylesheet" href="../../tokens/tokens.css" />
+<link rel="stylesheet" href="../demo-nav.css" />
+<link rel="stylesheet" href="feedback-status-chip.css" />
+<link rel="stylesheet" href="schedule.css" />
+<style>
+  body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
+  .demo-main { padding: var(--spacing-4xl); }
+  h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-sm); }
+  h2 { font-size: var(--font-size-text-md); font-weight: 700; color: var(--color-neutral-700); margin: var(--spacing-4xl) 0 var(--spacing-xs); }
+  h2:first-of-type { margin-top: 0; }
+  .demo-nid { font-weight: 400; color: var(--color-neutral-450); }
+  .demo-note { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); max-width: 760px; margin: 0 0 var(--spacing-3xl); line-height: 1.6; }
+  .demo-sub { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); margin: 0 0 var(--spacing-lg); line-height: 1.5; }
+  .demo-grid { display: flex; flex-wrap: wrap; gap: var(--spacing-2xl); align-items: flex-start; }
+  .demo-col { display: flex; flex-direction: column; gap: var(--spacing-sm); align-items: flex-start; }
+  .demo-state { font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--color-neutral-450); }
+  .demo-surface { padding: var(--spacing-2xl); background: var(--color-neutral-100); border-radius: 12px; }
+</style>
+</head>
+<body>
+<div class="demo-shell">
+  <nav class="demo-sidebar">
+    <a href="../../index.html" class="demo-sidebar-home">← Home</a>
+    <div class="demo-sidebar-group collapsed" data-group="forms-inputs">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Forms & Inputs</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="controls-field-ai-assisted-text.html">Controls / Field / AI assisted text</a>
+        <a href="controls-field.html">Controls / Field</a>
+        <a href="controls-filter-select.html">Controls / Filter / Select</a>
+        <a href="controls-filter-toggle.html">Controls / Filter / Toggle</a>
+        <a href="controls-misc.html">Controls — Icon Action, Popover, Carousel Arrow, Scrollbar, Segmented Control</a>
+        <a href="controls-multi-select.html">Controls / Multi Select</a>
+        <a href="controls-option-card.html">Controls / Option Card</a>
+        <a href="controls-search-field.html">Controls / Search Field</a>
+        <a href="controls-social-profile-row.html">Controls / Social profile row</a>
+        <a href="controls-toggles.html">Controls / Toggles</a>
+        <a href="date-picker.html">Date Picker</a>
+        <a href="duration-chip.html">Controls / Duration Chip</a>
+        <a href="filter-chip.html">Controls / Filter / Toggle</a>
+        <a href="input-login.html">Input / Login</a>
+        <a href="input.html">Input</a>
+        <a href="segment-chip.html">Segment Chip</a>
+        <a href="setting-chip.html">Setting Chip</a>
+        <a href="switch.html">Controls / Switch</a>
+        <a href="table-filter.html">Table / Filter</a>
+        <a href="toggle-chip.html">Controls / Toggle Chip</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="actions">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Actions</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="actions-button.html">Actions / Button</a>
+        <a href="../shared/button.html">Button</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="login">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Login</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="login.html">Login · Section</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="labels-status">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Labels & Status</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="feedback-status-chip.html">Feedback / Status Chip</a>
+        <a href="post-status-chip.html">Post Status Chip</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="navigation">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Navigation</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="nav.html">Nav / Navigation</a>
+        <a href="topbar-stepper.html">Topbar + Stepper</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="overlays-menus">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Overlays & Menus</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="controls-menu.html">Menu / Context Menu / Size Dropdown</a>
+        <a href="context-bar-popovers.html">ContextBar Popovers</a>
+        <a href="publish-social-modal.html">Publish to Social Modal</a>
+        <a href="../shared/modal-confirm.html">Modal / Confirm</a>
+        <a href="../shared/modal-form.html">Modal / Form</a>
+        <a href="../shared/modal-success.html">Modal / Success</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="images-icons">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Images & Icons</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="brand-logo.html">Brand / Logo</a>
+        <a href="icons.html">Icons</a>
+        <a href="avatar.html">Avatar</a>
+        <a href="illus-placeholder.html">Illus Placeholder</a>
+        <a href="editor-color-swatch.html">Editor / ContextBar Color Swatch</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="data-display">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Data Display</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="carousel-card-block.html">Carousel Card Block</a>
+        <a href="generate-preview-panel.html">Generate Preview Panel</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="content-editor">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Content Editor</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="brand-kit.html">Brand Kit</a>
+        <a href="editor-cell.html">Editor Cell</a>
+        <a href="editor-context-bar.html">Editor ContextBar</a>
+        <a href="editor-panel-chrome.html">Editor Panel & Controls</a>
+        <a href="editor-safe-zone-legend.html">Safe Zone Legend & Content Preview Actions</a>
+        <a href="heading.html">Heading</a>
+        <a href="w-action-bar.html">Action Bar / Editor</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="brand-kit">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Brand Kit</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="brand-kit-builder.html">Brand Kit · Section</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="scene-storyboard">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Scene & Storyboard</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="image-scene-card.html">Image Scene Card</a>
+        <a href="media-card-icon-btn.html">Media Card Icon Button</a>
+        <a href="preview-top-row.html">Preview Top Row</a>
+        <a href="scene-tile.html">Scene Tile</a>
+        <a href="reference-scene-tile.html">Reference / Scene Tile · Selectable</a>
+        <a href="storyboard-card.html">Storyboard Card</a>
+        <a href="video-summary-card.html">Video Summary Card</a>
+        <a href="selector-style-card.html">Selector / Style Card</a>
+        <a href="selector-video-card.html">Selector / Video Card</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="editor-video">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Editor - Video</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="editor-video.html">Editor - Video · Section</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="generation-workflow">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Generation Workflow</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="music-track-row.html">Music Track Row</a>
+        <a href="queue-panel.html">Queue Job Row / Queue Panel</a>
+        <a href="voice-accordion-row.html">Voice Accordion Row</a>
+        <a href="voice-section.html">Voice Section</a>
+        <a href="character-card.html">Character Card</a>
+        <a href="action-bar-feedback.html">Action Bar / Brief</a>
+      </div>
+    </div>
+        <div class="demo-sidebar-group" data-group="schedule">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Schedule</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="schedule.html" class="active">Schedule · Section</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="ai-assistant">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>AI Assistant</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="ai-assistant.html">10 AI Assistant · Section</a>
+        <a href="chat-panel.html">Chat Panel</a>
+        <a href="prompt-box.html">AI Prompt Box</a>
+        <a href="ai-response-card.html">AI Response Card</a>
+        <a href="reference-chip.html">Reference Chip</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="upload-destination">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Upload & Destination</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="upload-dropzone.html">Upload Dropzone / Dashed Upload Row</a>
+        <a href="uploads-file-badge.html">Uploads / File Badge / Source Row</a>
+        <a href="uploads-rows.html">Uploads Panel Rows</a>
+        <a href="destination-account.html">Destination Account</a>
+        <a href="publish-destination-table-row.html">Publish / Destination Table Row</a>
+      </div>
+    </div>
+  </nav>
+  <main class="demo-main">
+  <h1>Schedule</h1>
+  <p class="demo-note">Figma: section <strong>“schedule”</strong> (node 9062:241465) — the calendar-grid, list-view and side-peek components behind the Schedule screen. The full interactive prototype is <code>prototypes/ai-social-media/schedule/schedule.html</code>; this page documents the component set. The List Row status column and the Side Peek status chip reuse the real <a href="feedback-status-chip.html">Feedback / Status Chip</a>; post thumbnails use a neutral gradient placeholder (<a href="scene-tile.html">Scene Tile</a> convention).</p>
+
+  <h2>Schedule / Event Pill <span class="demo-nid">— 9087:133885</span></h2>
+  <p class="demo-sub">Status = Scheduled / Published / Failed, each × State = Default / Selected.</p>
+  <div class="demo-surface demo-grid">
+    <div class="demo-col"><span class="demo-state">Scheduled</span>
+      <div class="sc-event-pill"><span class="sc-event-pill__thumb"></span><div class="sc-event-pill__text"><span class="sc-event-pill__time"><span class="sc-status-dot sc-status-dot--scheduled"></span><span>9:00 AM</span></span><span class="sc-event-pill__title">Post title</span></div></div>
+      <div class="sc-event-pill sc-event-pill--selected"><span class="sc-event-pill__thumb"></span><div class="sc-event-pill__text"><span class="sc-event-pill__time"><span class="sc-status-dot sc-status-dot--scheduled"></span><span>9:00 AM</span></span><span class="sc-event-pill__title">Post title</span></div></div>
+    </div>
+    <div class="demo-col"><span class="demo-state">Published</span>
+      <div class="sc-event-pill"><span class="sc-event-pill__thumb"></span><div class="sc-event-pill__text"><span class="sc-event-pill__time"><span class="sc-status-dot sc-status-dot--published"></span><span>9:00 AM</span></span><span class="sc-event-pill__title">Post title</span></div></div>
+      <div class="sc-event-pill sc-event-pill--selected"><span class="sc-event-pill__thumb"></span><div class="sc-event-pill__text"><span class="sc-event-pill__time"><span class="sc-status-dot sc-status-dot--published"></span><span>9:00 AM</span></span><span class="sc-event-pill__title">Post title</span></div></div>
+    </div>
+    <div class="demo-col"><span class="demo-state">Failed</span>
+      <div class="sc-event-pill"><span class="sc-event-pill__thumb"></span><div class="sc-event-pill__text"><span class="sc-event-pill__time"><span class="sc-status-dot sc-status-dot--failed"></span><span>9:00 AM</span></span><span class="sc-event-pill__title">Post title</span></div></div>
+      <div class="sc-event-pill sc-event-pill--selected"><span class="sc-event-pill__thumb"></span><div class="sc-event-pill__text"><span class="sc-event-pill__time"><span class="sc-status-dot sc-status-dot--failed"></span><span>9:00 AM</span></span><span class="sc-event-pill__title">Post title</span></div></div>
+    </div>
+  </div>
+
+  <h2>Schedule / Month Nav <span class="demo-nid">— 9110:132416</span></h2>
+  <div class="demo-surface"><div class="sc-month-nav"><img src="icons/chevron-left.svg" alt="Previous"><span>Sep 2026</span><img src="icons/chevron-right.svg" alt="Next"></div></div>
+
+  <h2>Schedule / Day-of-week Cell + Row <span class="demo-nid">— 9089:133811 / 9114:132535</span></h2>
+  <div class="demo-surface" style="overflow-x:auto;">
+    <div class="sc-dow-row">
+      <span class="sc-dow-cell">MON</span><span class="sc-dow-cell">TUE</span><span class="sc-dow-cell">WED</span><span class="sc-dow-cell">THU</span><span class="sc-dow-cell">FRI</span><span class="sc-dow-cell">SAT</span><span class="sc-dow-cell">SUN</span>
+    </div>
+  </div>
+
+  <h2>Schedule / Day Cell <span class="demo-nid">— 9100:132420</span></h2>
+  <p class="demo-sub">Day = In month / Out of month / Today, each × Events = 0 / 1.</p>
+  <div class="demo-surface" style="overflow-x:auto;">
+    <div style="display:flex;">
+      <div class="sc-day-cell"><span class="sc-day-cell__num">1</span></div>
+      <div class="sc-day-cell"><span class="sc-day-cell__num">1</span>
+        <div class="sc-event-pill"><span class="sc-event-pill__thumb"></span><div class="sc-event-pill__text"><span class="sc-event-pill__time"><span class="sc-status-dot sc-status-dot--scheduled"></span><span>9:00 AM</span></span><span class="sc-event-pill__title">Post title</span></div></div>
+      </div>
+      <div class="sc-day-cell sc-day-cell--out"><span class="sc-day-cell__num">31</span></div>
+      <div class="sc-day-cell"><span class="sc-day-cell__today">7</span></div>
+      <div class="sc-day-cell"><span class="sc-day-cell__today">7</span>
+        <div class="sc-event-pill"><span class="sc-event-pill__thumb"></span><div class="sc-event-pill__text"><span class="sc-event-pill__time"><span class="sc-status-dot sc-status-dot--scheduled"></span><span>9:00 AM</span></span><span class="sc-event-pill__title">Post title</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Schedule / List Column Head + Group Head <span class="demo-nid">— 9137:132243 / 9137:132247</span></h2>
+  <div class="demo-surface">
+    <div class="sc-list">
+      <div class="sc-list-colhead"><span class="sc-col--post">Post</span><span class="sc-col--when">When</span><span class="sc-col--platforms">Platforms</span><span class="sc-col--status">Status</span></div>
+      <div class="sc-list-grouphead">Sep 8 · Tuesday</div>
+    </div>
+  </div>
+
+  <h2>Schedule / List Row <span class="demo-nid">— 9137:132233</span></h2>
+  <p class="demo-sub">Status = Scheduled / Published / Failed, each × State = Default / Selected.</p>
+  <div class="demo-surface">
+    <div class="sc-list">
+      <div class="sc-list-row">
+        <div class="sc-col--post sc-list-row__post"><span class="sc-list-row__thumb"></span><div><div class="sc-list-row__title">This New Lip Tint Is Everything</div><div class="sc-list-row__sub">Reel · Formee Express</div></div></div>
+        <div class="sc-col--when"><div class="sc-list-row__when-main">Sep 8, 9:00 AM</div><div class="sc-list-row__sub">in 1 day</div></div>
+        <div class="sc-col--platforms sc-list-row__platforms">Instagram · TikTok</div>
+        <div class="sc-col--status"><span class="feedback-status-chip feedback-status-chip--blue">Scheduled</span></div>
+      </div>
+      <div class="sc-list-row sc-list-row--selected">
+        <div class="sc-col--post sc-list-row__post"><span class="sc-list-row__thumb"></span><div><div class="sc-list-row__title">This New Lip Tint Is Everything</div><div class="sc-list-row__sub">Reel · Formee Express</div></div></div>
+        <div class="sc-col--when"><div class="sc-list-row__when-main">Sep 8, 9:00 AM</div><div class="sc-list-row__sub">in 1 day</div></div>
+        <div class="sc-col--platforms sc-list-row__platforms">Instagram · TikTok</div>
+        <div class="sc-col--status"><span class="feedback-status-chip feedback-status-chip--blue">Scheduled</span></div>
+      </div>
+      <div class="sc-list-row">
+        <div class="sc-col--post sc-list-row__post"><span class="sc-list-row__thumb"></span><div><div class="sc-list-row__title">Your Visa Checklist, Step by Step</div><div class="sc-list-row__sub">Image · Formee Express</div></div></div>
+        <div class="sc-col--when"><div class="sc-list-row__when-main">Sep 1, 9:00 AM</div><div class="sc-list-row__sub">6 days ago</div></div>
+        <div class="sc-col--platforms sc-list-row__platforms">Instagram · LinkedIn</div>
+        <div class="sc-col--status"><span class="feedback-status-chip feedback-status-chip--green">Published</span></div>
+      </div>
+      <div class="sc-list-row">
+        <div class="sc-col--post sc-list-row__post"><span class="sc-list-row__thumb"></span><div><div class="sc-list-row__title">Your Visa Checklist, Step by Step</div><div class="sc-list-row__sub">Image · Formee Express</div></div></div>
+        <div class="sc-col--when"><div class="sc-list-row__when-main">Sep 1, 9:00 AM</div><div class="sc-list-row__sub">6 days ago</div></div>
+        <div class="sc-col--platforms sc-list-row__platforms">Instagram · LinkedIn</div>
+        <div class="sc-col--status"><span class="feedback-status-chip feedback-status-chip--error">Failed</span></div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Schedule / Peek Header + Meta Row <span class="demo-nid">— 9087:133889 / 9087:133886</span></h2>
+  <div class="demo-surface demo-col" style="gap:0; width:304px;">
+    <div class="sc-peek-header"><span class="sc-peek-header__title">This New Lip Tint Is Everything</span><button type="button" class="sc-peek-header__more" aria-label="More"><img src="icons/ui-ellipsis.svg" alt=""></button></div>
+    <div class="sc-peek-meta-row" style="margin-top:12px;"><span class="sc-peek-meta-row__label">Status</span><span class="sc-peek-meta-row__value">Scheduled</span></div>
+    <div class="sc-peek-meta-row"><span class="sc-peek-meta-row__label">Type / Aspect</span><span class="sc-peek-meta-row__value">Reel · 9:16</span></div>
+    <div class="sc-peek-meta-row"><span class="sc-peek-meta-row__label">Brand</span><span class="sc-peek-meta-row__value">Formee Express</span></div>
+  </div>
+
+  <h2>Schedule / Side Peek <span class="demo-nid">— 9121:133715</span></h2>
+  <p class="demo-sub">Type = Default / Scheduled / Failed.</p>
+  <div class="demo-grid">
+    <div class="demo-col"><span class="demo-state">Default</span>
+      <div class="sc-side-peek">
+        <div class="sc-peek-header"><span class="sc-peek-header__title">This New Lip Tint Is Everything</span><button type="button" class="sc-peek-header__more" aria-label="More"><img src="icons/ui-ellipsis.svg" alt=""></button></div>
+        <div class="sc-side-peek__media"><span class="sc-side-peek__ratio">9:16</span><span class="sc-side-peek__play"><img src="icons/video-play-glyph.svg" alt=""></span></div>
+        <div class="sc-side-peek__meta">
+          <div class="sc-peek-meta-row"><span class="sc-peek-meta-row__label">Scheduled for</span><span class="sc-peek-meta-row__value">Sep 8, 2026 9:00 AM</span></div>
+          <div class="sc-peek-meta-row"><span class="sc-peek-meta-row__label">Status</span><span class="sc-peek-meta-row__value">Scheduled</span></div>
+          <div class="sc-peek-meta-row"><span class="sc-peek-meta-row__label">Type / Aspect</span><span class="sc-peek-meta-row__value">Reel · 9:16</span></div>
+          <div class="sc-peek-meta-row"><span class="sc-peek-meta-row__label">Brand</span><span class="sc-peek-meta-row__value">Formee Express</span></div>
+          <div class="sc-peek-meta-row"><span class="sc-peek-meta-row__label">Created by</span><span class="sc-peek-meta-row__value">Jenny</span></div>
+        </div>
+        <div class="sc-side-peek__footer">
+          <button type="button" class="sc-side-peek__btn sc-side-peek__btn--primary">Edit post</button>
+          <button type="button" class="sc-side-peek__btn sc-side-peek__btn--secondary">Delete</button>
+        </div>
+      </div>
+    </div>
+    <div class="demo-col"><span class="demo-state">Scheduled</span>
+      <div class="sc-side-peek">
+        <div class="sc-peek-header"><span class="sc-peek-header__title">This New Lip Tint Is Everything</span><button type="button" class="sc-peek-header__more" aria-label="More"><img src="icons/ui-ellipsis.svg" alt=""></button></div>
+        <div class="sc-side-peek__media"><span class="sc-side-peek__ratio">9:16</span><span class="sc-side-peek__play"><img src="icons/video-play-glyph.svg" alt=""></span></div>
+        <div class="sc-side-peek__meta">
+          <div class="sc-peek-meta-row"><span class="sc-peek-meta-row__label">Scheduled for</span><span class="sc-peek-meta-row__value">Sep 8, 2026 9:00 AM</span></div>
+          <div class="sc-peek-meta-row"><span class="sc-peek-meta-row__label">Status</span><span class="sc-peek-meta-row__value">Scheduled</span></div>
+          <div class="sc-peek-meta-row"><span class="sc-peek-meta-row__label">Type / Aspect</span><span class="sc-peek-meta-row__value">Reel · 9:16</span></div>
+          <div class="sc-peek-meta-row"><span class="sc-peek-meta-row__label">Brand</span><span class="sc-peek-meta-row__value">Formee Express</span></div>
+        </div>
+        <div class="sc-side-peek__footer">
+          <button type="button" class="sc-side-peek__btn sc-side-peek__btn--primary">Reschedule</button>
+          <button type="button" class="sc-side-peek__btn sc-side-peek__btn--secondary">Edit post</button>
+          <button type="button" class="sc-side-peek__btn sc-side-peek__btn--ghost">Unschedule</button>
+        </div>
+      </div>
+    </div>
+    <div class="demo-col"><span class="demo-state">Failed</span>
+      <div class="sc-side-peek">
+        <div class="sc-peek-header"><span class="sc-peek-header__title">UK Applications — January Intake</span><button type="button" class="sc-peek-header__more" aria-label="More"><img src="icons/ui-ellipsis.svg" alt=""></button></div>
+        <div class="sc-side-peek__media"><span class="sc-side-peek__ratio">9:16</span><span class="sc-side-peek__play"><img src="icons/video-play-glyph.svg" alt=""></span></div>
+        <div class="sc-side-peek__meta">
+          <div class="sc-peek-meta-row"><span class="sc-peek-meta-row__label">Scheduled for</span><span class="sc-peek-meta-row__value">Sep 8, 2026 9:00 AM</span></div>
+          <div class="sc-peek-meta-row"><span class="sc-peek-meta-row__label">Status</span><span class="sc-peek-meta-row__value">Failed</span></div>
+          <div class="sc-peek-meta-row"><span class="sc-peek-meta-row__label">Type / Aspect</span><span class="sc-peek-meta-row__value">Reel · 9:16</span></div>
+          <div class="sc-peek-meta-row"><span class="sc-peek-meta-row__label">Brand</span><span class="sc-peek-meta-row__value">Formee Express</span></div>
+        </div>
+        <div class="sc-side-peek__error"><strong>Instagram rejected this post</strong><span>The connected account lost access. Reconnect it in Settings, then retry.</span></div>
+        <div class="sc-side-peek__footer">
+          <button type="button" class="sc-side-peek__btn sc-side-peek__btn--primary">Retry now</button>
+          <button type="button" class="sc-side-peek__btn sc-side-peek__btn--secondary">Edit post</button>
+          <button type="button" class="sc-side-peek__btn sc-side-peek__btn--ghost">Unschedule</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  </main>
+
+</div>
+<script src="../demo-nav.js"></script>
+</body>
+</html>
