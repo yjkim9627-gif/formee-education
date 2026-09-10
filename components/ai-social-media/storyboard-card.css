@@ -51,19 +51,9 @@
 }
 
 /* Image type content */
+/* Download/maximize action pair -- now the shared .media-card-icon-btn component
+   (media-card-icon-btn.css), reused identically by Scene Tile and Image Scene Card. */
 .storyboard-card-top-row{display:flex; align-items:center; justify-content:flex-end; width:100%; gap:var(--spacing-sm);}
-.storyboard-card-icon-btn{
-  width:24px; height:24px; border-radius:var(--radius-md); border:none;
-  display:flex; align-items:center; justify-content:center; padding:0; cursor:pointer;
-}
-.storyboard-card-icon-btn.download{
-  background:var(--color-neutral-0); border:1px solid var(--color-neutral-400);
-  box-shadow:0 1px 1.5px rgba(15,23,41,.1),0 1px .5px rgba(15,23,41,.04);
-}
-.storyboard-card-icon-btn.maximize{background:rgba(255,255,255,.2); backdrop-filter:blur(5px); padding:5px;}
-.storyboard-card-icon-btn img{display:block;}
-.storyboard-card-icon-btn.download img{width:14px; height:14px;}
-.storyboard-card-icon-btn.maximize img{width:16px; height:16px;}
 .storyboard-card-image-empty{flex:1; display:flex; align-items:center; justify-content:center; width:100%;}
 .storyboard-card-image-empty img{width:72px; height:72px; opacity:.5;}
 

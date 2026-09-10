@@ -2,12 +2,10 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
-<title>ContextBar Popovers — AI Social Media Component</title>
+<title>Media Card Icon Button — AI Social Media Component</title>
 <link rel="stylesheet" href="../../tokens/tokens.css" />
 <link rel="stylesheet" href="../demo-nav.css" />
-<link rel="stylesheet" href="editor-cell.css" />
-<link rel="stylesheet" href="editor-panel-chrome.css" />
-<link rel="stylesheet" href="context-bar-popovers.css" />
+<link rel="stylesheet" href="media-card-icon-btn.css" />
 <style>
   body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
   .demo-main { padding: var(--spacing-4xl); }
@@ -17,6 +15,8 @@
   .demo-note { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); max-width: 720px; margin: 0 0 var(--spacing-3xl); line-height: 1.6; }
   .demo-sub { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); margin: 0 0 var(--spacing-lg); }
   .demo-grid { display: flex; flex-wrap: wrap; gap: var(--spacing-2xl); align-items: flex-start; }
+  .demo-photo-bg { width: 120px; height: 80px; border-radius: var(--radius-lg); display: flex; align-items: flex-start; justify-content: flex-end; gap: var(--spacing-sm); padding: var(--spacing-sm); box-sizing: border-box; background: linear-gradient(135deg, var(--color-neutral-500), var(--color-neutral-300)); }
+  .demo-plain-bg { display: flex; align-items: center; gap: var(--spacing-sm); }
 </style>
 </head>
 <body>
@@ -96,7 +96,7 @@
       <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Editor</span><span class="demo-sidebar-group-caret">▾</span></button>
       <div class="demo-sidebar-group-items">
         <a href="brand-kit.html">Brand Kit</a>
-        <a href="context-bar-popovers.html" class="active">ContextBar Popovers</a>
+        <a href="context-bar-popovers.html">ContextBar Popovers</a>
         <a href="editor-cell.html">Editor Cell</a>
         <a href="editor-color-swatch.html">Editor / ContextBar Color Swatch</a>
         <a href="editor-context-bar.html">Editor ContextBar</a>
@@ -104,7 +104,7 @@
         <a href="editor-safe-zone-legend.html">Safe Zone Legend & Content Preview Actions</a>
         <a href="heading.html">Heading</a>
         <a href="image-scene-card.html">Image Scene Card</a>
-        <a href="media-card-icon-btn.html">Media Card Icon Button</a>
+        <a href="media-card-icon-btn.html" class="active">Media Card Icon Button</a>
         <a href="music-track-row.html">Music Track Row</a>
         <a href="queue-panel.html">Queue Job Row / Queue Panel</a>
         <a href="scene-tile.html">Scene Tile</a>
@@ -148,115 +148,21 @@
     </div>
   </nav>
   <main class="demo-main">
-  <h1>ContextBar Popovers</h1>
-  <p class="demo-note">Figma: "08 Editor" (1124:10672) — the 6 floating popovers that open from individual <a href="editor-context-bar.html">Editor ContextBar</a> items: Replace, Flip, Opacity, Arrange, Layer, Spacing. 5 of the 6 (all but Replace) are built almost entirely from one shared row, Menu / Item, plus the existing Editor / Slider for Opacity/Spacing.</p>
+  <h1>Media Card Icon Button</h1>
+  <p class="demo-note">Download/maximize action pair — used identically on Scene Tile, Image Scene Card and Storyboard Card's top-right action row. Extracted here as one shared component (previously declared byte-for-byte in all three files' own CSS).</p>
 
-  <h2>ContextBar / Popover / Replace</h2>
-  <p class="demo-sub">Node 3662:26573 — recent-match thumbnails (Editor / cell) + carousel arrow + "AI Matched" badge.</p>
+  <h2>Download (24×24px, on a light background)</h2>
   <div class="demo-grid">
-    <div class="popover-replace">
-      <div class="popover-replace-header">
-        <span class="popover-replace-header-left">
-          <img src="icons/arrow-down-up.svg" alt="">
-          <span class="popover-replace-title">Replace Sticker</span>
-        </span>
-        <span class="popover-replace-badge"><span>AI Matched</span></span>
-      </div>
-      <div class="popover-replace-preview">
-        <div class="popover-replace-items">
-          <div class="editor-cell size-sm type-sticker"><img src="icons/stickers/sparkling-heart.svg" alt=""></div>
-          <div class="editor-cell size-sm type-sticker"><img src="icons/stickers/heart-with-ribbon.svg" alt=""></div>
-          <div class="editor-cell size-sm type-sticker"><img src="icons/stickers/heart-with-arrow.svg" alt=""></div>
-          <div class="editor-cell size-sm type-sticker"><img src="icons/stickers/growing-heart.svg" alt=""></div>
-        </div>
-        <span class="popover-replace-fade"></span>
-        <button type="button" class="popover-replace-arrow"><img src="icons/chevron-right.svg" alt="More"></button>
-      </div>
+    <div class="demo-plain-bg">
+      <button class="media-card-icon-btn download" type="button"><img src="icons/download-ui.svg" alt=""></button>
     </div>
   </div>
 
-  <h2>ContextBar / Popover / Flip</h2>
-  <p class="demo-sub">Node 3662:26572.</p>
+  <h2>Maximize (24×24px, translucent blurred-glass, over a photo)</h2>
   <div class="demo-grid">
-    <div class="context-popover" style="width:180px;">
-      <button type="button" class="popover-menu-item"><img src="icons/popover-flip-horizontal.svg" alt="">Flip Horizontal</button>
-      <button type="button" class="popover-menu-item"><img src="icons/popover-flip-vertical.svg" alt="">Flip Vertical</button>
-    </div>
-  </div>
-
-  <h2>ContextBar / Popover / Opacity</h2>
-  <p class="demo-sub">Node 3711:32960 — reuses Editor / Slider (editor-panel-chrome.css).</p>
-  <div class="demo-grid">
-    <div class="context-popover has-slider" style="width:298px;">
-      <button type="button" class="popover-menu-item" style="width:auto;">Opacity</button>
-      <div class="context-popover-slider-row">
-        <div class="editor-slider">
-          <div class="editor-slider-track" style="--val:100%;">
-            <div class="editor-slider-fill"></div>
-            <div class="editor-slider-thumb"></div>
-          </div>
-          <span class="editor-slider-value">100%</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <h2>ContextBar / Popover / Arrange</h2>
-  <p class="demo-sub">Node 3662:26571 — horizontal-align column + vertical-align column.</p>
-  <div class="demo-grid">
-    <div class="context-popover">
-      <div class="context-popover-columns">
-        <div class="context-popover-column">
-          <button type="button" class="popover-menu-item"><img src="icons/popover-align-top.svg" alt="">Top</button>
-          <button type="button" class="popover-menu-item"><img src="icons/popover-align-middle.svg" alt="">Middle</button>
-          <button type="button" class="popover-menu-item"><img src="icons/popover-align-bottom.svg" alt="">Bottom</button>
-        </div>
-        <div class="context-popover-column">
-          <button type="button" class="popover-menu-item"><img src="icons/popover-align-left.svg" alt="">Left</button>
-          <button type="button" class="popover-menu-item"><img src="icons/popover-align-center.svg" alt="">Center</button>
-          <button type="button" class="popover-menu-item"><img src="icons/popover-align-right.svg" alt="">Right</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <h2>ContextBar / Popover / Layer</h2>
-  <p class="demo-sub">Node 3662:26570.</p>
-  <div class="demo-grid">
-    <div class="context-popover" style="width:180px;">
-      <button type="button" class="popover-menu-item"><img src="icons/popover-layer-front.svg" alt="">Bring to front</button>
-      <button type="button" class="popover-menu-item"><img src="icons/popover-layer-forward.svg" alt="">Bring forward</button>
-      <button type="button" class="popover-menu-item"><img src="icons/popover-layer-backward.svg" alt="">Send backward</button>
-      <button type="button" class="popover-menu-item"><img src="icons/popover-layer-back.svg" alt="">Send to back</button>
-      <span class="popover-menu-divider"></span>
-      <button type="button" class="popover-menu-item"><img src="icons/popover-show-layers.svg" alt="">Show layers</button>
-    </div>
-  </div>
-
-  <h2>ContextBar / Popover / Spacing</h2>
-  <p class="demo-sub">Node 4554:81524 — Letter spacing + Line spacing sliders.</p>
-  <div class="demo-grid">
-    <div class="context-popover has-slider" style="width:298px;">
-      <button type="button" class="popover-menu-item" style="width:auto;">Letter spacing</button>
-      <div class="context-popover-slider-row">
-        <div class="editor-slider">
-          <div class="editor-slider-track" style="--val:0%;">
-            <div class="editor-slider-fill"></div>
-            <div class="editor-slider-thumb"></div>
-          </div>
-          <span class="editor-slider-value">0</span>
-        </div>
-      </div>
-      <button type="button" class="popover-menu-item" style="width:auto;">Line spacing</button>
-      <div class="context-popover-slider-row">
-        <div class="editor-slider">
-          <div class="editor-slider-track" style="--val:0%;">
-            <div class="editor-slider-fill"></div>
-            <div class="editor-slider-thumb"></div>
-          </div>
-          <span class="editor-slider-value">0</span>
-        </div>
-      </div>
+    <div class="demo-photo-bg">
+      <button class="media-card-icon-btn download" type="button"><img src="icons/download-ui.svg" alt=""></button>
+      <button class="media-card-icon-btn maximize" type="button"><img src="icons/maximize.svg" alt=""></button>
     </div>
   </div>
   </main>

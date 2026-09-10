@@ -29,6 +29,7 @@
 <link rel="stylesheet" href="../../../../components/ai-social-media/brand-kit-summary.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/image-scene-card.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/storyboard-card.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/media-card-icon-btn.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/destination-account.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/publish-social-modal.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/action-bar-feedback.css">
@@ -96,18 +97,12 @@
   .seg-chip.active{background:#fff; color:var(--color-neutral-900); font-weight:600; box-shadow:0 1px 1.5px rgba(15,23,41,0.1),0 1px 0.5px rgba(15,23,41,0.04);}
   .seg-chip.disabled{opacity:.4; cursor:default; pointer-events:none;}
 
-  /* .btn-dark is deliberately its own class (composed with shared button.css's .btn base, 40px/
-     16px-padding) rather than actions-button.css's .actions-btn--primary -- same dark-gradient
-     treatment (style-reference.md documents this exact gradient being reused across multiple
-     differently-sized button families, e.g. Auth Button), but a genuinely different, larger CTA
-     tier used here for step-advancing actions (Continue/Generate/Publish), not the smaller
-     Actions/Button pill. It was missing the glossy inset highlight that treatment's other sizes
-     have, though -- added via the existing (previously unused) shadow token for the dark inset
-     line, plus the matching top highlight (no token yet for that one). */
-  .btn-dark{background:linear-gradient(180deg, var(--color-action-primary-dark-gradient-start), var(--color-action-primary-dark-gradient-end)); border-color:transparent; color:var(--color-neutral-0); box-shadow:0 1px 2px rgba(13,13,13,0.1), var(--shadow-action-primary-dark-inset), inset 0 0.5px 1px rgba(255,255,255,.15);}
-  .btn-dark:hover:not(:disabled){filter:brightness(1.1);}
-  .btn-dark:active:not(:disabled){filter:brightness(0.92);}
-  .btn-dark:disabled{background:var(--color-neutral-300); color:var(--color-neutral-450); box-shadow:none;}
+  /* .btn-dark itself now lives in shared/button.css (promoted from here -- was duplicated
+     byte-for-byte in both v3 and v4). Deliberately its own class composed with .btn's 40px/
+     16px-padding base, not actions-button.css's .actions-btn--primary -- same dark-gradient
+     treatment reused across differently-sized button families, but this is the larger CTA
+     tier for step-advancing actions (Continue/Generate/Publish), not the smaller Actions/
+     Button pill. */
 
   .action-bar{position:absolute; left:0; right:0; bottom:0; background:#fff; border-top:1px solid var(--color-neutral-200); padding:12px 64px; display:flex; align-items:center; justify-content:center; gap:32px;}
   .meta-text{font-size:12px; color:var(--color-neutral-500); flex-shrink:0;}
@@ -1936,8 +1931,8 @@
                       <div class="image-scene-card-preview">
                         <div class="image-scene-card-top-row">
                           <div class="image-scene-card-icon-row">
-                            <button class="image-scene-card-icon-btn download" type="button" onclick="downloadImage('main')"><img src="../../../../components/ai-social-media/icons/download-ui.svg" alt=""></button>
-                            <button class="image-scene-card-icon-btn maximize" type="button" onclick="openImageLightbox(window.__editHistory, window.__activeEditIndex, 'main', selectHistoryEntry)"><img src="../../../../components/ai-social-media/icons/maximize.svg" alt=""></button>
+                            <button class="media-card-icon-btn download" type="button" onclick="downloadImage('main')"><img src="../../../../components/ai-social-media/icons/download-ui.svg" alt=""></button>
+                            <button class="media-card-icon-btn maximize" type="button" onclick="openImageLightbox(window.__editHistory, window.__activeEditIndex, 'main', selectHistoryEntry)"><img src="../../../../components/ai-social-media/icons/maximize.svg" alt=""></button>
                           </div>
                         </div>
                       </div>
@@ -3174,8 +3169,8 @@ function renderVersionGrid(){
           <div class="image-scene-card-top-row">
             <span class="image-scene-card-ready-badge" style="${ready ? '' : 'display:none;'}">Ready</span>
             <div class="image-scene-card-icon-row">
-              <button class="image-scene-card-icon-btn download" type="button" onclick="event.stopPropagation(); downloadImage(${v.id})"><img src="../../../../components/ai-social-media/icons/download-ui.svg" alt=""></button>
-              <button class="image-scene-card-icon-btn maximize" type="button" onclick="event.stopPropagation(); openVersionLightbox(${v.id})"><img src="../../../../components/ai-social-media/icons/maximize.svg" alt=""></button>
+              <button class="media-card-icon-btn download" type="button" onclick="event.stopPropagation(); downloadImage(${v.id})"><img src="../../../../components/ai-social-media/icons/download-ui.svg" alt=""></button>
+              <button class="media-card-icon-btn maximize" type="button" onclick="event.stopPropagation(); openVersionLightbox(${v.id})"><img src="../../../../components/ai-social-media/icons/maximize.svg" alt=""></button>
             </div>
           </div>
           <div class="spinner-mini" style="${ready ? '' : 'display:block;'}"></div>
@@ -3950,8 +3945,8 @@ function renderStoryboardTile(n){
     <div class="storyboard-card${isSelected ? ' selected' : ''}${ready ? '' : ' generating'}" data-type="image" data-card="${n}" id="storyboardTile${n}" onclick="selectStoryboardCard(${n})">
       <div class="storyboard-card-preview">
         <div class="storyboard-card-top-row">
-          <button class="storyboard-card-icon-btn download" type="button" onclick="event.stopPropagation(); downloadCard(${n})"><img src="../../../../components/ai-social-media/icons/download-ui.svg" alt=""></button>
-          <button class="storyboard-card-icon-btn maximize" type="button" onclick="event.stopPropagation(); expandCard(${n})"><img src="../../../../components/ai-social-media/icons/maximize.svg" alt=""></button>
+          <button class="media-card-icon-btn download" type="button" onclick="event.stopPropagation(); downloadCard(${n})"><img src="../../../../components/ai-social-media/icons/download-ui.svg" alt=""></button>
+          <button class="media-card-icon-btn maximize" type="button" onclick="event.stopPropagation(); expandCard(${n})"><img src="../../../../components/ai-social-media/icons/maximize.svg" alt=""></button>
         </div>
         <div class="storyboard-card-image-empty"><img src="../../../../components/ai-social-media/icons/content-image.svg" alt=""></div>
         <div class="spinner-mini"></div>
@@ -4328,8 +4323,8 @@ function renderPreviewTile(n){
     <div class="storyboard-card${isSelected ? ' selected' : ''}${ready ? '' : ' generating'}" data-type="image" data-card="${n}" onclick="selectPreviewCard(${n})">
       <div class="storyboard-card-preview">
         <div class="storyboard-card-top-row">
-          <button class="storyboard-card-icon-btn download" type="button" onclick="event.stopPropagation(); downloadCard(${n})"><img src="../../../../components/ai-social-media/icons/download-ui.svg" alt=""></button>
-          <button class="storyboard-card-icon-btn maximize" type="button" onclick="event.stopPropagation(); expandCard(${n})"><img src="../../../../components/ai-social-media/icons/maximize.svg" alt=""></button>
+          <button class="media-card-icon-btn download" type="button" onclick="event.stopPropagation(); downloadCard(${n})"><img src="../../../../components/ai-social-media/icons/download-ui.svg" alt=""></button>
+          <button class="media-card-icon-btn maximize" type="button" onclick="event.stopPropagation(); expandCard(${n})"><img src="../../../../components/ai-social-media/icons/maximize.svg" alt=""></button>
         </div>
         <div class="storyboard-card-image-empty"><img src="../../../../components/ai-social-media/icons/content-image.svg" alt=""></div>
         <div class="spinner-mini"></div>

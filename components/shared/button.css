@@ -89,6 +89,31 @@
   opacity: 0.6;
 }
 
+/* ---------- Button / Dark (AI Social Media — Actions / Button, Style=Primary와 동일한
+   다크그라디언트 sheen. actions-button.css의 .actions-btn--primary와 시각적으로 동일하지만,
+   이쪽은 .btn 베이스(40px 고정 높이, radius-md)를 쓰는 화면에서 쓰는 정식 modifier.
+   기존에 new-content-to-generate.html v3/v4 양쪽에 인라인으로 중복 정의돼 있던 것을 승격. ---------- */
+.btn-dark {
+  background: linear-gradient(180deg, var(--color-action-primary-dark-gradient-start), var(--color-action-primary-dark-gradient-end));
+  border-color: transparent;
+  color: var(--color-neutral-0);
+  box-shadow: 0 1px 2px rgba(13,13,13,0.1), var(--shadow-action-primary-dark-inset), inset 0 0.5px 1px rgba(255,255,255,.15);
+}
+
+.btn-dark:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+
+.btn-dark:active:not(:disabled) {
+  filter: brightness(0.92);
+}
+
+.btn-dark:disabled {
+  background: var(--color-neutral-300);
+  color: var(--color-neutral-450);
+  box-shadow: none;
+}
+
 /* ---------- Button / block (full width, modal CTA 등에서 사용) ---------- */
 .btn-block {
   width: 100%;
