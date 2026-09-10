@@ -85,20 +85,9 @@
   box-shadow:0 4px 4px rgba(15,23,41,.08),0 2px 2px rgba(15,23,41,.05);
 }
 
+/* Download/maximize action pair -- now the shared .media-card-icon-btn component
+   (media-card-icon-btn.css), reused identically by Image Scene Card and Storyboard Card. */
 .scene-tile-icon-row{display:flex; align-items:center; gap:var(--spacing-sm);}
-.scene-tile-icon-btn{
-  width:24px; height:24px; border-radius:var(--radius-md); border:none;
-  display:flex; align-items:center; justify-content:center; padding:0; cursor:pointer;
-}
-.scene-tile-icon-btn.download{
-  background:var(--color-neutral-0); border:1px solid var(--color-neutral-400);
-  box-shadow:0 1px 1.5px rgba(15,23,41,.1),0 1px .5px rgba(15,23,41,.04);
-}
-.scene-tile-icon-btn.maximize{
-  background:rgba(255,255,255,.2); backdrop-filter:blur(5px); padding:5px;
-}
-.scene-tile-icon-btn img{width:100%; height:100%; display:block;}
-.scene-tile-icon-btn.download img{width:14px; height:14px;}
 
 .scene-tile-badge{
   display:inline-flex; align-items:center; gap:var(--spacing-xs);
