@@ -2,23 +2,22 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
-<title>Selector / Style Card — AI Social Media Component</title>
+<title>Login — Section Components</title>
 <link rel="stylesheet" href="../../tokens/tokens.css" />
 <link rel="stylesheet" href="../demo-nav.css" />
-<link rel="stylesheet" href="selector-style-card.css" />
-<link rel="stylesheet" href="preview-top-row.css" />
+<link rel="stylesheet" href="login.css" />
 <style>
   body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
   .demo-main { padding: var(--spacing-4xl); }
   h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-sm); }
-  h2 { font-size: var(--font-size-text-md); font-weight: 700; margin: var(--spacing-3xl) 0 var(--spacing-sm); }
+  h2 { font-size: var(--font-size-text-md); font-weight: 700; color: var(--color-neutral-700); margin: var(--spacing-4xl) 0 var(--spacing-xs); }
   h2:first-of-type { margin-top: 0; }
-  .demo-note { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); max-width: 720px; margin: 0 0 var(--spacing-3xl); line-height: 1.6; }
-  .demo-sub { font-size: var(--font-size-text-xs); color: var(--color-neutral-500); margin: 0 0 var(--spacing-sm); }
-  .demo-row { display: flex; flex-direction: column; gap: var(--spacing-sm); margin-bottom: var(--spacing-2xl); }
-  .demo-label { font-size: var(--font-size-text-xs); color: var(--color-neutral-500); }
+  .demo-nid { font-weight: 400; color: var(--color-neutral-450); }
+  .demo-note { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); max-width: 760px; margin: 0 0 var(--spacing-3xl); line-height: 1.6; }
   .demo-grid { display: flex; flex-wrap: wrap; gap: var(--spacing-2xl); align-items: flex-start; }
-  .selector-style-card-thumb-placeholder { position:absolute; inset:0; background: linear-gradient(135deg, #a8cbff 14%, #ed7897 86%); }
+  .demo-col { display: flex; flex-direction: column; gap: var(--spacing-sm); align-items: flex-start; }
+  .demo-state { font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--color-neutral-450); }
+  .demo-surface { padding: var(--spacing-2xl); background: var(--color-neutral-100); border-radius: 12px; }
 </style>
 </head>
 <body>
@@ -57,10 +56,10 @@
         <a href="../shared/button.html">Button</a>
       </div>
     </div>
-    <div class="demo-sidebar-group collapsed" data-group="login">
+        <div class="demo-sidebar-group" data-group="login">
       <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Login</span><span class="demo-sidebar-group-caret">▾</span></button>
       <div class="demo-sidebar-group-items">
-        <a href="login.html">Login · Section</a>
+        <a href="login.html" class="active">Login · Section</a>
       </div>
     </div>
     <div class="demo-sidebar-group collapsed" data-group="labels-status">
@@ -117,7 +116,7 @@
         <a href="w-action-bar.html">Action Bar / Editor</a>
       </div>
     </div>
-    <div class="demo-sidebar-group" data-group="scene-storyboard">
+    <div class="demo-sidebar-group collapsed" data-group="scene-storyboard">
       <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Scene & Storyboard</span><span class="demo-sidebar-group-caret">▾</span></button>
       <div class="demo-sidebar-group-items">
         <a href="image-scene-card.html">Image Scene Card</a>
@@ -127,7 +126,7 @@
         <a href="reference-scene-tile.html">Reference / Scene Tile · Selectable</a>
         <a href="storyboard-card.html">Storyboard Card</a>
         <a href="video-summary-card.html">Video Summary Card</a>
-        <a href="selector-style-card.html" class="active">Selector / Style Card</a>
+        <a href="selector-style-card.html">Selector / Style Card</a>
         <a href="selector-video-card.html">Selector / Video Card</a>
       </div>
     </div>
@@ -170,43 +169,38 @@
     </div>
   </nav>
   <main class="demo-main">
-  <h1>Selector / Style Card</h1>
-  <p class="demo-note">Figma node 3673:33878. cardType = Style / add. A brand-style picker tile: full-bleed photo, bottom scrim + name, and a preview-top-row(favorite-more) overlay -- Favorite and More each toggle independently.</p>
+  <h1>Login</h1>
+  <p class="demo-note">Figma: section <strong>“Login”</strong> (node 3999:40000). The auth-screen buttons and dividers. The email / password field itself is <strong>Input / login</strong> and lives on <a href="input-login.html">Input / Login</a> — this page is the buttons around it. The <strong>Auth / Button</strong> Primary style is the same dark-gradient treatment shared across button families (see <a href="actions-button.html">Actions / Button</a>), here at the 48px / 16px auth tier.</p>
 
-  <h2>Style</h2>
-  <div class="demo-grid">
-    <div class="selector-style-card">
-      <div class="selector-style-card-thumb-placeholder"></div>
-      <div class="selector-style-card-scrim"></div>
-      <span class="selector-style-card-name">Headshot</span>
-      <div class="selector-style-card-top-row">
-        <div class="preview-top-row favorite-more">
-          <button class="preview-action-btn" type="button"><img src="icons/shape-star.svg" alt="Favorite"></button>
-          <button class="preview-action-btn" type="button"><img src="icons/ui-ellipsis.svg" alt="More"></button>
-        </div>
-      </div>
-    </div>
-    <div class="selector-style-card">
-      <div class="selector-style-card-thumb-placeholder"></div>
-      <div class="selector-style-card-scrim"></div>
-      <span class="selector-style-card-name">Studio Portrait</span>
-      <div class="selector-style-card-top-row">
-        <div class="preview-top-row favorite-more" style="justify-content:flex-start;">
-          <button class="preview-action-btn" type="button"><img src="icons/shape-star.svg" alt="Favorite"></button>
-        </div>
-      </div>
-    </div>
+  <h2>Actions / Social Login Button <span class="demo-nid">— 3982:37018</span></h2>
+  <div class="demo-surface demo-col" style="gap:12px;">
+    <button type="button" class="login-social-btn"><img class="google" src="icons/social-google.svg" alt=""><span>Continue with Google</span></button>
+    <button type="button" class="login-social-btn"><img class="apple" src="icons/social-apple.svg" alt=""><span>Continue with Apple</span></button>
   </div>
 
-  <h2>add</h2>
-  <p class="demo-sub">Empty-state tile for adding a new style.</p>
-  <div class="demo-grid">
-    <div class="selector-style-card selector-style-card--add">
-      <img src="icons/pagebar-plus.svg" alt="">
-      <span class="selector-style-card--add-label">New Style</span>
-    </div>
+  <h2>Divider / Or <span class="demo-nid">— 3982:63651</span></h2>
+  <div class="demo-surface"><div class="login-divider"><span>OR</span></div></div>
+
+  <h2>Auth / Sign-up Row <span class="demo-nid">— 3982:63653</span></h2>
+  <div class="demo-surface"><div class="login-signup-row"><span class="prompt">Don’t have an account?</span><span class="link">Sign up</span></div></div>
+
+  <h2>Auth / Button — Primary <span class="demo-nid">— 4024:37648</span></h2>
+  <div class="demo-surface demo-grid">
+    <div class="demo-col"><span class="demo-state">Default</span><button type="button" class="auth-btn auth-btn--primary">Continue</button></div>
+    <div class="demo-col"><span class="demo-state">Hover</span><button type="button" class="auth-btn auth-btn--primary auth-btn--hover">Continue</button></div>
+    <div class="demo-col"><span class="demo-state">Loading</span><button type="button" class="auth-btn auth-btn--primary"><img class="auth-btn__spinner" src="icons/ui-spinner.svg" alt="">Continue</button></div>
+    <div class="demo-col"><span class="demo-state">Disabled</span><button type="button" class="auth-btn auth-btn--primary auth-btn--disabled" disabled>Continue</button></div>
+  </div>
+
+  <h2>Auth / Button — Secondary <span class="demo-nid">— 4024:37648</span></h2>
+  <div class="demo-surface demo-grid">
+    <div class="demo-col"><span class="demo-state">Default</span><button type="button" class="auth-btn auth-btn--secondary">Continue</button></div>
+    <div class="demo-col"><span class="demo-state">Hover</span><button type="button" class="auth-btn auth-btn--secondary auth-btn--hover">Continue</button></div>
+    <div class="demo-col"><span class="demo-state">Loading</span><button type="button" class="auth-btn auth-btn--secondary"><img class="auth-btn__spinner" src="icons/ui-spinner.svg" alt="">Continue</button></div>
+    <div class="demo-col"><span class="demo-state">Disabled</span><button type="button" class="auth-btn auth-btn--secondary auth-btn--disabled" disabled>Continue</button></div>
   </div>
   </main>
+
 </div>
 <script src="../demo-nav.js"></script>
 </body>
