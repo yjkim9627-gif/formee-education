@@ -22,6 +22,7 @@
 <link rel="stylesheet" href="../../../../components/ai-social-media/controls-filter-select.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/actions-button.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/scene-tile.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/reference-scene-tile.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/reference-chip.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/voice-accordion-row.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/queue-panel.css">
@@ -37,6 +38,7 @@
 <link rel="stylesheet" href="../../../../components/ai-social-media/image-scene-card.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/storyboard-card.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/media-card-icon-btn.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/feedback-status-chip.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/destination-account.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/publish-social-modal.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/controls-misc.css">
@@ -201,31 +203,27 @@
   /* AI Prompt Box shell — .ratio-box-ic는 이제 components/ai-social-media/prompt-box.css,
      setting-chip.css에서 공유 정의됨 (v3 링크 목록 참고) */
 
-  /* -- Reference image chips (Brief prompt box) -- */
+  /* -- Reference image chips (Brief prompt box, Script/Timeline scene editors, Image post
+     and Carousel's own prompt box) -- all now the real Prompt Reference Chip component,
+     see components/ai-social-media/reference-chip.css (.ref-chip). This row is just the
+     flex-wrap layout the chips sit in. */
   .reference-images-row{display:flex; gap:8px; flex-wrap:wrap;}
   .reference-images-row:empty{display:none;}
-  .ref-image-chip{display:flex; align-items:center; gap:8px; background:#fff; border:1px solid var(--color-neutral-300); border-radius:var(--radius-lg); padding:8px 12px 8px 8px;}
-  .ref-image-chip .thumb{width:28px; height:28px; border-radius:6px; background:linear-gradient(135deg,var(--color-brand-primary-mid),var(--color-brand-accent)); position:relative; flex-shrink:0;}
-  .ref-image-chip .thumb::after{content:'🖼'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:12px;}
-  .ref-image-chip .label{font-size:12.5px; font-weight:600; color:var(--color-neutral-900);}
-  .ref-image-chip{position:relative; padding-right:var(--spacing-4xl);}
-  .ref-image-chip .remove{position:absolute; top:var(--spacing-xs); right:var(--spacing-xs); display:flex; align-items:center; justify-content:center; width:var(--spacing-2xl); height:var(--spacing-2xl); padding:0; margin:0; border:var(--border-width-1) solid var(--color-neutral-400); border-radius:var(--radius-full); background:var(--color-neutral-0); color:var(--color-neutral-700); cursor:pointer; opacity:0; pointer-events:none;}
-  .ref-image-chip:hover .remove, .ref-image-chip:focus-within .remove{opacity:1; pointer-events:auto;}
-  @media (hover:none){.ref-image-chip .remove{opacity:1; pointer-events:auto;}}
-  .ref-image-chip .remove:focus-visible{outline:var(--border-width-1) solid var(--color-brand-primary); outline-offset:var(--spacing-2);}
-  .ref-image-chip .remove img{width:var(--spacing-md); height:var(--spacing-md);}
-  /* Prompt Reference Chip, empty state — Figma node 5991:95700. Real spec: bg
-     neutral-100, 12/20 padding, 6px gap, radius-lg, neutral-450 13px/500 label, and the
-     real icon/content/image-plus glyph (not a plain placeholder square). The compact
-     square variant (Script/Timeline scene editors) now uses its own updated component,
-     see components/ai-social-media/reference-chip.css. */
-  .ref-image-add{display:flex; align-items:center; justify-content:center; gap:6px; background:var(--color-neutral-100); border-radius:var(--radius-lg); padding:var(--spacing-xl) var(--spacing-md); cursor:pointer; color:var(--color-neutral-450); font-size:13px; font-weight:500; font-family:var(--font-family-text); align-self:flex-start;}
-  .ref-image-add:hover{background:var(--color-neutral-150);}
-  .ref-image-add .ref-add-icon{width:20px; height:20px; flex-shrink:0; display:block;}
-  /* Reel/Short & Story Video Brief & Style prompt box: Reference vs first/last frame are
-     mutually exclusive attachment modes — the inactive option greys out instead of disappearing,
-     so it's clear it's still there once the other is removed. */
-  .ref-image-add.disabled{opacity:.4; cursor:not-allowed; pointer-events:none;}
+
+  /* -- My Library picker modal (Figma 9198:133913 "Reference - My Library") — real
+     Controls/Segmented Control + Controls/Filter/Select + Reference/Scene Tile·Selectable
+     grid (multi-select) + Actions/Button footer. Selecting tiles then clicking "Add"
+     hands off to window.fmxRefMount() (see reference-images-row above / fmxref-js below),
+     same as the Content Library "Use as reference" deep-link. -- */
+  .mylib-modal{max-width:1088px; width:100%; padding:var(--spacing-xl); border-radius:16px; gap:var(--spacing-sm);}
+  .mylib-header-top{display:flex; align-items:flex-start; justify-content:space-between; width:100%;}
+  .mylib-header-top .modal__close{position:static; width:36px; height:36px; border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); box-shadow:0 1px 1.5px rgba(15,23,41,.1),0 1px 0.5px rgba(15,23,41,.04);}
+  .mylib-filter-bar{display:flex; align-items:center; justify-content:space-between; height:64px; width:100%;}
+  .mylib-filter-left{display:flex; align-items:center; gap:8px;}
+  .mylib-filter-row{display:flex; align-items:center; gap:var(--spacing-md);}
+  .mylib-item-count{font-family:var(--font-family-text); font-size:12px; font-weight:500; color:var(--color-neutral-500); white-space:nowrap;}
+  .mylib-content{display:flex; flex-wrap:wrap; gap:var(--spacing-md); max-height:60vh; overflow-y:auto;}
+  .mylib-footer{display:flex; align-items:center; justify-content:flex-end; gap:var(--spacing-md); padding-top:16px; width:100%;}
 
   /* -- Character section (Brief & Style) — .char-section/.char-panel/.char-filters/.char-grid/
      .char-card + Filter Chip now in components/ai-social-media/character-card.css + filter-chip.css. -- */
@@ -3299,7 +3297,7 @@ function renderVersionGrid(){
       <div class="image-scene-card${ready && v.id === window.__activeVersionId ? ' selected' : ''}" data-type="version" onclick="selectActiveVersion(${v.id})">
         <div class="image-scene-card-preview${ready ? '' : ' generating'}">
           <div class="image-scene-card-top-row">
-            <span class="image-scene-card-ready-badge" style="${ready ? '' : 'display:none;'}">Ready</span>
+            <span class="feedback-status-chip feedback-status-chip--green" style="${ready ? '' : 'display:none;'}">Ready</span>
             <div class="image-scene-card-icon-row">
               <button class="media-card-icon-btn download" type="button" onclick="event.stopPropagation(); downloadImage(${v.id})"><img src="../../../../components/ai-social-media/icons/download-ui.svg" alt=""></button>
               <button class="media-card-icon-btn maximize" type="button" onclick="event.stopPropagation(); openVersionLightbox(${v.id})"><img src="../../../../components/ai-social-media/icons/maximize.svg" alt=""></button>
@@ -3528,15 +3526,16 @@ function imgRemoveReferenceImage(num){
   imgRenderReferenceImages();
 }
 function imgRenderReferenceImages(){
+  const icon = `<img class="ref-chip-icon" src="../../../../components/ai-social-media/icons/content-image-plus.svg" alt="">`;
   const chips = imgReferenceImages.map(n => `
-    <div class="ref-image-chip">
-      <div class="thumb"></div>
-      <span class="label">Image ${n}</span>
-      <button type="button" class="remove" onclick="event.stopPropagation(); imgRemoveReferenceImage(${n})" aria-label="Remove reference image ${n}" title="Remove reference"><img src="../../../../components/ai-social-media/icons/controls/chip-close-x.svg" class="icon-inline" alt=""></button>
+    <div class="ref-chip" data-attached="true">
+      ${icon}<span class="ref-chip-label">Image ${n}</span>
+      <button type="button" class="ref-chip-more" onclick="event.stopPropagation();" title="More options"><img src="../../../../components/ai-social-media/icons/ui-ellipsis.svg" class="icon-inline" alt=""></button>
+      <button type="button" class="ref-chip-remove" onclick="event.stopPropagation(); imgRemoveReferenceImage(${n})" aria-label="Remove reference image ${n}" title="Remove reference"><img src="../../../../components/ai-social-media/icons/controls/chip-close-x.svg" class="icon-inline" alt=""></button>
     </div>
   `).join('');
   document.getElementById('referenceImagesRowImage').innerHTML = chips + `
-    <div class="ref-image-add" onclick="imgAddReferenceImage()"><img class="ref-add-icon" src="../../../../components/ai-social-media/icons/content-image-plus.svg" alt=""><span>Reference</span></div>
+    <div class="ref-chip" onclick="imgAddReferenceImage()" title="Add reference image">${icon}<span class="ref-chip-label">Reference</span></div>
   `;
 }
 imgRenderReferenceImages();
@@ -3701,15 +3700,16 @@ function carRemoveReferenceImage(num){
   carRenderReferenceImages();
 }
 function carRenderReferenceImages(){
+  const icon = `<img class="ref-chip-icon" src="../../../../components/ai-social-media/icons/content-image-plus.svg" alt="">`;
   const chips = carReferenceImages.map(n => `
-    <div class="ref-image-chip">
-      <div class="thumb"></div>
-      <span class="label">Image ${n}</span>
-      <button type="button" class="remove" onclick="event.stopPropagation(); carRemoveReferenceImage(${n})" aria-label="Remove reference image ${n}" title="Remove reference"><img src="../../../../components/ai-social-media/icons/controls/chip-close-x.svg" class="icon-inline" alt=""></button>
+    <div class="ref-chip" data-attached="true">
+      ${icon}<span class="ref-chip-label">Image ${n}</span>
+      <button type="button" class="ref-chip-more" onclick="event.stopPropagation();" title="More options"><img src="../../../../components/ai-social-media/icons/ui-ellipsis.svg" class="icon-inline" alt=""></button>
+      <button type="button" class="ref-chip-remove" onclick="event.stopPropagation(); carRemoveReferenceImage(${n})" aria-label="Remove reference image ${n}" title="Remove reference"><img src="../../../../components/ai-social-media/icons/controls/chip-close-x.svg" class="icon-inline" alt=""></button>
     </div>
   `).join('');
   document.getElementById('referenceImagesRowCarousel').innerHTML = chips + `
-    <div class="ref-image-add" onclick="carAddReferenceImage()"><img class="ref-add-icon" src="../../../../components/ai-social-media/icons/content-image-plus.svg" alt=""><span>Reference</span></div>
+    <div class="ref-chip" onclick="carAddReferenceImage()" title="Add reference image">${icon}<span class="ref-chip-label">Reference</span></div>
   `;
 }
 carRenderReferenceImages();
@@ -5176,70 +5176,182 @@ function addFirstFrameImage(){ firstFrameAdded = true; renderReferenceImages(); 
 function removeFirstFrameImage(){ firstFrameAdded = false; renderReferenceImages(); }
 function addLastFrameImage(){ lastFrameAdded = true; renderReferenceImages(); }
 function removeLastFrameImage(){ lastFrameAdded = false; renderReferenceImages(); }
+// Every reference-images-row (Brief prompt box, Script/Timeline scene editors, Image post
+// and Carousel's own prompt box) uses the one real "Prompt Reference Chip" component
+// (components/ai-social-media/reference-chip.css, Figma 8727:220714/8620:121242) -- no more
+// separate "compact" vs "full" bespoke pill. Empty state opens an Upload image/My Library
+// menu (Figma 8727:220803) instead of attaching directly; My Library hands off to the wide
+// .ref-chip--detail "image" state (Figma 8614:18), same as the Content Library hand-off.
+const refChipIcon = `<img class="ref-chip-icon" src="../../../../components/ai-social-media/icons/content-image-plus.svg" alt="">`;
+window.__refUploadMenuOpen = false;
+
+function buildRefUploadMenuHtml(){
+  return `
+    <div class="context-menu" style="position:absolute; top:calc(100% + 4px); left:0; z-index:50;" onclick="event.stopPropagation();">
+      <button type="button" class="menu-item" onclick="closeRefUploadMenu(); addReferenceImage(null);">Upload image</button>
+      <button type="button" class="menu-item" onclick="closeRefUploadMenu(); openMyLibraryModal();">My Library</button>
+    </div>`;
+}
+function toggleRefUploadMenu(e){
+  e.stopPropagation();
+  window.__refUploadMenuOpen = !window.__refUploadMenuOpen;
+  renderReferenceImages();
+}
+function closeRefUploadMenu(){ window.__refUploadMenuOpen = false; renderReferenceImages(); }
+document.addEventListener('click', () => {
+  if(window.__refUploadMenuOpen){ window.__refUploadMenuOpen = false; renderReferenceImages(); }
+});
+
 function renderReferenceImages(){
   const chips = referenceImages.map(n => `
-    <div class="ref-image-chip">
-      <div class="thumb"></div>
-      <span class="label">Image ${n}</span>
-      <button type="button" class="remove" onclick="event.stopPropagation(); removeReferenceImage(${n})" aria-label="Remove reference image ${n}" title="Remove reference"><img src="../../../../components/ai-social-media/icons/controls/chip-close-x.svg" class="icon-inline" alt=""></button>
-    </div>
-  `).join('');
-  const refIcon = `<img class="ref-add-icon" src="../../../../components/ai-social-media/icons/content-image-plus.svg" alt="">`;
-  const fullHtml = chips + `
-    <div class="ref-image-add" onclick="addReferenceImage(this)">${refIcon}<span>Reference</span></div>
-  `;
-
-  // Compact rows (Script/Timeline scene editors) use the actual Figma "Prompt Reference
-  // Chip" component (components/ai-social-media/reference-chip.css, node 8620:121242)
-  // instead of the wider Brief-row pill above -- a square chip that reveals the Remove (X)
-  // corner button once attached and the More (...) button on hover, matching Figma's
-  // empty/hover/Remove states. Attaching (click) goes straight to the Remove state, same
-  // as if the reference had just been updated.
-  const refChipIcon = `<img class="ref-chip-icon" src="../../../../components/ai-social-media/icons/content-image-plus.svg" alt="">`;
-  const compactChips = referenceImages.map(n => `
     <div class="ref-chip" data-attached="true">
       ${refChipIcon}<span class="ref-chip-label">Image ${n}</span>
       <button type="button" class="ref-chip-more" onclick="event.stopPropagation();" title="More options"><img src="../../../../components/ai-social-media/icons/ui-ellipsis.svg" class="icon-inline" alt=""></button>
       <button type="button" class="ref-chip-remove" onclick="event.stopPropagation(); removeReferenceImage(${n})" aria-label="Remove reference image ${n}" title="Remove reference"><img src="../../../../components/ai-social-media/icons/controls/chip-close-x.svg" class="icon-inline" alt=""></button>
     </div>
   `).join('');
-  const compactHtml = compactChips + `
-    <div class="ref-chip" onclick="addReferenceImage(this)" title="Add reference image">${refChipIcon}<span class="ref-chip-label">Reference</span></div>
-  `;
+
+  const referenceEmptyChip = (disabled) => disabled
+    ? `<div class="ref-chip disabled" title="Remove the first/last frame image to attach a reference instead">${refChipIcon}<span class="ref-chip-label">Reference</span></div>`
+    : `<div class="ref-chip" onclick="toggleRefUploadMenu(event)" title="Add reference image">${refChipIcon}<span class="ref-chip-label">Reference</span>${window.__refUploadMenuOpen ? buildRefUploadMenuHtml() : ''}</div>`;
+
+  // A Content Library / My Library reference already attached via window.fmxRefMount()
+  // (fmxref-js, further down this file) renders its own wide .ref-chip--detail in the
+  // sibling .fmxref-row mounted just above this one -- suppress the plain empty chip here
+  // so the two reference indicators don't show side by side. See window.__fmxrefActive.
+  const fmxActive = !!window.__fmxrefActive;
+  const compactHtml = fmxActive ? '' : (chips + referenceEmptyChip(false));
 
   // Reel/Short & Story Video's Brief & Style prompt box (#referenceImagesRow) only:
   // Reference vs first/last frame are mutually exclusive attachment modes.
-  const hasReference = referenceImages.length > 0;
+  const hasReference = referenceImages.length > 0 || fmxActive;
   const hasFrame = firstFrameAdded || lastFrameAdded;
-  const referenceChipBrief = chips + (hasFrame
-    ? `<div class="ref-image-add disabled" title="Remove the first/last frame image to attach a reference instead">${refIcon}<span>Reference</span></div>`
-    : `<div class="ref-image-add" onclick="addReferenceImage(this)">${refIcon}<span>Reference</span></div>`);
+  const referenceChipBrief = fmxActive ? '' : (chips + referenceEmptyChip(hasFrame));
   const firstFrameChipBrief = firstFrameAdded ? `
-    <div class="ref-image-chip">
-      <div class="thumb"></div>
-      <span class="label">First frame</span>
-      <button type="button" class="remove" onclick="event.stopPropagation(); removeFirstFrameImage()" aria-label="Remove first frame" title="Remove first frame"><img src="../../../../components/ai-social-media/icons/controls/chip-close-x.svg" class="icon-inline" alt=""></button>
+    <div class="ref-chip" data-attached="true">
+      ${refChipIcon}<span class="ref-chip-label">First frame</span>
+      <button type="button" class="ref-chip-remove" onclick="event.stopPropagation(); removeFirstFrameImage()" aria-label="Remove first frame" title="Remove first frame"><img src="../../../../components/ai-social-media/icons/controls/chip-close-x.svg" class="icon-inline" alt=""></button>
     </div>
   ` : `
-    <div class="ref-image-add${hasReference ? ' disabled' : ''}" ${hasReference ? 'title="Remove the reference image to attach a first frame instead"' : 'onclick="addFirstFrameImage()"'}>${refIcon}<span>First frame</span></div>
+    <div class="ref-chip${hasReference ? ' disabled' : ''}" ${hasReference ? 'title="Remove the reference image to attach a first frame instead"' : 'onclick="addFirstFrameImage()"'}>${refChipIcon}<span class="ref-chip-label">First frame</span></div>
   `;
   const lastFrameChipBrief = lastFrameAdded ? `
-    <div class="ref-image-chip">
-      <div class="thumb"></div>
-      <span class="label">Last frame</span>
-      <button type="button" class="remove" onclick="event.stopPropagation(); removeLastFrameImage()" aria-label="Remove last frame" title="Remove last frame"><img src="../../../../components/ai-social-media/icons/controls/chip-close-x.svg" class="icon-inline" alt=""></button>
+    <div class="ref-chip" data-attached="true">
+      ${refChipIcon}<span class="ref-chip-label">Last frame</span>
+      <button type="button" class="ref-chip-remove" onclick="event.stopPropagation(); removeLastFrameImage()" aria-label="Remove last frame" title="Remove last frame"><img src="../../../../components/ai-social-media/icons/controls/chip-close-x.svg" class="icon-inline" alt=""></button>
     </div>
   ` : `
-    <div class="ref-image-add${hasReference ? ' disabled' : ''}" ${hasReference ? 'title="Remove the reference image to attach a last frame instead"' : 'onclick="addLastFrameImage()"'}>${refIcon}<span>Last frame</span></div>
+    <div class="ref-chip${hasReference ? ' disabled' : ''}" ${hasReference ? 'title="Remove the reference image to attach a last frame instead"' : 'onclick="addLastFrameImage()"'}>${refChipIcon}<span class="ref-chip-label">Last frame</span></div>
   `;
   const briefHtml = firstFrameChipBrief + lastFrameChipBrief + referenceChipBrief;
 
-  document.querySelectorAll('.reference-images-row').forEach(row => {
-    if(row.id === 'referenceImagesRow') row.innerHTML = briefHtml;
-    else row.innerHTML = row.classList.contains('compact') ? compactHtml : fullHtml;
+  // Scoped to the Brief row (#referenceImagesRow) and the Script/Timeline scene editors'
+  // compact rows (.reference-images-row.compact) only -- Image post and Carousel have their
+  // OWN prompt box reference row (#referenceImagesRowImage / #referenceImagesRowCarousel,
+  // rendered by imgRenderReferenceImages()/carRenderReferenceImages() below) with their own
+  // local state; a blanket `.reference-images-row` selector here would clobber those every
+  // time this function runs, since all these rows share that one layout class.
+  document.querySelectorAll('#referenceImagesRow, .reference-images-row.compact').forEach(row => {
+    row.innerHTML = row.id === 'referenceImagesRow' ? briefHtml : compactHtml;
   });
 }
 renderReferenceImages();
+
+// ---- My Library picker modal (Figma 9198:133913 "Reference - My Library") -- a real
+// Controls/Segmented Control + Controls/Filter/Select filter bar, a grid of the real
+// Reference/Scene Tile·Selectable component (components/ai-social-media/reference-scene-tile.css)
+// supporting multi-select, and an Actions/Button footer. Clicking "Add" hands off to
+// window.fmxRefMount() (fmxref-js below) using the first selected item -- same entry point
+// the Content Library "Use as reference" deep-link uses, pre-filled with the default
+// strength/match. The content-type tabs and Status/Created by/Date range filters are
+// decorative here (no sample data to actually filter by), matching this prototype's usual
+// treatment of peripheral filter chrome elsewhere. ----
+const MY_LIBRARY_ITEMS = [
+  { title: 'This New Lip Tint Is Everything', thumb: '../../brand-characters/assets/imgLibLipTint.png', ratio: '9:16', isVideo: true },
+  { title: 'January Intake — Apply Now', thumb: '../../brand-characters/assets/imgLibJanIntake.png', ratio: '9:16', isVideo: false },
+  { title: 'Study in the UK', thumb: '../../brand-characters/assets/imgLibStudyUK.png', ratio: '9:16', isVideo: true },
+  { title: 'This New Lip Tint Is Everything', thumb: '../../brand-characters/assets/imgLibLipTint.png', ratio: '9:16', isVideo: false },
+  { title: 'January Intake — Apply Now', thumb: '../../brand-characters/assets/imgLibJanIntake.png', ratio: '9:16', isVideo: true },
+  { title: 'Study in the UK', thumb: '../../brand-characters/assets/imgLibStudyUK.png', ratio: '9:16', isVideo: false }
+];
+window.__myLibrarySelected = new Set();
+function buildMyLibraryTileHtml(item, i){
+  const selected = window.__myLibrarySelected.has(i);
+  return `
+    <div class="ref-scene-tile${selected ? ' selected' : ''}" onclick="toggleMyLibraryItem(${i})">
+      <img class="ref-scene-tile-thumb" src="${item.thumb}" alt="">
+      <div class="ref-scene-tile-preview">
+        <div class="ref-scene-tile-top-row">
+          <span class="ref-scene-tile-badge"><span class="ref-scene-tile-badge-icon"><span></span></span><span class="ref-scene-tile-badge-label">${item.ratio}</span></span>
+          <input type="checkbox" class="checkbox checkbox--lg" ${selected ? 'checked' : ''} onclick="event.stopPropagation(); toggleMyLibraryItem(${i});" tabindex="-1">
+        </div>
+      </div>
+      ${item.isVideo ? '<button type="button" class="scene-tile-play-btn" onclick="event.stopPropagation();"><img class="play" src="../../../../components/ai-social-media/icons/video-play-glyph.svg" alt=""></button>' : ''}
+    </div>`;
+}
+function buildMyLibraryModalHtml(){
+  return `
+    <div class="modal-overlay" id="myLibraryModalOverlay" style="display:none;" onclick="if(event.target===this) closeMyLibraryModal();">
+      <div class="modal mylib-modal">
+        <div class="mylib-header-top">
+          <h2 class="modal__title">My Library</h2>
+          <button type="button" class="modal__close" onclick="closeMyLibraryModal()"><img src="../../../../components/ai-social-media/icons/button-x-dark.svg" class="icon-inline" alt=""></button>
+        </div>
+        <div class="mylib-filter-bar">
+          <div class="mylib-filter-left">
+            <div class="controls-segmented-control">
+              <button type="button" class="controls-segment-chip controls-segment-chip--selected">All</button>
+              <button type="button" class="controls-segment-chip">Videos</button>
+              <button type="button" class="controls-segment-chip">Images</button>
+              <button type="button" class="controls-segment-chip">Carousels</button>
+            </div>
+            <div class="mylib-filter-row">
+              <div class="filter-select"><span class="filter-select__label">Status</span><img class="filter-select__caret" src="../../../../components/ai-social-media/icons/caret-down-filled.svg" alt=""></div>
+              <div class="filter-select"><span class="filter-select__label">Created by</span><img class="filter-select__caret" src="../../../../components/ai-social-media/icons/caret-down-filled.svg" alt=""></div>
+              <div class="filter-select"><span class="filter-select__label">Date range</span><img class="filter-select__caret" src="../../../../components/ai-social-media/icons/caret-down-filled.svg" alt=""></div>
+              <span class="mylib-item-count">${MY_LIBRARY_ITEMS.length} items</span>
+            </div>
+          </div>
+        </div>
+        <div class="mylib-content" id="myLibraryContent">${MY_LIBRARY_ITEMS.map((item, i) => buildMyLibraryTileHtml(item, i)).join('')}</div>
+        <div class="mylib-footer">
+          <button type="button" class="actions-btn actions-btn--secondary" onclick="clearMyLibrarySelection()">Clear all</button>
+          <button type="button" class="actions-btn actions-btn--primary" id="myLibraryAddBtn" onclick="addMyLibrarySelection()">Add 0</button>
+        </div>
+      </div>
+    </div>`;
+}
+function mountMyLibraryModal(){
+  if(document.getElementById('myLibraryModalOverlay')) return;
+  const el = document.createElement('div');
+  el.innerHTML = buildMyLibraryModalHtml();
+  document.querySelector('.app').appendChild(el.firstElementChild);
+}
+function openMyLibraryModal(){ window.__myLibrarySelected = new Set(); mountMyLibraryModal(); renderMyLibraryTiles(); document.getElementById('myLibraryModalOverlay').style.display = 'flex'; }
+function closeMyLibraryModal(){ const el = document.getElementById('myLibraryModalOverlay'); if(el) el.style.display = 'none'; }
+function renderMyLibraryTiles(){
+  const content = document.getElementById('myLibraryContent');
+  if(content) content.innerHTML = MY_LIBRARY_ITEMS.map((item, i) => buildMyLibraryTileHtml(item, i)).join('');
+  const addBtn = document.getElementById('myLibraryAddBtn');
+  if(addBtn) addBtn.textContent = 'Add ' + window.__myLibrarySelected.size;
+}
+function toggleMyLibraryItem(i){
+  if(window.__myLibrarySelected.has(i)) window.__myLibrarySelected.delete(i); else window.__myLibrarySelected.add(i);
+  renderMyLibraryTiles();
+}
+function clearMyLibrarySelection(){ window.__myLibrarySelected = new Set(); renderMyLibraryTiles(); }
+function addMyLibrarySelection(){
+  const indices = Array.from(window.__myLibrarySelected);
+  if(!indices.length) return;
+  closeMyLibraryModal();
+  // Hand off exactly like the Content Library "Use as reference" deep-link does: same
+  // fmxRefMount() entry point, same wide chip + strength/match/frame-picker popover
+  // (fmxref-js, further down this file). fmxRefMount only carries a single reference, so
+  // a multi-select here still only attaches the first item picked -- this modal only opens
+  // from the Reel/Short & Story Video Brief row, so the reference is always the 9:16 (video) kind.
+  const item = MY_LIBRARY_ITEMS[indices[0]];
+  if(window.fmxRefMount) window.fmxRefMount({ ref: item.title, thumb: item.thumb, ratio: item.ratio });
+}
 
 let activeMentionEl = null;
 let activeMentionPop = null;
@@ -5767,7 +5879,7 @@ function generateScriptThumbnails(){
       t.dataset.type = 'thumbnail';
       t.querySelector('.scene-tile-placeholder')?.remove();
       t.querySelector('.scene-tile-preview').style.backgroundImage = `url('assets/video/scene${(i % 2) + 1}.png')`;
-      t.querySelector('.scene-tile-preview').insertAdjacentHTML('afterbegin', '<div class="scene-tile-top-row"><span class="scene-tile-ready-badge">Ready</span></div>');
+      t.querySelector('.scene-tile-preview').insertAdjacentHTML('afterbegin', '<div class="scene-tile-top-row"><span class="feedback-status-chip feedback-status-chip--green">Ready</span></div>');
     });
     proceedToStudio();
   }, 'Scene');
@@ -7780,6 +7892,24 @@ fitScreenToViewport();
 .fmx-ref span{color:var(--color-neutral-500,#8a93a8);}
 .fmx-ref button{margin-left:4px;border:0;background:none;cursor:pointer;
   color:var(--color-neutral-500,#8a93a8);font-size:14px;line-height:1;padding:2px 4px;}
+/* 딥링크로 들어온 화면에는 돌아갈 길이 없다. 보낸 쪽이 from/back 을 실어 보내면
+   이 알약이 왼쪽 위에 뜨고, back 의 해시 그대로 원래 보던 화면으로 되돌린다. */
+.fmx-back{position:fixed;left:16px;top:12px;z-index:9999;display:inline-flex;align-items:center;
+  gap:6px;padding:8px 14px;background:var(--color-neutral-0,#fff);
+  border:1px solid var(--color-neutral-300,#d6ddeb);border-radius:9999px;
+  box-shadow:0 6px 20px rgba(15,23,41,.14);text-decoration:none;
+  font-family:var(--font-family-text),-apple-system,sans-serif;font-size:13px;font-weight:600;
+  color:var(--color-neutral-900,#0f1729);white-space:nowrap;}
+.fmx-back:hover{background:var(--color-neutral-50,#f6f8fc);}
+.fmx-back i{font-style:normal;color:var(--color-neutral-500,#8a93a8);}
+/* 상단 바 왼쪽, 스테퍼 앞. Figma 는 Nav / App TopBar 의 "Show back" 토글로
+   같은 자리를 낸다. 제목 위가 아니라 여기인 이유는 하나 — Publish 는 길어서
+   본문에 두면 한 번 스크롤에 사라진다. 상단 바는 남는다.
+   스테퍼(지금 어디냐)와 역할이 달라서 구분선으로 갈라 둔다.
+   상단 바를 못 찾으면 아래 떠 있는 버전이 대신 뜬다. */
+.fmx-back-slot{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.fmx-back--bar{position:static;box-shadow:none;}
+.fmx-back-rule{width:1px;height:24px;background:var(--color-neutral-300,#d6ddeb);flex:none;}
 </style>
 <script id="fmx-deeplink-js">
 /* Content Library 딥링크
@@ -7794,12 +7924,48 @@ fitScreenToViewport();
   /* 라이브러리 초안을 이어서 편집할 때 넘어오는 값. ref 와 달리 "참고"가 아니라
      같은 콘텐츠라서 배너를 띄우지 않고 캡션 필드를 그대로 채운다. */
   var editTitle = q.get('edit'), caption = q.get('caption');
-  if (!ref && !stage && !editTitle) return;
+  /* 어디서 왔는지 + 어느 화면으로 되돌릴지. 값은 해시 조각이지 URL 이 아니다 —
+     from 이 아는 이름일 때만 경로를 이쪽에서 정한다. */
+  var from = q.get('from'), back = q.get('back') || '';
+  var HOMES = {
+    schedule: {href:'../../schedule/schedule.html', label:'Schedule'},
+    library:  {href:'../../brand-characters/brand-setup-kit-character-library.html', label:'Library'}
+  };
+  if (!ref && !stage && !editTitle && !from) return;
 
   function pickType(){
     if (stage === 'script') return 'carousel';
     if (stage === 'reelTimeline') return 'reel';
     return (ratio && ratio !== '9:16') ? 'image' : 'reel';
+  }
+  function backPill(){
+    var home = HOMES[from];
+    if (!home) return;
+    /* back 은 해시 조각만 받는다. 콜론이나 // 가 섞여 있으면 URL 을 밀어넣은 것이라 버린다. */
+    var safe = /[:]|\/\//.test(back) ? '' : back;
+    function pill(){
+      var a = document.createElement('a');
+      a.className = 'fmx-back';
+      a.href = home.href + (safe ? '#' + safe : '');
+      a.innerHTML = '<i>\u2190</i>';
+      a.appendChild(document.createTextNode('Back to ' + home.label));
+      return a;
+    }
+    /* 상단 바는 모든 view 가 함께 쓰는 껍데기라 한 번만 넣으면 된다 */
+    var bar = document.querySelector('.topbar');
+    if (bar && !bar.querySelector('.fmx-back-slot')){
+      var slot = document.createElement('div');
+      slot.className = 'fmx-back-slot';
+      var a = pill(false);
+      a.classList.add('fmx-back--bar');
+      slot.appendChild(a);
+      var rule = document.createElement('span');
+      rule.className = 'fmx-back-rule';
+      slot.appendChild(rule);
+      bar.insertBefore(slot, bar.firstChild);
+      return;
+    }
+    if (!bar) document.body.appendChild(pill(false));
   }
   function banner(){
     if (!ref) return;
@@ -7851,6 +8017,7 @@ fitScreenToViewport();
       }
     } catch(e){ /* 진입만 실패해도 브리프는 정상으로 열린다 */ }
     banner();
+    backPill();
   }
   if (document.readyState === 'complete') setTimeout(go, 60);
   else window.addEventListener('load', function(){ setTimeout(go, 60); });
@@ -7884,30 +8051,18 @@ fitScreenToViewport();
 .fmxref-line{display:flex; align-items:flex-start; gap:8px; flex-wrap:wrap;}
 .fmxref-row{position:relative; display:flex;}
 .fmxref-row:empty{display:none;}
-.fmxref-chip{display:flex; align-items:center; gap:var(--spacing-sm);
-  padding:var(--spacing-sm) var(--spacing-sm) var(--spacing-sm) var(--spacing-sm);
-  background:var(--color-brand-primary-light,#eef2fb);
-  border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl);
-  font-family:var(--font-family-text); text-align:left;}
-.fmxref-chip:hover{border-color:var(--color-neutral-450);}
-.fmxref-hit{display:flex; align-items:center; gap:var(--spacing-md); min-width:0;
-  cursor:pointer; padding-right:var(--spacing-sm);}
-.fmxref-chip .th{width:40px; flex:none; aspect-ratio:9/16; border-radius:var(--radius-md);
-  object-fit:cover; display:block; background:var(--color-neutral-150);}
-.fmxref-chip[data-r="4:5"] .th{aspect-ratio:4/5;}
-.fmxref-chip[data-r="1:1"] .th{aspect-ratio:1/1;}
-.fmxref-chip .tx{display:flex; flex-direction:column; gap:2px; min-width:0;}
-.fmxref-chip .t1{display:flex; align-items:center; gap:var(--spacing-sm);
-  font-size:var(--font-size-text-sm); font-weight:var(--font-weight-semibold);
-  color:var(--color-neutral-900); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-.fmxref-chip .t2{font-size:var(--font-size-text-xs); color:var(--color-neutral-600);
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-.fmxref-tag{flex:none; padding:2px 6px; border-radius:var(--radius-sm);
-  background:var(--color-neutral-900); color:var(--color-neutral-0);
-  font-size:10px; font-weight:var(--font-weight-semibold); letter-spacing:.04em;}
-.fmxref-x{flex:none; margin-left:var(--spacing-sm); width:24px; height:24px; border:0;
-  border-radius:var(--radius-sm); background:none; cursor:pointer; line-height:1;
-  color:var(--color-neutral-500); font-size:15px; font-family:inherit;}
+/* The chip itself now renders as the real Prompt / Reference Chip's "image" state
+   (components/ai-social-media/reference-chip.css: .ref-chip .ref-chip--detail, Figma node
+   8614:18 / 8620:121242) -- this chip's own interactive logic (popover, strength, match,
+   frame picker) is untouched, only its markup/classes changed. .fmxref-hit is local-only:
+   the shared component has no separate "click to open" hit-area, but this feature does, so
+   it wraps just the thumb+labels (leaving the remove icon as its own click target). */
+.fmxref-hit{display:flex; align-items:center; gap:12px; min-width:0;
+  cursor:pointer; flex:1 1 auto;}
+.fmxref-x{flex:none; width:16px; height:16px; border:0; padding:0;
+  border-radius:var(--radius-full); background:none; cursor:pointer; line-height:1;
+  color:var(--color-neutral-600); font-size:12px; font-family:inherit;
+  display:flex; align-items:center; justify-content:center;}
 .fmxref-x:hover{background:var(--color-neutral-100); color:var(--color-neutral-800);}
 
 /* ---------- Use as reference 팝오버 ---------- */
@@ -8044,14 +8199,14 @@ fitScreenToViewport();
 
   /* ---------- 칩 ---------- */
   function chipHTML(){
-    return '<div class="fmxref-chip" data-r="' + esc(S.ratio) + '">' +
+    return '<div class="ref-chip ref-chip--detail" data-r="' + esc(S.ratio) + '">' +
       '<div class="fmxref-hit" data-fmxref="open" role="button" tabindex="0">' +
-        (S.thumb ? '<img class="th" src="' + esc(thumbSrc(S.thumb)) + '" alt=""' + onerr() + '>'
-                 : '<span class="th"></span>') +
-        '<span class="tx">' +
-          '<span class="t1"><span class="fmxref-tag">REF</span>from “' + esc(S.title) + '”</span>' +
-          '<span class="t2">' + esc(subline()) + '</span>' +
-        '</span></div>' +
+        (S.thumb ? '<img class="ref-chip-detail-thumb" src="' + esc(thumbSrc(S.thumb)) + '" alt=""' + onerr() + '>'
+                 : '<span class="ref-chip-detail-thumb"></span>') +
+        '<div class="ref-chip-detail-labels">' +
+          '<div class="ref-chip-detail-line1"><span class="ref-chip-detail-badge">REF</span><span class="ref-chip-detail-title">from “' + esc(S.title) + '”</span></div>' +
+          '<span class="ref-chip-detail-sub">' + esc(subline()) + '</span>' +
+        '</div></div>' +
       '<button type="button" class="fmxref-x" data-fmxref="remove" aria-label="Remove reference">✕</button>' +
     '</div>';
   }
@@ -8187,7 +8342,11 @@ fitScreenToViewport();
       if (pop) pop.hidden = wasOpen;
     }
     else if (act === 'close'){ if (pop) pop.hidden = true; }
-    else if (act === 'remove'){ S = null; render(); }
+    else if (act === 'remove'){
+      S = null; render();
+      window.__fmxrefActive = false;
+      if (window.renderReferenceImages) window.renderReferenceImages();
+    }
     else if (act === 'strength'){ S.strength = hit.dataset.v; render(); }
     else if (act === 'match'){
       S.match[hit.dataset.v] = !S.match[hit.dataset.v];
@@ -8233,6 +8392,11 @@ fitScreenToViewport();
     }
     render();
     toast('Reference added from “' + d.ref + '”');
+    /* Lets the Brief row's own plain "Reference" ref-chip (new-content-to-generate.html's
+       renderReferenceImages()) know a reference is attached here, so it hides its own empty
+       chip instead of showing two reference indicators at once. */
+    window.__fmxrefActive = true;
+    if (window.renderReferenceImages) window.renderReferenceImages();
   };
 })();
 </script>
