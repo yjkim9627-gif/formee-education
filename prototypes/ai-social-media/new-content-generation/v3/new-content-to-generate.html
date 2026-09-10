@@ -2369,7 +2369,7 @@
           <div class="queue-panel" id="queuePanel" style="display:none;">
             <div class="queue-panel-header">
               <span class="queue-panel-title">Queue</span>
-              <span class="queue-badge orange" id="queueBadge"><img src="../../../../components/ai-social-media/icons/badge-dot.svg" alt="">2 ACTIVE</span>
+              <span class="feedback-status-chip feedback-status-chip--orange-icon" id="queueBadge"><img src="../../../../components/ai-social-media/icons/badge-dot.svg" alt="">2 ACTIVE</span>
             </div>
             <div class="queue-sub">We keep working even if you leave this page.</div>
             <div class="queue-panel-jobs" id="queueJobs"></div>
@@ -5668,7 +5668,7 @@ function showQueuePanel(tileSelector, jobLabel, onDone, itemName){
   `).join('');
   document.getElementById('queueJobs').innerHTML = jobsHTML;
   const badge = document.getElementById('queueBadge');
-  badge.className = 'queue-badge orange';
+  badge.className = 'feedback-status-chip feedback-status-chip--orange-icon';
   badge.innerHTML = `<img src="../../../../components/ai-social-media/icons/badge-dot.svg" alt="">${scenes.length} ACTIVE`;
   document.getElementById('queuePanel').style.display = 'block';
   setTimeout(() => {
@@ -5676,7 +5676,7 @@ function showQueuePanel(tileSelector, jobLabel, onDone, itemName){
       j.classList.add('ready');
       j.querySelector('.queue-job-status-label').textContent = 'READY';
     });
-    badge.className = 'queue-badge green';
+    badge.className = 'feedback-status-chip feedback-status-chip--green with-icon';
     badge.innerHTML = `<img src="../../../../components/ai-social-media/icons/circle-check.svg" alt="">DONE`;
   }, 1400);
   setTimeout(() => {
