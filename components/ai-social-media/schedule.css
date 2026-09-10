@@ -1,0 +1,171 @@
+/* Schedule — section component sheet
+   Figma: FME_AI-Social-Media, section "schedule" (node 9062:241465) — the calendar-grid,
+   list-view and side-peek components of the Schedule screen. (The full interactive Schedule
+   prototype is prototypes/ai-social-media/schedule/schedule.html — this page just documents
+   the component set behind it.)
+
+   Built on tokens/tokens.css:
+     Figma --neutral/N -> --color-neutral-N ; --brand/primary -> --color-brand-primary
+     --badge/green/text #027a48 -> --color-badge-green-text ; --badge/red/text #c4271b (raw)
+     --neutral/800 #0b2b55 -> --color-neutral-800 ; "DM Sans" -> --font-family-text
+   The List Row status column and the Side Peek status chip reuse the real
+   .feedback-status-chip component (feedback-status-chip.css). Post thumbnails use a
+   neutral gradient placeholder (scene-tile.css convention). */
+
+/* ============================================================================
+   Schedule / Event Pill (9087:133885) — Status x State
+   ============================================================================ */
+.sc-event-pill{
+  display:flex; align-items:center; gap:6px; box-sizing:border-box; width:161px;
+  padding:2px 4px; border-radius:var(--radius-sm); font-family:var(--font-family-text);
+}
+.sc-event-pill--selected{background:var(--color-neutral-150); border:1px solid var(--color-neutral-500);}
+.sc-event-pill__thumb{
+  width:24px; height:32px; flex-shrink:0; border:1px solid var(--color-neutral-200);
+  border-radius:var(--radius-sm);
+  background:linear-gradient(135deg,var(--color-neutral-400),var(--color-neutral-200));
+}
+.sc-event-pill__text{flex:1 0 0; min-width:0; display:flex; flex-direction:column;}
+.sc-event-pill__time{display:flex; align-items:center; gap:4px;}
+.sc-status-dot{width:6px; height:6px; border-radius:var(--radius-full); flex-shrink:0;}
+.sc-status-dot--scheduled{background:var(--color-brand-primary);}
+.sc-status-dot--published{background:var(--color-badge-green-text);}
+.sc-status-dot--failed{background:#c4271b;} /* Figma --badge/red/text, raw */
+.sc-event-pill__time span{font-size:var(--font-size-text-2xs); line-height:var(--line-height-text-2xs); font-weight:var(--font-weight-semibold); color:var(--color-neutral-900); white-space:nowrap;}
+.sc-event-pill__title{font-size:var(--font-size-text-2xs); line-height:var(--line-height-text-2xs); font-weight:var(--font-weight-regular); color:var(--color-neutral-700); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+
+/* ============================================================================
+   Schedule / Month Nav (9110:132416)
+   ============================================================================ */
+.sc-month-nav{display:flex; align-items:center; justify-content:center; gap:12px; width:324px; font-family:var(--font-family-text);}
+.sc-month-nav img{width:28px; height:28px; display:block; cursor:pointer;}
+.sc-month-nav span{font-size:20px; line-height:28px; font-weight:var(--font-weight-semibold); color:var(--color-neutral-900); white-space:nowrap;}
+
+/* ============================================================================
+   Schedule / Day-of-week Cell (9089:133811) + Row (9114:132535)
+   ============================================================================ */
+.sc-dow-cell{
+  display:flex; align-items:flex-start; box-sizing:border-box; width:177px;
+  padding:8px 10px; background:var(--color-neutral-100);
+  font-family:var(--font-family-text); font-size:var(--font-size-text-2xs);
+  line-height:var(--line-height-text-2xs); font-weight:var(--font-weight-medium);
+  color:var(--color-neutral-500);
+}
+.sc-dow-row{display:flex;}
+
+/* ============================================================================
+   Schedule / Day Cell (9100:132420) — Day x Events
+   ============================================================================ */
+.sc-day-cell{
+  display:flex; flex-direction:column; align-items:flex-start; gap:4px; box-sizing:border-box;
+  width:177px; height:155px; padding:6px 8px; background:var(--color-neutral-0);
+  border-right:1px solid var(--color-neutral-150); border-bottom:1px solid var(--color-neutral-150);
+  font-family:var(--font-family-text);
+}
+.sc-day-cell__num{font-size:16px; line-height:24px; font-weight:var(--font-weight-medium); color:var(--color-neutral-700);}
+.sc-day-cell--out .sc-day-cell__num{color:var(--color-neutral-400);}
+.sc-day-cell__today{
+  display:flex; align-items:center; justify-content:center; width:22px; height:22px;
+  box-sizing:border-box; border:1px solid var(--color-brand-primary); border-radius:var(--radius-lg);
+  font-size:16px; line-height:24px; font-weight:var(--font-weight-medium); color:var(--color-brand-primary);
+}
+.sc-day-cell .sc-event-pill{width:100%;}
+
+/* ============================================================================
+   Schedule / List Column Head (9137:132243) + Group Head (9137:132247) + Row (9137:132233)
+   ============================================================================ */
+.sc-list{width:100%; max-width:1218px; overflow-x:auto;}
+.sc-list-colhead,
+.sc-list-row{display:flex; align-items:center; min-width:900px; box-sizing:border-box;}
+.sc-list-colhead{
+  padding:8px 12px; border-bottom:1px solid var(--color-neutral-200);
+  font-family:var(--font-family-text); font-size:var(--font-size-text-xs);
+  font-weight:var(--font-weight-medium); color:var(--color-neutral-500);
+}
+.sc-list-colhead > *,
+.sc-list-row > *{flex-shrink:0;}
+.sc-col--post{width:400px;}
+.sc-col--when{width:200px;}
+.sc-col--platforms{width:200px;}
+.sc-col--status{width:140px;}
+
+.sc-list-grouphead{
+  padding:8px 12px; background:var(--color-neutral-50);
+  font-family:var(--font-family-text); font-size:var(--font-size-text-xs);
+  font-weight:var(--font-weight-semibold); color:var(--color-neutral-700);
+}
+
+.sc-list-row{padding:12px; border-bottom:1px solid var(--color-neutral-150); font-family:var(--font-family-text);}
+.sc-list-row--selected{background:var(--color-neutral-150);}
+.sc-list-row__post{display:flex; align-items:center; gap:12px;}
+.sc-list-row__thumb{
+  width:48px; height:60px; flex-shrink:0; border-radius:var(--radius-md);
+  background:linear-gradient(135deg,var(--color-neutral-400),var(--color-neutral-200));
+}
+.sc-list-row__title{font-size:var(--font-size-text-sm); line-height:var(--line-height-text-sm); font-weight:var(--font-weight-semibold); color:var(--color-neutral-900);}
+.sc-list-row__sub{font-size:var(--font-size-text-xs); line-height:var(--line-height-text-xs); font-weight:var(--font-weight-regular); color:var(--color-neutral-500);}
+.sc-list-row__when-main{font-size:var(--font-size-text-sm); line-height:var(--line-height-text-sm); font-weight:var(--font-weight-semibold); color:var(--color-neutral-800);}
+.sc-list-row__platforms{font-size:var(--font-size-text-sm); line-height:var(--line-height-text-sm); font-weight:var(--font-weight-regular); color:var(--color-neutral-700);}
+
+/* ============================================================================
+   Schedule / Peek Header (9087:133889) + Peek Meta Row (9087:133886)
+   ============================================================================ */
+.sc-peek-header{display:flex; align-items:center; gap:12px; width:304px; font-family:var(--font-family-text);}
+.sc-peek-header__title{flex:1 0 0; min-width:0; font-size:var(--font-size-text-lg); line-height:var(--line-height-text-lg); font-weight:var(--font-weight-semibold); color:var(--color-neutral-900);}
+.sc-peek-header__more{
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  width:36px; height:36px; box-sizing:border-box; background:var(--color-neutral-0);
+  border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg);
+  box-shadow:0 1px 3px rgba(15,23,41,.1); cursor:pointer;
+}
+.sc-peek-header__more img{width:16px; height:16px; display:block;}
+
+.sc-peek-meta-row{
+  display:flex; align-items:center; gap:12px; box-sizing:border-box; width:304px;
+  padding:8px 0; border-bottom:1px solid var(--color-neutral-150);
+  font-family:var(--font-family-text); font-size:var(--font-size-text-sm); line-height:20px;
+}
+.sc-peek-meta-row__label{font-weight:var(--font-weight-regular); color:var(--color-neutral-500); white-space:nowrap;}
+.sc-peek-meta-row__value{font-weight:var(--font-weight-semibold); color:var(--color-neutral-800); white-space:nowrap;}
+
+/* ============================================================================
+   Schedule / Side Peek (9121:133715) — Type = Default / Scheduled / Failed
+   ============================================================================ */
+.sc-side-peek{
+  display:flex; flex-direction:column; gap:12px; box-sizing:border-box; width:336px;
+  padding:16px; background:var(--color-neutral-0);
+  border:1px solid var(--color-neutral-200); border-radius:var(--radius-xl);
+  box-shadow:var(--shadow-popover); font-family:var(--font-family-text);
+}
+.sc-side-peek__media{
+  /* Figma crops the 9:16 media to roughly 4:5 inside the peek panel */
+  position:relative; width:100%; aspect-ratio:4/5; border-radius:var(--radius-md);
+  overflow:hidden; background:linear-gradient(135deg,var(--color-neutral-500),var(--color-neutral-300));
+}
+.sc-side-peek__ratio{
+  position:absolute; top:8px; left:8px; padding:2px 8px; border-radius:var(--radius-sm);
+  background:var(--color-neutral-950); color:var(--color-neutral-0);
+  font-size:var(--font-size-text-2xs); font-weight:var(--font-weight-semibold);
+}
+.sc-side-peek__play{
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:44px; height:44px; border-radius:var(--radius-full);
+  background:rgba(255,255,255,.8); display:flex; align-items:center; justify-content:center;
+}
+.sc-side-peek__play img{width:18px; height:18px; display:block;}
+.sc-side-peek__meta{display:flex; flex-direction:column;}
+.sc-side-peek__error{
+  padding:12px; border-radius:var(--radius-md); background:#fbe3e5;
+  font-size:var(--font-size-text-xs); line-height:1.4;
+}
+.sc-side-peek__error strong{display:block; color:#c4271b; font-weight:var(--font-weight-semibold); margin-bottom:2px;}
+.sc-side-peek__error span{color:#912018;}
+.sc-side-peek__footer{display:flex; flex-direction:column; gap:8px; margin-top:4px;}
+.sc-side-peek__btn{
+  display:flex; align-items:center; justify-content:center; box-sizing:border-box;
+  height:40px; border-radius:var(--radius-lg); cursor:pointer; border:none;
+  font-family:var(--font-family-text); font-size:var(--font-size-text-sm); font-weight:var(--font-weight-semibold);
+}
+.sc-side-peek__btn--primary{background:var(--color-neutral-950); color:var(--color-neutral-0);}
+.sc-side-peek__btn--secondary{background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); color:var(--color-neutral-700);}
+.sc-side-peek__btn--ghost{background:none; color:var(--color-neutral-700);}

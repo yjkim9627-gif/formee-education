@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>10 AI Assistant — Section Components</title>
+<link rel="stylesheet" href="../../tokens/tokens.css" />
+<link rel="stylesheet" href="../demo-nav.css" />
+<link rel="stylesheet" href="actions-button.css" />
+<link rel="stylesheet" href="ai-assistant.css" />
+<style>
+  body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
+  .demo-main { padding: var(--spacing-4xl); }
+  h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-sm); }
+  h2 { font-size: var(--font-size-text-md); font-weight: 700; color: var(--color-neutral-700); margin: var(--spacing-4xl) 0 var(--spacing-xs); }
+  h2:first-of-type { margin-top: 0; }
+  .demo-note { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); max-width: 760px; margin: 0 0 var(--spacing-3xl); line-height: 1.6; }
+  .demo-sub { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); margin: 0 0 var(--spacing-lg); line-height: 1.5; }
+  .demo-grid { display: flex; flex-wrap: wrap; gap: var(--spacing-2xl); align-items: flex-start; }
+  .demo-col { display: flex; flex-direction: column; gap: var(--spacing-sm); align-items: flex-start; }
+  .demo-state { font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--color-neutral-450); }
+  .demo-surface { padding: var(--spacing-2xl); background: var(--color-neutral-100); border-radius: 12px; }
+</style>
+</head>
+<body>
+<div class="demo-shell">
+  <nav class="demo-sidebar">
+    <a href="../../index.html" class="demo-sidebar-home">← Home</a>
+    <div class="demo-sidebar-group collapsed" data-group="forms-inputs">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Forms & Inputs</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="controls-field-ai-assisted-text.html">Controls / Field / AI assisted text</a>
+        <a href="controls-field.html">Controls / Field</a>
+        <a href="controls-filter-select.html">Controls / Filter / Select</a>
+        <a href="controls-filter-toggle.html">Controls / Filter / Toggle</a>
+        <a href="controls-misc.html">Controls — Icon Action, Popover, Carousel Arrow, Scrollbar, Segmented Control</a>
+        <a href="controls-multi-select.html">Controls / Multi Select</a>
+        <a href="controls-option-card.html">Controls / Option Card</a>
+        <a href="controls-search-field.html">Controls / Search Field</a>
+        <a href="controls-social-profile-row.html">Controls / Social profile row</a>
+        <a href="controls-toggles.html">Controls / Toggles</a>
+        <a href="date-picker.html">Date Picker</a>
+        <a href="duration-chip.html">Controls / Duration Chip</a>
+        <a href="filter-chip.html">Controls / Filter / Toggle</a>
+        <a href="input-login.html">Input / Login</a>
+        <a href="input.html">Input</a>
+        <a href="segment-chip.html">Segment Chip</a>
+        <a href="setting-chip.html">Setting Chip</a>
+        <a href="switch.html">Controls / Switch</a>
+        <a href="table-filter.html">Table / Filter</a>
+        <a href="toggle-chip.html">Controls / Toggle Chip</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="actions">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Actions</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="actions-button.html">Actions / Button</a>
+        <a href="../shared/button.html">Button</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="login">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Login</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="login.html">Login · Section</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="labels-status">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Labels & Status</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="feedback-status-chip.html">Feedback / Status Chip</a>
+        <a href="post-status-chip.html">Post Status Chip</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="navigation">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Navigation</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="nav.html">Nav / Navigation</a>
+        <a href="topbar-stepper.html">Topbar + Stepper</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="overlays-menus">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Overlays & Menus</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="controls-menu.html">Menu / Context Menu / Size Dropdown</a>
+        <a href="context-bar-popovers.html">ContextBar Popovers</a>
+        <a href="publish-social-modal.html">Publish to Social Modal</a>
+        <a href="../shared/modal-confirm.html">Modal / Confirm</a>
+        <a href="../shared/modal-form.html">Modal / Form</a>
+        <a href="../shared/modal-success.html">Modal / Success</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="images-icons">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Images & Icons</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="brand-logo.html">Brand / Logo</a>
+        <a href="icons.html">Icons</a>
+        <a href="avatar.html">Avatar</a>
+        <a href="illus-placeholder.html">Illus Placeholder</a>
+        <a href="editor-color-swatch.html">Editor / ContextBar Color Swatch</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="data-display">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Data Display</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="carousel-card-block.html">Carousel Card Block</a>
+        <a href="generate-preview-panel.html">Generate Preview Panel</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="content-editor">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Content Editor</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="brand-kit.html">Brand Kit</a>
+        <a href="editor-cell.html">Editor Cell</a>
+        <a href="editor-context-bar.html">Editor ContextBar</a>
+        <a href="editor-panel-chrome.html">Editor Panel & Controls</a>
+        <a href="editor-safe-zone-legend.html">Safe Zone Legend & Content Preview Actions</a>
+        <a href="heading.html">Heading</a>
+        <a href="w-action-bar.html">Action Bar / Editor</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="brand-kit">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Brand Kit</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="brand-kit-builder.html">Brand Kit · Section</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="scene-storyboard">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Scene & Storyboard</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="image-scene-card.html">Image Scene Card</a>
+        <a href="media-card-icon-btn.html">Media Card Icon Button</a>
+        <a href="preview-top-row.html">Preview Top Row</a>
+        <a href="scene-tile.html">Scene Tile</a>
+        <a href="reference-scene-tile.html">Reference / Scene Tile · Selectable</a>
+        <a href="storyboard-card.html">Storyboard Card</a>
+        <a href="video-summary-card.html">Video Summary Card</a>
+        <a href="selector-style-card.html">Selector / Style Card</a>
+        <a href="selector-video-card.html">Selector / Video Card</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="editor-video">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Editor - Video</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="editor-video.html">Editor - Video · Section</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="generation-workflow">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Generation Workflow</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="music-track-row.html">Music Track Row</a>
+        <a href="queue-panel.html">Queue Job Row / Queue Panel</a>
+        <a href="voice-accordion-row.html">Voice Accordion Row</a>
+        <a href="voice-section.html">Voice Section</a>
+        <a href="character-card.html">Character Card</a>
+        <a href="action-bar-feedback.html">Action Bar / Brief</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="new-content">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>New content</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="new-content-misc.html">New content · loose controls</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="schedule">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Schedule</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="schedule.html">Schedule · Section</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group" data-group="ai-assistant">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>AI Assistant</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="ai-assistant.html" class="active">10 AI Assistant · Section</a>
+        <a href="chat-panel.html">Chat Panel</a>
+        <a href="prompt-box.html">AI Prompt Box</a>
+        <a href="ai-response-card.html">AI Response Card</a>
+        <a href="reference-chip.html">Reference Chip</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="upload-destination">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Upload & Destination</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="upload-dropzone.html">Upload Dropzone / Dashed Upload Row</a>
+        <a href="uploads-file-badge.html">Uploads / File Badge / Source Row</a>
+        <a href="uploads-rows.html">Uploads Panel Rows</a>
+        <a href="destination-account.html">Destination Account</a>
+        <a href="publish-destination-table-row.html">Publish / Destination Table Row</a>
+      </div>
+    </div>
+  </nav>
+  <main class="demo-main">
+  <h1>10 AI Assistant</h1>
+  <p class="demo-note">Figma: section <strong>“10 AI Assistant”</strong> (node 2298:60044). Every component in that section that doesn’t already have its own demo page. <strong>AI / Prompt Box</strong> lives on <a href="prompt-box.html">AI Prompt Box</a> and <strong>AI / Assistant Panel</strong> on <a href="chat-panel.html">Chat Panel</a>, so those two are omitted here. The pink→blue “AI” gradient text is the same <code>background-clip:text</code> treatment already in <a href="heading.html">heading.css</a> and <a href="controls-field-ai-assisted-text.html">controls-field-ai-assisted-text.css</a>; the “Use this” button reuses <code>.actions-btn.actions-btn--primary</code> from <a href="actions-button.html">Actions / Button</a>.</p>
+
+  <h2>AI / Section Label <span style="font-weight:400;color:var(--color-neutral-450)">— 2163:39060</span></h2>
+  <p class="demo-sub">type=prompt (uppercase eyebrow + muted hint) and type=ai (sparkle + gradient text).</p>
+  <div class="demo-surface demo-col">
+    <div class="ai-section-label">
+      <span class="ai-section-label__eyebrow">Generation prompt</span>
+      <span class="ai-section-label__hint">from your selections + description</span>
+    </div>
+    <div class="ai-section-label ai-section-label--ai">
+      <img class="ai-section-label__icon" src="icons/ai-sparkle-outline-color.svg" alt="">
+      <span class="ai-section-label__gradient">Updated by AI</span>
+    </div>
+    <div class="ai-section-label ai-section-label--ai">
+      <img class="ai-section-label__icon" src="icons/ai-sparkle-outline-color.svg" alt="">
+      <span class="ai-section-label__gradient">AI Assistant</span>
+    </div>
+  </div>
+
+  <h2>AI / Field Label <span style="font-weight:400;color:var(--color-neutral-450)">— 2963:29036</span></h2>
+  <div class="demo-surface demo-grid">
+    <p class="ai-field-label">Selected Text</p>
+    <p class="ai-field-label">Quick actions</p>
+  </div>
+
+  <h2>AI / Popover Header <span style="font-weight:400;color:var(--color-neutral-450)">— 5993:98578</span></h2>
+  <div class="demo-surface" style="width:237px;">
+    <div class="ai-popover-header">
+      <div class="ai-section-label ai-section-label--ai">
+        <img class="ai-section-label__icon" src="icons/ai-sparkle-outline-color.svg" alt="">
+        <span class="ai-section-label__gradient">AI Assistant</span>
+      </div>
+      <button type="button" class="ai-popover-header__close" aria-label="Close"><img src="icons/panel-close.svg" alt=""></button>
+    </div>
+  </div>
+
+  <h2>Script Panel / Header <span style="font-weight:400;color:var(--color-neutral-450)">— 5968:95627</span></h2>
+  <div class="demo-surface" style="width:292px;">
+    <div class="script-panel-header">
+      <span class="script-panel-header__title">AI Assistant</span>
+      <button type="button" class="script-panel-header__plus" aria-label="New chat"><img src="icons/pagebar-plus.svg" alt=""></button>
+    </div>
+  </div>
+
+  <h2>AI / Chat Mark <span style="font-weight:400;color:var(--color-neutral-450)">— 4762:93606</span></h2>
+  <div class="demo-surface"><img class="ai-chat-mark" src="icons/ai-chat-mark.svg" alt="AI chat"></div>
+
+  <h2>AI / Spark Button <span style="font-weight:400;color:var(--color-neutral-450)">— 1488:14422</span></h2>
+  <div class="demo-surface"><button type="button" class="ai-spark-button" aria-label="Ask AI"><img src="icons/ai-spark-glyph.svg" alt=""></button></div>
+
+  <h2>Actions / Refine <span style="font-weight:400;color:var(--color-neutral-450)">— 3502:32531</span></h2>
+  <p class="demo-sub">36px trailing send button. State=Normal, State=Focused (brand ring), and the “send” fill used once there’s input.</p>
+  <div class="demo-surface demo-grid">
+    <div class="demo-col"><span class="demo-state">Normal</span><button type="button" class="ai-refine-btn"><img src="icons/arrow-up.svg" alt="Send"></button></div>
+    <div class="demo-col"><span class="demo-state">Focused</span><button type="button" class="ai-refine-btn ai-refine-btn--focused"><img src="icons/arrow-up.svg" alt="Send"></button></div>
+    <div class="demo-col"><span class="demo-state">Send</span><button type="button" class="ai-refine-btn ai-refine-btn--send"><img src="icons/arrow-up.svg" alt="Send"></button></div>
+  </div>
+
+  <h2>AI / Refine Pill <span style="font-weight:400;color:var(--color-neutral-450)">— 5937:3526</span></h2>
+  <p class="demo-sub">Standalone “Refine with AI” pill. The in-<a href="heading.html">Heading</a> accessory version (<code>.ai-heading-refine-pill</code>) is the same component without the faint hairline.</p>
+  <div class="demo-surface demo-grid">
+    <div class="demo-col"><span class="demo-state">Default</span>
+      <button type="button" class="ai-refine-pill"><img src="icons/ai-refine.svg" alt=""><span>Refine with AI</span></button></div>
+    <div class="demo-col"><span class="demo-state">Hover</span>
+      <button type="button" class="ai-refine-pill ai-refine-pill--hover"><img src="icons/ai-refine.svg" alt=""><span>Refine with AI</span></button></div>
+    <div class="demo-col"><span class="demo-state">Active</span>
+      <button type="button" class="ai-refine-pill ai-refine-pill--active"><img src="icons/ai-refine.svg" alt=""><span>Refine with AI</span></button></div>
+    <div class="demo-col"><span class="demo-state">Disabled</span>
+      <button type="button" class="ai-refine-pill ai-refine-pill--disabled" disabled><img src="icons/ai-refine.svg" alt=""><span>Refine with AI</span></button></div>
+  </div>
+
+  <h2>AI / Suggestion Chip <span style="font-weight:400;color:var(--color-neutral-450)">— 2974:28984</span></h2>
+  <div class="demo-surface demo-grid">
+    <div class="ai-suggestion-chip"><img class="ai-suggestion-chip__icon" src="icons/ui-search.svg" alt=""><span class="ai-suggestion-chip__label">Selected Text</span></div>
+  </div>
+
+  <h2>AI / User Bubble <span style="font-weight:400;color:var(--color-neutral-450)">— 2959:49584</span></h2>
+  <div class="demo-surface" style="width:360px;">
+    <div class="ai-user-turn"><div class="ai-user-bubble">make it more urgent</div></div>
+  </div>
+
+  <h2>AI / Review Item <span style="font-weight:400;color:var(--color-neutral-450)">— 2981:28994</span></h2>
+  <div class="demo-surface">
+    <p class="ai-review-item">1.&nbsp;&nbsp;<strong>Group Format &amp; Aspect Ratio</strong> — they’re related choices; one container cuts visual noise.</p>
+  </div>
+
+  <h2>AI / Panel Card <span style="font-weight:400;color:var(--color-neutral-450)">— 1519:15117 / 1519:15177</span></h2>
+  <p class="demo-sub">The confirmation card dropped after an improve applies. State=loading / State=applied.</p>
+  <div class="demo-surface demo-grid">
+    <div class="demo-col"><span class="demo-state">loading</span>
+      <div class="ai-panel-card">
+        <span class="ai-panel-card__icon ai-panel-card__icon--spinner"></span>
+        <div class="ai-panel-card__body">
+          <span class="ai-panel-card__title">Applied</span>
+          <span class="ai-panel-card__detail">‘Get started now’ · Selected text</span>
+        </div>
+      </div>
+    </div>
+    <div class="demo-col"><span class="demo-state">applied</span>
+      <div class="ai-panel-card">
+        <img class="ai-panel-card__icon" src="icons/check.svg" alt="">
+        <div class="ai-panel-card__body">
+          <span class="ai-panel-card__title">Applied</span>
+          <span class="ai-panel-card__detail">‘Get started now’ · Selected text</span>
+        </div>
+        <button type="button" class="ai-panel-card__undo">Undo</button>
+      </div>
+    </div>
+  </div>
+
+  <h2>Script Panel — Footer Input <span style="font-weight:400;color:var(--color-neutral-450)">— 9215:259349 / 5968:95633</span></h2>
+  <div class="demo-surface">
+    <div class="script-panel-footer">
+      <p class="script-panel-footer__prompt">Ask for changes</p>
+      <div class="script-panel-footer__row">
+        <button type="button" class="script-panel-footer__attach" aria-label="Attach"><img src="icons/attach.svg" alt=""></button>
+        <button type="button" class="script-panel-footer__send" aria-label="Send"><img src="icons/arrow-up.svg" alt=""></button>
+      </div>
+    </div>
+  </div>
+
+  <h2>AI / Improve Popover <span style="font-weight:400;color:var(--color-neutral-450)">— 2960:29156</span></h2>
+  <p class="demo-sub">One shell, six states. Floating card for “improve this selected text”.</p>
+  <div class="demo-grid">
+    <div class="demo-col"><span class="demo-state">empty</span>
+      <div class="ai-improve-popover">
+        <div class="ai-popover-header">
+          <div class="ai-section-label ai-section-label--ai"><img class="ai-section-label__icon" src="icons/ai-sparkle-outline-color.svg" alt=""><span class="ai-section-label__gradient">AI Assistant</span></div>
+          <button type="button" class="ai-popover-header__close" aria-label="Close"><img src="icons/panel-close.svg" alt=""></button>
+        </div>
+        <p class="ai-field-label">Selected Text</p>
+        <div class="ai-panel-field ai-panel-field--readonly"><span class="ai-panel-field__text">Get Started</span></div>
+        <p class="ai-field-label">Quick actions</p>
+        <div class="ai-quick-chip-row">
+          <button type="button" class="ai-quick-chip">Make it longer</button>
+          <button type="button" class="ai-quick-chip">More professional</button>
+          <button type="button" class="ai-quick-chip">Change tone</button>
+        </div>
+        <div class="ai-section-label ai-section-label--ai"><img class="ai-section-label__icon" src="icons/ai-sparkle-outline-color.svg" alt=""><span class="ai-section-label__gradient">Refine the prompt</span></div>
+        <div class="ai-panel-field"><span class="ai-panel-field__text ai-panel-field--placeholder">Ask for another change…</span><button type="button" class="ai-refine-btn"><img src="icons/arrow-up.svg" alt="Send"></button></div>
+      </div>
+    </div>
+    <div class="demo-col"><span class="demo-state">typing</span>
+      <div class="ai-improve-popover">
+        <div class="ai-popover-header">
+          <div class="ai-section-label ai-section-label--ai"><img class="ai-section-label__icon" src="icons/ai-sparkle-outline-color.svg" alt=""><span class="ai-section-label__gradient">AI Assistant</span></div>
+          <button type="button" class="ai-popover-header__close" aria-label="Close"><img src="icons/panel-close.svg" alt=""></button>
+        </div>
+        <p class="ai-field-label">Selected Text</p>
+        <div class="ai-panel-field ai-panel-field--readonly"><span class="ai-panel-field__text">Get Started</span></div>
+        <p class="ai-field-label">Quick actions</p>
+        <div class="ai-quick-chip-row">
+          <button type="button" class="ai-quick-chip">Make it longer</button>
+          <button type="button" class="ai-quick-chip">More professional</button>
+          <button type="button" class="ai-quick-chip">Change tone</button>
+        </div>
+        <div class="ai-section-label ai-section-label--ai"><img class="ai-section-label__icon" src="icons/ai-sparkle-outline-color.svg" alt=""><span class="ai-section-label__gradient">Refine the prompt</span></div>
+        <div class="ai-panel-field ai-panel-field--result"><span class="ai-panel-field__text">Make it feel more welcoming</span><button type="button" class="ai-refine-btn ai-refine-btn--send"><img src="icons/arrow-up.svg" alt="Send"></button></div>
+      </div>
+    </div>
+    <div class="demo-col"><span class="demo-state">generating</span>
+      <div class="ai-improve-popover">
+        <div class="ai-popover-header">
+          <div class="ai-section-label ai-section-label--ai"><img class="ai-section-label__icon" src="icons/ai-sparkle-outline-color.svg" alt=""><span class="ai-section-label__gradient">AI Assistant</span></div>
+          <button type="button" class="ai-popover-header__close" aria-label="Close"><img src="icons/panel-close.svg" alt=""></button>
+        </div>
+        <p class="ai-field-label">Selected Text</p>
+        <div class="ai-panel-field ai-panel-field--readonly"><span class="ai-panel-field__text">Get Started</span></div>
+        <div class="ai-user-turn"><div class="ai-user-bubble">Make it feel more welcoming</div></div>
+        <div class="ai-panel-progress">
+          <span class="ai-panel-progress__spinner"></span>
+          <div class="ai-panel-progress__body">
+            <span class="ai-panel-progress__title">Generating…</span>
+            <span class="ai-panel-progress__sub">Applying brand voice to your selection</span>
+          </div>
+        </div>
+        <div class="ai-section-label ai-section-label--ai"><img class="ai-section-label__icon" src="icons/ai-sparkle-outline-color.svg" alt=""><span class="ai-section-label__gradient">Refine the prompt</span></div>
+        <div class="ai-panel-field"><span class="ai-panel-field__text ai-panel-field--placeholder">Ask for another change…</span><button type="button" class="ai-refine-btn"><img src="icons/arrow-up.svg" alt="Send"></button></div>
+      </div>
+    </div>
+    <div class="demo-col"><span class="demo-state">result</span>
+      <div class="ai-improve-popover">
+        <div class="ai-popover-header">
+          <div class="ai-section-label ai-section-label--ai"><img class="ai-section-label__icon" src="icons/ai-sparkle-outline-color.svg" alt=""><span class="ai-section-label__gradient">AI Assistant</span></div>
+          <button type="button" class="ai-popover-header__close" aria-label="Close"><img src="icons/panel-close.svg" alt=""></button>
+        </div>
+        <p class="ai-field-label">Selected Text</p>
+        <div class="ai-panel-field ai-panel-field--readonly"><span class="ai-panel-field__text">Get Started</span></div>
+        <div class="ai-user-turn"><div class="ai-user-bubble">Make it feel more welcoming</div></div>
+        <div class="ai-section-label ai-section-label--ai"><img class="ai-section-label__icon" src="icons/ai-sparkle-outline-color.svg" alt=""><span class="ai-section-label__gradient">Updated by AI</span></div>
+        <div class="ai-panel-field ai-panel-field--result"><span class="ai-panel-field__text">Find the Right Program for You</span></div>
+        <div class="ai-user-turn"><button type="button" class="actions-btn actions-btn--primary">Use this</button></div>
+        <div class="ai-section-label ai-section-label--ai"><img class="ai-section-label__icon" src="icons/ai-sparkle-outline-color.svg" alt=""><span class="ai-section-label__gradient">Refine the prompt</span></div>
+        <div class="ai-panel-field"><span class="ai-panel-field__text ai-panel-field--placeholder">Ask for another change…</span><button type="button" class="ai-refine-btn"><img src="icons/arrow-up.svg" alt="Send"></button></div>
+      </div>
+    </div>
+    <div class="demo-col"><span class="demo-state">conversation</span>
+      <div class="ai-improve-popover">
+        <div class="ai-popover-header">
+          <div class="ai-section-label ai-section-label--ai"><img class="ai-section-label__icon" src="icons/ai-sparkle-outline-color.svg" alt=""><span class="ai-section-label__gradient">AI Assistant</span></div>
+          <button type="button" class="ai-popover-header__close" aria-label="Close"><img src="icons/panel-close.svg" alt=""></button>
+        </div>
+        <p class="ai-field-label">Selected Text</p>
+        <div class="ai-panel-field ai-panel-field--readonly"><span class="ai-panel-field__text">Get Started</span></div>
+        <div class="ai-user-turn"><div class="ai-user-bubble">Make it feel more welcoming</div></div>
+        <div class="ai-section-label ai-section-label--ai"><img class="ai-section-label__icon" src="icons/ai-sparkle-outline-color.svg" alt=""><span class="ai-section-label__gradient">AI Assistant</span></div>
+        <div class="ai-panel-field ai-panel-field--result"><span class="ai-panel-field__text">Find the Right Program for You</span></div>
+        <div class="ai-user-turn"><div class="ai-user-bubble">make it shorter</div></div>
+        <div class="ai-section-label ai-section-label--ai"><img class="ai-section-label__icon" src="icons/ai-sparkle-outline-color.svg" alt=""><span class="ai-section-label__gradient">Updated by AI</span></div>
+        <div class="ai-panel-field ai-panel-field--result"><span class="ai-panel-field__text">Find Your Program</span></div>
+        <div class="ai-user-turn"><button type="button" class="actions-btn actions-btn--primary">Use this</button></div>
+        <div class="ai-section-label ai-section-label--ai"><img class="ai-section-label__icon" src="icons/ai-sparkle-outline-color.svg" alt=""><span class="ai-section-label__gradient">Refine the prompt</span></div>
+        <div class="ai-panel-field"><span class="ai-panel-field__text ai-panel-field--placeholder">Ask for another change…</span><button type="button" class="ai-refine-btn"><img src="icons/arrow-up.svg" alt="Send"></button></div>
+      </div>
+    </div>
+    <div class="demo-col"><span class="demo-state">applied</span>
+      <div class="ai-improve-popover">
+        <div class="ai-popover-header">
+          <div class="ai-section-label ai-section-label--ai"><img class="ai-section-label__icon" src="icons/ai-sparkle-outline-color.svg" alt=""><span class="ai-section-label__gradient">AI Assistant</span></div>
+          <button type="button" class="ai-popover-header__close" aria-label="Close"><img src="icons/panel-close.svg" alt=""></button>
+        </div>
+        <p class="ai-field-label">Selected Text</p>
+        <div class="ai-panel-field ai-panel-field--readonly"><span class="ai-panel-field__text">Find Your Program</span></div>
+        <div class="ai-user-turn"><div class="ai-user-bubble">make it shorter</div></div>
+        <div class="ai-improve-applied">
+          <img class="ai-improve-applied__icon" src="icons/check.svg" alt="">
+          <div class="ai-panel-card__body">
+            <span class="ai-improve-applied__label">Applied</span>
+            <span class="ai-improve-applied__detail">‘Find Your Program’ · Selected text</span>
+          </div>
+          <button type="button" class="ai-improve-applied__undo">Undo</button>
+        </div>
+        <p class="ai-field-label">Quick actions</p>
+        <div class="ai-quick-chip-row">
+          <button type="button" class="ai-quick-chip">Make it longer</button>
+          <button type="button" class="ai-quick-chip">More professional</button>
+          <button type="button" class="ai-quick-chip">Change tone</button>
+        </div>
+        <div class="ai-section-label ai-section-label--ai"><img class="ai-section-label__icon" src="icons/ai-sparkle-outline-color.svg" alt=""><span class="ai-section-label__gradient">Refine the prompt</span></div>
+        <div class="ai-panel-field"><span class="ai-panel-field__text ai-panel-field--placeholder">Ask for another change…</span><button type="button" class="ai-refine-btn"><img src="icons/arrow-up.svg" alt="Send"></button></div>
+      </div>
+    </div>
+  </div>
+
+  <h2>AI / Generation Prompt <span style="font-weight:400;color:var(--color-neutral-450)">— 3022:50403</span></h2>
+  <p class="demo-sub">The compiled “here’s the prompt we’ll send” block. States: base / typing / generating / result / kept.</p>
+  <div class="demo-grid">
+    <div class="demo-col"><span class="demo-state">base</span>
+      <div class="ai-generation-prompt">
+        <div class="ai-section-label"><span class="ai-section-label__eyebrow">Generation prompt</span><span class="ai-section-label__hint">from your selections + description</span></div>
+        <div class="ai-generation-prompt__readout">Latino/a · Human · Age 55+ · Short hair — Professional woman, friendly, black blazer, cinematic lighting</div>
+        <div class="ai-section-label ai-section-label--ai"><img class="ai-section-label__icon" src="icons/ai-sparkle-outline-color.svg" alt=""><span class="ai-section-label__gradient">Refine the prompt</span></div>
+        <div class="ai-panel-field"><span class="ai-panel-field__text ai-panel-field--placeholder">e.g. make it cinematic, add glasses…</span><button type="button" class="ai-refine-btn"><img src="icons/arrow-up.svg" alt="Send"></button></div>
+      </div>
+    </div>
+    <div class="demo-col"><span class="demo-state">typing</span>
+      <div class="ai-generation-prompt">
+        <div class="ai-section-label"><span class="ai-section-label__eyebrow">Generation prompt</span><span class="ai-section-label__hint">from your selections + description</span></div>
+        <div class="ai-generation-prompt__readout">Latino/a · Human · Age 55+ · Short hair — Professional woman, friendly, black blazer, cinematic lighting</div>
+        <div class="ai-section-label ai-section-label--ai"><img class="ai-section-label__icon" src="icons/ai-sparkle-outline-color.svg" alt=""><span class="ai-section-label__gradient">Refine the prompt</span></div>
+        <div class="ai-panel-field ai-panel-field--result"><span class="ai-panel-field__text">make it cinematic, add glasses</span><button type="button" class="ai-refine-btn ai-refine-btn--send"><img src="icons/arrow-up.svg" alt="Send"></button></div>
+      </div>
+    </div>
+    <div class="demo-col"><span class="demo-state">generating</span>
+      <div class="ai-generation-prompt">
+        <div class="ai-section-label"><span class="ai-section-label__eyebrow">Generation prompt</span><span class="ai-section-label__hint">from your selections + description</span></div>
+        <div class="ai-generation-prompt__readout">Latino/a · Human · Age 55+ · Short hair — Professional woman, friendly, black blazer, cinematic lighting</div>
+        <div class="ai-user-turn"><div class="ai-user-bubble">Make it look like a polished professional portrait.</div></div>
+        <div class="ai-panel-progress">
+          <span class="ai-panel-progress__spinner"></span>
+          <div class="ai-panel-progress__body">
+            <span class="ai-panel-progress__title">Rewriting prompt…</span>
+            <span class="ai-panel-progress__sub">Applying your refinement</span>
+          </div>
+        </div>
+        <div class="ai-section-label ai-section-label--ai"><img class="ai-section-label__icon" src="icons/ai-sparkle-outline-color.svg" alt=""><span class="ai-section-label__gradient">Refine the prompt</span></div>
+        <div class="ai-panel-field"><span class="ai-panel-field__text ai-panel-field--placeholder">e.g. make it cinematic, add glasses…</span><button type="button" class="ai-refine-btn"><img src="icons/arrow-up.svg" alt="Send"></button></div>
+      </div>
+    </div>
+    <div class="demo-col"><span class="demo-state">result</span>
+      <div class="ai-generation-prompt">
+        <div class="ai-section-label"><span class="ai-section-label__eyebrow">Generation prompt</span><span class="ai-section-label__hint">from your selections + description</span></div>
+        <div class="ai-generation-prompt__readout">Latino/a · Human · Age 55+ · Short hair — Professional woman, friendly, black blazer, cinematic lighting</div>
+        <div class="ai-user-turn"><div class="ai-user-bubble">Make it look like a polished professional portrait.</div></div>
+        <div class="ai-section-label ai-section-label--ai"><img class="ai-section-label__icon" src="icons/ai-sparkle-outline-color.svg" alt=""><span class="ai-section-label__gradient">Updated by AI</span></div>
+        <div class="ai-generation-prompt__readout ai-generation-prompt__readout--result">A polished professional portrait of a friendly Latina woman in her late 50s with short hair, wearing a black blazer, with soft studio lighting against a clean neutral background, and a natural expression.</div>
+        <div class="ai-user-turn"><button type="button" class="actions-btn actions-btn--primary">Use this</button></div>
+        <div class="ai-section-label ai-section-label--ai"><img class="ai-section-label__icon" src="icons/ai-sparkle-outline-color.svg" alt=""><span class="ai-section-label__gradient">Refine the prompt</span></div>
+        <div class="ai-panel-field"><span class="ai-panel-field__text ai-panel-field--placeholder">e.g. make it cinematic, add glasses…</span><button type="button" class="ai-refine-btn"><img src="icons/arrow-up.svg" alt="Send"></button></div>
+      </div>
+    </div>
+    <div class="demo-col"><span class="demo-state">kept</span>
+      <div class="ai-generation-prompt">
+        <div class="ai-section-label"><span class="ai-section-label__eyebrow">Generation prompt</span><span class="ai-updated-badge">updated</span></div>
+        <div class="ai-generation-prompt__readout">A polished professional portrait of a friendly Latina woman in her late 50s with short hair, wearing a black blazer, with soft studio lighting against a clean neutral background, and a natural expression.</div>
+        <div class="ai-section-label ai-section-label--ai"><img class="ai-section-label__icon" src="icons/ai-sparkle-outline-color.svg" alt=""><span class="ai-section-label__gradient">Refine the prompt</span></div>
+        <div class="ai-panel-field"><span class="ai-panel-field__text ai-panel-field--placeholder">e.g. make it cinematic, add glasses…</span><button type="button" class="ai-refine-btn"><img src="icons/arrow-up.svg" alt="Send"></button></div>
+      </div>
+    </div>
+  </div>
+
+  <h2>AI / Refine · Inline <span style="font-weight:400;color:var(--color-neutral-450)">— 6047:125399</span></h2>
+  <p class="demo-sub">Full-width inline refine block (vs. the floating popover). States: idle / result / generating / typing.</p>
+  <div class="demo-col" style="gap:var(--spacing-2xl); width:100%; max-width:640px;">
+    <div class="demo-col"><span class="demo-state">idle</span>
+      <div class="ai-refine-inline">
+        <div class="ai-section-label ai-section-label--ai"><img class="ai-section-label__icon" src="icons/ai-sparkle-outline-color.svg" alt=""><span class="ai-section-label__gradient">Refine the description</span></div>
+        <div class="ai-refine-inline__input-row">
+          <span class="ai-refine-inline__field ai-refine-inline__field--placeholder">e.g. make it cinematic, add glasses…</span>
+          <button type="button" class="ai-refine-btn"><img src="icons/arrow-up.svg" alt="Send"></button>
+        </div>
+        <div class="ai-quick-chip-row">
+          <button type="button" class="ai-quick-chip">Make it shorter</button>
+          <button type="button" class="ai-quick-chip">Say what makes us different</button>
+          <button type="button" class="ai-quick-chip">Speak to parents too</button>
+        </div>
+      </div>
+    </div>
+    <div class="demo-col"><span class="demo-state">result</span>
+      <div class="ai-refine-inline">
+        <div class="ai-user-turn"><div class="ai-user-bubble">shorter, and name the one thing only we do</div></div>
+        <div class="ai-section-label ai-section-label--ai"><img class="ai-section-label__icon" src="icons/ai-sparkle-outline-color.svg" alt=""><span class="ai-section-label__gradient">Updated by AI</span></div>
+        <div class="ai-refine-inline__result">
+          <span class="ai-refine-inline__result-text">The AI-rewritten text lands here.</span>
+          <button type="button" class="ai-refine-inline__revert" aria-label="Revert"><img src="icons/ui-corner-up-left.svg" alt=""></button>
+        </div>
+        <div class="ai-refine-inline__use-row"><button type="button" class="actions-btn actions-btn--primary">Use this</button></div>
+        <div class="ai-section-label ai-section-label--ai"><img class="ai-section-label__icon" src="icons/ai-sparkle-outline-color.svg" alt=""><span class="ai-section-label__gradient">Refine the description</span></div>
+        <div class="ai-refine-inline__input-row">
+          <span class="ai-refine-inline__field ai-refine-inline__field--placeholder">e.g. make it cinematic, add glasses…</span>
+          <button type="button" class="ai-refine-btn"><img src="icons/arrow-up.svg" alt="Send"></button>
+        </div>
+        <div class="ai-quick-chip-row">
+          <button type="button" class="ai-quick-chip">Make it shorter</button>
+          <button type="button" class="ai-quick-chip">Say what makes us different</button>
+          <button type="button" class="ai-quick-chip">Speak to parents too</button>
+        </div>
+      </div>
+    </div>
+    <div class="demo-col"><span class="demo-state">generating</span>
+      <div class="ai-refine-inline">
+        <div class="ai-user-turn"><div class="ai-user-bubble">shorter, and name the one thing only we do</div></div>
+        <div class="ai-panel-progress">
+          <span class="ai-panel-progress__spinner"></span>
+          <div class="ai-panel-progress__body">
+            <span class="ai-panel-progress__title">Rewriting…</span>
+            <span class="ai-panel-progress__sub">Applying your refinement</span>
+          </div>
+        </div>
+        <div class="ai-section-label ai-section-label--ai"><img class="ai-section-label__icon" src="icons/ai-sparkle-outline-color.svg" alt=""><span class="ai-section-label__gradient">Refine the description</span></div>
+        <div class="ai-refine-inline__input-row">
+          <span class="ai-refine-inline__field ai-refine-inline__field--placeholder">e.g. make it cinematic, add glasses…</span>
+          <button type="button" class="ai-refine-btn"><img src="icons/arrow-up.svg" alt="Send"></button>
+        </div>
+        <div class="ai-quick-chip-row">
+          <button type="button" class="ai-quick-chip">Make it shorter</button>
+          <button type="button" class="ai-quick-chip">Say what makes us different</button>
+          <button type="button" class="ai-quick-chip">Speak to parents too</button>
+        </div>
+      </div>
+    </div>
+    <div class="demo-col"><span class="demo-state">typing</span>
+      <div class="ai-refine-inline">
+        <div class="ai-section-label ai-section-label--ai"><img class="ai-section-label__icon" src="icons/ai-sparkle-outline-color.svg" alt=""><span class="ai-section-label__gradient">Refine the description</span></div>
+        <div class="ai-refine-inline__input-row">
+          <span class="ai-refine-inline__field">shorter, and name the one thing only we do</span>
+          <button type="button" class="ai-refine-btn ai-refine-btn--send"><img src="icons/arrow-up.svg" alt="Send"></button>
+        </div>
+        <div class="ai-quick-chip-row">
+          <button type="button" class="ai-quick-chip">Make it shorter</button>
+          <button type="button" class="ai-quick-chip">Say what makes us different</button>
+          <button type="button" class="ai-quick-chip">Speak to parents too</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  </main>
+</div>
+<script src="../demo-nav.js"></script>
+</body>
+</html>

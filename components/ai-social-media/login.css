@@ -1,0 +1,83 @@
+/* Login — section component sheet
+   Figma: FME_AI-Social-Media, section "Login" (node 3999:40000).
+   The auth-screen buttons + dividers. (The email/password field itself is
+   "Input / login" and lives on input-login.html — this section is the buttons
+   around it.)
+
+   Built on tokens/tokens.css:
+     Figma --neutral/N -> --color-neutral-N ; --brand/primary -> --color-brand-primary
+     Primary dark gradient reuses --color-action-primary-dark-gradient-start/end
+     (#323232 / #222222) — the same treatment style-reference.md §1 documents being
+     shared across button families (Actions/Button, Publish Button, Auth Button).
+     "DM Sans" -> --font-family-text */
+
+/* ============================================================================
+   Actions / Social Login Button (3982:37018) — Google / Apple
+   ============================================================================ */
+.login-social-btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px; box-sizing:border-box;
+  width:360px; height:48px; padding:10px; background:var(--color-neutral-0);
+  border:1px solid var(--color-neutral-400); border-radius:var(--radius-xl);
+  font-family:var(--font-family-text); cursor:pointer;
+}
+.login-social-btn img{height:18px; display:block; flex-shrink:0;}
+.login-social-btn img.google{width:17px;}
+.login-social-btn img.apple{width:15px;}
+.login-social-btn span{
+  font-size:var(--font-size-text-lg); line-height:var(--line-height-text-lg);
+  font-weight:var(--font-weight-medium); color:var(--color-neutral-700); white-space:nowrap;
+}
+
+/* ============================================================================
+   Divider / Or (3982:63651)
+   ============================================================================ */
+.login-divider{display:flex; align-items:center; gap:12px; width:360px; font-family:var(--font-family-text);}
+.login-divider::before,
+.login-divider::after{content:""; flex:1 0 0; height:1px; background:var(--color-neutral-400);}
+.login-divider span{
+  font-size:var(--font-size-text-md); line-height:var(--line-height-text-md);
+  font-weight:var(--font-weight-medium); color:var(--color-neutral-700);
+}
+
+/* ============================================================================
+   Auth / Sign-up Row (3982:63653)
+   ============================================================================ */
+.login-signup-row{
+  display:flex; align-items:center; justify-content:center; gap:6px; width:360px;
+  font-family:var(--font-family-text); font-size:var(--font-size-text-md); line-height:var(--line-height-text-md);
+}
+.login-signup-row .prompt{font-weight:var(--font-weight-medium); color:var(--color-neutral-700);}
+.login-signup-row .link{font-weight:var(--font-weight-semibold); color:var(--color-brand-primary); cursor:pointer;}
+
+/* ============================================================================
+   Auth / Button (4024:37648) — Primary / Secondary × Default / Hover / Disabled / Loading
+   ============================================================================ */
+.auth-btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:var(--spacing-sm);
+  box-sizing:border-box; width:360px; height:48px; padding:8px 16px; border:none;
+  border-radius:var(--radius-lg); cursor:pointer; font-family:var(--font-family-text);
+  font-size:var(--font-size-text-xl); line-height:var(--line-height-text-xl);
+  font-weight:var(--font-weight-semibold); position:relative;
+}
+.auth-btn__spinner{width:20px; height:20px; flex-shrink:0; display:block; animation:auth-btn-spin .8s linear infinite;}
+@keyframes auth-btn-spin{to{transform:rotate(360deg);}}
+
+/* Primary — dark gradient + glossy inset line */
+.auth-btn--primary{
+  background:linear-gradient(180deg, var(--color-action-primary-dark-gradient-start), var(--color-action-primary-dark-gradient-end));
+  color:var(--color-neutral-0);
+  box-shadow:var(--shadow-action-primary-dark-inset, inset 0 -1px 1.2px #121212);
+}
+.auth-btn--primary.auth-btn--hover{background:linear-gradient(180deg, #4a4a4a, #383838);} /* Figma's hover pair — no token */
+.auth-btn--primary.auth-btn--disabled{
+  background:var(--color-neutral-300); color:var(--color-neutral-450); box-shadow:none; cursor:not-allowed;
+}
+.auth-btn--primary .auth-btn__spinner{filter:brightness(0) invert(1);}
+
+/* Secondary — outlined; Figma's literal 8px radius + 17/9 padding */
+.auth-btn--secondary{
+  background:var(--color-neutral-0); border:1px solid var(--color-neutral-400);
+  color:var(--color-neutral-700); padding:9px 17px; border-radius:8px;
+}
+.auth-btn--secondary.auth-btn--hover{background:var(--color-neutral-75);}
+.auth-btn--secondary.auth-btn--disabled{border-color:var(--color-neutral-300); color:var(--color-neutral-450); cursor:not-allowed;}
