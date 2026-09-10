@@ -3140,10 +3140,13 @@ function imgApplyBrandMode(mode){
 }
 function toggleBrandKit(){
   brandKitOn = !brandKitOn;
-  const hasBrand = window.__brandMode === 'set';
   document.getElementById('brandKitSwitch').classList.toggle('on', brandKitOn);
-  document.getElementById('brandKitSummary').style.display = brandKitOn && hasBrand ? 'block' : 'none';
-  document.getElementById('brandKitEmpty').style.display = !hasBrand ? 'flex' : 'none';
+  // Figma's own "Brand kit off"/"Brand kit on" frames are just the two states of this one
+  // switch (8727:219504 / 8987:236875) -- the switch alone decides summary vs. empty, no
+  // separate "has a brand kit configured" precondition (that's the hidden #roleSwitch demo
+  // control elsewhere, a different concern -- see updateReelBrandKitUI()'s own note).
+  document.getElementById('brandKitSummary').style.display = brandKitOn ? 'block' : 'none';
+  document.getElementById('brandKitEmpty').style.display = brandKitOn ? 'none' : 'flex';
   document.getElementById('brandKitSwitch').setAttribute('aria-checked', String(brandKitOn));
   updateVisualConceptPrompt();
 }
@@ -4272,12 +4275,13 @@ function updateGlobalBrandKitUI(){
   const empty = document.getElementById('globalBrandKitEmpty');
   if(!sw) return;
   const on = !!window.__globalBrandKitOn;
-  const hasBrand = window.__brandMode === 'set';
   sw.classList.remove('disabled');
   sw.classList.toggle('on', on);
   sw.setAttribute('aria-checked', String(on));
-  summary.style.display = on && hasBrand ? 'block' : 'none';
-  empty.style.display = !hasBrand ? 'flex' : 'none';
+  // The switch alone decides summary vs. empty (Figma 8727:219504/8987:236875 are just its
+  // off/on states) -- see updateReelBrandKitUI()'s own note, same reasoning applies here.
+  summary.style.display = on ? 'block' : 'none';
+  empty.style.display = on ? 'none' : 'flex';
 }
 
 // ---- Reel/Short & Story Video's own "Use brand kit" toggle (same pattern as Carousel's
@@ -4292,12 +4296,17 @@ function updateReelBrandKitUI(){
   const empty = document.getElementById('reelBrandKitEmpty');
   if(!sw) return;
   const on = !!window.__reelBrandKitOn;
-  const hasBrand = window.__brandMode === 'set';
   sw.classList.remove('disabled');
   sw.classList.toggle('on', on);
   sw.setAttribute('aria-checked', String(on));
-  summary.style.display = on && hasBrand ? 'block' : 'none';
-  empty.style.display = !hasBrand ? 'flex' : 'none';
+  // The switch alone decides summary vs. empty here -- Figma's "Brand kit off"/"Brand kit
+  // on" (8727:219504 / 8987:236875) are just this one switch's own off/on states, not a
+  // separate "account has a brand kit" precondition. That whole-account concept still
+  // exists (window.__brandMode, driven by the hidden #roleSwitch demo control + the
+  // "Brand: ..." chip elsewhere) but no longer gates this row -- it wasn't reachable from
+  // the deployed page, so toggling this switch could never show the compact bar.
+  summary.style.display = on ? 'block' : 'none';
+  empty.style.display = on ? 'none' : 'flex';
 }
 function reelGoToBrandSetup(){
   alert('This would open Brand Setup — outside this prototype\'s scope.');
