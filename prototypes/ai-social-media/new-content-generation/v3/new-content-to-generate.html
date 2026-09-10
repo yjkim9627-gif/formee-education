@@ -30,6 +30,7 @@
 <link rel="stylesheet" href="../../../../components/ai-social-media/image-scene-card.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/storyboard-card.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/media-card-icon-btn.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/feedback-status-chip.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/destination-account.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/publish-social-modal.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/action-bar-feedback.css">
@@ -3167,7 +3168,7 @@ function renderVersionGrid(){
       <div class="image-scene-card${ready && v.id === window.__activeVersionId ? ' selected' : ''}" data-type="version" onclick="selectActiveVersion(${v.id})">
         <div class="image-scene-card-preview${ready ? '' : ' generating'}">
           <div class="image-scene-card-top-row">
-            <span class="image-scene-card-ready-badge" style="${ready ? '' : 'display:none;'}">Ready</span>
+            <span class="feedback-status-chip feedback-status-chip--green" style="${ready ? '' : 'display:none;'}">Ready</span>
             <div class="image-scene-card-icon-row">
               <button class="media-card-icon-btn download" type="button" onclick="event.stopPropagation(); downloadImage(${v.id})"><img src="../../../../components/ai-social-media/icons/download-ui.svg" alt=""></button>
               <button class="media-card-icon-btn maximize" type="button" onclick="event.stopPropagation(); openVersionLightbox(${v.id})"><img src="../../../../components/ai-social-media/icons/maximize.svg" alt=""></button>

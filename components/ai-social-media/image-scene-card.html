@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="../demo-nav.css" />
 <link rel="stylesheet" href="image-scene-card.css" />
 <link rel="stylesheet" href="media-card-icon-btn.css" />
+<link rel="stylesheet" href="feedback-status-chip.css" />
 <style>
   body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
   .demo-main { padding: var(--spacing-4xl); }
@@ -100,6 +101,7 @@
         <a href="editor-context-bar.html">Editor ContextBar</a>
         <a href="editor-panel-chrome.html">Editor Panel & Controls</a>
         <a href="editor-safe-zone-legend.html">Safe Zone Legend & Content Preview Actions</a>
+        <a href="feedback-status-chip.html">Feedback / Status Chip</a>
         <a href="heading.html">Heading</a>
         <a href="image-scene-card.html" class="active">Image Scene Card</a>
         <a href="queue-panel.html">Queue Job Row / Queue Panel</a>
@@ -154,7 +156,7 @@
         <div class="image-scene-card" data-type="version">
           <div class="image-scene-card-preview">
             <div class="image-scene-card-top-row">
-              <span class="image-scene-card-ready-badge">Ready</span>
+              <span class="feedback-status-chip feedback-status-chip--green">Ready</span>
               <div class="image-scene-card-icon-row">
                 <button class="media-card-icon-btn download" type="button"><img src="icons/download-ui.svg" alt=""></button>
                 <button class="media-card-icon-btn maximize" type="button"><img src="icons/maximize.svg" alt=""></button>
@@ -172,7 +174,7 @@
         <div class="image-scene-card selected" data-type="version">
           <div class="image-scene-card-preview">
             <div class="image-scene-card-top-row">
-              <span class="image-scene-card-ready-badge">Ready</span>
+              <span class="feedback-status-chip feedback-status-chip--green">Ready</span>
               <div class="image-scene-card-icon-row">
                 <button class="media-card-icon-btn download" type="button"><img src="icons/download-ui.svg" alt=""></button>
                 <button class="media-card-icon-btn maximize" type="button"><img src="icons/maximize.svg" alt=""></button>
