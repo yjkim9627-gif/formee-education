@@ -25,6 +25,7 @@
 <link rel="stylesheet" href="../../../../components/ai-social-media/reference-scene-tile.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/reference-chip.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/voice-accordion-row.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/voice-section.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/queue-panel.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/video-summary-card.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/date-picker.css">
@@ -5719,6 +5720,51 @@ function renderSceneNarrationHTML(scope, unit){
     </div>
   `;
 }
+
+// Timeline tab only (Figma 8727-219846's own "Voice Section" component) -- the Script stage
+// keeps the compact block above unchanged. Word-count row swaps to the red over-limit row
+// past 15 words; the Preview button reuses the existing cached/stale/loading state machine
+// (updateVoicePreviewButton), just reskinned full-width, see voice-section.css's own note.
+function renderVoiceWordcountRowHTML(unit, script){
+  const count = countScriptWords(script);
+  if(count > 15){
+    return `
+      <div class="voice-section-error-row" id="voiceWordcountRow_${unit}">
+        <div class="voice-section-error-left">
+          <span class="voice-section-error-text">You've gone over the word limit.</span>
+          <button class="voice-section-refine-chip" type="button" onclick="refineSceneScript(${unit})">Make it shorter</button>
+        </div>
+        <span class="voice-section-error-count">${count} / 15 words</span>
+      </div>`;
+  }
+  return `<span class="voice-section-wordcount" id="voiceWordcountRow_${unit}">${count} / 15 words</span>`;
+}
+function refineSceneScript(unit){
+  updateSceneScript(unit, fitScriptToWordLimit(getSceneScript(unit), 15));
+}
+function renderTimelineVoiceSectionHTML(unit){
+  const script = getSceneScript(unit);
+  return `
+    <div class="voice-section">
+      <div class="voice-section-header">
+        <span class="voice-section-title">Voice</span>
+        <div class="voice-section-header-right">
+          <span class="voice-section-spacer"></span>
+          <img class="voice-section-caret" src="../../../../components/ai-social-media/icons/chevron-up.svg" alt="">
+        </div>
+      </div>
+      <div class="voice-section-body">
+        <div class="voice-section-script-wrap">
+          <div class="field-fill-wrap" id="narrFieldWrap_tl_${unit}">
+            <textarea class="voice-script-text voice-section-script" data-scene="${unit}" oninput="updateSceneScript(${unit}, this.value)" aria-invalid="${countScriptWords(script) > 15 || countScriptWords(script) === 0}">${escapeHtml(script)}</textarea>
+          </div>
+          ${renderVoiceWordcountRowHTML(unit, script)}
+        </div>
+        <button class="voice-preview-btn" id="voicePreviewBtn_tl_${unit}" onclick="previewSceneVoice('tl', ${unit})"></button>
+      </div>
+    </div>
+  `;
+}
 function renderReelSceneEditors(){
   const count = getSceneCount();
   ensureSceneScripts(count);
@@ -5851,7 +5897,7 @@ function renderTimelineEditor(unit){
         </div>
         <p class="scene-note">AI automatically builds a scene to match this line</p>
       </div>
-      ${renderSceneNarrationHTML('tl', unit)}
+      ${renderTimelineVoiceSectionHTML(unit)}
     </div>
   `;
   renderReferenceImages();
@@ -5933,6 +5979,8 @@ function updateSceneScript(n, value){
 
   document.querySelectorAll(`.voice-guide-${n}`).forEach(g => { g.textContent = wordCountGuideText(value); });
   document.querySelectorAll(`.voice-script-text[data-scene="${n}"]`).forEach(ta => { if(ta.value !== value) ta.value = value; ta.setAttribute('aria-invalid', String(countScriptWords(value) > 15 || countScriptWords(value) === 0)); });
+  const voiceWordcountRow = document.getElementById(`voiceWordcountRow_${n}`);
+  if(voiceWordcountRow) voiceWordcountRow.outerHTML = renderVoiceWordcountRowHTML(n, value);
 
   updateVoicePreviewButton('tl', n);
   updateVoicePreviewButton('vid', n);

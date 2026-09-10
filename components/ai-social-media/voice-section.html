@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>Voice Section — AI Social Media Component</title>
+<link rel="stylesheet" href="../../tokens/tokens.css" />
+<link rel="stylesheet" href="../demo-nav.css" />
+<link rel="stylesheet" href="voice-section.css" />
+<link rel="stylesheet" href="voice-accordion-row.css" />
+<style>
+  body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
+  .demo-main { padding: var(--spacing-4xl); }
+  h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-sm); }
+  h2 { font-size: var(--font-size-text-md); font-weight: 700; margin: var(--spacing-3xl) 0 var(--spacing-sm); }
+  h2:first-of-type { margin-top: 0; }
+  .demo-note { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); max-width: 720px; margin: 0 0 var(--spacing-3xl); line-height: 1.6; }
+  .demo-sub { font-size: var(--font-size-text-xs); color: var(--color-neutral-500); margin: 0 0 var(--spacing-sm); }
+  .demo-row { display: flex; flex-direction: column; gap: var(--spacing-sm); margin-bottom: var(--spacing-2xl); }
+  .demo-label { font-size: var(--font-size-text-xs); color: var(--color-neutral-500); }
+  .demo-grid { display: flex; flex-wrap: wrap; gap: var(--spacing-2xl); align-items: flex-start; }
+</style>
+</head>
+<body>
+<div class="demo-shell">
+  <nav class="demo-sidebar">
+    <a href="../../index.html" class="demo-sidebar-home">← Home</a>
+    <div class="demo-sidebar-group collapsed" data-group="forms-inputs">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Forms & Inputs</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="controls-field-ai-assisted-text.html">Controls / Field / AI assisted text</a>
+        <a href="controls-field.html">Controls / Field</a>
+        <a href="controls-filter-select.html">Controls / Filter / Select</a>
+        <a href="controls-filter-toggle.html">Controls / Filter / Toggle</a>
+        <a href="controls-misc.html">Controls — Icon Action, Popover, Carousel Arrow, Scrollbar, Segmented Control</a>
+        <a href="controls-multi-select.html">Controls / Multi Select</a>
+        <a href="controls-option-card.html">Controls / Option Card</a>
+        <a href="controls-search-field.html">Controls / Search Field</a>
+        <a href="controls-social-profile-row.html">Controls / Social profile row</a>
+        <a href="controls-toggles.html">Controls / Toggles</a>
+        <a href="date-picker.html">Date Picker</a>
+        <a href="duration-chip.html">Controls / Duration Chip</a>
+        <a href="filter-chip.html">Controls / Filter / Toggle</a>
+        <a href="input-login.html">Input / Login</a>
+        <a href="input.html">Input</a>
+        <a href="segment-chip.html">Segment Chip</a>
+        <a href="setting-chip.html">Setting Chip</a>
+        <a href="switch.html">Controls / Switch</a>
+        <a href="table-filter.html">Table / Filter</a>
+        <a href="toggle-chip.html">Controls / Toggle Chip</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="actions">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Actions</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="actions-button.html">Actions / Button</a>
+        <a href="../shared/button.html">Button</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="labels-status">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Labels & Status</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="feedback-status-chip.html">Feedback / Status Chip</a>
+        <a href="post-status-chip.html">Post Status Chip</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="navigation">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Navigation</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="nav.html">Nav / Navigation</a>
+        <a href="topbar-stepper.html">Topbar + Stepper</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="overlays-menus">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Overlays & Menus</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="controls-menu.html">Menu / Context Menu / Size Dropdown</a>
+        <a href="context-bar-popovers.html">ContextBar Popovers</a>
+        <a href="publish-social-modal.html">Publish to Social Modal</a>
+        <a href="../shared/modal-confirm.html">Modal / Confirm</a>
+        <a href="../shared/modal-form.html">Modal / Form</a>
+        <a href="../shared/modal-success.html">Modal / Success</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="images-icons">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Images & Icons</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="brand-logo.html">Brand / Logo</a>
+        <a href="icons.html">Icons</a>
+        <a href="avatar.html">Avatar</a>
+        <a href="illus-placeholder.html">Illus Placeholder</a>
+        <a href="editor-color-swatch.html">Editor / ContextBar Color Swatch</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="data-display">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Data Display</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="carousel-card-block.html">Carousel Card Block</a>
+        <a href="generate-preview-panel.html">Generate Preview Panel</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="content-editor">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Content Editor</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="brand-kit.html">Brand Kit</a>
+        <a href="editor-cell.html">Editor Cell</a>
+        <a href="editor-context-bar.html">Editor ContextBar</a>
+        <a href="editor-panel-chrome.html">Editor Panel & Controls</a>
+        <a href="editor-safe-zone-legend.html">Safe Zone Legend & Content Preview Actions</a>
+        <a href="heading.html">Heading</a>
+        <a href="w-action-bar.html">Action Bar / Editor</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group" data-group="scene-storyboard">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Scene & Storyboard</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="image-scene-card.html">Image Scene Card</a>
+        <a href="media-card-icon-btn.html">Media Card Icon Button</a>
+        <a href="preview-top-row.html">Preview Top Row</a>
+        <a href="scene-tile.html">Scene Tile</a>
+        <a href="reference-scene-tile.html">Reference / Scene Tile · Selectable</a>
+        <a href="storyboard-card.html">Storyboard Card</a>
+        <a href="video-summary-card.html">Video Summary Card</a>
+        <a href="selector-style-card.html">Selector / Style Card</a>
+        <a href="selector-video-card.html">Selector / Video Card</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="generation-workflow">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Generation Workflow</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="music-track-row.html">Music Track Row</a>
+        <a href="queue-panel.html">Queue Job Row / Queue Panel</a>
+        <a href="voice-accordion-row.html">Voice Accordion Row</a>
+        <a href="voice-section.html" class="active">Voice Section</a>
+        <a href="character-card.html">Character Card</a>
+        <a href="action-bar-feedback.html">Action Bar / Brief</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="ai-assistant">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>AI Assistant</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="chat-panel.html">Chat Panel</a>
+        <a href="prompt-box.html">AI Prompt Box</a>
+        <a href="ai-response-card.html">AI Response Card</a>
+        <a href="reference-chip.html">Reference Chip</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="upload-destination">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Upload & Destination</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="upload-dropzone.html">Upload Dropzone / Dashed Upload Row</a>
+        <a href="uploads-file-badge.html">Uploads / File Badge / Source Row</a>
+        <a href="uploads-rows.html">Uploads Panel Rows</a>
+        <a href="destination-account.html">Destination Account</a>
+      </div>
+    </div>
+  </nav>
+  <main class="demo-main">
+  <h1>Voice Section</h1>
+  <p class="demo-note">Figma node 7148:115284. State = Collapsed / Expanded / Error, Mode = Whole take / Split by scene. Voice narration editor card used in Reel/Short Timeline scene editing.</p>
+
+  <h2>Collapsed</h2>
+  <div class="demo-grid">
+    <div class="voice-section collapsed">
+      <div class="voice-section-header">
+        <span class="voice-section-title">Voice</span>
+        <div class="voice-section-header-right">
+          <span class="voice-section-spacer"></span>
+          <img class="voice-section-caret" src="icons/chevron-down.svg" alt="">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Expanded — Whole take</h2>
+  <p class="demo-sub">Script box (no reference chip) + word count + Preview. Regenerate button and the voice-sample row are optional — not wired into any real screen yet (see file header note).</p>
+  <div class="demo-grid">
+    <div class="voice-section">
+      <div class="voice-section-header">
+        <span class="voice-section-title">Voice</span>
+        <div class="voice-section-header-right">
+          <span class="voice-section-spacer"></span>
+          <img class="voice-section-caret" src="icons/chevron-up.svg" alt="">
+        </div>
+      </div>
+      <div class="voice-section-body">
+        <div class="voice-section-script-wrap">
+          <div class="voice-section-script">Okay wait, you guys have to see this new lip tint</div>
+          <span class="voice-section-wordcount">11 / 15 words</span>
+        </div>
+        <button class="voice-section-preview-btn" type="button">
+          <span class="voice-section-preview-play"><img src="icons/audio-play.svg" alt=""></span>
+          Preview
+        </button>
+      </div>
+    </div>
+    <div class="voice-section">
+      <div class="voice-section-header">
+        <span class="voice-section-title">Voice</span>
+        <div class="voice-section-header-right">
+          <span class="voice-section-spacer"></span>
+          <img class="voice-section-caret" src="icons/chevron-up.svg" alt="">
+        </div>
+      </div>
+      <div class="voice-section-body">
+        <div class="voice-section-script-wrap">
+          <div class="voice-section-script">Okay wait, you guys have to see this new lip tint</div>
+          <span class="voice-section-wordcount">11 / 15 words</span>
+        </div>
+        <button class="voice-section-preview-btn" type="button">
+          <span class="voice-section-preview-play"><img src="icons/audio-play.svg" alt=""></span>
+          Preview
+        </button>
+        <button class="voice-section-preview-btn" type="button">
+          <span class="voice-section-preview-play"><img src="icons/audio-play.svg" alt=""></span>
+          Regenerate
+        </button>
+        <div class="voice-section-sample">
+          <span class="voice-section-sample-play"><img src="icons/audio-play.svg" alt=""></span>
+          <span class="voice-section-sample-name">Voice 1</span>
+          <span class="voice-section-sample-time">00:02 / 00:10</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Error</h2>
+  <p class="demo-sub">Same Whole take layout, but the word-count row switches to a red over-limit message + refine chip.</p>
+  <div class="demo-grid">
+    <div class="voice-section">
+      <div class="voice-section-header">
+        <span class="voice-section-title">Voice</span>
+        <div class="voice-section-header-right">
+          <span class="voice-section-spacer"></span>
+          <img class="voice-section-caret" src="icons/chevron-up.svg" alt="">
+        </div>
+      </div>
+      <div class="voice-section-body">
+        <div class="voice-section-script-wrap">
+          <div class="voice-section-script">Okay wait, you guys have to see this new lip tint</div>
+          <div class="voice-section-error-row">
+            <div class="voice-section-error-left">
+              <span class="voice-section-error-text">You've gone over the word limit.</span>
+              <button class="voice-section-refine-chip" type="button">Make it shorter</button>
+            </div>
+            <span class="voice-section-error-count">16 / 15 words</span>
+          </div>
+        </div>
+        <button class="voice-section-preview-btn" type="button">
+          <span class="voice-section-preview-play"><img src="icons/audio-play.svg" alt=""></span>
+          Preview
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <h2>Expanded — Split by scene</h2>
+  <p class="demo-sub">A stack of .voice-accordion-row instances, one per scene — that component's own CSS already matched this spec exactly.</p>
+  <div class="demo-grid">
+    <div class="voice-section">
+      <div class="voice-section-header">
+        <span class="voice-section-title">Voice</span>
+        <div class="voice-section-header-right">
+          <span class="voice-section-spacer"></span>
+          <img class="voice-section-caret" src="icons/chevron-up.svg" alt="">
+        </div>
+      </div>
+      <div class="voice-section-body" style="gap:10px;">
+        <div class="voice-accordion-row">
+          <button class="voice-acc-header" type="button">
+            <span class="voice-acc-time">0:00-0:08</span>
+            <span class="voice-acc-summary">Okay wait, you guys have to see this new lip tint...</span>
+            <span class="voice-credit-pill"><span class="cost"><img src="icons/zap-sm.svg" alt="">5</span></span>
+            <img class="voice-acc-caret" src="icons/caret-down-filled.svg" alt="">
+          </button>
+        </div>
+        <div class="voice-accordion-row expanded">
+          <button class="voice-acc-header" type="button">
+            <span class="voice-acc-time">0:09-0:16</span>
+            <span class="voice-acc-summary">See for yourself right now!</span>
+            <span class="voice-credit-pill"><span class="cost"><img src="icons/zap-sm.svg" alt="">5</span></span>
+            <img class="voice-acc-caret" src="icons/caret-down-filled.svg" alt="">
+          </button>
+          <div class="voice-acc-body">
+            <div class="voice-acc-script-wrap">
+              <div class="voice-script-text">Watch it glide on, blend into the color, and see the difference for yourself.</div>
+              <span class="voice-acc-wordcount">9 / 15 words</span>
+            </div>
+            <button class="voice-section-preview-btn" type="button">
+              <span class="voice-section-preview-play"><img src="icons/audio-play.svg" alt=""></span>
+              Preview
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </main>
+</div>
+<script src="../demo-nav.js"></script>
+</body>
+</html>
