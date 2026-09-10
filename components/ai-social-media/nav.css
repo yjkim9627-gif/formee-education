@@ -1,59 +1,166 @@
-/* Nav / Navigation — shared component (components/ai-social-media/nav.html 참고)
-   Figma: FME_AI-Social-Media, "Nav / Navigation" — 좌측 사이드바 (brand mark, workspace switcher, nav groups/items).
-   3개 v2 화면(new-image-to-generate, new-carousel-to-generate, new-content-brief-to-generate)에
-   byte-identical하게 중복돼 있던 CSS를 그대로 추출한 것. 마크업은 각 페이지에 그대로 남아있고
-   (정적 HTML이라 include 불가), 이 파일은 스타일만 <link>로 공유한다. */
+/* Nav / Navigation — shared component
+   Figma: FME_AI-Social-Media, "Nav / Navigation" (node 9154:132343 — the unified design).
+   The left app sidebar: account block (brand mark + workspace switcher + collapse toggle)
+   then the nav item list grouped into Create / Content / Asset.
 
-.nav{
-  width:262px; flex-shrink:0; background:var(--color-neutral-0); border-right:1px solid var(--color-neutral-300);
-  padding:16px 12px; display:flex; flex-direction:column; gap:20px;
-  transition:width 0.2s ease, padding 0.2s ease; overflow:hidden;
+   Consumed by:
+     - components/ai-social-media/nav.html                       (demo)
+     - prototypes/.../new-content-generation/v4/new-content-to-generate.html
+     - prototypes/.../brand-characters/brand-setup-kit-character-library.html
+     - prototypes/.../schedule/schedule.html
+   Two markup families are supported so each prototype adopts it with minimal churn:
+   the ".nav / .nav-group / .nav-label(section head) / .nav-item .label" family (v4, this
+   demo) and the ".sidebar / .account* / .nav-section / .nav-sec-head / .nav-item-inner /
+   .nav-item .nav-label(item text)" family (brand-characters, schedule). Both render the
+   same Figma design. Icons are the real 20px components/ai-social-media/icons/nav-*.svg
+   set — no exported multi-vector fragments.
+
+   Sizing (Figma): item h36, label 15/22/500 (neutral-700; active neutral-900), icon 20,
+   icon↔label gap 8, item padding 4/12, radius-lg; section head 10/14/700 uppercase
+   letter-spacing 1px neutral-500; account brand title 16/24/600, sub 12/18/400; workspace
+   input 1px neutral-400 radius-lg px12 py7; 16px between the account block and the list and
+   between groups, 1px within a group; active tint brand-primary-light. */
+
+/* ============================================================================
+   Container
+   ============================================================================ */
+.nav,
+.sidebar{
+  width:262px; flex-shrink:0; box-sizing:border-box;
+  background:var(--color-neutral-0); border-right:1px solid var(--color-neutral-300);
+  display:flex; flex-direction:column; align-items:stretch;
+  padding:0 0 var(--spacing-4xl); overflow:hidden;
+  transition:width .2s ease, padding .2s ease;
+}
+.sidebar-inner{display:flex; flex-direction:column; flex:none; align-items:stretch;}
+
+/* ---------- Account block ---------- */
+.nav-account,
+.account{
+  display:flex; flex-direction:column; gap:var(--spacing-xs);
+  padding:0 var(--spacing-md); margin-bottom:var(--spacing-lg); flex:none;
 }
 
-/* ---------- Brand mark ---------- */
-.nav-brand{display:flex; align-items:center; gap:10px; padding:8px 4px;}
-.nav-brand .mark{width:28px; height:28px; border-radius:7px; background:linear-gradient(135deg,var(--color-brand-primary),var(--color-brand-accent)); flex-shrink:0;}
-.nav-brand .txt b{display:block; font-size:13px; font-weight:600; color:var(--color-neutral-900); white-space:nowrap;}
-.nav-brand .txt span{display:block; font-size:10.5px; color:var(--color-neutral-500); white-space:nowrap;}
-
-/* ---------- Workspace switcher ---------- */
-.nav-workspace{
-  display:flex; align-items:center; justify-content:space-between; gap:8px; height:36px; padding:0 12px;
-  margin:0 4px 4px; border:1px solid var(--color-neutral-400); border-radius:8px; background:var(--color-neutral-0);
-  font-size:14px; color:var(--color-neutral-500); cursor:pointer; transition:border-color .15s ease, background .15s ease;
+.nav-brand,
+.account-top,
+.brand{
+  display:flex; align-items:flex-start; justify-content:space-between; gap:8px;
+  box-sizing:border-box; padding:var(--spacing-lg) 0 var(--spacing-lg) 2px;
+  border-radius:var(--radius-lg);
 }
-.nav-workspace:hover{background:var(--color-neutral-50); border-color:var(--color-neutral-450);}
-.nav-workspace:focus-visible{outline:2px solid var(--color-brand-primary); outline-offset:1px;}
-.nav-workspace .chevron{color:var(--color-neutral-500); font-size:10px; flex-shrink:0;}
+.nav-brand .link, .account-link, .brand .link{display:flex; align-items:center; gap:var(--spacing-md); min-width:0;}
+.nav-brand .mark, .account-link .logo, .brand-mark{
+  width:33px; height:32px; flex-shrink:0; display:block; border-radius:0; background:none;
+}
+.nav-brand .txt, .account-names{display:flex; flex-direction:column; min-width:0; white-space:nowrap;}
+.nav-brand .txt b, .acc-title, .brand-name{
+  font-family:var(--font-family-text); font-size:16px; line-height:24px;
+  font-weight:var(--font-weight-semibold); color:var(--color-neutral-900);
+}
+.nav-brand .txt span, .acc-sub, .brand-sub{
+  font-family:var(--font-family-text); font-size:12px; line-height:18px;
+  font-weight:var(--font-weight-regular); color:var(--color-neutral-500);
+}
+/* collapse toggle (icon / ui / panel) */
+.nav-brand .collapse-btn,
+.account-panel,
+.brand-collapse{
+  display:flex; align-items:center; margin-top:2px; margin-left:auto;
+  width:20px; height:20px; flex-shrink:0; padding:0; border:none; background:none; cursor:pointer;
+}
+.nav-brand .collapse-btn img, .account-panel img, .brand-collapse img{display:block; width:20px; height:20px;}
+.account-panel:hover, .brand-collapse:hover, .nav-brand .collapse-btn:hover{opacity:.6;}
 
-/* ---------- Nav groups / items ---------- */
-.nav-group{display:flex; flex-direction:column; gap:1px;}
-.nav-label{font-size:10px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--color-neutral-500); padding:6px 8px; white-space:nowrap;}
+/* ---------- Workspace switcher (Figma: the [DS] Input, Type=Dropdown) ---------- */
+.nav-workspace,
+.account-input,
+.acct{
+  display:flex; align-items:center; gap:8px; box-sizing:border-box;
+  padding:7px 12px; margin:0; border:1px solid var(--color-neutral-400);
+  border-radius:var(--radius-lg); background:var(--color-neutral-0);
+  font-family:var(--font-family-text); font-size:14px; line-height:22px;
+  font-weight:var(--font-weight-regular); color:var(--color-neutral-500); cursor:pointer;
+}
+.nav-workspace:hover, .account-input:hover, .acct:hover{border-color:var(--color-neutral-450);}
+.nav-workspace:focus-within, .account-input:focus-within, .acct:focus-within{border-color:var(--color-neutral-500);}
+.nav-workspace > span:first-child, .account-input select, .acct > span:first-child{
+  flex:1 0 0; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  font-family:inherit; font-size:inherit; line-height:inherit; color:inherit; cursor:pointer; border:none; background:none;
+}
+.nav-workspace .chevron{color:var(--color-neutral-450); font-size:10px; flex-shrink:0; display:flex;}
+.nav-workspace .chevron img{width:16px; height:16px; display:block;}
+
+/* ============================================================================
+   Item list — 16px between the top-level rows (bare items + groups),
+   1px within a group.  All three consumers wrap the list in .nav-items.
+   ============================================================================ */
+.nav-items{
+  display:flex; flex-direction:column; gap:var(--spacing-lg);
+  padding:0 var(--spacing-md); flex:none; align-items:stretch;
+}
+/* group = a labelled block (.nav-group in the .nav family, .nav-section in the .sidebar family) */
+.nav-group,
+.nav-section{display:flex; flex-direction:column; gap:var(--spacing-1); align-items:stretch;}
+
+/* section heading — .nav-label (v4, demo) or .nav-sec-head (schedule); the
+   brand-characters page keeps its own <div class=nav-sec-head><p> markup + CSS. */
+.nav-label,
+.nav-sec-head{
+  display:block; padding:8px; margin:0;
+  font-family:var(--font-family-text); font-size:10px; line-height:14px;
+  font-weight:var(--font-weight-bold); letter-spacing:1px; text-transform:uppercase;
+  color:var(--color-neutral-500); white-space:nowrap;
+}
+
+/* ---------- Nav item ---------- */
 .nav-item{
-  display:flex; align-items:center; gap:9px; padding:8px 8px; border-radius:7px; font-size:13px;
-  color:var(--color-neutral-700); font-weight:500; white-space:nowrap; cursor:pointer;
-  transition:background .15s ease, color .15s ease;
+  display:flex; align-items:center; gap:var(--spacing-sm); box-sizing:border-box;
+  width:100%; height:36px; padding:4px 12px; border-radius:var(--radius-lg);
+  color:var(--color-neutral-700); text-decoration:none; text-align:left;
+  border:none; background:none; cursor:pointer; font-family:var(--font-family-text);
 }
-.nav-item .ic{position:relative; flex-shrink:0;}
+.nav-item-inner{display:flex; align-items:center; gap:var(--spacing-sm); min-width:0;}
+.nav-fill{flex:1 0 0; min-width:1px; height:100%;}
+
+/* item icon — one 20px glyph */
+.nav-item .ic{width:20px; height:20px; flex-shrink:0; position:relative; display:block; overflow:visible;}
 .nav-item .ic.clip{overflow:hidden;}
 .nav-item .ic .f{position:absolute;}
 .nav-item .ic img{display:block; width:100%; height:100%; max-width:none;}
+.nav-item > svg{width:20px; height:20px; flex:none; color:var(--color-neutral-500);
+  stroke:currentColor; fill:none; stroke-width:var(--icon-stroke-width,1.6);
+  stroke-linecap:round; stroke-linejoin:round;}
+.nav-item.active > svg{color:var(--color-neutral-700);}
 
-/* state: hover (not previously exercised — added per interactive-affordance convention shared with
-   .topbar-icon-btn:hover / .nav-workspace:hover) */
+/* item label — 15/22/500. <span class="label"> (v4, demo), <span class="nav-label">
+   nested in .nav-item-inner (brand-characters — must beat the section-heading rule),
+   or a bare trailing <span> (schedule). */
+.nav-item .label,
+.nav-item .nav-label,
+.nav-item > span:not(.ic):not(.nav-fill):not(.nav-item-inner){
+  font-family:var(--font-family-text); font-size:15px; line-height:22px;
+  font-weight:var(--font-weight-medium); letter-spacing:0; text-transform:none;
+  color:inherit; padding:0; white-space:nowrap; position:static;
+}
+
+/* states */
 .nav-item:hover:not(.active){background:var(--color-neutral-100);}
 .nav-item:focus-visible{outline:2px solid var(--color-brand-primary); outline-offset:1px;}
-
-/* state: active/selected — Figma: 선택 상태에 brand-primary-light 틴트를 쓰는 몇 안 되는 카테고리
-   (style-reference.md §3 Navigation) */
 .nav-item.active{background:var(--color-brand-primary-light); color:var(--color-neutral-900);}
-
-/* state: disabled (documented for completeness — not currently used by any v2 screen) */
+.nav-item.active .label, .nav-item.active .nav-label{color:var(--color-neutral-900);}
 .nav-item.disabled{color:var(--color-neutral-400); cursor:not-allowed; pointer-events:none;}
 
-/* ---------- Collapsed variant ---------- */
-.nav.collapsed{width:64px; padding:16px 8px;}
-.nav.collapsed .nav-workspace{display:none;}
-.nav.collapsed .nav-brand{justify-content:center; padding:8px 0;}
-.nav.collapsed .nav-brand .txt, .nav.collapsed .nav-label, .nav.collapsed .nav-item .label{display:none;}
-.nav.collapsed .nav-item{justify-content:center; padding:8px;}
+/* ============================================================================
+   Collapsed variant
+   ============================================================================ */
+.nav.collapsed, .sidebar.collapsed{width:64px;}
+.nav.collapsed .nav-account, .sidebar.collapsed .account{padding:0 8px;}
+.nav.collapsed .nav-workspace, .sidebar.collapsed .account-input, .sidebar.collapsed .acct{display:none;}
+.nav.collapsed .nav-brand, .sidebar.collapsed .account-top, .sidebar.collapsed .brand{justify-content:center; padding:16px 0;}
+.nav.collapsed .nav-brand .txt, .nav.collapsed .nav-label, .nav.collapsed .nav-item .label,
+.sidebar.collapsed .account-names, .sidebar.collapsed .nav-sec-head, .sidebar.collapsed .nav-item .nav-label{display:none;}
+/* collapse toggle stays visible while collapsed so the user can expand again */
+.nav.collapsed .nav-brand{flex-direction:column; gap:8px;}
+.nav.collapsed .nav-items, .sidebar.collapsed .nav-items{padding:0 8px;}
+.nav.collapsed .nav-item, .sidebar.collapsed .nav-item{justify-content:center; padding:4px;}
+.nav.collapsed .nav-fill, .sidebar.collapsed .nav-fill{display:none;}

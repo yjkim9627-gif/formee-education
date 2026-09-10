@@ -1231,33 +1231,38 @@
 
 <div class="app">
 
-  <!-- NAV -->
+  <!-- NAV — components/ai-social-media/nav.css (Figma "Nav / Navigation" 9154:132343) -->
   <div class="nav" id="sideNav">
-    <div class="nav-brand">
-      <img class="mark" src="../../../../components/ai-social-media/icons/brand-formee-education-mark.svg" alt="" style="width:28px;height:28px;border-radius:7px;object-fit:contain;">
-      <div class="txt"><b>Formee Education</b><span>AI Social Media</span></div>
+    <div class="nav-account">
+      <div class="nav-brand">
+        <span class="link">
+          <img class="mark" src="../../../../components/ai-social-media/icons/brand-formee-education-mark.svg" alt="Formee Education">
+          <span class="txt"><b>Formee Education</b><span>AI Social Media</span></span>
+        </span>
+        <button type="button" class="collapse-btn" aria-label="Collapse navigation" onclick="document.getElementById('sideNav').classList.toggle('collapsed')"><img src="../../../../components/ai-social-media/icons/ui-panel.svg" alt=""></button>
+      </div>
+      <div class="nav-workspace"><span>Formee Express</span><span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" alt=""></span></div>
     </div>
-    <div class="nav-workspace"><span>Formee Express</span><span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span></div>
-    <div class="nav-group">
-      <div class="nav-item"><div class="ic" style="width:20px;height:20px;"><img src="../../../../components/ai-social-media/icons/nav-home.svg" alt=""></div><span class="label">Home</span></div>
-    </div>
-    <div class="nav-group">
-      <div class="nav-label">Create</div>
-      <div class="nav-item active"><div class="ic" style="width:20px;height:20px;"><img src="../../../../components/ai-social-media/icons/ai-sparkle-outline-grey.svg" alt=""></div><span class="label">New Content</span></div>
-    </div>
-    <div class="nav-group">
-      <div class="nav-label">Content</div>
-      <div class="nav-item"><div class="ic" style="width:20px;height:20px;"><img src="../../../../components/ai-social-media/icons/nav-library.svg" alt=""></div><span class="label">Library</span></div>
-      <div class="nav-item"><div class="ic" style="width:20px;height:20px;"><img src="../../../../components/ai-social-media/icons/nav-schedule.svg" alt=""></div><span class="label">Schedule</span></div>
-      <div class="nav-item"><div class="ic" style="width:20px;height:20px;"><img src="../../../../components/ai-social-media/icons/data-trending-up.svg" alt=""></div><span class="label">Trends</span></div>
-      <div class="nav-item"><div class="ic" style="width:20px;height:20px;"><img src="../../../../components/ai-social-media/icons/nav-analytics.svg" alt=""></div><span class="label">Analytics</span></div>
-    </div>
-    <div class="nav-group">
-      <div class="nav-label">Asset</div>
-      <div class="nav-item" id="navBrandSetup" onclick="goToBrandSetupPage()" style="cursor:pointer;"><div class="ic" style="width:20px;height:20px;"><img src="../../../../components/ai-social-media/icons/nav-workspace-03.svg" alt=""></div><span class="label">Brand Setup</span></div>
-      <div class="nav-item"><div class="ic" style="width:20px;height:20px;"><img src="../../../../components/ai-social-media/icons/nav-characters.svg" alt=""></div><span class="label">Characters</span></div>
-      <div class="nav-item"><div class="ic" style="width:20px;height:20px;"><img src="../../../../components/ai-social-media/icons/nav-voices.svg" alt=""></div><span class="label">Voices</span></div>
-      <div class="nav-item"><div class="ic" style="width:20px;height:20px;"><img src="../../../../components/ai-social-media/icons/nav-audio.svg" alt=""></div><span class="label">Audio Library</span></div>
+    <div class="nav-items">
+      <div class="nav-item"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-home.svg" alt=""></span><span class="label">Home</span></div>
+      <div class="nav-group">
+        <div class="nav-label">Create</div>
+        <div class="nav-item active"><span class="ic"><img src="../../../../components/ai-social-media/icons/ai-sparkle-outline-grey.svg" alt=""></span><span class="label">New Content</span></div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-label">Content</div>
+        <div class="nav-item"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-library.svg" alt=""></span><span class="label">Library</span></div>
+        <div class="nav-item"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-schedule.svg" alt=""></span><span class="label">Schedule</span></div>
+        <div class="nav-item"><span class="ic"><img src="../../../../components/ai-social-media/icons/data-trending-up.svg" alt=""></span><span class="label">Trends</span></div>
+        <div class="nav-item"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-analytics.svg" alt=""></span><span class="label">Analytics</span></div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-label">Asset</div>
+        <div class="nav-item" id="navBrandSetup" onclick="goToBrandSetupPage()" style="cursor:pointer;"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-workspace-03.svg" alt=""></span><span class="label">Brand Setup</span></div>
+        <div class="nav-item"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-characters.svg" alt=""></span><span class="label">Characters</span></div>
+        <div class="nav-item"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-voices.svg" alt=""></span><span class="label">Voices</span></div>
+        <div class="nav-item"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-audio.svg" alt=""></span><span class="label">Audio Library</span></div>
+      </div>
     </div>
   </div>
 
