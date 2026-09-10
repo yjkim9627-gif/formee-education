@@ -42,6 +42,7 @@
 <link rel="stylesheet" href="../../../../components/ai-social-media/feedback-status-chip.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/destination-account.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/publish-destination-table-row.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/controls-field-ai-assisted-text.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/publish-social-modal.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/controls-misc.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/controls-toggles.css">
@@ -2451,17 +2452,18 @@
           </div>
 
           <textarea class="pub-caption-input" id="pubCaption" placeholder="Draft your caption — or generate suggestions above and tap a chip to add it." oninput="onSharedCaptionInput()"></textarea>
-          <div class="pub-caption-refine-row">
-            <div class="pub-refine-chips">
-              <button type="button" class="pub-refine-chip" onclick="refineCaptionWithAI('shorter')">Make it shorter</button>
-              <button type="button" class="pub-refine-chip" onclick="refineCaptionWithAI('punchier')">Make it punchier</button>
-              <button type="button" class="pub-refine-chip" onclick="refineCaptionWithAI('cta')">Add a call to action</button>
+          <div class="controls-field-ai__chips" id="pubCaptionChipsRow">
+            <div class="controls-field-ai__quick-chips" id="pubCaptionQuickChips">
+              <button type="button" class="controls-field-ai__quick-chip" onclick="refineCaptionWithAI('shorter')">Make it shorter</button>
+              <button type="button" class="controls-field-ai__quick-chip" onclick="refineCaptionWithAI('punchier')">Make it punchier</button>
+              <button type="button" class="controls-field-ai__quick-chip" onclick="refineCaptionWithAI('cta')">Add a call to action</button>
             </div>
-            <button type="button" class="pub-refine-ai-pill" onclick="refineCaptionWithAI('ai')">
-              <span class="ic"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIiBjbGlwLXBhdGg9InVybCgjY2xpcDBfMF8zNDkpIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTEzLjU3MzMgMS41NzMzM0wxNC40MjY3IDIuNDI2NjdDMTQuNTAzMyAyLjUwMTIxIDE0LjU2NDIgMi41OTAzNiAxNC42MDU3IDIuNjg4ODNDMTQuNjQ3MyAyLjc4NzMgMTQuNjY4NyAyLjg5MzExIDE0LjY2ODcgM0MxNC42Njg3IDMuMTA2ODkgMTQuNjQ3MyAzLjIxMjcgMTQuNjA1NyAzLjMxMTE3QzE0LjU2NDIgMy40MDk2NCAxNC41MDMzIDMuNDk4NzkgMTQuNDI2NyAzLjU3MzMzTDMuNTczMzMgMTQuNDI2N0MzLjQ5ODc5IDE0LjUwMzMgMy40MDk2NCAxNC41NjQyIDMuMzExMTcgMTQuNjA1N0MzLjIxMjcgMTQuNjQ3MyAzLjEwNjg5IDE0LjY2ODcgMyAxNC42Njg3QzIuODkzMTEgMTQuNjY4NyAyLjc4NzMgMTQuNjQ3MyAyLjY4ODgzIDE0LjYwNTdDMi41OTAzNiAxNC41NjQyIDIuNTAxMjEgMTQuNTAzMyAyLjQyNjY3IDE0LjQyNjdMMS41NzMzMyAxMy41NzMzQzEuNDk3NTQgMTMuNDk4MyAxLjQzNzM4IDEzLjQwOSAxLjM5NjMyIDEzLjMxMDZDMS4zNTUyNiAxMy4yMTIyIDEuMzM0MTIgMTMuMTA2NiAxLjMzNDEyIDEzQzEuMzM0MTIgMTIuODkzNCAxLjM1NTI2IDEyLjc4NzggMS4zOTYzMiAxMi42ODk0QzEuNDM3MzggMTIuNTkxIDEuNDk3NTQgMTIuNTAxNyAxLjU3MzMzIDEyLjQyNjdMMTIuNDI2NyAxLjU3MzMzQzEyLjUwMTcgMS40OTc1NCAxMi41OTEgMS40MzczOCAxMi42ODk0IDEuMzk2MzJDMTIuNzg3OCAxLjM1NTI2IDEyLjg5MzQgMS4zMzQxMiAxMyAxLjMzNDEyQzEzLjEwNjYgMS4zMzQxMiAxMy4yMTIyIDEuMzU1MjYgMTMuMzEwNiAxLjM5NjMyQzEzLjQwOSAxLjQzNzM4IDEzLjQ5ODMgMS40OTc1NCAxMy41NzMzIDEuNTczMzNaIiBzdHJva2U9IiM0RjZERTYiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggaWQ9IlZlY3Rvcl8yIiBkPSJNOS4zMzMzNyA0LjY2Njk5TDExLjMzMzQgNi42NjY5OSIgc3Ryb2tlPSIjNEY2REU2IiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxwYXRoIGlkPSJWZWN0b3JfMyIgZD0iTTMuMzMzMzMgNFY2LjY2NjY3IiBzdHJva2U9IiM0RjZERTYiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggaWQ9IlZlY3Rvcl80IiBkPSJNMTIuNjY2NiA5LjMzMzAxVjExLjk5OTciIHN0cm9rZT0iIzRGNkRFNiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzUiIGQ9Ik02LjY2NjYzIDEuMzMzMDFWMi42NjYzNCIgc3Ryb2tlPSIjNEY2REU2IiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxwYXRoIGlkPSJWZWN0b3JfNiIgZD0iTTQuNjY2NjcgNS4zMzMwMUgyIiBzdHJva2U9IiM0RjZERTYiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggaWQ9IlZlY3Rvcl83IiBkPSJNMTQgMTAuNjY3SDExLjMzMzQiIHN0cm9rZT0iIzRGNkRFNiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzgiIGQ9Ik03LjMzMzMzIDJINiIgc3Ryb2tlPSIjNEY2REU2IiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjwvZz4KPGRlZnM+CjxjbGlwUGF0aCBpZD0iY2xpcDBfMF8zNDkiPgo8cmVjdCB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIGZpbGw9IndoaXRlIi8+CjwvY2xpcFBhdGg+CjwvZGVmcz4KPC9zdmc+Cg==" alt=""></span>
-              <span class="label">Refine with AI</span>
+            <button type="button" class="controls-field-ai__refine-btn" id="pubRefineAiPill" onclick="toggleCaptionRefinePanel()">
+              <img src="../../../../components/ai-social-media/icons/ai-refine.svg" alt="">
+              <span>Refine with AI</span>
             </button>
           </div>
+          <div class="controls-field-ai__panel" id="pubCaptionRefinePanel" style="display:none;"></div>
 
           <div class="pub-divider-inner"></div>
 
@@ -7070,6 +7072,154 @@ function refineCaptionWithAI(mode){
   }
   ta.value = text;
   onSharedCaptionInput();
+}
+
+// ---- "Refine with AI" panel (Figma 8727:218298) — 1 Closed / 2 Open / 3 Typing /
+// 4 Generating / 5 Result / 6 Applied. Shared component: components/ai-social-media/
+// controls-field-ai-assisted-text.css. The 3 instant chips above (refineCaptionWithAI)
+// are untouched -- this is the separate free-text refine flow opened by the pill itself.
+window.__captionRefine = { open: false, appliedOnce: false, phase: 'idle', prompt: '', result: '' };
+
+function updateCaptionRefinePillClass(){
+  const pill = document.getElementById('pubRefineAiPill');
+  if(!pill) return;
+  const s = window.__captionRefine;
+  pill.classList.remove('is-open', 'is-engaged');
+  if(s.open){
+    pill.classList.add((s.phase === 'idle' && !s.prompt.trim()) ? 'is-open' : 'is-engaged');
+  } else if(s.appliedOnce){
+    pill.classList.add('is-engaged');
+  }
+}
+
+// Applied state (6) hides the instant quick-chips entirely and right-aligns the pill alone --
+// matches Figma's own example exactly (a generic "shorter/punchier/cta" set stops being
+// useful advice once the caption has already been AI-refined once).
+function updateCaptionQuickChipsVisibility(){
+  const chipsRow = document.getElementById('pubCaptionQuickChips');
+  const wrap = document.getElementById('pubCaptionChipsRow');
+  if(chipsRow) chipsRow.style.display = window.__captionRefine.appliedOnce ? 'none' : 'flex';
+  if(wrap) wrap.style.justifyContent = window.__captionRefine.appliedOnce ? 'flex-end' : 'space-between';
+}
+
+function toggleCaptionRefinePanel(){
+  const s = window.__captionRefine;
+  s.open = !s.open;
+  if(!s.open){ s.phase = 'idle'; s.prompt = ''; s.result = ''; }
+  renderCaptionRefinePanel();
+}
+
+function onCaptionRefinePromptInput(value){
+  window.__captionRefine.prompt = value;
+  updateCaptionRefinePillClass();
+  const submitBtn = document.querySelector('#pubCaptionRefinePanel .controls-field-ai__prompt-submit');
+  if(submitBtn) submitBtn.classList.toggle('is-active', !!value.trim());
+}
+
+function quickFillCaptionRefine(text){
+  window.__captionRefine.prompt = text;
+  submitCaptionRefinePrompt();
+}
+
+function submitCaptionRefinePrompt(){
+  const s = window.__captionRefine;
+  if(!s.prompt.trim() || s.phase === 'generating') return;
+  s.phase = 'generating';
+  renderCaptionRefinePanel();
+  setTimeout(() => {
+    const base = document.getElementById('pubCaption').value.trim() || buildAutoCaption();
+    s.result = computeCaptionAiRefineResult(s.prompt, base);
+    s.phase = 'result';
+    renderCaptionRefinePanel();
+  }, 1100);
+}
+
+// Lightweight heuristic "AI" — reuses the same shorten/punchier/cta transforms as the
+// instant chips when the free-text prompt mentions them, else a generic light polish.
+function computeCaptionAiRefineResult(promptText, baseText){
+  const p = promptText.toLowerCase();
+  let text = baseText;
+  if(p.includes('short')){
+    const words = text.split(/\s+/).filter(Boolean);
+    const limit = Math.max(12, Math.round(words.length * 0.6));
+    text = words.slice(0, limit).join(' ');
+  }
+  if(p.includes('punch') || p.includes('energ') || p.includes('bold')){
+    text = text.replace(/\.(\s|$)/g, '!$1').trim();
+  }
+  if(p.includes('call to action') || p.includes('cta')){
+    const details = getBriefDetails();
+    const cta = details.cta || (window.__brandMode === 'set' ? 'Shop now — link in bio.' : 'Follow for more.');
+    if(!text.includes(cta)) text = `${text}\n${cta}`;
+  }
+  if(text === baseText){
+    text = text.trim();
+    if(text && !/[.!?]$/.test(text)) text += '.';
+  }
+  return text;
+}
+
+function undoCaptionRefineResult(){
+  const s = window.__captionRefine;
+  s.phase = 'idle';
+  s.result = '';
+  renderCaptionRefinePanel();
+}
+
+function applyCaptionRefineResult(){
+  const s = window.__captionRefine;
+  document.getElementById('pubCaption').value = s.result;
+  onSharedCaptionInput();
+  s.appliedOnce = true;
+  s.open = false;
+  s.phase = 'idle';
+  s.prompt = '';
+  s.result = '';
+  renderCaptionRefinePanel();
+}
+
+function renderCaptionRefinePanel(){
+  const panel = document.getElementById('pubCaptionRefinePanel');
+  const s = window.__captionRefine;
+  updateCaptionRefinePillClass();
+  updateCaptionQuickChipsVisibility();
+  if(!panel) return;
+  if(!s.open){ panel.style.display = 'none'; panel.innerHTML = ''; return; }
+  panel.style.display = 'flex';
+
+  const icon = '../../../../components/ai-social-media/icons/ai-refine.svg';
+  const turnHtml = (s.phase === 'generating' || s.phase === 'result')
+    ? `<div class="controls-field-ai__turn"><p>${escapeHtml(s.prompt)}</p></div>` : '';
+  const loadingHtml = s.phase === 'generating' ? `
+    <div class="controls-field-ai__loading">
+      <img class="controls-field-ai__loading-spinner" src="../../../../components/ai-social-media/icons/ui-spinner.svg" alt="">
+      <div class="controls-field-ai__loading-text"><b>Rewriting…</b><span>Applying your refinement</span></div>
+    </div>` : '';
+  const resultHtml = s.phase === 'result' ? `
+    <div class="controls-field-ai__section-label"><img src="${icon}" alt=""><span>Updated by AI</span></div>
+    <div class="controls-field-ai__result-box">
+      <p>${escapeHtml(s.result)}</p>
+      <button type="button" class="controls-field-ai__undo-btn" onclick="undoCaptionRefineResult()" aria-label="Undo"><img src="../../../../components/ai-social-media/icons/ui-undo.svg" alt=""></button>
+    </div>
+    <div class="controls-field-ai__use-row">
+      <button type="button" class="btn btn-dark controls-field-ai__use-btn" onclick="applyCaptionRefineResult()">Use this</button>
+    </div>` : '';
+  const generating = s.phase === 'generating';
+  const submitActiveCls = (s.prompt.trim() && !generating) ? ' is-active' : '';
+
+  panel.innerHTML = `
+    ${turnHtml}${loadingHtml}${resultHtml}
+    <div class="controls-field-ai__section-label"><img src="${icon}" alt=""><span>Refine the caption</span></div>
+    <div class="controls-field-ai__prompt-box">
+      <input type="text" class="controls-field-ai__prompt-input" id="pubCaptionRefineInput" placeholder="e.g. shorter, and add a call to action…" value="${escapeHtml(s.prompt)}" oninput="onCaptionRefinePromptInput(this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault(); submitCaptionRefinePrompt();}" ${generating ? 'disabled' : ''}>
+      <button type="button" class="controls-field-ai__prompt-submit${submitActiveCls}" onclick="submitCaptionRefinePrompt()" ${generating ? 'disabled' : ''}><img src="../../../../components/ai-social-media/icons/arrow-up.svg" alt=""></button>
+    </div>
+    <div class="controls-field-ai__quick-chips">
+      <button type="button" class="controls-field-ai__quick-chip" onclick="quickFillCaptionRefine('shorter, but keep the key details')">Make it shorter</button>
+      <button type="button" class="controls-field-ai__quick-chip" onclick="quickFillCaptionRefine('make it punchier and more energetic')">Make it punchier</button>
+      <button type="button" class="controls-field-ai__quick-chip" onclick="quickFillCaptionRefine('add a clear call to action')">Add a call to action</button>
+    </div>
+  `;
 }
 
 // "Customize timing for each platform" (Figma node 7228-149845) — off: the original 3

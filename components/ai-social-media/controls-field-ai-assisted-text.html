@@ -5,6 +5,7 @@
 <title>Controls / Field / AI assisted text — Shared Component</title>
 <link rel="stylesheet" href="../../tokens/tokens.css" />
 <link rel="stylesheet" href="../demo-nav.css" />
+<link rel="stylesheet" href="../shared/button.css" />
 <link rel="stylesheet" href="controls-field-ai-assisted-text.css" />
 <style>
   body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
@@ -151,15 +152,165 @@
   </nav>
   <main class="demo-main">
   <h1>Controls / Field / AI assisted text</h1>
-  <p class="demo-note">Figma: "03 Inputs &amp; Controls" (1124:30) — "Controls / Field /AI assisted text" (4651:68446), a single-symbol AI-assisted textarea variant: label + multi-line input + helper text + a trailing "Refine with AI" pill.</p>
+  <p class="demo-note">Figma: "03 Inputs &amp; Controls" (1124:30) — "Controls / Field /AI assisted text" (4651:68446) plus the full "Refine with AI" flow (8727:218298): 1 Closed / 2 Open / 3 Typing / 4 Generating / 5 Result / 6 Applied. Real interactive version lives in new-content-to-generate.html v4's Publish caption field.</p>
 
+  <p class="demo-sub" style="font-size:var(--font-size-text-xs); color:var(--color-neutral-500); margin:0 0 8px;">1 · Closed</p>
+  <div class="row" style="margin-bottom:24px;">
+    <div class="controls-field-ai">
+      <textarea class="controls-field-ai__textarea">Formee Express gets students from application to arrival &mdash; programmes, visas and housing handled by one named advisor. Unlike agencies that hand you between desks, the advisor who takes the first call is the one who meets you at arrival. Parents see the same timeline and the same cost breakdown the student sees. Over 4,000 students placed across 12 countries since 2019.</textarea>
+      <div class="controls-field-ai__chips">
+        <div class="controls-field-ai__quick-chips">
+          <button class="controls-field-ai__quick-chip" type="button">Make it shorter</button>
+          <button class="controls-field-ai__quick-chip" type="button">Make it punchier</button>
+          <button class="controls-field-ai__quick-chip" type="button">Add a call to action</button>
+        </div>
+        <button class="controls-field-ai__refine-btn" type="button">
+          <img src="icons/ai-refine.svg" alt="">
+          <span>Refine with AI</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <p class="demo-sub" style="font-size:var(--font-size-text-xs); color:var(--color-neutral-500); margin:0 0 8px;">2 · Open</p>
+  <div class="row" style="margin-bottom:24px;">
+    <div class="controls-field-ai">
+      <textarea class="controls-field-ai__textarea">Formee Express gets students from application to arrival &mdash; programmes, visas and housing handled by one named advisor. Unlike agencies that hand you between desks, the advisor who takes the first call is the one who meets you at arrival. Parents see the same timeline and the same cost breakdown the student sees. Over 4,000 students placed across 12 countries since 2019.</textarea>
+      <div class="controls-field-ai__chips">
+        <div class="controls-field-ai__quick-chips">
+          <button class="controls-field-ai__quick-chip" type="button">Make it shorter</button>
+          <button class="controls-field-ai__quick-chip" type="button">Make it punchier</button>
+          <button class="controls-field-ai__quick-chip" type="button">Add a call to action</button>
+        </div>
+        <button class="controls-field-ai__refine-btn is-open" type="button">
+          <img src="icons/ai-refine.svg" alt="">
+          <span>Refine with AI</span>
+        </button>
+      </div>
+      <div class="controls-field-ai__panel">
+        <div class="controls-field-ai__prompt-box">
+          <input class="controls-field-ai__prompt-input" placeholder="e.g. shorter, and name the one thing only we do&hellip;">
+          <button class="controls-field-ai__prompt-submit" type="button"><img src="icons/arrow-up.svg" alt=""></button>
+        </div>
+        <div class="controls-field-ai__quick-chips">
+          <button class="controls-field-ai__quick-chip" type="button">Make it shorter</button>
+          <button class="controls-field-ai__quick-chip" type="button">Say what makes us different</button>
+          <button class="controls-field-ai__quick-chip" type="button">Speak to parents too</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="demo-sub" style="font-size:var(--font-size-text-xs); color:var(--color-neutral-500); margin:0 0 8px;">3 · Typing</p>
+  <div class="row" style="margin-bottom:24px;">
+    <div class="controls-field-ai">
+      <textarea class="controls-field-ai__textarea">Formee Express gets students from application to arrival &mdash; programmes, visas and housing handled by one named advisor. Unlike agencies that hand you between desks, the advisor who takes the first call is the one who meets you at arrival. Parents see the same timeline and the same cost breakdown the student sees. Over 4,000 students placed across 12 countries since 2019.</textarea>
+      <div class="controls-field-ai__chips">
+        <div class="controls-field-ai__quick-chips">
+          <button class="controls-field-ai__quick-chip" type="button">Make it shorter</button>
+          <button class="controls-field-ai__quick-chip" type="button">Make it punchier</button>
+          <button class="controls-field-ai__quick-chip" type="button">Add a call to action</button>
+        </div>
+        <button class="controls-field-ai__refine-btn is-engaged" type="button">
+          <img src="icons/ai-refine.svg" alt="">
+          <span>Refine with AI</span>
+        </button>
+      </div>
+      <div class="controls-field-ai__panel">
+        <div class="controls-field-ai__section-label"><img src="icons/ai-refine.svg" alt=""><span>Refine the description</span></div>
+        <div class="controls-field-ai__prompt-box">
+          <input class="controls-field-ai__prompt-input" value="shorter, and name the one thing only we do">
+          <button class="controls-field-ai__prompt-submit is-active" type="button"><img src="icons/arrow-up.svg" alt=""></button>
+        </div>
+        <div class="controls-field-ai__quick-chips">
+          <button class="controls-field-ai__quick-chip" type="button">Make it shorter</button>
+          <button class="controls-field-ai__quick-chip" type="button">Say what makes us different</button>
+          <button class="controls-field-ai__quick-chip" type="button">Speak to parents too</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="demo-sub" style="font-size:var(--font-size-text-xs); color:var(--color-neutral-500); margin:0 0 8px;">4 · Generating</p>
+  <div class="row" style="margin-bottom:24px;">
+    <div class="controls-field-ai">
+      <textarea class="controls-field-ai__textarea">Formee Express gets students from application to arrival &mdash; programmes, visas and housing handled by one named advisor. Unlike agencies that hand you between desks, the advisor who takes the first call is the one who meets you at arrival. Parents see the same timeline and the same cost breakdown the student sees. Over 4,000 students placed across 12 countries since 2019.</textarea>
+      <div class="controls-field-ai__chips">
+        <div class="controls-field-ai__quick-chips">
+          <button class="controls-field-ai__quick-chip" type="button">Make it shorter</button>
+          <button class="controls-field-ai__quick-chip" type="button">Make it punchier</button>
+          <button class="controls-field-ai__quick-chip" type="button">Add a call to action</button>
+        </div>
+        <button class="controls-field-ai__refine-btn is-engaged" type="button">
+          <img src="icons/ai-refine.svg" alt="">
+          <span>Refine with AI</span>
+        </button>
+      </div>
+      <div class="controls-field-ai__panel">
+        <div class="controls-field-ai__turn"><p>shorter, and name the one thing only we do</p></div>
+        <div class="controls-field-ai__loading">
+          <img class="controls-field-ai__loading-spinner" src="icons/ui-spinner.svg" alt="">
+          <div class="controls-field-ai__loading-text"><b>Rewriting&hellip;</b><span>Applying your refinement</span></div>
+        </div>
+        <div class="controls-field-ai__section-label"><img src="icons/ai-refine.svg" alt=""><span>Refine the description</span></div>
+        <div class="controls-field-ai__prompt-box">
+          <input class="controls-field-ai__prompt-input" placeholder="e.g. shorter, and name the one thing only we do&hellip;">
+          <button class="controls-field-ai__prompt-submit" type="button"><img src="icons/arrow-up.svg" alt=""></button>
+        </div>
+        <div class="controls-field-ai__quick-chips">
+          <button class="controls-field-ai__quick-chip" type="button">Make it shorter</button>
+          <button class="controls-field-ai__quick-chip" type="button">Say what makes us different</button>
+          <button class="controls-field-ai__quick-chip" type="button">Speak to parents too</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="demo-sub" style="font-size:var(--font-size-text-xs); color:var(--color-neutral-500); margin:0 0 8px;">5 · Result</p>
+  <div class="row" style="margin-bottom:24px;">
+    <div class="controls-field-ai">
+      <textarea class="controls-field-ai__textarea">Formee Express gets students from application to arrival &mdash; programmes, visas and housing handled by one named advisor. Unlike agencies that hand you between desks, the advisor who takes the first call is the one who meets you at arrival. Parents see the same timeline and the same cost breakdown the student sees. Over 4,000 students placed across 12 countries since 2019.</textarea>
+      <div class="controls-field-ai__chips">
+        <div class="controls-field-ai__quick-chips">
+          <button class="controls-field-ai__quick-chip" type="button">Make it shorter</button>
+          <button class="controls-field-ai__quick-chip" type="button">Make it punchier</button>
+          <button class="controls-field-ai__quick-chip" type="button">Add a call to action</button>
+        </div>
+        <button class="controls-field-ai__refine-btn is-engaged" type="button">
+          <img src="icons/ai-refine.svg" alt="">
+          <span>Refine with AI</span>
+        </button>
+      </div>
+      <div class="controls-field-ai__panel">
+        <div class="controls-field-ai__turn"><p>shorter, and name the one thing only we do</p></div>
+        <div class="controls-field-ai__section-label"><img src="icons/ai-refine.svg" alt=""><span>Updated by AI</span></div>
+        <div class="controls-field-ai__result-box">
+          <p>The AI-rewritten text lands here.</p>
+          <button class="controls-field-ai__undo-btn" type="button"><img src="icons/ui-undo.svg" alt=""></button>
+        </div>
+        <div class="controls-field-ai__use-row">
+          <button class="btn btn-dark controls-field-ai__use-btn" type="button">Use this</button>
+        </div>
+        <div class="controls-field-ai__section-label"><img src="icons/ai-refine.svg" alt=""><span>Refine the description</span></div>
+        <div class="controls-field-ai__prompt-box">
+          <input class="controls-field-ai__prompt-input" placeholder="e.g. shorter, and name the one thing only we do&hellip;">
+          <button class="controls-field-ai__prompt-submit" type="button"><img src="icons/arrow-up.svg" alt=""></button>
+        </div>
+        <div class="controls-field-ai__quick-chips">
+          <button class="controls-field-ai__quick-chip" type="button">Make it shorter</button>
+          <button class="controls-field-ai__quick-chip" type="button">Say what makes us different</button>
+          <button class="controls-field-ai__quick-chip" type="button">Speak to parents too</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="demo-sub" style="font-size:var(--font-size-text-xs); color:var(--color-neutral-500); margin:0 0 8px;">6 · Applied</p>
   <div class="row">
     <div class="controls-field-ai">
-      <p class="controls-field-ai__label">Describe Your Brand *</p>
-      <textarea class="controls-field-ai__textarea" placeholder="In 2&ndash;3 sentences, describe what your brand offers, who it serves and what makes it different."></textarea>
-      <p class="controls-field-ai__helper">We&rsquo;ll use your website to suggest brand details, visual assets and writing style.</p>
-      <div class="controls-field-ai__chips">
-        <button class="controls-field-ai__refine-btn" type="button">
+      <textarea class="controls-field-ai__textarea">Formee Express gets students from application to arrival &mdash; programmes, visas and housing handled by one named advisor. Unlike agencies that hand you between desks, the advisor who takes the first call is the one who meets you at arrival. Parents see the same timeline and the same cost breakdown the student sees. Over 4,000 students placed across 12 countries since 2019.</textarea>
+      <div class="controls-field-ai__chips" style="justify-content:flex-end;">
+        <button class="controls-field-ai__refine-btn is-engaged" type="button">
           <img src="icons/ai-refine.svg" alt="">
           <span>Refine with AI</span>
         </button>
