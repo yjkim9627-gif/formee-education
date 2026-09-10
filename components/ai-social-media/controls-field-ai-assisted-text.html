@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="../../tokens/tokens.css" />
 <link rel="stylesheet" href="../demo-nav.css" />
 <link rel="stylesheet" href="../shared/button.css" />
+<link rel="stylesheet" href="feedback-status-chip.css" />
 <link rel="stylesheet" href="controls-field-ai-assisted-text.css" />
 <style>
   body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
@@ -336,12 +337,25 @@
     </div>
   </div>
 
-  <p class="demo-sub" style="font-size:var(--font-size-text-xs); color:var(--color-neutral-500); margin:0 0 8px;">6 · Applied</p>
+  <p class="demo-sub" style="font-size:var(--font-size-text-xs); color:var(--color-neutral-500); margin:0 0 8px;">6 · Applied (Figma 9377:140697) — head row (updated badge + Undo/Redo) appears above the field; chips and the pill go back to their normal look.</p>
   <div class="row">
     <div class="controls-field-ai">
+      <div class="controls-field-ai__head">
+        <span class="feedback-status-chip feedback-status-chip--green">updated</span>
+        <div class="controls-field-ai__head-spacer"></div>
+        <div class="controls-field-ai__undo-redo">
+          <button class="controls-field-ai__icon-btn" type="button" aria-label="Undo"><img src="icons/ui-undo.svg" alt=""></button>
+          <button class="controls-field-ai__icon-btn" type="button" aria-label="Redo" disabled><img src="icons/ui-redo.svg" alt=""></button>
+        </div>
+      </div>
       <textarea class="controls-field-ai__textarea">Formee Express gets students from application to arrival &mdash; programmes, visas and housing handled by one named advisor. Unlike agencies that hand you between desks, the advisor who takes the first call is the one who meets you at arrival. Parents see the same timeline and the same cost breakdown the student sees. Over 4,000 students placed across 12 countries since 2019.</textarea>
-      <div class="controls-field-ai__chips" style="justify-content:flex-end;">
-        <button class="controls-field-ai__refine-btn is-engaged" type="button">
+      <div class="controls-field-ai__chips">
+        <div class="controls-field-ai__quick-chips">
+          <button class="controls-field-ai__quick-chip" type="button">Make it shorter</button>
+          <button class="controls-field-ai__quick-chip" type="button">Say what makes us different</button>
+          <button class="controls-field-ai__quick-chip" type="button">Speak to parents too</button>
+        </div>
+        <button class="controls-field-ai__refine-btn" type="button">
           <img src="icons/ai-refine.svg" alt="">
           <span>Refine with AI</span>
         </button>

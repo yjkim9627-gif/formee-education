@@ -2539,6 +2539,7 @@
             </div>
           </div>
 
+          <div class="controls-field-ai__head" id="pubCaptionHeadRow" style="display:none;"></div>
           <textarea class="pub-caption-input" id="pubCaption" placeholder="Draft your caption — or generate suggestions above and tap a chip to add it." oninput="onSharedCaptionInput()"></textarea>
           <div class="controls-field-ai__chips" id="pubCaptionChipsRow">
             <div class="controls-field-ai__quick-chips" id="pubCaptionQuickChips">
@@ -7263,28 +7264,57 @@ function refineCaptionWithAI(mode){
 // 4 Generating / 5 Result / 6 Applied. Shared component: components/ai-social-media/
 // controls-field-ai-assisted-text.css. The 3 instant chips above (refineCaptionWithAI)
 // are untouched -- this is the separate free-text refine flow opened by the pill itself.
-window.__captionRefine = { open: false, appliedOnce: false, phase: 'idle', prompt: '', result: '' };
+window.__captionRefine = { open: false, phase: 'idle', prompt: '', result: '' };
+// Undo/redo pair for the "Applied" head row (Figma 9377:140697) -- set once "Use this" is
+// clicked, at:'after'|'before' tracks which side of the swap the field currently shows. A
+// fresh apply always overwrites this with a new before/after pair (single-step undo/redo,
+// matching the two icon buttons Figma shows -- not a full multi-step history stack).
+window.__captionApplyHistory = null;
 
 function updateCaptionRefinePillClass(){
   const pill = document.getElementById('pubRefineAiPill');
   if(!pill) return;
   const s = window.__captionRefine;
   pill.classList.remove('is-open', 'is-engaged');
-  if(s.open){
-    pill.classList.add((s.phase === 'idle' && !s.prompt.trim()) ? 'is-open' : 'is-engaged');
-  } else if(s.appliedOnce){
-    pill.classList.add('is-engaged');
-  }
+  if(s.open) pill.classList.add((s.phase === 'idle' && !s.prompt.trim()) ? 'is-open' : 'is-engaged');
 }
 
-// Applied state (6) hides the instant quick-chips entirely and right-aligns the pill alone --
-// matches Figma's own example exactly (a generic "shorter/punchier/cta" set stops being
-// useful advice once the caption has already been AI-refined once).
-function updateCaptionQuickChipsVisibility(){
-  const chipsRow = document.getElementById('pubCaptionQuickChips');
-  const wrap = document.getElementById('pubCaptionChipsRow');
-  if(chipsRow) chipsRow.style.display = window.__captionRefine.appliedOnce ? 'none' : 'flex';
-  if(wrap) wrap.style.justifyContent = window.__captionRefine.appliedOnce ? 'flex-end' : 'space-between';
+// Head row (Figma 9377:140697) -- a green "updated" badge + Undo/Redo, shown above the field
+// once at least one refinement has been applied this session. The instant quick-chips and
+// the pill itself stay exactly as they always were (Figma's real Applied reference keeps
+// them, unlike the generic Brand-description component demo's own simplified example).
+function renderCaptionHeadRow(){
+  const row = document.getElementById('pubCaptionHeadRow');
+  if(!row) return;
+  const h = window.__captionApplyHistory;
+  if(!h){ row.style.display = 'none'; row.innerHTML = ''; return; }
+  row.style.display = 'flex';
+  row.innerHTML = `
+    <span class="feedback-status-chip feedback-status-chip--green">updated</span>
+    <div class="controls-field-ai__head-spacer"></div>
+    <div class="controls-field-ai__undo-redo">
+      <button type="button" class="controls-field-ai__icon-btn" onclick="undoCaptionApply()" aria-label="Undo" ${h.at === 'before' ? 'disabled' : ''}><img src="../../../../components/ai-social-media/icons/ui-undo.svg" alt=""></button>
+      <button type="button" class="controls-field-ai__icon-btn" onclick="redoCaptionApply()" aria-label="Redo" ${h.at === 'after' ? 'disabled' : ''}><img src="../../../../components/ai-social-media/icons/ui-redo.svg" alt=""></button>
+    </div>
+  `;
+}
+
+function undoCaptionApply(){
+  const h = window.__captionApplyHistory;
+  if(!h || h.at !== 'after') return;
+  document.getElementById('pubCaption').value = h.before;
+  onSharedCaptionInput();
+  h.at = 'before';
+  renderCaptionHeadRow();
+}
+
+function redoCaptionApply(){
+  const h = window.__captionApplyHistory;
+  if(!h || h.at !== 'before') return;
+  document.getElementById('pubCaption').value = h.after;
+  onSharedCaptionInput();
+  h.at = 'after';
+  renderCaptionHeadRow();
 }
 
 function toggleCaptionRefinePanel(){
@@ -7353,9 +7383,11 @@ function undoCaptionRefineResult(){
 
 function applyCaptionRefineResult(){
   const s = window.__captionRefine;
-  document.getElementById('pubCaption').value = s.result;
+  const ta = document.getElementById('pubCaption');
+  window.__captionApplyHistory = { before: ta.value, after: s.result, at: 'after' };
+  ta.value = s.result;
   onSharedCaptionInput();
-  s.appliedOnce = true;
+  renderCaptionHeadRow();
   s.open = false;
   s.phase = 'idle';
   s.prompt = '';
@@ -7367,7 +7399,6 @@ function renderCaptionRefinePanel(){
   const panel = document.getElementById('pubCaptionRefinePanel');
   const s = window.__captionRefine;
   updateCaptionRefinePillClass();
-  updateCaptionQuickChipsVisibility();
   if(!panel) return;
   if(!s.open){ panel.style.display = 'none'; panel.innerHTML = ''; return; }
   panel.style.display = 'flex';
