@@ -1,8 +1,13 @@
 /* Queue Job Row + Queue Panel — Figma nodes 6091:88216 / 6093:49
    Queue Job Row: State = Working / Ready — a single generation job with a gradient
-   thumbnail placeholder, title, and a tiny status dot + label.
-   Queue Panel: State = Active (orange "N ACTIVE" badge, jobs Working) / Done (green
-   "DONE" badge, jobs Ready) — wraps 1+ Queue Job Rows.
+   thumbnail placeholder, title, and a tiny status dot + label (intentionally its own
+   small-scale indicator, not a feedback-status-chip -- too small a context for a full
+   pill per design decision).
+   Queue Panel: State = Active (jobs Working) / Done (jobs Ready) — wraps 1+ Queue Job
+   Rows. The header's "N ACTIVE"/"DONE" badge is the shared .feedback-status-chip
+   component (feedback-status-chip.css: --orange-icon / --green.with-icon) -- previously
+   a bespoke .queue-badge here with slightly-off values (10px/14px type instead of the
+   real 11px/13px, a forced 22px height on green, 16px icon instead of 14px).
 
    Thumbnail uses the same diagonal gradient placeholder convention as scene-tile.css /
    image-scene-card.css (no real generated-image asset to download).
@@ -36,12 +41,3 @@
 .queue-panel-header{display:flex; align-items:center; gap:8px; width:100%;}
 .queue-panel-title{flex:1 0 0; font-family:var(--font-family-text); font-size:13px; font-weight:600; line-height:20px; color:var(--color-neutral-900);}
 .queue-panel-jobs{display:flex; flex-direction:column; gap:6px; align-items:flex-start; width:100%;}
-
-.queue-badge{
-  display:inline-flex; align-items:center; border-radius:999px; flex-shrink:0;
-  font-family:var(--font-family-text); font-size:10px; font-weight:600; line-height:14px;
-}
-.queue-badge.orange{gap:0; padding:3px 8px 3px 4px; background:var(--color-badge-orange-bg); color:var(--color-badge-orange-text);}
-.queue-badge.orange img{width:16px; height:16px; margin-right:0;}
-.queue-badge.green{gap:4px; height:22px; padding:3px 8px; background:var(--color-badge-green-bg); color:var(--color-badge-green-text);}
-.queue-badge.green img{width:14px; height:14px;}
