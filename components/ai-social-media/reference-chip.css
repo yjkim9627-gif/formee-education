@@ -1,7 +1,9 @@
 /* Prompt Reference Chip (Figma: PromptReferenceChip, node 8620:121242)
-   States: empty (nothing attached yet) / hover (attached, mouse over -> "More" button) /
-   Remove (attached -> floating X to detach) / image (wide reference-detail card, not yet
-   used anywhere in this codebase — kept here for parity with the Figma component). */
+   States: empty (nothing attached yet) / hover (EMPTY chip, mouse over -> "More" button,
+   node 8708:207411 -- confirmed against Figma: label stays "Reference", no X, this is NOT
+   the attached state) / Remove (attached -> floating X only, no More button at all, node
+   8727:237967) / image (wide reference-detail card -- the Content Library "Use as
+   reference" hand-off, new-content-to-generate.html's fmxref-js). */
 
 .ref-chip{
   display:inline-flex; align-items:center; justify-content:center; gap:6px;
@@ -12,7 +14,10 @@
 .ref-chip-icon{width:20px; height:20px; flex-shrink:0; display:block;}
 .ref-chip-label{font-size:12px; font-weight:500; color:var(--color-neutral-450); white-space:nowrap;}
 
-/* hover state — Actions / More Button, inset top-right, shown only while attached */
+/* hover state — Actions / More Button, inset top-right, shown only on the EMPTY chip's
+   hover (never rendered into an attached chip's markup at all -- see Remove below). No
+   onclick of its own: it has no click handler, so a click on it bubbles straight up to
+   the chip's own onclick (same "open add-reference flow" action either way). */
 .ref-chip-more{
   display:none; position:absolute; top:4px; right:4px; width:24px; height:24px;
   align-items:center; justify-content:center; background:var(--color-neutral-0);
@@ -20,10 +25,11 @@
   box-shadow:0 1px 1.5px rgba(15,23,41,.1), 0 1px 0.5px rgba(15,23,41,.04);
   cursor:pointer;
 }
-.ref-chip[data-attached="true"]:hover .ref-chip-more{display:flex;}
+.ref-chip:hover .ref-chip-more{display:flex;}
 
 /* Remove state — Actions / Remove Button, floating just outside the corner, shown once
-   an image is attached (this is the "State=Remove" the click-to-attach flow lands on). */
+   an image is attached (this is the "State=Remove" the click-to-attach flow lands on) --
+   attached chips never get a More button, only this X. */
 .ref-chip-remove{
   display:none; position:absolute; top:-5px; right:-5px; width:22px; height:22px;
   align-items:center; justify-content:center; background:var(--color-neutral-0);
@@ -32,6 +38,10 @@
   cursor:pointer;
 }
 .ref-chip[data-attached="true"] .ref-chip-remove{display:flex;}
+
+/* disabled — shown instead of the empty state while a mutually-exclusive attachment
+   (e.g. Reference vs. First/Last frame in the Brief prompt box) is already in place */
+.ref-chip.disabled{opacity:.4; cursor:not-allowed; pointer-events:none;}
 
 /* image state — wide reference-detail card (Figma node 8614:18) */
 .ref-chip--detail{
