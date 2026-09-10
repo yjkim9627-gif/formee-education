@@ -3143,7 +3143,7 @@ function toggleBrandKit(){
   const hasBrand = window.__brandMode === 'set';
   document.getElementById('brandKitSwitch').classList.toggle('on', brandKitOn);
   document.getElementById('brandKitSummary').style.display = brandKitOn && hasBrand ? 'block' : 'none';
-  document.getElementById('brandKitEmpty').style.display = brandKitOn && !hasBrand ? 'flex' : 'none';
+  document.getElementById('brandKitEmpty').style.display = !hasBrand ? 'flex' : 'none';
   document.getElementById('brandKitSwitch').setAttribute('aria-checked', String(brandKitOn));
   updateVisualConceptPrompt();
 }
@@ -4277,7 +4277,7 @@ function updateGlobalBrandKitUI(){
   sw.classList.toggle('on', on);
   sw.setAttribute('aria-checked', String(on));
   summary.style.display = on && hasBrand ? 'block' : 'none';
-  empty.style.display = on && !hasBrand ? 'flex' : 'none';
+  empty.style.display = !hasBrand ? 'flex' : 'none';
 }
 
 // ---- Reel/Short & Story Video's own "Use brand kit" toggle (same pattern as Carousel's
@@ -4297,7 +4297,7 @@ function updateReelBrandKitUI(){
   sw.classList.toggle('on', on);
   sw.setAttribute('aria-checked', String(on));
   summary.style.display = on && hasBrand ? 'block' : 'none';
-  empty.style.display = on && !hasBrand ? 'flex' : 'none';
+  empty.style.display = !hasBrand ? 'flex' : 'none';
 }
 function reelGoToBrandSetup(){
   alert('This would open Brand Setup — outside this prototype\'s scope.');
