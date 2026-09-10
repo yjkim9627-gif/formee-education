@@ -1,26 +1,39 @@
 /* Feedback / Status Chip — shared component (Figma node 5004:126953)
-   6 colors: Green/Primary/Secondary/Blue/error/Disabled. Currently only .--green is wired
-   into real usage (the "Ready" badge in scene-tile.css/image-scene-card.css/
-   w-action-bar.css, all 3 previously hand-rolled with slightly different, all-incorrect
-   values -- see each file's own comment). The other 5 are built here for parity with the
-   Figma component set but aren't consumed anywhere yet.
+   8 colors: Green/Primary/Secondary/Blue/Disabled/Error/Orange/Orange-icon. Currently only
+   .--green is wired into real usage (the "Ready" badge in scene-tile.css/image-scene-card.css/
+   w-action-bar.css) and .--orange-icon (Queue Panel's "N ACTIVE" badge, queue-panel.css).
+   The rest are built here for parity with the Figma component set but aren't consumed
+   elsewhere yet.
 
-   Token gaps found while porting (kept as flagged raw values per project convention --
-   see controls-menu.css's own precedent): Blue and error/red here resolve to different hex
-   than tokens.css's --color-badge-blue-text/-bg and --color-badge-red-text/-bg (this
-   component apparently uses its own --badge/blue, --status/error Figma variables, not the
-   badge-* set). */
+   Orange and Orange-icon are two separate Figma variants, not one variant + a boolean --
+   the icon version uses asymmetric padding (4px/8px, tighter on the icon side) rather than
+   the uniform 8px/8px every other variant uses, so it doesn't collapse into a simple
+   show/hide toggle. Green's own icon (circle-check) IS a real boolean per Figma, wired below
+   via .feedback-status-chip--green.with-icon.
+
+   Token gaps (kept as flagged raw values per project convention -- see controls-menu.css's
+   own precedent): Blue here resolves to different hex than tokens.css's
+   --color-badge-blue-text/-bg (this component uses its own --badge/blue Figma variable, not
+   the badge-* set). Error's Figma variable (--badge/red/bg) was recently corrected in Figma
+   to match this component's own need -- it's now internally consistent on the Figma side,
+   but still doesn't match tokens.css's separate, broader-use --color-badge-red-text/-bg
+   (used across real error/danger states elsewhere in the app -- not touched here to avoid
+   an unrelated blast radius). Orange matches tokens.css's --color-badge-orange-* exactly. */
 .feedback-status-chip{
   display:inline-flex; align-items:center; justify-content:center;
   padding:var(--spacing-2) var(--spacing-sm); border-radius:var(--radius-full);
   font-family:var(--font-family-text); font-size:11px; font-weight:var(--font-weight-semibold); line-height:13px;
   white-space:nowrap;
 }
+.feedback-status-chip img{display:block; width:14px; height:14px;}
 .feedback-status-chip--green{background:var(--color-badge-green-bg); color:var(--color-badge-green-text);}
+.feedback-status-chip--green.with-icon{gap:4px;}
 .feedback-status-chip--primary{background:var(--color-neutral-950); color:var(--color-neutral-0);}
 .feedback-status-chip--secondary{background:var(--color-neutral-150); color:var(--color-neutral-900);}
 .feedback-status-chip--disabled{background:var(--color-neutral-400); color:var(--color-neutral-700);}
 /* Figma raw hex here, doesn't map to --color-badge-blue-text/-bg -- see file header note */
 .feedback-status-chip--blue{background:#e8f0ff; color:#155eef;}
-/* Figma raw hex here (--status/error-*), doesn't map to --color-badge-red-text/-bg -- see file header note */
+/* Figma raw hex here, doesn't map to --color-badge-red-text/-bg -- see file header note */
 .feedback-status-chip--error{background:#fbe3e5; color:#c4271b;}
+.feedback-status-chip--orange{background:var(--color-badge-orange-bg); color:var(--color-badge-orange-text);}
+.feedback-status-chip--orange-icon{background:var(--color-badge-orange-bg); color:var(--color-badge-orange-text); gap:4px; padding-left:var(--radius-sm); padding-right:var(--spacing-sm);}

@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="../../tokens/tokens.css" />
 <link rel="stylesheet" href="../demo-nav.css" />
 <link rel="stylesheet" href="queue-panel.css" />
+<link rel="stylesheet" href="feedback-status-chip.css" />
 <style>
   body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
   .demo-main { padding: var(--spacing-4xl); }
@@ -118,6 +119,8 @@
       <div class="demo-sidebar-group-items">
         <a href="character-card.html">Character Card</a>
         <a href="destination-account.html">Destination Account</a>
+        <a href="selector-style-card.html">Selector / Style Card</a>
+        <a href="selector-video-card.html">Selector / Video Card</a>
       </div>
     </div>
     <div class="demo-sidebar-group collapsed" data-group="data-display">
@@ -176,7 +179,7 @@
       <div class="queue-panel" data-state="active">
         <div class="queue-panel-header">
           <span class="queue-panel-title">Queue</span>
-          <span class="queue-badge orange"><img src="icons/badge-dot.svg" alt="">2 ACTIVE</span>
+          <span class="feedback-status-chip feedback-status-chip--orange-icon"><img src="icons/badge-dot.svg" alt="">2 ACTIVE</span>
         </div>
         <div class="queue-panel-jobs">
           <div class="queue-job-row">
@@ -199,7 +202,7 @@
       <div class="queue-panel" data-state="done">
         <div class="queue-panel-header">
           <span class="queue-panel-title">Queue</span>
-          <span class="queue-badge green"><img src="icons/circle-check.svg" alt="">DONE</span>
+          <span class="feedback-status-chip feedback-status-chip--green with-icon"><img src="icons/circle-check.svg" alt="">DONE</span>
         </div>
         <div class="queue-panel-jobs">
           <div class="queue-job-row ready">

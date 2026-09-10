@@ -107,6 +107,7 @@
         <a href="image-scene-card.html">Image Scene Card</a>
         <a href="media-card-icon-btn.html">Media Card Icon Button</a>
         <a href="music-track-row.html">Music Track Row</a>
+        <a href="preview-top-row.html">Preview Top Row</a>
         <a href="queue-panel.html">Queue Job Row / Queue Panel</a>
         <a href="scene-tile.html">Scene Tile</a>
         <a href="reference-scene-tile.html">Reference / Scene Tile · Selectable</a>
@@ -121,6 +122,8 @@
       <div class="demo-sidebar-group-items">
         <a href="character-card.html">Character Card</a>
         <a href="destination-account.html">Destination Account</a>
+        <a href="selector-style-card.html">Selector / Style Card</a>
+        <a href="selector-video-card.html">Selector / Video Card</a>
       </div>
     </div>
     <div class="demo-sidebar-group collapsed" data-group="data-display">
@@ -150,13 +153,17 @@
   </nav>
   <main class="demo-main">
   <h1>Feedback / Status Chip</h1>
-  <p class="demo-note">Figma node 5004:126953. 6 color variants: Green/Primary/Secondary/Blue/Error/Disabled. Currently only Green is wired into real usage — it replaces the "Ready" badge previously hand-rolled (each slightly wrong) in scene-tile.css, image-scene-card.css and w-action-bar.css. The other 5 are built for parity with the Figma component set but aren't consumed anywhere yet.</p>
+  <p class="demo-note">Figma node 5004:126953. 8 color variants: Green/Primary/Secondary/Blue/Disabled/Error/Orange/Orange (icon). Green is wired into the "Ready" badge (scene-tile.css/image-scene-card.css/w-action-bar.css); Orange (icon) is wired into Queue Panel's "N ACTIVE" badge (queue-panel.css). The rest are built for parity with the Figma component set but aren't consumed elsewhere yet.</p>
 
   <h2>Colors</h2>
   <div class="demo-grid">
     <div class="demo-swatch">
       <span class="feedback-status-chip feedback-status-chip--green">Ready</span>
       <span class="demo-swatch-label">Green — wired (Ready badge)</span>
+    </div>
+    <div class="demo-swatch">
+      <span class="feedback-status-chip feedback-status-chip--green with-icon"><img src="icons/circle-check.svg" alt="">Ready</span>
+      <span class="demo-swatch-label">Green + icon</span>
     </div>
     <div class="demo-swatch">
       <span class="feedback-status-chip feedback-status-chip--primary">Primary</span>
@@ -171,12 +178,20 @@
       <span class="demo-swatch-label">Blue</span>
     </div>
     <div class="demo-swatch">
+      <span class="feedback-status-chip feedback-status-chip--disabled">Disabled</span>
+      <span class="demo-swatch-label">Disabled</span>
+    </div>
+    <div class="demo-swatch">
       <span class="feedback-status-chip feedback-status-chip--error">Error</span>
       <span class="demo-swatch-label">Error</span>
     </div>
     <div class="demo-swatch">
-      <span class="feedback-status-chip feedback-status-chip--disabled">Disabled</span>
-      <span class="demo-swatch-label">Disabled</span>
+      <span class="feedback-status-chip feedback-status-chip--orange">Orange</span>
+      <span class="demo-swatch-label">Orange</span>
+    </div>
+    <div class="demo-swatch">
+      <span class="feedback-status-chip feedback-status-chip--orange-icon"><img src="icons/badge-dot.svg" alt="">2 ACTIVE</span>
+      <span class="demo-swatch-label">Orange (icon) — wired (Queue Panel)</span>
     </div>
   </div>
   </main>

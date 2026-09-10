@@ -2,19 +2,26 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
-<title>Music Track Row — AI Social Media Component</title>
+<title>Preview Top Row — AI Social Media Component</title>
 <link rel="stylesheet" href="../../tokens/tokens.css" />
 <link rel="stylesheet" href="../demo-nav.css" />
-<link rel="stylesheet" href="actions-button.css" />
-<link rel="stylesheet" href="music-track-row.css" />
+<link rel="stylesheet" href="preview-top-row.css" />
+<link rel="stylesheet" href="feedback-status-chip.css" />
+<link rel="stylesheet" href="media-card-icon-btn.css" />
+<link rel="stylesheet" href="../shared/checkbox.css" />
 <style>
   body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
   .demo-main { padding: var(--spacing-4xl); }
   h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-sm); }
+  h2 { font-size: var(--font-size-text-md); font-weight: 700; margin: var(--spacing-3xl) 0 var(--spacing-sm); }
+  h2:first-of-type { margin-top: 0; }
   .demo-note { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); max-width: 720px; margin: 0 0 var(--spacing-3xl); line-height: 1.6; }
-  .demo-row { display: flex; flex-direction: column; gap: var(--spacing-sm); margin-bottom: var(--spacing-3xl); max-width: 912px; }
+  .demo-sub { font-size: var(--font-size-text-xs); color: var(--color-neutral-500); margin: 0 0 var(--spacing-sm); }
+  .demo-row { display: flex; flex-direction: column; gap: var(--spacing-sm); margin-bottom: var(--spacing-2xl); }
   .demo-label { font-size: var(--font-size-text-xs); color: var(--color-neutral-500); }
-  .demo-grid { display: flex; flex-direction: column; gap: var(--spacing-md); }
+  .demo-grid { display: flex; flex-wrap: wrap; gap: var(--spacing-2xl); align-items: flex-start; }
+  .demo-surface { width: 246px; box-sizing: border-box; padding: 14px; border-radius: var(--radius-lg); background: linear-gradient(135deg, var(--color-neutral-500), var(--color-neutral-300)); }
+  .demo-surface.narrow { width: 176px; }
 </style>
 </head>
 <body>
@@ -104,8 +111,8 @@
         <a href="heading.html">Heading</a>
         <a href="image-scene-card.html">Image Scene Card</a>
         <a href="media-card-icon-btn.html">Media Card Icon Button</a>
-        <a href="music-track-row.html" class="active">Music Track Row</a>
-        <a href="preview-top-row.html">Preview Top Row</a>
+        <a href="music-track-row.html">Music Track Row</a>
+        <a href="preview-top-row.html" class="active">Preview Top Row</a>
         <a href="queue-panel.html">Queue Job Row / Queue Panel</a>
         <a href="scene-tile.html">Scene Tile</a>
         <a href="reference-scene-tile.html">Reference / Scene Tile · Selectable</a>
@@ -150,45 +157,87 @@
     </div>
   </nav>
   <main class="demo-main">
-  <h1>Music Track Row</h1>
-  <p class="demo-note">Figma: "audio" section (2086:63836) → "audio" component set (2086:61844) — background-music picker row for the video editor's Timeline/Music panel. One row per track, radio-selected (only one plays at a time); "No Music" is the fixed opt-out row that always appears first. hover/focused states are real :hover/:focus-within, not separate markup.</p>
+  <h1>Preview Top Row</h1>
+  <p class="demo-note">Figma node 9223:260962. 4 types, each pairing a left element with a right element — every instance can toggle either side independently (ShowLeft/ShowRight), not just the fixed pair shown here. Sits on top of a media/scene thumbnail.</p>
 
-  <div class="demo-row">
-    <span class="demo-label">Type = No music / Default / Pause (selected)</span>
-    <div class="demo-grid">
-
-      <label class="music-track-row" data-type="no-music">
-        <img class="music-track-icon" src="icons/audio-volume-off.svg" alt="">
-        <div class="music-track-info">
-          <span class="music-track-title">No Music</span>
+  <h2>Ready + Media Actions</h2>
+  <p class="demo-sub">Left: Ready badge (feedback-status-chip). Right: download/maximize (media-card-icon-btn, 24px). Used directly by scene-tile.css / image-scene-card.css / storyboard-card.css.</p>
+  <div class="demo-grid">
+    <div class="demo-surface">
+      <div class="preview-top-row">
+        <span class="feedback-status-chip feedback-status-chip--green">Ready</span>
+        <div class="preview-top-row-actions">
+          <button class="media-card-icon-btn download" type="button"><img src="icons/download-ui.svg" alt=""></button>
+          <button class="media-card-icon-btn maximize" type="button"><img src="icons/maximize.svg" alt=""></button>
         </div>
-        <input type="radio" class="music-track-radio" name="music-track-demo">
-      </label>
-
-      <label class="music-track-row" data-type="default">
-        <img class="music-track-icon" src="icons/audio-play.svg" alt="">
-        <div class="music-track-info">
-          <span class="music-track-title">Funky Chunk</span>
-          <span class="music-track-duration">03:59</span>
-          <span class="music-track-mood">Hype</span>
-          <span class="music-track-bpm">BPM 115</span>
+      </div>
+    </div>
+    <div class="demo-surface">
+      <div class="preview-top-row">
+        <span class="feedback-status-chip feedback-status-chip--green">Ready</span>
+      </div>
+    </div>
+    <div class="demo-surface">
+      <div class="preview-top-row" style="justify-content:flex-end;">
+        <div class="preview-top-row-actions">
+          <button class="media-card-icon-btn download" type="button"><img src="icons/download-ui.svg" alt=""></button>
+          <button class="media-card-icon-btn maximize" type="button"><img src="icons/maximize.svg" alt=""></button>
         </div>
-        <button type="button" class="music-track-favorite"><img src="icons/audio-favorite-false.svg" alt="Favorite"></button>
-        <input type="radio" class="music-track-radio" name="music-track-demo">
-      </label>
+      </div>
+    </div>
+  </div>
 
-      <label class="music-track-row" data-type="pause">
-        <img class="music-track-icon" src="icons/audio-pause.svg" alt="">
-        <div class="music-track-info">
-          <span class="music-track-title">Funky Chunk</span>
-          <span class="music-track-duration">03:59</span>
-          <span class="music-track-mood">Hype</span>
-          <span class="music-track-bpm">BPM 115</span>
+  <h2>Favorite + More</h2>
+  <p class="demo-sub">Left: favorite (star). Right: more (⋯). Both 36px, centered row with side padding. Used by Selector / Style Card.</p>
+  <div class="demo-grid">
+    <div class="demo-surface">
+      <div class="preview-top-row favorite-more">
+        <button class="preview-action-btn" type="button"><img src="icons/shape-star.svg" alt=""></button>
+        <button class="preview-action-btn" type="button"><img src="icons/ui-ellipsis.svg" alt=""></button>
+      </div>
+    </div>
+    <div class="demo-surface">
+      <div class="preview-top-row favorite-more" style="justify-content:flex-start;">
+        <button class="preview-action-btn" type="button"><img src="icons/shape-star.svg" alt=""></button>
+      </div>
+    </div>
+  </div>
+
+  <h2>Format + Download</h2>
+  <p class="demo-sub">Left: format badge ("9:16"). Right: download + more, outline style (36px, border-neutral-500, no shadow). Used by Selector / Video Card.</p>
+  <div class="demo-grid">
+    <div class="demo-surface">
+      <div class="preview-top-row">
+        <span class="preview-top-row-format-badge"><span class="preview-top-row-format-badge-icon"><span></span></span><span class="preview-top-row-format-badge-label">9:16</span></span>
+        <div class="preview-top-row-actions">
+          <button class="preview-action-btn preview-action-btn--outline download" type="button"><img src="icons/download-ui.svg" alt=""></button>
+          <button class="preview-action-btn preview-action-btn--outline" type="button"><img src="icons/ui-ellipsis.svg" alt=""></button>
         </div>
-        <button type="button" class="music-track-favorite"><img src="icons/audio-favorite-false.svg" alt="Favorite"></button>
-        <input type="radio" class="music-track-radio" name="music-track-demo" checked>
-      </label>
+      </div>
+    </div>
+    <div class="demo-surface">
+      <div class="preview-top-row" style="justify-content:flex-end;">
+        <div class="preview-top-row-actions">
+          <button class="preview-action-btn preview-action-btn--outline download" type="button"><img src="icons/download-ui.svg" alt=""></button>
+          <button class="preview-action-btn preview-action-btn--outline" type="button"><img src="icons/ui-ellipsis.svg" alt=""></button>
+        </div>
+      </div>
+    </div>
+  </div>
 
+  <h2>Format + Select</h2>
+  <p class="demo-sub">Left: format badge. Right: checkbox (shared/checkbox.css's .checkbox--lg, 28px). Used by Reference / Scene Tile · Selectable.</p>
+  <div class="demo-grid">
+    <div class="demo-surface narrow">
+      <div class="preview-top-row">
+        <span class="preview-top-row-format-badge"><span class="preview-top-row-format-badge-icon"><span></span></span><span class="preview-top-row-format-badge-label">9:16</span></span>
+        <input type="checkbox" class="checkbox checkbox--lg">
+      </div>
+    </div>
+    <div class="demo-surface narrow">
+      <div class="preview-top-row">
+        <span class="preview-top-row-format-badge"><span class="preview-top-row-format-badge-icon"><span></span></span><span class="preview-top-row-format-badge-label">9:16</span></span>
+      </div>
     </div>
   </div>
   </main>

@@ -1,0 +1,29 @@
+/* Selector / Style Card — Figma node 3673:33878 (cardType = Style / add)
+   A brand-style picker tile: full-bleed photo, bottom scrim + name, and a
+   .preview-top-row(favorite-more) overlay (Favorite + More, both toggleable
+   independently via preview-top-row.css's ShowLeft/ShowRight). "add" is the
+   dashed-border empty-state tile used to add a new style.
+*/
+
+.selector-style-card{
+  position:relative; width:246px; height:295px; box-sizing:border-box;
+  border-radius:var(--radius-xl); overflow:hidden; cursor:pointer;
+}
+.selector-style-card-thumb{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block;}
+.selector-style-card-scrim{
+  position:absolute; left:0; right:0; bottom:0; height:78px;
+  background:linear-gradient(to bottom, rgba(11,20,40,0), rgba(11,20,40,.72));
+}
+.selector-style-card-name{
+  position:absolute; left:10px; right:10px; bottom:14px;
+  font-family:var(--font-family-text); font-size:13px; font-weight:600; line-height:20px; color:var(--color-neutral-0);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.selector-style-card-top-row{position:absolute; top:14px; left:0; right:0;}
+
+.selector-style-card--add{
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:var(--spacing-sm);
+  border:1px dashed var(--color-neutral-400); border-radius:var(--radius-xl); background:var(--color-neutral-0);
+}
+.selector-style-card--add img{width:24px; height:24px; display:block;}
+.selector-style-card--add-label{font-family:var(--font-family-text); font-size:14px; font-weight:500; line-height:22px; color:var(--color-neutral-700);}

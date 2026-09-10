@@ -2,19 +2,26 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
-<title>Music Track Row — AI Social Media Component</title>
+<title>Selector / Video Card — AI Social Media Component</title>
 <link rel="stylesheet" href="../../tokens/tokens.css" />
 <link rel="stylesheet" href="../demo-nav.css" />
-<link rel="stylesheet" href="actions-button.css" />
-<link rel="stylesheet" href="music-track-row.css" />
+<link rel="stylesheet" href="selector-video-card.css" />
+<link rel="stylesheet" href="preview-top-row.css" />
+<link rel="stylesheet" href="scene-tile.css" />
+<link rel="stylesheet" href="post-status-chip.css" />
+<link rel="stylesheet" href="feedback-status-chip.css" />
 <style>
   body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
   .demo-main { padding: var(--spacing-4xl); }
   h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-sm); }
+  h2 { font-size: var(--font-size-text-md); font-weight: 700; margin: var(--spacing-3xl) 0 var(--spacing-sm); }
+  h2:first-of-type { margin-top: 0; }
   .demo-note { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); max-width: 720px; margin: 0 0 var(--spacing-3xl); line-height: 1.6; }
-  .demo-row { display: flex; flex-direction: column; gap: var(--spacing-sm); margin-bottom: var(--spacing-3xl); max-width: 912px; }
+  .demo-sub { font-size: var(--font-size-text-xs); color: var(--color-neutral-500); margin: 0 0 var(--spacing-sm); }
+  .demo-row { display: flex; flex-direction: column; gap: var(--spacing-sm); margin-bottom: var(--spacing-2xl); }
   .demo-label { font-size: var(--font-size-text-xs); color: var(--color-neutral-500); }
-  .demo-grid { display: flex; flex-direction: column; gap: var(--spacing-md); }
+  .demo-grid { display: flex; flex-wrap: wrap; gap: var(--spacing-2xl); align-items: flex-start; }
+  .selector-video-card-thumb-placeholder { position:absolute; inset:0; background: linear-gradient(135deg, #a8cbff 14%, #ed7897 86%); }
 </style>
 </head>
 <body>
@@ -104,7 +111,7 @@
         <a href="heading.html">Heading</a>
         <a href="image-scene-card.html">Image Scene Card</a>
         <a href="media-card-icon-btn.html">Media Card Icon Button</a>
-        <a href="music-track-row.html" class="active">Music Track Row</a>
+        <a href="music-track-row.html">Music Track Row</a>
         <a href="preview-top-row.html">Preview Top Row</a>
         <a href="queue-panel.html">Queue Job Row / Queue Panel</a>
         <a href="scene-tile.html">Scene Tile</a>
@@ -121,7 +128,7 @@
         <a href="character-card.html">Character Card</a>
         <a href="destination-account.html">Destination Account</a>
         <a href="selector-style-card.html">Selector / Style Card</a>
-        <a href="selector-video-card.html">Selector / Video Card</a>
+        <a href="selector-video-card.html" class="active">Selector / Video Card</a>
       </div>
     </div>
     <div class="demo-sidebar-group collapsed" data-group="data-display">
@@ -150,45 +157,49 @@
     </div>
   </nav>
   <main class="demo-main">
-  <h1>Music Track Row</h1>
-  <p class="demo-note">Figma: "audio" section (2086:63836) → "audio" component set (2086:61844) — background-music picker row for the video editor's Timeline/Music panel. One row per track, radio-selected (only one plays at a time); "No Music" is the fixed opt-out row that always appears first. hover/focused states are real :hover/:focus-within, not separate markup.</p>
+  <h1>Selector / Video Card</h1>
+  <p class="demo-note">Figma node 8386:120080. state = Default / Playing. A published-video result tile -- reuses scene-tile.css's own video scrubber and Play button (same trick Figma's component uses) plus post-status-chip.css and feedback-status-chip.css for the meta row.</p>
 
-  <div class="demo-row">
-    <span class="demo-label">Type = No music / Default / Pause (selected)</span>
-    <div class="demo-grid">
-
-      <label class="music-track-row" data-type="no-music">
-        <img class="music-track-icon" src="icons/audio-volume-off.svg" alt="">
-        <div class="music-track-info">
-          <span class="music-track-title">No Music</span>
+  <h2>Default</h2>
+  <div class="demo-grid">
+    <div class="selector-video-card">
+      <div class="selector-video-card-frame">
+        <div class="selector-video-card-thumb-placeholder"></div>
+        <div class="selector-video-card-preview">
+          <div class="preview-top-row">
+            <span class="preview-top-row-format-badge"><span class="preview-top-row-format-badge-icon"><span></span></span><span class="preview-top-row-format-badge-label">9:16</span></span>
+            <div class="preview-top-row-actions">
+              <button class="preview-action-btn preview-action-btn--outline download" type="button"><img src="icons/download-ui.svg" alt="Download"></button>
+              <button class="preview-action-btn preview-action-btn--outline" type="button"><img src="icons/ui-ellipsis.svg" alt="More"></button>
+            </div>
+          </div>
+          <div class="scene-tile-scrubber">
+            <div class="scene-tile-scrubber-row">
+              <span class="scene-tile-scrubber-time">0:03 / 0:08</span>
+              <div class="scene-tile-scrubber-controls">
+                <img class="volume" src="icons/audio-volume-off.svg" alt="">
+                <img class="maximize-sm" src="icons/maximize.svg" alt="">
+              </div>
+            </div>
+            <div class="scene-tile-scrubber-bar"><div class="scene-tile-scrubber-bar-fill"></div></div>
+          </div>
         </div>
-        <input type="radio" class="music-track-radio" name="music-track-demo">
-      </label>
-
-      <label class="music-track-row" data-type="default">
-        <img class="music-track-icon" src="icons/audio-play.svg" alt="">
-        <div class="music-track-info">
-          <span class="music-track-title">Funky Chunk</span>
-          <span class="music-track-duration">03:59</span>
-          <span class="music-track-mood">Hype</span>
-          <span class="music-track-bpm">BPM 115</span>
+        <button class="scene-tile-play-btn" type="button"><img class="play" src="icons/video-play-glyph.svg" alt="Play"></button>
+      </div>
+      <div class="selector-video-card-meta">
+        <span class="selector-video-card-title">This New Lip Tint Is Everything</span>
+        <div class="selector-video-card-meta-row">
+          <div class="selector-video-card-date-platforms">
+            <span class="selector-video-card-date">Aug 26, 2026</span>
+            <div class="post-status-chip">
+              <img src="icons/social-instagram.svg" alt="Instagram">
+              <img src="icons/social-tiktok.svg" alt="TikTok">
+              <img src="icons/social-youtube.svg" alt="YouTube">
+            </div>
+          </div>
+          <span class="feedback-status-chip feedback-status-chip--green">Published</span>
         </div>
-        <button type="button" class="music-track-favorite"><img src="icons/audio-favorite-false.svg" alt="Favorite"></button>
-        <input type="radio" class="music-track-radio" name="music-track-demo">
-      </label>
-
-      <label class="music-track-row" data-type="pause">
-        <img class="music-track-icon" src="icons/audio-pause.svg" alt="">
-        <div class="music-track-info">
-          <span class="music-track-title">Funky Chunk</span>
-          <span class="music-track-duration">03:59</span>
-          <span class="music-track-mood">Hype</span>
-          <span class="music-track-bpm">BPM 115</span>
-        </div>
-        <button type="button" class="music-track-favorite"><img src="icons/audio-favorite-false.svg" alt="Favorite"></button>
-        <input type="radio" class="music-track-radio" name="music-track-demo" checked>
-      </label>
-
+      </div>
     </div>
   </div>
   </main>
