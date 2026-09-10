@@ -3495,7 +3495,6 @@ function imgGoToBrief(){ showView('briefView'); setStep('stepBrief'); document.g
 // ---- Reference image attach (Brief prompt box) ----
 let imgReferenceImages = [];
 let imgRefImageCounter = 0;
-let imgRefMoreMenuOpen = null;
 function imgAddReferenceImage(){
   imgRefImageCounter++;
   imgReferenceImages.push(imgRefImageCounter);
@@ -3505,30 +3504,17 @@ function imgRemoveReferenceImage(num){
   imgReferenceImages = imgReferenceImages.filter(n => n !== num);
   imgRenderReferenceImages();
 }
-function imgToggleRefMoreMenu(e, n){
-  e.stopPropagation();
-  imgRefMoreMenuOpen = imgRefMoreMenuOpen === n ? null : n;
-  imgRenderReferenceImages();
-}
-function imgReplaceReferenceImage(n){
-  imgRefImageCounter++;
-  imgReferenceImages = imgReferenceImages.map(x => x === n ? imgRefImageCounter : x);
-  imgRefMoreMenuOpen = null;
-  imgRenderReferenceImages();
-}
-document.addEventListener('click', () => { if(imgRefMoreMenuOpen !== null){ imgRefMoreMenuOpen = null; imgRenderReferenceImages(); } });
 function imgRenderReferenceImages(){
   const icon = `<img class="ref-chip-icon" src="../../../../components/ai-social-media/icons/content-image-plus.svg" alt="">`;
   const chips = imgReferenceImages.map(n => `
     <div class="ref-chip" data-attached="true">
       ${icon}<span class="ref-chip-label">Image ${n}</span>
-      <button type="button" class="ref-chip-more" onclick="imgToggleRefMoreMenu(event, ${n})" title="More options"><img src="../../../../components/ai-social-media/icons/ui-ellipsis.svg" class="icon-inline" alt=""></button>
-      ${imgRefMoreMenuOpen === n ? buildRefMoreMenuHtml(`imgReplaceReferenceImage(${n})`) : ''}
       <button type="button" class="ref-chip-remove" onclick="event.stopPropagation(); imgRemoveReferenceImage(${n})" aria-label="Remove reference image ${n}" title="Remove reference"><img src="../../../../components/ai-social-media/icons/controls/chip-close-x.svg" class="icon-inline" alt=""></button>
     </div>
   `).join('');
+  const menuOpen = window.__refUploadMenuOpen === 'img-reference';
   document.getElementById('referenceImagesRowImage').innerHTML = chips + `
-    <div class="ref-chip" onclick="imgAddReferenceImage()" title="Add reference image">${icon}<span class="ref-chip-label">Reference</span></div>
+    <div class="ref-chip" onclick="toggleRefUploadMenu(event, 'img-reference')" title="Add reference image">${icon}<span class="ref-chip-label">Reference</span><button type="button" class="ref-chip-more" title="More options"><img src="../../../../components/ai-social-media/icons/ui-ellipsis.svg" class="icon-inline" alt=""></button>${menuOpen ? buildRefUploadMenuHtml('img-reference') : ''}</div>
   `;
 }
 imgRenderReferenceImages();
@@ -3683,7 +3669,6 @@ function carGoToBrief(){ showView('briefView'); setStep('stepBrief'); document.g
 // ---- Reference image attach (Brief prompt box) ----
 let carReferenceImages = [];
 let carRefImageCounter = 0;
-let carRefMoreMenuOpen = null;
 function carAddReferenceImage(){
   carRefImageCounter++;
   carReferenceImages.push(carRefImageCounter);
@@ -3693,30 +3678,17 @@ function carRemoveReferenceImage(num){
   carReferenceImages = carReferenceImages.filter(n => n !== num);
   carRenderReferenceImages();
 }
-function carToggleRefMoreMenu(e, n){
-  e.stopPropagation();
-  carRefMoreMenuOpen = carRefMoreMenuOpen === n ? null : n;
-  carRenderReferenceImages();
-}
-function carReplaceReferenceImage(n){
-  carRefImageCounter++;
-  carReferenceImages = carReferenceImages.map(x => x === n ? carRefImageCounter : x);
-  carRefMoreMenuOpen = null;
-  carRenderReferenceImages();
-}
-document.addEventListener('click', () => { if(carRefMoreMenuOpen !== null){ carRefMoreMenuOpen = null; carRenderReferenceImages(); } });
 function carRenderReferenceImages(){
   const icon = `<img class="ref-chip-icon" src="../../../../components/ai-social-media/icons/content-image-plus.svg" alt="">`;
   const chips = carReferenceImages.map(n => `
     <div class="ref-chip" data-attached="true">
       ${icon}<span class="ref-chip-label">Image ${n}</span>
-      <button type="button" class="ref-chip-more" onclick="carToggleRefMoreMenu(event, ${n})" title="More options"><img src="../../../../components/ai-social-media/icons/ui-ellipsis.svg" class="icon-inline" alt=""></button>
-      ${carRefMoreMenuOpen === n ? buildRefMoreMenuHtml(`carReplaceReferenceImage(${n})`) : ''}
       <button type="button" class="ref-chip-remove" onclick="event.stopPropagation(); carRemoveReferenceImage(${n})" aria-label="Remove reference image ${n}" title="Remove reference"><img src="../../../../components/ai-social-media/icons/controls/chip-close-x.svg" class="icon-inline" alt=""></button>
     </div>
   `).join('');
+  const menuOpen = window.__refUploadMenuOpen === 'car-reference';
   document.getElementById('referenceImagesRowCarousel').innerHTML = chips + `
-    <div class="ref-chip" onclick="carAddReferenceImage()" title="Add reference image">${icon}<span class="ref-chip-label">Reference</span></div>
+    <div class="ref-chip" onclick="toggleRefUploadMenu(event, 'car-reference')" title="Add reference image">${icon}<span class="ref-chip-label">Reference</span><button type="button" class="ref-chip-more" title="More options"><img src="../../../../components/ai-social-media/icons/ui-ellipsis.svg" class="icon-inline" alt=""></button>${menuOpen ? buildRefUploadMenuHtml('car-reference') : ''}</div>
   `;
 }
 carRenderReferenceImages();
@@ -5179,18 +5151,6 @@ function removeReferenceImage(num){
   referenceImages = referenceImages.filter(n => n !== num);
   renderReferenceImages();
 }
-window.__refMoreMenuOpen = null;
-function toggleRefMoreMenu(e, n){
-  e.stopPropagation();
-  window.__refMoreMenuOpen = window.__refMoreMenuOpen === n ? null : n;
-  renderReferenceImages();
-}
-function replaceReferenceImage(n){
-  refImageCounter++;
-  referenceImages = referenceImages.map(x => x === n ? refImageCounter : x);
-  window.__refMoreMenuOpen = null;
-  renderReferenceImages();
-}
 function addFirstFrameImage(){ firstFrameAdded = true; renderReferenceImages(); }
 function removeFirstFrameImage(){ firstFrameAdded = false; renderReferenceImages(); }
 function addLastFrameImage(){ lastFrameAdded = true; renderReferenceImages(); }
@@ -5202,39 +5162,52 @@ function removeLastFrameImage(){ lastFrameAdded = false; renderReferenceImages()
 // menu (Figma 8727:220803) instead of attaching directly; My Library hands off to the wide
 // .ref-chip--detail "image" state (Figma 8614:18), same as the Content Library hand-off.
 const refChipIcon = `<img class="ref-chip-icon" src="../../../../components/ai-social-media/icons/content-image-plus.svg" alt="">`;
-window.__refUploadMenuOpen = false;
+// null | 'reference' | 'first' | 'last' -- which empty chip's Upload image/My Library menu
+// (Figma 9202:221430) is currently open, since Reference/First frame/Last frame each need
+// their own add-function wired but share this exact same menu shell.
+window.__refUploadMenuOpen = null;
+// Covers all five empty-chip entry points across every content type -- Reel/Short & Story
+// Video's Reference/First frame/Last frame, plus Image post's and Carousel's own Reference
+// chip (each with their own local add function, see img-/car-RenderReferenceImages below).
+const REF_UPLOAD_ADD_FN = {
+  reference: 'addReferenceImage(null)', first: 'addFirstFrameImage()', last: 'addLastFrameImage()',
+  'img-reference': 'imgAddReferenceImage()', 'car-reference': 'carAddReferenceImage()'
+};
+function refreshAllReferenceChipRows(){
+  renderReferenceImages();
+  if(typeof imgRenderReferenceImages === 'function') imgRenderReferenceImages();
+  if(typeof carRenderReferenceImages === 'function') carRenderReferenceImages();
+}
 
-function buildRefUploadMenuHtml(){
+function buildRefUploadMenuHtml(kind){
   return `
     <div class="context-menu" style="position:absolute; top:calc(100% + 4px); left:0; z-index:50;" onclick="event.stopPropagation();">
-      <button type="button" class="menu-item" onclick="closeRefUploadMenu(); addReferenceImage(null);">Upload image</button>
-      <button type="button" class="menu-item" onclick="closeRefUploadMenu(); openMyLibraryModal();">My Library</button>
+      <button type="button" class="menu-item" onclick="closeRefUploadMenu(); ${REF_UPLOAD_ADD_FN[kind]};">Upload image</button>
+      <button type="button" class="menu-item" onclick="closeRefUploadMenu(); openMyLibraryModal('${kind}');">My Library</button>
     </div>`;
 }
-function toggleRefUploadMenu(e){
+function toggleRefUploadMenu(e, kind){
   e.stopPropagation();
-  window.__refUploadMenuOpen = !window.__refUploadMenuOpen;
-  renderReferenceImages();
+  window.__refUploadMenuOpen = window.__refUploadMenuOpen === kind ? null : kind;
+  refreshAllReferenceChipRows();
 }
-function closeRefUploadMenu(){ window.__refUploadMenuOpen = false; renderReferenceImages(); }
+function closeRefUploadMenu(){ window.__refUploadMenuOpen = null; refreshAllReferenceChipRows(); }
 document.addEventListener('click', () => {
-  if(window.__refUploadMenuOpen){ window.__refUploadMenuOpen = false; renderReferenceImages(); }
-  if(window.__refMoreMenuOpen !== null){ window.__refMoreMenuOpen = null; renderReferenceImages(); }
+  if(window.__refUploadMenuOpen !== null){ window.__refUploadMenuOpen = null; refreshAllReferenceChipRows(); }
 });
 
 function renderReferenceImages(){
   const chips = referenceImages.map(n => `
     <div class="ref-chip" data-attached="true">
       ${refChipIcon}<span class="ref-chip-label">Image ${n}</span>
-      <button type="button" class="ref-chip-more" onclick="toggleRefMoreMenu(event, ${n})" title="More options"><img src="../../../../components/ai-social-media/icons/ui-ellipsis.svg" class="icon-inline" alt=""></button>
-      ${window.__refMoreMenuOpen === n ? buildRefMoreMenuHtml(`replaceReferenceImage(${n})`) : ''}
       <button type="button" class="ref-chip-remove" onclick="event.stopPropagation(); removeReferenceImage(${n})" aria-label="Remove reference image ${n}" title="Remove reference"><img src="../../../../components/ai-social-media/icons/controls/chip-close-x.svg" class="icon-inline" alt=""></button>
     </div>
   `).join('');
 
+  const refChipMore = `<button type="button" class="ref-chip-more" title="More options"><img src="../../../../components/ai-social-media/icons/ui-ellipsis.svg" class="icon-inline" alt=""></button>`;
   const referenceEmptyChip = (disabled) => disabled
     ? `<div class="ref-chip disabled" title="Remove the first/last frame image to attach a reference instead">${refChipIcon}<span class="ref-chip-label">Reference</span></div>`
-    : `<div class="ref-chip" onclick="toggleRefUploadMenu(event)" title="Add reference image">${refChipIcon}<span class="ref-chip-label">Reference</span>${window.__refUploadMenuOpen ? buildRefUploadMenuHtml() : ''}</div>`;
+    : `<div class="ref-chip" onclick="toggleRefUploadMenu(event, 'reference')" title="Add reference image">${refChipIcon}<span class="ref-chip-label">Reference</span>${refChipMore}${window.__refUploadMenuOpen === 'reference' ? buildRefUploadMenuHtml('reference') : ''}</div>`;
 
   // A Content Library / My Library reference already attached via window.fmxRefMount()
   // (fmxref-js, further down this file) renders its own wide .ref-chip--detail in the
@@ -5254,7 +5227,7 @@ function renderReferenceImages(){
       <button type="button" class="ref-chip-remove" onclick="event.stopPropagation(); removeFirstFrameImage()" aria-label="Remove first frame" title="Remove first frame"><img src="../../../../components/ai-social-media/icons/controls/chip-close-x.svg" class="icon-inline" alt=""></button>
     </div>
   ` : `
-    <div class="ref-chip${hasReference ? ' disabled' : ''}" ${hasReference ? 'title="Remove the reference image to attach a first frame instead"' : 'onclick="addFirstFrameImage()"'}>${refChipIcon}<span class="ref-chip-label">First frame</span></div>
+    <div class="ref-chip${hasReference ? ' disabled' : ''}" ${hasReference ? 'title="Remove the reference image to attach a first frame instead"' : 'onclick="toggleRefUploadMenu(event, \'first\')"'}>${refChipIcon}<span class="ref-chip-label">First frame</span>${hasReference ? '' : refChipMore}${window.__refUploadMenuOpen === 'first' ? buildRefUploadMenuHtml('first') : ''}</div>
   `;
   const lastFrameChipBrief = lastFrameAdded ? `
     <div class="ref-chip" data-attached="true">
@@ -5262,7 +5235,7 @@ function renderReferenceImages(){
       <button type="button" class="ref-chip-remove" onclick="event.stopPropagation(); removeLastFrameImage()" aria-label="Remove last frame" title="Remove last frame"><img src="../../../../components/ai-social-media/icons/controls/chip-close-x.svg" class="icon-inline" alt=""></button>
     </div>
   ` : `
-    <div class="ref-chip${hasReference ? ' disabled' : ''}" ${hasReference ? 'title="Remove the reference image to attach a last frame instead"' : 'onclick="addLastFrameImage()"'}>${refChipIcon}<span class="ref-chip-label">Last frame</span></div>
+    <div class="ref-chip${hasReference ? ' disabled' : ''}" ${hasReference ? 'title="Remove the reference image to attach a last frame instead"' : 'onclick="toggleRefUploadMenu(event, \'last\')"'}>${refChipIcon}<span class="ref-chip-label">Last frame</span>${hasReference ? '' : refChipMore}${window.__refUploadMenuOpen === 'last' ? buildRefUploadMenuHtml('last') : ''}</div>
   `;
   const briefHtml = firstFrameChipBrief + lastFrameChipBrief + referenceChipBrief;
 
@@ -5348,7 +5321,14 @@ function mountMyLibraryModal(){
   el.innerHTML = buildMyLibraryModalHtml();
   document.querySelector('.app').appendChild(el.firstElementChild);
 }
-function openMyLibraryModal(){ window.__myLibrarySelected = new Set(); mountMyLibraryModal(); renderMyLibraryTiles(); document.getElementById('myLibraryModalOverlay').style.display = 'flex'; }
+// Which chip opened the modal, so "Add" can route to the right attach function --
+// 'reference' (Reel/Short & Story Video) keeps the original wide-card fmxRefMount hand-off,
+// 'first'/'last' just attach a plain placeholder like Upload image does, and 'img-reference'/
+// 'car-reference' cover Image post and Carousel's own Reference chip (Figma's library grid
+// itself is still the Reel/Short-only 9:16 sample set -- ratio badges won't match those two
+// content types' own aspect ratio, a known placeholder-data gap, not a routing bug).
+window.__myLibraryTargetKind = 'reference';
+function openMyLibraryModal(kind){ window.__myLibraryTargetKind = kind || 'reference'; window.__myLibrarySelected = new Set(); mountMyLibraryModal(); renderMyLibraryTiles(); document.getElementById('myLibraryModalOverlay').style.display = 'flex'; }
 function closeMyLibraryModal(){ const el = document.getElementById('myLibraryModalOverlay'); if(el) el.style.display = 'none'; }
 function renderMyLibraryTiles(){
   const content = document.getElementById('myLibraryContent');
@@ -5365,11 +5345,16 @@ function addMyLibrarySelection(){
   const indices = Array.from(window.__myLibrarySelected);
   if(!indices.length) return;
   closeMyLibraryModal();
-  // Hand off exactly like the Content Library "Use as reference" deep-link does: same
-  // fmxRefMount() entry point, same wide chip + strength/match/frame-picker popover
-  // (fmxref-js, further down this file). fmxRefMount only carries a single reference, so
-  // a multi-select here still only attaches the first item picked -- this modal only opens
-  // from the Reel/Short & Story Video Brief row, so the reference is always the 9:16 (video) kind.
+  const kind = window.__myLibraryTargetKind;
+  if(kind === 'first'){ addFirstFrameImage(); return; }
+  if(kind === 'last'){ addLastFrameImage(); return; }
+  if(kind === 'img-reference'){ imgAddReferenceImage(); return; }
+  if(kind === 'car-reference'){ carAddReferenceImage(); return; }
+  // 'reference' (Reel/Short & Story Video): hand off exactly like the Content Library "Use
+  // as reference" deep-link does -- same fmxRefMount() entry point, same wide chip +
+  // strength/match/frame-picker popover (fmxref-js, further down this file). fmxRefMount
+  // only carries a single reference, so a multi-select here still only attaches the first
+  // item picked.
   const item = MY_LIBRARY_ITEMS[indices[0]];
   if(window.fmxRefMount) window.fmxRefMount({ ref: item.title, thumb: item.thumb, ratio: item.ratio });
 }

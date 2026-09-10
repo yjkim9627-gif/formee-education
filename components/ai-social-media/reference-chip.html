@@ -15,6 +15,8 @@
   .demo-note { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); max-width: 720px; margin: 0 0 var(--spacing-3xl); line-height: 1.6; }
   .demo-sub { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); margin: 0 0 var(--spacing-lg); }
   .demo-grid { display: flex; flex-wrap: wrap; gap: var(--spacing-2xl); align-items: flex-start; }
+  /* Demo-only: forces the real :hover-only .ref-chip-more visible for a static screenshot. */
+  .demo-force-hover .ref-chip-more { display: flex; }
 </style>
 </head>
 <body>
@@ -154,24 +156,24 @@
   </nav>
   <main class="demo-main">
   <h1>Reference Chip</h1>
-  <p class="demo-note">Figma: "Prompt Reference Chip" (node 8727:220714, 9191:135045) — the reference-image chip used in the AI Prompt Box across Reel/Short, Story Video, Image post and Carousel's Brief &amp; Style stage. Empty state prompts "Reference"/"First frame"/"Last frame"; once attached it shows the Remove (✕) corner and a More (…) button on hover. The wide "image" state (<code>.ref-chip--detail</code>) is the Content Library "Use as reference" hand-off card.</p>
+  <p class="demo-note">Figma: "Prompt Reference Chip" (node 8727:220714, 9191:135045) — the reference-image chip used in the AI Prompt Box across Reel/Short, Story Video, Image post and Carousel's Brief &amp; Style stage. Empty state prompts "Reference"/"First frame"/"Last frame", and reveals a More (…) button on hover (node 8708:207411 — same "open the add-reference flow" click target, just a hover affordance, no separate handler). Once attached it shows only the Remove (✕) corner (node 8727:237967) — no More button in that state. The wide "image" state (<code>.ref-chip--detail</code>) is the Content Library "Use as reference" hand-off card.</p>
 
-  <h2>Empty / Hover / Remove (square chip, 120×~68px)</h2>
-  <p class="demo-sub">Used compactly (one chip per attachment) in the Brief prompt box and Script/Timeline scene editors.</p>
+  <h2>Empty / Empty-hover / Remove (square chip, 120×~68px)</h2>
+  <p class="demo-sub">Used compactly (one chip per attachment) in the Brief prompt box and Script/Timeline scene editors. Middle chip's hover is forced on for this static demo (real hover is CSS-only, :hover-driven).</p>
   <div class="demo-grid">
     <div class="ref-chip" title="Empty">
       <img class="ref-chip-icon" src="icons/content-image-plus.svg" alt="">
       <span class="ref-chip-label">Reference</span>
     </div>
-    <div class="ref-chip" data-attached="true" title="Hover to reveal the More button">
+    <div class="ref-chip demo-force-hover" title="Empty, hovered">
+      <img class="ref-chip-icon" src="icons/content-image-plus.svg" alt="">
+      <span class="ref-chip-label">Reference</span>
+      <button type="button" class="ref-chip-more" title="More options"><img src="icons/ui-ellipsis.svg" class="icon-inline" alt=""></button>
+    </div>
+    <div class="ref-chip" data-attached="true" title="Attached (Remove only, no hover needed)">
       <img class="ref-chip-icon" src="icons/content-image-plus.svg" alt="">
       <span class="ref-chip-label">First frame</span>
-      <button type="button" class="ref-chip-more" title="More options"><img src="icons/ui-ellipsis.svg" class="icon-inline" alt=""></button>
       <button type="button" class="ref-chip-remove" aria-label="Remove reference" title="Remove reference"><img src="icons/controls/chip-close-x.svg" class="icon-inline" alt=""></button>
-    </div>
-    <div class="ref-chip" title="Empty">
-      <img class="ref-chip-icon" src="icons/content-image-plus.svg" alt="">
-      <span class="ref-chip-label">Last frame</span>
     </div>
   </div>
 
