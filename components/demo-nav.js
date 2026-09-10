@@ -11,6 +11,11 @@ function toggleDemoGroup(btn){
 // links by substring match: a group with zero matches hides entirely, a group with at least
 // one match force-expands regardless of its normal baked-in collapsed state, and clearing the
 // box restores exactly whatever collapsed/expanded state the page loaded with.
+//
+// Matches against BOTH the visible label ("Actions / Button") and the href/filename slug
+// ("actions-button.html") -- the two often don't share substrings (hyphens vs "/" and
+// spaces), so a dev searching by the CSS/file name they actually work with (e.g.
+// "actions-button") would otherwise get zero results despite the component existing.
 (function(){
   function init(){
     const sidebar = document.querySelector('.demo-sidebar');
@@ -39,7 +44,9 @@ function toggleDemoGroup(btn){
       groups.forEach(g => {
         let anyMatch = false;
         g.querySelectorAll('a').forEach(a => {
-          const match = a.textContent.toLowerCase().includes(q);
+          const label = a.textContent.toLowerCase();
+          const href = (a.getAttribute('href') || '').toLowerCase();
+          const match = label.includes(q) || href.includes(q);
           a.style.display = match ? '' : 'none';
           if(match) anyMatch = true;
         });
