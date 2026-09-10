@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>Editor - Video — Section Components</title>
+<link rel="stylesheet" href="../../tokens/tokens.css" />
+<link rel="stylesheet" href="../demo-nav.css" />
+<link rel="stylesheet" href="editor-video.css" />
+<style>
+  body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
+  .demo-main { padding: var(--spacing-4xl); }
+  h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-sm); }
+  h2 { font-size: var(--font-size-text-md); font-weight: 700; color: var(--color-neutral-700); margin: var(--spacing-4xl) 0 var(--spacing-xs); }
+  h2:first-of-type { margin-top: 0; }
+  .demo-nid { font-weight: 400; color: var(--color-neutral-450); }
+  .demo-note { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); max-width: 760px; margin: 0 0 var(--spacing-3xl); line-height: 1.6; }
+  .demo-sub { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); margin: 0 0 var(--spacing-lg); line-height: 1.5; }
+  .demo-grid { display: flex; flex-wrap: wrap; gap: var(--spacing-2xl); align-items: flex-start; }
+  .demo-col { display: flex; flex-direction: column; gap: var(--spacing-sm); align-items: flex-start; }
+  .demo-state { font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--color-neutral-450); }
+  .demo-surface { padding: var(--spacing-2xl); background: var(--color-neutral-100); border-radius: 12px; }
+</style>
+</head>
+<body>
+<div class="demo-shell">
+  <nav class="demo-sidebar">
+    <a href="../../index.html" class="demo-sidebar-home">← Home</a>
+    <div class="demo-sidebar-group collapsed" data-group="forms-inputs">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Forms & Inputs</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="controls-field-ai-assisted-text.html">Controls / Field / AI assisted text</a>
+        <a href="controls-field.html">Controls / Field</a>
+        <a href="controls-filter-select.html">Controls / Filter / Select</a>
+        <a href="controls-filter-toggle.html">Controls / Filter / Toggle</a>
+        <a href="controls-misc.html">Controls — Icon Action, Popover, Carousel Arrow, Scrollbar, Segmented Control</a>
+        <a href="controls-multi-select.html">Controls / Multi Select</a>
+        <a href="controls-option-card.html">Controls / Option Card</a>
+        <a href="controls-search-field.html">Controls / Search Field</a>
+        <a href="controls-social-profile-row.html">Controls / Social profile row</a>
+        <a href="controls-toggles.html">Controls / Toggles</a>
+        <a href="date-picker.html">Date Picker</a>
+        <a href="duration-chip.html">Controls / Duration Chip</a>
+        <a href="filter-chip.html">Controls / Filter / Toggle</a>
+        <a href="input-login.html">Input / Login</a>
+        <a href="input.html">Input</a>
+        <a href="segment-chip.html">Segment Chip</a>
+        <a href="setting-chip.html">Setting Chip</a>
+        <a href="switch.html">Controls / Switch</a>
+        <a href="table-filter.html">Table / Filter</a>
+        <a href="toggle-chip.html">Controls / Toggle Chip</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="actions">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Actions</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="actions-button.html">Actions / Button</a>
+        <a href="../shared/button.html">Button</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="labels-status">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Labels & Status</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="feedback-status-chip.html">Feedback / Status Chip</a>
+        <a href="post-status-chip.html">Post Status Chip</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="navigation">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Navigation</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="nav.html">Nav / Navigation</a>
+        <a href="topbar-stepper.html">Topbar + Stepper</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="overlays-menus">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Overlays & Menus</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="controls-menu.html">Menu / Context Menu / Size Dropdown</a>
+        <a href="context-bar-popovers.html">ContextBar Popovers</a>
+        <a href="publish-social-modal.html">Publish to Social Modal</a>
+        <a href="../shared/modal-confirm.html">Modal / Confirm</a>
+        <a href="../shared/modal-form.html">Modal / Form</a>
+        <a href="../shared/modal-success.html">Modal / Success</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="images-icons">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Images & Icons</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="brand-logo.html">Brand / Logo</a>
+        <a href="icons.html">Icons</a>
+        <a href="avatar.html">Avatar</a>
+        <a href="illus-placeholder.html">Illus Placeholder</a>
+        <a href="editor-color-swatch.html">Editor / ContextBar Color Swatch</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="data-display">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Data Display</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="carousel-card-block.html">Carousel Card Block</a>
+        <a href="generate-preview-panel.html">Generate Preview Panel</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="content-editor">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Content Editor</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="brand-kit.html">Brand Kit</a>
+        <a href="editor-cell.html">Editor Cell</a>
+        <a href="editor-context-bar.html">Editor ContextBar</a>
+        <a href="editor-panel-chrome.html">Editor Panel & Controls</a>
+        <a href="editor-safe-zone-legend.html">Safe Zone Legend & Content Preview Actions</a>
+        <a href="heading.html">Heading</a>
+        <a href="w-action-bar.html">Action Bar / Editor</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="scene-storyboard">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Scene & Storyboard</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="image-scene-card.html">Image Scene Card</a>
+        <a href="media-card-icon-btn.html">Media Card Icon Button</a>
+        <a href="preview-top-row.html">Preview Top Row</a>
+        <a href="scene-tile.html">Scene Tile</a>
+        <a href="reference-scene-tile.html">Reference / Scene Tile · Selectable</a>
+        <a href="storyboard-card.html">Storyboard Card</a>
+        <a href="video-summary-card.html">Video Summary Card</a>
+        <a href="selector-style-card.html">Selector / Style Card</a>
+        <a href="selector-video-card.html">Selector / Video Card</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group" data-group="editor-video">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Editor - Video</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="editor-video.html" class="active">Editor - Video · Section</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="generation-workflow">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Generation Workflow</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="music-track-row.html">Music Track Row</a>
+        <a href="queue-panel.html">Queue Job Row / Queue Panel</a>
+        <a href="voice-accordion-row.html">Voice Accordion Row</a>
+        <a href="voice-section.html">Voice Section</a>
+        <a href="character-card.html">Character Card</a>
+        <a href="action-bar-feedback.html">Action Bar / Brief</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="ai-assistant">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>AI Assistant</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="ai-assistant.html">10 AI Assistant · Section</a>
+        <a href="chat-panel.html">Chat Panel</a>
+        <a href="prompt-box.html">AI Prompt Box</a>
+        <a href="ai-response-card.html">AI Response Card</a>
+        <a href="reference-chip.html">Reference Chip</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="upload-destination">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Upload & Destination</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="upload-dropzone.html">Upload Dropzone / Dashed Upload Row</a>
+        <a href="uploads-file-badge.html">Uploads / File Badge / Source Row</a>
+        <a href="uploads-rows.html">Uploads Panel Rows</a>
+        <a href="destination-account.html">Destination Account</a>
+        <a href="publish-destination-table-row.html">Publish / Destination Table Row</a>
+      </div>
+    </div>
+  </nav>
+  <main class="demo-main">
+  <h1>Editor - Video</h1>
+  <p class="demo-note">Figma: section <strong>“Editor - Video”</strong> (node 2796:45122). The timeline / audio / transition components of the video editor. Already covered elsewhere and only cross-linked, not rebuilt here: <strong>Editor / Layer Row (Panel)</strong> on <a href="editor-panel-chrome.html">Editor Panel &amp; Controls</a>, <strong>Editor / Content Preview Actions</strong> on <a href="editor-safe-zone-legend.html">Safe Zone Legend</a>, and the voice accordion on <a href="voice-section.html">Voice Section</a>. Photo fills use a neutral gradient placeholder and waveforms are CSS-drawn — the same convention as <a href="scene-tile.html">Scene Tile</a> (Figma’s raster fills aren’t shipped as assets).</p>
+
+  <h2>Editor / Page Row <span class="demo-nid">— 467:9</span></h2>
+  <div class="demo-surface demo-grid">
+    <div class="ev-page-row"><span class="ev-page-row__title">Page 1</span><span class="ev-page-row__peek">Why Study in the UK?</span></div>
+  </div>
+
+  <h2>Editor / Beat Row <span class="demo-nid">— 476:18</span></h2>
+  <div class="demo-surface demo-col" style="gap:2px; width:420px;">
+    <div class="ev-beat-row"><span class="ev-beat-row__num">01</span><span class="ev-beat-row__text">Beat text</span></div>
+    <div class="ev-beat-row ev-beat-row--current"><span class="ev-beat-row__num">02</span><span class="ev-beat-row__text">Beat text — current</span></div>
+    <div class="ev-beat-row"><span class="ev-beat-row__num">03</span><span class="ev-beat-row__text">Beat text</span></div>
+  </div>
+
+  <h2>Timeline / Ruler + Playhead <span class="demo-nid">— 1389:13270 / 1389:13387</span></h2>
+  <div class="demo-surface">
+    <div class="ev-timeline-demo">
+      <div class="ev-ruler">
+        <span class="ev-ruler__tick-label" style="left:0">0:00</span>
+        <span class="ev-ruler__tick-label" style="left:120px">0:03</span>
+        <span class="ev-ruler__tick-label" style="left:240px">0:06</span>
+        <span class="ev-ruler__tick-label" style="left:360px">0:09</span>
+        <span class="ev-ruler__tick-label" style="left:480px">0:12</span>
+      </div>
+      <div class="ev-playhead" style="left:150px"></div>
+    </div>
+  </div>
+
+  <h2>Timeline / Group Label <span class="demo-nid">— 1391:13329</span></h2>
+  <p class="demo-sub">Lane-gutter icons: overlays (T), video (frame), audio (note).</p>
+  <div class="demo-surface" style="display:flex; align-items:flex-start; gap:0;">
+    <div class="ev-group-label ev-group-label--overlays"><img src="icons/menu-text.svg" alt=""></div>
+    <div class="ev-group-label ev-group-label--video"><img src="icons/content-image.svg" alt=""></div>
+    <div class="ev-group-label ev-group-label--audio"><img src="icons/nav-audio.svg" alt=""></div>
+  </div>
+
+  <h2>Timeline / Lane Label <span class="demo-nid">— 1693:1404</span></h2>
+  <div class="demo-surface demo-grid">
+    <div class="ev-lane-label"><img class="ev-lane-label__grip" src="icons/layer-grip.svg" alt=""><img class="ev-lane-label__toggle" src="icons/layer-eye.svg" alt=""><img class="ev-lane-label__toggle" src="icons/edit-lock.svg" alt=""><span class="ev-lane-label__name">Headline</span></div>
+    <div class="ev-lane-label ev-lane-label--selected"><img class="ev-lane-label__grip" src="icons/layer-grip.svg" alt=""><img class="ev-lane-label__toggle" src="icons/layer-eye.svg" alt=""><img class="ev-lane-label__toggle" src="icons/edit-lock.svg" alt=""><span class="ev-lane-label__name">Headline</span></div>
+  </div>
+
+  <h2>Timeline / Overlay Clip <span class="demo-nid">— 1692:1115</span></h2>
+  <div class="demo-surface demo-col" style="gap:12px; width:460px;">
+    <div class="ev-overlay-clip"><span class="ev-overlay-clip__label">Discover Learn Grow with SCEI</span><span class="ev-overlay-clip__handle ev-overlay-clip__handle--l"></span><span class="ev-overlay-clip__handle ev-overlay-clip__handle--r"></span></div>
+    <div class="ev-overlay-clip ev-overlay-clip--selected"><span class="ev-overlay-clip__label">Discover Learn Grow with SCEI</span><span class="ev-overlay-clip__handle ev-overlay-clip__handle--l"></span><span class="ev-overlay-clip__handle ev-overlay-clip__handle--r"></span></div>
+  </div>
+
+  <h2>Timeline / Scene Clip <span class="demo-nid">— 1693:1114</span></h2>
+  <div class="demo-surface demo-col" style="gap:12px; width:460px;">
+    <div class="ev-scene-clip"><span class="ev-scene-clip__badge">Scene 1</span></div>
+    <div class="ev-scene-clip ev-scene-clip--selected"><span class="ev-scene-clip__badge">Scene 1</span></div>
+  </div>
+
+  <h2>Timeline / Waveform Clip <span class="demo-nid">— 1693:1385</span></h2>
+  <div class="demo-surface demo-col" style="gap:12px; width:480px;">
+    <div class="ev-waveform-clip"><span class="ev-waveform-clip__badge">Aria</span><span class="ev-waveform-clip__wave"></span></div>
+    <div class="ev-waveform-clip ev-waveform-clip--selected"><span class="ev-waveform-clip__badge">Aria</span><span class="ev-waveform-clip__wave"></span></div>
+  </div>
+
+  <h2>Editor / Add Track Row <span class="demo-nid">— 1744:1144</span></h2>
+  <div class="demo-surface demo-grid">
+    <div class="demo-col"><span class="demo-state">default</span><button type="button" class="ev-add-track"><img src="icons/pagebar-plus.svg" alt=""><span>Add another track</span></button></div>
+    <div class="demo-col"><span class="demo-state">hover</span><button type="button" class="ev-add-track ev-add-track--hover"><img src="icons/pagebar-plus.svg" alt=""><span>Add another track</span></button></div>
+  </div>
+
+  <h2>Timeline / Transport Button <span class="demo-nid">— 1392:14177</span></h2>
+  <div class="demo-surface demo-grid">
+    <div class="demo-col"><span class="demo-state">icon</span><button type="button" class="ev-transport-btn"><img src="icons/edit-trash.svg" alt="Delete"></button></div>
+    <div class="demo-col"><span class="demo-state">label</span><button type="button" class="ev-transport-btn ev-transport-btn--label"><img src="icons/transport-split.svg" alt=""><span>Split</span></button></div>
+  </div>
+
+  <h2>Timeline / Transition Chip <span class="demo-nid">— 1773:20845</span></h2>
+  <div class="demo-surface demo-grid">
+    <div class="demo-col"><span class="demo-state">Fade</span><span class="ev-transition-chip"><img src="icons/transition-fade.svg" alt=""></span></div>
+    <div class="demo-col"><span class="demo-state">Dissolve</span><span class="ev-transition-chip"><img src="icons/transition-dissolve.svg" alt=""></span></div>
+  </div>
+
+  <h2>Editor / Transition Option + Popover <span class="demo-nid">— 1776:35373 / 1776:36325</span></h2>
+  <div class="demo-grid">
+    <div class="demo-col"><span class="demo-state">Fade selected</span>
+      <div class="ev-transition-popover">
+        <button type="button" class="ev-transition-option"><img src="icons/transition-dissolve.svg" alt=""><span>Dissolve</span></button>
+        <button type="button" class="ev-transition-option ev-transition-option--selected"><img src="icons/transition-fade.svg" alt=""><span>Fade</span></button>
+        <div class="ev-transition-popover__check"><span class="box"></span>Apply to all clips</div>
+        <p class="ev-transition-popover__hint">Backspace ⌫ to remove</p>
+      </div>
+    </div>
+    <div class="demo-col"><span class="demo-state">Dissolve selected</span>
+      <div class="ev-transition-popover">
+        <button type="button" class="ev-transition-option ev-transition-option--selected"><img src="icons/transition-dissolve.svg" alt=""><span>Dissolve</span></button>
+        <button type="button" class="ev-transition-option"><img src="icons/transition-fade.svg" alt=""><span>Fade</span></button>
+        <div class="ev-transition-popover__check"><span class="box"></span>Apply to all clips</div>
+        <p class="ev-transition-popover__hint">Backspace ⌫ to remove</p>
+      </div>
+    </div>
+  </div>
+
+  <h2>Controls / Filter Button <span class="demo-nid">— 5005:160343</span></h2>
+  <div class="demo-surface demo-grid">
+    <div class="demo-col"><span class="demo-state">Default</span><button type="button" class="ev-filter-btn"><img src="icons/list-filter.svg" alt="Filter"></button></div>
+    <div class="demo-col"><span class="demo-state">Active</span><button type="button" class="ev-filter-btn"><img src="icons/list-filter.svg" alt="Filter"><span class="ev-filter-btn__count">1</span></button></div>
+  </div>
+
+  <h2>Controls / Labeled Slider <span class="demo-nid">— 4955:17</span></h2>
+  <div class="demo-surface">
+    <div class="ev-labeled-slider">
+      <span class="ev-labeled-slider__title">Speed</span>
+      <div class="ev-labeled-slider__wrap">
+        <div class="ev-labeled-slider__range"><span>Slower</span><span>Faster</span></div>
+        <div class="ev-slider"><div class="ev-slider__track"><div class="ev-slider__fill" style="right:60%"></div></div><span class="ev-slider__thumb" style="left:40%"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Editor / Volume Row <span class="demo-nid">— 1367:13102</span></h2>
+  <div class="demo-surface">
+    <div class="ev-volume-row">
+      <span class="ev-volume-row__label">Music volume</span>
+      <div class="ev-slider"><div class="ev-slider__track"><div class="ev-slider__fill" style="right:51%"></div></div><span class="ev-slider__thumb" style="left:49%"></span></div>
+      <span class="ev-volume-row__value">49%</span>
+    </div>
+  </div>
+
+  <h2>Music / Track Play Button <span class="demo-nid">— 1754:22356</span></h2>
+  <p class="demo-sub">30px outline button; play / pause / mute / resume / regenerate, plus the recording state.</p>
+  <div class="demo-surface demo-grid">
+    <div class="demo-col"><span class="demo-state">playing</span><button type="button" class="ev-play-btn"><img src="icons/video-pause-glyph.svg" alt="Pause"></button></div>
+    <div class="demo-col"><span class="demo-state">pause</span><button type="button" class="ev-play-btn"><img src="icons/video-play-glyph.svg" alt="Play"></button></div>
+    <div class="demo-col"><span class="demo-state">mute</span><button type="button" class="ev-play-btn"><img src="icons/audio-volume-off.svg" alt="Muted"></button></div>
+    <div class="demo-col"><span class="demo-state">resume</span><button type="button" class="ev-play-btn"><img src="icons/refresh-ccw.svg" alt="Resume"></button></div>
+    <div class="demo-col"><span class="demo-state">recording</span><button type="button" class="ev-play-btn ev-play-btn--record" aria-label="Recording"><img src="icons/video-play-glyph.svg" alt=""></button></div>
+  </div>
+
+  <h2>Editor / Audio Track Card <span class="demo-nid">— 1367:13069</span></h2>
+  <div class="demo-surface demo-grid">
+    <div class="ev-audio-track-card">
+      <img class="ev-audio-track-card__grip" src="icons/layer-grip.svg" alt="">
+      <button type="button" class="ev-play-btn"><img src="icons/video-play-glyph.svg" alt="Play"></button>
+      <div class="ev-audio-track-card__body">
+        <span class="ev-audio-track-card__title">Inspiring Cinematic</span>
+        <span class="ev-audio-track-card__meta">uplifting<span class="dot"></span>2:22</span>
+      </div>
+      <button type="button" class="ev-iconbtn ev-audio-track-card__act" aria-label="Replace"><img src="icons/panel-swap.svg" alt=""></button>
+      <button type="button" class="ev-iconbtn ev-audio-track-card__act" aria-label="Remove"><img src="icons/panel-close.svg" alt=""></button>
+    </div>
+  </div>
+
+  <h2>Editor / Voice-over Card <span class="demo-nid">— 1367:13091</span></h2>
+  <div class="demo-surface demo-grid">
+    <div class="ev-voiceover-card">
+      <span class="ev-voiceover-card__icon"><img src="icons/nav-voices.svg" alt=""></span>
+      <div class="ev-voiceover-card__body">
+        <span class="ev-voiceover-card__title">Alloy voice-over</span>
+        <span class="ev-voiceover-card__meta">AI voice · 0:12</span>
+      </div>
+      <button type="button" class="ev-voiceover-card__play" aria-label="Play"><img src="icons/video-play-glyph.svg" alt=""></button>
+    </div>
+  </div>
+
+  <h2>Editor / Voiceover Card <span class="demo-nid">— 5207:114871</span></h2>
+  <div class="demo-surface demo-grid">
+    <div class="demo-col"><span class="demo-state">default</span>
+      <div class="ev-vo-card">
+        <button type="button" class="ev-vo-card__play" aria-label="Play"><img src="icons/video-play-glyph.svg" alt=""></button>
+        <div class="ev-vo-card__body"><span class="ev-vo-card__title">Recording 1.mp4</span><span class="ev-vo-card__meta">0:11</span></div>
+      </div>
+    </div>
+    <div class="demo-col"><span class="demo-state">focused</span>
+      <div class="ev-vo-card ev-vo-card--focused">
+        <button type="button" class="ev-vo-card__play" aria-label="Play"><img src="icons/video-play-glyph.svg" alt=""></button>
+        <div class="ev-vo-card__body"><span class="ev-vo-card__title">Recording 1.mp4</span><span class="ev-vo-card__meta">0:11</span></div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Music / Track Picker Row <span class="demo-nid">— 1367:13926</span></h2>
+  <p class="demo-sub">default/inUse × action=use (button) / action=radio (radio + check).</p>
+  <div class="demo-surface demo-col" style="gap:8px; width:420px;">
+    <div class="ev-track-picker-row">
+      <button type="button" class="ev-track-picker-row__btn"><img src="icons/video-play-glyph.svg" alt="Play"></button>
+      <div class="ev-track-picker-row__body"><span class="ev-track-picker-row__title">Off to Osaka</span><span class="ev-track-picker-row__meta">Kevin MacLeod · mellow · 100 BPM · 1:50</span></div>
+      <button type="button" class="ev-track-picker-row__use">Use</button>
+    </div>
+    <div class="ev-track-picker-row ev-track-picker-row--inuse">
+      <button type="button" class="ev-track-picker-row__btn"><img src="icons/video-pause-glyph.svg" alt="Pause"></button>
+      <div class="ev-track-picker-row__body"><span class="ev-track-picker-row__title">Off to Osaka</span><span class="ev-track-picker-row__meta">Kevin MacLeod · mellow · 100 BPM · 1:50</span></div>
+      <button type="button" class="ev-track-picker-row__use ev-track-picker-row__use--active">In use</button>
+    </div>
+    <div class="ev-track-picker-row">
+      <button type="button" class="ev-track-picker-row__btn"><img src="icons/video-play-glyph.svg" alt="Play"></button>
+      <div class="ev-track-picker-row__body"><span class="ev-track-picker-row__title">Off to Osaka</span><span class="ev-track-picker-row__meta">Kevin MacLeod · mellow · 100 BPM · 1:50</span></div>
+      <span class="ev-track-picker-row__radio"></span>
+    </div>
+    <div class="ev-track-picker-row ev-track-picker-row--inuse">
+      <button type="button" class="ev-track-picker-row__btn"><img src="icons/video-pause-glyph.svg" alt="Pause"></button>
+      <div class="ev-track-picker-row__body"><span class="ev-track-picker-row__title">Off to Osaka</span><span class="ev-track-picker-row__meta">Kevin MacLeod · mellow · 100 BPM · 1:50</span></div>
+      <span class="ev-track-picker-row__radio ev-track-picker-row__radio--on"><img src="icons/check.svg" alt=""></span>
+    </div>
+  </div>
+
+  <h2>Editor / Audio Row <span class="demo-nid">— 4677:101311</span></h2>
+  <p class="demo-sub">Type = Music / Brand / Library, each × Default / Hover / Selected.</p>
+  <div class="demo-surface demo-grid">
+    <div class="demo-col"><span class="demo-state">Music · Default</span>
+      <div class="ev-audio-row">
+        <span class="ev-audio-row__art"><img src="icons/content-image.svg" alt=""></span>
+        <div class="ev-audio-row__body"><span class="ev-audio-row__title">Inspiring Workflow Loop</span><span class="ev-audio-row__sub">2:22 · Electronic, Corporate, Downtempo</span></div>
+      </div>
+    </div>
+    <div class="demo-col"><span class="demo-state">Brand · Default</span>
+      <div class="ev-audio-row">
+        <span class="ev-audio-row__playcircle"><img src="icons/video-play-glyph.svg" alt="Play"></span>
+        <div class="ev-audio-row__body"><span class="ev-audio-row__title">Bunty – Funny Best Friend</span><span class="ev-audio-row__sub">Male · Standard</span></div>
+      </div>
+    </div>
+    <div class="demo-col"><span class="demo-state">Library · Hover</span>
+      <div class="ev-audio-row ev-audio-row--hover">
+        <img class="ev-audio-row__grip" src="icons/layer-grip.svg" alt="">
+        <span class="ev-audio-row__playcircle"><img src="icons/video-play-glyph.svg" alt="Play"></span>
+        <div class="ev-audio-row__body"><span class="ev-audio-row__title">Bunty – Funny Best Friend</span><span class="ev-audio-row__sub">Male · Standard</span></div>
+      </div>
+    </div>
+    <div class="demo-col"><span class="demo-state">Library · Selected</span>
+      <div class="ev-audio-row ev-audio-row--selected">
+        <span class="ev-audio-row__playcircle"><img src="icons/video-play-glyph.svg" alt="Play"></span>
+        <div class="ev-audio-row__body"><span class="ev-audio-row__title">Bunty – Funny Best Friend</span><span class="ev-audio-row__sub">Male · Standard</span></div>
+      </div>
+    </div>
+  </div>
+
+  <h2>voice <span class="demo-nid">— 5884:94643</span></h2>
+  <p class="demo-sub">The settled voice-tone option card. Property 1 = selected / default.</p>
+  <div class="demo-grid">
+    <div class="demo-col"><span class="demo-state">selected</span>
+      <div class="ev-voice-option ev-voice-option--selected">
+        <div class="ev-voice-option__head">
+          <span class="ev-voice-option__radio ev-voice-option__radio--on"><img src="icons/check.svg" alt=""></span>
+          <div class="ev-voice-option__titles">
+            <span class="ev-voice-option__name">Warm and conversational <span class="ev-voice-option__suggested">Suggested</span></span>
+            <span class="ev-voice-option__desc">Friendly and natural</span>
+          </div>
+        </div>
+        <p class="ev-voice-option__quote">“You won’t do this alone. Our experts are with you the whole way”</p>
+      </div>
+    </div>
+    <div class="demo-col"><span class="demo-state">default</span>
+      <div class="ev-voice-option">
+        <div class="ev-voice-option__head">
+          <span class="ev-voice-option__radio"></span>
+          <div class="ev-voice-option__titles">
+            <span class="ev-voice-option__name">Warm and conversational <span class="ev-voice-option__suggested">Suggested</span></span>
+            <span class="ev-voice-option__desc">Friendly and natural</span>
+          </div>
+        </div>
+        <p class="ev-voice-option__quote">“You won’t do this alone. Our experts are with you the whole way”</p>
+      </div>
+    </div>
+  </div>
+
+  <h2>Timeline — Transport Bar <span class="demo-nid">— 4633:170661</span></h2>
+  <p class="demo-sub">The full playback control strip (Property 1 = Transport Bar).</p>
+  <div class="demo-surface">
+    <div class="ev-transport-bar">
+      <button type="button" class="ev-transport-bar__play"><img src="icons/video-play-glyph.svg" alt="Play"></button>
+      <img class="ev-transport-bar__skip" src="icons/chevron-left.svg" alt="">
+      <img class="ev-transport-bar__skip" src="icons/chevron-right.svg" alt="">
+      <span class="ev-transport-bar__time"><b>0:03</b> / 0:15</span>
+      <img class="ev-transport-bar__icon" src="icons/volume-2.svg" alt="">
+      <div class="ev-slider" style="max-width:80px;"><div class="ev-slider__track"><div class="ev-slider__fill" style="right:40%"></div></div><span class="ev-slider__thumb" style="left:60%"></span></div>
+      <span class="ev-transport-bar__spacer"></span>
+      <button type="button" class="ev-transport-btn ev-transport-btn--label"><img src="icons/transport-split.svg" alt=""><span>Split</span></button>
+      <button type="button" class="ev-transport-btn"><img src="icons/edit-trash.svg" alt="Delete"></button>
+      <img class="ev-transport-bar__icon" src="icons/pagebar-minus.svg" alt="Zoom out">
+      <div class="ev-slider" style="max-width:64px;"><div class="ev-slider__track"><div class="ev-slider__fill" style="right:55%"></div></div><span class="ev-slider__thumb" style="left:45%"></span></div>
+      <img class="ev-transport-bar__icon" src="icons/pagebar-plus.svg" alt="Zoom in">
+      <button type="button" class="ev-transport-btn ev-transport-btn--label"><img src="icons/scan-square.svg" alt=""><span>Fit</span></button>
+      <img class="ev-transport-bar__icon" src="icons/chevron-down.svg" alt="Collapse">
+    </div>
+  </div>
+
+  </main>
+
+</div>
+<script src="../demo-nav.js"></script>
+</body>
+</html>
