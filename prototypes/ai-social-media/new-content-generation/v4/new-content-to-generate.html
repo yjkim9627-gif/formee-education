@@ -2695,6 +2695,18 @@ function escapeHtml(str){
   return div.innerHTML;
 }
 
+// Shared "More" popover for an attached .ref-chip (Figma 8708:207411's Actions/More Button
+// -- Figma only specs the hover-reveal affordance, not what it opens, so this is the one
+// action that made sense across all four content types: Replace swaps the attached image
+// without going through Remove + re-Add. Each content type (Image post/Carousel share this
+// helper; Reel/Short & Story Video's own renderReferenceImages() below does too) owns its
+// own open/closed state and replace handler, this is just the shared markup.
+function buildRefMoreMenuHtml(onReplaceClick){
+  return `<div class="context-menu" style="position:absolute; top:32px; right:4px; z-index:50;" onclick="event.stopPropagation();">
+    <button type="button" class="menu-item" onclick="${onReplaceClick}">Replace image</button>
+  </div>`;
+}
+
 // Quick-action chips shown above the chat input, contextual to whatever stage/state just
 // finished (e.g. copy drafted, visual concept applied) — mirrors the Copilot-style chip
 // pattern already used in new-carousel-to-generate.html. Each chip is either
@@ -3517,6 +3529,7 @@ function imgGoToBrief(){ showView('briefView'); setStep('stepBrief'); document.g
 // ---- Reference image attach (Brief prompt box) ----
 let imgReferenceImages = [];
 let imgRefImageCounter = 0;
+let imgRefMoreMenuOpen = null;
 function imgAddReferenceImage(){
   imgRefImageCounter++;
   imgReferenceImages.push(imgRefImageCounter);
@@ -3526,12 +3539,25 @@ function imgRemoveReferenceImage(num){
   imgReferenceImages = imgReferenceImages.filter(n => n !== num);
   imgRenderReferenceImages();
 }
+function imgToggleRefMoreMenu(e, n){
+  e.stopPropagation();
+  imgRefMoreMenuOpen = imgRefMoreMenuOpen === n ? null : n;
+  imgRenderReferenceImages();
+}
+function imgReplaceReferenceImage(n){
+  imgRefImageCounter++;
+  imgReferenceImages = imgReferenceImages.map(x => x === n ? imgRefImageCounter : x);
+  imgRefMoreMenuOpen = null;
+  imgRenderReferenceImages();
+}
+document.addEventListener('click', () => { if(imgRefMoreMenuOpen !== null){ imgRefMoreMenuOpen = null; imgRenderReferenceImages(); } });
 function imgRenderReferenceImages(){
   const icon = `<img class="ref-chip-icon" src="../../../../components/ai-social-media/icons/content-image-plus.svg" alt="">`;
   const chips = imgReferenceImages.map(n => `
     <div class="ref-chip" data-attached="true">
       ${icon}<span class="ref-chip-label">Image ${n}</span>
-      <button type="button" class="ref-chip-more" onclick="event.stopPropagation();" title="More options"><img src="../../../../components/ai-social-media/icons/ui-ellipsis.svg" class="icon-inline" alt=""></button>
+      <button type="button" class="ref-chip-more" onclick="imgToggleRefMoreMenu(event, ${n})" title="More options"><img src="../../../../components/ai-social-media/icons/ui-ellipsis.svg" class="icon-inline" alt=""></button>
+      ${imgRefMoreMenuOpen === n ? buildRefMoreMenuHtml(`imgReplaceReferenceImage(${n})`) : ''}
       <button type="button" class="ref-chip-remove" onclick="event.stopPropagation(); imgRemoveReferenceImage(${n})" aria-label="Remove reference image ${n}" title="Remove reference"><img src="../../../../components/ai-social-media/icons/controls/chip-close-x.svg" class="icon-inline" alt=""></button>
     </div>
   `).join('');
@@ -3691,6 +3717,7 @@ function carGoToBrief(){ showView('briefView'); setStep('stepBrief'); document.g
 // ---- Reference image attach (Brief prompt box) ----
 let carReferenceImages = [];
 let carRefImageCounter = 0;
+let carRefMoreMenuOpen = null;
 function carAddReferenceImage(){
   carRefImageCounter++;
   carReferenceImages.push(carRefImageCounter);
@@ -3700,12 +3727,25 @@ function carRemoveReferenceImage(num){
   carReferenceImages = carReferenceImages.filter(n => n !== num);
   carRenderReferenceImages();
 }
+function carToggleRefMoreMenu(e, n){
+  e.stopPropagation();
+  carRefMoreMenuOpen = carRefMoreMenuOpen === n ? null : n;
+  carRenderReferenceImages();
+}
+function carReplaceReferenceImage(n){
+  carRefImageCounter++;
+  carReferenceImages = carReferenceImages.map(x => x === n ? carRefImageCounter : x);
+  carRefMoreMenuOpen = null;
+  carRenderReferenceImages();
+}
+document.addEventListener('click', () => { if(carRefMoreMenuOpen !== null){ carRefMoreMenuOpen = null; carRenderReferenceImages(); } });
 function carRenderReferenceImages(){
   const icon = `<img class="ref-chip-icon" src="../../../../components/ai-social-media/icons/content-image-plus.svg" alt="">`;
   const chips = carReferenceImages.map(n => `
     <div class="ref-chip" data-attached="true">
       ${icon}<span class="ref-chip-label">Image ${n}</span>
-      <button type="button" class="ref-chip-more" onclick="event.stopPropagation();" title="More options"><img src="../../../../components/ai-social-media/icons/ui-ellipsis.svg" class="icon-inline" alt=""></button>
+      <button type="button" class="ref-chip-more" onclick="carToggleRefMoreMenu(event, ${n})" title="More options"><img src="../../../../components/ai-social-media/icons/ui-ellipsis.svg" class="icon-inline" alt=""></button>
+      ${carRefMoreMenuOpen === n ? buildRefMoreMenuHtml(`carReplaceReferenceImage(${n})`) : ''}
       <button type="button" class="ref-chip-remove" onclick="event.stopPropagation(); carRemoveReferenceImage(${n})" aria-label="Remove reference image ${n}" title="Remove reference"><img src="../../../../components/ai-social-media/icons/controls/chip-close-x.svg" class="icon-inline" alt=""></button>
     </div>
   `).join('');
@@ -5173,6 +5213,18 @@ function removeReferenceImage(num){
   referenceImages = referenceImages.filter(n => n !== num);
   renderReferenceImages();
 }
+window.__refMoreMenuOpen = null;
+function toggleRefMoreMenu(e, n){
+  e.stopPropagation();
+  window.__refMoreMenuOpen = window.__refMoreMenuOpen === n ? null : n;
+  renderReferenceImages();
+}
+function replaceReferenceImage(n){
+  refImageCounter++;
+  referenceImages = referenceImages.map(x => x === n ? refImageCounter : x);
+  window.__refMoreMenuOpen = null;
+  renderReferenceImages();
+}
 function addFirstFrameImage(){ firstFrameAdded = true; renderReferenceImages(); }
 function removeFirstFrameImage(){ firstFrameAdded = false; renderReferenceImages(); }
 function addLastFrameImage(){ lastFrameAdded = true; renderReferenceImages(); }
@@ -5201,13 +5253,15 @@ function toggleRefUploadMenu(e){
 function closeRefUploadMenu(){ window.__refUploadMenuOpen = false; renderReferenceImages(); }
 document.addEventListener('click', () => {
   if(window.__refUploadMenuOpen){ window.__refUploadMenuOpen = false; renderReferenceImages(); }
+  if(window.__refMoreMenuOpen !== null){ window.__refMoreMenuOpen = null; renderReferenceImages(); }
 });
 
 function renderReferenceImages(){
   const chips = referenceImages.map(n => `
     <div class="ref-chip" data-attached="true">
       ${refChipIcon}<span class="ref-chip-label">Image ${n}</span>
-      <button type="button" class="ref-chip-more" onclick="event.stopPropagation();" title="More options"><img src="../../../../components/ai-social-media/icons/ui-ellipsis.svg" class="icon-inline" alt=""></button>
+      <button type="button" class="ref-chip-more" onclick="toggleRefMoreMenu(event, ${n})" title="More options"><img src="../../../../components/ai-social-media/icons/ui-ellipsis.svg" class="icon-inline" alt=""></button>
+      ${window.__refMoreMenuOpen === n ? buildRefMoreMenuHtml(`replaceReferenceImage(${n})`) : ''}
       <button type="button" class="ref-chip-remove" onclick="event.stopPropagation(); removeReferenceImage(${n})" aria-label="Remove reference image ${n}" title="Remove reference"><img src="../../../../components/ai-social-media/icons/controls/chip-close-x.svg" class="icon-inline" alt=""></button>
     </div>
   `).join('');
