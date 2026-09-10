@@ -152,3 +152,17 @@
 .controls-field-ai__prompt-submit img{ width:16px; height:16px; }
 .controls-field-ai__prompt-submit.is-active{ background:var(--color-brand-primary); border-color:var(--color-brand-primary); }
 .controls-field-ai__prompt-submit.is-active img{ filter:brightness(0) invert(1); }
+
+/* ---- Applied head row (Figma 9377:140697) — shown above the field once a refinement has
+   been applied at least once: a green "updated" badge (reuses .feedback-status-chip--green)
+   + Undo/Redo icon buttons that swap the field between the pre- and post-refine text. */
+.controls-field-ai__head{ display:flex; align-items:center; gap:var(--spacing-sm); width:100%; box-sizing:border-box; }
+.controls-field-ai__head-spacer{ flex:1 0 0; min-width:0; height:1px; }
+.controls-field-ai__undo-redo{ display:flex; align-items:center; gap:var(--spacing-sm); flex-shrink:0; }
+.controls-field-ai__icon-btn{
+  display:flex; align-items:center; justify-content:center; width:24px; height:24px; box-sizing:border-box;
+  border:1px solid var(--color-neutral-400); border-radius:var(--radius-md); background:var(--color-neutral-0); cursor:pointer;
+}
+.controls-field-ai__icon-btn img{ width:16px; height:16px; display:block; }
+.controls-field-ai__icon-btn:hover:not(:disabled){ background:var(--color-neutral-50); }
+.controls-field-ai__icon-btn:disabled{ opacity:.4; cursor:not-allowed; }

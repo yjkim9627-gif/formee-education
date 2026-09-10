@@ -1213,6 +1213,37 @@
   .back-to-scenes-link{display:block; background:none; border:none; color:var(--color-neutral-500); font-size:12px; font-family:var(--font-family-text); cursor:pointer; text-decoration:underline; margin-top:10px; padding:0; text-align:left;}
   .back-to-scenes-link:hover{color:var(--color-neutral-700);}
 
+  /* ---- Refine this video (in-place text-prompt edit on the finished cut) --------------
+     Same .scene-card / .scene-desc-box / .img-prompt-regen-btn / .refine-history-row
+     pattern the Image post Preview screen already uses for prompt-based regeneration —
+     surfaced here so a "done" video still reads as editable without going to the chat. */
+  .video-refine-card .scene-card-head-label{display:inline-flex; align-items:center; gap:6px;}
+  .video-refine-card .scene-card-head-label img{width:15px; height:15px; display:block;}
+  .video-refine-chips{display:flex; flex-wrap:wrap; gap:6px;}
+  .refine-chip{border:1px solid var(--color-neutral-400); background:var(--color-neutral-0); border-radius:999px; padding:5px 11px; font-size:11px; font-weight:500; color:var(--color-neutral-700); font-family:var(--font-family-text); cursor:pointer;}
+  .refine-chip:hover{background:var(--color-neutral-50); border-color:var(--color-neutral-450);}
+  .combine-player .combine-rerender{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; background:rgba(15,23,41,.55); backdrop-filter:blur(2px); border-radius:14px; color:#fff; font-size:12px; font-weight:600;}
+  .combine-player .combine-rerender .spin{width:22px; height:22px; border:2px solid rgba(255,255,255,.4); border-top-color:#fff; border-radius:999px; animation:combine-spin .8s linear infinite;}
+  @keyframes combine-spin{to{transform:rotate(360deg);}}
+  .combine-player .combine-vbadge{position:absolute; top:10px; left:10px; font-size:10px; font-weight:700; letter-spacing:.04em; color:#fff; background:var(--color-brand-primary); padding:3px 7px; border-radius:6px;}
+
+  /* ---- Rate this result (product feedback → team) ------------------------------------- */
+  .result-feedback{border:1px solid var(--color-neutral-300); border-radius:10px; background:var(--color-neutral-0); padding:16px; display:flex; flex-direction:column; gap:10px;}
+  .result-feedback-head{display:flex; flex-direction:column; gap:2px;}
+  .result-feedback-title{font-size:13px; font-weight:600; color:var(--color-neutral-900); font-family:var(--font-family-text);}
+  .result-feedback-sub{font-size:11px; color:var(--color-neutral-500); line-height:1.45;}
+  .result-feedback-rate{display:flex; gap:8px;}
+  .rf-btn{flex:1; display:inline-flex; align-items:center; justify-content:center; gap:6px; border:1px solid var(--color-neutral-400); background:var(--color-neutral-0); border-radius:8px; padding:8px 10px; font-size:12px; font-weight:600; color:var(--color-neutral-700); font-family:var(--font-family-text); cursor:pointer;}
+  .rf-btn img{width:14px; height:14px; display:block;}
+  .rf-btn:hover{background:var(--color-neutral-50);}
+  .rf-btn.sel[data-v="up"]{border-color:var(--color-badge-green-text); background:var(--color-badge-green-bg); color:var(--color-badge-green-text);}
+  .rf-btn.sel[data-v="down"]{border-color:#c4271b; background:#fbe3e5; color:#c4271b;}
+  .result-feedback-note{width:100%; box-sizing:border-box; border:1px solid var(--color-neutral-300); border-radius:7px; padding:8px 10px; font-size:12px; font-family:var(--font-family-text); color:var(--color-neutral-900); line-height:1.5; resize:vertical; min-height:52px; outline:none;}
+  .result-feedback-note:focus{border-color:var(--color-brand-primary-mid);}
+  .rf-send{width:100%;}
+  .rf-done{margin:0; font-size:12px; font-weight:600; color:var(--color-badge-green-text); display:flex; align-items:center; gap:6px;}
+  .rf-done[hidden]{display:none;}
+
   /* ---- Queue panel (floating, shown while video clips generate) ----
      Base look (card bg/border/radius/padding, header, badge, job row, thumb, title,
      status dot/label) now comes from components/ai-social-media/queue-panel.css.
@@ -1232,33 +1263,38 @@
 
 <div class="app">
 
-  <!-- NAV -->
+  <!-- NAV — components/ai-social-media/nav.css (Figma "Nav / Navigation" 9154:132343) -->
   <div class="nav" id="sideNav">
-    <div class="nav-brand">
-      <img class="mark" src="../../../../components/ai-social-media/icons/brand-formee-education-mark.svg" alt="" style="width:28px;height:28px;border-radius:7px;object-fit:contain;">
-      <div class="txt"><b>Formee Education</b><span>AI Social Media</span></div>
+    <div class="nav-account">
+      <div class="nav-brand">
+        <span class="link">
+          <img class="mark" src="../../../../components/ai-social-media/icons/brand-formee-education-mark.svg" alt="Formee Education">
+          <span class="txt"><b>Formee Education</b><span>AI Social Media</span></span>
+        </span>
+        <button type="button" class="collapse-btn" aria-label="Collapse navigation" onclick="document.getElementById('sideNav').classList.toggle('collapsed')"><img src="../../../../components/ai-social-media/icons/ui-panel.svg" alt=""></button>
+      </div>
+      <div class="nav-workspace"><span>Formee Express</span><span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" alt=""></span></div>
     </div>
-    <div class="nav-workspace"><span>Formee Express</span><span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span></div>
-    <div class="nav-group">
-      <div class="nav-item"><div class="ic" style="width:20px;height:20px;"><img src="../../../../components/ai-social-media/icons/nav-home.svg" alt=""></div><span class="label">Home</span></div>
-    </div>
-    <div class="nav-group">
-      <div class="nav-label">Create</div>
-      <div class="nav-item active"><div class="ic" style="width:20px;height:20px;"><img src="../../../../components/ai-social-media/icons/ai-sparkle-outline-grey.svg" alt=""></div><span class="label">New Content</span></div>
-    </div>
-    <div class="nav-group">
-      <div class="nav-label">Content</div>
-      <div class="nav-item"><div class="ic" style="width:20px;height:20px;"><img src="../../../../components/ai-social-media/icons/nav-library.svg" alt=""></div><span class="label">Library</span></div>
-      <div class="nav-item"><div class="ic" style="width:20px;height:20px;"><img src="../../../../components/ai-social-media/icons/nav-schedule.svg" alt=""></div><span class="label">Schedule</span></div>
-      <div class="nav-item"><div class="ic" style="width:20px;height:20px;"><img src="../../../../components/ai-social-media/icons/data-trending-up.svg" alt=""></div><span class="label">Trends</span></div>
-      <div class="nav-item"><div class="ic" style="width:20px;height:20px;"><img src="../../../../components/ai-social-media/icons/nav-analytics.svg" alt=""></div><span class="label">Analytics</span></div>
-    </div>
-    <div class="nav-group">
-      <div class="nav-label">Asset</div>
-      <div class="nav-item" id="navBrandSetup" onclick="goToBrandSetupPage()" style="cursor:pointer;"><div class="ic" style="width:20px;height:20px;"><img src="../../../../components/ai-social-media/icons/nav-workspace-03.svg" alt=""></div><span class="label">Brand Setup</span></div>
-      <div class="nav-item"><div class="ic" style="width:20px;height:20px;"><img src="../../../../components/ai-social-media/icons/nav-characters.svg" alt=""></div><span class="label">Characters</span></div>
-      <div class="nav-item"><div class="ic" style="width:20px;height:20px;"><img src="../../../../components/ai-social-media/icons/nav-voices.svg" alt=""></div><span class="label">Voices</span></div>
-      <div class="nav-item"><div class="ic" style="width:20px;height:20px;"><img src="../../../../components/ai-social-media/icons/nav-audio.svg" alt=""></div><span class="label">Audio Library</span></div>
+    <div class="nav-items">
+      <div class="nav-item"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-home.svg" alt=""></span><span class="label">Home</span></div>
+      <div class="nav-group">
+        <div class="nav-label">Create</div>
+        <div class="nav-item active"><span class="ic"><img src="../../../../components/ai-social-media/icons/ai-sparkle-outline-grey.svg" alt=""></span><span class="label">New Content</span></div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-label">Content</div>
+        <div class="nav-item"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-library.svg" alt=""></span><span class="label">Library</span></div>
+        <div class="nav-item"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-schedule.svg" alt=""></span><span class="label">Schedule</span></div>
+        <div class="nav-item"><span class="ic"><img src="../../../../components/ai-social-media/icons/data-trending-up.svg" alt=""></span><span class="label">Trends</span></div>
+        <div class="nav-item"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-analytics.svg" alt=""></span><span class="label">Analytics</span></div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-label">Asset</div>
+        <div class="nav-item" id="navBrandSetup" onclick="goToBrandSetupPage()" style="cursor:pointer;"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-workspace-03.svg" alt=""></span><span class="label">Brand Setup</span></div>
+        <div class="nav-item"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-characters.svg" alt=""></span><span class="label">Characters</span></div>
+        <div class="nav-item"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-voices.svg" alt=""></span><span class="label">Voices</span></div>
+        <div class="nav-item"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-audio.svg" alt=""></span><span class="label">Audio Library</span></div>
+      </div>
     </div>
   </div>
 
@@ -1923,6 +1959,23 @@
                     <div class="scene-desc-box"><textarea class="scene-desc" id="refineEditInput" oninput="onRefinePromptEdited()"></textarea></div>
                     <p class="scene-note">Auto-drafted from your Copy and Visual concept in the Draft step</p>
                   </div>
+
+                  <!-- Rate this result — product feedback routed to the team -->
+                  <div class="result-feedback" id="imageResultFeedback">
+                    <div class="result-feedback-head">
+                      <span class="result-feedback-title">How’s this result?</span>
+                      <span class="result-feedback-sub">Your feedback goes straight to the Formee team — it won’t change this image.</span>
+                    </div>
+                    <div class="result-feedback-body">
+                      <div class="result-feedback-rate">
+                        <button type="button" class="rf-btn" data-v="up" onclick="rfRate(this)"><img src="../../../../components/ai-social-media/icons/check.svg" alt="">Looks great</button>
+                        <button type="button" class="rf-btn" data-v="down" onclick="rfRate(this)"><img src="../../../../components/ai-social-media/icons/alert-sm.svg" alt="">Needs work</button>
+                      </div>
+                      <textarea class="result-feedback-note" id="rfNoteImage" placeholder="What worked, what didn’t? (optional)"></textarea>
+                      <button type="button" class="btn btn-secondary rf-send" onclick="rfSend('image')" disabled>Send feedback</button>
+                    </div>
+                    <p class="rf-done" hidden><img src="../../../../components/ai-social-media/icons/check.svg" class="icon-inline" alt="" style="width:14px;height:14px;"> Thanks — sent to the Formee team.</p>
+                  </div>
                 </div>
               </div>
               <!-- Hidden — not part of Figma's Preview screen (that CTA lives only in the
@@ -2269,7 +2322,8 @@
               <div class="combine-result-view" id="combineResultView" style="display:none;">
                 <div class="timeline-stage">
                   <div class="timeline-canvas combine-canvas">
-                    <div class="combine-player">
+                    <div class="combine-player" id="combinePlayer">
+                      <span class="combine-vbadge" id="combineVBadge" hidden>v1</span>
                       <button class="video-play-btn" onclick="playCombineResult(this)" title="Play"><img class="play" src="../../../../components/ai-social-media/icons/video-play-glyph.svg" alt=""></button>
                       <span class="combine-player-duration" id="combineResultDuration">8s</span>
                     </div>
@@ -2287,6 +2341,40 @@
                       <div class="video-summary-card-divider"></div>
                       <div id="combineSummarySpecs" style="display:contents;"></div>
                       <p class="combine-audio-note"><img src="../../../../components/ai-social-media/icons/nav-voices.svg" class="icon-inline" alt=""> Narration from Script is already mixed in — no extra steps needed.</p>
+                    </div>
+
+                    <!-- Refine this video — in-place text-prompt edit on the finished cut -->
+                    <div class="scene-card video-refine-card">
+                      <div class="scene-card-head-row">
+                        <span class="scene-card-head-label"><img src="../../../../components/ai-social-media/icons/ai-sparkle-outline-grey.svg" alt="">Refine this video</span>
+                        <button type="button" class="img-prompt-regen-btn used" id="videoRefineBtn" onclick="refineFinalVideo()" disabled><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt="">Re-render <span class="cost"><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">6</span></button>
+                      </div>
+                      <div class="scene-desc-box"><textarea class="scene-desc" id="videoRefineInput" placeholder="Describe a change — e.g. tighten the opening, warmer tone, hold the last shot longer…" oninput="onVideoRefineEdited()"></textarea></div>
+                      <div class="video-refine-chips">
+                        <button type="button" class="refine-chip" onclick="fillVideoRefine('Tighten the opening — get to the product faster')">Tighten the opening</button>
+                        <button type="button" class="refine-chip" onclick="fillVideoRefine('Warmer, softer colour grade')">Warmer colour</button>
+                        <button type="button" class="refine-chip" onclick="fillVideoRefine('Slower pace — hold each shot a beat longer')">Slower pace</button>
+                        <button type="button" class="refine-chip" onclick="fillVideoRefine('Punchier cuts, more energy')">Punchier cuts</button>
+                      </div>
+                      <div class="refine-history-row" id="videoRefineHistoryRow"></div>
+                      <p class="scene-note">Re-renders the final cut. Your note also shows in the AI&nbsp;Assistant chat.</p>
+                    </div>
+
+                    <!-- Rate this result — product feedback routed to the team -->
+                    <div class="result-feedback" id="videoResultFeedback">
+                      <div class="result-feedback-head">
+                        <span class="result-feedback-title">How’s this result?</span>
+                        <span class="result-feedback-sub">Your feedback goes straight to the Formee team — it won’t change this video.</span>
+                      </div>
+                      <div class="result-feedback-body">
+                        <div class="result-feedback-rate">
+                          <button type="button" class="rf-btn" data-v="up" onclick="rfRate(this)"><img src="../../../../components/ai-social-media/icons/check.svg" alt="">Looks great</button>
+                          <button type="button" class="rf-btn" data-v="down" onclick="rfRate(this)"><img src="../../../../components/ai-social-media/icons/alert-sm.svg" alt="">Needs work</button>
+                        </div>
+                        <textarea class="result-feedback-note" id="rfNoteVideo" placeholder="What worked, what didn’t? (optional)"></textarea>
+                        <button type="button" class="btn btn-secondary rf-send" onclick="rfSend('video')" disabled>Send feedback</button>
+                      </div>
+                      <p class="rf-done" hidden><img src="../../../../components/ai-social-media/icons/check.svg" class="icon-inline" alt="" style="width:14px;height:14px;"> Thanks — sent to the Formee team.</p>
                     </div>
                     <!-- Hidden — per Figma, "Continue to editing"/"Skip to publish" don't live in
                          this right-side work area (it's already offered as a chat CTA — see
@@ -2451,6 +2539,7 @@
             </div>
           </div>
 
+          <div class="controls-field-ai__head" id="pubCaptionHeadRow" style="display:none;"></div>
           <textarea class="pub-caption-input" id="pubCaption" placeholder="Draft your caption — or generate suggestions above and tap a chip to add it." oninput="onSharedCaptionInput()"></textarea>
           <div class="controls-field-ai__chips" id="pubCaptionChipsRow">
             <div class="controls-field-ai__quick-chips" id="pubCaptionQuickChips">
@@ -6387,6 +6476,7 @@ function showCombineResult(){
     return `<div class="combine-tick" style="left:${pct}%"></div>`;
   }).join('');
   renderCombineSummaryCard();
+  renderVideoRefineHistory();
   syncGenActionBarV3();
 }
 
@@ -6468,6 +6558,102 @@ function backToSceneVideos(){
 function playCombineResult(btn){
   btn.innerHTML = '<img class="pause" src="../../../../components/ai-social-media/icons/video-pause-glyph.svg" alt="">';
   setTimeout(() => { btn.innerHTML = '<img class="play" src="../../../../components/ai-social-media/icons/video-play-glyph.svg" alt="">'; }, 1400);
+}
+
+/* ---- Refine this video (in-place text-prompt edit on the finished cut) --------------
+   Routes the same as a chat prompt: the user's note is logged in the AI Assistant chat
+   and a new "version" of the final cut is produced. Version chips let you flip back. */
+window.__videoRefineVersions = [{ label: 'v1', prompt: null, ready: true }];
+window.__videoRefineActive = 0;
+
+function onVideoRefineEdited(){
+  const btn = document.getElementById('videoRefineBtn');
+  if(btn) btn.disabled = !document.getElementById('videoRefineInput').value.trim();
+}
+function fillVideoRefine(text){
+  const ta = document.getElementById('videoRefineInput');
+  ta.value = text;
+  ta.focus();
+  onVideoRefineEdited();
+}
+function renderVideoRefineHistory(){
+  const row = document.getElementById('videoRefineHistoryRow');
+  if(!row) return;
+  const vers = window.__videoRefineVersions;
+  row.style.display = vers.length > 1 ? 'flex' : 'none';
+  row.innerHTML = vers.map((v, i) => `
+    <button type="button" class="img-version-chip${i === window.__videoRefineActive ? ' selected' : ''}${v.ready ? '' : ' loading'}"
+      onclick="selectVideoRefineVersion(${i})" ${v.ready ? '' : 'disabled'} title="${escapeHtml(v.prompt || 'Original combined cut')}">
+      ${v.label}${v.ready ? '' : ' …'}
+    </button>`).join('');
+  const badge = document.getElementById('combineVBadge');
+  if(badge){
+    badge.textContent = vers[window.__videoRefineActive].label;
+    badge.hidden = vers.length < 2;
+  }
+}
+function selectVideoRefineVersion(i){
+  if(!window.__videoRefineVersions[i] || !window.__videoRefineVersions[i].ready) return;
+  window.__videoRefineActive = i;
+  renderVideoRefineHistory();
+}
+function refineFinalVideo(){
+  const ta = document.getElementById('videoRefineInput');
+  const prompt = ta.value.trim();
+  if(!prompt) return;
+  ta.value = '';
+  document.getElementById('videoRefineBtn').disabled = true;
+
+  const vers = window.__videoRefineVersions;
+  const newLabel = 'v' + (vers.length + 1);
+  vers.push({ label: newLabel, prompt, ready: false });
+  window.__videoRefineActive = vers.length - 1;
+  renderVideoRefineHistory();
+
+  // re-render overlay on the player
+  const player = document.getElementById('combinePlayer');
+  let ov = player.querySelector('.combine-rerender');
+  if(!ov){ ov = document.createElement('div'); ov.className = 'combine-rerender'; player.appendChild(ov); }
+  ov.innerHTML = '<span class="spin"></span><span>Re-rendering the cut…</span>';
+
+  // mirror into the AI Assistant chat (single source of truth)
+  const log = document.getElementById('chatLog');
+  if(log){
+    log.innerHTML += `<div class="msg user"><div class="bubble">${escapeHtml(prompt)}</div><div class="avatar">DV</div></div>`;
+    log.innerHTML += `<div class="msg ai loading" id="videoRefineMsg">Re-rendering the final cut<span class="dots"><span>.</span><span>.</span><span>.</span></span></div>`;
+    log.scrollTop = log.scrollHeight;
+  }
+
+  setTimeout(() => {
+    vers[vers.length - 1].ready = true;
+    renderVideoRefineHistory();
+    if(ov) ov.remove();
+    const msg = document.getElementById('videoRefineMsg');
+    if(msg){
+      msg.classList.remove('loading');
+      msg.id = '';
+      msg.innerHTML = `<span class="tag">AI</span>Re-rendered the final cut (<b>${newLabel}</b>) with your note: “${escapeHtml(prompt)}”. Flip between versions on the video, or keep refining.`;
+    }
+    if(log) log.scrollTop = log.scrollHeight;
+  }, 1700);
+}
+
+/* ---- Rate this result → team (product feedback, not an edit) ----------------------- */
+window.__resultFeedback = {};
+function rfRate(btn){
+  const wrap = btn.closest('.result-feedback');
+  wrap.querySelectorAll('.rf-btn').forEach(b => b.classList.toggle('sel', b === btn));
+  wrap.querySelector('.rf-send').disabled = false;
+}
+function rfSend(target){
+  const wrap = document.getElementById(target === 'image' ? 'imageResultFeedback' : 'videoResultFeedback');
+  const rating = wrap.querySelector('.rf-btn.sel')?.dataset.v || null;
+  const note = wrap.querySelector('.result-feedback-note').value.trim();
+  window.__resultFeedback[target] = { rating, note, at: new Date().toISOString() };
+  console.log('[Formee] result feedback sent', target, window.__resultFeedback[target]);
+  wrap.querySelector('.result-feedback-body').hidden = true;
+  wrap.querySelector('.result-feedback-sub').hidden = true;
+  wrap.querySelector('.rf-done').hidden = false;
 }
 
 
@@ -7078,28 +7264,57 @@ function refineCaptionWithAI(mode){
 // 4 Generating / 5 Result / 6 Applied. Shared component: components/ai-social-media/
 // controls-field-ai-assisted-text.css. The 3 instant chips above (refineCaptionWithAI)
 // are untouched -- this is the separate free-text refine flow opened by the pill itself.
-window.__captionRefine = { open: false, appliedOnce: false, phase: 'idle', prompt: '', result: '' };
+window.__captionRefine = { open: false, phase: 'idle', prompt: '', result: '' };
+// Undo/redo pair for the "Applied" head row (Figma 9377:140697) -- set once "Use this" is
+// clicked, at:'after'|'before' tracks which side of the swap the field currently shows. A
+// fresh apply always overwrites this with a new before/after pair (single-step undo/redo,
+// matching the two icon buttons Figma shows -- not a full multi-step history stack).
+window.__captionApplyHistory = null;
 
 function updateCaptionRefinePillClass(){
   const pill = document.getElementById('pubRefineAiPill');
   if(!pill) return;
   const s = window.__captionRefine;
   pill.classList.remove('is-open', 'is-engaged');
-  if(s.open){
-    pill.classList.add((s.phase === 'idle' && !s.prompt.trim()) ? 'is-open' : 'is-engaged');
-  } else if(s.appliedOnce){
-    pill.classList.add('is-engaged');
-  }
+  if(s.open) pill.classList.add((s.phase === 'idle' && !s.prompt.trim()) ? 'is-open' : 'is-engaged');
 }
 
-// Applied state (6) hides the instant quick-chips entirely and right-aligns the pill alone --
-// matches Figma's own example exactly (a generic "shorter/punchier/cta" set stops being
-// useful advice once the caption has already been AI-refined once).
-function updateCaptionQuickChipsVisibility(){
-  const chipsRow = document.getElementById('pubCaptionQuickChips');
-  const wrap = document.getElementById('pubCaptionChipsRow');
-  if(chipsRow) chipsRow.style.display = window.__captionRefine.appliedOnce ? 'none' : 'flex';
-  if(wrap) wrap.style.justifyContent = window.__captionRefine.appliedOnce ? 'flex-end' : 'space-between';
+// Head row (Figma 9377:140697) -- a green "updated" badge + Undo/Redo, shown above the field
+// once at least one refinement has been applied this session. The instant quick-chips and
+// the pill itself stay exactly as they always were (Figma's real Applied reference keeps
+// them, unlike the generic Brand-description component demo's own simplified example).
+function renderCaptionHeadRow(){
+  const row = document.getElementById('pubCaptionHeadRow');
+  if(!row) return;
+  const h = window.__captionApplyHistory;
+  if(!h){ row.style.display = 'none'; row.innerHTML = ''; return; }
+  row.style.display = 'flex';
+  row.innerHTML = `
+    <span class="feedback-status-chip feedback-status-chip--green">updated</span>
+    <div class="controls-field-ai__head-spacer"></div>
+    <div class="controls-field-ai__undo-redo">
+      <button type="button" class="controls-field-ai__icon-btn" onclick="undoCaptionApply()" aria-label="Undo" ${h.at === 'before' ? 'disabled' : ''}><img src="../../../../components/ai-social-media/icons/ui-undo.svg" alt=""></button>
+      <button type="button" class="controls-field-ai__icon-btn" onclick="redoCaptionApply()" aria-label="Redo" ${h.at === 'after' ? 'disabled' : ''}><img src="../../../../components/ai-social-media/icons/ui-redo.svg" alt=""></button>
+    </div>
+  `;
+}
+
+function undoCaptionApply(){
+  const h = window.__captionApplyHistory;
+  if(!h || h.at !== 'after') return;
+  document.getElementById('pubCaption').value = h.before;
+  onSharedCaptionInput();
+  h.at = 'before';
+  renderCaptionHeadRow();
+}
+
+function redoCaptionApply(){
+  const h = window.__captionApplyHistory;
+  if(!h || h.at !== 'before') return;
+  document.getElementById('pubCaption').value = h.after;
+  onSharedCaptionInput();
+  h.at = 'after';
+  renderCaptionHeadRow();
 }
 
 function toggleCaptionRefinePanel(){
@@ -7168,9 +7383,11 @@ function undoCaptionRefineResult(){
 
 function applyCaptionRefineResult(){
   const s = window.__captionRefine;
-  document.getElementById('pubCaption').value = s.result;
+  const ta = document.getElementById('pubCaption');
+  window.__captionApplyHistory = { before: ta.value, after: s.result, at: 'after' };
+  ta.value = s.result;
   onSharedCaptionInput();
-  s.appliedOnce = true;
+  renderCaptionHeadRow();
   s.open = false;
   s.phase = 'idle';
   s.prompt = '';
@@ -7182,7 +7399,6 @@ function renderCaptionRefinePanel(){
   const panel = document.getElementById('pubCaptionRefinePanel');
   const s = window.__captionRefine;
   updateCaptionRefinePillClass();
-  updateCaptionQuickChipsVisibility();
   if(!panel) return;
   if(!s.open){ panel.style.display = 'none'; panel.innerHTML = ''; return; }
   panel.style.display = 'flex';
