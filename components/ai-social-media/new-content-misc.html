@@ -2,21 +2,24 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
-<title>Uploads Panel Rows — AI Social Media Component</title>
+<title>New content — Loose Controls</title>
 <link rel="stylesheet" href="../../tokens/tokens.css" />
 <link rel="stylesheet" href="../demo-nav.css" />
-<link rel="stylesheet" href="editor-cell.css" />
-<link rel="stylesheet" href="uploads-rows.css" />
+<link rel="stylesheet" href="controls-toggles.css" />
+<link rel="stylesheet" href="new-content-misc.css" />
 <style>
   body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
   .demo-main { padding: var(--spacing-4xl); }
   h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-sm); }
-  h2 { font-size: var(--font-size-text-md); font-weight: 700; color: var(--color-neutral-700); margin: var(--spacing-3xl) 0 var(--spacing-md); }
+  h2 { font-size: var(--font-size-text-md); font-weight: 700; color: var(--color-neutral-700); margin: var(--spacing-4xl) 0 var(--spacing-xs); }
   h2:first-of-type { margin-top: 0; }
-  .demo-note { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); max-width: 720px; margin: 0 0 var(--spacing-3xl); line-height: 1.6; }
-  .demo-sub { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); margin: 0 0 var(--spacing-lg); }
+  .demo-nid { font-weight: 400; color: var(--color-neutral-450); }
+  .demo-note { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); max-width: 780px; margin: 0 0 var(--spacing-3xl); line-height: 1.6; }
+  .demo-sub { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); margin: 0 0 var(--spacing-lg); line-height: 1.5; }
   .demo-grid { display: flex; flex-wrap: wrap; gap: var(--spacing-2xl); align-items: flex-start; }
-  .demo-col { display: flex; flex-direction: column; gap: var(--spacing-md); }
+  .demo-col { display: flex; flex-direction: column; gap: var(--spacing-sm); align-items: flex-start; }
+  .demo-state { font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--color-neutral-450); }
+  .demo-surface { padding: var(--spacing-2xl); background: var(--color-neutral-100); border-radius: 12px; }
 </style>
 </head>
 <body>
@@ -152,10 +155,10 @@
         <a href="action-bar-feedback.html">Action Bar / Brief</a>
       </div>
     </div>
-    <div class="demo-sidebar-group collapsed" data-group="new-content">
+        <div class="demo-sidebar-group" data-group="new-content">
       <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>New content</span><span class="demo-sidebar-group-caret">▾</span></button>
       <div class="demo-sidebar-group-items">
-        <a href="new-content-misc.html">New content · loose controls</a>
+        <a href="new-content-misc.html" class="active">New content · loose controls</a>
       </div>
     </div>
     <div class="demo-sidebar-group collapsed" data-group="schedule">
@@ -174,79 +177,114 @@
         <a href="reference-chip.html">Reference Chip</a>
       </div>
     </div>
-    <div class="demo-sidebar-group" data-group="upload-destination">
+    <div class="demo-sidebar-group collapsed" data-group="upload-destination">
       <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Upload & Destination</span><span class="demo-sidebar-group-caret">▾</span></button>
       <div class="demo-sidebar-group-items">
         <a href="upload-dropzone.html">Upload Dropzone / Dashed Upload Row</a>
         <a href="uploads-file-badge.html">Uploads / File Badge / Source Row</a>
-        <a href="uploads-rows.html" class="active">Uploads Panel Rows</a>
+        <a href="uploads-rows.html">Uploads Panel Rows</a>
         <a href="destination-account.html">Destination Account</a>
         <a href="publish-destination-table-row.html">Publish / Destination Table Row</a>
       </div>
     </div>
   </nav>
   <main class="demo-main">
-  <h1>Uploads Panel Rows</h1>
-  <p class="demo-note">Figma: "08 Editor" (1124:10672) — the folder/file list rows shown inside the Uploads side-panel, following on from the drag &amp; drop affordances already built in <a href="upload-dropzone.html">Upload Dropzone / Dashed Upload Row</a>.</p>
+  <h1>New content — loose controls</h1>
+  <p class="demo-note">Figma: section <strong>“New content”</strong> (node 7405:117847). Most of that section already has dedicated pages — <a href="input.html">Input</a>, <a href="heading.html">Heading</a>, <a href="scene-tile.html">Scene Tile</a> (incl. its badge + play button in context), <a href="queue-panel.html">Queue Panel</a>, <a href="date-picker.html">Date Picker</a>, <a href="voice-section.html">Voice Section</a>, <a href="ai-response-card.html">AI Response Card</a>, <a href="reference-chip.html">Reference Chip</a>, <a href="carousel-card-block.html">Carousel / Script Card</a>, <a href="publish-destination-table-row.html">Destination Table Row</a>, <a href="preview-top-row.html">preview-top-row</a>, etc. This page picks up the small utility controls that had no home. The timing-row radios reuse <code>.ctrl-radio</code> (<a href="controls-toggles.html">Controls / Toggles</a>).</p>
 
-  <h2>Uploads / Folder Row</h2>
-  <p class="demo-sub">Node 2575:71946 (Default) / 2575:71996 (Hover) / 2588:72216 (Rename).</p>
-  <div class="demo-grid">
-    <div class="demo-col">
-      <div class="uploads-folder-row">
-        <span class="uploads-folder-row-left">
-          <span class="uploads-folder-row-icon"><img src="icons/nav-folder-closed.svg" alt=""></span>
-          <span class="uploads-folder-row-title">Folder 01</span>
-        </span>
-        <button type="button" class="uploads-folder-row-action"><img src="icons/ui-ellipsis.svg" alt="More"></button>
+  <h2>segment-nav-btn <span class="demo-nid">— 6010:106417</span></h2>
+  <p class="demo-sub">28px page/step nav button. Type = Text / Icon, each × Selected.</p>
+  <div class="demo-surface demo-grid">
+    <div class="demo-col"><span class="demo-state">Text</span><button type="button" class="ncm-seg-nav-btn">1</button></div>
+    <div class="demo-col"><span class="demo-state">Text · selected</span><button type="button" class="ncm-seg-nav-btn ncm-seg-nav-btn--selected">1</button></div>
+    <div class="demo-col"><span class="demo-state">Icon</span><button type="button" class="ncm-seg-nav-btn"><img src="icons/ui-undo.svg" alt="Undo"></button></div>
+    <div class="demo-col"><span class="demo-state">Icon · selected</span><button type="button" class="ncm-seg-nav-btn ncm-seg-nav-btn--selected"><img src="icons/ui-undo.svg" alt="Undo"></button></div>
+  </div>
+
+  <h2>credit <span class="demo-nid">— 6010:102327</span></h2>
+  <p class="demo-sub">Credit-cost pill, with or without a leading label.</p>
+  <div class="demo-surface demo-grid">
+    <div class="demo-col"><span class="demo-state">cost only</span>
+      <span class="ncm-credit"><span class="ncm-credit__cost"><img src="icons/zap.svg" alt=""><span>5</span></span></span>
+    </div>
+    <div class="demo-col"><span class="demo-state">with label</span>
+      <span class="ncm-credit"><span class="ncm-credit__label">Regenerate</span><span class="ncm-credit__cost"><img src="icons/zap.svg" alt=""><span>5</span></span></span>
+    </div>
+  </div>
+
+  <h2>regenerate <span class="demo-nid">— 6077:107118</span></h2>
+  <p class="demo-sub">State = Inactive / Active. Active brightens the cost to brand-primary and can show a leading refresh icon.</p>
+  <div class="demo-surface demo-grid">
+    <div class="demo-col"><span class="demo-state">Inactive</span>
+      <button type="button" class="ncm-regenerate"><img class="ncm-regenerate__icon" src="icons/refresh-ccw.svg" alt=""><span class="ncm-regenerate__text">Regenerate</span><span class="ncm-regenerate__cost"><img src="icons/zap.svg" alt=""><span>5</span></span></button>
+    </div>
+    <div class="demo-col"><span class="demo-state">Active</span>
+      <button type="button" class="ncm-regenerate ncm-regenerate--active"><img class="ncm-regenerate__icon" src="icons/refresh-ccw.svg" alt=""><span class="ncm-regenerate__text">Regenerate</span><span class="ncm-regenerate__cost"><img src="icons/zap.svg" alt=""><span>5</span></span></button>
+    </div>
+  </div>
+
+  <h2>Video / Play button <span class="demo-nid">— 6077:107620</span></h2>
+  <p class="demo-sub">Translucent 40px overlay button (same treatment as <a href="scene-tile.html">Scene Tile</a>'s play button, shown here standalone). Type = Play / Pause.</p>
+  <div class="demo-surface demo-grid" style="background:linear-gradient(135deg,var(--color-neutral-500),var(--color-neutral-300));">
+    <div class="demo-col"><button type="button" class="ncm-video-play"><img class="play" src="icons/video-play-glyph.svg" alt="Play"></button></div>
+    <div class="demo-col"><button type="button" class="ncm-video-play"><img class="pause" src="icons/video-pause-glyph.svg" alt="Pause"></button></div>
+  </div>
+
+  <h2>Scene Desc Box <span class="demo-nid">— 6077:108544</span></h2>
+  <p class="demo-sub">Per-scene description field with a “Reference” attach chip. Filled = true / false.</p>
+  <div class="demo-surface demo-grid">
+    <div class="demo-col"><span class="demo-state">filled</span>
+      <div class="ncm-scene-desc">
+        <span class="ncm-scene-desc__ref"><img src="icons/content-image-plus.svg" alt=""><span>Reference</span></span>
+        <p class="ncm-scene-desc__text">Bright studio, close-up — holding up the product with a big smile</p>
       </div>
-      <div class="uploads-folder-row hover">
-        <span class="uploads-folder-row-left">
-          <span class="uploads-folder-row-icon"><img src="icons/nav-folder-closed.svg" alt=""></span>
-          <span class="uploads-folder-row-title">Folder 01</span>
-        </span>
-        <button type="button" class="uploads-folder-row-action"><img src="icons/ui-ellipsis.svg" alt="More"></button>
-      </div>
-      <div class="uploads-folder-row rename">
-        <span class="uploads-folder-row-left">
-          <span class="uploads-folder-row-icon"><img src="icons/nav-folder-closed.svg" alt=""></span>
-          <span class="uploads-folder-row-title">Folder 01</span>
-        </span>
-        <button type="button" class="uploads-folder-row-action"><img src="icons/ui-ellipsis.svg" alt="More"></button>
+    </div>
+    <div class="demo-col"><span class="demo-state">empty</span>
+      <div class="ncm-scene-desc ncm-scene-desc--empty">
+        <span class="ncm-scene-desc__ref"><img src="icons/content-image-plus.svg" alt=""><span>Reference</span></span>
+        <p class="ncm-scene-desc__text">Bright studio, close-up — holding up the product with a big smile</p>
       </div>
     </div>
   </div>
 
-  <h2>Uploads / Folder Rename Field</h2>
-  <p class="demo-sub">Node 2598:65264 — the active-editing counterpart, shown near the row being renamed.</p>
-  <div class="demo-grid">
-    <div class="uploads-folder-rename-field">
-      <span class="uploads-folder-rename-field-row">
-        <span class="uploads-folder-rename-field-text">Brand Default</span>
-        <img src="icons/edit-pencil.svg" alt="Rename">
+  <h2>Preview Button <span class="demo-nid">— 7666:26</span></h2>
+  <p class="demo-sub">State = Default / Hover / Focused (Focused = “Playing…”).</p>
+  <div class="demo-surface demo-grid">
+    <div class="demo-col"><span class="demo-state">Default</span>
+      <button type="button" class="ncm-preview-btn"><span class="ncm-preview-btn__icon"><img src="icons/video-play-glyph.svg" alt=""></span><span class="ncm-preview-btn__label">Preview</span></button>
+    </div>
+    <div class="demo-col"><span class="demo-state">Hover</span>
+      <button type="button" class="ncm-preview-btn ncm-preview-btn--hover"><span class="ncm-preview-btn__icon"><img src="icons/video-play-glyph.svg" alt=""></span><span class="ncm-preview-btn__label">Preview</span></button>
+    </div>
+    <div class="demo-col"><span class="demo-state">Focused</span>
+      <button type="button" class="ncm-preview-btn ncm-preview-btn--focused"><span class="ncm-preview-btn__icon"><img src="icons/video-pause-glyph.svg" alt=""></span><span class="ncm-preview-btn__label">Playing…</span></button>
+    </div>
+  </div>
+
+  <h2>Publish / Platform Timing Row <span class="demo-nid">— 7235:546</span></h2>
+  <p class="demo-sub">One row of the Publish step’s per-platform timing list. Mode = Publish Now / Schedule (switches which radio is checked).</p>
+  <div class="demo-surface demo-col" style="gap:16px; width:100%; max-width:820px;">
+    <div class="ncm-timing-row">
+      <span class="ncm-timing-row__meta"><img src="icons/social-instagram.svg" alt=""><span>Instagram</span></span>
+      <span class="ncm-timing-row__spacer"></span>
+      <span class="ncm-timing-row__choice"><button class="ctrl-radio" type="button" role="radio" aria-checked="true"><img src="icons/controls/radio-true.svg" alt=""></button><span>Publish now</span></span>
+      <span class="ncm-timing-row__choice">
+        <button class="ctrl-radio" type="button" role="radio" aria-checked="false"><img src="icons/controls/radio-false.svg" alt=""></button><span>Schedule</span>
+        <span class="ncm-timing-row__date"><span>Choose date &amp; time</span><img src="icons/input/icon-calendar.svg" alt=""></span>
       </span>
-      <span class="uploads-folder-rename-field-underline"></span>
     </div>
-  </div>
-
-  <h2>Uploads / File Row</h2>
-  <p class="demo-sub">Node 3317:21984 — checkbox + thumbnail (reuses <a href="editor-cell.html">Editor / cell</a>) + filename/meta + optional action.</p>
-  <div class="demo-grid">
-    <div class="uploads-file-row">
-      <input type="checkbox" class="uploads-file-row-checkbox" aria-label="Select file">
-      <div class="editor-cell size-sm type-image"><img src="icons/editor-cell-placeholder.svg" alt=""></div>
-      <div class="uploads-file-row-meta">
-        <span class="uploads-file-row-name">Filename.png</span>
-        <span class="uploads-file-row-sub">
-          <span>68x68px</span>
-          <span class="uploads-file-row-sub-dot"></span>
-          <span>210.2 KB</span>
-        </span>
-      </div>
-      <button type="button" class="uploads-file-row-action"><img src="icons/ui-ellipsis.svg" alt="More"></button>
+    <div class="ncm-timing-row">
+      <span class="ncm-timing-row__meta"><img src="icons/social-instagram.svg" alt=""><span>Instagram</span></span>
+      <span class="ncm-timing-row__spacer"></span>
+      <span class="ncm-timing-row__choice"><button class="ctrl-radio" type="button" role="radio" aria-checked="false"><img src="icons/controls/radio-false.svg" alt=""></button><span>Publish now</span></span>
+      <span class="ncm-timing-row__choice">
+        <button class="ctrl-radio" type="button" role="radio" aria-checked="true"><img src="icons/controls/radio-true.svg" alt=""></button><span>Schedule</span>
+        <span class="ncm-timing-row__date"><span>Choose date &amp; time</span><img src="icons/input/icon-calendar.svg" alt=""></span>
+      </span>
     </div>
   </div>
   </main>
+
 </div>
 <script src="../demo-nav.js"></script>
 </body>
