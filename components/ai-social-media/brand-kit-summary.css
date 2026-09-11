@@ -68,3 +68,81 @@
 .brand-kit-text-style-pill span.subheading{font-family:'Lora',Georgia,serif; font-weight:700;}
 .brand-kit-text-style-pill span.body{font-family:Impact,'Arial Narrow Bold',sans-serif; font-weight:400;}
 .brand-kit-text-style-meta{font-size:11px; font-weight:500; line-height:16px; color:var(--color-neutral-500); white-space:nowrap;}
+
+/* ====================================================================================
+   Brand kit summary — row 2: what AI draws vs what is composited on top.
+   (2026-09-10) The colours feed two different places, so the bar is split:
+   row 1 = goes into generation (logo, palette, type), row 2 = composited overlay.
+   `Text & graphics` is the real choice — In the image (AI draws the text, not
+   editable afterwards) vs On top (editable layers). When it is "In the image"
+   there is nothing to style, so .brand-kit-overlay-group is hidden. ==================== */
+.brand-kit-overlay-row{
+  box-sizing:border-box; width:100%; display:flex; align-items:center; gap:16px;
+  padding:12px 16px; margin-top:8px;
+  background:var(--color-neutral-0); border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl);
+}
+
+/* the changed-from-brand-default marker: a dot, not a badge — a badge needs a word
+   ("Modified") that never says what changed or what it changed from. */
+.brand-kit-changed-dot{width:6px; height:6px; border-radius:var(--radius-full); background:var(--color-brand-primary); flex-shrink:0;}
+
+/* 빈 spacer 로 밀지 않는다 — 좌/우 그룹 + space-between 으로 잡는다. 2026-09-11 */
+.brand-kit-overlay-row{justify-content:space-between;}
+.brand-kit-overlay-controls,
+.brand-kit-overlay-actions{display:flex; align-items:center; gap:10px; flex:none;}
+
+/* 위에 선택자 없이 선언만 떠 있던 블록이 있었다 — 세그먼티드로 바뀌면서 지워진
+   드롭다운 버튼의 잔해다. CSS 파서가 그 지점부터 다음 `{` 까지를 통째로 버리는
+   바람에 `.brand-kit-mode-help` 까지 같이 죽어서 16px 검정으로 찍히고 있었다.
+   값은 Figma `Use brand kit` 9386:141887 기준. */
+.brand-kit-overlay-key{font-size:13px; line-height:20px; font-weight:500;
+  color:var(--color-neutral-500); white-space:nowrap;}
+.brand-kit-mode-help{margin:0; font-size:12px; line-height:18px; font-weight:500;
+  color:var(--color-neutral-500);}
+
+/* 브랜드 킷으로 나가는 링크는 <a> 다 (window.open 은 팝업 차단에 걸린다) */
+a.brand-kit-empty-box{text-align:center;}
+
+/* ── Overlay 행 (2026-09-11) ────────────────────────────────────────────────
+   컨트롤은 전부 DS 컴포넌트를 쓴다 — 슬롯은 .brand-picker-btn(로고·팔레트와 동일),
+   Suggest 는 .actions-btn--secondary, Reset 은 .actions-btn--ghost,
+   Edit in Brand Kit 은 .editor-section-header-see-all. 여기엔 레이아웃만 남긴다. */
+.brand-kit-overlay-group{display:flex; align-items:center; gap:4px;}
+.brand-kit-overlay-group .brand-picker-btn{padding:5px 4px;}
+.brand-kit-overlay-group .brand-picker-chevron{width:16px; height:16px;}
+.brand-kit-overlay-group .brand-picker-label{font-size:12px; color:var(--color-neutral-700);}
+.brand-kit-overlay-group .brand-picker-popover{min-width:150px;}
+.brand-kit-overlay-row .actions-btn{padding:6px 10px; height:auto;}
+/* Suggest 는 테두리 없이 아이콘+글자로 — 스와치 옆에서 네모가 하나 더 생기면
+   "이것도 색 자리인가?" 로 읽힌다. 순환 화살표가 "다시 돌린다"를 말해준다.
+   아이콘은 Regenerate 버튼들과 같은 refresh-ccw(스트로크가 neutral-500 로
+   박혀 있어 색을 못 바꾼다) — 그래서 글자도 뉴트럴로 맞춘다. */
+.brand-kit-suggest{color:var(--color-neutral-700);}
+.brand-kit-suggest:hover{background:var(--color-neutral-50);}
+/* DS .actions-btn--ghost 에 강조 토큰만 얹는다 — 새 버튼 컴포넌트를 만들지 않는다 */
+.brand-kit-editlink{text-decoration:none; color:var(--color-brand-primary); font-weight:var(--font-weight-semibold);}
+a.brand-kit-empty-box{text-decoration:none; text-align:center;}
+
+/* 읽기 전용 — 브랜드 값은 여기서 안 바꾼다. 버튼처럼 보이면 안 되므로
+   hover 반응과 커서를 없앤다. 바꾸는 길은 Edit in Brand Kit 하나뿐. */
+.brand-picker.is-readonly .brand-picker-btn{cursor:default; background:none;}
+.brand-picker.is-readonly .brand-picker-btn:hover{background:none;}
+
+/* Text & graphics 는 드롭다운이 아니라 세그먼티드다 (Figma 9386:141887).
+   선택지가 둘뿐이고 결과 차이가 커서 둘 다 보이는 편이 맞다. 줄 안에서는
+   기본 크기가 커서 한 단계 줄인다. */
+.brand-kit-overlay-row .controls-segmented-control{padding:3px;}
+.brand-kit-overlay-row .controls-segment-chip{padding:5px 12px; font-size:13px; line-height:18px;}
+
+/* 우측 액션 묶음 — Reset 이 나타났다 사라질 때 줄이 밀리지 않도록 자리를 늘 잡는다.
+   display:none 이면 폭이 0이 돼 Suggest 를 누르는 순간 전체가 흔들린다. */
+.brand-kit-actions{display:flex; align-items:center; gap:12px; flex:none;}
+.brand-kit-overlay-row .brand-kit-summary-divider{margin-left:4px;}
+/* 줄이 빠듯해서 라벨이 두 줄로 접히던 문제 */
+.brand-kit-overlay-key{white-space:nowrap;}
+.brand-kit-overlay-row{gap:10px;}
+.brand-kit-overlay-row .actions-btn{padding:6px 6px; font-size:12px;}
+/* 되돌릴 게 없을 때의 Reset — DS --inactive 는 회색 판이 깔려 버튼이 도드라진다.
+   여기선 "지금은 할 일이 없다" 정도만 말하면 되므로 배경 없이 글자만 죽인다. */
+.brand-kit-reset[disabled]{background:none; box-shadow:none; color:var(--color-neutral-400); cursor:default;}
+.brand-kit-overlay-group{gap:0;}
