@@ -26,8 +26,15 @@
 button.voice-section-header{border:none; background:transparent; padding:0; margin:0; font:inherit; color:inherit; cursor:pointer;}
 button.voice-section-header:focus-visible{outline:2px solid var(--color-brand-primary); outline-offset:2px; border-radius:4px;}
 .voice-section-title{font-family:var(--font-family-text); font-size:14px; font-weight:600; line-height:22px; color:var(--color-neutral-900);}
-.voice-section-header-right{display:flex; align-items:center; gap:12px;}
-.voice-section-spacer{width:212px; height:1px; background:transparent;}
+.voice-section-header-right{display:flex; align-items:center; gap:12px; min-width:0; flex:1 1 auto; justify-content:flex-end;}
+/* Figma's 212px spacer is a fixed placeholder for a "Whole take / Split by scene" toggle that
+   sat next to the chevron in other component states -- this app doesn't use that toggle
+   (removed for good, see wordCountGuideText()'s comment), and the card itself isn't a fixed
+   358px wide here, so a hardcoded 212px pushed the chevron straight off the card's right edge.
+   Collapsing it to 0 (rather than deleting the element) keeps the markup matching Figma's
+   layer tree 1:1 while letting .voice-section-header's own justify-content:space-between do
+   the actual right-alignment of the chevron. */
+.voice-section-spacer{width:0; height:1px; background:transparent; flex-shrink:1;}
 .voice-section-caret{width:20px; height:20px; display:block; flex-shrink:0;}
 .voice-section.collapsed .voice-section-caret{width:16px; height:16px;}
 .voice-section.collapsed .voice-section-body{display:none;}
@@ -47,15 +54,17 @@ button.voice-section-header:focus-visible{outline:2px solid var(--color-brand-pr
   font-family:var(--font-family-text); font-size:14px; font-weight:400; line-height:22px; color:var(--color-neutral-900);
 }
 textarea.voice-section-script:focus{border-color:var(--color-brand-primary);}
+/* Figma's over-limit state (9276:225303) keeps this box neutral -- the red-border direction
+   (.voice-script-text[aria-invalid], v4's own inline stylesheet) is for the compact Script-
+   stage textarea only; here the separate warning row below carries all of the over-limit
+   signaling instead. Three selector parts (2 classes + 1 attribute) so this wins regardless of
+   stylesheet load order, same reasoning as the combined-class rule above. */
+.voice-section-script.voice-script-text[aria-invalid="true"]{border-color:var(--color-neutral-400);}
 /* Timeline's Preview/Regenerate buttons are real .voice-preview-btn elements (existing
    cached/stale/loading state machine, see updateVoicePreviewButton()) that also carry
    .voice-section-preview-btn so they render with Figma's own icon-circle + full-width look
    instead of the compact inline style used elsewhere (Script/Video stage). */
 .voice-section-actions{display:flex; flex-direction:column; gap:var(--spacing-md); width:100%;}
-/* Combined-class selector bumps specificity over the plain .voice-preview-btn rule (v4's own
-   inline stylesheet) so Figma's full-width icon-circle look always wins regardless of
-   stylesheet load order -- same defensive pattern as .voice-section-script above. */
-.voice-preview-btn.voice-section-preview-btn{display:flex; width:100%; justify-content:center; gap:var(--spacing-sm);}
 .voice-section-sample-play{cursor:pointer;}
 .voice-section-wordcount{width:100%; text-align:right; font-family:var(--font-family-text); font-size:11px; font-weight:400; line-height:16px; color:var(--color-neutral-500);}
 
@@ -74,15 +83,30 @@ textarea.voice-section-script:focus{border-color:var(--color-brand-primary);}
 }
 .voice-section-refine-chip:hover{background:var(--color-neutral-50);}
 
-/* Whole take: Preview / Regenerate buttons (Preview always shown; Regenerate optional,
-   shown once a take already exists to generate again) */
-.voice-section-preview-btn{
+/* Whole take: Preview / Regenerate buttons -- Preview shown before any take exists, Regenerate
+   shown instead once a take exists but has gone stale (narration edited or voice model changed
+   since it was generated) -- see renderVoiceButtonAreaHTML()'s fresh/stale branching. Never
+   both, and never alongside .voice-section-sample below (a fresh take fully replaces this
+   button with the sample row, per Figma 8727:220507). */
+/* Combined-class selector (.voice-preview-btn.voice-section-preview-btn, not just
+   .voice-section-preview-btn alone) -- this button carries BOTH classes in the real markup,
+   and the plain compact .voice-preview-btn base rule (v4's own inline stylesheet, loads after
+   this file) has equal (0,1,0) specificity with a DIFFERENT padding value (9px vs this rule's
+   11px vertical) -- without the extra class here, that tie is broken by load order and the
+   compact rule silently wins, which is exactly what was happening before this fix. */
+.voice-preview-btn.voice-section-preview-btn{
   display:flex; align-items:center; justify-content:center; gap:var(--spacing-sm); width:100%; box-sizing:border-box;
   background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg);
   padding:11px 14px; cursor:pointer;
   font-family:var(--font-family-text); font-size:13px; font-weight:600; color:var(--color-neutral-900);
 }
-.voice-section-preview-btn:hover{border-color:var(--color-neutral-450);}
+.voice-preview-btn.voice-section-preview-btn:hover{border-color:var(--color-neutral-450);}
+/* Playing/Replaying state (Figma 8727:220503) -- a real bg/border recolor, not just the
+   compact button's plain text/border-color tint (.voice-preview-btn.playing further up the
+   cascade); this selector's extra specificity (two classes + state class) wins over it. */
+.voice-preview-btn.voice-section-preview-btn.playing{
+  background:var(--color-neutral-150); border-color:var(--color-neutral-500); color:var(--color-neutral-900);
+}
 .voice-section-preview-play{
   width:24px; height:24px; flex-shrink:0; box-sizing:border-box;
   border:1.5px solid var(--color-neutral-700); border-radius:999px;
@@ -90,18 +114,22 @@ textarea.voice-section-script:focus{border-color:var(--color-brand-primary);}
 }
 .voice-section-preview-play img{width:10px; height:10px; display:block;}
 
-/* Whole take: optional generated-voice-sample row (Editor / Voiceover Card) */
+/* Whole take: generated-voice-sample row (Editor / Voiceover Card, Figma 8727:220507) -- the
+   fresh/idle resting look is plain white + neutral-400 border, NOT the Playing button's
+   neutral-150/neutral-500 recolor above (that was this rule's actual bug: it had borrowed the
+   Playing state's colors for its own permanent resting state). */
 .voice-section-sample{
   display:flex; align-items:center; gap:var(--spacing-sm); width:100%; box-sizing:border-box;
-  background:var(--color-neutral-150); border:1px solid var(--color-neutral-500);
+  background:var(--color-neutral-0); border:1px solid var(--color-neutral-400);
   border-radius:11px; /* Figma's own radius/11 -- no exact token between lg(8)/xl(12) */
   padding:var(--spacing-sm);
 }
 .voice-section-sample-play{
   width:30px; height:30px; flex-shrink:0; box-sizing:border-box;
   border:1.5px solid var(--color-neutral-700); border-radius:999px;
-  display:flex; align-items:center; justify-content:center;
+  display:flex; align-items:center; justify-content:center; cursor:pointer;
 }
 .voice-section-sample-play img{width:12px; height:12px; display:block;}
 .voice-section-sample-name{flex:1 0 0; min-width:0; font-family:var(--font-family-text); font-size:12px; font-weight:500; line-height:18px; color:var(--color-neutral-700); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
 .voice-section-sample-time{display:flex; align-items:center; gap:4px; flex-shrink:0; font-family:var(--font-family-text); font-size:11px; font-weight:500; line-height:16px; color:var(--color-neutral-500); white-space:nowrap;}
+.voice-section-sample-time .sep{font-size:12px; line-height:18px;}

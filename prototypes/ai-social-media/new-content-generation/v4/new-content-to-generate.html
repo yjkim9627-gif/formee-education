@@ -163,12 +163,6 @@
   /* .chat-cta-row/.chat-cta-card/etc. now come from the shared
      components/ai-social-media/ai-response-card.css ("AI / Response Card", node 7164:15). */
 
-  .visual-proposal-box{margin-top:8px; background:#fff; border:1px solid var(--color-neutral-300); border-radius:var(--radius-lg); padding:14px; display:flex; flex-direction:column; gap:10px;}
-  .visual-proposal-heading{font-size:13px; font-weight:700; color:var(--color-neutral-900);}
-  .visual-proposal-text{font-size:12.5px; color:var(--color-neutral-900); line-height:1.5;}
-  .copy-applied-note{display:none; align-items:center; gap:4px; width:fit-content; font-size:12px; font-weight:600; color:var(--color-brand-primary); background:var(--color-brand-primary-light); border:1px solid var(--color-brand-primary-mid); border-radius:999px; padding:6px 10px;}
-  .visual-proposal-box.applied .copy-applied-note{display:flex;}
-  .visual-proposal-box.applied{border-color:var(--color-brand-primary-mid);}
   /* Figma's "AI / Review Item" (5457-111240 ai-response > list) is a plain 14px paragraph,
      same size/weight as the rest of the AI response — not a small muted caption. */
   .chat-edit-hint{display:block; font-size:14px; line-height:20px; color:var(--color-neutral-700); margin-top:4px;}
@@ -962,23 +956,17 @@
   .script-proposal-box.applied{border-color:var(--color-brand-primary-mid);}
   .script-proposal-title{font-size:14px; font-weight:700; color:var(--color-neutral-900); font-family:var(--font-family-text);}
 
-  /* AI 대화창 공통 규칙 스펙, Case 2/3 — the "Changes" completion card every chat-driven edit
-     converges on (Framer Agent panel reference: a small card naming what changed + Undo).
-     Reuses the same bg-75/border-400/radius-xl/padding-12 shell as .script-proposal-box and
-     .chat-cta-card (both already this exact look) rather than inventing a new container, and
-     the Undo/Redo icon-button pair reuses controls-field-ai-assisted-text.css's
-     .controls-field-ai__icon-btn as-is (same 24px/border-400/radius-md look already
-     established for the Publish caption's own Undo/Redo). */
-  .chat-changes-card{
-    display:flex; align-items:center; gap:var(--spacing-sm); margin-top:10px;
-    background:var(--color-neutral-75); border:1px solid var(--color-neutral-400); border-radius:var(--radius-xl);
-    padding:10px 12px; box-sizing:border-box;
-  }
-  .chat-changes-label{font-size:13px; font-weight:600; color:var(--color-neutral-900); font-family:var(--font-family-text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-  .chat-changes-spacer{flex:1 0 0; min-width:0;}
+  /* AI 대화창 공통 규칙 스펙, Case 2/3 — the "Changes" completion card every chat-driven
+     script/prompt edit converges on. Figma's actual "AI / Response Card" Undo/Redo states
+     (nodes 9382:146084 / 9382:170356) turned out to be ONE small text chip toggling between
+     "Undo"/"Redo" labels in a title header-row -- not the two-icon-button pair this used to
+     render (see git history for the earlier .chat-changes-card version). Needs no CSS of its
+     own: renders straight onto components/ai-social-media/ai-response-card.css's existing
+     .chat-cta-card + .chat-cta-header-row + .chat-cta-chip-btn, already pixel-matched to that
+     component. See pushChatChangeCard()/toggleChatChange() below. */
 
   /* Case 3 — proactive over-limit suggestion card, shown in the chat alongside (not instead
-     of) the field's own inline red warning. Same shell as .chat-changes-card; the one-click
+     of) the field's own inline red warning. Same shell as .chat-cta-card; the one-click
      button reuses .pub-refine-chip (already the "Shorten" affordance's look elsewhere). */
   .chat-limit-card{
     display:flex; flex-direction:column; align-items:flex-start; gap:8px; margin-top:10px;
@@ -1020,13 +1008,26 @@
   .setting-chip .ratio-icon i{width:8px; height:14px; border:1.2px solid var(--color-neutral-500); border-radius:2px; display:block;}
   .setting-chip-wrap{position:relative;}
   .setting-popover{position:absolute; top:calc(100% + 6px); left:0; min-width:230px; background:#fff; border:1px solid var(--color-neutral-300); border-radius:10px; box-shadow:0 10px 28px rgba(15,23,41,0.14); z-index:40; padding:8px;}
-  .char-mini-grid{display:flex; gap:12px; padding:4px 4px 2px;}
-  .char-mini-opt{display:flex; flex-direction:column; align-items:center; gap:5px; cursor:pointer;}
-  .char-mini-opt .circle{width:40px; height:40px; border-radius:999px; background:linear-gradient(135deg,var(--color-neutral-300),var(--color-neutral-200)); border:2px solid transparent;}
-  .char-mini-opt.selected .circle{border-color:var(--color-brand-primary);}
-  .char-mini-opt span{font-size:10.5px; color:var(--color-neutral-700);}
-  .setting-popover-footer{margin-top:8px; padding-top:8px; border-top:1px solid var(--color-neutral-200); font-size:11.5px; color:var(--color-neutral-600); text-align:center; cursor:pointer;}
-  .setting-popover-footer:hover{color:var(--color-neutral-900);}
+
+  /* "Change Character" popover — Figma 8727:223651 / 9399:189818 (ContextBar / Popover /
+     Replace): a horizontal scroll of character thumbnails with a fade + arrow hinting more
+     sit off-screen, instead of the old vertical .char-mini-grid list. Shared between
+     Reel/Short's existing character chip and Image post's (new — that chip had no popover
+     at all before). Needs its own position/background/shadow (doesn't share .setting-popover
+     as a co-class) — floats below the chip instead of pushing page content down. */
+  .char-replace-popover{position:absolute; top:calc(100% + 6px); left:0; z-index:40; width:308px; background:#fff; border:1px solid var(--color-neutral-200); border-radius:var(--radius-xl); box-shadow:0 12px 20px rgba(15,23,41,0.1), 0 4px 8px rgba(15,23,41,0.05); padding:8px 12px 12px;}
+  .char-replace-header{display:flex; align-items:center; gap:8px; font-size:14px; font-weight:600; color:var(--color-neutral-800); padding-bottom:8px;}
+  .char-replace-header img{width:16px; height:16px;}
+  .char-replace-carousel{position:relative;}
+  .char-replace-track{display:flex; gap:8px; overflow-x:auto; scroll-behavior:smooth; scrollbar-width:none;}
+  .char-replace-track::-webkit-scrollbar{display:none;}
+  .char-replace-cell{flex-shrink:0; width:68px; height:68px; border:1px solid var(--color-neutral-400); border-radius:var(--radius-md); background:var(--color-neutral-25); padding:0; overflow:hidden; cursor:pointer; display:flex; align-items:center; justify-content:center;}
+  .char-replace-cell img{width:100%; height:100%; object-fit:cover; display:block;}
+  .char-replace-cell.placeholder{background:linear-gradient(135deg,var(--color-neutral-300),var(--color-neutral-200));}
+  .char-replace-cell.selected{border-color:var(--color-brand-primary); border-width:2px;}
+  .char-replace-fade{position:absolute; top:0; right:0; width:22px; height:68px; background:linear-gradient(to right, rgba(255,255,255,0), #fff); pointer-events:none;}
+  .char-replace-arrow{position:absolute; top:50%; right:-4px; transform:translateY(-50%); width:32px; height:32px; border-radius:999px; background:#fff; border:1px solid var(--color-neutral-400); box-shadow:0 4px 4px rgba(15,23,41,0.08), 0 2px 2px rgba(15,23,41,0.05); display:flex; align-items:center; justify-content:center; cursor:pointer;}
+  .char-replace-arrow img{width:20px; height:20px;}
 
   #subReelScript, #subReelVideo{display:flex; flex-direction:column; flex:1; min-height:0;}
   #stageAreaReel .stage-body{flex:1; min-height:0; padding:32px 28px 14px; overflow-y:auto; display:flex; flex-direction:column;}
@@ -1077,20 +1078,24 @@
   .script-label{font-size:12px; font-weight:600; color:var(--color-neutral-700); margin-bottom:8px;}
   .script-panel-header .script-label{margin-bottom:0;}
   .script-text{width:100%; border:1px solid var(--color-neutral-300); border-radius:8px; padding:14px; font-size:14px; font-family:var(--font-family-text); font-style:italic; color:var(--color-neutral-900); line-height:1.6; resize:vertical; min-height:80px;}
-  /* Word-limit states — Figma node 7254-136585 ("Full script — word limit (Normal / Over 30
-     words)"): Normal shows a plain grey "N / max words" counter bottom-right of the field;
-     crossing the limit turns the field's border red (1.2px, Figma's own "badge/red/text" —
-     this file otherwise only had the Formee-wide --color-error-text/--color-badge-red-* to
-     reach for, close enough for a prototype) and folds the counter into a red banner row
-     alongside the over-limit message, instead of leaving it floating alone. */
-  .script-text.error{border-color:var(--color-error-text);}
-  .script-limit-row{display:flex; align-items:center; justify-content:flex-end; gap:12px; margin-top:8px; padding:0; background:none; border-radius:var(--radius-lg); transition:padding .15s, background-color .15s;}
-  .script-limit-count{font-size:12px; color:var(--color-neutral-500); white-space:nowrap; font-family:var(--font-family-text);}
-  .script-limit-error{display:none; align-items:center; gap:8px; font-size:12px; color:var(--color-error-text); line-height:1.5; flex:1; min-width:0;}
-  .script-limit-error img{width:16px; height:16px; flex-shrink:0;}
-  .script-limit-row.over{justify-content:space-between; padding:10px 12px; background:var(--color-badge-red-bg);}
+  /* Word-limit states — Figma node 8727-219581 ("Full script — Over word limit"): Normal shows
+     a plain grey "N / max words" counter bottom-right of the field; crossing the limit turns
+     the field's border red and splits into a plain (no background pill, no inline button) row
+     below it -- icon + message on the left, the now-red/bold count on the right. No action
+     button here since the chat's own proactive suggestion card already carries the one-click
+     "Shorten it" (see showChatLimitSuggestion('fullScript', ...)) -- keeping this row textual-
+     only avoids offering the same fix twice. #c4271b is Figma's literal "badge/red/text" value,
+     which doesn't match this file's --color-error-text/--color-badge-red-text (#b80000) --
+     same token gap already flagged in voice-section.css/controls-menu.css/feedback-status-
+     chip.css, used verbatim here to match the reference exactly. */
+  .script-text.error{border-color:#c4271b;}
+  .script-limit-row{display:flex; align-items:center; justify-content:flex-end; gap:12px; margin-top:12px; font-family:var(--font-family-text);}
+  .script-limit-count{font-size:12px; font-weight:500; color:var(--color-neutral-500); white-space:nowrap;}
+  .script-limit-error{display:none; align-items:center; gap:4px; font-size:12px; font-weight:500; color:#c4271b; flex:1; min-width:0;}
+  .script-limit-error img{width:20px; height:20px; flex-shrink:0;}
+  .script-limit-row.over{justify-content:space-between;}
   .script-limit-row.over .script-limit-error{display:flex;}
-  .script-limit-row.over .script-limit-count{color:var(--color-error-text); font-weight:600;}
+  .script-limit-row.over .script-limit-count{color:#c4271b;}
   .voice-row{margin-top:20px; display:flex; gap:10px; align-items:center;}
   .play-sample{border:1px solid var(--color-neutral-400); border-radius:8px; padding:9px 14px; font-size:13px; color:var(--color-neutral-700); background:#fff; display:flex; align-items:center; gap:6px;}
   .stage-cta-row{display:flex; justify-content:flex-end; margin-top:20px;}
@@ -1255,15 +1260,9 @@
   .back-to-scenes-link{display:block; background:none; border:none; color:var(--color-neutral-500); font-size:12px; font-family:var(--font-family-text); cursor:pointer; text-decoration:underline; margin-top:10px; padding:0; text-align:left;}
   .back-to-scenes-link:hover{color:var(--color-neutral-700);}
 
-  /* ---- Refine this video (in-place text-prompt edit on the finished cut) --------------
-     Same .scene-card / .scene-desc-box / .img-prompt-regen-btn / .refine-history-row
-     pattern the Image post Preview screen already uses for prompt-based regeneration —
-     surfaced here so a "done" video still reads as editable without going to the chat. */
-  .video-refine-card .scene-card-head-label{display:inline-flex; align-items:center; gap:6px;}
-  .video-refine-card .scene-card-head-label img{width:15px; height:15px; display:block;}
-  .video-refine-chips{display:flex; flex-wrap:wrap; gap:6px;}
-  .refine-chip{border:1px solid var(--color-neutral-400); background:var(--color-neutral-0); border-radius:999px; padding:5px 11px; font-size:11px; font-weight:500; color:var(--color-neutral-700); font-family:var(--font-family-text); cursor:pointer;}
-  .refine-chip:hover{background:var(--color-neutral-50); border-color:var(--color-neutral-450);}
+  /* ---- Refine this video (requested from the AI Assistant chat — see combineVideo()/
+     sendVideoRefineChat()) — only the re-render overlay + version badge stay here, since
+     they belong to the canvas/player, not to how the request itself gets typed. ---- */
   .combine-player .combine-rerender{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; background:rgba(15,23,41,.55); backdrop-filter:blur(2px); border-radius:14px; color:#fff; font-size:12px; font-weight:600;}
   .combine-player .combine-rerender .spin{width:22px; height:22px; border:2px solid rgba(255,255,255,.4); border-top-color:#fff; border-radius:999px; animation:combine-spin .8s linear infinite;}
   @keyframes combine-spin{to{transform:rotate(360deg);}}
@@ -1840,8 +1839,9 @@
           </div>
           <div class="chat-log" id="chatLog"></div>
           <div class="chat-quick-chips" id="chatQuickChips"></div>
+          <div class="chat-cost-hint" id="chatCostHint" style="display:none;"></div>
           <div class="chat-input-box">
-            <textarea class="chat-input" id="chatInput" rows="2" placeholder="Requests like &quot;make the script shorter&quot; or &quot;try a warmer tone&quot; work here too"></textarea>
+            <textarea class="chat-input" id="chatInput" rows="2" placeholder="Requests like &quot;make the script shorter&quot; or &quot;try a warmer tone&quot; work here too" oninput="updateChatCostHint()"></textarea>
             <div class="chat-input-bottom-row">
               <button class="chat-attach-btn" title="Attach"><img src="../../../../components/ai-social-media/icons/attach.svg" class="icon-inline icon-16" alt=""></button>
               <button class="chat-send" id="chatSend" onclick="sendChatMessage()"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15.8367 10.0033L10.0033 4.17L4.17 10.0033M10.0033 4.17V15.8367" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
@@ -1864,7 +1864,17 @@
           <div class="settings-bar" id="settingsBarImage" aria-label="Image post settings">
             <div class="setting-chip"><div class="chip-ic"><img id="genSettingRatioIconImage" src="../../../../components/ai-social-media/icons/spec-4-5.svg" alt=""></div><b id="genSettingRatioImage">4:5</b></div>
             <div class="setting-chip"><div class="chip-ic"><img src="../../../../components/ai-social-media/icons/spec-versions.svg" alt=""></div><b id="genSettingVersionsImage">2 Versions</b></div>
-            <div class="setting-chip" id="genSettingCharacterChipImage"><span class="character-avatar"><img src="../../../../components/ai-social-media/icons/menu-image.svg" alt=""></span><span>Character</span><span class="dot-sep" aria-hidden="true"></span><b id="genSettingCharacterImage">Elena</b></div>
+            <div class="setting-chip-wrap" id="characterChipWrapImage">
+              <div class="setting-chip clickable" id="genSettingCharacterChipImage" onclick="toggleImgCharacterPopover(event)"><span class="character-avatar"><img src="../../../../components/ai-social-media/icons/menu-image.svg" alt=""></span><span>Character</span><span class="dot-sep" aria-hidden="true"></span><b id="genSettingCharacterImage">Elena</b><span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span></div>
+              <div class="char-replace-popover" id="imgCharacterPopover" style="display:none;">
+                <div class="char-replace-header"><img src="../../../../components/ai-social-media/icons/arrow-down-up.svg" alt="">Change Character</div>
+                <div class="char-replace-carousel">
+                  <div class="char-replace-track" id="imgCharacterReplaceTrack"></div>
+                  <div class="char-replace-fade"></div>
+                  <button type="button" class="char-replace-arrow" onclick="scrollCharReplaceCarousel('imgCharacterReplaceTrack')"><img src="../../../../components/ai-social-media/icons/chevron-right.svg" alt=""></button>
+                </div>
+              </div>
+            </div>
             <div class="setting-chip brand-chip-setting" id="brandSettingChipImage" style="display:none;">🏷 Brand: <b>Formee Express</b></div>
           </div>
 
@@ -2044,7 +2054,17 @@
           <div class="settings-bar" id="settingsBarCarousel">
             <div class="setting-chip"><span class="ratio-icon"><i></i></span><b id="genSettingRatioCarousel">4:5</b></div>
             <div class="setting-chip"><img src="../../../../components/ai-social-media/icons/spec-versions.svg" class="icon-inline" alt=""><b id="genSettingCards">5 cards</b></div>
-            <div class="setting-chip" id="carouselCharacterChip" style="display:none;"><span class="avatar-mini"></span>Character<span class="dot-sep"></span><b>Elena</b></div>
+            <div class="setting-chip-wrap" id="carouselCharacterChipWrap" style="display:none;">
+              <div class="setting-chip clickable" id="carouselCharacterChip" onclick="toggleCarCharacterPopover(event)"><span class="avatar-mini"></span>Character<span class="dot-sep"></span><b id="genSettingCharacterCarousel">Elena</b><span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span></div>
+              <div class="char-replace-popover" id="carCharacterPopover" style="display:none;">
+                <div class="char-replace-header"><img src="../../../../components/ai-social-media/icons/arrow-down-up.svg" alt="">Change Character</div>
+                <div class="char-replace-carousel">
+                  <div class="char-replace-track" id="carCharacterReplaceTrack"></div>
+                  <div class="char-replace-fade"></div>
+                  <button type="button" class="char-replace-arrow" onclick="scrollCharReplaceCarousel('carCharacterReplaceTrack')"><img src="../../../../components/ai-social-media/icons/chevron-right.svg" alt=""></button>
+                </div>
+              </div>
+            </div>
             <div class="setting-chip brand-chip-setting" id="brandSettingChipCarousel" style="display:none;">🏷 Brand: <b>Formee Express</b></div>
           </div>
 
@@ -2198,13 +2218,17 @@
               <div class="setting-chip clickable" onclick="toggleSettingPopover(event,'character')">
                 <span class="avatar-mini"></span>Character<span class="dot-sep"></span><b id="settingCharacter">Minji</b><span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span>
               </div>
-              <div class="setting-popover" id="characterPopover" style="display:none;">
-                <div class="char-mini-grid">
-                  <div class="char-mini-opt selected" onclick="selectSettingCharacter(this,'Minji')"><div class="circle"></div><span>Minji</span></div>
-                  <div class="char-mini-opt" onclick="selectSettingCharacter(this,'Hyunwoo')"><div class="circle"></div><span>Hyunwoo</span></div>
-                  <div class="char-mini-opt" onclick="selectSettingCharacter(this,'Soyul')"><div class="circle"></div><span>Soyul</span></div>
+              <div class="char-replace-popover" id="characterPopover" style="display:none;">
+                <div class="char-replace-header"><img src="../../../../components/ai-social-media/icons/arrow-down-up.svg" alt="">Change Character</div>
+                <div class="char-replace-carousel">
+                  <div class="char-replace-track" id="characterReplaceTrack">
+                    <button type="button" class="char-replace-cell placeholder selected" title="Minji" onclick="selectSettingCharacter(this,'Minji')"></button>
+                    <button type="button" class="char-replace-cell placeholder" title="Hyunwoo" onclick="selectSettingCharacter(this,'Hyunwoo')"></button>
+                    <button type="button" class="char-replace-cell placeholder" title="Soyul" onclick="selectSettingCharacter(this,'Soyul')"></button>
+                  </div>
+                  <div class="char-replace-fade"></div>
+                  <button type="button" class="char-replace-arrow" onclick="scrollCharReplaceCarousel('characterReplaceTrack')"><img src="../../../../components/ai-social-media/icons/chevron-right.svg" alt=""></button>
                 </div>
-                <div class="setting-popover-footer">+68 more characters</div>
               </div>
             </div>
 
@@ -2287,7 +2311,14 @@
                        pattern as every other Generate sub-stage's forward-progress action. -->
                   <div style="display:none;">
                     <button class="btn btn-dark" id="reelGenerateVideoBtn" onclick="proceedToStudio()">Generate video</button>
-                    <button class="btn btn-dark" id="reelContinueToTimelineBtn" onclick="continueToTimelineFromChat(this)">Continue to timeline</button>
+                    <!-- No `this` here on purpose -- this hidden button is syncGenActionBarV3()'s
+                         permanent "source of truth" for the visible bottom action bar's disabled
+                         state (copied in on every tab revisit), so disabling it would leave the
+                         bottom bar stuck inactive on every future visit to this sub-stage, not
+                         just this one click. Only the chat card's own button copy (which is a
+                         one-off chat-log entry, fine to leave disabled forever once used) passes
+                         `this`. -->
+                    <button class="btn btn-dark" id="reelContinueToTimelineBtn" onclick="continueToTimelineFromChat()">Continue to timeline</button>
                   </div>
                 </div>
               </div>
@@ -2308,7 +2339,7 @@
             <div class="stage-body">
             <div class="stage-body-inner">
               <h2 class="stage-title">Timeline</h2>
-              <p class="stage-sub-text">Confirm the dialogue and scene description for each segment, then generate thumbnails.</p>
+              <p class="stage-sub-text">Confirm the dialogue and scene description for each segment, then generate a reference image for each.</p>
               <div class="timeline-stage">
                 <div class="timeline-canvas">
                   <div class="video-grid" id="timelineGrid"></div>
@@ -2319,7 +2350,11 @@
                   <!-- Hidden — mirrors syncGenActionBarV3()'s forward-progress pattern; the
                        bottom action bar's CTA on this tab is "Generate Thumbnails". -->
                   <div style="display:none;">
-                    <button class="btn btn-dark" id="timelineGenerateThumbsBtn" onclick="generateScriptThumbnails()">Generate Thumbnails</button>
+                    <!-- No `this` here either -- same reasoning as reelContinueToTimelineBtn
+                         above: this hidden button feeds the persistent bottom action bar's
+                         disabled state on every tab revisit, so it must never be disabled
+                         itself. Only the chat card's own button copy does. -->
+                    <button class="btn btn-dark" id="timelineGenerateThumbsBtn" onclick="generateScriptThumbnails()">Generate Reference Images</button>
                   </div>
                 </div>
               </div>
@@ -2385,39 +2420,10 @@
                       <p class="combine-audio-note"><img src="../../../../components/ai-social-media/icons/nav-voices.svg" class="icon-inline" alt=""> Narration from Script is already mixed in — no extra steps needed.</p>
                     </div>
 
-                    <!-- Refine this video — in-place text-prompt edit on the finished cut -->
-                    <div class="scene-card video-refine-card">
-                      <div class="scene-card-head-row">
-                        <span class="scene-card-head-label"><img src="../../../../components/ai-social-media/icons/ai-sparkle-outline-grey.svg" alt="">Refine this video</span>
-                        <button type="button" class="img-prompt-regen-btn used" id="videoRefineBtn" onclick="refineFinalVideo()" disabled><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt="">Re-render <span class="cost"><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">6</span></button>
-                      </div>
-                      <div class="scene-desc-box"><textarea class="scene-desc" id="videoRefineInput" placeholder="Describe a change — e.g. tighten the opening, warmer tone, hold the last shot longer…" oninput="onVideoRefineEdited()"></textarea></div>
-                      <div class="video-refine-chips">
-                        <button type="button" class="refine-chip" onclick="fillVideoRefine('Tighten the opening — get to the product faster')">Tighten the opening</button>
-                        <button type="button" class="refine-chip" onclick="fillVideoRefine('Warmer, softer colour grade')">Warmer colour</button>
-                        <button type="button" class="refine-chip" onclick="fillVideoRefine('Slower pace — hold each shot a beat longer')">Slower pace</button>
-                        <button type="button" class="refine-chip" onclick="fillVideoRefine('Punchier cuts, more energy')">Punchier cuts</button>
-                      </div>
-                      <div class="refine-history-row" id="videoRefineHistoryRow"></div>
-                      <p class="scene-note">Re-renders the final cut. Your note also shows in the AI&nbsp;Assistant chat.</p>
-                    </div>
-
-                    <!-- Rate this result — product feedback routed to the team -->
-                    <div class="result-feedback" id="videoResultFeedback">
-                      <div class="result-feedback-head">
-                        <span class="result-feedback-title">How’s this result?</span>
-                        <span class="result-feedback-sub">Your feedback goes straight to the Formee team — it won’t change this video.</span>
-                      </div>
-                      <div class="result-feedback-body">
-                        <div class="result-feedback-rate">
-                          <button type="button" class="rf-btn" data-v="up" onclick="rfRate(this)"><img src="../../../../components/ai-social-media/icons/check.svg" alt="">Looks great</button>
-                          <button type="button" class="rf-btn" data-v="down" onclick="rfRate(this)"><img src="../../../../components/ai-social-media/icons/alert-sm.svg" alt="">Needs work</button>
-                        </div>
-                        <textarea class="result-feedback-note" id="rfNoteVideo" placeholder="What worked, what didn’t? (optional)"></textarea>
-                        <button type="button" class="btn btn-secondary rf-send" onclick="rfSend('video')" disabled>Send feedback</button>
-                      </div>
-                      <p class="rf-done" hidden><img src="../../../../components/ai-social-media/icons/check.svg" class="icon-inline" alt="" style="width:14px;height:14px;"> Thanks — sent to the Formee team.</p>
-                    </div>
+                    <!-- Version picker for re-rendered cuts — the request itself now happens in
+                         the AI Assistant chat (see combineVideo()/sendVideoRefineChat()); this
+                         stays on the canvas side only because it controls what the player shows. -->
+                    <div class="refine-history-row" id="videoRefineHistoryRow"></div>
                     <!-- Hidden — per Figma, "Continue to editing"/"Skip to publish" don't live in
                          this right-side work area (it's already offered as a chat CTA — see
                          appendChatCta('Your video is ready...', ...) below — and in the
@@ -2854,7 +2860,7 @@ function setChatGuideHint(text){
 }
 
 // Copy fills in directly (no propose/apply step) — the chat just narrates what changed.
-// Visual concept, drafted right after, keeps the propose -> apply pattern (see draftVisualConcept below).
+// Visual concept, drafted right after, now fills in directly too (see draftVisualConcept below).
 function buildRevisedCopy(requestText){
   const req = requestText.toLowerCase();
   const cur = {};
@@ -2895,7 +2901,7 @@ function draftCopy(){
     status2s.className = 'msg-status';
     status2s.innerHTML = '<span class="worked-label">Worked</span> <span class="worked-time">for 2s</span>';
     log.appendChild(status2s);
-    addChatMsg('ai', 'I\'ve refined it and filled in the Headline, Subhead, and Call to action on the right. Want something different? Just tell me here anytime.');
+    imgAppendDoneCard('Filled copies');
     log.scrollTop = log.scrollHeight;
 
     setTimeout(() => {
@@ -2903,7 +2909,7 @@ function draftCopy(){
       copyFields.find(f => f.key === 'subhead').text = 'Applications open for the January intake';
       copyFields.find(f => f.key === 'cta').text = 'Apply Now';
       renderCopyFields();
-      addChatMsg('ai', '<span class="tag">AI</span>Great — the Headline, Subhead, and Call to action are generated based on your script and filled in on the right. Want changes? Send them here anytime.');
+      imgAppendDoneCard('Generated copies');
       renderChatQuickChips([
         { label: 'Shorten headline' },
         { label: 'Make headline more hooking' }
@@ -2926,61 +2932,35 @@ function reviseCopy(requestText){
   log.appendChild(loadingEl);
   log.scrollTop = log.scrollHeight;
 
+  const before = {
+    headline: copyFields.find(f => f.key === 'headline').text,
+    subhead: copyFields.find(f => f.key === 'subhead').text,
+    cta: copyFields.find(f => f.key === 'cta').text
+  };
   setTimeout(() => {
-    const draft = buildRevisedCopy(requestText);
-    copyFields.find(f => f.key === 'headline').text = draft.headline;
-    copyFields.find(f => f.key === 'subhead').text = draft.subhead;
-    copyFields.find(f => f.key === 'cta').text = draft.cta;
+    const after = buildRevisedCopy(requestText);
+    copyFields.find(f => f.key === 'headline').text = after.headline;
+    copyFields.find(f => f.key === 'subhead').text = after.subhead;
+    copyFields.find(f => f.key === 'cta').text = after.cta;
     renderCopyFields();
     loadingEl.remove();
     const status1s = document.createElement('div');
     status1s.className = 'msg-status';
     status1s.innerHTML = '<span class="worked-label">Worked</span> <span class="worked-time">for 1s</span>';
     log.appendChild(status1s);
-    addChatMsg('ai', 'Updated the Headline, Subhead, and Call to action based on your note.');
+    pushChatChangeCard(log, 'Updated copies', before, after, (snap) => {
+      copyFields.find(f => f.key === 'headline').text = snap.headline;
+      copyFields.find(f => f.key === 'subhead').text = snap.subhead;
+      copyFields.find(f => f.key === 'cta').text = snap.cta;
+      renderCopyFields();
+    }, `Updated the copy based on your request: "${requestText}".`);
   }, 1100);
 }
 
-// ---- Chat-driven visual concept drafting ----
-let visualDraftCounter = 0;
-window.__visualDrafts = {};
-function renderVisualProposalMessage(promptText, introText){
-  visualDraftCounter++;
-  const id = visualDraftCounter;
-  window.__visualDrafts[id] = promptText;
-  return `
-    <div class="msg ai">
-      <span class="tag">AI</span>${escapeHtml(introText)}
-      <div class="visual-proposal-box" id="visualProposal${id}">
-        <div class="visual-proposal-heading">Visual Concept</div>
-        <div class="visual-proposal-text">"${escapeHtml(promptText)}"</div>
-        <span class="copy-applied-note">✓ Applied to Visual concept</span>
-        <button class="btn btn-dark" data-draft-id="${id}" onclick="handleVisualProposalClick(this)">Apply to draft</button>
-      </div>
-      <span class="chat-edit-hint">Want a different direction? Type it below and I'll redraft.</span>
-    </div>
-  `;
-}
-function handleVisualProposalClick(btn){
-  applyVisualDraft(Number(btn.dataset.draftId), btn);
-}
-function applyVisualDraft(id, btn){
-  const text = window.__visualDrafts[id];
-  if(text === undefined) return;
-  document.getElementById('visualConceptText').value = text;
-  userEditedPrompt = true;
-  visualConceptDrafted = true;
-  imgUpdateDevelopPreview();
-  document.querySelectorAll('.visual-proposal-box').forEach(box => {
-    box.classList.remove('applied');
-    const b = box.querySelector('.btn-dark');
-    if(b){ b.textContent = 'Apply to draft'; b.disabled = false; }
-  });
-  const box = document.getElementById('visualProposal' + id);
-  box.classList.add('applied');
-  btn.textContent = '✓ Applied';
-  btn.disabled = true;
-
+// ---- Chat-driven visual concept drafting — fills in directly, same as copy fields, no
+// separate propose/apply step. The chat still narrates the work (Worked-for-Xs + a Done
+// card), so drafting/redrafting reads the same way copy drafting already does. ----
+function afterVisualConceptReady(){
   // Quick edits to the visual itself — kept generic since the prototype doesn't read the
   // actual script content yet; a real implementation would tailor these to what's in the shot.
   renderChatQuickChips([
@@ -3025,20 +3005,22 @@ function draftVisualConcept(){
   log.scrollTop = log.scrollHeight;
   setTimeout(() => {
     const prompt = buildVisualConceptPrompt();
+    document.getElementById('visualConceptText').value = prompt;
+    userEditedPrompt = true;
+    visualConceptDrafted = true;
+    imgUpdateDevelopPreview();
     loadingEl.remove();
     const status2sb = document.createElement('div');
     status2sb.className = 'msg-status';
     status2sb.innerHTML = '<span class="worked-label">Worked</span> <span class="worked-time">for 2s</span>';
     log.appendChild(status2sb);
-    const wrap = document.createElement('div');
-    wrap.innerHTML = renderVisualProposalMessage(prompt, 'Here\'s a visual concept based on your finalized copy. Should I apply this?').trim();
-    log.appendChild(wrap.firstElementChild);
-    log.scrollTop = log.scrollHeight;
+    imgAppendDoneCard('Generated visual concept');
+    afterVisualConceptReady();
   }, 1200);
 }
 
-// Once the visual concept has been drafted, chat requests redraft it (still propose -> apply,
-// so a new direction can be reviewed before it overwrites the current concept).
+// Once the visual concept has been drafted, chat requests redraft it — fills in directly
+// (same as the initial draft above), no separate propose/apply review step.
 function buildRevisedVisualConcept(requestText){
   const base = buildVisualConceptPrompt();
   const req = requestText.toLowerCase();
@@ -3054,17 +3036,21 @@ function reviseVisualConcept(requestText){
   loadingEl.innerHTML = `<span class="tag">AI</span>Reworking the visual concept<span class="dots"><span>.</span><span>.</span><span>.</span></span>`;
   log.appendChild(loadingEl);
   log.scrollTop = log.scrollHeight;
+  const before = document.getElementById('visualConceptText').value;
   setTimeout(() => {
-    const prompt = buildRevisedVisualConcept(requestText);
+    const after = buildRevisedVisualConcept(requestText);
+    document.getElementById('visualConceptText').value = after;
+    imgUpdateDevelopPreview();
     loadingEl.remove();
     const status1sb = document.createElement('div');
     status1sb.className = 'msg-status';
     status1sb.innerHTML = '<span class="worked-label">Worked</span> <span class="worked-time">for 1s</span>';
     log.appendChild(status1sb);
-    const wrap = document.createElement('div');
-    wrap.innerHTML = renderVisualProposalMessage(prompt, 'Here\'s a new direction based on your note. Should I apply this?').trim();
-    log.appendChild(wrap.firstElementChild);
-    log.scrollTop = log.scrollHeight;
+    pushChatChangeCard(log, 'Updated visual concept', before, after, (snap) => {
+      document.getElementById('visualConceptText').value = snap;
+      imgUpdateDevelopPreview();
+    }, `Updated the visual concept based on your request: "${requestText}".`);
+    afterVisualConceptReady();
   }, 1100);
 }
 
@@ -3072,6 +3058,13 @@ function reviseVisualConcept(requestText){
 function imgAppendChatCta(title, text, buttonsHtml){
   const log = document.getElementById('chatLog');
   log.innerHTML += `<div class="msg ai"><div class="chat-cta-card"><div class="chat-cta-title">${escapeHtml(title)}</div><div class="chat-cta-text">${escapeHtml(text)}</div>${buttonsHtml}</div></div>`;
+  log.scrollTop = log.scrollHeight;
+}
+// State = "Done" — for a completed action that needs no follow-up decision at all (contrast
+// imgAppendChatCta above, which always ends in a button/toggle/pick).
+function imgAppendDoneCard(label){
+  const log = document.getElementById('chatLog');
+  log.innerHTML += `<div class="msg ai"><div class="chat-cta-card"><div class="chat-cta-done-row"><div class="chat-cta-done-left"><img src="../../../../components/ai-social-media/icons/file.svg" alt=""><span class="chat-cta-done-label">${escapeHtml(label)}</span></div><img class="chat-cta-done-check" src="../../../../components/ai-social-media/icons/check.svg" alt=""></div></div></div>`;
   log.scrollTop = log.scrollHeight;
 }
 
@@ -3790,7 +3783,7 @@ function imgHandleChatSend(text){
   const versionsTab = document.getElementById('tabVersions');
   if(versionsTab && versionsTab.classList.contains('locked')){
     // Copy is filled in first — while that's still the active topic, chat requests revise it directly.
-    // Once the visual concept has been drafted, chat requests redraft that instead (propose -> apply).
+    // Once the visual concept has been drafted, chat requests redraft that instead — same direct-fill.
     if(visualConceptDraftStarted) reviseVisualConcept(text);
     else reviseCopy(text);
   } else {
@@ -3885,7 +3878,7 @@ function carSetCharMode(mode){
   syncCarouselCharacterChip();
 }
 function syncCarouselCharacterChip(){
-  const chip = document.getElementById('carouselCharacterChip');
+  const chip = document.getElementById('carouselCharacterChipWrap');
   if(chip) chip.style.display = window.__charMode === 'with' ? 'flex' : 'none';
 }
 // Only Elena has a downloaded style set in this prototype — selecting any other character
@@ -4969,7 +4962,14 @@ function fitScriptToWordLimit(text, maxWords){
   }
   return result;
 }
-function validateScriptLength(){
+// `suppressChatSuggestion` -- updateSceneScript() recomputes and re-validates the full script
+// on every per-clip narration edit purely to keep this field's own inline warning in sync; the
+// chat log already gets the more specific, actionable per-clip suggestion in that case (see
+// showChatLimitSuggestion(`scene-${n}`, ...) there), so showing the generic whole-script card
+// too would just be a redundant second card for the same edit. Direct edits to this field
+// itself (reelOnScriptInput(), applyScriptDraft(), duration changes) still want it, so they
+// call this with no argument (default: show).
+function validateScriptLength(suppressChatSuggestion){
   const ta = document.getElementById('fullScript');
   const row = document.getElementById('scriptLimitRow');
   const errEl = document.getElementById('scriptLimitError');
@@ -4981,25 +4981,22 @@ function validateScriptLength(){
   ta.classList.toggle('error', over);
   row.classList.toggle('over', over);
   countEl.textContent = `${count} / ${max} words`;
-  // Figma node 7606-229127: the over-limit state draws its own inline "Shorten" button next
-  // to the warning, in addition to (not instead of) the chat's own proactive suggestion card
-  // below -- both routes converge on the same working/completion/Undo-Redo flow, per the AI
-  // 대화창 공통 규칙 스펙's Case 3 dual-notification rule.
+  // Figma node 8727-219581: this row is text-only now (icon + message, count on the right) --
+  // no inline "Shorten" button, since the chat's own proactive suggestion card below already
+  // carries the one-click fix (showChatLimitSuggestion('fullScript', ...)); both still converge
+  // on the same working/completion/Undo-Redo flow, per the AI 대화창 공통 규칙 스펙's Case 3
+  // dual-notification rule -- the duplication was just the action itself, not the notice.
   errEl.innerHTML = over
-    ? `<img src="../../../../components/ai-social-media/icons/alert-sm.svg" class="icon-inline" alt="">You've gone over the word limit (${count}/${max} words). For a ${window.__videoDuration || 8}s video, up to ${max} words is safe.<button type="button" class="pub-refine-chip" onclick="refineScriptWithAI()">Shorten</button>`
+    ? `<img src="../../../../components/ai-social-media/icons/alert-sm.svg" alt="">You've gone over the word limit. For a ${window.__videoDuration || 8}s video, up to ${max} words is safe.`
     : '';
 
   if(over){
-    showChatLimitSuggestion('fullScript', `Your script is over the word limit for a ${window.__videoDuration || 8}s video (${count}/${max} words). Want me to shorten it to fit?`, 'Shorten it', shortenFullScriptViaChat);
+    if(!suppressChatSuggestion){
+      showChatLimitSuggestion('fullScript', `Your script is over the word limit for a ${window.__videoDuration || 8}s video (${count}/${max} words). Want me to shorten it to fit?`, 'Shorten it', shortenFullScriptViaChat);
+    }
   } else {
     clearChatLimitSuggestion('fullScript');
   }
-}
-// Case 2/3 — routes the field's own inline "Shorten" button through the same chat
-// working/completion(Undo/Redo) flow the chat's own [Shorten it] suggestion uses, so both
-// entry points behave identically (per the spec's convergence rule).
-function refineScriptWithAI(){
-  shortenFullScriptViaChat();
 }
 function shortenFullScriptViaChat(){
   const ta = document.getElementById('fullScript');
@@ -5106,6 +5103,11 @@ function applyScriptDraft(id, btn){
   btn.textContent = '✓ Applied';
   btn.disabled = true;
   reelConfirmScript();
+  // The revision just replaced the script, so the "what's next" card needs to follow it back
+  // into view too -- otherwise it's still sitting wherever the very first generation left it,
+  // higher up in a now-longer chat log.
+  appendReadyToGenerateTimelineCard();
+  document.getElementById('chatLog').scrollTop = document.getElementById('chatLog').scrollHeight;
 }
 
 // Masks a field's already-set text behind a diagonal shimmer sweep (rather than emptying it),
@@ -5132,27 +5134,30 @@ function hideFieldSpinners(){
 window.__chatChangeCounter = 0;
 window.__chatChanges = {};
 
-function renderChatChangeCardInnerHtml(id, label){
+function renderChatChangeCardInnerHtml(id, label, desc){
   const c = window.__chatChanges[id];
-  const undoDisabled = !c || c.at === 'before';
-  const redoDisabled = !c || c.at === 'after';
+  const chipLabel = (!c || c.at === 'after') ? 'Undo' : 'Redo';
   return `
-    <span class="chat-changes-label">${escapeHtml(label)}</span>
-    <div class="chat-changes-spacer"></div>
-    <div class="controls-field-ai__undo-redo">
-      <button type="button" class="controls-field-ai__icon-btn" onclick="undoChatChange(${id})" aria-label="Undo" ${undoDisabled ? 'disabled' : ''}><img src="../../../../components/ai-social-media/icons/ui-undo.svg" alt=""></button>
-      <button type="button" class="controls-field-ai__icon-btn" onclick="redoChatChange(${id})" aria-label="Redo" ${redoDisabled ? 'disabled' : ''}><img src="../../../../components/ai-social-media/icons/ui-redo.svg" alt=""></button>
-    </div>`;
+    <div class="chat-cta-header-row">
+      <div class="chat-cta-title">${escapeHtml(label)}</div>
+      <button type="button" class="chat-cta-chip-btn" onclick="toggleChatChange(${id})">${chipLabel}</button>
+    </div>
+    ${desc ? `<p class="chat-cta-text">${escapeHtml(desc)}</p>` : ''}`;
 }
 
-function pushChatChangeCard(logEl, label, beforeSnapshot, afterSnapshot, applyFn){
+// `desc` is optional (defaults to none, e.g. Reel/Short's narration/scene-desc edits, which
+// have no natural one-line summary) — Image Draft's copy/visual-concept edits pass one
+// (e.g. "Based on your edit, ...") to match Figma's "Undo" state, which always shows one.
+function pushChatChangeCard(logEl, label, beforeSnapshot, afterSnapshot, applyFn, desc){
   window.__chatChangeCounter++;
   const id = window.__chatChangeCounter;
   window.__chatChanges[id] = { before: beforeSnapshot, after: afterSnapshot, apply: applyFn, at: 'after' };
   const card = document.createElement('div');
-  card.className = 'chat-changes-card';
+  card.className = 'chat-cta-card';
   card.id = `chatChange${id}`;
-  card.innerHTML = renderChatChangeCardInnerHtml(id, label);
+  card.dataset.label = label;
+  card.dataset.desc = desc || '';
+  card.innerHTML = renderChatChangeCardInnerHtml(id, label, desc);
   logEl.appendChild(card);
   return id;
 }
@@ -5160,8 +5165,7 @@ function pushChatChangeCard(logEl, label, beforeSnapshot, afterSnapshot, applyFn
 function refreshChatChangeCard(id){
   const card = document.getElementById(`chatChange${id}`);
   if(!card) return;
-  const label = card.querySelector('.chat-changes-label').textContent;
-  card.innerHTML = renderChatChangeCardInnerHtml(id, label);
+  card.innerHTML = renderChatChangeCardInnerHtml(id, card.dataset.label, card.dataset.desc);
 }
 
 function undoChatChange(id){
@@ -5178,6 +5182,16 @@ function redoChatChange(id){
   c.apply(c.after);
   c.at = 'after';
   refreshChatChangeCard(id);
+}
+
+// Figma's Undo/Redo states are one property, one chip button that flips label -- never two
+// buttons at once (confirmed against nodes 9382:146084/9382:170356) -- so the chip's single
+// onclick just re-fires whichever direction the current state allows.
+function toggleChatChange(id){
+  const c = window.__chatChanges[id];
+  if(!c) return;
+  if(c.at === 'after') undoChatChange(id);
+  else redoChatChange(id);
 }
 
 // ---- AI 대화창 공통 규칙 스펙, Case 3 — proactive chat suggestion for "must-fix" limit
@@ -5247,6 +5261,14 @@ function runBriefToScript(){
     aiMsg.className = 'msg ai';
     aiMsg.textContent = `Your ${window.__videoDuration}s script and ${count} clip${count > 1 ? 's are' : ' is'} ready. Each 8-second clip has an image prompt and up to 15 narration words. Edit the script to update the clips automatically.`;
     log.appendChild(aiMsg);
+    // Figma 9399:174568 ("AI Assistant flow"): any autonomous AI action always ends in a
+    // Done card confirming what got made, then an explicit invite to request changes —
+    // applies regardless of __thumbnailMode, unlike the quick-chips/cards block below.
+    reelAppendDoneCard('Generated Script');
+    const inviteMsg = document.createElement('div');
+    inviteMsg.className = 'msg ai';
+    inviteMsg.textContent = 'We wrote this based on your brief. Anything you’d like to change?';
+    log.appendChild(inviteMsg);
     log.scrollTop = log.scrollHeight;
     setChatGuideHint('e.g. "make the script more hooking" or "make it shorter"');
     // With-thumbnail mode goes straight into the Timeline tab next (see syncGenActionBarV3's
@@ -5257,29 +5279,37 @@ function runBriefToScript(){
         { label: 'Make it shorter' },
         { label: 'Make it more hooking' }
       ]);
-      // AI / Response Card, State = "Toggle" (Figma 7725:326789) — lets brand kit be set up
-      // right from chat instead of only from the toggle row further down the Script panel.
-      // Only worth surfacing once a brand kit actually exists to apply (window.__brandMode
-      // === 'set') — same demo-only flag updateReelBrandKitUI() already gates its own
-      // empty-state text on.
-      if(window.__brandMode === 'set'){
-        appendChatCta(
-          'Use brand Kit',
-          'Apply your saved brand colors, fonts, and logo to this video automatically.',
-          `<div class="chat-cta-toggle-row">
-            <span class="chat-cta-toggle-label">Use brand kit</span>
-            <button type="button" class="field-switch${window.__reelBrandKitOn ? ' on' : ''}" role="switch" aria-checked="${!!window.__reelBrandKitOn}" onclick="toggleReelBrandKit(); this.classList.toggle('on'); this.setAttribute('aria-checked', this.classList.contains('on'));"><span class="knob"></span></button>
-          </div>`
-        );
-      }
+      // AI / Response Card, State = "Toggle" (Figma 7725:326789 / 9399:174568 step 04) — lets
+      // brand kit be set up right from chat instead of only from the toggle row further down
+      // the Script panel. Always shows, same as that row's own switch (updateReelBrandKitUI())
+      // — not gated on window.__brandMode, which is a separate whole-account concept the
+      // switch itself stopped depending on (see updateReelBrandKitUI()'s own comment). Shown
+      // before "Ready to generate" so brand kit is settled first, then the next-step card
+      // follows immediately after (per explicit ordering request).
       appendChatCta(
-        'Ready to generate thumbnails?',
-        'Move to the Timeline tab and I’ll set up each scene automatically.',
-        '<button class="btn btn-dark" onclick="continueToTimelineFromChat(this)">Continue to timeline</button>'
+        'Use brand Kit',
+        'Apply your saved brand colors, fonts, and logo to this video automatically.',
+        `<div class="chat-cta-toggle-row">
+          <span class="chat-cta-toggle-label">Use brand kit</span>
+          <button type="button" class="field-switch${window.__reelBrandKitOn ? ' on' : ''}" role="switch" aria-checked="${!!window.__reelBrandKitOn}" onclick="toggleReelBrandKit(); this.classList.toggle('on'); this.setAttribute('aria-checked', this.classList.contains('on'));"><span class="knob"></span></button>
+        </div>`
       );
+      appendReadyToGenerateTimelineCard();
     }
     syncGenActionBarV3();
   }, 1100);
+}
+
+// Shared by runBriefToScript() (first-time generation) and applyScriptDraft() (applying a
+// chat-driven revision) -- whichever just happened, the next-step card belongs right after it
+// so the user doesn't have to scroll back up to find it again.
+function appendReadyToGenerateTimelineCard(){
+  if(window.__thumbnailMode !== 'on') return;
+  appendChatCta(
+    'Ready to generate reference images?',
+    'Move to the Timeline tab and I’ll set up each scene automatically.',
+    '<button class="btn btn-dark" onclick="continueToTimelineFromChat(this)">Continue to timeline</button>'
+  );
 }
 
 // ---- Chat-driven text revision — used both for the full script (while still unconfirmed,
@@ -5792,10 +5822,102 @@ document.addEventListener('click', (e) => {
   if(!e.target.closest('#durationSettingChipWrap')) document.getElementById('durationSettingPopover').style.display = 'none';
 });
 function selectSettingCharacter(el, name){
-  document.querySelectorAll('.char-mini-opt').forEach(a => a.classList.remove('selected'));
+  document.querySelectorAll('#characterReplaceTrack .char-replace-cell').forEach(a => a.classList.remove('selected'));
   el.classList.add('selected');
   document.getElementById('settingCharacter').textContent = name;
   document.getElementById('characterPopover').style.display = 'none';
+}
+// Shared by every "Change Character" popover (Figma 8727:223651) — scrolls one cell+gap.
+function scrollCharReplaceCarousel(trackId){
+  const track = document.getElementById(trackId);
+  if(track) track.scrollBy({ left: 76, behavior: 'smooth' });
+}
+// Builds the horizontal-carousel cells from a Brief-screen character grid's real photos
+// (Image post has no separate voice/persona roster the way Reel/Short's chip does — its
+// "Character" chip always means this grid) — see toggleImgCharacterPopover() below.
+function buildCharReplaceCells(gridId, selectFnName){
+  const grid = document.getElementById(gridId);
+  if(!grid) return '';
+  return [...grid.querySelectorAll('.char-card:not(.new)')].map(c => {
+    const img = c.querySelector('img');
+    const name = c.querySelector('.name')?.textContent || '';
+    const selected = c.classList.contains('selected');
+    return `<button type="button" class="char-replace-cell${selected ? ' selected' : ''}" title="${escapeHtml(name)}" onclick="${selectFnName}(this,'${escapeHtml(name)}')">${img ? `<img src="${img.src}" alt="${escapeHtml(name)}">` : ''}</button>`;
+  }).join('');
+}
+// Image post's "Character" chip previously had no popover at all — built from #charGridImage
+// (the same real photos as the Brief screen's character grid) the first time it's opened.
+function toggleImgCharacterPopover(e){
+  e.stopPropagation();
+  const pop = document.getElementById('imgCharacterPopover');
+  const opening = pop.style.display !== 'block';
+  pop.style.display = opening ? 'block' : 'none';
+  if(opening && !pop.dataset.built){
+    document.getElementById('imgCharacterReplaceTrack').innerHTML = buildCharReplaceCells('charGridImage', 'selectImgSettingCharacter');
+    pop.dataset.built = '1';
+  }
+}
+document.addEventListener('click', (e) => {
+  if(!e.target.closest('#characterChipWrapImage')){
+    const pop = document.getElementById('imgCharacterPopover');
+    if(pop) pop.style.display = 'none';
+  }
+});
+function selectImgSettingCharacter(el, name){
+  document.querySelectorAll('#imgCharacterReplaceTrack .char-replace-cell').forEach(a => a.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('genSettingCharacterImage').textContent = name;
+  document.getElementById('imgCharacterPopover').style.display = 'none';
+  // keep the Brief screen's own character grid in sync with the chip's choice
+  const grid = document.getElementById('charGridImage');
+  if(grid){
+    grid.querySelectorAll('.char-card').forEach(c => c.classList.remove('selected'));
+    const match = [...grid.querySelectorAll('.char-card .name')].find(n => n.textContent === name);
+    match?.closest('.char-card')?.classList.add('selected');
+  }
+}
+// Carousel's "Character" chip previously had no popover either — built from #charGridCarousel
+// the first time it's opened, same as Image post's.
+function toggleCarCharacterPopover(e){
+  e.stopPropagation();
+  const pop = document.getElementById('carCharacterPopover');
+  const opening = pop.style.display !== 'block';
+  pop.style.display = opening ? 'block' : 'none';
+  if(opening && !pop.dataset.built){
+    document.getElementById('carCharacterReplaceTrack').innerHTML = buildCharReplaceCells('charGridCarousel', 'selectCarSettingCharacter');
+    pop.dataset.built = '1';
+  }
+}
+document.addEventListener('click', (e) => {
+  if(!e.target.closest('#carouselCharacterChipWrap')){
+    const pop = document.getElementById('carCharacterPopover');
+    if(pop) pop.style.display = 'none';
+  }
+});
+function selectCarSettingCharacter(el, name){
+  document.querySelectorAll('#carCharacterReplaceTrack .char-replace-cell').forEach(a => a.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('genSettingCharacterCarousel').textContent = name;
+  document.getElementById('carCharacterPopover').style.display = 'none';
+  // keep the Brief screen's own character grid — and its "downloaded styles" side panel,
+  // see carSelectChar() — in sync with the chip's choice
+  const grid = document.getElementById('charGridCarousel');
+  if(!grid) return;
+  grid.querySelectorAll('.char-card').forEach(c => c.classList.remove('selected'));
+  const card = [...grid.querySelectorAll('.char-card .name')].find(n => n.textContent === name)?.closest('.char-card');
+  if(!card) return;
+  card.classList.add('selected');
+  const label = CHAR_WITH_STYLES_CAROUSEL[name.toLowerCase()];
+  const panel = document.getElementById('charStylesPanelCarousel');
+  if(panel){
+    panel.classList.toggle('show', !!label);
+    if(label){
+      document.getElementById('charStylesTitle').textContent = label;
+      const avatarImg = card.querySelector('.thumb img');
+      const target = document.querySelector('#charStylesAvatarCarousel img');
+      if(avatarImg && target) target.src = avatarImg.src;
+    }
+  }
 }
 function selectSettingVoice(el, label){
   document.querySelectorAll('#voiceSettingPopover .voice-item').forEach(v => v.classList.remove('selected'));
@@ -5815,15 +5937,27 @@ function appendChatCta(title, desc, buttonsHtml){
   log.innerHTML += `<div class="msg ai"><div class="chat-cta-card"><div class="chat-cta-title">${escapeHtml(title)}</div>${desc ? `<p class="chat-cta-text">${escapeHtml(desc)}</p>` : ''}${buttonsHtml}</div></div>`;
   log.scrollTop = log.scrollHeight;
 }
+// State = "Done" (Figma 9385:170372) — for a completed action that needs no follow-up decision
+// at all (contrast appendChatCta above, which always ends in a button/toggle/pick). `icon`
+// defaults to the generic file glyph Figma's own example uses ("Generated Script"); pass a
+// different one (e.g. content-image-outline-sm.svg, Figma node 81:12294) when the completed
+// action is about something other than text -- generated reference images, for instance.
+function reelAppendDoneCard(label, icon){
+  const log = document.getElementById('chatLog');
+  log.innerHTML += `<div class="msg ai"><div class="chat-cta-card"><div class="chat-cta-done-row"><div class="chat-cta-done-left"><img src="../../../../components/ai-social-media/icons/${icon || 'file.svg'}" alt=""><span class="chat-cta-done-label">${escapeHtml(label)}</span></div><img class="chat-cta-done-check" src="../../../../components/ai-social-media/icons/check.svg" alt=""></div></div></div>`;
+  log.scrollTop = log.scrollHeight;
+}
 
 // ---- "Continue to timeline" -- per the AI 대화창 공통 규칙 스펙, any moment where the AI is
 // silently doing work on the user's behalf (here: setting up each clip's scene & character
-// action description and narration on the new Timeline tab) needs to narrate it: disable the
-// button that kicked it off, show a context-specific working message, then a completion message
-// the instant the destination is visible, then hand off the next action as its own card --
-// same working -> completion -> next-step-card shape as runBriefToScript() above. Shared by
-// both entry points that can trigger this (the chat card's own button, and its hidden mirror
-// #reelContinueToTimelineBtn that the bottom action bar proxies clicks to). ----
+// action description AND distributing narration into each clip's Voice section on the new
+// Timeline tab) needs to narrate it: disable the button that kicked it off, show a context-
+// specific working message, then a completion beat per distinct piece of work the instant the
+// destination is visible (Figma 9385:170372's "Done" card -- reelAppendDoneCard()), then hand
+// off the next action as its own card -- same working -> completion -> next-step-card shape as
+// runBriefToScript() above. Shared by both entry points that can trigger this (the chat card's
+// own button, and its hidden mirror #reelContinueToTimelineBtn that the bottom action bar
+// proxies clicks to). ----
 function continueToTimelineFromChat(btnEl){
   if(btnEl) btnEl.disabled = true;
   showSub('reelTimeline');
@@ -5834,33 +5968,58 @@ function continueToTimelineFromChat(btnEl){
   showFieldSpinner(document.getElementById(`narrFieldWrap_tl_${unit}`));
 
   const log = document.getElementById('chatLog');
-  const loadingEl = document.createElement('div');
-  loadingEl.className = 'msg ai loading';
-  loadingEl.innerHTML = `<span class="tag">AI</span>Filling in each clip's scene &amp; character action description and narration on the Timeline<span class="dots"><span>.</span><span>.</span><span>.</span></span>`;
-  log.appendChild(loadingEl);
+
+  // Beat 1 -- scene & character action description, filled in per clip. Its own working
+  // message precedes the Done card, same as every other beat in this app -- the field shimmer
+  // above is the "something's happening on-screen" half, this is the "here's specifically
+  // what" half.
+  const loading1 = document.createElement('div');
+  loading1.className = 'msg ai loading';
+  loading1.innerHTML = `<span class="tag">AI</span>Filling in each clip's scene &amp; character action description<span class="dots"><span>.</span><span>.</span><span>.</span></span>`;
+  log.appendChild(loading1);
   log.scrollTop = log.scrollHeight;
 
   setTimeout(() => {
     hideFieldSpinners();
-    loadingEl.remove();
+    loading1.remove();
 
-    const status = document.createElement('div');
-    status.className = 'msg-status';
-    status.innerHTML = '<span class="worked-label">Worked</span> <span class="worked-time">for 1s</span>';
-    log.appendChild(status);
-
-    const msg = document.createElement('div');
-    msg.className = 'msg ai';
-    msg.textContent = `Filled in the scene & character action description and narration for each clip on the Timeline. Want changes? Just tell me what to adjust.`;
-    log.appendChild(msg);
-
-    appendChatCta(
-      'Timeline set up',
-      'Review each scene on the Timeline, then generate a thumbnail to preview how it looks.',
-      '<button class="btn btn-dark" onclick="generateScriptThumbnails()">Generate Thumbnails</button>'
-    );
-
+    const status1 = document.createElement('div');
+    status1.className = 'msg-status';
+    status1.innerHTML = '<span class="worked-label">Worked</span> <span class="worked-time">for 1s</span>';
+    log.appendChild(status1);
+    reelAppendDoneCard('Generated scene descriptions');
     log.scrollTop = log.scrollHeight;
+
+    // Beat 2 -- narration distributed into each clip's own Voice section, a beat later (same
+    // "sequential completions, not one merged message" pattern as draftCopy()'s Filled/
+    // Generated pair) since it's a separate piece of work with its own working message and
+    // explanation.
+    const loading2 = document.createElement('div');
+    loading2.className = 'msg ai loading';
+    loading2.innerHTML = `<span class="tag">AI</span>Distributing narration into each clip's Voice section<span class="dots"><span>.</span><span>.</span><span>.</span></span>`;
+    log.appendChild(loading2);
+    log.scrollTop = log.scrollHeight;
+
+    setTimeout(() => {
+      loading2.remove();
+      const status2 = document.createElement('div');
+      status2.className = 'msg-status';
+      status2.innerHTML = '<span class="worked-label">Worked</span> <span class="worked-time">for 1s</span>';
+      log.appendChild(status2);
+      const voiceMsg = document.createElement('div');
+      voiceMsg.className = 'msg ai';
+      voiceMsg.textContent = `Split your narration across each 8-second clip and matched it to a voice automatically.`;
+      log.appendChild(voiceMsg);
+      reelAppendDoneCard('Distributed narration');
+
+      appendChatCta(
+        'Timeline set up',
+        'Review each scene on the Timeline, then generate a reference image for how it looks.',
+        '<button class="btn btn-dark" id="timelineGenRefImagesChatBtn" onclick="generateScriptThumbnails(this)">Generate Reference Images</button>'
+      );
+
+      log.scrollTop = log.scrollHeight;
+    }, 700);
   }, 900);
 }
 
@@ -6048,11 +6207,11 @@ function renderSceneNarrationHTML(scope, unit){
 // keeps the compact block above unchanged. Word-count row swaps to the red over-limit row
 // past 15 words; the Preview button reuses the existing cached/stale/loading state machine
 // (updateVoicePreviewButton), just reskinned full-width, see voice-section.css's own note.
-function renderVoiceWordcountRowHTML(unit, script){
+function renderVoiceWordcountRowHTML(scope, unit, script){
   const count = countScriptWords(script);
   if(count > 15){
     return `
-      <div class="voice-section-error-row" id="voiceWordcountRow_${unit}">
+      <div class="voice-section-error-row" id="voiceWordcountRow_${scope}_${unit}">
         <div class="voice-section-error-left">
           <span class="voice-section-error-text">You've gone over the word limit.</span>
           <button class="voice-section-refine-chip" type="button" onclick="refineSceneScript(${unit})">Make it shorter</button>
@@ -6060,7 +6219,7 @@ function renderVoiceWordcountRowHTML(unit, script){
         <span class="voice-section-error-count">${count} / 15 words</span>
       </div>`;
   }
-  return `<span class="voice-section-wordcount" id="voiceWordcountRow_${unit}">${count} / 15 words</span>`;
+  return `<span class="voice-section-wordcount" id="voiceWordcountRow_${scope}_${unit}">${count} / 15 words</span>`;
 }
 // Case 2/3 — same convergence rule as shortenFullScriptViaChat(): the Voice Section's own
 // inline "Make it shorter" chip routes through the identical chat working/completion(Undo/Redo)
@@ -6093,7 +6252,7 @@ function shortenSceneScriptViaChat(unit){
     msg.textContent = `Shortened the narration for Clip ${unit} to fit.`;
     log.appendChild(msg);
 
-    pushChatChangeCard(log, `Narration · Clip ${unit}`, before, after, (snap) => updateSceneScript(unit, snap));
+    pushChatChangeCard(log, `Narration · Clip ${unit}`, before, after, (snap) => updateSceneScript(unit, snap), after);
 
     log.scrollTop = log.scrollHeight;
   }, 800);
@@ -6107,41 +6266,68 @@ function toggleVoiceSection(headerEl){
   const caret = section.querySelector('.voice-section-caret');
   if(caret) caret.src = `../../../../components/ai-social-media/icons/chevron-${collapsed ? 'down' : 'up'}.svg`;
 }
-// Voiceover Card row shown once a take exists -- name/time aren't tracked anywhere real yet
-// (no audio pipeline), so name falls back to the currently selected voice and the time is
-// estimated from word count at the same ~1.875 words/sec used by getMaxScriptWords().
-function renderVoiceSampleRowHTML(unit){
-  const cache = window.__voicePreviewCache[unit] || {};
-  const voiceName = cache.voice || getCurrentVoiceLabel() || 'Voice';
+// Voiceover Card row shown once a take exists (Figma 8727:220507) -- the label is literally
+// "Voice N" (an auto-incrementing take name), NOT the character/voice-model name that used to
+// render here; this prototype only ever caches one take per clip, so it's always "Voice 1".
+// Time isn't tracked anywhere real yet (no audio pipeline), so it's estimated from word count
+// at the same ~1.875 words/sec used by getMaxScriptWords(). The row's own play icon is now the
+// only playback control once a take exists (see playVoiceSample()) -- there's no longer a
+// separate Preview button sitting alongside it.
+function renderVoiceSampleRowHTML(scope, unit){
   const totalSec = Math.max(1, Math.round(countScriptWords(getSceneScript(unit)) / 1.875));
   return `
-    <div class="voice-section-sample" id="voiceSample_tl_${unit}">
-      <span class="voice-section-sample-play" onclick="document.getElementById('voicePreviewBtn_tl_${unit}').click()"><img src="../../../../components/ai-social-media/icons/audio-play.svg" alt=""></span>
-      <span class="voice-section-sample-name">${escapeHtml(voiceName)}</span>
-      <span class="voice-section-sample-time">00:00 / 00:${String(totalSec).padStart(2, '0')}</span>
+    <div class="voice-section-sample" id="voiceSample_${scope}_${unit}">
+      <span class="voice-section-sample-play" id="voiceSamplePlay_${scope}_${unit}" onclick="playVoiceSample('${scope}', ${unit})"><img src="../../../../components/ai-social-media/icons/audio-play.svg" alt=""></span>
+      <span class="voice-section-sample-name">Voice 1</span>
+      <span class="voice-section-sample-time">00:00<span class="sep">&nbsp;/&nbsp;</span>00:${String(totalSec).padStart(2, '0')}</span>
     </div>`;
 }
-// Preview replays whatever take already exists (even a stale one); Regenerate is the
-// separate button that pays to refresh it to match the current script -- see previewSceneVoice()
-// and updateVoicePreviewButton()'s figmaStyle branch for how Preview's own state differs here
-// from the single-button model still used by the Script/Video stage.
-function renderVoiceButtonAreaHTML(unit){
+
+// Replays an existing (fresh or stale) take from the sample row's own play icon -- toggles a
+// play/pause glyph in place while it plays, same beat as playVoiceButton() below but scoped to
+// this one icon instead of a whole button.
+function playVoiceSample(scope, unit){
+  const icon = document.getElementById(`voiceSamplePlay_${scope}_${unit}`);
+  if(!icon || icon.classList.contains('playing')) return;
+  icon.classList.add('playing');
+  icon.innerHTML = `<img src="../../../../components/ai-social-media/icons/audio-pause.svg" alt="">`;
+  setTimeout(() => {
+    icon.classList.remove('playing');
+    icon.innerHTML = `<img src="../../../../components/ai-social-media/icons/audio-play.svg" alt="">`;
+  }, 1300);
+}
+// Preview is shown only before any take exists yet. Once a take exists AND still matches the
+// current script + voice model (fresh), the button is fully replaced by the Voice-1 sample row
+// (Figma 8727:220507) -- Preview and the sample row never coexist. Once the narration or voice
+// model changes since that take was made (stale), a Regenerate button reappears below the
+// (still playable) sample row (Figma 9215:259221). An invalid script (empty or over the word
+// limit) always falls back to a disabled Preview button instead of Regenerate -- regenerating
+// invalid text isn't a valid action (Figma 9276:225303's screenshot, despite its extracted
+// layer name still reading "Regenerate").
+function renderVoiceButtonAreaHTML(scope, unit){
+  const words = countScriptWords(getSceneScript(unit));
+  const invalid = words === 0 || words > 15 || !!window.__reelSyncPending;
   const hasCache = !!window.__voicePreviewCache[unit];
-  const invalid = countScriptWords(getSceneScript(unit)) === 0 || countScriptWords(getSceneScript(unit)) > 15 || !!window.__reelSyncPending;
-  const previewBtn = `<button class="voice-preview-btn voice-section-preview-btn" id="voicePreviewBtn_tl_${unit}" onclick="previewSceneVoice('tl', ${unit})"></button>`;
-  if(!hasCache) return `<div class="voice-section-actions" id="voiceButtonArea_${unit}">${previewBtn}</div>`;
-  return `
-    <div class="voice-section-actions" id="voiceButtonArea_${unit}">
-      ${previewBtn}
-      <button class="voice-preview-btn voice-section-preview-btn" id="voiceRegenBtn_tl_${unit}" onclick="regenerateSceneVoice(${unit})" ${invalid ? 'disabled' : ''} title="Generate a fresh take to match the current script · ${SEGMENT_VOICE_CREDIT} credits">
+  const fresh = hasCache && isVoicePreviewCached(unit);
+  const previewBtn = `<button class="voice-preview-btn voice-section-preview-btn" id="voicePreviewBtn_${scope}_${unit}" onclick="previewSceneVoice('${scope}', ${unit})"${invalid ? ' disabled' : ''}><span class="voice-section-preview-play"><img src="../../../../components/ai-social-media/icons/audio-play.svg" alt=""></span> Preview</button>`;
+
+  if(!hasCache) return `<div class="voice-section-actions" id="voiceButtonArea_${scope}_${unit}">${previewBtn}</div>`;
+  if(fresh) return `<div class="voice-section-actions" id="voiceButtonArea_${scope}_${unit}">${renderVoiceSampleRowHTML(scope, unit)}</div>`;
+
+  const staleActionBtn = invalid ? previewBtn : `<button class="voice-preview-btn voice-section-preview-btn" id="voiceRegenBtn_${scope}_${unit}" onclick="regenerateSceneVoice('${scope}', ${unit})" title="Generate a fresh take to match the current script · ${SEGMENT_VOICE_CREDIT} credits">
         <span class="voice-section-preview-play"><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" alt=""></span> Regenerate
-      </button>
-      ${renderVoiceSampleRowHTML(unit)}
+      </button>`;
+  return `
+    <div class="voice-section-actions" id="voiceButtonArea_${scope}_${unit}">
+      ${renderVoiceSampleRowHTML(scope, unit)}
+      ${staleActionBtn}
     </div>`;
 }
-function regenerateSceneVoice(unit){
+// Regenerating from either scope refreshes the same shared take (window.__voicePreviewCache),
+// so both Timeline's and Video's copies of this clip's voice card need to reflect it.
+function regenerateSceneVoice(scope, unit){
   if(countScriptWords(getSceneScript(unit)) === 0 || countScriptWords(getSceneScript(unit)) > 15 || window.__reelSyncPending) return;
-  const btn = document.getElementById(`voiceRegenBtn_tl_${unit}`);
+  const btn = document.getElementById(`voiceRegenBtn_${scope}_${unit}`);
   if(!btn || btn.disabled) return;
   const scriptText = getSceneScript(unit);
   const voice = getCurrentVoiceLabel();
@@ -6150,13 +6336,20 @@ function regenerateSceneVoice(unit){
   btn.innerHTML = `<span class="vp-spinner"></span> Generating…`;
   setTimeout(() => {
     window.__voicePreviewCache[unit] = { script: scriptText, voice };
-    const area = document.getElementById(`voiceButtonArea_${unit}`);
-    if(area) area.outerHTML = renderVoiceButtonAreaHTML(unit);
+    ['tl', 'vid'].forEach(s => {
+      const area = document.getElementById(`voiceButtonArea_${s}_${unit}`);
+      if(area) area.outerHTML = renderVoiceButtonAreaHTML(s, unit);
+    });
     updateVoicePreviewButton('tl', unit);
     updateVoicePreviewButton('vid', unit);
   }, 1100);
 }
-function renderTimelineVoiceSectionHTML(unit){
+// Figma 8727:220486 "Voice Section" — narration card used in both Reel/Short Timeline AND
+// Video scene editing (per the component's own Figma description), so this takes a scope
+// ('tl' | 'vid') instead of being Timeline-only — every id inside is scoped to match, since
+// both copies of a given clip's card can be in the DOM at once (only one tab is visible, but
+// neither panel's markup is torn down when the other tab is active).
+function renderVoiceSectionCardHTML(scope, unit){
   const script = getSceneScript(unit);
   return `
     <div class="voice-section">
@@ -6169,12 +6362,12 @@ function renderTimelineVoiceSectionHTML(unit){
       </button>
       <div class="voice-section-body">
         <div class="voice-section-script-wrap">
-          <div class="field-fill-wrap" id="narrFieldWrap_tl_${unit}">
+          <div class="field-fill-wrap" id="narrFieldWrap_${scope}_${unit}">
             <textarea class="voice-script-text voice-section-script" data-scene="${unit}" oninput="updateSceneScript(${unit}, this.value)" aria-invalid="${countScriptWords(script) > 15 || countScriptWords(script) === 0}">${escapeHtml(script)}</textarea>
           </div>
-          ${renderVoiceWordcountRowHTML(unit, script)}
+          ${renderVoiceWordcountRowHTML(scope, unit, script)}
         </div>
-        ${renderVoiceButtonAreaHTML(unit)}
+        ${renderVoiceButtonAreaHTML(scope, unit)}
       </div>
     </div>
   `;
@@ -6265,8 +6458,8 @@ function renderTimelineGrid(count){
         <div class="scene-tile-placeholder">
           <div class="scene-tile-placeholder-icon sparkle"><img src="../../../../components/ai-social-media/icons/sparkle-single-neutral.svg" alt=""></div>
           <div class="scene-tile-placeholder-text">
-            <span class="scene-tile-placeholder-title">Your thumbnail will appear here</span>
-            <span class="scene-tile-placeholder-sub"><p>Generate one to preview</p><p>how this scene looks.</p></span>
+            <span class="scene-tile-placeholder-title">Your reference image will appear here</span>
+            <span class="scene-tile-placeholder-sub"><p>Generate one to guide</p><p>how this scene's video looks.</p></span>
           </div>
         </div>
       </div>
@@ -6311,7 +6504,7 @@ function renderTimelineEditor(unit){
         </div>
         <p class="scene-note">AI automatically builds a scene to match this line</p>
       </div>
-      ${renderTimelineVoiceSectionHTML(unit)}
+      ${renderVoiceSectionCardHTML('tl', unit)}
     </div>
   `;
   renderReferenceImages();
@@ -6323,24 +6516,41 @@ function renderTimelineEditor(unit){
 // data-type default -> generating (spinner placeholder, for the queue-panel's duration) ->
 // thumbnail (real photo + Ready badge), then advances to Video the same way the old
 // proceedToStudio() did.
-function generateScriptThumbnails(){
+function generateScriptThumbnails(btnEl){
+  if(btnEl) btnEl.disabled = true;
   document.querySelectorAll('#timelineGrid .scene-tile').forEach(t => {
     t.dataset.type = 'generating';
     const placeholder = t.querySelector('.scene-tile-placeholder');
     if(placeholder) placeholder.innerHTML = `
       <div class="scene-tile-placeholder-icon spinner"><img src="../../../../components/ai-social-media/icons/ui-spinner-lg.svg" alt=""></div>
       <div class="scene-tile-placeholder-text">
-        <span class="scene-tile-placeholder-title">Creating your thumbnail…</span>
-        <span class="scene-tile-placeholder-sub"><p>Making the first frame of your video</p></span>
+        <span class="scene-tile-placeholder-title">Creating your reference image…</span>
+        <span class="scene-tile-placeholder-sub"><p>The video will be generated using this as a guide</p></span>
       </div>`;
   });
-  showQueuePanel('#timelineGrid .scene-tile', 'thumbnail generation', () => {
+  showQueuePanel('#timelineGrid .scene-tile', 'reference image generation', () => {
     document.querySelectorAll('#timelineGrid .scene-tile').forEach((t, i) => {
       t.dataset.type = 'thumbnail';
       t.querySelector('.scene-tile-placeholder')?.remove();
       t.querySelector('.scene-tile-preview').style.backgroundImage = `url('assets/video/scene${(i % 2) + 1}.png')`;
       t.querySelector('.scene-tile-preview').insertAdjacentHTML('afterbegin', '<div class="scene-tile-top-row"><span class="feedback-status-chip feedback-status-chip--green">Ready</span></div>');
     });
+
+    // Same working -> completion -> Done-card narration as continueToTimelineFromChat() above,
+    // just with the image icon (Figma 81:12294) instead of the default file glyph, since this
+    // completion is about generated images rather than text.
+    const log = document.getElementById('chatLog');
+    const status = document.createElement('div');
+    status.className = 'msg-status';
+    status.innerHTML = '<span class="worked-label">Worked</span> <span class="worked-time">for 2s</span>';
+    log.appendChild(status);
+    const msg = document.createElement('div');
+    msg.className = 'msg ai';
+    msg.textContent = `Generated a reference image for each scene, based on its description.`;
+    log.appendChild(msg);
+    reelAppendDoneCard('Generated reference images', 'content-image-outline-sm.svg');
+    log.scrollTop = log.scrollHeight;
+
     proceedToStudio();
   }, 'Scene');
 }
@@ -6379,7 +6589,7 @@ function updateSceneScript(n, value){
   document.getElementById('fullScript').value = full;
   window.__approvedFullScript = full;
   window.__latestScriptText = full;
-  validateScriptLength();
+  validateScriptLength(true);
   // Keep the active textarea intact while showing prompt review actions.
   const card = document.getElementById('sceneEditor'+n);
   if(card && window.__reelPromptReview[n] && !card.querySelector('.prompt-review-actions')){
@@ -6393,12 +6603,17 @@ function updateSceneScript(n, value){
 
   document.querySelectorAll(`.voice-guide-${n}`).forEach(g => { g.textContent = wordCountGuideText(value); });
   document.querySelectorAll(`.voice-script-text[data-scene="${n}"]`).forEach(ta => { if(ta.value !== value) ta.value = value; ta.setAttribute('aria-invalid', String(countScriptWords(value) > 15 || countScriptWords(value) === 0)); });
-  const voiceWordcountRow = document.getElementById(`voiceWordcountRow_${n}`);
-  if(voiceWordcountRow) voiceWordcountRow.outerHTML = renderVoiceWordcountRowHTML(n, value);
-  // Refreshes Regenerate's disabled state + the sample row's estimated time; skipped mid-generate
-  // so a live "Generating…" button isn't yanked out from under itself.
-  const voiceButtonArea = document.getElementById(`voiceButtonArea_${n}`);
-  if(voiceButtonArea && !voiceButtonArea.querySelector('.loading')) voiceButtonArea.outerHTML = renderVoiceButtonAreaHTML(n);
+  // Timeline's and Video's Voice Section cards are separate DOM copies of the same clip
+  // (see renderVoiceSectionCardHTML) — both need refreshing, not just whichever one you're
+  // currently editing from.
+  ['tl', 'vid'].forEach(scope => {
+    const voiceWordcountRow = document.getElementById(`voiceWordcountRow_${scope}_${n}`);
+    if(voiceWordcountRow) voiceWordcountRow.outerHTML = renderVoiceWordcountRowHTML(scope, n, value);
+    // Refreshes Regenerate's disabled state + the sample row's estimated time; skipped mid-generate
+    // so a live "Generating…" button isn't yanked out from under itself.
+    const voiceButtonArea = document.getElementById(`voiceButtonArea_${scope}_${n}`);
+    if(voiceButtonArea && !voiceButtonArea.querySelector('.loading')) voiceButtonArea.outerHTML = renderVoiceButtonAreaHTML(scope, n);
+  });
 
   updateVoicePreviewButton('tl', n);
   updateVoicePreviewButton('vid', n);
@@ -6422,32 +6637,31 @@ function isVoicePreviewCached(n){
 }
 
 function updateVoicePreviewButton(scope, n){
+  const btn = document.getElementById(`voicePreviewBtn_${scope}_${n}`);
+  if(!btn || btn.classList.contains('loading') || btn.classList.contains('playing')) return;
+  const invalid = countScriptWords(getSceneScript(n)) === 0 || countScriptWords(getSceneScript(n)) > 15 || !!window.__reelSyncPending;
+  btn.disabled = invalid;
+
+  // Timeline's split Preview/Regenerate layout (voice-section-preview-btn): once any take
+  // exists, this id no longer renders at all -- renderVoiceButtonAreaHTML() replaces it with
+  // the Voice-1 sample row (± a separate Regenerate button once stale), so the only thing left
+  // to sync here for that variant is the disabled state above. The single-button model below
+  // (Script/Video stage) still folds cached/stale/idle into this one button's own label.
+  if(btn.classList.contains('voice-section-preview-btn')) return;
+
   const cached = isVoicePreviewCached(n);
   const hasCache = !!window.__voicePreviewCache[n];
   const stale = hasCache && !cached;
+  btn.classList.toggle('cached', cached);
+  btn.classList.toggle('stale', stale);
 
-  const btn = document.getElementById(`voicePreviewBtn_${scope}_${n}`);
-  if(!btn || btn.classList.contains('loading') || btn.classList.contains('playing')) return;
-  btn.disabled = countScriptWords(getSceneScript(n)) === 0 || countScriptWords(getSceneScript(n)) > 15 || !!window.__reelSyncPending;
+  const icon = (src, sizeCls) => `<span class="vp-icon"><img src="../../../../components/ai-social-media/icons/${src}" class="icon-inline${sizeCls ? ' ' + sizeCls : ''}" alt=""></span>`;
+  const cost = ` <span class="vp-cost"><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">${SEGMENT_VOICE_CREDIT}</span>`;
 
-  // Timeline's split Preview/Regenerate layout (voice-section-preview-btn): Preview always
-  // just replays whatever take exists, even a stale one -- the separate Regenerate button
-  // (renderVoiceButtonAreaHTML) owns "text changed, pay to refresh". The single-button
-  // model below (Script/Video stage) still folds staleness into this same button.
-  const figmaStyle = btn.classList.contains('voice-section-preview-btn');
-  const showCached = figmaStyle ? hasCache : cached;
-  btn.classList.toggle('cached', showCached);
-  btn.classList.toggle('stale', !figmaStyle && stale);
-
-  const icon = (src, sizeCls) => figmaStyle
-    ? `<span class="voice-section-preview-play"><img src="../../../../components/ai-social-media/icons/${src}" alt=""></span>`
-    : `<span class="vp-icon"><img src="../../../../components/ai-social-media/icons/${src}" class="icon-inline${sizeCls ? ' ' + sizeCls : ''}" alt=""></span>`;
-  const cost = figmaStyle ? '' : ` <span class="vp-cost"><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">${SEGMENT_VOICE_CREDIT}</span>`;
-
-  if(showCached){
+  if(cached){
     btn.innerHTML = `${icon('refresh-ccw.svg')} Preview`;
     btn.title = 'Replay the cached preview — no extra cost';
-  } else if(!figmaStyle && stale){
+  } else if(stale){
     btn.innerHTML = `${icon('refresh-ccw.svg')} Regenerate${cost}`;
     btn.title = `Text changed since the last generation · ${SEGMENT_VOICE_CREDIT} credits to regenerate`;
   } else {
@@ -6461,10 +6675,12 @@ function previewSceneVoice(scope, n){
   const btn = document.getElementById(`voicePreviewBtn_${scope}_${n}`);
   if(!btn || btn.disabled) return;
 
-  // Timeline's Preview button (voice-section-preview-btn) replays any existing take, even a
-  // stale one -- see updateVoicePreviewButton()'s figmaStyle branch for why.
+  // Timeline's Preview button (voice-section-preview-btn) only ever renders pre-generation now
+  // (renderVoiceButtonAreaHTML replaces it with the sample row ± Regenerate once any take
+  // exists -- see playVoiceSample() for replaying from there instead), so this id is only ever
+  // reachable here for the compact Script/Video-stage button's own cached-replay case.
   const figmaStyle = btn.classList.contains('voice-section-preview-btn');
-  if(isVoicePreviewCached(n) || (figmaStyle && window.__voicePreviewCache[n])){
+  if(!figmaStyle && isVoicePreviewCached(n)){
     playVoiceButton(btn, false, () => updateVoicePreviewButton(scope, n));
     return;
   }
@@ -6482,12 +6698,16 @@ function previewSceneVoice(scope, n){
     btn.disabled = false;
     // Wait for the "Playing…" animation to finish before swapping in Regenerate + the
     // sample row (a first-time generation just flipped hasCache true) -- replacing
-    // voiceButtonArea any earlier would detach `btn` mid-animation.
+    // voiceButtonArea any earlier would detach `btn` mid-animation. Refreshes both scopes'
+    // cards since they share the same underlying take (window.__voicePreviewCache).
     playVoiceButton(btn, true, () => {
-      if(figmaStyle){
-        const area = document.getElementById(`voiceButtonArea_${n}`);
-        if(area) area.outerHTML = renderVoiceButtonAreaHTML(n);
-      }
+      ['tl', 'vid'].forEach(s => {
+        const areaBtn = document.getElementById(`voicePreviewBtn_${s}_${n}`);
+        if(areaBtn && areaBtn.classList.contains('voice-section-preview-btn')){
+          const area = document.getElementById(`voiceButtonArea_${s}_${n}`);
+          if(area) area.outerHTML = renderVoiceButtonAreaHTML(s, n);
+        }
+      });
       updateVoicePreviewButton(scope, n);
     });
     updateVoicePreviewButton(scope === 'tl' ? 'vid' : 'tl', n);
@@ -6627,7 +6847,7 @@ function startVideoGeneration(){
           <button type="button" class="img-prompt-regen-btn used" onclick="regenerateVideoScene(${i + 1})"><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt="">Regenerate <span class="cost"><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">${VIDEO_COST_PER_UNIT}</span></button>
         </div>
         <div class="scene-desc-box"><textarea class="scene-desc" id="videoPrompt${i + 1}">${escapeHtml(buildVideoPrompt(i + 1))}</textarea></div>
-        ${renderSceneNarrationHTML('vid', i + 1)}
+        ${renderVoiceSectionCardHTML('vid', i + 1)}
       </div>
     </div>
   `).join('');
@@ -6718,8 +6938,22 @@ function combineVideo(){
   window.__videoCombineStale = false;
   updateVideoCta();
   document.getElementById('tabReelVideo').innerHTML = '<span class="check">✓</span> Video';
-  document.getElementById('chatLog').innerHTML += '<div class="msg ai"><span class="tag">AI</span>Combined all scenes into the final cut — free, no credits used. Your narration track from Script is already mixed in.</div>';
-  appendChatCta('Your video is ready. What\'s next?', '', '<button class="btn btn-dark" onclick="this.parentElement.querySelectorAll(\'button\').forEach(b => b.disabled = true); goToDevelop()">Continue to editing →</button><button class="btn btn-secondary" onclick="this.parentElement.querySelectorAll(\'button\').forEach(b => b.disabled = true); goToPublish()">Skip to publish</button>');
+  reelAppendDoneCard('Combined final video');
+  appendChatCta('Your video is ready. What\'s next?', '',
+    '<button class="btn btn-dark" onclick="this.parentElement.querySelectorAll(\'button\').forEach(b => b.disabled = true); goToDevelop()">Continue to editing →</button>' +
+    '<button class="btn btn-secondary" onclick="this.parentElement.querySelectorAll(\'button\').forEach(b => b.disabled = true); goToPublish()">Skip to publish</button>' +
+    '<div class="chat-card-feedback" id="videoCardFeedback"><span class="ccf-label">How\'s this result?</span><button type="button" class="ccf-icon-btn" onclick="ccfRate(this,\'video\',\'up\')" title="Looks great"><img src="../../../../components/ai-social-media/icons/check.svg" alt=""></button><button type="button" class="ccf-icon-btn" onclick="ccfRate(this,\'video\',\'down\')" title="Needs work"><img src="../../../../components/ai-social-media/icons/alert-sm.svg" alt=""></button></div>'
+  );
+  // Refine-this-video now happens through the AI Assistant chat itself instead of a separate
+  // right-panel prompt box — quick presets + a per-request credit hint live down by the input.
+  window.__videoRefineMode = true;
+  renderChatQuickChips([
+    { label: 'Tighten the opening', direct: () => sendVideoRefineChat('Tighten the opening') },
+    { label: 'Warmer colour', direct: () => sendVideoRefineChat('Warmer colour') },
+    { label: 'Slower pace', direct: () => sendVideoRefineChat('Slower pace') },
+    { label: 'Punchier cuts', direct: () => sendVideoRefineChat('Punchier cuts') }
+  ]);
+  setChatGuideHint('Describe a change — e.g. "tighten the opening" or "warmer tone"');
   showCombineResult();
 }
 
@@ -6810,6 +7044,9 @@ function backToSceneVideos(){
   document.getElementById('combineResultView').style.display = 'none';
   document.querySelector('#subReelVideo .timeline-stage').style.display = 'flex';
   document.getElementById('settingsBar').style.display = '';
+  window.__videoRefineMode = false;
+  renderChatQuickChips([]);
+  updateChatCostHint();
   syncGenActionBarV3();
 }
 
@@ -6818,21 +7055,55 @@ function playCombineResult(btn){
   setTimeout(() => { btn.innerHTML = '<img class="play" src="../../../../components/ai-social-media/icons/video-play-glyph.svg" alt="">'; }, 1400);
 }
 
-/* ---- Refine this video (in-place text-prompt edit on the finished cut) --------------
-   Routes the same as a chat prompt: the user's note is logged in the AI Assistant chat
-   and a new "version" of the final cut is produced. Version chips let you flip back. */
+/* ---- Refine this video (requested from the AI Assistant chat, not a separate right-panel
+   prompt box) — a quick chip or a typed chat message both land here. A new "version" of the
+   final cut is produced each time; the version row on the canvas lets you flip back. ---- */
 window.__videoRefineVersions = [{ label: 'v1', prompt: null, ready: true }];
 window.__videoRefineActive = 0;
+const VIDEO_REFINE_COST = 6;
 
-function onVideoRefineEdited(){
-  const btn = document.getElementById('videoRefineBtn');
-  if(btn) btn.disabled = !document.getElementById('videoRefineInput').value.trim();
+// Shows the per-request credit cost near the chat input once there's something to send —
+// takes over the role the right-panel's "Re-render ⚡6" badge used to play.
+function updateChatCostHint(){
+  const hint = document.getElementById('chatCostHint');
+  if(!hint) return;
+  const input = document.getElementById('chatInput');
+  if(window.__videoRefineMode && input && input.value.trim()){
+    hint.textContent = `This edit uses ⚡${VIDEO_REFINE_COST} credits`;
+    hint.style.display = '';
+  } else {
+    hint.style.display = 'none';
+  }
 }
-function fillVideoRefine(text){
-  const ta = document.getElementById('videoRefineInput');
-  ta.value = text;
-  ta.focus();
-  onVideoRefineEdited();
+function sendVideoRefineChat(text){
+  const vers = window.__videoRefineVersions;
+  const newLabel = 'v' + (vers.length + 1);
+  vers.push({ label: newLabel, prompt: text, ready: false });
+  window.__videoRefineActive = vers.length - 1;
+  renderVideoRefineHistory();
+  updateChatCostHint();
+
+  const player = document.getElementById('combinePlayer');
+  let ov = player.querySelector('.combine-rerender');
+  if(!ov){ ov = document.createElement('div'); ov.className = 'combine-rerender'; player.appendChild(ov); }
+  ov.innerHTML = '<span class="spin"></span><span>Re-rendering the cut…</span>';
+
+  const log = document.getElementById('chatLog');
+  log.innerHTML += `<div class="msg ai loading" id="videoRefineMsg">Re-rendering the final cut<span class="dots"><span>.</span><span>.</span><span>.</span></span></div>`;
+  log.scrollTop = log.scrollHeight;
+
+  setTimeout(() => {
+    vers[vers.length - 1].ready = true;
+    renderVideoRefineHistory();
+    if(ov) ov.remove();
+    const msg = document.getElementById('videoRefineMsg');
+    if(msg){
+      msg.classList.remove('loading');
+      msg.id = '';
+      msg.innerHTML = `<span class="tag">AI</span>Re-rendered the final cut (<b>${newLabel}</b>) with your note: “${escapeHtml(text)}”. Flip between versions on the video, or keep refining.`;
+    }
+    log.scrollTop = log.scrollHeight;
+  }, 1700);
 }
 function renderVideoRefineHistory(){
   const row = document.getElementById('videoRefineHistoryRow');
@@ -6855,56 +7126,35 @@ function selectVideoRefineVersion(i){
   window.__videoRefineActive = i;
   renderVideoRefineHistory();
 }
-function refineFinalVideo(){
-  const ta = document.getElementById('videoRefineInput');
-  const prompt = ta.value.trim();
-  if(!prompt) return;
-  ta.value = '';
-  document.getElementById('videoRefineBtn').disabled = true;
-
-  const vers = window.__videoRefineVersions;
-  const newLabel = 'v' + (vers.length + 1);
-  vers.push({ label: newLabel, prompt, ready: false });
-  window.__videoRefineActive = vers.length - 1;
-  renderVideoRefineHistory();
-
-  // re-render overlay on the player
-  const player = document.getElementById('combinePlayer');
-  let ov = player.querySelector('.combine-rerender');
-  if(!ov){ ov = document.createElement('div'); ov.className = 'combine-rerender'; player.appendChild(ov); }
-  ov.innerHTML = '<span class="spin"></span><span>Re-rendering the cut…</span>';
-
-  // mirror into the AI Assistant chat (single source of truth)
-  const log = document.getElementById('chatLog');
-  if(log){
-    log.innerHTML += `<div class="msg user"><div class="bubble">${escapeHtml(prompt)}</div><div class="avatar">DV</div></div>`;
-    log.innerHTML += `<div class="msg ai loading" id="videoRefineMsg">Re-rendering the final cut<span class="dots"><span>.</span><span>.</span><span>.</span></span></div>`;
-    log.scrollTop = log.scrollHeight;
-  }
-
-  setTimeout(() => {
-    vers[vers.length - 1].ready = true;
-    renderVideoRefineHistory();
-    if(ov) ov.remove();
-    const msg = document.getElementById('videoRefineMsg');
-    if(msg){
-      msg.classList.remove('loading');
-      msg.id = '';
-      msg.innerHTML = `<span class="tag">AI</span>Re-rendered the final cut (<b>${newLabel}</b>) with your note: “${escapeHtml(prompt)}”. Flip between versions on the video, or keep refining.`;
-    }
-    if(log) log.scrollTop = log.scrollHeight;
-  }, 1700);
-}
-
 /* ---- Rate this result → team (product feedback, not an edit) ----------------------- */
 window.__resultFeedback = {};
+// Icon-only feedback on the "Your video is ready" chat card — 👍 records immediately, 👎
+// reveals a one-line optional note before sending. Deliberately separate from rfRate/rfSend
+// below (still used by the Image post right-panel result), since this lives inside a chat
+// card that gets rebuilt/scrolled away rather than a persistent panel section.
+function ccfRate(btn, target, rating){
+  const wrap = btn.closest('.chat-card-feedback');
+  if(!wrap) return;
+  if(rating === 'up'){
+    window.__resultFeedback[target] = { rating: 'up', note: '', at: new Date().toISOString() };
+    wrap.innerHTML = '<span class="ccf-thanks"><img src="../../../../components/ai-social-media/icons/check.svg" alt="">Thanks for the feedback</span>';
+  } else {
+    wrap.innerHTML = `<textarea class="ccf-note" placeholder="What didn't work? (optional)"></textarea><button type="button" class="btn btn-secondary ccf-send" onclick="ccfSendNote(this,'${target}')">Send</button>`;
+  }
+}
+function ccfSendNote(btn, target){
+  const wrap = btn.closest('.chat-card-feedback');
+  const note = wrap.querySelector('.ccf-note').value.trim();
+  window.__resultFeedback[target] = { rating: 'down', note, at: new Date().toISOString() };
+  wrap.innerHTML = '<span class="ccf-thanks"><img src="../../../../components/ai-social-media/icons/check.svg" alt="">Thanks — sent to the Formee team</span>';
+}
 function rfRate(btn){
   const wrap = btn.closest('.result-feedback');
   wrap.querySelectorAll('.rf-btn').forEach(b => b.classList.toggle('sel', b === btn));
   wrap.querySelector('.rf-send').disabled = false;
 }
 function rfSend(target){
-  const wrap = document.getElementById(target === 'image' ? 'imageResultFeedback' : 'videoResultFeedback');
+  const wrap = document.getElementById('imageResultFeedback');
   const rating = wrap.querySelector('.rf-btn.sel')?.dataset.v || null;
   const note = wrap.querySelector('.result-feedback-note').value.trim();
   window.__resultFeedback[target] = { rating, note, at: new Date().toISOString() };
@@ -7518,8 +7768,8 @@ function buildAutoCaption(){
   return parts.filter(Boolean).join('\n');
 }
 
-// Quick AI-style refine actions for the caption textarea (mirrors the script's
-// refineScriptWithAI pattern) — "shorter"/"punchier"/"cta" are the three fixed
+// Quick AI-style refine actions for the caption textarea (same shape as the script's own
+// shortenFullScriptViaChat) — "shorter"/"punchier"/"cta" are the three fixed
 // chips, "ai" is the general "Refine with AI" pill.
 function refineCaptionWithAI(mode){
   const ta = document.getElementById('pubCaption');
@@ -8577,7 +8827,9 @@ function sendChatMessage(){
 }
 
 function reelHandleChatSend(text){
-  if(!window.__scriptConfirmed || /script|스크립트/i.test(text) || !mentionsClipOrField(text)){
+  if(window.__videoRefineMode){
+    sendVideoRefineChat(text);
+  } else if(!window.__scriptConfirmed || /script|스크립트/i.test(text) || !mentionsClipOrField(text)){
     reviseScript(text);
   } else {
     reviseSceneOrNarration(text);
@@ -8647,11 +8899,15 @@ function reviseSceneOrNarration(text){
     msg.textContent = `Updated the ${isNarration ? 'narration' : 'scene description'} for ${whichClip}.`;
     log.appendChild(msg);
 
+    // Figma 9382:146084's "Undo" card carries a description line under the title -- here
+    // that's the actual new text itself (only for a single targeted clip; "every clip" has no
+    // one line to show), not a generic static sentence like Figma's own example.
+    const desc = clipNum ? after[clipNum] : undefined;
     pushChatChangeCard(log, `${isNarration ? 'Narration' : 'Scene description'} · ${whichClip}`, before, after, (snap) => {
       Object.keys(snap).forEach(n => {
         if(isNarration){ updateSceneScript(Number(n), snap[n]); } else { setVideoUnitDesc(Number(n), snap[n]); }
       });
-    });
+    }, desc);
 
     log.scrollTop = log.scrollHeight;
   }, 900);
