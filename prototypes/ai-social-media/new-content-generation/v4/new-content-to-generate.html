@@ -2287,7 +2287,7 @@
                        pattern as every other Generate sub-stage's forward-progress action. -->
                   <div style="display:none;">
                     <button class="btn btn-dark" id="reelGenerateVideoBtn" onclick="proceedToStudio()">Generate video</button>
-                    <button class="btn btn-dark" id="reelContinueToTimelineBtn" onclick="showSub('reelTimeline')">Continue to timeline</button>
+                    <button class="btn btn-dark" id="reelContinueToTimelineBtn" onclick="continueToTimelineFromChat(this)">Continue to timeline</button>
                   </div>
                 </div>
               </div>
@@ -5274,8 +5274,8 @@ function runBriefToScript(){
       }
       appendChatCta(
         'Ready to generate thumbnails?',
-        'Review each scene’s dialogue and description on the Timeline tab, then generate a thumbnail to preview how it looks.',
-        '<button class="btn btn-dark" onclick="showSub(\'reelTimeline\')">Continue to timeline</button>'
+        'Move to the Timeline tab and I’ll set up each scene automatically.',
+        '<button class="btn btn-dark" onclick="continueToTimelineFromChat(this)">Continue to timeline</button>'
       );
     }
     syncGenActionBarV3();
@@ -5814,6 +5814,54 @@ function appendChatCta(title, desc, buttonsHtml){
   const log = document.getElementById('chatLog');
   log.innerHTML += `<div class="msg ai"><div class="chat-cta-card"><div class="chat-cta-title">${escapeHtml(title)}</div>${desc ? `<p class="chat-cta-text">${escapeHtml(desc)}</p>` : ''}${buttonsHtml}</div></div>`;
   log.scrollTop = log.scrollHeight;
+}
+
+// ---- "Continue to timeline" -- per the AI 대화창 공통 규칙 스펙, any moment where the AI is
+// silently doing work on the user's behalf (here: setting up each clip's scene & character
+// action description and narration on the new Timeline tab) needs to narrate it: disable the
+// button that kicked it off, show a context-specific working message, then a completion message
+// the instant the destination is visible, then hand off the next action as its own card --
+// same working -> completion -> next-step-card shape as runBriefToScript() above. Shared by
+// both entry points that can trigger this (the chat card's own button, and its hidden mirror
+// #reelContinueToTimelineBtn that the bottom action bar proxies clicks to). ----
+function continueToTimelineFromChat(btnEl){
+  if(btnEl) btnEl.disabled = true;
+  showSub('reelTimeline');
+
+  const selectedTile = document.querySelector('#timelineGrid .scene-tile.selected');
+  const unit = selectedTile ? Number(selectedTile.dataset.unit) : 1;
+  showFieldSpinner(document.getElementById(`descFieldWrap_${unit}`));
+  showFieldSpinner(document.getElementById(`narrFieldWrap_tl_${unit}`));
+
+  const log = document.getElementById('chatLog');
+  const loadingEl = document.createElement('div');
+  loadingEl.className = 'msg ai loading';
+  loadingEl.innerHTML = `<span class="tag">AI</span>Filling in each clip's scene &amp; character action description and narration on the Timeline<span class="dots"><span>.</span><span>.</span><span>.</span></span>`;
+  log.appendChild(loadingEl);
+  log.scrollTop = log.scrollHeight;
+
+  setTimeout(() => {
+    hideFieldSpinners();
+    loadingEl.remove();
+
+    const status = document.createElement('div');
+    status.className = 'msg-status';
+    status.innerHTML = '<span class="worked-label">Worked</span> <span class="worked-time">for 1s</span>';
+    log.appendChild(status);
+
+    const msg = document.createElement('div');
+    msg.className = 'msg ai';
+    msg.textContent = `Filled in the scene & character action description and narration for each clip on the Timeline. Want changes? Just tell me what to adjust.`;
+    log.appendChild(msg);
+
+    appendChatCta(
+      'Timeline set up',
+      'Review each scene on the Timeline, then generate a thumbnail to preview how it looks.',
+      '<button class="btn btn-dark" onclick="generateScriptThumbnails()">Generate Thumbnails</button>'
+    );
+
+    log.scrollTop = log.scrollHeight;
+  }, 900);
 }
 
 function reelConfirmScript(){
