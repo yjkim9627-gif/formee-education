@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "static-preview",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8000", "--directory", "/Users/yejin.kim/Library/CloudStorage/OneDrive-FORMEEHOLDINGS/04 UI:UX/FME_AI Social Media"],
+      "port": 8000
+    },
+    {
+      "name": "v4-branch-preview",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8001", "--directory", "/Users/yejin.kim/Library/CloudStorage/OneDrive-FORMEEHOLDINGS/04 UI:UX/_v4-branch-preview"],
+      "port": 8001
+    }
+  ]
+}

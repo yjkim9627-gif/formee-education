@@ -356,8 +356,6 @@
   .storyboard-card .storyboard-card-preview .spinner-mini{position:absolute; top:50%; left:50%; margin:-11px 0 0 -11px; display:none;}
   .storyboard-card.generating .storyboard-card-preview{opacity:.55;}
   .storyboard-card.generating .storyboard-card-preview .spinner-mini{display:block;}
-  .storyboard-card-char-badge{position:absolute; left:16px; bottom:16px; font-size:10px; font-weight:600; color:var(--color-neutral-0); background:rgba(71,80,105,.6); padding:4px 7px; border-radius:var(--radius-sm); white-space:nowrap;}
-  .storyboard-card-char-badge.off{background:rgba(71,80,105,.3); color:rgba(255,255,255,0.8);}
 
   /* Editor column — same scene-nav (28px segment-nav-btn)/copy-field-list/scene-card pattern as
      the Reel/Short Timeline and Image post Versions panels (Figma names this "storyboard-editor-col"
@@ -931,6 +929,21 @@
   .voice-lib-add{border:1px solid var(--color-neutral-300); background:#fff; border-radius:999px; padding:3px 10px; font-size:10.5px; font-weight:600; color:var(--color-neutral-700); cursor:pointer; flex-shrink:0; font-family:var(--font-family-text);}
   .voice-lib-add:hover{border-color:var(--color-brand-primary); color:var(--color-brand-primary);}
 
+  /* ---- Select-voice modal (Figma 8727:223765) + ElevenLabs library sub-modal (8727:223551) --
+     both opened from the Generate-stage settings-bar Voice chip (see openVoiceSelectModal()/
+     openVoiceLibraryModal() in the v4 prototype). Reuses .voice-item (My-voices row, defined
+     alongside .voice-play above) and .voice-lib-row/.voice-lib-grid (ElevenLabs row/grid,
+     defined just above) as-is -- only the modal-specific chrome (group headers, sizing) is
+     new here. ---- */
+  .voice-select-modal{max-width:420px; width:100%;}
+  .voice-select-group{display:flex; flex-direction:column; gap:8px;}
+  .voice-select-group-title{font-size:12px; font-weight:600; color:var(--color-neutral-500); text-transform:uppercase; letter-spacing:0.02em;}
+  .voice-select-group .voice-item{border:1px solid var(--color-neutral-300); border-radius:var(--radius-lg);}
+  .voice-select-group .voice-item + .voice-item{margin-top:6px;}
+  .voice-library-modal{max-width:720px; width:100%;}
+  .voice-library-modal .voice-browse-panel-header{gap:var(--spacing-lg);}
+  .voice-lib-grid--modal{max-height:400px;}
+
   /* ---- Chat attachments (not covered by chat-panel.css) ---- */
   .chat-attachments{padding:12px 16px 0; border-bottom:1px solid var(--color-neutral-200); display:flex; flex-direction:column; gap:8px;}
   .chat-attachments-label{font-size:10.5px; font-weight:600; color:var(--color-neutral-500);}
@@ -1015,7 +1028,7 @@
      Reel/Short's existing character chip and Image post's (new — that chip had no popover
      at all before). Needs its own position/background/shadow (doesn't share .setting-popover
      as a co-class) — floats below the chip instead of pushing page content down. */
-  .char-replace-popover{position:absolute; top:calc(100% + 6px); left:0; z-index:40; width:308px; background:#fff; border:1px solid var(--color-neutral-200); border-radius:var(--radius-xl); box-shadow:0 12px 20px rgba(15,23,41,0.1), 0 4px 8px rgba(15,23,41,0.05); padding:8px 12px 12px;}
+  .char-replace-popover{position:absolute; top:calc(100% + 6px); left:0; z-index:40; width:286px; background:var(--color-neutral-0); border:1px solid var(--color-neutral-200); border-radius:var(--radius-xl); box-shadow:var(--shadow-popover); padding:8px 12px 12px;}
   .char-replace-header{display:flex; align-items:center; gap:8px; font-size:14px; font-weight:600; color:var(--color-neutral-800); padding-bottom:8px;}
   .char-replace-header img{width:16px; height:16px;}
   .char-replace-carousel{position:relative;}
@@ -2232,26 +2245,13 @@
               </div>
             </div>
 
+            <!-- Figma 8727:223765 -- Voice is a plain chip (no inline dropdown); clicking it
+                 opens the Select-voice modal below, same as the Character chip opening its own
+                 popover but as a full modal since the voice picker needs room for the
+                 ElevenLabs-library hand-off (8727:223551). -->
             <div class="setting-chip-wrap" id="voiceChipWrap">
-              <div class="setting-chip clickable" onclick="toggleSettingPopover(event,'voice')">
-                <img src="../../../../components/ai-social-media/icons/nav-voices.svg" class="icon-inline" alt=""> Voice<span class="dot-sep"></span><b id="settingVoice">Minji — bright, upbeat tone</b><span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span>
-              </div>
-              <div class="setting-popover" id="voiceSettingPopover" style="display:none;">
-                <div class="voice-item selected" onclick="selectSettingVoice(this,'Minji — bright, upbeat tone')">
-                  <div class="voice-play" onclick="togglePreview(event,this)"><img src="../../../../components/ai-social-media/icons/audio-play.svg" class="icon-inline icon-16" alt=""></div>
-                  <div class="voice-item-info"><span class="voice-item-name">Minji — bright, upbeat tone</span><span class="voice-item-tag">Female · Bright</span></div>
-                  <span class="voice-check">✓</span>
-                </div>
-                <div class="voice-item" onclick="selectSettingVoice(this,'Hyunwoo — calm, steady tone')">
-                  <div class="voice-play" onclick="togglePreview(event,this)"><img src="../../../../components/ai-social-media/icons/audio-play.svg" class="icon-inline icon-16" alt=""></div>
-                  <div class="voice-item-info"><span class="voice-item-name">Hyunwoo — calm, steady tone</span><span class="voice-item-tag">Male · Calm</span></div>
-                  <span class="voice-check">✓</span>
-                </div>
-                <div class="voice-item" onclick="selectSettingVoice(this,'Soyul — playful, bubbly tone')">
-                  <div class="voice-play" onclick="togglePreview(event,this)"><img src="../../../../components/ai-social-media/icons/audio-play.svg" class="icon-inline icon-16" alt=""></div>
-                  <div class="voice-item-info"><span class="voice-item-name">Soyul — playful, bubbly tone</span><span class="voice-item-tag">Female · Playful</span></div>
-                  <span class="voice-check">✓</span>
-                </div>
+              <div class="setting-chip clickable" onclick="openVoiceSelectModal()">
+                <img src="../../../../components/ai-social-media/icons/nav-voices.svg" class="icon-inline" alt=""> Voice<span class="dot-sep"></span><b id="settingVoice">Mina — calm</b>
               </div>
             </div>
 
@@ -2752,6 +2752,76 @@
         <button type="button" class="img-lightbox-nav next" id="imgLightboxNext" onclick="lightboxNext()"><img src="../../../../components/ai-social-media/icons/chevron-right.svg" alt="Next version"></button>
       </div>
       <div class="img-lightbox-pills" id="imgLightboxPills"></div>
+    </div>
+  </div>
+
+  <!-- Figma 8727:223765 -- "Select voice" modal, opened from the settings-bar Voice chip.
+       Two grouped sections mirror the two sources a voice can come from (an ElevenLabs Library
+       pick vs. one the user cloned/designed) instead of one flat list -- see
+       renderVoiceSelectModalRows(). "Browse ElevenLabs Voice Library" hands off to the second
+       modal below (8727:223551), reusing the exact search/filter/grid markup from the Brief
+       screen's inline panel (#voiceBrowsePanel) so the two stay visually identical. -->
+  <div class="modal-overlay" id="voiceSelectModalOverlay" style="display:none;" onclick="if(event.target===this) closeVoiceSelectModal();">
+    <div class="modal voice-select-modal">
+      <div class="modal__content">
+        <div class="pub-social-title-row">
+          <h2 class="modal__title">Select voice</h2>
+          <button type="button" class="modal__close" onclick="closeVoiceSelectModal()"><img src="../../../../components/ai-social-media/icons/button-x-dark.svg" class="icon-inline" alt=""></button>
+        </div>
+        <div class="voice-select-group">
+          <div class="voice-select-group-title">From ElevenLabs Library</div>
+          <div id="voiceSelectGroupLib"></div>
+        </div>
+        <div class="voice-select-group">
+          <div class="voice-select-group-title">Cloned &amp; Designed by you</div>
+          <div id="voiceSelectGroupCloned"></div>
+        </div>
+        <button type="button" class="voice-browse-btn" onclick="openVoiceLibraryModal()">Browse ElevenLabs Voice Library <span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span></button>
+      </div>
+      <div class="modal__footer">
+        <button type="button" class="btn btn-secondary" onclick="closeVoiceSelectModal()">Cancel</button>
+        <button type="button" class="btn btn-dark" onclick="saveVoiceSelection()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Figma 8727:223551 -- ElevenLabs voice library sub-modal, reached only via the button
+       above. Same search/filter-chip/grid layout as the Brief screen's #voiceBrowsePanel, just
+       in modal chrome and with its own grid id so the two don't fight over
+       renderVoiceLibRows()'s dataset.rendered guard. -->
+  <div class="modal-overlay" id="voiceLibraryModalOverlay" style="display:none;" onclick="if(event.target===this) closeVoiceLibraryModal();">
+    <div class="modal voice-library-modal">
+      <div class="modal__content">
+        <div class="voice-browse-panel-header">
+          <div>
+            <div class="voice-browse-panel-title">ElevenLabs voice library</div>
+            <div class="voice-browse-panel-sub">Search thousands of community voices. Adding one imports it into your ElevenLabs account.</div>
+          </div>
+          <button type="button" class="modal__close" onclick="closeVoiceLibraryModal()"><img src="../../../../components/ai-social-media/icons/button-x-dark.svg" class="icon-inline" alt=""></button>
+        </div>
+        <div class="voice-browse-search-row">
+          <div class="voice-lib-search-wrap">
+            <img src="../../../../components/ai-social-media/icons/ui-search.svg" alt="">
+            <input type="text" class="voice-lib-search" placeholder="Search voice" oninput="filterVoiceLib(this.value,'voiceLibGridModal')">
+          </div>
+          <div class="table-filter-btn"><span>Filter</span><img class="icon" src="../../../../components/ai-social-media/icons/list-filter.svg" alt=""></div>
+          <div class="table-filter-btn" style="width:36px; justify-content:center; padding:8px;"><img class="icon" src="../../../../components/ai-social-media/icons/arrow-down-wide-narrow.svg" alt=""></div>
+        </div>
+        <div class="voice-browse-chips">
+          <div class="filter-toggle filter-toggle--selected"><span class="filter-toggle__label">All</span></div>
+          <div class="filter-select"><span class="filter-select__label">Language</span><img class="filter-select__caret" src="../../../../components/ai-social-media/icons/caret-down-filled.svg" alt=""></div>
+          <div class="filter-select"><span class="filter-select__label">Gender</span><img class="filter-select__caret" src="../../../../components/ai-social-media/icons/caret-down-filled.svg" alt=""></div>
+          <div class="voice-browse-chip-divider"></div>
+          <div class="filter-toggle"><span class="filter-toggle__label">All</span></div>
+          <div class="filter-toggle"><span class="filter-toggle__label">Social Media</span></div>
+          <div class="filter-toggle"><span class="filter-toggle__label">Advertisement</span></div>
+        </div>
+        <div class="voice-lib-grid voice-lib-grid--modal" id="voiceLibGridModal"></div>
+      </div>
+      <div class="modal__footer">
+        <button type="button" class="btn btn-secondary" onclick="closeVoiceLibraryModal()">Cancel</button>
+        <button type="button" class="btn btn-dark" onclick="saveVoiceLibrarySelection()">Save</button>
+      </div>
     </div>
   </div>
 
@@ -4442,10 +4512,6 @@ function renderStoryboardGrid(){
   renderPreviewGrid();
   for(let i = 1; i <= n; i++) syncPreviewRegenGate(i);
 }
-function storyboardTileCharBadgeHtml(n){
-  if(window.__charMode !== 'with') return '';
-  return `<span class="storyboard-card-char-badge ${window.__cardCharacterOn[n] ? '' : 'off'}">${window.__cardCharacterOn[n] ? '<img src="../../../../components/ai-social-media/icons/nav-characters.svg" class="icon-inline" alt=""> Character' : 'No character'}</span>`;
-}
 // Real Storyboard Card component (components/ai-social-media/storyboard-card.css, Figma node
 // 6566-115735): data-type="storyboard" (copy preview) before a card has an image, data-type="image"
 // (icon row + placeholder/generated image + version chips) once generation has started.
@@ -4466,7 +4532,6 @@ function renderStoryboardTile(n){
           ${cta && cta.on && cta.text ? `<span class="storyboard-card-cta">${escapeHtml(cta.text)}</span>` : ''}
           <div class="storyboard-card-spacer"></div>
           <span class="storyboard-card-badge">Card ${n}</span>
-          ${storyboardTileCharBadgeHtml(n)}
         </div>
       </div>`;
   }
@@ -4485,7 +4550,6 @@ function renderStoryboardTile(n){
         </div>
         <div class="storyboard-card-image-empty"><img src="../../../../components/ai-social-media/icons/content-image.svg" alt=""></div>
         <div class="spinner-mini"></div>
-        ${storyboardTileCharBadgeHtml(n)}
       </div>
       ${chipsHtml}
     </div>`;
@@ -5763,8 +5827,10 @@ function refreshAllReferenceChipRows(){
 }
 
 function buildRefUploadMenuHtml(kind){
+  // Figma 8727:220803 -- 5px below the "more" trigger's bottom edge, not 4px; the 10px corner
+  // radius already comes for free from the shared .context-menu class (--radius-md-lg).
   return `
-    <div class="context-menu" style="position:absolute; top:calc(100% + 4px); left:0; z-index:50;" onclick="event.stopPropagation();">
+    <div class="context-menu" style="position:absolute; top:calc(100% + 5px); left:0; z-index:50;" onclick="event.stopPropagation();">
       <button type="button" class="menu-item" onclick="closeRefUploadMenu(); ${REF_UPLOAD_ADD_FN[kind]};">Upload image</button>
       <button type="button" class="menu-item" onclick="closeRefUploadMenu(); openMyLibraryModal('${kind}');">My Library</button>
     </div>`;
@@ -5849,7 +5915,9 @@ const MY_LIBRARY_ITEMS = [
   { title: 'Study in the UK', thumb: '../../brand-characters/assets/imgLibStudyUK.png', ratio: '9:16', isVideo: true },
   { title: 'This New Lip Tint Is Everything', thumb: '../../brand-characters/assets/imgLibLipTint.png', ratio: '9:16', isVideo: false },
   { title: 'January Intake — Apply Now', thumb: '../../brand-characters/assets/imgLibJanIntake.png', ratio: '9:16', isVideo: true },
-  { title: 'Study in the UK', thumb: '../../brand-characters/assets/imgLibStudyUK.png', ratio: '9:16', isVideo: false }
+  { title: 'Study in the UK', thumb: '../../brand-characters/assets/imgLibStudyUK.png', ratio: '9:16', isVideo: false },
+  { title: 'This New Lip Tint Is Everything', thumb: '../../brand-characters/assets/imgLibLipTint.png', ratio: '9:16', isVideo: true },
+  { title: 'January Intake — Apply Now', thumb: '../../brand-characters/assets/imgLibJanIntake.png', ratio: '9:16', isVideo: false }
 ];
 window.__myLibrarySelected = new Set();
 function buildMyLibraryTileHtml(item, i){
@@ -5931,15 +5999,18 @@ function addMyLibrarySelection(){
   const kind = window.__myLibraryTargetKind;
   if(kind === 'first'){ addFirstFrameImage(); return; }
   if(kind === 'last'){ addLastFrameImage(); return; }
-  if(kind === 'img-reference'){ imgAddReferenceImage(); return; }
-  if(kind === 'car-reference'){ carAddReferenceImage(); return; }
+  // Image post / Carousel's own reference chips already push onto a real array each call, so
+  // selecting N items here just needs N calls -- each one already produces its own chip.
+  if(kind === 'img-reference'){ indices.forEach(() => imgAddReferenceImage()); return; }
+  if(kind === 'car-reference'){ indices.forEach(() => carAddReferenceImage()); return; }
   // 'reference' (Reel/Short & Story Video): hand off exactly like the Content Library "Use
   // as reference" deep-link does -- same fmxRefMount() entry point, same wide chip +
-  // strength/match/frame-picker popover (fmxref-js, further down this file). fmxRefMount
-  // only carries a single reference, so a multi-select here still only attaches the first
-  // item picked.
-  const item = MY_LIBRARY_ITEMS[indices[0]];
-  if(window.fmxRefMount) window.fmxRefMount({ ref: item.title, thumb: item.thumb, ratio: item.ratio });
+  // strength/match/frame-picker popover (fmxref-js, further down this file). fmxRefMount now
+  // holds an array of references, so one call per selected item produces one chip per item.
+  indices.forEach(i => {
+    const item = MY_LIBRARY_ITEMS[i];
+    if(window.fmxRefMount) window.fmxRefMount({ ref: item.title, thumb: item.thumb, ratio: item.ratio });
+  });
 }
 
 let activeMentionEl = null;
@@ -6002,12 +6073,12 @@ function togglePreview(e, btn){
 }
 
 const YOUR_VOICES_DATA = [
-  {id:'mina', name:'Mina — calm', tag:"Female · Warm · Elena's default"},
-  {id:'bunty', name:'Bunty — Funny Best Friend', tag:'Male · Standard'},
-  {id:'sora', name:'Sora — Bright & Playful', tag:'Female · Energetic'},
-  {id:'jun', name:'Jun — Deep & Confident', tag:'Male · Warm'},
-  {id:'yuna', name:'Yuna — Soft ASMR', tag:'Female · Soft'},
-  {id:'chris', name:'Chris — Casual Narrator', tag:'Male · Standard'}
+  {id:'mina', name:'Mina — calm', tag:"Female · Warm · Elena's default", source:'library'},
+  {id:'bunty', name:'Bunty — Funny Best Friend', tag:'Male · Standard', source:'library'},
+  {id:'sora', name:'Sora — Bright & Playful', tag:'Female · Energetic', source:'library'},
+  {id:'jun', name:'Jun — Deep & Confident', tag:'Male · Warm', source:'cloned'},
+  {id:'yuna', name:'Yuna — Soft ASMR', tag:'Female · Soft', source:'cloned'},
+  {id:'chris', name:'Chris — Casual Narrator', tag:'Male · Standard', source:'cloned'}
 ];
 let selectedVoiceId = 'mina';
 
@@ -6025,6 +6096,35 @@ function renderMyVoicesCardRow(){
 function selectVoiceById(id){
   selectedVoiceId = id;
   renderMyVoicesCardRow();
+}
+
+// ---- Settings-bar "Select voice" modal (Figma 8727:223765) ----
+function voiceRowHtml(v){
+  const selected = v.id === selectedVoiceId;
+  return `
+    <div class="voice-item${selected ? ' selected' : ''}" onclick="selectSettingVoice(this,'${escapeHtml(v.name)}'); this.dataset.voiceId='${v.id}';" data-voice-id="${v.id}">
+      <div class="voice-play" onclick="togglePreview(event,this)"><img src="../../../../components/ai-social-media/icons/audio-play.svg" class="icon-inline icon-16" alt=""></div>
+      <div class="voice-item-info"><span class="voice-item-name">${escapeHtml(v.name)}</span><span class="voice-item-tag">${escapeHtml(v.tag)}</span></div>
+      <span class="voice-check">✓</span>
+    </div>`;
+}
+function renderVoiceSelectModalRows(){
+  document.getElementById('voiceSelectGroupLib').innerHTML = YOUR_VOICES_DATA.filter(v => v.source === 'library').map(voiceRowHtml).join('');
+  document.getElementById('voiceSelectGroupCloned').innerHTML = YOUR_VOICES_DATA.filter(v => v.source === 'cloned').map(voiceRowHtml).join('');
+}
+function openVoiceSelectModal(){
+  renderVoiceSelectModalRows();
+  window.__pendingSettingVoiceLabel = document.getElementById('settingVoice').textContent;
+  document.getElementById('voiceSelectModalOverlay').style.display = 'flex';
+}
+function closeVoiceSelectModal(){
+  document.getElementById('voiceSelectModalOverlay').style.display = 'none';
+}
+function saveVoiceSelection(){
+  const picked = document.querySelector('#voiceSelectModalOverlay .voice-item.selected');
+  if(picked) selectedVoiceId = picked.dataset.voiceId;
+  if(window.__pendingSettingVoiceLabel) applySettingVoice(window.__pendingSettingVoiceLabel);
+  closeVoiceSelectModal();
 }
 
 // -- Browse ElevenLabs voice library data + rendering (inline expand panel) --
@@ -6073,7 +6173,11 @@ function filterVoiceLib(query, containerId){
   });
 }
 function addVoiceFromLibrary(row){
-  document.querySelectorAll('#voiceLibGrid .voice-lib-row.added').forEach(r => r.classList.remove('added'));
+  // Generalized over whichever grid the row actually lives in (the Brief screen's inline
+  // #voiceLibGrid or the settings-bar modal's #voiceLibGridModal) rather than hardcoding one --
+  // both grids render from the same renderVoiceLibRows()/onclick markup.
+  const grid = row.closest('.voice-lib-grid');
+  grid.querySelectorAll('.voice-lib-row.added').forEach(r => r.classList.remove('added'));
   row.classList.add('added');
 }
 function reelToggleVoiceBrowsePanel(){
@@ -6084,12 +6188,40 @@ function reelToggleVoiceBrowsePanel(){
   btn.style.display = isOpen ? 'flex' : 'none';
   if(!isOpen) renderVoiceLibRows('voiceLibGrid');
 }
+
+// ---- Settings-bar "ElevenLabs voice library" sub-modal (Figma 8727:223551) ----
+function openVoiceLibraryModal(){
+  closeVoiceSelectModal();
+  renderVoiceLibRows('voiceLibGridModal');
+  document.getElementById('voiceLibraryModalOverlay').style.display = 'flex';
+}
+function closeVoiceLibraryModal(){
+  document.getElementById('voiceLibraryModalOverlay').style.display = 'none';
+  document.getElementById('voiceSelectModalOverlay').style.display = 'flex';
+}
+// Importing a library voice adds it to "Cloned & Designed by you" (this app has no real
+// ElevenLabs account to import into, so it's modeled the same way a cloned voice would show up)
+// and selects it immediately, then hands control back to the Select-voice modal.
+function saveVoiceLibrarySelection(){
+  const added = document.querySelector('#voiceLibGridModal .voice-lib-row.added');
+  if(added){
+    const name = added.querySelector('.voice-lib-name').textContent;
+    const tag = added.querySelector('.voice-lib-meta').textContent;
+    const id = 'lib-' + name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    if(!YOUR_VOICES_DATA.some(v => v.id === id)) YOUR_VOICES_DATA.push({id, name, tag, source:'cloned'});
+    selectedVoiceId = id;
+    window.__pendingSettingVoiceLabel = name;
+  }
+  document.getElementById('voiceLibraryModalOverlay').style.display = 'none';
+  document.getElementById('voiceSelectModalOverlay').style.display = 'flex';
+  renderVoiceSelectModalRows();
+}
 renderMyVoicesCardRow();
 
 // ---- Settings bar: Character / Voice popovers ----
 function toggleSettingPopover(e, which){
   e.stopPropagation();
-  const ids = {character:'characterPopover', voice:'voiceSettingPopover', duration:'durationSettingPopover'};
+  const ids = {character:'characterPopover', duration:'durationSettingPopover'};
   Object.entries(ids).forEach(([key, id]) => {
     const pop = document.getElementById(id);
     if(key === which){
@@ -6101,7 +6233,6 @@ function toggleSettingPopover(e, which){
 }
 document.addEventListener('click', (e) => {
   if(!e.target.closest('#characterChipWrap')) document.getElementById('characterPopover').style.display = 'none';
-  if(!e.target.closest('#voiceChipWrap')) document.getElementById('voiceSettingPopover').style.display = 'none';
   if(!e.target.closest('#durationSettingChipWrap')) document.getElementById('durationSettingPopover').style.display = 'none';
 });
 function selectSettingCharacter(el, name){
@@ -6203,10 +6334,14 @@ function selectCarSettingCharacter(el, name){
   }
 }
 function selectSettingVoice(el, label){
-  document.querySelectorAll('#voiceSettingPopover .voice-item').forEach(v => v.classList.remove('selected'));
+  document.querySelectorAll('#voiceSelectModalOverlay .voice-item').forEach(v => v.classList.remove('selected'));
   el.classList.add('selected');
+  window.__pendingSettingVoiceLabel = label;
+}
+// Commits whatever selectSettingVoice() last marked (or the modal's initial selection, if the
+// user just hits Save without touching anything) -- see openVoiceSelectModal()/saveVoiceSelection().
+function applySettingVoice(label){
   document.getElementById('settingVoice').textContent = label;
-  document.getElementById('voiceSettingPopover').style.display = 'none';
   ['tl', 'vid'].forEach(scope => {
     for(let i = 1; i <= getSceneCount(); i++) updateVoicePreviewButton(scope, i);
   });
@@ -6754,6 +6889,17 @@ function renderTimelineGrid(count){
   selectTimelineTile(1);
 }
 
+// Prototype only -- no real files exist to save, mirrors downloadCard()'s no-op.
+function downloadReelThumb(unit){}
+// Figma 9385:172647 -- reuses the shared image lightbox (openImageLightbox, node 7351-139160)
+// exactly like the Carousel Storyboard's expandCard() does, so the "don't exceed viewport" sizing
+// is already handled by that shared modal. Every generated scene becomes a page (its Scene N
+// label), and paging inside the lightbox keeps the Timeline tab's own tile selection in sync.
+function expandReelThumb(unit){
+  const tiles = document.querySelectorAll('#timelineGrid .scene-tile');
+  const entries = Array.from(tiles).map((t, i) => ({ label: 'Scene ' + (i + 1), ready: t.dataset.type === 'thumbnail' }));
+  openImageLightbox(entries, unit - 1, 'reel-thumb-' + unit, (i) => selectTimelineTile(i + 1));
+}
 function buildTimelineSegmentNav(count){
   const nav = document.getElementById('timelineSegmentNav');
   if(!nav || !count) return;
@@ -6816,7 +6962,17 @@ function generateScriptThumbnails(btnEl){
       t.dataset.type = 'thumbnail';
       t.querySelector('.scene-tile-placeholder')?.remove();
       t.querySelector('.scene-tile-preview').style.backgroundImage = `url('assets/video/scene${(i % 2) + 1}.png')`;
-      t.querySelector('.scene-tile-preview').insertAdjacentHTML('afterbegin', '<div class="scene-tile-top-row"><span class="feedback-status-chip feedback-status-chip--green">Ready</span></div>');
+      // Figma 9059:244772 -- Ready badge left, download/maximize (media-card-icon-btn, shared
+      // with Image Scene Card / Storyboard Card) right, both always visible (not hover-only)
+      // per .scene-tile-top-row's own justify-content:space-between.
+      t.querySelector('.scene-tile-preview').insertAdjacentHTML('afterbegin', `
+        <div class="scene-tile-top-row">
+          <span class="feedback-status-chip feedback-status-chip--green">Ready</span>
+          <div class="scene-tile-icon-row">
+            <button class="media-card-icon-btn download" type="button" onclick="event.stopPropagation(); downloadReelThumb(${i + 1})"><img src="../../../../components/ai-social-media/icons/download-ui.svg" alt=""></button>
+            <button class="media-card-icon-btn maximize" type="button" onclick="event.stopPropagation(); expandReelThumb(${i + 1})"><img src="../../../../components/ai-social-media/icons/maximize.svg" alt=""></button>
+          </div>
+        </div>`);
     });
 
     // Same working -> completion -> Done-card narration as continueToTimelineFromChat() above,
@@ -7583,19 +7739,17 @@ function getPublishMetaText(){
   return `${window.__isStoryVideo ? 'Story Video' : 'Reel/Short'} · 9:16 · ${window.__videoDuration || 16}s`;
 }
 
-// key -> {post: bool, story: bool}. Connected platforms default to every surface the
-// content type offers. Not-connected platforms default to nothing checked EXCEPT facebook,
-// which the Destinations/Publish reference screens (7606:232090) show as a selected-but-
-// not-connected destination -- it needs to default checked so its "Not connected" tab
-// (illustration + inline Connect card) is actually reachable by opening Publish, not just
-// possible in theory. Other not-connected platforms stay opt-in.
+// key -> {post: bool, story: bool}. Connected platforms default to every surface the content
+// type offers; not-connected platforms always default to unchecked and can't be checked at
+// all (see renderPublishDestinationsSimple()/renderPublishDestinationsTable()) -- a
+// not-connected destination can only ever be reached via its own "Connect" button, never by
+// getting selected into the Publish confirmation modal.
 window.__platformFormats = window.__platformFormats || {};
 function ensurePlatformFormatDefaults(){
   const surfaces = getDestinationSurfaces();
   PUBLISH_PLATFORMS.forEach(p => {
     if(window.__platformFormats[p.key]) return;
-    const connected = window.__platformConnections[p.key];
-    const on = connected || p.key === 'facebook';
+    const on = window.__platformConnections[p.key];
     window.__platformFormats[p.key] = { post: on && surfaces.includes('post'), story: on && surfaces.includes('story') };
   });
 }
@@ -7640,7 +7794,11 @@ function getCheckedDestinations(){
   ensurePlatformFormatDefaults();
   return PUBLISH_PLATFORMS.filter(p => {
     const f = window.__platformFormats[p.key];
-    return f && (f.post || f.story);
+    // Defensive: a not-connected platform should never be checked in the first place
+    // (renderPublishDestinationsSimple()/renderPublishDestinationsTable() both refuse to let
+    // one get selected), but this is the single choke-point every content type's Publish
+    // modal reads from, so it's worth guarding here too rather than trusting every caller.
+    return window.__platformConnections[p.key] && f && (f.post || f.story);
   }).map(p => p.key);
 }
 
@@ -7979,16 +8137,13 @@ function renderPublishDestinationsSimple(el){
   const surface = getDestinationSurfaces()[0];
   el.innerHTML = PUBLISH_PLATFORMS.map(p => {
     const connected = window.__platformConnections[p.key];
-    // Connection status no longer disables this -- see renderPublishDestinationsTable's
-    // matching comment: selecting a not-connected platform is what makes its "Not connected"
-    // state reachable in the Publish modal instead of permanently dead code.
     const checked = window.__platformFormats[p.key][surface];
-    // Figma's Checkbox component (node 6320:129248) forces a Not Connected row's checkbox
-    // into its inactive look — always the empty neutral-150/neutral-400/opacity-50 box,
-    // never a checkmark, regardless of the underlying selected state. Still clickable (see
-    // comment above): only the visual is forced, not the interaction.
+    // A not-connected destination can't be selected at all -- Figma's Checkbox component
+    // (node 6320:129248) forces the empty neutral-150/neutral-400/opacity-50 look, and here
+    // that's backed by actually removing the click handler too (matches
+    // renderPublishDestinationsTable's disabled inputs), not just a visual-only lock.
     const checkbox = !connected
-      ? `<span class="destination-checkbox disabled" onclick="toggleDestinationFormat('${p.key}','${surface}');"></span>`
+      ? `<span class="destination-checkbox disabled"></span>`
       : `<span class="destination-checkbox${checked ? ' checked' : ''}" onclick="toggleDestinationFormat('${p.key}','${surface}');">${checked ? '<img src="../../../../components/ai-social-media/icons/wh-check.svg" alt="">' : ''}</span>`;
     const status = connected
       ? `<span class="destination-account-status connected">Connected</span>`
@@ -9510,8 +9665,9 @@ fitScreenToViewport();
     tick:'<svg viewBox="0 0 12 12" fill="none"><path d="M10 3L4.5 8.5 2 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'
   };
   var MATCH = ['Style','Composition','Colors','Subject'];
-  var S = null;          /* 레퍼런스 상태. 딥링크가 없으면 끝까지 null 이다 */
+  var refs = [];         /* 레퍼런스 상태 배열 -- My Library에서 2장 이상 고르면 항목마다 하나씩 */
   var pending = null;    /* 모달에서 고르는 중인 프레임 (아직 확정 전) */
+  var pendingIdx = null; /* 프레임 모달이 refs[] 중 몇 번째를 편집 중인지 */
 
   function esc(s){ return String(s == null ? '' : s)
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
@@ -9536,69 +9692,71 @@ fitScreenToViewport();
     for (var i = 0; i < 8; i++) out.push(tc(Math.round(i * d / 7)));
     return out;
   }
-  function matchList(){ return MATCH.filter(function(m){ return S.match[m]; }); }
-  function subline(){
+  function matchList(r){ return MATCH.filter(function(m){ return r.match[m]; }); }
+  function subline(r){
     /* 프레임은 영상에만 있는 개념이다. 이미지·캐러셀에서는 아예 말하지 않는다 */
-    var f = !S.isVideo ? '' : (S.frame === 'Cover' ? 'Cover frame' : 'Frame ' + S.frame) + ' · ';
-    var m = matchList();
-    return f + S.strength + (m.length ? ' · ' + m.join(', ') : '');
+    var f = !r.isVideo ? '' : (r.frame === 'Cover' ? 'Cover frame' : 'Frame ' + r.frame) + ' · ';
+    var m = matchList(r);
+    return f + r.strength + (m.length ? ' · ' + m.join(', ') : '');
   }
 
   /* ---------- 칩 ---------- */
-  function chipHTML(){
-    return '<div class="ref-chip ref-chip--detail" data-r="' + esc(S.ratio) + '">' +
-      '<div class="fmxref-hit" data-fmxref="open" role="button" tabindex="0">' +
-        (S.thumb ? '<img class="ref-chip-detail-thumb" src="' + esc(thumbSrc(S.thumb)) + '" alt=""' + onerr() + '>'
+  /* `i`는 refs[] 안에서 몇 번째 레퍼런스인지 -- My Library에서 여러 장을 고르면 항목마다
+     하나씩 이 칩이 반복돼서 나온다 (전에는 S가 객체 하나뿐이라 마지막 것만 남았었다). */
+  function chipHTML(r, i){
+    return '<div class="ref-chip ref-chip--detail" data-r="' + esc(r.ratio) + '">' +
+      '<div class="fmxref-hit" data-fmxref="open" data-idx="' + i + '" role="button" tabindex="0">' +
+        (r.thumb ? '<img class="ref-chip-detail-thumb" src="' + esc(thumbSrc(r.thumb)) + '" alt=""' + onerr() + '>'
                  : '<span class="ref-chip-detail-thumb"></span>') +
         '<div class="ref-chip-detail-labels">' +
-          '<div class="ref-chip-detail-line1"><span class="ref-chip-detail-badge">REF</span><span class="ref-chip-detail-title">from “' + esc(S.title) + '”</span></div>' +
-          '<span class="ref-chip-detail-sub">' + esc(subline()) + '</span>' +
+          '<div class="ref-chip-detail-line1"><span class="ref-chip-detail-badge">REF</span><span class="ref-chip-detail-title">from “' + esc(r.title) + '”</span></div>' +
+          '<span class="ref-chip-detail-sub">' + esc(subline(r)) + '</span>' +
         '</div></div>' +
-      '<button type="button" class="fmxref-x" data-fmxref="remove" aria-label="Remove reference">✕</button>' +
+      '<button type="button" class="fmxref-x" data-fmxref="remove" data-idx="' + i + '" aria-label="Remove reference">✕</button>' +
     '</div>';
   }
 
   /* ---------- 팝오버 ---------- */
-  function popHTML(){
-    var isCover = S.frame === 'Cover';
+  function popHTML(r, i){
+    var isCover = r.frame === 'Cover';
     return '<div class="fmxref-pop" hidden>' +
       '<div class="fmxref-pop-head">' + ICO.check + 'Use as reference' +
-        '<button type="button" class="fmxref-x" data-fmxref="close" aria-label="Close">✕</button></div>' +
+        '<button type="button" class="fmxref-x" data-fmxref="close" data-idx="' + i + '" aria-label="Close">✕</button></div>' +
       '<div><div class="fmxref-lb">Reference frame</div>' +
         '<div class="fmxref-fr">' +
-          '<span class="thwrap" data-r="' + esc(S.ratio) + '">' +
-            (S.thumb ? '<img class="th" src="' + esc(thumbSrc(S.thumb)) + '" alt=""' + onerr() + '>'
+          '<span class="thwrap" data-r="' + esc(r.ratio) + '">' +
+            (r.thumb ? '<img class="th" src="' + esc(thumbSrc(r.thumb)) + '" alt=""' + onerr() + '>'
                      : '<span class="th"></span>') +
-            (S.isVideo ? '<span class="cover">' + esc(isCover ? 'Cover' : S.frame) + '</span>' : '') +
+            (r.isVideo ? '<span class="cover">' + esc(isCover ? 'Cover' : r.frame) + '</span>' : '') +
           '</span>' +
-          '<span class="meta"><span class="nm">' + esc(S.title) + '</span>' +
-            '<span class="sub">' + esc(S.kindLabel + ' · ' + S.ratio + (S.isVideo ? ' · ' + duration() + 's' : '')) + '</span>' +
-            (S.isVideo ? '<button type="button" class="fmxref-change" data-fmxref="frames">' +
+          '<span class="meta"><span class="nm">' + esc(r.title) + '</span>' +
+            '<span class="sub">' + esc(r.kindLabel + ' · ' + r.ratio + (r.isVideo ? ' · ' + duration() + 's' : '')) + '</span>' +
+            (r.isVideo ? '<button type="button" class="fmxref-change" data-fmxref="frames" data-idx="' + i + '">' +
                          ICO.swap + 'Change frame</button>' : '') +
           '</span></div></div>' +
       '<div><div class="fmxref-lb">Reference strength</div>' +
         '<div class="seg-control">' +
           ['Loose','Balanced','Close match'].map(function(v){
-            return '<div class="seg-chip' + (S.strength === v ? ' active' : '') +
-                   '" data-fmxref="strength" data-v="' + v + '">' + v + '</div>';
+            return '<div class="seg-chip' + (r.strength === v ? ' active' : '') +
+                   '" data-fmxref="strength" data-idx="' + i + '" data-v="' + v + '">' + v + '</div>';
           }).join('') + '</div></div>' +
       '<div><div class="fmxref-lb">Match from reference</div>' +
         '<div class="fmxref-mchips">' +
           MATCH.map(function(m){
-            return '<button type="button" class="fmxref-mchip" data-fmxref="match" data-v="' + m +
-                   '" aria-pressed="' + (S.match[m] ? 'true' : 'false') + '">' + m + '</button>';
+            return '<button type="button" class="fmxref-mchip" data-fmxref="match" data-idx="' + i + '" data-v="' + m +
+                   '" aria-pressed="' + (r.match[m] ? 'true' : 'false') + '">' + m + '</button>';
           }).join('') + '</div></div>' +
       '<hr class="fmxref-hr">' +
       '<div><div class="fmxref-lb">Copied settings</div>' +
         '<div class="fmxref-cp" style="margin-bottom:8px;"><span class="k">Character</span>' +
           '<img src="assets/characters/elena.png" alt=""' + onerr() + '><span class="v">Elena</span></div>' +
         '<div class="fmxref-cp"><span class="k">Format</span>' +
-          '<span class="fmxref-pill">' + esc(S.kindLabel) + '</span>' +
-          '<span class="fmxref-pill">' + esc(S.ratio) + '</span>' +
-          (S.isVideo ? '<span class="fmxref-pill">' + duration() + 's</span>' : '') +
+          '<span class="fmxref-pill">' + esc(r.kindLabel) + '</span>' +
+          '<span class="fmxref-pill">' + esc(r.ratio) + '</span>' +
+          (r.isVideo ? '<span class="fmxref-pill">' + duration() + 's</span>' : '') +
         '</div></div>' +
       '<div class="fmxref-pop-foot">' +
-        '<button type="button" class="btn btn-dark" data-fmxref="apply">Apply</button></div>' +
+        '<button type="button" class="btn btn-dark" data-fmxref="apply" data-idx="' + i + '">Apply</button></div>' +
     '</div>';
   }
 
@@ -9629,9 +9787,14 @@ fitScreenToViewport();
   /* ---------- 그리기 ---------- */
   function render(){
     document.querySelectorAll('.fmxref-row').forEach(function(row){
-      var open = !!row.querySelector('.fmxref-pop:not([hidden])');
-      row.innerHTML = S ? chipHTML() + popHTML() : '';
-      if (open && S){ var p = row.querySelector('.fmxref-pop'); if (p) p.hidden = false; }
+      /* refs[] 배열이라 이제 팝오버가 여러 개일 수 있다 -- 몇 번째가 열려 있었는지 인덱스로 기억 */
+      var openIdx = -1;
+      row.querySelectorAll('.fmxref-pop').forEach(function(p, idx){ if (!p.hidden) openIdx = idx; });
+      row.innerHTML = refs.map(function(r, i){ return chipHTML(r, i) + popHTML(r, i); }).join('');
+      if (openIdx > -1){
+        var pops = row.querySelectorAll('.fmxref-pop');
+        if (pops[openIdx]) pops[openIdx].hidden = false;
+      }
     });
   }
   function mountRows(){
@@ -9680,8 +9843,13 @@ fitScreenToViewport();
         document.querySelectorAll('.fmxref-pop').forEach(function(p){ p.hidden = true; });
       return;
     }
+    /* data-idx가 refs[] 안에서 어느 레퍼런스를 가리키는지 -- 여러 장을 골랐으면 칩/팝오버마다
+       다른 인덱스를 갖고 있어서 서로 독립적으로 열고 닫고 수정할 수 있다. */
+    var idx = hit.dataset.idx !== undefined ? Number(hit.dataset.idx) : null;
+    var r = idx !== null ? refs[idx] : null;
     var row = hit.closest('.fmxref-row');
-    var pop = row && row.querySelector('.fmxref-pop');
+    var pops = row ? row.querySelectorAll('.fmxref-pop') : [];
+    var pop = (idx !== null && pops[idx]) ? pops[idx] : null;
 
     if (act === 'open'){
       var wasOpen = pop && !pop.hidden;
@@ -9690,20 +9858,24 @@ fitScreenToViewport();
     }
     else if (act === 'close'){ if (pop) pop.hidden = true; }
     else if (act === 'remove'){
-      S = null; render();
-      window.__fmxrefActive = false;
-      if (window.renderReferenceImages) window.renderReferenceImages();
+      if (idx !== null) refs.splice(idx, 1);
+      render();
+      if (!refs.length){
+        window.__fmxrefActive = false;
+        if (window.renderReferenceImages) window.renderReferenceImages();
+      }
     }
-    else if (act === 'strength'){ S.strength = hit.dataset.v; render(); }
+    else if (act === 'strength'){ r.strength = hit.dataset.v; render(); }
     else if (act === 'match'){
-      S.match[hit.dataset.v] = !S.match[hit.dataset.v];
+      r.match[hit.dataset.v] = !r.match[hit.dataset.v];
       /* 전부 끄면 참고할 게 없어진다 — 마지막 하나는 못 끄게 막는다 */
-      if (!matchList().length){ S.match[hit.dataset.v] = true; return; }
+      if (!matchList(r).length){ r.match[hit.dataset.v] = true; return; }
       render();
     }
     else if (act === 'apply'){ if (pop) pop.hidden = true; }
     else if (act === 'frames'){
-      pending = S.frame === 'Cover' ? frames()[2] : S.frame;
+      pendingIdx = idx;
+      pending = r.frame === 'Cover' ? frames()[2] : r.frame;
       paintGrid();
       var ov = document.querySelector('.fmxref-ov'); if (ov) ov.hidden = false;
     }
@@ -9712,11 +9884,17 @@ fitScreenToViewport();
       var ov2 = document.querySelector('.fmxref-ov'); if (ov2) ov2.hidden = true;
     }
     else if (act === 'frames-use'){
-      S.frame = pending;
+      if (pendingIdx !== null && refs[pendingIdx]) refs[pendingIdx].frame = pending;
       var ov3 = document.querySelector('.fmxref-ov'); if (ov3) ov3.hidden = true;
       render();
-      /* 프레임을 바꿔도 팝오버는 열린 채로 둔다 — 방금 뭘 바꿨는지 보여야 한다 */
-      var p2 = document.querySelector('.fmxref-row .fmxref-pop'); if (p2) p2.hidden = false;
+      /* 프레임을 바꿔도 팝오버는 열린 채로 둔다 — 방금 뭘 바꿨는지 보여야 한다 (모든 row가
+         같은 refs[]를 그대로 반복해서 보여주므로, 각 row의 같은 인덱스를 전부 열어준다) */
+      if (pendingIdx !== null){
+        document.querySelectorAll('.fmxref-row').forEach(function(rw){
+          var rwPops = rw.querySelectorAll('.fmxref-pop');
+          if (rwPops[pendingIdx]) rwPops[pendingIdx].hidden = false;
+        });
+      }
     }
   });
 
@@ -9725,12 +9903,14 @@ fitScreenToViewport();
     if (!d || !d.ref) return;
     var ratio = d.ratio || '9:16';
     var isVideo = !(ratio && ratio !== '9:16');
-    S = {
+    /* My Library에서 여러 장을 고르면 fmxRefMount가 그만큼 여러 번 호출된다 -- refs[]에 계속
+       push해서 칩이 하나씩 늘어나게 한다 (기존 단일 슬롯 S를 덮어쓰던 방식 대신). */
+    refs.push({
       title: d.ref, thumb: d.thumb || '', ratio: ratio, isVideo: isVideo,
       kindLabel: isVideo ? 'Reel' : (d.stage === 'script' ? 'Carousel' : 'Image'),
       frame: 'Cover', strength: 'Balanced',
       match: { Style:true, Composition:true, Colors:true, Subject:false }
-    };
+    });
     mountRows();
     if (!document.querySelector('.fmxref-ov')){
       var wrap = document.createElement('div');

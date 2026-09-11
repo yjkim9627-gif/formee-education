@@ -6,14 +6,6 @@
 <link rel="stylesheet" href="../../../../tokens/tokens.css">
 <link rel="stylesheet" href="../../../../components/shared/button.css">
 <link rel="stylesheet" href="../../../../components/shared/modal.css">
-<link rel="stylesheet" href="../../../../components/ai-social-media/nav.css">
-<link rel="stylesheet" href="../../../../components/ai-social-media/topbar-stepper.css">
-<link rel="stylesheet" href="../../../../components/ai-social-media/chat-panel.css">
-<link rel="stylesheet" href="../../../../components/ai-social-media/switch.css">
-<link rel="stylesheet" href="../../../../components/ai-social-media/prompt-box.css">
-<link rel="stylesheet" href="../../../../components/ai-social-media/character-card.css">
-<link rel="stylesheet" href="../../../../components/ai-social-media/filter-chip.css">
-<link rel="stylesheet" href="../../../../components/ai-social-media/setting-chip.css">
 <style>
   *{box-sizing:border-box;}
   /* Fixed 1920x1162 to match the shared reference frame size (brand-setup/index.html) —
@@ -27,12 +19,51 @@
     display:flex; border:1px solid var(--color-neutral-300); transform-origin:top left;
   }
 
-  /* ============ NAV SIDEBAR — components/ai-social-media/nav.css ============ */
+  /* ============ NAV SIDEBAR ============ */
+  .nav{width:262px; flex-shrink:0; background:#fff; border-right:1px solid var(--color-neutral-300); padding:16px 12px; display:flex; flex-direction:column; gap:20px; transition:width 0.2s ease, padding 0.2s ease; overflow:hidden;}
+  .nav-brand{display:flex; align-items:center; gap:10px; padding:8px 4px;}
+  .nav-brand .mark{width:28px; height:28px; border-radius:7px; background:linear-gradient(135deg,var(--color-brand-primary),var(--color-brand-accent)); flex-shrink:0;}
+  .nav-brand .txt b{display:block; font-size:13px; font-weight:600; color:var(--color-neutral-900); white-space:nowrap;}
+  .nav-brand .txt span{display:block; font-size:10.5px; color:var(--color-neutral-500); white-space:nowrap;}
+  .nav-group{display:flex; flex-direction:column; gap:1px;}
+  .nav-label{font-size:10px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--color-neutral-500); padding:6px 8px; white-space:nowrap;}
+  .nav-item{display:flex; align-items:center; gap:9px; padding:8px 8px; border-radius:7px; font-size:13px; color:var(--color-neutral-700); font-weight:500; white-space:nowrap;}
+  .nav-item .ic{position:relative; flex-shrink:0;}
+  .nav-item .ic.clip{overflow:hidden;}
+  .nav-item .ic .f{position:absolute;}
+  .nav-item .ic img{display:block; width:100%; height:100%; max-width:none;}
+  .nav-item.active{background:var(--color-brand-primary-light); color:var(--color-neutral-900);}
+  .nav-workspace{display:flex; align-items:center; justify-content:space-between; gap:8px; height:36px; padding:0 12px; margin:0 4px 4px; border:1px solid var(--color-neutral-400); border-radius:8px; background:#fff; font-size:14px; color:var(--color-neutral-500); cursor:pointer;}
+  .nav-workspace .chevron{color:var(--color-neutral-500); font-size:10px; flex-shrink:0;}
+
+  .nav.collapsed{width:64px; padding:16px 8px;}
+  .nav.collapsed .nav-workspace{display:none;}
+  .nav.collapsed .nav-brand{justify-content:center; padding:8px 0;}
+  .nav.collapsed .nav-brand .txt, .nav.collapsed .nav-label, .nav.collapsed .nav-item .label{display:none;}
+  .nav.collapsed .nav-item{justify-content:center; padding:8px;}
 
   /* ============ MAIN ============ */
   .main{flex:1; display:flex; flex-direction:column; min-width:0; position:relative; background:var(--color-neutral-50);}
 
-  /* ---- topbar + stepper — components/ai-social-media/topbar-stepper.css ---- */
+  .topbar{
+    height:56px; border-bottom:1px solid var(--color-neutral-300); background:#fff; display:flex; align-items:center;
+    gap:20px; padding:0 24px; flex-shrink:0;
+  }
+  .stepper{display:flex; align-items:center; gap:8px;}
+  .step{display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:var(--color-neutral-400); cursor:pointer;}
+  .step .num{width:20px; height:20px; border-radius:10px; border:1px solid var(--color-neutral-400); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; color:var(--color-neutral-400); background:#fff;}
+  .step.active{color:var(--color-brand-primary);}
+  .step.active .num{background:var(--color-brand-primary); border-color:var(--color-brand-primary); color:#fff;}
+  .step.done{color:var(--color-neutral-700); cursor:pointer;}
+  .step.done .num{background:var(--color-badge-green-text); border-color:var(--color-badge-green-text); color:#fff;}
+  .step.done:hover{color:var(--color-brand-primary);}
+  .connector{width:30px; height:2px; background:var(--color-neutral-200);}
+  .topbar-spacer{flex:1;}
+  .topbar-actions{display:flex; align-items:center; gap:16px;}
+  .topbar-icon-btn{width:36px; height:36px; border-radius:8px; border:none; background:transparent; display:flex; align-items:center; justify-content:center; color:var(--color-neutral-700); position:relative; cursor:pointer; flex-shrink:0;}
+  .topbar-icon-btn:hover{background:var(--color-neutral-100);}
+  .topbar-icon-btn .dot{position:absolute; top:8px; right:9px; width:4px; height:4px; border-radius:2px; background:var(--color-brand-accent);}
+  .topbar-avatar{width:32px; height:32px; border-radius:999px; background:var(--color-brand-primary-mid); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:#0b2b55; flex-shrink:0;}
 
   /* ---- shared view ---- */
   .view{position:absolute; inset:56px 0 0 0; overflow-y:auto; opacity:1; transition:opacity .2s ease;}
@@ -73,16 +104,41 @@
   .credit-est .credit-value{font-size:13px; font-weight:600; color:var(--color-neutral-900);}
   .credit-est .credit-value .credit-sub{font-weight:400; color:var(--color-neutral-500);}
 
-  /* ---- VIEW: Generate (shared shell: chat + stage area) — chat panel base rules now in
-     components/ai-social-media/chat-panel.css; only screen-specific additions stay here. ---- */
+  /* ---- VIEW: Generate (shared shell: chat + stage area) ---- */
   .gen-body{display:flex; height:100%;}
+  .chat{width:324px; flex-shrink:0; min-height:0; background:var(--color-neutral-0); border-right:1px solid var(--color-neutral-200); display:flex; flex-direction:column;}
+  .chat-header{flex-shrink:0; padding:20px 16px 0; display:flex; align-items:center; justify-content:space-between;}
+  .chat-header-title{font-size:16px; font-weight:700; color:var(--color-neutral-900); font-family:var(--font-family-text);}
+  .chat-new-btn{width:28px; height:28px; border-radius:8px; background:var(--color-neutral-0); border:1px solid var(--color-neutral-200); display:flex; align-items:center; justify-content:center; font-size:16px; line-height:1; color:var(--color-neutral-700); cursor:pointer;}
+  .chat-new-btn:hover{background:var(--color-neutral-50);}
+  .chat-log{flex:1; min-height:0; overflow-y:auto; scroll-behavior:smooth; padding:16px; display:flex; flex-direction:column; gap:12px;}
+  .msg{font-size:14px; line-height:20px; max-width:92%; white-space:pre-wrap; font-family:var(--font-family-text);}
+  .msg.user{align-self:flex-end; display:flex; align-items:flex-end; gap:8px; max-width:100%;}
+  .msg.user .bubble{background:var(--color-brand-primary-light); color:var(--color-neutral-900); padding:12px 14px; border-radius:16px 16px 4px 16px; max-width:224px;}
+  .msg.user .avatar{flex-shrink:0; width:32px; height:32px; border-radius:999px; background:var(--color-brand-primary-mid); color:var(--color-neutral-800); font-size:11px; font-weight:600; font-family:var(--font-family-text); display:flex; align-items:center; justify-content:center;}
+  .msg.ai{align-self:stretch; background:none; color:var(--color-neutral-700); padding:0; border-radius:0; max-width:100%; display:flex; flex-direction:column; gap:12px;}
+  .msg.ai .tag{display:none;}
+  .msg.ai .note{display:block; font-size:10.5px; color:var(--color-neutral-500); margin-top:3px;}
+  .msg.ai.loading{color:var(--color-neutral-500); font-size:13px;}
   .msg-status{font-size:13px; font-family:var(--font-family-text);}
   .msg-status .worked-label{font-weight:600; color:var(--color-neutral-700);}
   .msg-status .worked-time{font-weight:400; color:var(--color-neutral-500);}
-  /* .chat-cta-row here is the plain flex-wrap row (matches brief/reel) — see note in chat-panel.css
-     re: why it's not shared with new-image-to-generate.html's bordered-card variant. */
   .chat-cta-row{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;}
   .chat-cta-row .btn-dark, .chat-cta-row .btn-secondary{padding:8px 14px; font-size:12px;}
+  .dots span{animation:blink 1.4s infinite; opacity:0;}
+  .dots span:nth-child(2){animation-delay:.2s;}
+  .dots span:nth-child(3){animation-delay:.4s;}
+  @keyframes blink{0%,80%,100%{opacity:0;}40%{opacity:1;}}
+  .chat-hint{font-size:10.5px; color:var(--color-neutral-500); padding:0 16px 10px;}
+  .chat-quick-chips{display:none; flex-wrap:wrap; gap:6px; padding:0 16px 10px;}
+  .chat-chip{border:1px solid var(--color-neutral-300); border-radius:999px; background:#fff; padding:6px 12px; font-size:12.5px; font-weight:600; color:var(--color-neutral-900); font-family:var(--font-family-text); cursor:pointer;}
+  .chat-chip:hover{border-color:var(--color-neutral-450);}
+  .chat-input-box{margin:0 16px 16px; border:1.5px solid var(--color-brand-primary); border-radius:12px; background:var(--color-neutral-0); padding:14px 14px 12px; display:flex; flex-direction:column; gap:12px;}
+  .chat-input{border:none; outline:none; background:transparent; width:100%; font-size:13px; color:var(--color-neutral-900); font-family:var(--font-family-text);}
+  .chat-input::placeholder{color:var(--color-neutral-500);}
+  .chat-input-bottom-row{display:flex; align-items:center; justify-content:space-between;}
+  .chat-attach-btn{width:18px; height:18px; border:none; background:none; padding:0; color:var(--color-neutral-500); cursor:pointer; display:flex; align-items:center; justify-content:center;}
+  .chat-send{width:28px; height:28px; border-radius:999px; background:var(--color-brand-primary); border:none; color:#fff; cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:14px;}
 
   .stage-area{flex:1; display:flex; flex-direction:column; min-width:0; min-height:0; position:relative;}
   .stage-tabs{display:flex; justify-content:center; gap:18px; padding:12px 24px 0; border-bottom:1px solid var(--color-neutral-300); flex-shrink:0;}
@@ -93,7 +149,9 @@
 
   .settings-bar{position:absolute; top:56px; left:28px; right:28px; z-index:15; display:flex; justify-content:center; gap:8px; flex-wrap:wrap; pointer-events:none;}
   .settings-bar > *{pointer-events:auto;}
-  /* .setting-chip / .brand-chip-setting — components/ai-social-media/setting-chip.css */
+  .setting-chip{display:flex; align-items:center; gap:6px; border:1px solid var(--color-neutral-300); border-radius:999px; padding:5px 12px; font-size:11.5px; color:var(--color-neutral-700); background:var(--color-neutral-50);}
+  .setting-chip b{color:var(--color-neutral-900); font-weight:600;}
+  .brand-chip-setting{background:var(--color-brand-primary-light); border-color:var(--color-brand-primary-mid);}
 
   .stage-body{flex:1; min-height:0; padding:52px 28px 14px; overflow-y:auto; display:flex; flex-direction:column;}
   .stage-body-inner{max-width:960px; margin:0 auto; width:100%; flex:1; min-height:0; display:flex; flex-direction:column;}
@@ -110,10 +168,24 @@
   .brief-heading h1{font-size:22px; font-weight:700; color:var(--color-neutral-900); margin:0 0 6px; letter-spacing:-0.2px;}
   .brief-heading p{font-size:13px; color:var(--color-neutral-500); margin:0 0 16px;}
 
-  /* AI Prompt Box shell — components/ai-social-media/prompt-box.css. This screen's chip icon slot
-     is still a plain gray placeholder box (not a real icon asset like new-image-to-generate.html),
-     so the .ic override stays local. */
-  .prompt-chip .ic{border-radius:3px; background:var(--color-neutral-400);}
+  .prompt-box{background:#fff; border:1.2px solid var(--color-neutral-400); border-radius:var(--radius-xl); padding:24px; display:flex; flex-direction:column; gap:32px;}
+  .prompt-top{display:flex; flex-direction:column; gap:20px;}
+  .prompt-summary{display:block; width:100%; font-size:14px; color:var(--color-neutral-900); line-height:22px; margin:0; border:none; background:transparent; font-family:var(--font-family-text); resize:vertical; outline:none; min-height:66px;}
+  .prompt-bottom{display:flex; align-items:center; justify-content:space-between;}
+  .prompt-chips{display:flex; gap:8px;}
+  .prompt-chip{border:1px solid var(--color-neutral-400); border-radius:8px; padding:7px 12px 7px 10px; font-size:14px; font-weight:500; color:var(--color-neutral-700); display:flex; align-items:center; gap:5px;}
+  .prompt-chip .ic{width:16px; height:16px; border-radius:3px; background:var(--color-neutral-400);}
+  .prompt-chip.clickable{cursor:pointer;}
+  .prompt-chip.clickable .chevron{font-size:9px; color:var(--color-neutral-500); margin-left:1px;}
+  .prompt-chip-wrap{position:relative;}
+  .chip-popover{position:absolute; top:calc(100% + 6px); left:0; min-width:160px; background:#fff; border:1px solid var(--color-neutral-400); border-radius:8px; box-shadow:0 10px 28px rgba(15,23,41,.14); padding:8px; z-index:40;}
+  .chip-popover-label{font-size:12px; font-weight:600; color:var(--color-neutral-700); padding:7px 8px;}
+  .chip-option{display:flex; align-items:center; justify-content:space-between; gap:16px; padding:8px; border-radius:6px; font-size:14px; font-weight:500; color:var(--color-neutral-700); cursor:pointer;}
+  .chip-option:hover{background:var(--color-neutral-50);}
+  .chip-option.selected{background:var(--color-neutral-100);}
+  .chip-option .check{display:none; color:var(--color-brand-primary); font-size:13px;}
+  .chip-option.selected .check{display:inline;}
+  .refine-btn{width:36px; height:36px; border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); background:#fff; display:flex; align-items:center; justify-content:center; color:var(--color-neutral-700); font-size:14px; cursor:pointer;}
 
   /* -- Reference image chips (Brief prompt box) -- */
   .reference-images-row{display:flex; gap:8px; flex-wrap:wrap;}
@@ -127,10 +199,23 @@
   .ref-image-add:hover{background:var(--color-neutral-150);}
   .ref-image-add .ic{width:20px; height:20px; border-radius:4px; background:var(--color-neutral-400);}
 
-  /* -- Character section (Brief & Style) — components/ai-social-media/character-card.css +
-     filter-chip.css. Selection state harmonized: this screen previously used a brand-primary
-     border+shadow ring on .char-card.selected, which contradicted style-reference.md's documented
-     "card selection uses neutral tone, not brand blue" rule — now matches new-image-to-generate.html. -- */
+  /* -- Character section (Brief & Style) -- */
+  .char-section{margin-top:24px;}
+  .char-section-label{font-size:16px; font-weight:700; color:var(--color-neutral-900); margin-bottom:2px;}
+  .char-section-sub{font-size:13px; color:var(--color-neutral-500); margin:0 0 16px;}
+  .char-panel{background:#fff; border:1.2px solid var(--color-neutral-400); border-radius:var(--radius-xl); padding:24px; display:flex; flex-direction:column; gap:16px;}
+  .char-filters{display:flex; align-items:center; gap:8px; margin-bottom:12px;}
+  .filter-chip{display:flex; align-items:center; gap:4px; border:1px solid var(--color-neutral-300); border-radius:999px; padding:6px 12px; font-size:12.5px; font-weight:500; color:var(--color-neutral-700); cursor:pointer; background:#fff;}
+  .filter-chip.active{background:var(--color-neutral-100); border-color:var(--color-neutral-300); font-weight:600;}
+  .filter-chip .chevron{font-size:9px; color:var(--color-neutral-500);}
+  .char-see-all{margin-left:auto; font-size:12.5px; font-weight:600; color:var(--color-neutral-700); cursor:pointer; white-space:nowrap;}
+  .char-see-all:hover{color:var(--color-brand-primary);}
+  .char-grid{display:flex; gap:12px; overflow-x:auto; padding-bottom:4px;}
+  .char-card{width:104px; flex-shrink:0; border:1.5px solid var(--color-neutral-300); border-radius:10px; overflow:hidden; cursor:pointer; background:#fff;}
+  .char-card.selected{border-color:var(--color-brand-primary); box-shadow:0 0 0 3px rgba(79,109,230,0.12);}
+  .char-card .thumb{height:88px; background:linear-gradient(135deg,var(--color-neutral-300),var(--color-neutral-150));}
+  .char-card.new .thumb{display:flex; align-items:center; justify-content:center; font-size:20px; color:var(--color-neutral-400); background:var(--color-neutral-50); border-bottom:1px dashed var(--color-neutral-300);}
+  .char-card .name{padding:7px 4px; font-size:12px; text-align:center; color:var(--color-neutral-700); font-weight:500;}
   .char-per-card-note{margin:10px 0 0; font-size:12px; color:var(--color-neutral-500); line-height:1.5;}
 
   /* -- Advanced settings (Brief & Style, collapsible) -- */
@@ -147,7 +232,13 @@
   .advanced-field input{border:1px solid var(--color-neutral-300); border-radius:8px; padding:10px 12px; font-size:13px; font-family:var(--font-family-text); color:var(--color-neutral-900); outline:none;}
   .advanced-field input:focus{border-color:var(--color-brand-primary);}
 
-  /* switch — components/ai-social-media/switch.css */
+  /* switch — [DS] Controls/Switch: 40x23, off=neutral-300, on=brand/primary */
+  .field-switch{width:40px; height:23px; border-radius:12px; border:none; background:var(--color-neutral-300); position:relative; cursor:pointer; flex-shrink:0; margin-top:2px; transition:background .15s;}
+  .field-switch .knob{position:absolute; top:2px; left:2px; width:19px; height:19px; border-radius:999px; background:#fff; box-shadow:0 1px 2px rgba(0,0,0,.2); transition:transform .15s;}
+  .field-switch.on{background:var(--color-brand-primary);}
+  .field-switch.on .knob{transform:translateX(17px);}
+  .field-switch.disabled{background:var(--color-neutral-200); cursor:not-allowed;}
+  .field-switch.disabled .knob{background:var(--color-neutral-100);}
 
   .brand-kit-row{display:flex; align-items:center; gap:10px; margin-top:12px;}
   .brand-kit-label{font-size:13px; font-weight:600; color:var(--color-neutral-900);}
@@ -167,7 +258,7 @@
 
   /* ---- Script stage: brand kit + one full-width, always-expanded block per card ---- */
   .script-global-brand{border:1px solid var(--color-neutral-300); border-radius:10px; padding:14px 16px; margin-bottom:18px;}
-  .script-card-list{display:flex; flex-direction:column; gap:10px; margin-bottom:8px;}
+  .script-card-list{display:flex; flex-direction:column; gap:10px; margin-bottom:24px;}
   .script-card-block{border:1px solid var(--color-neutral-300); border-radius:10px; padding:12px 14px; background:#fff;}
   .script-card-block-header{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:8px;}
   .script-card-block-title{font-size:12.5px; font-weight:700; color:var(--color-neutral-900);}
@@ -206,7 +297,8 @@
   .storyboard-tile-ready-badge{display:none; align-items:center; gap:3px; font-size:10px; font-weight:700; color:var(--color-badge-green-text); background:#fff; padding:3px 7px; border-radius:999px;}
   .storyboard-tile.ready .storyboard-tile-ready-badge{display:inline-flex;}
   .storyboard-tile-regen-btn{display:none; width:24px; height:24px; border-radius:999px; border:none; background:rgba(255,255,255,0.92); align-items:center; justify-content:center; font-size:12px; color:var(--color-neutral-700); cursor:pointer; margin-left:auto;}
-  .storyboard-tile-regen-btn:hover{background:#fff; color:var(--color-neutral-900);}
+  .storyboard-tile-regen-btn:hover:not(:disabled){background:#fff; color:var(--color-neutral-900);}
+  .storyboard-tile-regen-btn:disabled{opacity:.4; cursor:not-allowed;}
   .storyboard-tile.ready .storyboard-tile-regen-btn{display:flex;}
   .storyboard-tile-pager{display:none; align-items:center; justify-content:center; gap:6px; padding:6px 8px; border-top:1px solid var(--color-neutral-200); font-size:11px; font-weight:600; color:var(--color-neutral-700); background:#fff;}
   .storyboard-tile.has-history .storyboard-tile-pager{display:flex;}
@@ -229,6 +321,15 @@
   .storyboard-generate-cta{margin-top:14px;}
   .storyboard-generate-cta .meta-text{display:block; margin-top:8px;}
 
+  .copy-field-header-row{display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;}
+  .copy-field-section-label{font-size:11px; font-weight:700; color:var(--color-neutral-500); text-transform:uppercase; letter-spacing:.04em;}
+  .copy-field-controls{display:flex; align-items:center; gap:6px;}
+  .copy-edit-btn{display:flex; align-items:center; gap:4px; border:1px solid var(--color-neutral-300); border-radius:999px; background:#fff; padding:5px 10px; font-size:12px; font-weight:600; color:var(--color-neutral-900); font-family:var(--font-family-text); cursor:pointer;}
+  .copy-edit-btn:hover{border-color:var(--color-neutral-450);}
+  .copy-undo-btn{width:26px; height:26px; border-radius:999px; border:1px solid var(--color-neutral-300); background:#fff; color:var(--color-neutral-700); font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center;}
+  .copy-undo-btn:hover:not(:disabled){border-color:var(--color-neutral-450); color:var(--color-neutral-900);}
+  .copy-undo-btn:disabled{opacity:.35; cursor:not-allowed;}
+
   .copy-field-list{border:1px solid var(--color-neutral-300); border-radius:12px; overflow:hidden; background:#fff; margin-bottom:16px;}
   .copy-field{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 16px; border-bottom:1px solid var(--color-neutral-200); transition:opacity .15s;}
   .copy-field:last-child{border-bottom:none;}
@@ -237,82 +338,24 @@
   .copy-field-label{font-size:11px; font-weight:700; color:var(--color-neutral-500); text-transform:uppercase; letter-spacing:.04em;}
   .copy-field-input{border:none; background:transparent; font-size:14px; color:var(--color-neutral-900); font-family:var(--font-family-text); padding:0; outline:none; width:100%;}
   .copy-field.off .copy-field-input{pointer-events:none;}
+  /* Locked = that card has already generated once; text/toggle read as muted until "Edit" is clicked. */
+  .copy-field-list.locked .copy-field-label{color:var(--color-neutral-400);}
+  .copy-field-list.locked .copy-field-input{color:var(--color-neutral-400); cursor:default;}
+  .copy-field-list.locked .field-switch{opacity:.4; pointer-events:none;}
 
   .scene-desc-label{font-size:11px; font-weight:700; color:var(--color-neutral-500); text-transform:uppercase; letter-spacing:.04em; display:block; margin-bottom:6px;}
   .story-desc-input{width:100%; min-height:70px; border:1px solid var(--color-neutral-300); border-radius:8px; padding:10px 12px; font-size:13px; font-family:var(--font-family-text); color:var(--color-neutral-900); line-height:1.5; resize:vertical; outline:none;}
   .story-desc-input:focus{border-color:var(--color-brand-primary);}
 
-  /* ---- Size variation panel (Generate stage, once all cards ready) ---- */
-  /* ---- Storyboard header: title/hint on the left, "+ Size variations" trigger on the right ---- */
+  /* ---- Per-card Image prompt (revealed once that card has generated at least once) ---- */
+  .card-prompt-block{display:none; margin-top:14px;}
+  .card-prompt-block.visible{display:block;}
+  .card-prompt-text{width:100%; min-height:70px; border:1px solid var(--color-neutral-300); border-radius:8px; padding:10px 12px; font-size:13px; font-family:var(--font-family-text); color:var(--color-neutral-900); line-height:1.5; resize:vertical; outline:none;}
+  .card-prompt-text:focus{border-color:var(--color-brand-primary);}
+
+  /* ---- Storyboard header: title/hint on the left ---- */
   .storyboard-header-row{display:flex; align-items:flex-start; justify-content:space-between; gap:16px;}
-
-  /* ---- Size variations panel — lives inline in the Storyboard work screen (swaps in for the
-       card grid + editor sidebar), not a modal. ---- */
-  .storyboard-sizevar-panel{flex:1; min-height:0; display:flex; flex-direction:column; border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl); background:#fff; overflow:hidden;}
-  .sizevar-back-btn{align-self:flex-start; margin:14px 0 0 14px;}
-  .sizevar-panel-header{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 16px 0; flex-shrink:0;}
-  .sizevar-modal-tabs{display:flex; align-items:center; gap:4px; flex-wrap:wrap; border-bottom:1px solid var(--color-neutral-200); width:100%; padding-bottom:0;}
-  .sizevar-tab{padding:8px 16px; border-radius:8px 8px 0 0; font-size:13px; font-weight:600; color:var(--color-neutral-500); cursor:pointer;}
-  .sizevar-tab:hover{color:var(--color-neutral-700);}
-  .sizevar-tab.active{color:var(--color-neutral-900); background:var(--color-neutral-100);}
-  .sizevar-tab-add{font-size:15px; font-weight:700; padding:8px 14px;}
-  .sizevar-modal-body{padding:20px; overflow-y:auto; flex:1; min-height:0;}
-  .sizevar-create-row{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:8px;}
-  .sizevar-selectall-btn{border:1px solid var(--color-neutral-300); background:#fff; border-radius:999px; padding:5px 12px; font-size:11.5px; font-weight:600; color:var(--color-neutral-700); cursor:pointer; font-family:var(--font-family-text);}
-  .sizevar-selectall-btn:hover{border-color:var(--color-neutral-450);}
-  .sizevar-card-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(90px, 1fr)); gap:10px;}
-  .sizevar-card-thumb{position:relative; aspect-ratio:4/5; border-radius:10px; border:2px solid transparent; background:linear-gradient(135deg,var(--color-brand-primary-mid),var(--color-brand-accent)); cursor:pointer; display:flex; align-items:flex-end; padding:8px;}
-  .sizevar-card-thumb.selected{border-color:var(--color-brand-primary); box-shadow:0 0 0 3px rgba(79,109,230,0.14);}
-  .sizevar-card-thumb-check{position:absolute; top:6px; right:6px; width:18px; height:18px; border-radius:999px; background:#fff; color:var(--color-brand-primary); font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center;}
-  .sizevar-card-thumb-label{font-size:11px; font-weight:600; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,.4);}
-  .sizevar-ratio-row{display:flex; align-items:flex-end; gap:16px; margin-top:18px; flex-wrap:wrap;}
-  .sizevar-cost-row{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:18px; padding-top:16px; border-top:1px solid var(--color-neutral-200);}
-  .sizevar-cost-text{font-size:12.5px; color:var(--color-neutral-700);}
-  .sizevar-cost-text b{color:var(--color-neutral-900); font-weight:700;}
-  .sizevar-empty-hint{font-size:12.5px; color:var(--color-neutral-500); padding:12px 0;}
-  .sizevar-set-view-title{font-size:13px; font-weight:700; color:var(--color-neutral-900); margin-bottom:14px;}
-  .sizevar-set-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(120px, 1fr)); gap:14px;}
-  .sizevar-set-thumb{border-radius:10px; background:linear-gradient(135deg,var(--color-brand-primary-mid),var(--color-brand-accent)); display:flex; flex-direction:column; align-items:flex-start; justify-content:space-between; padding:10px; overflow:hidden;}
-  .sizevar-set-thumb-label{font-size:11px; font-weight:600; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,.4);}
-  .sizevar-download-btn{align-self:stretch; border:none; background:rgba(255,255,255,0.92); border-radius:7px; padding:6px 8px; font-size:11.5px; font-weight:700; color:var(--color-neutral-900); cursor:pointer; font-family:var(--font-family-text);}
-  .sizevar-download-btn:hover{background:#fff;}
-
-  /* ---- Preview stage (Generate step, 3rd tab): finished-carousel grid + per-card editor.
-       Reuses Storyboard's card data (copy fields, scene description, image history) — editing
-       either place keeps both in sync. ---- */
-  .preview-back-link{display:flex; align-items:center; gap:4px; font-size:13px; font-weight:500; color:var(--color-neutral-700); cursor:pointer; margin-bottom:20px; background:none; border:none; padding:0; font-family:var(--font-family-text);}
-  .preview-back-link:hover{color:var(--color-neutral-900);}
-  .preview-back-link img{width:16px; height:16px;}
-  .preview-heading-row{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:24px;}
-  .preview-heading-row h2{margin:0 0 4px;}
-  .preview-download-all{display:flex; align-items:center; gap:4px;}
-  .preview-download-all img{width:16px; height:16px;}
-  .preview-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:20px; align-content:start; flex:1; min-height:0; overflow-y:auto;}
-  .preview-tile{cursor:pointer;}
-  .preview-tile-frame{position:relative; width:100%; aspect-ratio:303/379; border:1px solid var(--color-neutral-400); border-radius:var(--radius-xl); background:var(--color-neutral-200); display:flex; flex-direction:column; justify-content:space-between; padding:16px; overflow:hidden; transition:border-color .15s; margin-bottom:8px;}
-  .preview-tile.active .preview-tile-frame{border-color:var(--color-neutral-500);}
-  .preview-tile-top-row{display:flex; justify-content:flex-end; gap:8px;}
-  .preview-icon-btn{width:24px; height:24px; border-radius:var(--radius-md); border:1px solid var(--color-neutral-400); background:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 1px 1.5px rgba(15,23,41,0.1),0 1px 0.5px rgba(15,23,41,0.04); padding:0;}
-  .preview-icon-btn img{width:14px; height:14px; display:block;}
-  .preview-icon-btn.ghost{background:rgba(255,255,255,0.35); border:none; backdrop-filter:blur(5px); box-shadow:none;}
-  .preview-icon-btn.ghost img{width:16px; height:16px;}
-  .preview-tile-image{flex:1; display:flex; align-items:center; justify-content:center;}
-  .preview-tile-image img{width:72px; height:72px; opacity:.6;}
-  .preview-version-pills{display:flex; gap:8px; flex-wrap:wrap;}
-  .version-pill{height:28px; padding:0 13px; border-radius:999px; border:1px solid var(--color-neutral-400); background:#fff; font-size:12px; font-weight:500; color:var(--color-neutral-700); cursor:pointer; font-family:var(--font-family-text);}
-  .version-pill.active{background:var(--color-neutral-150); border-color:var(--color-neutral-500); font-weight:600; color:var(--color-neutral-900);}
-  .preview-editor-col{width:358px; flex-shrink:0; display:flex; flex-direction:column;}
-  .preview-undo-redo{display:flex; gap:6px; margin-left:auto;}
-  .card-nav-btn.icon img{width:14px; height:14px; display:block;}
-  .preview-cta-row{display:flex; gap:14px; margin-top:14px;}
-  .preview-cta-row .btn{flex:1;}
-
-  /* ---- Character styles sub-row (Brief & Style): once a character is selected, pick which of
-       their saved reference looks/outfits applies. Same card visual as the character grid above. ---- */
-  .char-styles-section{margin-top:20px; padding-top:20px; border-top:1px solid var(--color-neutral-200);}
-  .char-styles-header{display:flex; align-items:center; gap:8px; margin-bottom:12px;}
-  .char-styles-avatar{width:20px; height:20px; border-radius:999px; background:var(--color-brand-primary-mid); flex-shrink:0;}
-  .char-styles-title{font-size:13px; font-weight:700; color:var(--color-neutral-900);}
+  .preview-back-btn{margin-bottom:16px;}
 
   /* ---- Develop (minimal step-3 landing) ---- */
   .develop-body{display:flex; gap:32px; padding:48px; max-width:960px; margin:0 auto;}
@@ -450,27 +493,6 @@
                 <div class="char-card" onclick="selectChar(this)"><div class="thumb"></div><div class="name">Esther</div></div>
               </div>
               <p class="char-per-card-note">This character is included on every card by default — you'll be able to turn it off for individual cards in the next step (Script).</p>
-
-              <div class="char-styles-section">
-                <div class="char-styles-header">
-                  <div class="char-styles-avatar"></div>
-                  <span class="char-styles-title" id="charStylesTitle">Elena's styles</span>
-                  <div class="char-see-all" style="margin-left:auto;">See all →</div>
-                </div>
-                <div class="char-filters">
-                  <div class="filter-chip active">Favorites ★</div>
-                </div>
-                <div class="char-grid" id="charStylesGrid">
-                  <div class="char-card new"><div class="thumb">+</div><div class="name">Create New</div></div>
-                  <div class="char-card selected" onclick="selectCharStyle(this)"><div class="thumb"></div><div class="name">Headshot</div></div>
-                  <div class="char-card" onclick="selectCharStyle(this)"><div class="thumb"></div><div class="name">Studio Portrait</div></div>
-                  <div class="char-card" onclick="selectCharStyle(this)"><div class="thumb"></div><div class="name">Armchair Library</div></div>
-                  <div class="char-card" onclick="selectCharStyle(this)"><div class="thumb"></div><div class="name">Autumn Park</div></div>
-                  <div class="char-card" onclick="selectCharStyle(this)"><div class="thumb"></div><div class="name">Balcony Plants</div></div>
-                  <div class="char-card" onclick="selectCharStyle(this)"><div class="thumb"></div><div class="name">Beige Blazer</div></div>
-                  <div class="char-card" onclick="selectCharStyle(this)"><div class="thumb"></div><div class="name">Bright Hallway</div></div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -515,7 +537,8 @@
             <button class="chat-new-btn" title="New chat" onclick="startNewChat()">+</button>
           </div>
           <div class="chat-log" id="chatLog"></div>
-          <div class="chat-hint">💬 Requests like "make card 2 shorter" or "try a warmer tone" work here too</div>
+          <div class="chat-quick-chips" id="chatQuickChips"></div>
+          <div class="chat-hint" id="chatHint">💬 Requests like "make card 2 shorter" or "try a warmer tone" work here too</div>
           <div class="chat-input-box">
             <input class="chat-input" id="chatInput" placeholder="Type a message...">
             <div class="chat-input-bottom-row">
@@ -590,7 +613,6 @@
                   <h2 class="stage-title">Storyboard</h2>
                   <p class="stage-sub-text">Confirm the background, action, and on-card copy for each card, then generate.</p>
                 </div>
-                <button type="button" class="btn btn-secondary" id="sizeVarOpenBtn" onclick="openSizeVarModal()" style="display:none;">+ Size variations</button>
               </div>
               <div class="storyboard-stage" id="storyboardMainStage">
                 <div class="storyboard-canvas">
@@ -606,70 +628,43 @@
                 </div>
               </div>
 
-              <!-- Size variations panel: create a variation at another ratio (individual cards or all
-                   at once), then browse/download completed variation sets via tabs, "+" to start
-                   another. Lives inline in the Storyboard work screen, not a modal. -->
-              <div class="storyboard-sizevar-panel" id="sizeVarPanel" style="display:none;">
-                <button type="button" class="btn btn-secondary sizevar-back-btn" onclick="closeSizeVarModal()">← Back to Storyboard</button>
-                <div class="sizevar-panel-header">
-                  <div class="sizevar-modal-tabs" id="sizeVarModalTabs"></div>
-                </div>
-                <div class="sizevar-modal-body" id="sizeVarModalBody"></div>
-              </div>
-
               <div class="stage-cta-row" id="storyboardCtaRow" style="display:none;">
                 <span class="meta-text" id="generateCtaMeta" style="display:none;">Waiting for all cards to finish generating</span>
-                <button class="btn btn-secondary" id="skipToPublishBtn" onclick="goToPublish()" style="display:none;">Skip to publish</button>
-                <button class="btn btn-dark" id="continueToEditingBtn" onclick="goToDevelop()" style="display:none;">Continue to editing →</button>
+                <button class="btn btn-dark" id="continueToPreviewBtn" onclick="goToPreviewFromStoryboard()" style="display:none;">Continue to Preview →</button>
               </div>
             </div></div>
           </div>
 
-          <!-- SUB-STAGE: Preview — finished-carousel review once every card has an image. Same
-               underlying card data as Storyboard (copy fields, scene description, image history);
-               editing either place keeps both in sync. -->
+          <!-- SUB-STAGE: Preview — final review of the generated set once every card is ready. Storyboard
+               stays the free-form working area (regenerate/edit as much as you like); Preview is the
+               settled "here's what you're about to publish" check before moving on. -->
           <div class="stage-sub" id="subPreview" style="display:none;">
             <div class="stage-body"><div class="stage-body-inner">
-              <button type="button" class="preview-back-link" onclick="showSub('storyboard')">
-                <img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gdWkgLyBiYWNrIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTcuOTk5OTggMTIuNjY2NkwzLjMzMzMxIDcuOTk5OThMNy45OTk5OCAzLjMzMzMxIiBzdHJva2U9IiM0NzUwNjkiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggaWQ9IlZlY3Rvcl8yIiBkPSJNMTIuNjY2NiA4SDMuMzMzMzEiIHN0cm9rZT0iIzQ3NTA2OSIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L2c+Cjwvc3ZnPgo=" alt="">
-                Back to Storyboard
-              </button>
-              <div class="preview-heading-row">
+              <button type="button" class="btn btn-secondary preview-back-btn" onclick="backToStoryboard()">← Back to Storyboard</button>
+              <div class="storyboard-header-row">
                 <div>
                   <h2 class="stage-title">Your Carousel is ready</h2>
-                  <p class="stage-sub-text" style="margin:0;" id="previewSubText">All 5 cards are generated and ready to go — download them, or head back to Storyboard if anything needs another pass.</p>
+                  <p class="stage-sub-text">All 5 cards are generated and ready to go — download them, or head back to Storyboard if anything needs another pass.</p>
                 </div>
-                <button type="button" class="btn btn-secondary preview-download-all" onclick="downloadAllCards()">
-                  <img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gdWkgLyBkb3dubG9hZCI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik04IDEwVjIiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzIiIGQ9Ik00IDcuMzMzMzFMOCAxMS4zMzMzTDEyIDcuMzMzMzEiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzMiIGQ9Ik0xMi42NjY2IDE0SDMuMzMzMzEiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L2c+Cjwvc3ZnPgo=" alt="">
-                  Download All
-                </button>
+                <button type="button" class="btn btn-secondary" onclick="downloadAllCards()">⬇ Download All</button>
               </div>
-              <div class="storyboard-stage">
+              <div class="storyboard-stage" id="previewMainStage">
                 <div class="storyboard-canvas">
-                  <div class="preview-grid" id="previewGrid"></div>
+                  <div class="storyboard-grid" id="previewGrid"></div>
                 </div>
-                <div class="preview-editor-col">
+                <div class="storyboard-editor-col">
                   <div class="storyboard-nav" id="previewCardNav"></div>
                   <div class="storyboard-editor-panel" id="previewEditorPanel"></div>
                 </div>
+              </div>
+              <div class="stage-cta-row">
+                <button class="btn btn-secondary" id="previewSkipToPublishBtn" onclick="goToPublish()">Skip to publish</button>
+                <button class="btn btn-dark" id="previewContinueToEditingBtn" onclick="goToDevelop()">Continue to editing →</button>
               </div>
             </div></div>
           </div>
 
         </div>
-      </div>
-    </div>
-
-    <!-- Preview stage bottom bar — mirrors briefActionBar, shown only while the Preview tab is active -->
-    <div class="action-bar" id="previewActionBar" style="display:none;">
-      <div class="readiness">
-        <div class="readiness-top"><span>Brief readiness</span><span>79%</span></div>
-        <div class="readiness-bar"><div class="readiness-fill" style="width:79%"></div></div>
-      </div>
-      <div class="meta-text">Carousel · 4:5 · 5 cards</div>
-      <div class="bar-actions">
-        <button class="btn btn-secondary" onclick="goToPublish()">Skip to publish</button>
-        <button class="btn btn-dark" onclick="goToDevelop()">Continue to editing →</button>
       </div>
     </div>
 
@@ -738,7 +733,7 @@ function selectContentType(el){
     window.location.href = 'new-content-brief-to-generate.html';
   }
 }
-function goToBrief(){ showView('briefView'); setStep('stepBrief'); document.getElementById('briefActionBar').style.display = 'flex'; document.getElementById('previewActionBar').style.display = 'none'; }
+function goToBrief(){ showView('briefView'); setStep('stepBrief'); document.getElementById('briefActionBar').style.display = 'flex'; }
 
 // ---- Reference image attach (Brief prompt box) ----
 let referenceImages = [];
@@ -815,11 +810,7 @@ function setCharMode(mode){
   document.getElementById('charWithSection').style.display = mode === 'with' ? 'block' : 'none';
 }
 function selectChar(el){
-  document.querySelectorAll('#charGrid .char-card').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-}
-function selectCharStyle(el){
-  document.querySelectorAll('#charStylesGrid .char-card').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll('.char-card').forEach(c => c.classList.remove('selected'));
   el.classList.add('selected');
 }
 
@@ -857,6 +848,40 @@ function startNewChat(){
   if(log) log.innerHTML = '';
   const input = document.getElementById('chatInput');
   if(input) input.value = '';
+  renderChatQuickChips([]);
+  setChatGuideHint('💬 Requests like "make card 2 shorter" or "try a warmer tone" work here too');
+}
+// Quick-action chips shown above the chat input, contextual to whatever stage/state just
+// finished (e.g. script drafted, storyboard ready) — mirrors the Copilot-style chip pattern.
+// Each chip is either {label, direct: fn} (runs fn immediately, e.g. "Regenerate all") or
+// just {label} (sent through the normal chat pipeline, same as if the user had typed it).
+function renderChatQuickChips(chips){
+  window.__chatQuickChips = chips || [];
+  const wrap = document.getElementById('chatQuickChips');
+  if(!wrap) return;
+  if(!chips || !chips.length){
+    wrap.style.display = 'none';
+    wrap.innerHTML = '';
+    return;
+  }
+  wrap.style.display = 'flex';
+  wrap.innerHTML = chips.map((c, i) => `<button type="button" class="chat-chip" onclick="handleQuickChipClick(${i})">${escapeHtml(c.label)}</button>`).join('');
+}
+function handleQuickChipClick(i){
+  const chip = (window.__chatQuickChips || [])[i];
+  if(!chip) return;
+  if(chip.direct){
+    addChatMsg('user', chip.label);
+    chip.direct();
+  } else {
+    const input = document.getElementById('chatInput');
+    input.value = chip.label;
+    sendChatMessage();
+  }
+}
+function setChatGuideHint(text){
+  const hint = document.getElementById('chatHint');
+  if(hint) hint.textContent = text;
 }
 // Appends an AI message with an inline button row, so the next stage can be
 // triggered right from the chat (mirrors the video flow's stage-progress CTA).
@@ -871,6 +896,16 @@ function sendChatMessage(){
   if(!text) return;
   addChatMsg('user', text);
   input.value = '';
+
+  // Once every card has generated at least once, free-text chat becomes a live style/edit
+  // request instead of the generic prototype stub — see handleStoryboardStyleRequest().
+  const storyboardSub = document.getElementById('subStoryboard');
+  const storyboardVisible = storyboardSub && storyboardSub.style.display !== 'none';
+  if(storyboardVisible && storyboardCardsReady()){
+    handleStoryboardStyleRequest(text);
+    return;
+  }
+
   setTimeout(() => addChatMsg('ai', '<span class="tag">AI</span>Got it — this is a prototype, so I won\'t actually rewrite anything, but in the real flow this request would land on whichever card or stage you\'re currently working on.'), 500);
 }
 
@@ -884,7 +919,6 @@ function showSub(name){
   tabEl.classList.add('active');
   Object.values(subs).forEach(id => document.getElementById(id).style.display = 'none');
   document.getElementById(subs[name]).style.display = 'block';
-  document.getElementById('previewActionBar').style.display = name === 'preview' ? 'flex' : 'none';
 }
 
 let scriptDraftStarted = false;
@@ -899,12 +933,15 @@ function goToGenerate(){
 function goToDevelop(){
   showView('developView');
   setStep('stepEdit');
-  document.getElementById('previewActionBar').style.display = 'none';
 }
 function backToStoryboard(){
   showView('generateView');
   setStep('stepGenerate');
   showSub('storyboard');
+}
+function goToPreviewFromStoryboard(){
+  showSub('preview');
+  renderPreview();
 }
 // Publish is shared with the video/image flow — hand off to that file's Publish screen
 // directly, so editing Publish once updates it everywhere instead of per content type.
@@ -938,6 +975,7 @@ function draftScript(){
   const log = document.getElementById('chatLog');
   log.innerHTML = `<div class="msg ai loading" id="scriptLoadingMsg"><span class="tag">AI</span>Writing text for ${n} cards based on your brief<span class="dots"><span>.</span><span>.</span><span>.</span></span></div>`;
   document.getElementById('confirmScriptBtn').disabled = true;
+  renderChatQuickChips([]);
 
   setTimeout(() => {
     for(let i = 1; i <= n; i++) window.__cardScripts[i] = SCRIPT_TEMPLATES[i - 1] || `Card ${i} — key message goes here.`;
@@ -948,7 +986,55 @@ function draftScript(){
     );
     renderScriptCards();
     document.getElementById('confirmScriptBtn').disabled = false;
+    renderChatQuickChips([
+      { label: 'Regenerate all' },
+      { label: 'Add a card', direct: addScriptCard }
+    ]);
+    setChatGuideHint('Tweak one card: "make card 2 shorter" or "try a warmer tone" →');
   }, 1500);
+}
+const MAX_CAROUSEL_CARDS = 6;
+// "Add a card" both grows the script and offers to redraft everything so the story still
+// flows across the new card count — declining just leaves the new card on its template text.
+function addScriptCard(){
+  if(window.__cardCount >= MAX_CAROUSEL_CARDS){
+    addChatMsg('ai', `<span class="tag">AI</span>A carousel can have up to ${MAX_CAROUSEL_CARDS} cards, so I can't add another one.`);
+    renderChatQuickChips([
+      { label: 'Regenerate all' },
+      { label: 'Add a card', direct: addScriptCard }
+    ]);
+    return;
+  }
+  const newNum = window.__cardCount + 1;
+  selectCardCount(newNum);
+  window.__cardScripts[newNum] = SCRIPT_TEMPLATES[newNum - 1] || `Card ${newNum} — key message goes here.`;
+  renderScriptCards();
+
+  const atMax = newNum >= MAX_CAROUSEL_CARDS;
+  appendChatCta(
+    `Added Card ${newNum}${atMax ? ` — that's the max for a carousel (${MAX_CAROUSEL_CARDS} cards)` : ''}. Want me to rewrite all ${newNum} cards so the story flows with the new count?`,
+    '<button class="btn btn-dark" onclick="rewriteAllScriptCards()">Rewrite all cards</button>'
+  );
+  renderChatQuickChips(atMax
+    ? [{ label: 'Regenerate all' }]
+    : [{ label: 'Regenerate all' }, { label: 'Add a card', direct: addScriptCard }]);
+}
+function rewriteAllScriptCards(){
+  const n = window.__cardCount;
+  const log = document.getElementById('chatLog');
+  log.innerHTML += `<div class="msg ai loading" id="scriptRewriteMsg"><span class="tag">AI</span>Rewriting the script for all ${n} cards<span class="dots"><span>.</span><span>.</span><span>.</span></span></div>`;
+  log.scrollTop = log.scrollHeight;
+  renderChatQuickChips([]);
+  setTimeout(() => {
+    for(let i = 1; i <= n; i++) window.__cardScripts[i] = SCRIPT_TEMPLATES[i - 1] || `Card ${i} — key message goes here.`;
+    document.getElementById('scriptRewriteMsg')?.remove();
+    addChatMsg('ai', `<span class="tag">AI</span>Rewrote the script for all ${n} cards.`);
+    renderScriptCards();
+    renderChatQuickChips(n >= MAX_CAROUSEL_CARDS
+      ? [{ label: 'Regenerate all' }]
+      : [{ label: 'Regenerate all' }, { label: 'Add a card', direct: addScriptCard }]);
+    setChatGuideHint('Tweak one card: "make card 2 shorter" or "try a warmer tone" →');
+  }, 1400);
 }
 
 function renderScriptCards(){
@@ -984,6 +1070,7 @@ function confirmScript(){
   const log = document.getElementById('chatLog');
   log.innerHTML += `<div class="msg ai loading" id="storyboardLoadingMsg"><span class="tag">AI</span>Building the storyboard from your script<span class="dots"><span>.</span><span>.</span><span>.</span></span></div>`;
   log.scrollTop = log.scrollHeight;
+  renderChatQuickChips([]);
   setTimeout(() => {
     document.getElementById('storyboardLoadingMsg')?.remove();
     renderStoryboard();
@@ -1005,6 +1092,13 @@ function confirmScript(){
 window.__cardDescriptions = {};
 window.__cardCopyFields = {};
 window.__cardCharacterOn = {};
+window.__cardImagePrompts = {}; // n -> current image prompt text (auto-composed, then freely editable)
+window.__cardImagePromptBaseline = {}; // n -> prompt text as of that card's last (re)generation, for dirty-checking
+window.__cardEditMode = {}; // n -> bool, whether that card's on-card copy is currently unlocked for editing
+window.__cardCopyBaseline = {}; // n -> copy fields JSON as of that card's last (re)generation, for dirty-checking
+window.__cardCopyUndoStack = {}; // n -> array of past copy-field snapshots
+window.__cardCopyRedoStack = {}; // n -> array of undone copy-field snapshots
+window.__storyboardReadyMsgShown = false; // gates the "all images ready, want a different style?" chat message to once per batch
 window.__globalBrandKitOn = undefined; // unset until first computed from __brandMode
 window.__storyboardSelectedCard = 1;
 const STORYBOARD_TEMPLATES = [
@@ -1056,13 +1150,8 @@ function renderStoryboard(){
   window.__storyboardSelectedCard = 1;
   document.getElementById('storyboardGenerateBtn').disabled = false;
   document.getElementById('storyboardGenerateBtn').textContent = 'Generate images';
-  document.getElementById('sizeVarOpenBtn').style.display = 'none';
-  document.getElementById('sizeVarPanel').style.display = 'none';
   document.getElementById('storyboardMainStage').style.display = 'flex';
   document.getElementById('storyboardCtaRow').style.display = 'none';
-  window.__sizeVarSets = [];
-  window.__sizeVarActiveTab = 'new';
-  window.__sizeVarSelectedCards = new Set(Array.from({length: n}, (_, i) => i + 1));
   renderStoryboardGrid();
   buildStoryboardCardNav();
   renderStoryboardEditorPanels();
@@ -1072,10 +1161,6 @@ function renderStoryboardGrid(){
   const n = window.__cardCount;
   document.getElementById('storyboardGrid').innerHTML = Array.from({length: n}, (_, i) => renderStoryboardTile(i + 1)).join('');
   for(let i = 1; i <= n; i++) updateStoryboardCardRegenBtn(i);
-  // Keep the Preview tab's grid (finished-carousel review) in sync — it reads the same
-  // __cardImageHistory data, just rendered with download/expand actions instead of a regen badge.
-  renderPreviewGrid();
-  for(let i = 1; i <= n; i++) updatePreviewCardRegenBtn(i);
 }
 function storyboardTileCharBadgeHtml(n){
   if(window.__charMode !== 'with') return '';
@@ -1117,7 +1202,7 @@ function renderStoryboardTile(n){
       <div class="storyboard-tile-preview">
         <div class="storyboard-tile-overlay-top">
           <span class="storyboard-tile-ready-badge">✓ Ready</span>
-          <button type="button" class="storyboard-tile-regen-btn" onclick="event.stopPropagation(); regenerateCard(${n})" title="Regenerate this card only · ⚡${CARD_REGEN_CREDIT}">↻</button>
+          <button type="button" class="storyboard-tile-regen-btn" onclick="event.stopPropagation(); regenerateCard(${n})" title="Regenerate this card only · ⚡${CARD_REGEN_CREDIT}" ${isCardRegenEnabled(n) ? '' : 'disabled'}>↻</button>
         </div>
         <div class="spinner-mini"></div>
         <div class="storyboard-tile-bottom-row">
@@ -1159,9 +1244,17 @@ function renderStoryboardEditorPanels(){
     const num = i + 1;
     return `
       <div class="storyboard-card-editor" id="storyboardCardEditor${num}" style="${num === 1 ? '' : 'display:none;'}">
+        <div class="copy-field-header-row">
+          <span class="copy-field-section-label">On-card text</span>
+          <div class="copy-field-controls" id="copyFieldControls${num}"></div>
+        </div>
         <div class="copy-field-list" id="copyFieldList${num}"></div>
         <label class="scene-desc-label">Scene &amp; background description</label>
         <textarea class="story-desc-input" data-card="${num}" oninput="updateCardDescription(${num}, this.value)">${escapeHtml(window.__cardDescriptions[num] || '')}</textarea>
+        <div class="card-prompt-block" id="cardPromptBlock${num}">
+          <label class="scene-desc-label">Image prompt</label>
+          <textarea class="card-prompt-text" id="cardImagePrompt${num}" data-card="${num}" oninput="onCardPromptInput(${num}, this.value)"></textarea>
+        </div>
         <button type="button" class="regen-pill-btn" id="storyboardCardRegenBtn${num}" onclick="regenerateCard(${num})" disabled>
           <span>↻</span> Regenerate <span class="regen-pill-cost">⚡${CARD_REGEN_CREDIT}</span>
         </button>
@@ -1169,37 +1262,108 @@ function renderStoryboardEditorPanels(){
   }).join('');
   for(let i = 1; i <= n; i++){
     renderCardCopyFields(i);
+    renderCardImagePrompt(i);
     updateStoryboardCardRegenBtn(i);
   }
 }
-function updateStoryboardCardRegenBtn(n){
-  const btn = document.getElementById('storyboardCardRegenBtn' + n);
-  if(!btn) return;
+// Image prompt is auto-composed from the card's copy fields + scene description the first
+// time that card generates (mirrors the video flow's per-scene prompt), then persists as its
+// own editable field — editing copy/description afterwards does not silently overwrite it.
+function isCardRegenEnabled(n){
   const hist = window.__cardImageHistory[n];
-  btn.disabled = !(hist && hist[window.__cardImageActiveIndex[n]].ready);
+  const ready = !!(hist && hist[window.__cardImageActiveIndex[n]].ready);
+  const promptDirty = window.__cardImagePromptBaseline[n] !== undefined && window.__cardImagePrompts[n] !== window.__cardImagePromptBaseline[n];
+  const copyDirty = window.__cardCopyBaseline[n] !== undefined && window.__cardCopyBaseline[n] !== snapshotCardCopy(n);
+  return ready && (promptDirty || copyDirty);
+}
+function updateStoryboardCardRegenBtn(n){
+  const enabled = isCardRegenEnabled(n);
+  const btn = document.getElementById('storyboardCardRegenBtn' + n);
+  if(btn) btn.disabled = !enabled;
+  const tileBtn = document.querySelector(`#storyboardTile${n} .storyboard-tile-regen-btn`);
+  if(tileBtn) tileBtn.disabled = !enabled;
+}
+// Once a card has generated, its on-card copy locks (grayed text + inert toggles) so a stray
+// click can't silently drift the copy out of sync with the image — "Edit" explicitly opts back
+// in, and doing so is what's allowed to enable Regenerate again (see isCardRegenEnabled).
+function isCardCopyLocked(n){
+  return !!window.__cardImageHistory[n] && !window.__cardEditMode[n];
 }
 function renderCardCopyFields(n){
-  // Storyboard and Preview each keep their own copy-field-list container for the same card,
-  // so both stay visually in sync whichever tab was last edited.
-  renderCardCopyFieldsInto(n, 'copyFieldList' + n);
-  renderCardCopyFieldsInto(n, 'previewCopyFieldList' + n);
-}
-function renderCardCopyFieldsInto(n, listId){
-  const list = document.getElementById(listId);
+  const list = document.getElementById('copyFieldList' + n);
   if(!list) return;
   const fields = ensureCardCopyFields(n);
+  const locked = isCardCopyLocked(n);
+  list.classList.toggle('locked', locked);
   list.innerHTML = fields.map((f, i) => `
     <div class="copy-field ${f.on ? '' : 'off'}" data-key="${f.key}">
       <div class="copy-field-body">
         <span class="copy-field-label">${f.label}</span>
-        <input class="copy-field-input" value="${f.text.replace(/"/g,'&quot;')}" placeholder="Not set" oninput="onCardCopyFieldInput(${n}, ${i}, this.value)">
+        <input class="copy-field-input" value="${f.text.replace(/"/g,'&quot;')}" placeholder="Not set"
+          oninput="onCardCopyFieldInput(${n}, ${i}, this.value)"
+          onfocus="onCardCopyFieldFocus(${n})" onblur="onCardCopyFieldBlur(${n})"
+          ${locked ? 'disabled' : ''}>
       </div>
-      <button type="button" class="field-switch ${f.on ? 'on' : ''}" onclick="toggleCardCopyField(${n}, ${i})"><span class="knob"></span></button>
+      <button type="button" class="field-switch ${f.on ? 'on' : ''}" onclick="toggleCardCopyField(${n}, ${i})" ${locked ? 'disabled' : ''}><span class="knob"></span></button>
     </div>`).join('');
+  renderCopyFieldControls(n);
+}
+function renderCopyFieldControls(n){
+  const wrap = document.getElementById('copyFieldControls' + n);
+  if(!wrap) return;
+  if(!window.__cardImageHistory[n]){
+    wrap.innerHTML = '';
+    return;
+  }
+  if(!window.__cardEditMode[n]){
+    wrap.innerHTML = `<button type="button" class="copy-edit-btn" onclick="enterCardCopyEditMode(${n})">✎ Edit</button>`;
+    return;
+  }
+  const canUndo = (window.__cardCopyUndoStack[n] || []).length > 0;
+  const canRedo = (window.__cardCopyRedoStack[n] || []).length > 0;
+  wrap.innerHTML = `
+    <button type="button" class="copy-undo-btn" onclick="undoCardCopy(${n})" title="Undo" ${canUndo ? '' : 'disabled'}>↶</button>
+    <button type="button" class="copy-undo-btn" onclick="redoCardCopy(${n})" title="Redo" ${canRedo ? '' : 'disabled'}>↷</button>`;
+}
+function enterCardCopyEditMode(n){
+  window.__cardEditMode[n] = true;
+  renderCardCopyFields(n);
+}
+function snapshotCardCopy(n){
+  return JSON.stringify(ensureCardCopyFields(n));
+}
+function pushCardCopyUndoSnapshot(n, snapshotBeforeChange){
+  if(!window.__cardCopyUndoStack[n]) window.__cardCopyUndoStack[n] = [];
+  window.__cardCopyUndoStack[n].push(snapshotBeforeChange);
+  window.__cardCopyRedoStack[n] = [];
+  updateStoryboardCardRegenBtn(n);
+}
+function undoCardCopy(n){
+  const stack = window.__cardCopyUndoStack[n];
+  if(!stack || !stack.length) return;
+  const current = snapshotCardCopy(n);
+  (window.__cardCopyRedoStack[n] = window.__cardCopyRedoStack[n] || []).push(current);
+  window.__cardCopyFields[n] = JSON.parse(stack.pop());
+  renderCardCopyFields(n);
+  updateStoryboardTileCopyOverlay(n);
+  updateStoryboardCardRegenBtn(n);
+}
+function redoCardCopy(n){
+  const stack = window.__cardCopyRedoStack[n];
+  if(!stack || !stack.length) return;
+  const current = snapshotCardCopy(n);
+  (window.__cardCopyUndoStack[n] = window.__cardCopyUndoStack[n] || []).push(current);
+  window.__cardCopyFields[n] = JSON.parse(stack.pop());
+  renderCardCopyFields(n);
+  updateStoryboardTileCopyOverlay(n);
+  updateStoryboardCardRegenBtn(n);
 }
 function toggleCardCopyField(n, i){
+  if(isCardCopyLocked(n)) return;
+  const before = snapshotCardCopy(n);
   const fields = ensureCardCopyFields(n);
   fields[i].on = !fields[i].on;
+  pushCardCopyUndoSnapshot(n, before);
   renderCardCopyFields(n);
   updateStoryboardTileCopyOverlay(n);
 }
@@ -1207,14 +1371,16 @@ function onCardCopyFieldInput(n, i, value){
   const fields = ensureCardCopyFields(n);
   fields[i].text = value;
   updateStoryboardTileCopyOverlay(n);
-  // Mirror the keystroke into the same field on the other tab (Storyboard <-> Preview) without
-  // rebuilding either list, so the one being typed in never loses focus/cursor position.
-  ['copyFieldList' + n, 'previewCopyFieldList' + n].forEach(listId => {
-    const list = document.getElementById(listId);
-    if(!list) return;
-    const input = list.querySelectorAll('.copy-field-input')[i];
-    if(input && input.value !== value) input.value = value;
-  });
+}
+// Snapshot on focus/blur rather than every keystroke, so Undo steps through meaningful edits
+// (one per field visit) instead of one per character typed.
+function onCardCopyFieldFocus(n){
+  (window.__cardCopyFieldFocusSnapshot = window.__cardCopyFieldFocusSnapshot || {})[n] = snapshotCardCopy(n);
+}
+function onCardCopyFieldBlur(n){
+  const before = window.__cardCopyFieldFocusSnapshot && window.__cardCopyFieldFocusSnapshot[n];
+  if(before && before !== snapshotCardCopy(n)) pushCardCopyUndoSnapshot(n, before);
+  renderCopyFieldControls(n);
 }
 function toggleCardCharacter(n){
   window.__cardCharacterOn[n] = !window.__cardCharacterOn[n];
@@ -1223,27 +1389,44 @@ function toggleCardCharacter(n){
 }
 function updateCardDescription(n, value){
   window.__cardDescriptions[n] = value;
-  // Mirror into the other tab's textarea for the same card (Storyboard <-> Preview) without
-  // touching the one currently focused, so typing never loses cursor position.
-  document.querySelectorAll(`.story-desc-input[data-card="${n}"]`).forEach(el => {
-    if(el.value !== value) el.value = value;
-  });
+}
+function buildCardImagePrompt(n){
+  const fields = ensureCardCopyFields(n);
+  const overlay = fields.filter(f => f.on && f.text).map(f => `${f.label}: "${f.text}"`).join(', ');
+  const desc = (window.__cardDescriptions[n] || '').trim().replace(/\.+$/, '');
+  const overlayLine = overlay ? ` On-card text — ${overlay}.` : '';
+  return `${desc}.${overlayLine} Bright, on-brand social carousel photography — natural lighting, clean composition, true-to-life color.`;
+}
+function ensureCardImagePrompt(n){
+  if(window.__cardImagePrompts[n] === undefined) window.__cardImagePrompts[n] = buildCardImagePrompt(n);
+  return window.__cardImagePrompts[n];
+}
+function onCardPromptInput(n, value){
+  window.__cardImagePrompts[n] = value;
+  updateStoryboardCardRegenBtn(n);
+}
+function renderCardImagePrompt(n){
+  const block = document.getElementById('cardPromptBlock' + n);
+  const ta = document.getElementById('cardImagePrompt' + n);
+  if(!block || !ta) return;
+  const everGenerated = !!window.__cardImageHistory[n];
+  block.classList.toggle('visible', everGenerated);
+  if(everGenerated) ta.value = ensureCardImagePrompt(n);
 }
 function selectStoryboardCard(n){
   n = Number(n);
   window.__storyboardSelectedCard = n;
   document.querySelectorAll('#storyboardGrid .storyboard-tile').forEach(t => t.classList.toggle('active', Number(t.dataset.card) === n));
-  document.querySelectorAll('#storyboardCardNav .card-nav-btn, #previewCardNav .card-nav-btn').forEach(b => b.classList.toggle('active', Number(b.dataset.target) === n));
+  document.querySelectorAll('.card-nav-btn').forEach(b => b.classList.toggle('active', Number(b.dataset.target) === n));
   document.querySelectorAll('.storyboard-card-editor').forEach(e => e.style.display = 'none');
   const editor = document.getElementById('storyboardCardEditor' + n);
   if(editor) editor.style.display = 'block';
   const tile = document.getElementById('storyboardTile' + n);
   if(tile) tile.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
-  // Keep the Preview tab's grid/editor selection pointed at the same card.
-  document.querySelectorAll('#previewGrid .preview-tile').forEach(t => t.classList.toggle('active', Number(t.dataset.card) === n));
-  document.querySelectorAll('.preview-card-editor').forEach(e => e.style.display = 'none');
-  const previewEditor = document.getElementById('previewCardEditor' + n);
-  if(previewEditor) previewEditor.style.display = 'block';
+  // The copy-editing chips always target whichever card is selected, so they need to refresh
+  // on every selection change — available from the moment a card exists (pending or generated),
+  // not gated behind generation the way the whole-set image actions are.
+  renderStoryboardQuickChips();
 }
 function toggleGlobalBrandKit(){
   if(window.__brandMode !== 'set') return; // disabled until brand is set up
@@ -1273,25 +1456,40 @@ function startCardGeneration(){
   const n = window.__cardCount;
   window.__cardImageHistory = {};
   window.__cardImageActiveIndex = {};
+  window.__storyboardReadyMsgShown = false;
   for(let i = 1; i <= n; i++){
     window.__cardImageHistory[i] = [{ ready: false }];
     window.__cardImageActiveIndex[i] = 0;
+    // Composes the prompt from copy + description the first time only — a later "Regenerate
+    // all" reuses whatever prompt is already there (including any manual edits/style notes)
+    // instead of clobbering them.
+    ensureCardImagePrompt(i);
   }
   renderStoryboardGrid();
   document.getElementById('storyboardGenerateBtn').disabled = true;
   document.getElementById('storyboardGenerateBtn').textContent = 'Generating…';
   const ctaRow = document.getElementById('storyboardCtaRow');
   ctaRow.style.display = '';
-  document.getElementById('skipToPublishBtn').style.display = 'none';
-  document.getElementById('continueToEditingBtn').style.display = 'none';
+  document.getElementById('continueToPreviewBtn').style.display = 'none';
   document.getElementById('generateCtaMeta').style.display = '';
   document.getElementById('generateCtaMeta').textContent = 'Waiting for all cards to finish generating';
   addChatMsg('ai', '<span class="tag">AI</span>Generating an image for each card now.');
+  renderChatQuickChips([]);
 
   for(let i = 1; i <= n; i++){
     setTimeout(() => {
       window.__cardImageHistory[i][0].ready = true;
+      window.__cardImagePromptBaseline[i] = window.__cardImagePrompts[i];
+      // A fresh generation locks the on-card copy back in as the new source of truth — any
+      // prior undo/redo history is moot once the image itself has moved past it.
+      window.__cardCopyBaseline[i] = snapshotCardCopy(i);
+      window.__cardEditMode[i] = false;
+      window.__cardCopyUndoStack[i] = [];
+      window.__cardCopyRedoStack[i] = [];
       renderStoryboardGrid();
+      renderCardImagePrompt(i);
+      renderCardCopyFields(i);
+      updateStoryboardCardRegenBtn(i);
       checkAllCardsReady();
     }, 1200 + i * 700);
   }
@@ -1301,14 +1499,34 @@ function regenerateCard(n){
   hist.push({ ready: false });
   window.__cardImageActiveIndex[n] = hist.length - 1;
   renderStoryboardGrid();
-  document.getElementById('skipToPublishBtn').style.display = 'none';
-  document.getElementById('continueToEditingBtn').style.display = 'none';
+  document.getElementById('continueToPreviewBtn').style.display = 'none';
   document.getElementById('generateCtaMeta').style.display = '';
   setTimeout(() => {
     hist[hist.length - 1].ready = true;
+    window.__cardImagePromptBaseline[n] = window.__cardImagePrompts[n];
+    window.__cardCopyBaseline[n] = snapshotCardCopy(n);
+    window.__cardEditMode[n] = false;
+    window.__cardCopyUndoStack[n] = [];
+    window.__cardCopyRedoStack[n] = [];
     renderStoryboardGrid();
+    renderCardImagePrompt(n);
+    renderCardCopyFields(n);
+    updateStoryboardCardRegenBtn(n);
     checkAllCardsReady();
   }, 1300);
+}
+// Regenerates every card using its CURRENT prompt (whatever the user already has, including
+// any appended style note) rather than re-deriving from copy fields — used by chat-driven
+// "regenerate everyone with this style" requests, as opposed to the main button's
+// startCardGeneration(), which only (re)composes a prompt the first time a card is generated.
+function regenerateAllCardsWithStyle(){
+  const n = window.__cardCount;
+  window.__storyboardReadyMsgShown = false;
+  document.getElementById('storyboardGenerateBtn').disabled = true;
+  document.getElementById('storyboardGenerateBtn').textContent = 'Regenerating…';
+  for(let i = 1; i <= n; i++){
+    setTimeout(() => regenerateCard(i), i * 250);
+  }
 }
 function cardHistoryPrev(n){
   if(window.__cardImageActiveIndex[n] > 0) window.__cardImageActiveIndex[n]--;
@@ -1321,50 +1539,130 @@ function cardHistoryNext(n){
 }
 function checkAllCardsReady(){
   const n = window.__cardCount;
-  const allReady = Array.from({length: n}, (_, i) => i + 1).every(num => {
-    const hist = window.__cardImageHistory[num];
-    return hist && hist[window.__cardImageActiveIndex[num]].ready;
-  });
+  const allReady = storyboardCardsReady();
   document.getElementById('generateCtaMeta').style.display = allReady ? 'none' : '';
-  document.getElementById('skipToPublishBtn').style.display = allReady ? '' : 'none';
-  document.getElementById('continueToEditingBtn').style.display = allReady ? '' : 'none';
+  document.getElementById('continueToPreviewBtn').style.display = allReady ? '' : 'none';
+  document.getElementById('tabPreview').classList.toggle('locked', !allReady);
   if(allReady){
     document.getElementById('storyboardGenerateBtn').disabled = false;
     document.getElementById('storyboardGenerateBtn').textContent = 'Regenerate all';
-    document.getElementById('sizeVarOpenBtn').style.display = '';
-    const previewTab = document.getElementById('tabPreview');
-    if(previewTab.classList.contains('locked')){
-      previewTab.classList.remove('locked');
-      const n = window.__cardCount;
-      document.getElementById('previewSubText').textContent =
-        `All ${n} cards are generated and ready to go — download them, or head back to Storyboard if anything needs another pass.`;
-      renderPreview();
-      appendChatCta(
-        `All ${n} images are generated and ready to review. Head back to Storyboard for more edits, or continue when you're happy with how it looks.`,
-        '<button class="btn btn-dark" onclick="showSub(\'preview\')">Continue to editing →</button>'
-      );
-      showSub('preview');
+    if(!window.__storyboardReadyMsgShown){
+      window.__storyboardReadyMsgShown = true;
+      addChatMsg('ai', `<span class="tag">AI</span>All ${n} images are ready. Want to change a specific card? Tell me which one and how (e.g. "card 3, more colorful"). Want a different look for everyone? Just describe the style and I'll regenerate all of them with it.`);
+      setChatGuideHint('Tweak one card: "card 3, more colorful" →');
+      renderStoryboardQuickChips();
     }
+    // Preview mirrors whichever cards are currently generated — keep it in sync so switching
+    // tabs after a later regenerate-all/regenerate-one never shows a stale image or copy.
+    if(document.getElementById('subPreview').style.display !== 'none') renderPreview();
   }
+}
+function storyboardCardsReady(){
+  const n = window.__cardCount;
+  return Array.from({length: n}, (_, i) => i + 1).every(num => {
+    const hist = window.__cardImageHistory[num];
+    return hist && hist[window.__cardImageActiveIndex[num]].ready;
+  });
+}
+// A card is always selected in Storyboard, so the chips above the chat input always reflect
+// whichever card's editor panel is currently open — re-rendered on every selectStoryboardCard()
+// call, from the moment a card exists (even before it's generated). The whole-set image actions
+// ("Regenerate all" / "Try a different style") only make sense once there's something to
+// regenerate, so those two are appended on top only once every card has an image.
+function renderStoryboardQuickChips(){
+  const n = window.__storyboardSelectedCard;
+  const fields = ensureCardCopyFields(n);
+  const secondary = fields.find(f => f.key !== 'headline' && f.on && f.text);
+  const chips = [
+    { label: 'Shorten headline', direct: shortenCardHeadline }
+  ];
+  if(secondary){
+    chips.push({ label: `Make ${secondary.label.toLowerCase()} more engaging`, direct: hookifyCardSecondaryField });
+  }
+  const ready = storyboardCardsReady();
+  if(ready){
+    chips.push({ label: 'Regenerate all', direct: startCardGeneration });
+    chips.push({ label: 'Try a different style' });
+  }
+  renderChatQuickChips(chips);
+  setChatGuideHint(ready
+    ? 'Tweak one card: "card 3, more colorful" →'
+    : `Tweak Card ${n}'s copy, or type your own request →`);
+}
+// Trims a copy line down to roughly 60% of its length (min 5 words) — a simple stand-in for
+// "make this shorter" since this prototype doesn't call a real model.
+function shortenText(text){
+  const words = text.trim().replace(/[?!.]+$/, '').split(/\s+/);
+  if(words.length <= 5) return text;
+  const keep = Math.max(5, Math.ceil(words.length * 0.6));
+  return words.slice(0, keep).join(' ');
+}
+const HOOK_TEMPLATES = [
+  t => `Here's why: ${t.replace(/[?!.]+$/, '')}`,
+  t => `Wait — ${t.charAt(0).toLowerCase()}${t.slice(1).replace(/[?!.]+$/, '')}`,
+  t => `You need to see this: ${t.replace(/[?!.]+$/, '')}`,
+  t => `${t.replace(/[?!.]+$/, '')} — here's how`
+];
+function hookifyText(text, seed){
+  return HOOK_TEMPLATES[Math.abs(seed) % HOOK_TEMPLATES.length](text);
+}
+function shortenCardHeadline(){
+  const n = window.__storyboardSelectedCard;
+  const before = snapshotCardCopy(n);
+  const fields = ensureCardCopyFields(n);
+  const headline = fields.find(f => f.key === 'headline');
+  headline.text = shortenText(headline.text);
+  pushCardCopyUndoSnapshot(n, before);
+  renderCardCopyFields(n);
+  updateStoryboardTileCopyOverlay(n);
+  addChatMsg('ai', `<span class="tag">AI</span>Shortened the headline for Card ${n}.`);
+  renderStoryboardQuickChips();
+}
+// Targets whichever non-headline field is currently on for this card — Subhead on the first
+// card, Body on middle cards, Call to action on the last card — since only one of them is ever
+// active at once (see ensureCardCopyFields).
+function hookifyCardSecondaryField(){
+  const n = window.__storyboardSelectedCard;
+  const fields = ensureCardCopyFields(n);
+  const secondary = fields.find(f => f.key !== 'headline' && f.on && f.text);
+  if(!secondary) return;
+  const before = snapshotCardCopy(n);
+  secondary.text = hookifyText(secondary.text, n + 1);
+  pushCardCopyUndoSnapshot(n, before);
+  renderCardCopyFields(n);
+  updateStoryboardTileCopyOverlay(n);
+  addChatMsg('ai', `<span class="tag">AI</span>Made the ${secondary.label.toLowerCase()} more engaging for Card ${n}.`);
+  renderStoryboardQuickChips();
 }
 
 // =====================================================================
-// PREVIEW STAGE (Generate step, 3rd tab) — finished-carousel review once every
-// card has an image. Reads the exact same state as Storyboard (image history,
-// copy fields, scene descriptions); editing a card here or in Storyboard keeps
-// both tabs in sync. Adds download/expand actions per tile and version pills
-// (instead of Storyboard's prev/next pager) plus per-card undo/redo.
+// PREVIEW STAGE — settled "here's what you're about to publish" review,
+// reached once every card in Storyboard has an image. Read-only view of
+// the same per-card data Storyboard edits (copy fields, description,
+// image prompt); "Edit in Storyboard" jumps back to that card's editor
+// instead of duplicating the edit/regenerate machinery here.
 // =====================================================================
-const PREVIEW_ICON_DOWNLOAD = 'data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE0IiBoZWlnaHQ9IjE0IiB2aWV3Qm94PSIwIDAgMTQgMTQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gdWkgLyBkb3dubG9hZCI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik03IDguNzVWMS43NSIgc3Ryb2tlPSIjNjg3MTg4IiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxwYXRoIGlkPSJWZWN0b3JfMiIgZD0iTTMuNSA2LjQxNjY1TDcgOS45MTY2NUwxMC41IDYuNDE2NjUiIHN0cm9rZT0iIzY4NzE4OCIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzMiIGQ9Ik0xMS4wODMzIDEyLjI1SDIuOTE2NjUiIHN0cm9rZT0iIzY4NzE4OCIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L2c+Cjwvc3ZnPgo=';
-const PREVIEW_ICON_MAXIMIZE = 'data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE5LjYiIGhlaWdodD0iMTkuNiIgdmlld0JveD0iMCAwIDE5LjYgMTkuNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgaWQ9Imljb24gLyBtYXhpbWl6ZSIgZmlsdGVyPSJ1cmwoI2ZpbHRlcjBfZGRfMF85OTYpIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTcuMTMzMzMgMi44SDUuMTMzMzNDNC43Nzk3MSAyLjggNC40NDA1NyAyLjk0MDQ4IDQuMTkwNTIgMy4xOTA1MkMzLjk0MDQ4IDMuNDQwNTcgMy44IDMuNzc5NzEgMy44IDQuMTMzMzNWNi4xMzMzMyIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzIiIGQ9Ik0xNS44IDYuMTMzMzNWNC4xMzMzM0MxNS44IDMuNzc5NzEgMTUuNjU5NSAzLjQ0MDU3IDE1LjQwOTUgMy4xOTA1MkMxNS4xNTk0IDIuOTQwNDggMTQuODIwMyAyLjggMTQuNDY2NyAyLjhIMTIuNDY2NyIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzMiIGQ9Ik0zLjggMTEuNDY2N1YxMy40NjY3QzMuOCAxMy44MjAzIDMuOTQwNDggMTQuMTU5NCA0LjE5MDUyIDE0LjQwOTVDNC40NDA1NyAxNC42NTk1IDQuNzc5NzEgMTQuOCA1LjEzMzMzIDE0LjhINy4xMzMzMyIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzQiIGQ9Ik0xMi40NjY3IDE0LjhIMTQuNDY2N0MxNC44MjAzIDE0LjggMTUuMTU5NCAxNC42NTk1IDE1LjQwOTUgMTQuNDA5NUMxNS42NTk1IDE0LjE1OTQgMTUuOCAxMy44MjAzIDE1LjggMTMuNDY2N1YxMS40NjY3IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjEuNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjwvZz4KPGRlZnM+CjxmaWx0ZXIgaWQ9ImZpbHRlcjBfZGRfMF85OTYiIHg9Ii0xLjIiIHk9Ii0xLjIiIHdpZHRoPSIyMiIgaGVpZ2h0PSIyMiIgZmlsdGVyVW5pdHM9InVzZXJTcGFjZU9uVXNlIiBjb2xvci1pbnRlcnBvbGF0aW9uLWZpbHRlcnM9InNSR0IiPgo8ZmVGbG9vZCBmbG9vZC1vcGFjaXR5PSIwIiByZXN1bHQ9IkJhY2tncm91bmRJbWFnZUZpeCIvPgo8ZmVDb2xvck1hdHJpeCBpbj0iU291cmNlQWxwaGEiIHR5cGU9Im1hdHJpeCIgdmFsdWVzPSIwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAxMjcgMCIgcmVzdWx0PSJoYXJkQWxwaGEiLz4KPGZlT2Zmc2V0IGR5PSIxIi8+CjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjAuNSIvPgo8ZmVDb21wb3NpdGUgaW4yPSJoYXJkQWxwaGEiIG9wZXJhdG9yPSJvdXQiLz4KPGZlQ29sb3JNYXRyaXggdHlwZT0ibWF0cml4IiB2YWx1ZXM9IjAgMCAwIDAgMC4wNTg4IDAgMCAwIDAgMC4wOTAyIDAgMCAwIDAgMC4xNjA4IDAgMCAwIDAuMDQgMCIvPgo8ZmVCbGVuZCBtb2RlPSJub3JtYWwiIGluMj0iQmFja2dyb3VuZEltYWdlRml4IiByZXN1bHQ9ImVmZmVjdDFfZHJvcFNoYWRvd18wXzk5NiIvPgo8ZmVDb2xvck1hdHJpeCBpbj0iU291cmNlQWxwaGEiIHR5cGU9Im1hdHJpeCIgdmFsdWVzPSIwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAxMjcgMCIgcmVzdWx0PSJoYXJkQWxwaGEiLz4KPGZlT2Zmc2V0IGR5PSIxIi8+CjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjEuNSIvPgo8ZmVDb21wb3NpdGUgaW4yPSJoYXJkQWxwaGEiIG9wZXJhdG9yPSJvdXQiLz4KPGZlQ29sb3JNYXRyaXggdHlwZT0ibWF0cml4IiB2YWx1ZXM9IjAgMCAwIDAgMC4wNTg4IDAgMCAwIDAgMC4wOTAyIDAgMCAwIDAgMC4xNjA4IDAgMCAwIDAuMSAwIi8+CjxmZUJsZW5kIG1vZGU9Im5vcm1hbCIgaW4yPSJlZmZlY3QxX2Ryb3BTaGFkb3dfMF85OTYiIHJlc3VsdD0iZWZmZWN0Ml9kcm9wU2hhZG93XzBfOTk2Ii8+CjxmZUJsZW5kIG1vZGU9Im5vcm1hbCIgaW49IlNvdXJjZUdyYXBoaWMiIGluMj0iZWZmZWN0Ml9kcm9wU2hhZG93XzBfOTk2IiByZXN1bHQ9InNoYXBlIi8+CjwvZmlsdGVyPgo8L2RlZnM+Cjwvc3ZnPgo=';
-const PREVIEW_ICON_IMAGE = 'data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjcyIiBoZWlnaHQ9IjcyIiB2aWV3Qm94PSIwIDAgNzIgNzIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gY29udGVudCAvIGltYWdlIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTU3IDlIMTVDMTEuNjg2MyA5IDkgMTEuNjg2MyA5IDE1VjU3QzkgNjAuMzEzNyAxMS42ODYzIDYzIDE1IDYzSDU3QzYwLjMxMzcgNjMgNjMgNjAuMzEzNyA2MyA1N1YxNUM2MyAxMS42ODYzIDYwLjMxMzcgOSA1NyA5WiIgc3Ryb2tlPSIjQzhEMUUxIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzIiIGQ9Ik0yNyAzM0MzMC4zMTM3IDMzIDMzIDMwLjMxMzcgMzMgMjdDMzMgMjMuNjg2MyAzMC4zMTM3IDIxIDI3IDIxQzIzLjY4NjMgMjEgMjEgMjMuNjg2MyAyMSAyN0MyMSAzMC4zMTM3IDIzLjY4NjMgMzMgMjcgMzNaIiBzdHJva2U9IiNDOEQxRTEiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxwYXRoIGlkPSJWZWN0b3JfMyIgZD0iTTYzIDQ1TDUzLjc0MiAzNS43NDJDNTIuNjE2OCAzNC42MTcyIDUxLjA5MSAzMy45ODUzIDQ5LjUgMzMuOTg1M0M0Ny45MDkgMzMuOTg1MyA0Ni4zODMyIDM0LjYxNzIgNDUuMjU4IDM1Ljc0MkwxOCA2MyIgc3Ryb2tlPSIjQzhEMUUxIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L2c+Cjwvc3ZnPgo=';
-const PREVIEW_ICON_UNDO = 'data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gdWkgLyB1bmRvIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTUuOTk5OTkgOS4zMzMzNUwyLjY2NjY2IDYuMDAwMDJMNS45OTk5OSAyLjY2NjY5IiBzdHJva2U9IiM4QTkzQTgiIHN0cm9rZS13aWR0aD0iMS42IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggaWQ9IlZlY3Rvcl8yIiBkPSJNMi42NjY2NiA2SDkuNjY2NjZDMTAuMTQ4MiA2IDEwLjYyNSA2LjA5NDg0IDExLjA2OTggNi4yNzkxMUMxMS41MTQ3IDYuNDYzMzggMTEuOTE4OSA2LjczMzQ2IDEyLjI1OTQgNy4wNzM5NEMxMi41OTk5IDcuNDE0NDIgMTIuODY5OSA3LjgxODYzIDEzLjA1NDIgOC4yNjM0OUMxMy4yMzg1IDguNzA4MzUgMTMuMzMzMyA5LjE4NTE1IDEzLjMzMzMgOS42NjY2N0MxMy4zMzMzIDEwLjE0ODIgMTMuMjM4NSAxMC42MjUgMTMuMDU0MiAxMS4wNjk4QzEyLjg2OTkgMTEuNTE0NyAxMi41OTk5IDExLjkxODkgMTIuMjU5NCAxMi4yNTk0QzExLjkxODkgMTIuNTk5OSAxMS41MTQ3IDEyLjg3IDExLjA2OTggMTMuMDU0MkMxMC42MjUgMTMuMjM4NSAxMC4xNDgyIDEzLjMzMzMgOS42NjY2NiAxMy4zMzMzSDcuMzMzMzIiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L2c+Cjwvc3ZnPgo=';
-const PREVIEW_ICON_REDO = 'data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gdWkgLyByZWRvIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTEwIDkuMzMzMzVMMTMuMzMzMyA2LjAwMDAyTDEwIDIuNjY2NjkiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzIiIGQ9Ik0xMy4zMzMzIDZINi4zMzMzMkM1LjM2MDg2IDYgNC40MjgyMyA2LjM4NjMxIDMuNzQwNiA3LjA3Mzk0QzMuMDUyOTcgNy43NjE1NyAyLjY2NjY2IDguNjk0MjEgMi42NjY2NiA5LjY2NjY3QzIuNjY2NjYgMTAuMTQ4MiAyLjc2MTUgMTAuNjI1IDIuOTQ1NzYgMTEuMDY5OEMzLjEzMDAzIDExLjUxNDcgMy40MDAxMiAxMS45MTg5IDMuNzQwNiAxMi4yNTk0QzQuNDI4MjMgMTIuOTQ3IDUuMzYwODYgMTMuMzMzMyA2LjMzMzMyIDEzLjMzMzNIOC42NjY2NiIgc3Ryb2tlPSIjOEE5M0E4IiBzdHJva2Utd2lkdGg9IjEuNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjwvZz4KPC9zdmc+Cg==';
-
 function renderPreview(){
-  buildPreviewCardNav();
   renderPreviewGrid();
+  buildPreviewCardNav();
   renderPreviewEditorPanels();
+  selectPreviewCard(window.__storyboardSelectedCard || 1);
+}
+function renderPreviewGrid(){
+  const n = window.__cardCount;
+  document.getElementById('previewGrid').innerHTML = Array.from({length: n}, (_, i) => renderPreviewTile(i + 1)).join('');
+}
+function renderPreviewTile(n){
+  const isActive = n === window.__storyboardSelectedCard;
+  return `
+    <div class="storyboard-tile ready${isActive ? ' active' : ''}" data-card="${n}" id="previewTile${n}" onclick="selectPreviewCard(${n})">
+      <div class="storyboard-tile-preview">
+        <div class="storyboard-tile-overlay-top">
+          <span></span>
+          <button type="button" class="storyboard-tile-regen-btn" onclick="event.stopPropagation(); downloadCard(${n})" title="Download Card ${n}">⬇</button>
+        </div>
+      </div>
+    </div>`;
 }
 function buildPreviewCardNav(){
   const n = window.__cardCount;
@@ -1372,250 +1670,90 @@ function buildPreviewCardNav(){
     const num = i + 1;
     return `<div class="card-nav-btn${num === window.__storyboardSelectedCard ? ' active' : ''}" data-target="${num}" onclick="selectPreviewCard(${num})">${num}</div>`;
   }).join('');
-  const undoRedo = `
-    <div class="preview-undo-redo">
-      <button type="button" class="card-nav-btn icon" onclick="cardHistoryPrev(window.__storyboardSelectedCard)" title="Previous version"><img src="${PREVIEW_ICON_UNDO}" alt=""></button>
-      <button type="button" class="card-nav-btn icon" onclick="cardHistoryNext(window.__storyboardSelectedCard)" title="Next version"><img src="${PREVIEW_ICON_REDO}" alt=""></button>
-    </div>`;
-  document.getElementById('previewCardNav').innerHTML = `<span class="storyboard-nav-label">Card</span>${buttons}${undoRedo}`;
+  document.getElementById('previewCardNav').innerHTML = `<span class="storyboard-nav-label">Card</span>${buttons}`;
 }
-function renderPreviewGrid(){
-  const grid = document.getElementById('previewGrid');
-  if(!grid) return;
-  const n = window.__cardCount;
-  grid.innerHTML = Array.from({length: n}, (_, i) => renderPreviewTile(i + 1)).join('');
-}
-function renderPreviewTile(n){
-  const hist = window.__cardImageHistory[n];
-  const idx = window.__cardImageActiveIndex[n] || 0;
-  const ready = !!(hist && hist[idx] && hist[idx].ready);
-  const isActive = n === window.__storyboardSelectedCard;
-  const pills = hist && hist.length > 1
-    ? hist.map((h, i) => `<button type="button" class="version-pill ${i === idx ? 'active' : ''}" onclick="event.stopPropagation(); selectCardHistoryVersion(${n}, ${i})">V${i === 0 ? '1' : '1.' + i}</button>`).join('')
-    : `<span class="version-pill active">V1</span>`;
-  return `
-    <div class="preview-tile${isActive ? ' active' : ''}" data-card="${n}" onclick="selectPreviewCard(${n})">
-      <div class="preview-tile-frame">
-        <div class="preview-tile-top-row">
-          <button type="button" class="preview-icon-btn" onclick="event.stopPropagation(); downloadCard(${n})" title="Download this card"><img src="${PREVIEW_ICON_DOWNLOAD}" alt=""></button>
-          <button type="button" class="preview-icon-btn ghost" onclick="event.stopPropagation(); expandCard(${n})" title="Expand"><img src="${PREVIEW_ICON_MAXIMIZE}" alt=""></button>
-        </div>
-        <div class="preview-tile-image">${ready ? `<img src="${PREVIEW_ICON_IMAGE}" alt="">` : '<div class="spinner-mini" style="display:block;"></div>'}</div>
+function previewCopyFieldsHtml(n){
+  const fields = ensureCardCopyFields(n);
+  return fields.map(f => `
+    <div class="copy-field ${f.on ? '' : 'off'}" data-key="${f.key}">
+      <div class="copy-field-body">
+        <span class="copy-field-label">${f.label}</span>
+        <input class="copy-field-input" value="${f.text.replace(/"/g,'&quot;')}" placeholder="Not set" disabled>
       </div>
-      <div class="preview-version-pills">${pills}</div>
-    </div>`;
-}
-function selectCardHistoryVersion(n, idx){
-  window.__cardImageActiveIndex[n] = idx;
-  renderStoryboardGrid();
-}
-function selectPreviewCard(n){
-  n = Number(n);
-  selectStoryboardCard(n);
+      <button type="button" class="field-switch ${f.on ? 'on' : ''}" disabled><span class="knob"></span></button>
+    </div>`).join('');
 }
 function renderPreviewEditorPanels(){
   const n = window.__cardCount;
   document.getElementById('previewEditorPanel').innerHTML = Array.from({length: n}, (_, i) => {
     const num = i + 1;
     return `
-      <div class="preview-card-editor storyboard-card-editor" id="previewCardEditor${num}" style="${num === 1 ? '' : 'display:none;'}">
-        <div class="copy-field-list" id="previewCopyFieldList${num}"></div>
+      <div class="storyboard-card-editor" id="previewCardEditor${num}" style="${num === 1 ? '' : 'display:none;'}">
+        <div class="copy-field-header-row">
+          <span class="copy-field-section-label">On-card text</span>
+          <button type="button" class="copy-edit-btn" onclick="editCardFromPreview(${num})">✎ Edit in Storyboard</button>
+        </div>
+        <div class="copy-field-list locked">${previewCopyFieldsHtml(num)}</div>
         <label class="scene-desc-label">Scene &amp; background description</label>
-        <textarea class="story-desc-input" data-card="${num}" oninput="updateCardDescription(${num}, this.value)">${escapeHtml(window.__cardDescriptions[num] || '')}</textarea>
-        <div class="preview-cta-row">
-          <button type="button" class="btn btn-secondary" onclick="startCardGeneration()">Regenerate All</button>
-          <button type="button" class="btn btn-dark" id="previewCardRegenBtn${num}" onclick="regenerateCard(${num})" disabled>Regenerate Card ${num}</button>
+        <textarea class="story-desc-input" disabled>${escapeHtml(window.__cardDescriptions[num] || '')}</textarea>
+        <div class="card-prompt-block visible">
+          <label class="scene-desc-label">Image prompt</label>
+          <textarea class="card-prompt-text" disabled>${escapeHtml(ensureCardImagePrompt(num))}</textarea>
         </div>
       </div>`;
   }).join('');
-  for(let i = 1; i <= n; i++){
-    renderCardCopyFields(i);
-    updatePreviewCardRegenBtn(i);
-  }
 }
-function updatePreviewCardRegenBtn(n){
-  const btn = document.getElementById('previewCardRegenBtn' + n);
-  if(!btn) return;
-  const hist = window.__cardImageHistory[n];
-  btn.disabled = !(hist && hist[window.__cardImageActiveIndex[n]].ready);
+function selectPreviewCard(n){
+  n = Number(n);
+  window.__storyboardSelectedCard = n;
+  document.querySelectorAll('#previewGrid .storyboard-tile').forEach(t => t.classList.toggle('active', Number(t.dataset.card) === n));
+  document.querySelectorAll('#previewCardNav .card-nav-btn').forEach(b => b.classList.toggle('active', Number(b.dataset.target) === n));
+  document.querySelectorAll('#previewEditorPanel .storyboard-card-editor').forEach(e => e.style.display = 'none');
+  const editor = document.getElementById('previewCardEditor' + n);
+  if(editor) editor.style.display = 'block';
+  const tile = document.getElementById('previewTile' + n);
+  if(tile) tile.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
 }
-// Prototype only — no real files exist to save, so these are visual no-ops.
-function downloadCard(n){}
-function expandCard(n){}
-function downloadAllCards(){}
-
-// =====================================================================
-// SIZE VARIATIONS (post-generate) — a modal opened via "+ Size variations"
-// next to the Storyboard title. One tab per completed variation set (named
-// by ratio), a trailing "+" tab to start another, and a "new" tab that
-// lets you pick any number of cards (individually or all at once) plus a
-// ratio not already generated. Every result stays viewable/downloadable
-// via its tab — originals in the main canvas are never touched.
-// =====================================================================
-const SIZE_VAR_CREDIT_PER_CARD = 5;
-const ALL_RATIOS = ['9:16', '1:1', '4:5'];
-window.__sizeVarSets = []; // { id, ratio, cards:[n,...] }
-window.__sizeVarActiveTab = 'new'; // 'new' | a set's id
-window.__sizeVarSelectedCards = new Set();
-
-function availableSizeVarRatios(){
-  const used = new Set([window.__carouselRatio, ...window.__sizeVarSets.map(s => s.ratio)]);
-  return ALL_RATIOS.filter(r => !used.has(r));
+function editCardFromPreview(n){
+  window.__storyboardSelectedCard = Number(n);
+  backToStoryboard();
+  selectStoryboardCard(n);
 }
-function openSizeVarModal(){
-  if(!window.__sizeVarSets.length) window.__sizeVarActiveTab = 'new';
-  document.getElementById('storyboardMainStage').style.display = 'none';
-  document.getElementById('sizeVarPanel').style.display = 'block';
-  renderSizeVarModalTabs();
-  renderSizeVarModalBody();
+function downloadCard(n){
+  alert(`This is a prototype — in the real product this downloads Card ${n}'s image.`);
 }
-function closeSizeVarModal(){
-  document.getElementById('sizeVarPanel').style.display = 'none';
-  document.getElementById('storyboardMainStage').style.display = 'flex';
+function downloadAllCards(){
+  alert(`This is a prototype — in the real product this downloads all ${window.__cardCount} cards as a zip.`);
 }
-function selectSizeVarTab(tab){
-  window.__sizeVarActiveTab = tab;
-  renderSizeVarModalTabs();
-  renderSizeVarModalBody();
+// Folds a free-text style request into a card's prompt as a trailing "Style note", replacing
+// any previous note rather than stacking them indefinitely.
+function appendStyleNoteToPrompt(n, note){
+  const base = ensureCardImagePrompt(n).replace(/\s*Style note:.*$/i, '');
+  const updated = `${base} Style note: ${note}.`;
+  window.__cardImagePrompts[n] = updated;
+  const ta = document.getElementById('cardImagePrompt' + n);
+  if(ta) ta.value = updated;
 }
-function renderSizeVarModalTabs(){
-  const tabsHtml = window.__sizeVarSets.map(s => `
-    <div class="sizevar-tab ${window.__sizeVarActiveTab === s.id ? 'active' : ''}" onclick="selectSizeVarTab('${s.id}')">${s.ratio}</div>
-  `).join('');
-  document.getElementById('sizeVarModalTabs').innerHTML = `
-    ${tabsHtml}
-    <div class="sizevar-tab sizevar-tab-add ${window.__sizeVarActiveTab === 'new' ? 'active' : ''}" onclick="selectSizeVarTab('new')" title="Create another size variation">+</div>`;
-}
-function renderSizeVarModalBody(){
-  const body = document.getElementById('sizeVarModalBody');
-  if(window.__sizeVarActiveTab === 'new'){
-    body.innerHTML = renderSizeVarCreatePanel();
-    renderSizeVarCardGrid();
-    updateSizeVarCost();
-  } else {
-    const set = window.__sizeVarSets.find(s => s.id === window.__sizeVarActiveTab);
-    body.innerHTML = set ? renderSizeVarSetView(set) : '';
-  }
-}
-function renderSizeVarCreatePanel(){
-  const ratios = availableSizeVarRatios();
-  if(!ratios.length){
-    return `<p class="sizevar-empty-hint">All available ratios for this carousel have already been generated.</p>`;
-  }
-  return `
-    <div class="sizevar-create-row">
-      <label class="scene-desc-label" style="margin:0;">Cards</label>
-      <button type="button" class="sizevar-selectall-btn" id="sizeVarSelectAllBtn" onclick="toggleSizeVarSelectAll()"></button>
-    </div>
-    <div class="sizevar-card-grid" id="sizeVarCardGrid"></div>
-    <div class="sizevar-ratio-row">
-      <div class="size-var-field">
-        <label>New ratio</label>
-        <select class="size-var-select" id="sizeVarRatio" onchange="updateSizeVarCost()">
-          ${ratios.map(r => `<option value="${r}">${r}</option>`).join('')}
-        </select>
-      </div>
-    </div>
-    <div class="sizevar-cost-row">
-      <span class="sizevar-cost-text" id="sizeVarCost"></span>
-      <button class="btn btn-dark" id="sizeVarGenerateBtn" onclick="generateSizeVariationSet()">Generate</button>
-    </div>`;
-}
-function renderSizeVarCardGrid(){
-  const grid = document.getElementById('sizeVarCardGrid');
-  if(!grid) return;
+// Chat-driven regeneration: "card 3 ..." targets one card's prompt + regenerates just that
+// card; anything else is treated as a style note for the whole set and regenerates everyone.
+function handleStoryboardStyleRequest(text){
   const n = window.__cardCount;
-  grid.innerHTML = Array.from({length: n}, (_, i) => {
-    const num = i + 1;
-    const selected = window.__sizeVarSelectedCards.has(num);
-    return `
-      <div class="sizevar-card-thumb${selected ? ' selected' : ''}" onclick="toggleSizeVarCard(${num})">
-        ${selected ? '<span class="sizevar-card-thumb-check">✓</span>' : ''}
-        <span class="sizevar-card-thumb-label">Card ${num}</span>
-      </div>`;
-  }).join('');
-  updateSizeVarSelectAllBtn();
-}
-function toggleSizeVarCard(n){
-  if(window.__sizeVarSelectedCards.has(n)) window.__sizeVarSelectedCards.delete(n);
-  else window.__sizeVarSelectedCards.add(n);
-  renderSizeVarCardGrid();
-  updateSizeVarCost();
-}
-function toggleSizeVarSelectAll(){
-  if(window.__sizeVarSelectedCards.size === window.__cardCount) window.__sizeVarSelectedCards.clear();
-  else window.__sizeVarSelectedCards = new Set(Array.from({length: window.__cardCount}, (_, i) => i + 1));
-  renderSizeVarCardGrid();
-  updateSizeVarCost();
-}
-function updateSizeVarSelectAllBtn(){
-  const btn = document.getElementById('sizeVarSelectAllBtn');
-  if(btn) btn.textContent = window.__sizeVarSelectedCards.size === window.__cardCount ? 'Clear all' : 'Select all';
-}
-function updateSizeVarCost(){
-  const ratioEl = document.getElementById('sizeVarRatio');
-  const costEl = document.getElementById('sizeVarCost');
-  const genBtn = document.getElementById('sizeVarGenerateBtn');
-  if(!ratioEl || !costEl) return;
-  const count = window.__sizeVarSelectedCards.size;
-  if(!count){
-    costEl.textContent = 'Select at least one card';
-    genBtn.disabled = true;
-    return;
-  }
-  const credits = count * SIZE_VAR_CREDIT_PER_CARD;
-  costEl.innerHTML = `${count} card${count > 1 ? 's' : ''} · ${ratioEl.value} · <b>⚡${credits}</b>`;
-  genBtn.disabled = false;
-}
-function generateSizeVariationSet(){
-  const ratio = document.getElementById('sizeVarRatio').value;
-  const cards = Array.from(window.__sizeVarSelectedCards).sort((a, b) => a - b);
-  if(!cards.length) return;
-  const btn = document.getElementById('sizeVarGenerateBtn');
-  btn.disabled = true;
-  btn.textContent = 'Generating…';
+  const cardMatch = text.match(/card\s*(\d+)/i);
   setTimeout(() => {
-    const id = 'sv' + Date.now();
-    window.__sizeVarSets.push({ id, ratio, cards });
-    window.__sizeVarActiveTab = id;
-    renderSizeVarModalTabs();
-    renderSizeVarModalBody();
-  }, 1400);
+    if(cardMatch){
+      const num = Math.min(Math.max(parseInt(cardMatch[1], 10), 1), n);
+      const note = text.replace(/card\s*\d+[,:\s-]*/i, '').trim() || text;
+      appendStyleNoteToPrompt(num, note);
+      addChatMsg('ai', `<span class="tag">AI</span>Got it — regenerating Card ${num} with that.`);
+      regenerateCard(num);
+    } else {
+      for(let i = 1; i <= n; i++) appendStyleNoteToPrompt(i, text);
+      addChatMsg('ai', `<span class="tag">AI</span>Got it — regenerating all ${n} images with that style.`);
+      regenerateAllCardsWithStyle();
+    }
+  }, 500);
 }
-function renderSizeVarSetView(set){
-  return `
-    <div class="sizevar-set-view-title">${set.ratio} · ${set.cards.length} card${set.cards.length > 1 ? 's' : ''}</div>
-    <div class="sizevar-set-grid">
-      ${set.cards.map(num => `
-        <div class="sizevar-set-thumb" style="aspect-ratio:${set.ratio.replace(':', '/')};">
-          <span class="sizevar-set-thumb-label">Card ${num}</span>
-          <button type="button" class="sizevar-download-btn" onclick="downloadSizeVarImage('${set.id}', ${num})">⬇ Download</button>
-        </div>
-      `).join('')}
-    </div>`;
-}
-function downloadSizeVarImage(setId, cardNum){
-  const set = window.__sizeVarSets.find(s => s.id === setId);
-  if(!set) return;
-  const [rw, rh] = set.ratio.split(':').map(Number);
-  const scale = 90;
-  const canvas = document.createElement('canvas');
-  canvas.width = rw * scale;
-  canvas.height = rh * scale;
-  const ctx = canvas.getContext('2d');
-  const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-  grad.addColorStop(0, '#a8cbff');
-  grad.addColorStop(1, '#ed7797');
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = 'rgba(255,255,255,0.95)';
-  ctx.font = `bold ${Math.round(scale * 0.32)}px sans-serif`;
-  ctx.fillText(`Card ${cardNum} · ${set.ratio}`, 16, canvas.height - 18);
-  const a = document.createElement('a');
-  a.href = canvas.toDataURL('image/png');
-  a.download = `card-${cardNum}-${set.ratio.replace(':', 'x')}.png`;
-  a.click();
-}
+
 
 // ---- init ----
 setCharMode('with'); // matches the "With Character" chip that's active by default in the HTML
