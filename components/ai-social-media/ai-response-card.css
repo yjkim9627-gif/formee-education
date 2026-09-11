@@ -15,7 +15,10 @@
 .chat-cta-card{display:flex; flex-direction:column; gap:12px; margin-top:10px; background:var(--color-neutral-75); border:1px solid var(--color-neutral-400); border-radius:var(--radius-xl); padding:12px;}
 .chat-cta-title{font-size:14px; font-weight:700; line-height:20px; color:var(--color-neutral-900);}
 .chat-cta-text{font-size:14px; color:var(--color-neutral-700); line-height:1.57;}
-.chat-cta-card .btn-dark, .chat-cta-card .btn-secondary{width:100%; justify-content:center; padding:9px 14px; font-size:13px;}
+/* Figma's "Text/sm SemiBold" style (13px/20px) -- .btn's base line-height is tuned for its
+   own 14px/22px text-md, so it must be overridden here alongside font-size, and height must
+   go back to auto so the 9px/14px padding sets the box (38px), not the base .btn's fixed 40px. */
+.chat-cta-card .btn-dark, .chat-cta-card .btn-secondary{width:100%; justify-content:center; height:auto; padding:9px 14px; font-size:13px; line-height:var(--line-height-text-sm);}
 
 /* State = "Buttons 1row"/"Buttons 2rows" — the version-pick buttons (V1/V2/…) are fixed
    128px, not full-width like every other chat CTA button, and lay out as a plain row up to
