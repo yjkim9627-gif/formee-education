@@ -22,8 +22,10 @@
 <link rel="stylesheet" href="../../../../components/ai-social-media/controls-filter-select.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/actions-button.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/scene-tile.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/reference-scene-tile.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/reference-chip.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/voice-accordion-row.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/voice-section.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/queue-panel.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/video-summary-card.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/date-picker.css">
@@ -36,13 +38,20 @@
 <link rel="stylesheet" href="../../../../components/ai-social-media/brand-logo.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/image-scene-card.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/storyboard-card.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/media-card-icon-btn.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/feedback-status-chip.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/destination-account.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/publish-destination-table-row.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/controls-field-ai-assisted-text.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/publish-social-modal.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/controls-misc.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/controls-toggles.css">
 <!-- Playfair Display: only used live for the Draft screen's brand-kit font-preview tags (Formee
      Express's Heading face, matching brand-setup-kit-character-library.html's own import). -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap">
+<!-- Lora: brand-kit-summary-compact's Subheading preview card (Figma 8987:236932 uses
+     Lora Bold there, not Georgia). -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:wght@700&display=swap">
 <style>
   *{box-sizing:border-box;}
   /* Real Figma icons (components/ai-social-media/icons/), replacing emoji/ad-hoc glyphs. See
@@ -112,18 +121,12 @@
   .seg-chip.active{background:#fff; color:var(--color-neutral-900); font-weight:600; box-shadow:0 1px 1.5px rgba(15,23,41,0.1),0 1px 0.5px rgba(15,23,41,0.04);}
   .seg-chip.disabled{opacity:.4; cursor:default; pointer-events:none;}
 
-  /* .btn-dark is deliberately its own class (composed with shared button.css's .btn base, 40px/
-     16px-padding) rather than actions-button.css's .actions-btn--primary -- same dark-gradient
-     treatment (style-reference.md documents this exact gradient being reused across multiple
-     differently-sized button families, e.g. Auth Button), but a genuinely different, larger CTA
-     tier used here for step-advancing actions (Continue/Generate/Publish), not the smaller
-     Actions/Button pill. It was missing the glossy inset highlight that treatment's other sizes
-     have, though -- added via the existing (previously unused) shadow token for the dark inset
-     line, plus the matching top highlight (no token yet for that one). */
-  .btn-dark{background:linear-gradient(180deg, var(--color-action-primary-dark-gradient-start), var(--color-action-primary-dark-gradient-end)); border-color:transparent; color:var(--color-neutral-0); box-shadow:0 1px 2px rgba(13,13,13,0.1), var(--shadow-action-primary-dark-inset), inset 0 0.5px 1px rgba(255,255,255,.15);}
-  .btn-dark:hover:not(:disabled){filter:brightness(1.1);}
-  .btn-dark:active:not(:disabled){filter:brightness(0.92);}
-  .btn-dark:disabled{background:var(--color-neutral-300); color:var(--color-neutral-450); box-shadow:none;}
+  /* .btn-dark itself now lives in shared/button.css (promoted from here -- was duplicated
+     byte-for-byte in both v3 and v4). Deliberately its own class composed with .btn's 40px/
+     16px-padding base, not actions-button.css's .actions-btn--primary -- same dark-gradient
+     treatment reused across differently-sized button families, but this is the larger CTA
+     tier for step-advancing actions (Continue/Generate/Publish), not the smaller Actions/
+     Button pill. */
 
   .action-bar{position:absolute; left:0; right:0; bottom:0; background:#fff; border-top:1px solid var(--color-neutral-200); padding:12px 64px; display:flex; align-items:center; justify-content:center; gap:32px;}
   .meta-text{font-size:12px; color:var(--color-neutral-500); flex-shrink:0;}
@@ -160,12 +163,6 @@
   /* .chat-cta-row/.chat-cta-card/etc. now come from the shared
      components/ai-social-media/ai-response-card.css ("AI / Response Card", node 7164:15). */
 
-  .visual-proposal-box{margin-top:8px; background:#fff; border:1px solid var(--color-neutral-300); border-radius:var(--radius-lg); padding:14px; display:flex; flex-direction:column; gap:10px;}
-  .visual-proposal-heading{font-size:13px; font-weight:700; color:var(--color-neutral-900);}
-  .visual-proposal-text{font-size:12.5px; color:var(--color-neutral-900); line-height:1.5;}
-  .copy-applied-note{display:none; align-items:center; gap:4px; width:fit-content; font-size:12px; font-weight:600; color:var(--color-brand-primary); background:var(--color-brand-primary-light); border:1px solid var(--color-brand-primary-mid); border-radius:999px; padding:6px 10px;}
-  .visual-proposal-box.applied .copy-applied-note{display:flex;}
-  .visual-proposal-box.applied{border-color:var(--color-brand-primary-mid);}
   /* Figma's "AI / Review Item" (5457-111240 ai-response > list) is a plain 14px paragraph,
      same size/weight as the rest of the AI response — not a small muted caption. */
   .chat-edit-hint{display:block; font-size:14px; line-height:20px; color:var(--color-neutral-700); margin-top:4px;}
@@ -203,31 +200,27 @@
   /* AI Prompt Box shell — .ratio-box-ic는 이제 components/ai-social-media/prompt-box.css,
      setting-chip.css에서 공유 정의됨 (v3 링크 목록 참고) */
 
-  /* -- Reference image chips (Brief prompt box) -- */
+  /* -- Reference image chips (Brief prompt box, Script/Timeline scene editors, Image post
+     and Carousel's own prompt box) -- all now the real Prompt Reference Chip component,
+     see components/ai-social-media/reference-chip.css (.ref-chip). This row is just the
+     flex-wrap layout the chips sit in. */
   .reference-images-row{display:flex; gap:8px; flex-wrap:wrap;}
   .reference-images-row:empty{display:none;}
-  .ref-image-chip{display:flex; align-items:center; gap:8px; background:#fff; border:1px solid var(--color-neutral-300); border-radius:var(--radius-lg); padding:8px 12px 8px 8px;}
-  .ref-image-chip .thumb{width:28px; height:28px; border-radius:6px; background:linear-gradient(135deg,var(--color-brand-primary-mid),var(--color-brand-accent)); position:relative; flex-shrink:0;}
-  .ref-image-chip .thumb::after{content:'🖼'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:12px;}
-  .ref-image-chip .label{font-size:12.5px; font-weight:600; color:var(--color-neutral-900);}
-  .ref-image-chip{position:relative; padding-right:var(--spacing-4xl);}
-  .ref-image-chip .remove{position:absolute; top:var(--spacing-xs); right:var(--spacing-xs); display:flex; align-items:center; justify-content:center; width:var(--spacing-2xl); height:var(--spacing-2xl); padding:0; margin:0; border:var(--border-width-1) solid var(--color-neutral-400); border-radius:var(--radius-full); background:var(--color-neutral-0); color:var(--color-neutral-700); cursor:pointer; opacity:0; pointer-events:none;}
-  .ref-image-chip:hover .remove, .ref-image-chip:focus-within .remove{opacity:1; pointer-events:auto;}
-  @media (hover:none){.ref-image-chip .remove{opacity:1; pointer-events:auto;}}
-  .ref-image-chip .remove:focus-visible{outline:var(--border-width-1) solid var(--color-brand-primary); outline-offset:var(--spacing-2);}
-  .ref-image-chip .remove img{width:var(--spacing-md); height:var(--spacing-md);}
-  /* Prompt Reference Chip, empty state — Figma node 5991:95700. Real spec: bg
-     neutral-100, 12/20 padding, 6px gap, radius-lg, neutral-450 13px/500 label, and the
-     real icon/content/image-plus glyph (not a plain placeholder square). The compact
-     square variant (Script/Timeline scene editors) now uses its own updated component,
-     see components/ai-social-media/reference-chip.css. */
-  .ref-image-add{display:flex; align-items:center; justify-content:center; gap:6px; background:var(--color-neutral-100); border-radius:var(--radius-lg); padding:var(--spacing-xl) var(--spacing-md); cursor:pointer; color:var(--color-neutral-450); font-size:13px; font-weight:500; font-family:var(--font-family-text); align-self:flex-start;}
-  .ref-image-add:hover{background:var(--color-neutral-150);}
-  .ref-image-add .ref-add-icon{width:20px; height:20px; flex-shrink:0; display:block;}
-  /* Reel/Short & Story Video Brief & Style prompt box: Reference vs first/last frame are
-     mutually exclusive attachment modes — the inactive option greys out instead of disappearing,
-     so it's clear it's still there once the other is removed. */
-  .ref-image-add.disabled{opacity:.4; cursor:not-allowed; pointer-events:none;}
+
+  /* -- My Library picker modal (Figma 9198:133913 "Reference - My Library") — real
+     Controls/Segmented Control + Controls/Filter/Select + Reference/Scene Tile·Selectable
+     grid (multi-select) + Actions/Button footer. Selecting tiles then clicking "Add"
+     hands off to window.fmxRefMount() (see reference-images-row above / fmxref-js below),
+     same as the Content Library "Use as reference" deep-link. -- */
+  .mylib-modal{max-width:1088px; width:100%; padding:var(--spacing-xl); border-radius:16px; gap:var(--spacing-sm);}
+  .mylib-header-top{display:flex; align-items:flex-start; justify-content:space-between; width:100%;}
+  .mylib-header-top .modal__close{position:static; width:36px; height:36px; border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); box-shadow:0 1px 1.5px rgba(15,23,41,.1),0 1px 0.5px rgba(15,23,41,.04);}
+  .mylib-filter-bar{display:flex; align-items:center; justify-content:space-between; height:64px; width:100%;}
+  .mylib-filter-left{display:flex; align-items:center; gap:8px;}
+  .mylib-filter-row{display:flex; align-items:center; gap:var(--spacing-md);}
+  .mylib-item-count{font-family:var(--font-family-text); font-size:12px; font-weight:500; color:var(--color-neutral-500); white-space:nowrap;}
+  .mylib-content{display:flex; flex-wrap:wrap; gap:var(--spacing-md); max-height:60vh; overflow-y:auto;}
+  .mylib-footer{display:flex; align-items:center; justify-content:flex-end; gap:var(--spacing-md); padding-top:16px; width:100%;}
 
   /* -- Character section (Brief & Style) — .char-section/.char-panel/.char-filters/.char-grid/
      .char-card + Filter Chip now in components/ai-social-media/character-card.css + filter-chip.css. -- */
@@ -727,43 +720,8 @@
      pattern as the caption customization above -- */
   .pub-schedule-custom-row{display:flex; align-items:center; gap:10px; font-size:12.5px; font-weight:500; color:var(--color-neutral-700); user-select:none; margin-top:14px;}
 
-  /* -- Destinations — Figma node 7175-117702 (Image post case): one unified table instead
-     of the old bordered-card grid + a separate global "Format" block. Post/Story are now
-     per-platform columns (a platform can go out as either, both, or neither) instead of one
-     Post/Story choice applied uniformly to every checked destination — Image shows both
-     columns; Reel/Short and Carousel show Post only; Story Video shows Story only (see
-     renderPublishDestinations()). Checked = brand-primary fill (not the neutral-900 used by
-     every other checkbox/radio on this screen) to match the Figma "Destination Table Row"
-     component exactly. -- */
-  .pub-dest-table{width:100%; box-sizing:border-box; background:var(--color-neutral-0); border:1.2px solid var(--color-neutral-400); border-radius:var(--radius-xl); overflow:hidden;}
-  .pub-dest-table-header{display:flex; align-items:center; padding:12px 16px; border-bottom:1px solid var(--color-neutral-200);}
-  .pub-dest-col-head{width:56px; flex-shrink:0; text-align:center; font-size:13px; font-weight:600; color:var(--color-neutral-700);}
-  .pub-dest-row{display:flex; align-items:center; gap:0; padding:16px; border-bottom:1px solid var(--color-neutral-200);}
-  .pub-dest-row:last-child{border-bottom:none;}
-  /* Leading "select this platform" checkbox (Figma table-header's select-col, 36px) — checking
-     it turns every surface (Post/Story) this content type offers on at once; the per-surface
-     checkboxes further right stay independently toggleable afterward. */
-  .pub-dest-select-col{width:36px; flex-shrink:0; display:flex; align-items:center; justify-content:center;}
-  .pub-dest-meta{display:flex; align-items:center; gap:10px; width:240px; flex-shrink:0; min-width:0;}
-  .pub-dest-icon{width:32px; height:32px; flex-shrink:0; border-radius:var(--radius-sm); display:block;}
-  .pub-dest-name-col{display:flex; flex-direction:column; gap:2px; min-width:0;}
-  .pub-dest-name{font-size:14px; font-weight:600; color:var(--color-neutral-900); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-  .pub-dest-row.not-connected .pub-dest-name{color:var(--color-neutral-500);}
-  .pub-dest-handle{font-size:12px; font-weight:400; color:var(--color-neutral-500); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-  .pub-dest-gap{flex:1 0 0; min-width:12px;}
-  .pub-dest-col{width:56px; flex-shrink:0; display:flex; align-items:center; justify-content:center;}
-  .pub-dest-status-col{width:240px; flex-shrink:0; display:flex; align-items:center; justify-content:flex-end; gap:10px;}
-  /* .pub-dest-status / .connected duplicated the real Controls / Toggles feedback badge
-     (controls-toggles.css's .ctrl-feedback / --green, now linked) almost exactly (same padding/
-     font-size/line-height/radius) -- removed in favor of it. .not-connected's own neutral-400/
-     neutral-700 grey has no matching shared modifier yet (the closest, --secondary, is a
-     different neutral-150/neutral-900 combo), so it stays local as .pub-dest-status--not-connected,
-     layered on top of the shared .ctrl-feedback base instead of reimplementing that too. */
-  .pub-dest-status--not-connected{background:var(--color-neutral-400); color:var(--color-neutral-700); border-radius:var(--radius-full);}
-  .pub-dest-connect-btn{flex-shrink:0; display:inline-flex; align-items:center; justify-content:center; padding:9px 14px; background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); font-family:var(--font-family-text); font-size:13px; font-weight:600; line-height:20px; color:var(--color-neutral-700); cursor:pointer;}
-  .pub-dest-connect-btn:hover{border-color:var(--color-neutral-450);}
-  /* Checkbox look itself now comes from the shared .checkbox component (components/shared/
-     checkbox.css) — .pub-dest-checkbox only carries layout, no appearance overrides. */
+  /* -- Destinations table (Image post case) — real component now, see
+     components/ai-social-media/publish-destination-table-row.css (Figma 7186:149180). -- */
 
   /* -- Simple destinations grid — Reel/Short, Story Video and Carousel don't offer a Post/
      Story choice per platform (only Image does), so their Publish screen uses the plain
@@ -998,6 +956,31 @@
   .script-proposal-box.applied{border-color:var(--color-brand-primary-mid);}
   .script-proposal-title{font-size:14px; font-weight:700; color:var(--color-neutral-900); font-family:var(--font-family-text);}
 
+  /* AI 대화창 공통 규칙 스펙, Case 2/3 — the "Changes" completion card every chat-driven edit
+     converges on (Framer Agent panel reference: a small card naming what changed + Undo).
+     Reuses the same bg-75/border-400/radius-xl/padding-12 shell as .script-proposal-box and
+     .chat-cta-card (both already this exact look) rather than inventing a new container, and
+     the Undo/Redo icon-button pair reuses controls-field-ai-assisted-text.css's
+     .controls-field-ai__icon-btn as-is (same 24px/border-400/radius-md look already
+     established for the Publish caption's own Undo/Redo). */
+  .chat-changes-card{
+    display:flex; align-items:center; gap:var(--spacing-sm); margin-top:10px;
+    background:var(--color-neutral-75); border:1px solid var(--color-neutral-400); border-radius:var(--radius-xl);
+    padding:10px 12px; box-sizing:border-box;
+  }
+  .chat-changes-label{font-size:13px; font-weight:600; color:var(--color-neutral-900); font-family:var(--font-family-text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .chat-changes-spacer{flex:1 0 0; min-width:0;}
+
+  /* Case 3 — proactive over-limit suggestion card, shown in the chat alongside (not instead
+     of) the field's own inline red warning. Same shell as .chat-changes-card; the one-click
+     button reuses .pub-refine-chip (already the "Shorten" affordance's look elsewhere). */
+  .chat-limit-card{
+    display:flex; flex-direction:column; align-items:flex-start; gap:8px; margin-top:10px;
+    background:var(--color-badge-red-bg); border:1px solid var(--color-error-text); border-radius:var(--radius-xl);
+    padding:12px; box-sizing:border-box;
+  }
+  .chat-limit-card p{margin:0; font-size:13px; line-height:1.5; color:var(--color-neutral-900); font-family:var(--font-family-text);}
+
   /* -- Chat "next action" card (Generate Script/Video, Combine, etc.) now unified onto
      .chat-cta-card (see the shared rule above) — appendChatCta() used to render its own
      near-duplicate .ai-cta-card with slightly-off values (neutral-50/200 instead of
@@ -1031,13 +1014,24 @@
   .setting-chip .ratio-icon i{width:8px; height:14px; border:1.2px solid var(--color-neutral-500); border-radius:2px; display:block;}
   .setting-chip-wrap{position:relative;}
   .setting-popover{position:absolute; top:calc(100% + 6px); left:0; min-width:230px; background:#fff; border:1px solid var(--color-neutral-300); border-radius:10px; box-shadow:0 10px 28px rgba(15,23,41,0.14); z-index:40; padding:8px;}
-  .char-mini-grid{display:flex; gap:12px; padding:4px 4px 2px;}
-  .char-mini-opt{display:flex; flex-direction:column; align-items:center; gap:5px; cursor:pointer;}
-  .char-mini-opt .circle{width:40px; height:40px; border-radius:999px; background:linear-gradient(135deg,var(--color-neutral-300),var(--color-neutral-200)); border:2px solid transparent;}
-  .char-mini-opt.selected .circle{border-color:var(--color-brand-primary);}
-  .char-mini-opt span{font-size:10.5px; color:var(--color-neutral-700);}
-  .setting-popover-footer{margin-top:8px; padding-top:8px; border-top:1px solid var(--color-neutral-200); font-size:11.5px; color:var(--color-neutral-600); text-align:center; cursor:pointer;}
-  .setting-popover-footer:hover{color:var(--color-neutral-900);}
+
+  /* "Change Character" popover — Figma 8727:223651 (ContextBar / Popover / Replace): a
+     horizontal scroll of character thumbnails with a fade + arrow hinting more sit off-screen,
+     instead of the old vertical .char-mini-grid list. Shared between Reel/Short's existing
+     character chip and Image post's (new — that chip had no popover at all before). */
+  .char-replace-popover{width:308px; padding:8px 12px 12px;}
+  .char-replace-header{display:flex; align-items:center; gap:8px; font-size:14px; font-weight:600; color:var(--color-neutral-800); padding-bottom:8px;}
+  .char-replace-header img{width:16px; height:16px;}
+  .char-replace-carousel{position:relative;}
+  .char-replace-track{display:flex; gap:8px; overflow-x:auto; scroll-behavior:smooth; scrollbar-width:none;}
+  .char-replace-track::-webkit-scrollbar{display:none;}
+  .char-replace-cell{flex-shrink:0; width:68px; height:68px; border:1px solid var(--color-neutral-400); border-radius:var(--radius-md); background:var(--color-neutral-25); padding:0; overflow:hidden; cursor:pointer; display:flex; align-items:center; justify-content:center;}
+  .char-replace-cell img{width:100%; height:100%; object-fit:cover; display:block;}
+  .char-replace-cell.placeholder{background:linear-gradient(135deg,var(--color-neutral-300),var(--color-neutral-200));}
+  .char-replace-cell.selected{border-color:var(--color-brand-primary); border-width:2px;}
+  .char-replace-fade{position:absolute; top:0; right:0; width:22px; height:68px; background:linear-gradient(to right, rgba(255,255,255,0), #fff); pointer-events:none;}
+  .char-replace-arrow{position:absolute; top:50%; right:-4px; transform:translateY(-50%); width:32px; height:32px; border-radius:999px; background:#fff; border:1px solid var(--color-neutral-400); box-shadow:0 4px 4px rgba(15,23,41,0.08), 0 2px 2px rgba(15,23,41,0.05); display:flex; align-items:center; justify-content:center; cursor:pointer;}
+  .char-replace-arrow img{width:20px; height:20px;}
 
   #subReelScript, #subReelVideo{display:flex; flex-direction:column; flex:1; min-height:0;}
   #stageAreaReel .stage-body{flex:1; min-height:0; padding:32px 28px 14px; overflow-y:auto; display:flex; flex-direction:column;}
@@ -1048,11 +1042,28 @@
   #scriptPanel .stage-cta-row{display:flex; flex-wrap:wrap; justify-content:flex-start; gap:var(--spacing-sm); margin-top:var(--spacing-md);}
   /* Script screen's first-time generation — the full script box, scene cards, labels and
      reference chips render immediately as normal; only the text-filling areas (full script,
-     each clip's image prompt + narration) mask behind a spinner while runBriefToScript()'s
-     chat loading card is up, via showFieldSpinner()/hideFieldSpinners(). */
+     each clip's image prompt + narration) mask behind a diagonal shimmer sweep while
+     runBriefToScript()'s chat loading card is up, via showFieldSpinner()/hideFieldSpinners()
+     (per the AI 대화창 공통 규칙 스펙's Case 1: the empty-looking field itself should feel
+     alive while the chat panel's own spinner runs, not just sit static). Built from
+     --color-brand-primary-pale so the sweep reads as "brand AI activity" rather than a
+     generic grey skeleton shimmer -- and it runs diagonally (not horizontally) to read as
+     a distinct pattern from any ordinary loading-skeleton shimmer elsewhere in the app. */
   .field-fill-wrap{position:relative;}
-  .field-fill-spinner{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:var(--color-neutral-0); border-radius:var(--radius-lg); z-index:2;}
-  .field-fill-spinner .chat-loading-spinner{margin-top:0;}
+  .field-fill-spinner{position:absolute; inset:0; overflow:hidden; background:var(--color-neutral-0); border-radius:var(--radius-lg); z-index:2;}
+  .field-fill-spinner::after{
+    content:''; position:absolute; top:-120%; left:-40%; width:55%; height:340%;
+    background:linear-gradient(100deg, transparent 30%, var(--color-brand-primary-pale) 48%, var(--color-neutral-0) 50%, var(--color-brand-primary-pale) 52%, transparent 70%);
+    filter:blur(14px); opacity:.85;
+    animation:fieldFillShimmerSweep 1.8s linear infinite;
+  }
+  @keyframes fieldFillShimmerSweep{
+    from{ transform:translateX(-40%); }
+    to{ transform:translateX(260%); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .field-fill-spinner::after{ animation:none; opacity:.5; }
+  }
   .voice-script-text[aria-invalid="true"]{border-color:var(--color-error-text);}
   .voice-script-text[aria-invalid="true"] + .scene-guide{color:var(--color-error-text);}
   #stageAreaReel .stage-body-inner{max-width:960px; margin:0 auto; width:100%; flex:1; min-height:0; display:flex; flex-direction:column;}
@@ -1249,6 +1260,31 @@
   .back-to-scenes-link{display:block; background:none; border:none; color:var(--color-neutral-500); font-size:12px; font-family:var(--font-family-text); cursor:pointer; text-decoration:underline; margin-top:10px; padding:0; text-align:left;}
   .back-to-scenes-link:hover{color:var(--color-neutral-700);}
 
+  /* ---- Refine this video (requested from the AI Assistant chat — see combineVideo()/
+     sendVideoRefineChat()) — only the re-render overlay + version badge stay here, since
+     they belong to the canvas/player, not to how the request itself gets typed. ---- */
+  .combine-player .combine-rerender{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; background:rgba(15,23,41,.55); backdrop-filter:blur(2px); border-radius:14px; color:#fff; font-size:12px; font-weight:600;}
+  .combine-player .combine-rerender .spin{width:22px; height:22px; border:2px solid rgba(255,255,255,.4); border-top-color:#fff; border-radius:999px; animation:combine-spin .8s linear infinite;}
+  @keyframes combine-spin{to{transform:rotate(360deg);}}
+  .combine-player .combine-vbadge{position:absolute; top:10px; left:10px; font-size:10px; font-weight:700; letter-spacing:.04em; color:#fff; background:var(--color-brand-primary); padding:3px 7px; border-radius:6px;}
+
+  /* ---- Rate this result (product feedback → team) ------------------------------------- */
+  .result-feedback{border:1px solid var(--color-neutral-300); border-radius:10px; background:var(--color-neutral-0); padding:16px; display:flex; flex-direction:column; gap:10px;}
+  .result-feedback-head{display:flex; flex-direction:column; gap:2px;}
+  .result-feedback-title{font-size:13px; font-weight:600; color:var(--color-neutral-900); font-family:var(--font-family-text);}
+  .result-feedback-sub{font-size:11px; color:var(--color-neutral-500); line-height:1.45;}
+  .result-feedback-rate{display:flex; gap:8px;}
+  .rf-btn{flex:1; display:inline-flex; align-items:center; justify-content:center; gap:6px; border:1px solid var(--color-neutral-400); background:var(--color-neutral-0); border-radius:8px; padding:8px 10px; font-size:12px; font-weight:600; color:var(--color-neutral-700); font-family:var(--font-family-text); cursor:pointer;}
+  .rf-btn img{width:14px; height:14px; display:block;}
+  .rf-btn:hover{background:var(--color-neutral-50);}
+  .rf-btn.sel[data-v="up"]{border-color:var(--color-badge-green-text); background:var(--color-badge-green-bg); color:var(--color-badge-green-text);}
+  .rf-btn.sel[data-v="down"]{border-color:#c4271b; background:#fbe3e5; color:#c4271b;}
+  .result-feedback-note{width:100%; box-sizing:border-box; border:1px solid var(--color-neutral-300); border-radius:7px; padding:8px 10px; font-size:12px; font-family:var(--font-family-text); color:var(--color-neutral-900); line-height:1.5; resize:vertical; min-height:52px; outline:none;}
+  .result-feedback-note:focus{border-color:var(--color-brand-primary-mid);}
+  .rf-send{width:100%;}
+  .rf-done{margin:0; font-size:12px; font-weight:600; color:var(--color-badge-green-text); display:flex; align-items:center; gap:6px;}
+  .rf-done[hidden]{display:none;}
+
   /* ---- Queue panel (floating, shown while video clips generate) ----
      Base look (card bg/border/radius/padding, header, badge, job row, thumb, title,
      status dot/label) now comes from components/ai-social-media/queue-panel.css.
@@ -1268,31 +1304,38 @@
 
 <div class="app">
 
-  <!-- NAV -->
+  <!-- NAV — components/ai-social-media/nav.css (Figma "Nav / Navigation" 9154:132343) -->
   <div class="nav" id="sideNav">
-    <div class="nav-brand">
-      <div class="mark"></div>
-      <div class="txt"><b>Formee Education</b><span>AI Social Media</span></div>
+    <div class="nav-account">
+      <div class="nav-brand">
+        <span class="link">
+          <img class="mark" src="../../../../components/ai-social-media/icons/brand-formee-education-mark.svg" alt="Formee Education">
+          <span class="txt"><b>Formee Education</b><span>AI Social Media</span></span>
+        </span>
+        <button type="button" class="collapse-btn" aria-label="Collapse navigation" onclick="document.getElementById('sideNav').classList.toggle('collapsed')"><img src="../../../../components/ai-social-media/icons/ui-panel.svg" alt=""></button>
+      </div>
+      <div class="nav-workspace"><span>Formee Express</span><span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" alt=""></span></div>
     </div>
-    <div class="nav-workspace"><span>Placeholder</span><span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span></div>
-    <div class="nav-group"><div class="nav-item"><div class="ic clip" style="width:20px;height:20px;"><div class="f" style="inset:50% 37.5% 12.5% 37.5%"><div class="f" style="inset:-10.67% -16%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjYuNiIgaGVpZ2h0PSI5LjEiIHZpZXdCb3g9IjAgMCA2LjYgOS4xIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNNS44IDguM1YxLjYzMzMzQzUuOCAxLjQxMjMyIDUuNzEyMiAxLjIwMDM2IDUuNTU1OTIgMS4wNDQwOEM1LjM5OTY0IDAuODg3Nzk4IDUuMTg3NjggMC44IDQuOTY2NjcgMC44SDEuNjMzMzNDMS40MTIzMiAwLjggMS4yMDAzNiAwLjg4Nzc5OCAxLjA0NDA4IDEuMDQ0MDhDMC44ODc3OTggMS4yMDAzNiAwLjggMS40MTIzMiAwLjggMS42MzMzM1Y4LjMiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div><div class="f" style="inset:8.33% 12.5% 12.5% 12.5%"><div class="f" style="inset:-5.05% -5.33%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2LjYiIGhlaWdodD0iMTcuNDMzNyIgdmlld0JveD0iMCAwIDE2LjYgMTcuNDMzNyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTAuOCA3LjQ2NzA3QzAuNzk5OTQyIDcuMjI0NjIgMC44NTI3NzggNi45ODUwOSAwLjk1NDgyMyA2Ljc2NTE2QzEuMDU2ODcgNi41NDUyNCAxLjIwNTY2IDYuMzUwMjMgMS4zOTA4MyA2LjE5MzczTDcuMjI0MTcgMS4xOTM3M0M3LjUyNDk5IDAuOTM5NDkgNy45MDYxMyAwLjggOC4zIDAuOEM4LjY5Mzg3IDAuOCA5LjA3NTAxIDAuOTM5NDkgOS4zNzU4MyAxLjE5MzczTDE1LjIwOTIgNi4xOTM3M0MxNS4zOTQzIDYuMzUwMjMgMTUuNTQzMSA2LjU0NTI0IDE1LjY0NTIgNi43NjUxNkMxNS43NDcyIDYuOTg1MDkgMTUuODAwMSA3LjIyNDYyIDE1LjggNy40NjcwN1YxNC45NjcxQzE1LjggMTUuNDA5MSAxNS42MjQ0IDE1LjgzMyAxNS4zMTE4IDE2LjE0NTZDMTQuOTk5MyAxNi40NTgxIDE0LjU3NTQgMTYuNjMzNyAxNC4xMzMzIDE2LjYzMzdIMi40NjY2N0MyLjAyNDY0IDE2LjYzMzcgMS42MDA3MiAxNi40NTgxIDEuMjg4MTYgMTYuMTQ1NkMwLjk3NTU5NSAxNS44MzMgMC44IDE1LjQwOTEgMC44IDE0Ljk2NzFWNy40NjcwN1oiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div></div><span class="label">Home</span></div></div>
-    <div class="nav-group">
-      <div class="nav-label">Create</div>
-      <div class="nav-item active"><div class="ic clip" style="width:20px;height:20px;"><div class="f" style="inset:8.33% 8.32% 8.33% 8.34%"><div class="f" style="inset:-4.8%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE4LjI2NzEiIGhlaWdodD0iMTguMjY3MSIgdmlld0JveD0iMCAwIDE4LjI2NzEgMTguMjY3MSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTcuNDEyOSAxMi4wNTAyQzcuMzM4NSAxMS43NjE4IDcuMTg4MTggMTEuNDk4NiA2Ljk3NzU4IDExLjI4OEM2Ljc2Njk4IDExLjA3NzQgNi41MDM3OSAxMC45MjcxIDYuMjE1NCAxMC44NTI3TDEuMTAyOSA5LjUzNDM3QzEuMDE1NjcgOS41MDk2MiAwLjkzODkwMyA5LjQ1NzA4IDAuODg0MjQgOS4zODQ3NUMwLjgyOTU3NiA5LjMxMjQxIDAuOCA5LjIyNDIxIDAuOCA5LjEzMzU0QzAuOCA5LjA0Mjg3IDAuODI5NTc2IDguOTU0NjggMC44ODQyNCA4Ljg4MjM0QzAuOTM4OTAzIDguODEgMS4wMTU2NyA4Ljc1NzQ3IDEuMTAyOSA4LjczMjcxTDYuMjE1NCA3LjQxMzU0QzYuNTAzNjkgNy4zMzkyMSA2Ljc2NjgxIDcuMTg5MDIgNi45Nzc0IDYuOTc4NTdDNy4xODc5OSA2Ljc2ODEzIDcuMzM4MzcgNi41MDUxMSA3LjQxMjkgNi4yMTY4N0w4LjczMTIzIDEuMTA0MzdDOC43NTU3NCAxLjAxNjgxIDguODA4MjIgMC45Mzk2NTkgOC44ODA2NiAwLjg4NDcwM0M4Ljk1MzExIDAuODI5NzQ3IDkuMDQxNTUgMC44IDkuMTMyNDggMC44QzkuMjIzNDEgMC44IDkuMzExODUgMC44Mjk3NDcgOS4zODQyOSAwLjg4NDcwM0M5LjQ1Njc0IDAuOTM5NjU5IDkuNTA5MjIgMS4wMTY4MSA5LjUzMzczIDEuMTA0MzdMMTAuODUxMiA2LjIxNjg3QzEwLjkyNTYgNi41MDUyNyAxMS4wNzU5IDYuNzY4NDYgMTEuMjg2NSA2Ljk3OTA2QzExLjQ5NzEgNy4xODk2NiAxMS43NjAzIDcuMzM5OTggMTIuMDQ4NyA3LjQxNDM4TDE3LjE2MTIgOC43MzE4N0MxNy4yNDkxIDguNzU2MTIgMTcuMzI2NyA4LjgwODU1IDE3LjM4MTkgOC44ODExMUMxNy40MzcyIDguOTUzNjYgMTcuNDY3MSA5LjA0MjM0IDE3LjQ2NzEgOS4xMzM1NEMxNy40NjcxIDkuMjI0NzQgMTcuNDM3MiA5LjMxMzQyIDE3LjM4MTkgOS4zODU5OEMxNy4zMjY3IDkuNDU4NTMgMTcuMjQ5MSA5LjUxMDk2IDE3LjE2MTIgOS41MzUyMUwxMi4wNDg3IDEwLjg1MjdDMTEuNzYwMyAxMC45MjcxIDExLjQ5NzEgMTEuMDc3NCAxMS4yODY1IDExLjI4OEMxMS4wNzU5IDExLjQ5ODYgMTAuOTI1NiAxMS43NjE4IDEwLjg1MTIgMTIuMDUwMkw5LjUzMjkgMTcuMTYyN0M5LjUwODM5IDE3LjI1MDMgOS40NTU5MSAxNy4zMjc0IDkuMzgzNDYgMTcuMzgyNEM5LjMxMTAxIDE3LjQzNzMgOS4yMjI1OCAxNy40NjcxIDkuMTMxNjUgMTcuNDY3MUM5LjA0MDcxIDE3LjQ2NzEgOC45NTIyOCAxNy40MzczIDguODc5ODMgMTcuMzgyNEM4LjgwNzM4IDE3LjMyNzQgOC43NTQ5IDE3LjI1MDMgOC43MzA0IDE3LjE2MjdMNy40MTI5IDEyLjA1MDJaIiBzdHJva2U9IiM4QTkzQTgiIHN0cm9rZS13aWR0aD0iMS42IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==" alt=""></div></div></div><span class="label">New Content</span></div>
-    </div>
-    <div class="nav-group">
-      <div class="nav-label">Content</div>
-      <div class="nav-item"><div class="ic clip" style="width:20px;height:20px;"><div class="f" style="inset:28.57% 16.67% 13.1% 66.67%"><div class="f" style="inset:-6.86% -24.01%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjQuOTMzNzUiIGhlaWdodD0iMTMuMjY3MSIgdmlld0JveD0iMCAwIDQuOTMzNzUgMTMuMjY3MSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTAuODAwMjA2IDAuODAwMjA2TDQuMTMzNTQgMTIuNDY2OSIgc3Ryb2tlPSIjOEE5M0E4IiBzdHJva2Utd2lkdGg9IjEuNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPgo=" alt=""></div></div><div class="f" style="inset:28.57% 50% 13.1% 50%"><div class="f" style="inset:-6.86% -0.8px"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjEuNiIgaGVpZ2h0PSIxMy4yNjY3IiB2aWV3Qm94PSIwIDAgMS42IDEzLjI2NjciIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik0wLjggMC44VjEyLjQ2NjciIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div><div class="f" style="inset:35.71% 66.67% 14.29% 33.33%"><div class="f" style="inset:-8% -0.8px"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjEuNiIgaGVpZ2h0PSIxMS42IiB2aWV3Qm94PSIwIDAgMS42IDExLjYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik0wLjggMC44VjEwLjgiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div><div class="f" style="inset:21.43% 83.33% 11.9% 16.67%"><div class="f" style="inset:-6% -0.8px"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjEuNiIgaGVpZ2h0PSIxNC45MzMzIiB2aWV3Qm94PSIwIDAgMS42IDE0LjkzMzMiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik0wLjggMC44VjE0LjEzMzMiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div></div><span class="label">Library</span></div>
-      <div class="nav-item"><div class="ic clip" style="width:20px;height:20px;"><div class="f" style="inset:8.33% 66.67% 75% 33.33%"><div class="f" style="inset:-24% -0.8px"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjEuNiIgaGVpZ2h0PSI0LjkzMzMzIiB2aWV3Qm94PSIwIDAgMS42IDQuOTMzMzMiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik0wLjggMC44VjQuMTMzMzMiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div><div class="f" style="inset:8.33% 33.33% 75% 66.67%"><div class="f" style="inset:-24% -0.8px"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjEuNiIgaGVpZ2h0PSI0LjkzMzMzIiB2aWV3Qm94PSIwIDAgMS42IDQuOTMzMzMiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik0wLjggMC44VjQuMTMzMzMiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div><div class="f" style="inset:16.67% 12.5% 8.33% 12.5%"><div class="f" style="inset:-5.33%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2LjYiIGhlaWdodD0iMTYuNiIgdmlld0JveD0iMCAwIDE2LjYgMTYuNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTE0LjEzMzMgMC44SDIuNDY2NjdDMS41NDYxOSAwLjggMC44IDEuNTQ2MTkgMC44IDIuNDY2NjdWMTQuMTMzM0MwLjggMTUuMDUzOCAxLjU0NjE5IDE1LjggMi40NjY2NyAxNS44SDE0LjEzMzNDMTUuMDUzOCAxNS44IDE1LjggMTUuMDUzOCAxNS44IDE0LjEzMzNWMi40NjY2N0MxNS44IDEuNTQ2MTkgMTUuMDUzOCAwLjggMTQuMTMzMyAwLjhaIiBzdHJva2U9IiM4QTkzQTgiIHN0cm9rZS13aWR0aD0iMS42IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==" alt=""></div></div><div class="f" style="inset:41.67% 12.5% 58.33% 12.5%"><div class="f" style="inset:-0.8px -5.33%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2LjYiIGhlaWdodD0iMS42IiB2aWV3Qm94PSIwIDAgMTYuNiAxLjYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik0wLjggMC44SDE1LjgiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div></div><span class="label">Schedule</span></div>
-      <div class="nav-item"><div class="ic clip" style="width:20px;height:20px;"><div class="f" style="inset:29.17% 8.33% 45.83% 66.67%"><div class="f" style="inset:-16%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjYuNiIgaGVpZ2h0PSI2LjYiIHZpZXdCb3g9IjAgMCA2LjYgNi42IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNMC44IDAuOEg1LjhWNS44IiBzdHJva2U9IiM4QTkzQTgiIHN0cm9rZS13aWR0aD0iMS42IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==" alt=""></div></div><div class="f" style="inset:29.17% 8.33%"><div class="f" style="inset:-9.6% -4.8%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE4LjI2NjciIGhlaWdodD0iOS45MzMzMyIgdmlld0JveD0iMCAwIDE4LjI2NjcgOS45MzMzMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTE3LjQ2NjcgMC44TDEwLjM4MzMgNy44ODMzM0w2LjIxNjY3IDMuNzE2NjdMMC44IDkuMTMzMzMiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div></div><span class="label">Trends</span></div>
-      <div class="nav-item"><div class="ic clip" style="width:20px;height:20px;"><div class="f" style="inset:12.5%"><div class="f" style="inset:-5.33%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2LjYiIGhlaWdodD0iMTYuNiIgdmlld0JveD0iMCAwIDE2LjYgMTYuNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTAuOCAwLjhWMTQuMTMzM0MwLjggMTQuNTc1NCAwLjk3NTU5NSAxNC45OTkzIDEuMjg4MTYgMTUuMzExOEMxLjYwMDcyIDE1LjYyNDQgMi4wMjQ2NCAxNS44IDIuNDY2NjcgMTUuOEgxNS44IiBzdHJva2U9IiM4QTkzQTgiIHN0cm9rZS13aWR0aD0iMS42IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==" alt=""></div></div><div class="f" style="inset:20.83% 20.83% 29.17% 62.5%"><div class="f" style="inset:-8% -24%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjQuOTMzMzMiIGhlaWdodD0iMTEuNiIgdmlld0JveD0iMCAwIDQuOTMzMzMgMTEuNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTMuMyAwLjhIMS42MzMzM0MxLjE3MzEgMC44IDAuOCAxLjE3MzEgMC44IDEuNjMzMzNWOS45NjY2N0MwLjggMTAuNDI2OSAxLjE3MzEgMTAuOCAxLjYzMzMzIDEwLjhIMy4zQzMuNzYwMjQgMTAuOCA0LjEzMzMzIDEwLjQyNjkgNC4xMzMzMyA5Ljk2NjY3VjEuNjMzMzNDNC4xMzMzMyAxLjE3MzEgMy43NjAyNCAwLjggMy4zIDAuOFoiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div><div class="f" style="inset:33.33% 54.17% 29.17% 29.17%"><div class="f" style="inset:-10.67% -24%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjQuOTMzMzMiIGhlaWdodD0iOS4xIiB2aWV3Qm94PSIwIDAgNC45MzMzMyA5LjEiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik0zLjMgMC44SDEuNjMzMzNDMS4xNzMxIDAuOCAwLjggMS4xNzMxIDAuOCAxLjYzMzMzVjcuNDY2NjdDMC44IDcuOTI2OSAxLjE3MzEgOC4zIDEuNjMzMzMgOC4zSDMuM0MzLjc2MDI0IDguMyA0LjEzMzMzIDcuOTI2OSA0LjEzMzMzIDcuNDY2NjdWMS42MzMzM0M0LjEzMzMzIDEuMTczMSAzLjc2MDI0IDAuOCAzLjMgMC44WiIgc3Ryb2tlPSIjOEE5M0E4IiBzdHJva2Utd2lkdGg9IjEuNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPgo=" alt=""></div></div></div><span class="label">Analytics</span></div>
-    </div>
-    <div class="nav-group">
-      <div class="nav-label">Asset</div>
-      <div class="nav-item"><div class="ic clip" style="width:20px;height:20px;"><div class="f" style="inset:41.67% 50% 33.33% 50%"><div class="f" style="inset:-16% -0.8px"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjEuNiIgaGVpZ2h0PSI2LjYiIHZpZXdCb3g9IjAgMCAxLjYgNi42IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNMC44IDAuOFY1LjgiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div><div class="f" style="inset:54.17% 37.5% 45.83% 37.5%"><div class="f" style="inset:-0.8px -16%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjYuNiIgaGVpZ2h0PSIxLjYiIHZpZXdCb3g9IjAgMCA2LjYgMS42IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNMC44IDAuOEg1LjgiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div><div class="f" style="inset:12.5% 8.33% 16.67% 8.33%"><div class="f" style="inset:-5.65% -4.8%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE4LjI2NjciIGhlaWdodD0iMTUuNzY2NyIgdmlld0JveD0iMCAwIDE4LjI2NjcgMTUuNzY2NyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTE1LjggMTQuOTY2N0MxNi4yNDIgMTQuOTY2NyAxNi42NjU5IDE0Ljc5MTEgMTYuOTc4NSAxNC40Nzg1QzE3LjI5MTEgMTQuMTY2IDE3LjQ2NjcgMTMuNzQyIDE3LjQ2NjcgMTMuM1Y0Ljk2NjY3QzE3LjQ2NjcgNC41MjQ2NCAxNy4yOTExIDQuMTAwNzIgMTYuOTc4NSAzLjc4ODE2QzE2LjY2NTkgMy40NzU1OSAxNi4yNDIgMy4zIDE1LjggMy4zSDkuMjE2NjdDOC45Mzc5MyAzLjMwMjczIDguNjYyOTYgMy4yMzU1MSA4LjQxNjkyIDMuMTA0NDhDOC4xNzA4OCAyLjk3MzQ2IDcuOTYxNjMgMi43ODI4MSA3LjgwODMzIDIuNTVMNy4xMzMzMyAxLjU1QzYuOTgxNTggMS4zMTk1NiA2Ljc3NDk4IDEuMTMwNCA2LjUzMjA4IDAuOTk5NDk3QzYuMjg5MTkgMC44Njg1OTUgNi4wMTc1OSAwLjgwMDA0NSA1Ljc0MTY3IDAuOEgyLjQ2NjY3QzIuMDI0NjQgMC44IDEuNjAwNzIgMC45NzU1OTUgMS4yODgxNiAxLjI4ODE2QzAuOTc1NTk1IDEuNjAwNzIgMC44IDIuMDI0NjQgMC44IDIuNDY2NjdWMTMuM0MwLjggMTMuNzQyIDAuOTc1NTk1IDE0LjE2NiAxLjI4ODE2IDE0LjQ3ODVDMS42MDA3MiAxNC43OTExIDIuMDI0NjQgMTQuOTY2NyAyLjQ2NjY3IDE0Ljk2NjdIMTUuOFoiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div></div><span class="label">Brand Setup</span></div>
-      <div class="nav-item"><div class="ic clip" style="width:20px;height:20px;"><div class="f" style="inset:62.5% 33.33% 12.5% 8.33%"><div class="f" style="inset:-16% -6.86%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjEzLjI2NjciIGhlaWdodD0iNi42IiB2aWV3Qm94PSIwIDAgMTMuMjY2NyA2LjYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik0xMi40NjY3IDUuOFY0LjEzMzMzQzEyLjQ2NjcgMy4yNDkyOCAxMi4xMTU1IDIuNDAxNDMgMTEuNDkwNCAxLjc3NjMxQzEwLjg2NTIgMS4xNTExOSAxMC4wMTc0IDAuOCA5LjEzMzMzIDAuOEg0LjEzMzMzQzMuMjQ5MjggMC44IDIuNDAxNDMgMS4xNTExOSAxLjc3NjMxIDEuNzc2MzFDMS4xNTExOSAyLjQwMTQzIDAuOCAzLjI0OTI4IDAuOCA0LjEzMzMzVjUuOCIgc3Ryb2tlPSIjNDc1MDY5IiBzdHJva2Utd2lkdGg9IjEuNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPgo=" alt=""></div></div><div class="f" style="inset:13.03% 20.85% 54.7% 66.67%"><div class="f" style="inset:-12.4% -32.04% -12.4% -32.05%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjQuMDk3MDMiIGhlaWdodD0iOC4wNTM3MiIgdmlld0JveD0iMCAwIDQuMDk3MDMgOC4wNTM3MiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTAuODAwMTk0IDAuODAwMTk0QzEuNTE0OTkgMC45ODU1MDIgMi4xNDgwMiAxLjQwMjkxIDIuNTk5OTMgMS45ODY5MUMzLjA1MTgzIDIuNTcwOTEgMy4yOTcwMyAzLjI4ODQ0IDMuMjk3MDMgNC4wMjY4NkMzLjI5NzAzIDQuNzY1MjkgMy4wNTE4MyA1LjQ4MjgxIDIuNTk5OTMgNi4wNjY4MUMyLjE0ODAyIDYuNjUwODEgMS41MTQ5OSA3LjA2ODIyIDAuODAwMTk0IDcuMjUzNTMiIHN0cm9rZT0iIzQ3NTA2OSIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div><div class="f" style="inset:63.04% 8.33% 12.5% 79.17%"><div class="f" style="inset:-16.36% -32% -16.35% -32.01%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjQuMTAwMTkiIGhlaWdodD0iNi40OTE4NiIgdmlld0JveD0iMCAwIDQuMTAwMTkgNi40OTE4NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTMuMzAwMTkgNS42OTE4NlY0LjAyNTE5QzMuMjk5NjQgMy4yODY2MyAzLjA1MzgyIDIuNTY5MTcgMi42MDEzMyAxLjk4NTQ2QzIuMTQ4ODQgMS40MDE3NCAxLjUxNTMgMC45ODQ4MzQgMC44MDAxOTQgMC44MDAxOTQiIHN0cm9rZT0iIzQ3NTA2OSIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div><div class="f" style="inset:12.5% 45.83% 54.17% 20.83%"><div class="f" style="inset:-12%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjguMjY2NjciIGhlaWdodD0iOC4yNjY2NyIgdmlld0JveD0iMCAwIDguMjY2NjcgOC4yNjY2NyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTQuMTMzMzMgNy40NjY2N0M1Ljk3NDI4IDcuNDY2NjcgNy40NjY2NyA1Ljk3NDI4IDcuNDY2NjcgNC4xMzMzM0M3LjQ2NjY3IDIuMjkyMzggNS45NzQyOCAwLjggNC4xMzMzMyAwLjhDMi4yOTIzOCAwLjggMC44IDIuMjkyMzggMC44IDQuMTMzMzNDMC44IDUuOTc0MjggMi4yOTIzOCA3LjQ2NjY3IDQuMTMzMzMgNy40NjY2N1oiIHN0cm9rZT0iIzQ3NTA2OSIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div></div><span class="label">Characters</span></div>
-      <div class="nav-item"><div class="ic clip" style="width:20px;height:20px;"><div class="f" style="inset:79.17% 50% 8.33% 50%"><div class="f" style="inset:-32% -0.8px"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjEuNiIgaGVpZ2h0PSI0LjEiIHZpZXdCb3g9IjAgMCAxLjYgNC4xIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNMC44IDAuOFYzLjMiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div><div class="f" style="inset:41.67% 20.83% 20.83% 20.83%"><div class="f" style="inset:-10.67% -6.86%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjEzLjI2NjciIGhlaWdodD0iOS4xIiB2aWV3Qm94PSIwIDAgMTMuMjY2NyA5LjEiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik0xMi40NjY3IDAuOFYyLjQ2NjY3QzEyLjQ2NjcgNC4wMTM3NiAxMS44NTIxIDUuNDk3NDkgMTAuNzU4MSA2LjU5MTQ2QzkuNjY0MTYgNy42ODU0MiA4LjE4MDQzIDguMyA2LjYzMzMzIDguM0M1LjA4NjI0IDguMyAzLjYwMjUxIDcuNjg1NDIgMi41MDg1NCA2LjU5MTQ2QzEuNDE0NTggNS40OTc0OSAwLjggNC4wMTM3NiAwLjggMi40NjY2N1YwLjgiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div><div class="f" style="inset:8.33% 37.5% 37.5% 37.5%"><div class="f" style="inset:-7.38% -16%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjYuNiIgaGVpZ2h0PSIxMi40MzMzIiB2aWV3Qm94PSIwIDAgNi42IDEyLjQzMzMiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik01LjggMy4zQzUuOCAxLjkxOTI5IDQuNjgwNzEgMC44IDMuMyAwLjhDMS45MTkyOSAwLjggMC44IDEuOTE5MjkgMC44IDMuM1Y5LjEzMzMzQzAuOCAxMC41MTQgMS45MTkyOSAxMS42MzMzIDMuMyAxMS42MzMzQzQuNjgwNzEgMTEuNjMzMyA1LjggMTAuNTE0IDUuOCA5LjEzMzMzVjMuM1oiIHN0cm9rZT0iIzhBOTNBOCIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K" alt=""></div></div></div><span class="label">Voices</span></div>
-      <div class="nav-item"><div class="ic clip" style="width:20px;height:20px;"><div class="f" style="inset:12.5% 12.5% 25% 37.5%"><div class="f" style="inset:-6.4% -8%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjExLjYiIGhlaWdodD0iMTQuMSIgdmlld0JveD0iMCAwIDExLjYgMTQuMSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTAuOCAxMy4zVjIuNDY2NjdMMTAuOCAwLjgwMDAwNlYxMS42MzMzIiBzdHJva2U9IiM4QTkzQTgiIHN0cm9rZS13aWR0aD0iMS42IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==" alt=""></div></div><div class="f" style="inset:62.5% 62.5% 12.5% 12.5%"><div class="f" style="inset:-16%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjYuNiIgaGVpZ2h0PSI2LjYiIHZpZXdCb3g9IjAgMCA2LjYgNi42IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNMy4zIDUuOEM0LjY4MDcxIDUuOCA1LjggNC42ODA3MSA1LjggMy4zQzUuOCAxLjkxOTI5IDQuNjgwNzEgMC44IDMuMyAwLjhDMS45MTkyOSAwLjggMC44IDEuOTE5MjkgMC44IDMuM0MwLjggNC42ODA3MSAxLjkxOTI5IDUuOCAzLjMgNS44WiIgc3Ryb2tlPSIjOEE5M0E4IiBzdHJva2Utd2lkdGg9IjEuNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPgo=" alt=""></div></div><div class="f" style="inset:54.17% 12.5% 20.83% 62.5%"><div class="f" style="inset:-16%"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjYuNiIgaGVpZ2h0PSI2LjYiIHZpZXdCb3g9IjAgMCA2LjYgNi42IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cGF0aCBpZD0iVmVjdG9yIiBkPSJNMy4zIDUuOEM0LjY4MDcxIDUuOCA1LjggNC42ODA3MSA1LjggMy4zQzUuOCAxLjkxOTI5IDQuNjgwNzEgMC44IDMuMyAwLjhDMS45MTkyOSAwLjggMC44IDEuOTE5MjkgMC44IDMuM0MwLjggNC42ODA3MSAxLjkxOTI5IDUuOCAzLjMgNS44WiIgc3Ryb2tlPSIjOEE5M0E4IiBzdHJva2Utd2lkdGg9IjEuNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPgo=" alt=""></div></div></div><span class="label">Audio Library</span></div>
+    <div class="nav-items">
+      <div class="nav-item"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-home.svg" alt=""></span><span class="label">Home</span></div>
+      <div class="nav-group">
+        <div class="nav-label">Create</div>
+        <div class="nav-item active"><span class="ic"><img src="../../../../components/ai-social-media/icons/ai-sparkle-outline-grey.svg" alt=""></span><span class="label">New Content</span></div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-label">Content</div>
+        <div class="nav-item"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-library.svg" alt=""></span><span class="label">Library</span></div>
+        <div class="nav-item"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-schedule.svg" alt=""></span><span class="label">Schedule</span></div>
+        <div class="nav-item"><span class="ic"><img src="../../../../components/ai-social-media/icons/data-trending-up.svg" alt=""></span><span class="label">Trends</span></div>
+        <div class="nav-item"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-analytics.svg" alt=""></span><span class="label">Analytics</span></div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-label">Asset</div>
+        <div class="nav-item" id="navBrandSetup" onclick="goToBrandSetupPage()" style="cursor:pointer;"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-workspace-03.svg" alt=""></span><span class="label">Brand Setup</span></div>
+        <div class="nav-item"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-characters.svg" alt=""></span><span class="label">Characters</span></div>
+        <div class="nav-item"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-voices.svg" alt=""></span><span class="label">Voices</span></div>
+        <div class="nav-item"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-audio.svg" alt=""></span><span class="label">Audio Library</span></div>
+      </div>
     </div>
   </div>
 
@@ -1796,8 +1839,9 @@
           </div>
           <div class="chat-log" id="chatLog"></div>
           <div class="chat-quick-chips" id="chatQuickChips"></div>
+          <div class="chat-cost-hint" id="chatCostHint" style="display:none;"></div>
           <div class="chat-input-box">
-            <textarea class="chat-input" id="chatInput" rows="2" placeholder="Requests like &quot;make the script shorter&quot; or &quot;try a warmer tone&quot; work here too"></textarea>
+            <textarea class="chat-input" id="chatInput" rows="2" placeholder="Requests like &quot;make the script shorter&quot; or &quot;try a warmer tone&quot; work here too" oninput="updateChatCostHint()"></textarea>
             <div class="chat-input-bottom-row">
               <button class="chat-attach-btn" title="Attach"><img src="../../../../components/ai-social-media/icons/attach.svg" class="icon-inline icon-16" alt=""></button>
               <button class="chat-send" id="chatSend" onclick="sendChatMessage()"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15.8367 10.0033L10.0033 4.17L4.17 10.0033M10.0033 4.17V15.8367" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
@@ -1820,7 +1864,17 @@
           <div class="settings-bar" id="settingsBarImage" aria-label="Image post settings">
             <div class="setting-chip"><div class="chip-ic"><img id="genSettingRatioIconImage" src="../../../../components/ai-social-media/icons/spec-4-5.svg" alt=""></div><b id="genSettingRatioImage">4:5</b></div>
             <div class="setting-chip"><div class="chip-ic"><img src="../../../../components/ai-social-media/icons/spec-versions.svg" alt=""></div><b id="genSettingVersionsImage">2 Versions</b></div>
-            <div class="setting-chip" id="genSettingCharacterChipImage"><span class="character-avatar"><img src="../../../../components/ai-social-media/icons/menu-image.svg" alt=""></span><span>Character</span><span class="dot-sep" aria-hidden="true"></span><b id="genSettingCharacterImage">Elena</b></div>
+            <div class="setting-chip-wrap" id="characterChipWrapImage">
+              <div class="setting-chip clickable" id="genSettingCharacterChipImage" onclick="toggleImgCharacterPopover(event)"><span class="character-avatar"><img src="../../../../components/ai-social-media/icons/menu-image.svg" alt=""></span><span>Character</span><span class="dot-sep" aria-hidden="true"></span><b id="genSettingCharacterImage">Elena</b><span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span></div>
+              <div class="char-replace-popover" id="imgCharacterPopover" style="display:none;">
+                <div class="char-replace-header"><img src="../../../../components/ai-social-media/icons/arrow-down-up.svg" alt="">Change Character</div>
+                <div class="char-replace-carousel">
+                  <div class="char-replace-track" id="imgCharacterReplaceTrack"></div>
+                  <div class="char-replace-fade"></div>
+                  <button type="button" class="char-replace-arrow" onclick="scrollCharReplaceCarousel('imgCharacterReplaceTrack')"><img src="../../../../components/ai-social-media/icons/chevron-right.svg" alt=""></button>
+                </div>
+              </div>
+            </div>
             <div class="setting-chip brand-chip-setting" id="brandSettingChipImage" style="display:none;">🏷 Brand: <b>Formee Express</b></div>
           </div>
 
@@ -1924,8 +1978,8 @@
                       <div class="image-scene-card-preview">
                         <div class="image-scene-card-top-row">
                           <div class="image-scene-card-icon-row">
-                            <button class="image-scene-card-icon-btn download" type="button" onclick="downloadImage('main')"><img src="../../../../components/ai-social-media/icons/download-ui.svg" alt=""></button>
-                            <button class="image-scene-card-icon-btn maximize" type="button" onclick="openImageLightbox(window.__editHistory, window.__activeEditIndex, 'main', selectHistoryEntry)"><img src="../../../../components/ai-social-media/icons/maximize.svg" alt=""></button>
+                            <button class="media-card-icon-btn download" type="button" onclick="downloadImage('main')"><img src="../../../../components/ai-social-media/icons/download-ui.svg" alt=""></button>
+                            <button class="media-card-icon-btn maximize" type="button" onclick="openImageLightbox(window.__editHistory, window.__activeEditIndex, 'main', selectHistoryEntry)"><img src="../../../../components/ai-social-media/icons/maximize.svg" alt=""></button>
                           </div>
                         </div>
                       </div>
@@ -1956,6 +2010,23 @@
                     </div>
                     <div class="scene-desc-box"><textarea class="scene-desc" id="refineEditInput" oninput="onRefinePromptEdited()"></textarea></div>
                     <p class="scene-note">Auto-drafted from your Copy and Visual concept in the Draft step</p>
+                  </div>
+
+                  <!-- Rate this result — product feedback routed to the team -->
+                  <div class="result-feedback" id="imageResultFeedback">
+                    <div class="result-feedback-head">
+                      <span class="result-feedback-title">How’s this result?</span>
+                      <span class="result-feedback-sub">Your feedback goes straight to the Formee team — it won’t change this image.</span>
+                    </div>
+                    <div class="result-feedback-body">
+                      <div class="result-feedback-rate">
+                        <button type="button" class="rf-btn" data-v="up" onclick="rfRate(this)"><img src="../../../../components/ai-social-media/icons/check.svg" alt="">Looks great</button>
+                        <button type="button" class="rf-btn" data-v="down" onclick="rfRate(this)"><img src="../../../../components/ai-social-media/icons/alert-sm.svg" alt="">Needs work</button>
+                      </div>
+                      <textarea class="result-feedback-note" id="rfNoteImage" placeholder="What worked, what didn’t? (optional)"></textarea>
+                      <button type="button" class="btn btn-secondary rf-send" onclick="rfSend('image')" disabled>Send feedback</button>
+                    </div>
+                    <p class="rf-done" hidden><img src="../../../../components/ai-social-media/icons/check.svg" class="icon-inline" alt="" style="width:14px;height:14px;"> Thanks — sent to the Formee team.</p>
                   </div>
                 </div>
               </div>
@@ -2137,13 +2208,17 @@
               <div class="setting-chip clickable" onclick="toggleSettingPopover(event,'character')">
                 <span class="avatar-mini"></span>Character<span class="dot-sep"></span><b id="settingCharacter">Minji</b><span class="chevron"><img src="../../../../components/ai-social-media/icons/chevron-down.svg" class="icon-inline" alt=""></span>
               </div>
-              <div class="setting-popover" id="characterPopover" style="display:none;">
-                <div class="char-mini-grid">
-                  <div class="char-mini-opt selected" onclick="selectSettingCharacter(this,'Minji')"><div class="circle"></div><span>Minji</span></div>
-                  <div class="char-mini-opt" onclick="selectSettingCharacter(this,'Hyunwoo')"><div class="circle"></div><span>Hyunwoo</span></div>
-                  <div class="char-mini-opt" onclick="selectSettingCharacter(this,'Soyul')"><div class="circle"></div><span>Soyul</span></div>
+              <div class="char-replace-popover" id="characterPopover" style="display:none;">
+                <div class="char-replace-header"><img src="../../../../components/ai-social-media/icons/arrow-down-up.svg" alt="">Change Character</div>
+                <div class="char-replace-carousel">
+                  <div class="char-replace-track" id="characterReplaceTrack">
+                    <button type="button" class="char-replace-cell placeholder selected" title="Minji" onclick="selectSettingCharacter(this,'Minji')"></button>
+                    <button type="button" class="char-replace-cell placeholder" title="Hyunwoo" onclick="selectSettingCharacter(this,'Hyunwoo')"></button>
+                    <button type="button" class="char-replace-cell placeholder" title="Soyul" onclick="selectSettingCharacter(this,'Soyul')"></button>
+                  </div>
+                  <div class="char-replace-fade"></div>
+                  <button type="button" class="char-replace-arrow" onclick="scrollCharReplaceCarousel('characterReplaceTrack')"><img src="../../../../components/ai-social-media/icons/chevron-right.svg" alt=""></button>
                 </div>
-                <div class="setting-popover-footer">+68 more characters</div>
               </div>
             </div>
 
@@ -2226,7 +2301,7 @@
                        pattern as every other Generate sub-stage's forward-progress action. -->
                   <div style="display:none;">
                     <button class="btn btn-dark" id="reelGenerateVideoBtn" onclick="proceedToStudio()">Generate video</button>
-                    <button class="btn btn-dark" id="reelContinueToTimelineBtn" onclick="showSub('reelTimeline')">Continue to timeline</button>
+                    <button class="btn btn-dark" id="reelContinueToTimelineBtn" onclick="continueToTimelineFromChat(this)">Continue to timeline</button>
                   </div>
                 </div>
               </div>
@@ -2247,7 +2322,7 @@
             <div class="stage-body">
             <div class="stage-body-inner">
               <h2 class="stage-title">Timeline</h2>
-              <p class="stage-sub-text">Confirm the dialogue and scene description for each segment, then generate thumbnails.</p>
+              <p class="stage-sub-text">Confirm the dialogue and scene description for each segment, then generate a reference image for each.</p>
               <div class="timeline-stage">
                 <div class="timeline-canvas">
                   <div class="video-grid" id="timelineGrid"></div>
@@ -2258,7 +2333,7 @@
                   <!-- Hidden — mirrors syncGenActionBarV3()'s forward-progress pattern; the
                        bottom action bar's CTA on this tab is "Generate Thumbnails". -->
                   <div style="display:none;">
-                    <button class="btn btn-dark" id="timelineGenerateThumbsBtn" onclick="generateScriptThumbnails()">Generate Thumbnails</button>
+                    <button class="btn btn-dark" id="timelineGenerateThumbsBtn" onclick="generateScriptThumbnails()">Generate Reference Images</button>
                   </div>
                 </div>
               </div>
@@ -2303,7 +2378,8 @@
               <div class="combine-result-view" id="combineResultView" style="display:none;">
                 <div class="timeline-stage">
                   <div class="timeline-canvas combine-canvas">
-                    <div class="combine-player">
+                    <div class="combine-player" id="combinePlayer">
+                      <span class="combine-vbadge" id="combineVBadge" hidden>v1</span>
                       <button class="video-play-btn" onclick="playCombineResult(this)" title="Play"><img class="play" src="../../../../components/ai-social-media/icons/video-play-glyph.svg" alt=""></button>
                       <span class="combine-player-duration" id="combineResultDuration">8s</span>
                     </div>
@@ -2322,6 +2398,11 @@
                       <div id="combineSummarySpecs" style="display:contents;"></div>
                       <p class="combine-audio-note"><img src="../../../../components/ai-social-media/icons/nav-voices.svg" class="icon-inline" alt=""> Narration from Script is already mixed in — no extra steps needed.</p>
                     </div>
+
+                    <!-- Version picker for re-rendered cuts — the request itself now happens in
+                         the AI Assistant chat (see combineVideo()/sendVideoRefineChat()); this
+                         stays on the canvas side only because it controls what the player shows. -->
+                    <div class="refine-history-row" id="videoRefineHistoryRow"></div>
                     <!-- Hidden — per Figma, "Continue to editing"/"Skip to publish" don't live in
                          this right-side work area (it's already offered as a chat CTA — see
                          appendChatCta('Your video is ready...', ...) below — and in the
@@ -2346,7 +2427,7 @@
           <div class="queue-panel" id="queuePanel" style="display:none;">
             <div class="queue-panel-header">
               <span class="queue-panel-title">Queue</span>
-              <span class="queue-badge orange" id="queueBadge"><img src="../../../../components/ai-social-media/icons/badge-dot.svg" alt="">2 ACTIVE</span>
+              <span class="feedback-status-chip feedback-status-chip--orange-icon" id="queueBadge"><img src="../../../../components/ai-social-media/icons/badge-dot.svg" alt="">2 ACTIVE</span>
             </div>
             <div class="queue-sub">We keep working even if you leave this page.</div>
             <div class="queue-panel-jobs" id="queueJobs"></div>
@@ -2485,18 +2566,20 @@
             </div>
           </div>
 
+          <div class="controls-field-ai__head" id="pubCaptionHeadRow" style="display:none;"></div>
           <textarea class="pub-caption-input" id="pubCaption" placeholder="Draft your caption — or generate suggestions above and tap a chip to add it." oninput="onSharedCaptionInput()"></textarea>
-          <div class="pub-caption-refine-row">
-            <div class="pub-refine-chips">
-              <button type="button" class="pub-refine-chip" onclick="refineCaptionWithAI('shorter')">Make it shorter</button>
-              <button type="button" class="pub-refine-chip" onclick="refineCaptionWithAI('punchier')">Make it punchier</button>
-              <button type="button" class="pub-refine-chip" onclick="refineCaptionWithAI('cta')">Add a call to action</button>
+          <div class="controls-field-ai__chips" id="pubCaptionChipsRow">
+            <div class="controls-field-ai__quick-chips" id="pubCaptionQuickChips">
+              <button type="button" class="controls-field-ai__quick-chip" onclick="refineCaptionWithAI('shorter')">Make it shorter</button>
+              <button type="button" class="controls-field-ai__quick-chip" onclick="refineCaptionWithAI('punchier')">Make it punchier</button>
+              <button type="button" class="controls-field-ai__quick-chip" onclick="refineCaptionWithAI('cta')">Add a call to action</button>
             </div>
-            <button type="button" class="pub-refine-ai-pill" onclick="refineCaptionWithAI('ai')">
-              <span class="ic"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIiBjbGlwLXBhdGg9InVybCgjY2xpcDBfMF8zNDkpIj4KPHBhdGggaWQ9IlZlY3RvciIgZD0iTTEzLjU3MzMgMS41NzMzM0wxNC40MjY3IDIuNDI2NjdDMTQuNTAzMyAyLjUwMTIxIDE0LjU2NDIgMi41OTAzNiAxNC42MDU3IDIuNjg4ODNDMTQuNjQ3MyAyLjc4NzMgMTQuNjY4NyAyLjg5MzExIDE0LjY2ODcgM0MxNC42Njg3IDMuMTA2ODkgMTQuNjQ3MyAzLjIxMjcgMTQuNjA1NyAzLjMxMTE3QzE0LjU2NDIgMy40MDk2NCAxNC41MDMzIDMuNDk4NzkgMTQuNDI2NyAzLjU3MzMzTDMuNTczMzMgMTQuNDI2N0MzLjQ5ODc5IDE0LjUwMzMgMy40MDk2NCAxNC41NjQyIDMuMzExMTcgMTQuNjA1N0MzLjIxMjcgMTQuNjQ3MyAzLjEwNjg5IDE0LjY2ODcgMyAxNC42Njg3QzIuODkzMTEgMTQuNjY4NyAyLjc4NzMgMTQuNjQ3MyAyLjY4ODgzIDE0LjYwNTdDMi41OTAzNiAxNC41NjQyIDIuNTAxMjEgMTQuNTAzMyAyLjQyNjY3IDE0LjQyNjdMMS41NzMzMyAxMy41NzMzQzEuNDk3NTQgMTMuNDk4MyAxLjQzNzM4IDEzLjQwOSAxLjM5NjMyIDEzLjMxMDZDMS4zNTUyNiAxMy4yMTIyIDEuMzM0MTIgMTMuMTA2NiAxLjMzNDEyIDEzQzEuMzM0MTIgMTIuODkzNCAxLjM1NTI2IDEyLjc4NzggMS4zOTYzMiAxMi42ODk0QzEuNDM3MzggMTIuNTkxIDEuNDk3NTQgMTIuNTAxNyAxLjU3MzMzIDEyLjQyNjdMMTIuNDI2NyAxLjU3MzMzQzEyLjUwMTcgMS40OTc1NCAxMi41OTEgMS40MzczOCAxMi42ODk0IDEuMzk2MzJDMTIuNzg3OCAxLjM1NTI2IDEyLjg5MzQgMS4zMzQxMiAxMyAxLjMzNDEyQzEzLjEwNjYgMS4zMzQxMiAxMy4yMTIyIDEuMzU1MjYgMTMuMzEwNiAxLjM5NjMyQzEzLjQwOSAxLjQzNzM4IDEzLjQ5ODMgMS40OTc1NCAxMy41NzMzIDEuNTczMzNaIiBzdHJva2U9IiM0RjZERTYiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggaWQ9IlZlY3Rvcl8yIiBkPSJNOS4zMzMzNyA0LjY2Njk5TDExLjMzMzQgNi42NjY5OSIgc3Ryb2tlPSIjNEY2REU2IiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxwYXRoIGlkPSJWZWN0b3JfMyIgZD0iTTMuMzMzMzMgNFY2LjY2NjY3IiBzdHJva2U9IiM0RjZERTYiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggaWQ9IlZlY3Rvcl80IiBkPSJNMTIuNjY2NiA5LjMzMzAxVjExLjk5OTciIHN0cm9rZT0iIzRGNkRFNiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzUiIGQ9Ik02LjY2NjYzIDEuMzMzMDFWMi42NjYzNCIgc3Ryb2tlPSIjNEY2REU2IiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjxwYXRoIGlkPSJWZWN0b3JfNiIgZD0iTTQuNjY2NjcgNS4zMzMwMUgyIiBzdHJva2U9IiM0RjZERTYiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPHBhdGggaWQ9IlZlY3Rvcl83IiBkPSJNMTQgMTAuNjY3SDExLjMzMzQiIHN0cm9rZT0iIzRGNkRFNiIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBpZD0iVmVjdG9yXzgiIGQ9Ik03LjMzMzMzIDJINiIgc3Ryb2tlPSIjNEY2REU2IiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjwvZz4KPGRlZnM+CjxjbGlwUGF0aCBpZD0iY2xpcDBfMF8zNDkiPgo8cmVjdCB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIGZpbGw9IndoaXRlIi8+CjwvY2xpcFBhdGg+CjwvZGVmcz4KPC9zdmc+Cg==" alt=""></span>
-              <span class="label">Refine with AI</span>
+            <button type="button" class="controls-field-ai__refine-btn" id="pubRefineAiPill" onclick="toggleCaptionRefinePanel()">
+              <img src="../../../../components/ai-social-media/icons/ai-refine.svg" alt="">
+              <span>Refine with AI</span>
             </button>
           </div>
+          <div class="controls-field-ai__panel" id="pubCaptionRefinePanel" style="display:none;"></div>
 
           <div class="pub-divider-inner"></div>
 
@@ -2698,6 +2781,25 @@ function escapeHtml(str){
   return div.innerHTML;
 }
 
+// Sidebar's own "Brand Setup" nav item (id="navBrandSetup") -- separate from the
+// per-content-type imgGoToBrandSetup()/carGoToBrandSetup()/reelGoToBrandSetup() CTAs shown
+// inside the "Use brand kit" toggle's empty state, but all four now point at the same place.
+function goToBrandSetupPage(){
+  window.location.href = '../../brand-characters/brand-setup-kit-character-library.html#view=brandsetup&brand=formee-express';
+}
+
+// Shared "More" popover for an attached .ref-chip (Figma 8708:207411's Actions/More Button
+// -- Figma only specs the hover-reveal affordance, not what it opens, so this is the one
+// action that made sense across all four content types: Replace swaps the attached image
+// without going through Remove + re-Add. Each content type (Image post/Carousel share this
+// helper; Reel/Short & Story Video's own renderReferenceImages() below does too) owns its
+// own open/closed state and replace handler, this is just the shared markup.
+function buildRefMoreMenuHtml(onReplaceClick){
+  return `<div class="context-menu" style="position:absolute; top:32px; right:4px; z-index:50;" onclick="event.stopPropagation();">
+    <button type="button" class="menu-item" onclick="${onReplaceClick}">Replace image</button>
+  </div>`;
+}
+
 // Quick-action chips shown above the chat input, contextual to whatever stage/state just
 // finished (e.g. copy drafted, visual concept applied) — mirrors the Copilot-style chip
 // pattern already used in new-carousel-to-generate.html. Each chip is either
@@ -2737,7 +2839,7 @@ function setChatGuideHint(text){
 }
 
 // Copy fills in directly (no propose/apply step) — the chat just narrates what changed.
-// Visual concept, drafted right after, keeps the propose -> apply pattern (see draftVisualConcept below).
+// Visual concept, drafted right after, now fills in directly too (see draftVisualConcept below).
 function buildRevisedCopy(requestText){
   const req = requestText.toLowerCase();
   const cur = {};
@@ -2778,7 +2880,7 @@ function draftCopy(){
     status2s.className = 'msg-status';
     status2s.innerHTML = '<span class="worked-label">Worked</span> <span class="worked-time">for 2s</span>';
     log.appendChild(status2s);
-    addChatMsg('ai', 'I\'ve refined it and filled in the Headline, Subhead, and Call to action on the right. Want something different? Just tell me here anytime.');
+    imgAppendDoneCard('Filled in the Headline, Subhead, and Call to action');
     log.scrollTop = log.scrollHeight;
 
     setTimeout(() => {
@@ -2786,7 +2888,7 @@ function draftCopy(){
       copyFields.find(f => f.key === 'subhead').text = 'Applications open for the January intake';
       copyFields.find(f => f.key === 'cta').text = 'Apply Now';
       renderCopyFields();
-      addChatMsg('ai', '<span class="tag">AI</span>Great — the Headline, Subhead, and Call to action are generated based on your script and filled in on the right. Want changes? Send them here anytime.');
+      imgAppendDoneCard('Generated the Headline, Subhead, and Call to action');
       renderChatQuickChips([
         { label: 'Shorten headline' },
         { label: 'Make headline more hooking' }
@@ -2820,50 +2922,14 @@ function reviseCopy(requestText){
     status1s.className = 'msg-status';
     status1s.innerHTML = '<span class="worked-label">Worked</span> <span class="worked-time">for 1s</span>';
     log.appendChild(status1s);
-    addChatMsg('ai', 'Updated the Headline, Subhead, and Call to action based on your note.');
+    imgAppendDoneCard('Updated the Headline, Subhead, and Call to action');
   }, 1100);
 }
 
-// ---- Chat-driven visual concept drafting ----
-let visualDraftCounter = 0;
-window.__visualDrafts = {};
-function renderVisualProposalMessage(promptText, introText){
-  visualDraftCounter++;
-  const id = visualDraftCounter;
-  window.__visualDrafts[id] = promptText;
-  return `
-    <div class="msg ai">
-      <span class="tag">AI</span>${escapeHtml(introText)}
-      <div class="visual-proposal-box" id="visualProposal${id}">
-        <div class="visual-proposal-heading">Visual Concept</div>
-        <div class="visual-proposal-text">"${escapeHtml(promptText)}"</div>
-        <span class="copy-applied-note">✓ Applied to Visual concept</span>
-        <button class="btn btn-dark" data-draft-id="${id}" onclick="handleVisualProposalClick(this)">Apply to draft</button>
-      </div>
-      <span class="chat-edit-hint">Want a different direction? Type it below and I'll redraft.</span>
-    </div>
-  `;
-}
-function handleVisualProposalClick(btn){
-  applyVisualDraft(Number(btn.dataset.draftId), btn);
-}
-function applyVisualDraft(id, btn){
-  const text = window.__visualDrafts[id];
-  if(text === undefined) return;
-  document.getElementById('visualConceptText').value = text;
-  userEditedPrompt = true;
-  visualConceptDrafted = true;
-  imgUpdateDevelopPreview();
-  document.querySelectorAll('.visual-proposal-box').forEach(box => {
-    box.classList.remove('applied');
-    const b = box.querySelector('.btn-dark');
-    if(b){ b.textContent = 'Apply to draft'; b.disabled = false; }
-  });
-  const box = document.getElementById('visualProposal' + id);
-  box.classList.add('applied');
-  btn.textContent = '✓ Applied';
-  btn.disabled = true;
-
+// ---- Chat-driven visual concept drafting — fills in directly, same as copy fields, no
+// separate propose/apply step. The chat still narrates the work (Worked-for-Xs + a Done
+// card), so drafting/redrafting reads the same way copy drafting already does. ----
+function afterVisualConceptReady(){
   // Quick edits to the visual itself — kept generic since the prototype doesn't read the
   // actual script content yet; a real implementation would tailor these to what's in the shot.
   renderChatQuickChips([
@@ -2908,20 +2974,22 @@ function draftVisualConcept(){
   log.scrollTop = log.scrollHeight;
   setTimeout(() => {
     const prompt = buildVisualConceptPrompt();
+    document.getElementById('visualConceptText').value = prompt;
+    userEditedPrompt = true;
+    visualConceptDrafted = true;
+    imgUpdateDevelopPreview();
     loadingEl.remove();
     const status2sb = document.createElement('div');
     status2sb.className = 'msg-status';
     status2sb.innerHTML = '<span class="worked-label">Worked</span> <span class="worked-time">for 2s</span>';
     log.appendChild(status2sb);
-    const wrap = document.createElement('div');
-    wrap.innerHTML = renderVisualProposalMessage(prompt, 'Here\'s a visual concept based on your finalized copy. Should I apply this?').trim();
-    log.appendChild(wrap.firstElementChild);
-    log.scrollTop = log.scrollHeight;
+    imgAppendDoneCard('Generated the visual concept based on your finalized copy');
+    afterVisualConceptReady();
   }, 1200);
 }
 
-// Once the visual concept has been drafted, chat requests redraft it (still propose -> apply,
-// so a new direction can be reviewed before it overwrites the current concept).
+// Once the visual concept has been drafted, chat requests redraft it — fills in directly
+// (same as the initial draft above), no separate propose/apply review step.
 function buildRevisedVisualConcept(requestText){
   const base = buildVisualConceptPrompt();
   const req = requestText.toLowerCase();
@@ -2939,15 +3007,15 @@ function reviseVisualConcept(requestText){
   log.scrollTop = log.scrollHeight;
   setTimeout(() => {
     const prompt = buildRevisedVisualConcept(requestText);
+    document.getElementById('visualConceptText').value = prompt;
+    imgUpdateDevelopPreview();
     loadingEl.remove();
     const status1sb = document.createElement('div');
     status1sb.className = 'msg-status';
     status1sb.innerHTML = '<span class="worked-label">Worked</span> <span class="worked-time">for 1s</span>';
     log.appendChild(status1sb);
-    const wrap = document.createElement('div');
-    wrap.innerHTML = renderVisualProposalMessage(prompt, 'Here\'s a new direction based on your note. Should I apply this?').trim();
-    log.appendChild(wrap.firstElementChild);
-    log.scrollTop = log.scrollHeight;
+    imgAppendDoneCard('Updated the visual concept based on your note');
+    afterVisualConceptReady();
   }, 1100);
 }
 
@@ -2955,6 +3023,13 @@ function reviseVisualConcept(requestText){
 function imgAppendChatCta(title, text, buttonsHtml){
   const log = document.getElementById('chatLog');
   log.innerHTML += `<div class="msg ai"><div class="chat-cta-card"><div class="chat-cta-title">${escapeHtml(title)}</div><div class="chat-cta-text">${escapeHtml(text)}</div>${buttonsHtml}</div></div>`;
+  log.scrollTop = log.scrollHeight;
+}
+// State = "Done" — for a completed action that needs no follow-up decision at all (contrast
+// imgAppendChatCta above, which always ends in a button/toggle/pick).
+function imgAppendDoneCard(label){
+  const log = document.getElementById('chatLog');
+  log.innerHTML += `<div class="msg ai"><div class="chat-cta-card"><div class="chat-cta-done-row"><div class="chat-cta-done-left"><img src="../../../../components/ai-social-media/icons/uploads/file-text.svg" alt=""><span class="chat-cta-done-label">${escapeHtml(label)}</span></div><img class="chat-cta-done-check" src="../../../../components/ai-social-media/icons/circle-check.svg" alt=""></div></div></div>`;
   log.scrollTop = log.scrollHeight;
 }
 
@@ -3018,10 +3093,14 @@ window.__brandKitSource = null;
 /* 브랜드 킷은 별도 앱이라 같은 오리진(로컬 브리지 ~/fme-proto)으로 띄웠을 때만
    실제로 열 수 있다. 탭 이름을 고정해 반복 클릭해도 같은 탭을 재사용한다. */
 function fmeBrandKitUrl(tab){
+  /* 로컬 브리지(~/fme-proto)로 띄웠을 때는 진짜 브랜드 킷 앱을 연다. */
   const m = location.pathname.match(/^(.*?)\/newcontent\//);
-  if(!m) return null;
-  return m[1] + '/brandkit/characters-super-admin-group-by-brand.html'
+  if(m) return m[1] + '/brandkit/characters-super-admin-group-by-brand.html'
        + '#view=brandkit&brand=formee-express&tab=' + (tab || 'overview');
+  /* 배포본에는 그 앱이 없다 — goToBrandSetup 과 같은 저장소 안 Brand Setup 화면으로.
+     여기서 null 을 돌려주면 Edit in Brand Kit 이 alert 만 띄우고 아무 데도 안 간다. */
+  return '../../brand-characters/brand-setup-kit-character-library.html'
+       + '#view=brandsetup&brand=formee-express';
 }
 /* 진짜 <a href target> 으로 연다 — window.open 은 팝업 차단에 걸린다.
    탭 이름을 고정해 반복 클릭해도 같은 탭을 재사용한다. */
@@ -3170,7 +3249,7 @@ function buildBrandKitSummaryCompactHtml(scope){
   return `
     <div class="brand-kit-summary-compact">
       <div class="brand-picker">
-        <button type="button" class="brand-picker-btn" onclick="toggleBrandKitLogoMenu(event,'${scope}')">
+        <button type="button" class="brand-picker-btn brand-picker-btn--logo" onclick="toggleBrandKitLogoMenu(event,'${scope}')">
           ${brandKitLogoThumbHtml(st.logo)}
           ${brandKitDot(diff.logo)}
           <span class="brand-picker-label">${st.logo}</span>
@@ -3180,7 +3259,7 @@ function buildBrandKitSummaryCompactHtml(scope){
       </div>
       <div class="brand-kit-summary-divider"></div>
       <div class="brand-picker">
-        <button type="button" class="brand-picker-btn" onclick="toggleBrandKitColourMenu(event,'${scope}')">
+        <button type="button" class="brand-picker-btn brand-picker-btn--colour" onclick="toggleBrandKitColourMenu(event,'${scope}')">
           ${brandKitDot(diff.colours)}
           <div class="brand-picker-dots">${dots}</div>
           <span class="brand-picker-label">${st.colours.length} selected</span>
@@ -3376,28 +3455,14 @@ document.addEventListener('click', () => {
 
 Object.keys(BRAND_KIT_SUMMARY_CONTAINER_IDS).forEach(renderBrandKitSummaryCompact);
 
-// Empty state (Figma: Brand Kit settings page's "Overview - empty" node 8479:139483) --
-// shown instead of the compact summary above when window.__brandMode !== 'set' -- mirrors
-// the Logos/Colours/Fonts section shell, each section's content replaced by a dashed
-// "+ Manage X" box (8479:139506 "empty · logos" et al) instead of one generic message.
+// Empty state (Figma node 8860:138213 "brand-kit-empty", the "Brand kit off" screen
+// 8727:219504) -- shown instead of the compact summary above when window.__brandMode
+// !== 'set'. One dashed row: message + a real .btn.btn-dark "Brand Setup" CTA.
 function buildBrandKitEmptyCardHtml(goToSetupFn){
-  /* 각 드롭존은 브랜드 킷의 **해당 탭**으로 바로 간다 — "Manage logos" 를 눌렀는데
-     Overview 가 열리면 한 번 더 찾아 들어가야 한다. 2026-09-11 */
-  const emptyBox = (label, tab) => `
-      <a class="brand-kit-empty-box" ${fmeBrandKitAttrs(tab)}>
-        <img src="../../../../components/ai-social-media/icons/pagebar-plus.svg" alt="">
-        <span>${label}</span>
-      </a>`;
-  const section = (title, label, tab) => `
-      <div class="brand-kit-section">
-        <div class="brand-kit-section-header"><span class="brand-kit-section-title">${title}</span></div>
-        ${emptyBox(label, tab)}
-      </div>`;
   return `
-    <div class="brand-kit-card">
-      ${section('Logos', 'Manage logos', 'logos')}
-      ${section('Colours', 'Manage colours', 'colours')}
-      ${section('Fonts', 'Manage fonts', 'fonts')}
+    <div class="brand-kit-empty-row">
+      <p>Set up your brand kit to apply it here automatically</p>
+      <button type="button" class="btn btn-dark" onclick="${goToSetupFn}()">Brand Setup</button>
     </div>`;
 }
 [['brandKitEmpty', 'imgGoToBrandSetup'], ['globalBrandKitEmpty', 'carGoToBrandSetup'], ['reelBrandKitEmpty', 'reelGoToBrandSetup']].forEach(([id, fn]) => {
@@ -3433,15 +3498,18 @@ function imgApplyBrandMode(mode){
 }
 function toggleBrandKit(){
   brandKitOn = !brandKitOn;
-  const hasBrand = window.__brandMode === 'set';
   document.getElementById('brandKitSwitch').classList.toggle('on', brandKitOn);
-  document.getElementById('brandKitSummary').style.display = brandKitOn && hasBrand ? 'block' : 'none';
-  document.getElementById('brandKitEmpty').style.display = brandKitOn && !hasBrand ? 'flex' : 'none';
+  // Figma's own "Brand kit off"/"Brand kit on" frames are just the two states of this one
+  // switch (8727:219504 / 8987:236875) -- the switch alone decides summary vs. empty, no
+  // separate "has a brand kit configured" precondition (that's the hidden #roleSwitch demo
+  // control elsewhere, a different concern -- see updateReelBrandKitUI()'s own note).
+  document.getElementById('brandKitSummary').style.display = brandKitOn ? 'block' : 'none';
+  document.getElementById('brandKitEmpty').style.display = brandKitOn ? 'none' : 'flex';
   document.getElementById('brandKitSwitch').setAttribute('aria-checked', String(brandKitOn));
   updateVisualConceptPrompt();
 }
 function imgGoToBrandSetup(){
-  fmeOpenBrandKit('overview');
+  window.location.href = '../../brand-characters/brand-setup-kit-character-library.html#view=brandsetup&brand=formee-express';
 }
 
 // ---- Easy / Expert mode ----
@@ -3591,10 +3659,10 @@ function renderVersionGrid(){
       <div class="image-scene-card${ready && v.id === window.__activeVersionId ? ' selected' : ''}" data-type="version" onclick="selectActiveVersion(${v.id})">
         <div class="image-scene-card-preview${ready ? '' : ' generating'}">
           <div class="image-scene-card-top-row">
-            <span class="image-scene-card-ready-badge" style="${ready ? '' : 'display:none;'}">Ready</span>
+            <span class="feedback-status-chip feedback-status-chip--green" style="${ready ? '' : 'display:none;'}">Ready</span>
             <div class="image-scene-card-icon-row">
-              <button class="image-scene-card-icon-btn download" type="button" onclick="event.stopPropagation(); downloadImage(${v.id})"><img src="../../../../components/ai-social-media/icons/download-ui.svg" alt=""></button>
-              <button class="image-scene-card-icon-btn maximize" type="button" onclick="event.stopPropagation(); openVersionLightbox(${v.id})"><img src="../../../../components/ai-social-media/icons/maximize.svg" alt=""></button>
+              <button class="media-card-icon-btn download" type="button" onclick="event.stopPropagation(); downloadImage(${v.id})"><img src="../../../../components/ai-social-media/icons/download-ui.svg" alt=""></button>
+              <button class="media-card-icon-btn maximize" type="button" onclick="event.stopPropagation(); openVersionLightbox(${v.id})"><img src="../../../../components/ai-social-media/icons/maximize.svg" alt=""></button>
             </div>
           </div>
           <div class="spinner-mini" style="${ready ? '' : 'display:block;'}"></div>
@@ -3820,15 +3888,16 @@ function imgRemoveReferenceImage(num){
   imgRenderReferenceImages();
 }
 function imgRenderReferenceImages(){
+  const icon = `<img class="ref-chip-icon" src="../../../../components/ai-social-media/icons/content-image-plus.svg" alt="">`;
   const chips = imgReferenceImages.map(n => `
-    <div class="ref-image-chip">
-      <div class="thumb"></div>
-      <span class="label">Image ${n}</span>
-      <button type="button" class="remove" onclick="event.stopPropagation(); imgRemoveReferenceImage(${n})" aria-label="Remove reference image ${n}" title="Remove reference"><img src="../../../../components/ai-social-media/icons/controls/chip-close-x.svg" class="icon-inline" alt=""></button>
+    <div class="ref-chip" data-attached="true">
+      ${icon}<span class="ref-chip-label">Image ${n}</span>
+      <button type="button" class="ref-chip-remove" onclick="event.stopPropagation(); imgRemoveReferenceImage(${n})" aria-label="Remove reference image ${n}" title="Remove reference"><img src="../../../../components/ai-social-media/icons/controls/chip-close-x.svg" class="icon-inline" alt=""></button>
     </div>
   `).join('');
+  const menuOpen = window.__refUploadMenuOpen === 'img-reference';
   document.getElementById('referenceImagesRowImage').innerHTML = chips + `
-    <div class="ref-image-add" onclick="imgAddReferenceImage()"><img class="ref-add-icon" src="../../../../components/ai-social-media/icons/content-image-plus.svg" alt=""><span>Reference</span></div>
+    <div class="ref-chip" onclick="toggleRefUploadMenu(event, 'img-reference')" title="Add reference image">${icon}<span class="ref-chip-label">Reference</span><button type="button" class="ref-chip-more" title="More options"><img src="../../../../components/ai-social-media/icons/ui-ellipsis.svg" class="icon-inline" alt=""></button>${menuOpen ? buildRefUploadMenuHtml('img-reference') : ''}</div>
   `;
 }
 imgRenderReferenceImages();
@@ -3962,7 +4031,7 @@ function imgHandleChatSend(text){
   const versionsTab = document.getElementById('tabVersions');
   if(versionsTab && versionsTab.classList.contains('locked')){
     // Copy is filled in first — while that's still the active topic, chat requests revise it directly.
-    // Once the visual concept has been drafted, chat requests redraft that instead (propose -> apply).
+    // Once the visual concept has been drafted, chat requests redraft that instead — same direct-fill.
     if(visualConceptDraftStarted) reviseVisualConcept(text);
     else reviseCopy(text);
   } else {
@@ -3993,15 +4062,16 @@ function carRemoveReferenceImage(num){
   carRenderReferenceImages();
 }
 function carRenderReferenceImages(){
+  const icon = `<img class="ref-chip-icon" src="../../../../components/ai-social-media/icons/content-image-plus.svg" alt="">`;
   const chips = carReferenceImages.map(n => `
-    <div class="ref-image-chip">
-      <div class="thumb"></div>
-      <span class="label">Image ${n}</span>
-      <button type="button" class="remove" onclick="event.stopPropagation(); carRemoveReferenceImage(${n})" aria-label="Remove reference image ${n}" title="Remove reference"><img src="../../../../components/ai-social-media/icons/controls/chip-close-x.svg" class="icon-inline" alt=""></button>
+    <div class="ref-chip" data-attached="true">
+      ${icon}<span class="ref-chip-label">Image ${n}</span>
+      <button type="button" class="ref-chip-remove" onclick="event.stopPropagation(); carRemoveReferenceImage(${n})" aria-label="Remove reference image ${n}" title="Remove reference"><img src="../../../../components/ai-social-media/icons/controls/chip-close-x.svg" class="icon-inline" alt=""></button>
     </div>
   `).join('');
+  const menuOpen = window.__refUploadMenuOpen === 'car-reference';
   document.getElementById('referenceImagesRowCarousel').innerHTML = chips + `
-    <div class="ref-image-add" onclick="carAddReferenceImage()"><img class="ref-add-icon" src="../../../../components/ai-social-media/icons/content-image-plus.svg" alt=""><span>Reference</span></div>
+    <div class="ref-chip" onclick="toggleRefUploadMenu(event, 'car-reference')" title="Add reference image">${icon}<span class="ref-chip-label">Reference</span><button type="button" class="ref-chip-more" title="More options"><img src="../../../../components/ai-social-media/icons/ui-ellipsis.svg" class="icon-inline" alt=""></button>${menuOpen ? buildRefUploadMenuHtml('car-reference') : ''}</div>
   `;
 }
 carRenderReferenceImages();
@@ -4098,7 +4168,7 @@ function carApplyBrandMode(mode){
   updateGlobalBrandKitUI();
 }
 function carGoToBrandSetup(){
-  fmeOpenBrandKit('overview');
+  window.location.href = '../../brand-characters/brand-setup-kit-character-library.html#view=brandsetup&brand=formee-express';
 }
 
 // ---- Chat ----
@@ -4375,8 +4445,8 @@ function renderStoryboardTile(n){
     <div class="storyboard-card${isSelected ? ' selected' : ''}${ready ? '' : ' generating'}" data-type="image" data-card="${n}" id="storyboardTile${n}" onclick="selectStoryboardCard(${n})">
       <div class="storyboard-card-preview">
         <div class="storyboard-card-top-row">
-          <button class="storyboard-card-icon-btn download" type="button" onclick="event.stopPropagation(); downloadCard(${n})"><img src="../../../../components/ai-social-media/icons/download-ui.svg" alt=""></button>
-          <button class="storyboard-card-icon-btn maximize" type="button" onclick="event.stopPropagation(); expandCard(${n})"><img src="../../../../components/ai-social-media/icons/maximize.svg" alt=""></button>
+          <button class="media-card-icon-btn download" type="button" onclick="event.stopPropagation(); downloadCard(${n})"><img src="../../../../components/ai-social-media/icons/download-ui.svg" alt=""></button>
+          <button class="media-card-icon-btn maximize" type="button" onclick="event.stopPropagation(); expandCard(${n})"><img src="../../../../components/ai-social-media/icons/maximize.svg" alt=""></button>
         </div>
         <div class="storyboard-card-image-empty"><img src="../../../../components/ai-social-media/icons/content-image.svg" alt=""></div>
         <div class="spinner-mini"></div>
@@ -4563,12 +4633,13 @@ function updateGlobalBrandKitUI(){
   const empty = document.getElementById('globalBrandKitEmpty');
   if(!sw) return;
   const on = !!window.__globalBrandKitOn;
-  const hasBrand = window.__brandMode === 'set';
   sw.classList.remove('disabled');
   sw.classList.toggle('on', on);
   sw.setAttribute('aria-checked', String(on));
-  summary.style.display = on && hasBrand ? 'block' : 'none';
-  empty.style.display = on && !hasBrand ? 'flex' : 'none';
+  // The switch alone decides summary vs. empty (Figma 8727:219504/8987:236875 are just its
+  // off/on states) -- see updateReelBrandKitUI()'s own note, same reasoning applies here.
+  summary.style.display = on ? 'block' : 'none';
+  empty.style.display = on ? 'none' : 'flex';
 }
 
 // ---- Reel/Short & Story Video's own "Use brand kit" toggle (same pattern as Carousel's
@@ -4583,15 +4654,20 @@ function updateReelBrandKitUI(){
   const empty = document.getElementById('reelBrandKitEmpty');
   if(!sw) return;
   const on = !!window.__reelBrandKitOn;
-  const hasBrand = window.__brandMode === 'set';
   sw.classList.remove('disabled');
   sw.classList.toggle('on', on);
   sw.setAttribute('aria-checked', String(on));
-  summary.style.display = on && hasBrand ? 'block' : 'none';
-  empty.style.display = on && !hasBrand ? 'flex' : 'none';
+  // The switch alone decides summary vs. empty here -- Figma's "Brand kit off"/"Brand kit
+  // on" (8727:219504 / 8987:236875) are just this one switch's own off/on states, not a
+  // separate "account has a brand kit" precondition. That whole-account concept still
+  // exists (window.__brandMode, driven by the hidden #roleSwitch demo control + the
+  // "Brand: ..." chip elsewhere) but no longer gates this row -- it wasn't reachable from
+  // the deployed page, so toggling this switch could never show the compact bar.
+  summary.style.display = on ? 'block' : 'none';
+  empty.style.display = on ? 'none' : 'flex';
 }
 function reelGoToBrandSetup(){
-  fmeOpenBrandKit('overview');
+  window.location.href = '../../brand-characters/brand-setup-kit-character-library.html#view=brandsetup&brand=formee-express';
 }
 
 // ---- Image generation (manual "Generate images" click — mirrors the video flow's "Generate thumbnails") ----
@@ -4771,8 +4847,8 @@ function renderPreviewTile(n){
     <div class="storyboard-card${isSelected ? ' selected' : ''}${ready ? '' : ' generating'}" data-type="image" data-card="${n}" onclick="selectPreviewCard(${n})">
       <div class="storyboard-card-preview">
         <div class="storyboard-card-top-row">
-          <button class="storyboard-card-icon-btn download" type="button" onclick="event.stopPropagation(); downloadCard(${n})"><img src="../../../../components/ai-social-media/icons/download-ui.svg" alt=""></button>
-          <button class="storyboard-card-icon-btn maximize" type="button" onclick="event.stopPropagation(); expandCard(${n})"><img src="../../../../components/ai-social-media/icons/maximize.svg" alt=""></button>
+          <button class="media-card-icon-btn download" type="button" onclick="event.stopPropagation(); downloadCard(${n})"><img src="../../../../components/ai-social-media/icons/download-ui.svg" alt=""></button>
+          <button class="media-card-icon-btn maximize" type="button" onclick="event.stopPropagation(); expandCard(${n})"><img src="../../../../components/ai-social-media/icons/maximize.svg" alt=""></button>
         </div>
         <div class="storyboard-card-image-empty"><img src="../../../../components/ai-social-media/icons/content-image.svg" alt=""></div>
         <div class="spinner-mini"></div>
@@ -5147,18 +5223,56 @@ function validateScriptLength(){
   row.classList.toggle('over', over);
   countEl.textContent = `${count} / ${max} words`;
   // Figma node 7606-229127: the over-limit state draws its own inline "Shorten" button next
-  // to the warning, rather than routing the fix through the chat (the earlier node
-  // 7254-136585 had no button here, so that version leaned on a chat quick-chip instead).
+  // to the warning, in addition to (not instead of) the chat's own proactive suggestion card
+  // below -- both routes converge on the same working/completion/Undo-Redo flow, per the AI
+  // 대화창 공통 규칙 스펙's Case 3 dual-notification rule.
   errEl.innerHTML = over
     ? `<img src="../../../../components/ai-social-media/icons/alert-sm.svg" class="icon-inline" alt="">You've gone over the word limit (${count}/${max} words). For a ${window.__videoDuration || 8}s video, up to ${max} words is safe.<button type="button" class="pub-refine-chip" onclick="refineScriptWithAI()">Shorten</button>`
     : '';
+
+  if(over){
+    showChatLimitSuggestion('fullScript', `Your script is over the word limit for a ${window.__videoDuration || 8}s video (${count}/${max} words). Want me to shorten it to fit?`, 'Shorten it', shortenFullScriptViaChat);
+  } else {
+    clearChatLimitSuggestion('fullScript');
+  }
 }
+// Case 2/3 — routes the field's own inline "Shorten" button through the same chat
+// working/completion(Undo/Redo) flow the chat's own [Shorten it] suggestion uses, so both
+// entry points behave identically (per the spec's convergence rule).
 function refineScriptWithAI(){
+  shortenFullScriptViaChat();
+}
+function shortenFullScriptViaChat(){
   const ta = document.getElementById('fullScript');
   if(!ta) return;
-  const fitted = fitScriptToWordLimit(ta.value, getMaxScriptWords());
-  ta.value = `"${fitted}"`;
-  reelOnScriptInput();
+  clearChatLimitSuggestion('fullScript');
+  const log = document.getElementById('chatLog');
+  const loadingEl = document.createElement('div');
+  loadingEl.className = 'msg ai loading';
+  loadingEl.innerHTML = `<span class="tag">AI</span>Shortening your script to fit<span class="dots"><span>.</span><span>.</span><span>.</span></span>`;
+  log.appendChild(loadingEl);
+  log.scrollTop = log.scrollHeight;
+
+  const before = ta.value;
+  setTimeout(() => {
+    loadingEl.remove();
+    const after = `"${fitScriptToWordLimit(before, getMaxScriptWords())}"`;
+    ta.value = after;
+    reelOnScriptInput();
+
+    const status = document.createElement('div');
+    status.className = 'msg-status';
+    status.innerHTML = '<span class="worked-label">Worked</span> <span class="worked-time">for 1s</span>';
+    log.appendChild(status);
+    const msg = document.createElement('div');
+    msg.className = 'msg ai';
+    msg.textContent = 'Shortened your script to fit.';
+    log.appendChild(msg);
+
+    pushChatChangeCard(log, 'Full script', before, after, (snap) => { ta.value = snap; reelOnScriptInput(); });
+
+    log.scrollTop = log.scrollHeight;
+  }, 800);
 }
 
 // ---- Advanced settings (Goal / Tone / Target audience / Call to action) ----
@@ -5235,17 +5349,107 @@ function applyScriptDraft(id, btn){
   reelConfirmScript();
 }
 
-// Masks a field's already-set text behind a spinner (rather than emptying it), so the reveal
-// after loading is instant with no flicker — used for the Script screen's first-time generation.
+// Masks a field's already-set text behind a diagonal shimmer sweep (rather than emptying it),
+// so the reveal after loading is instant with no flicker — used for the Script screen's
+// first-time generation. The chat panel already carries its own spinner for "what's
+// happening"; this is just the field itself feeling alive while it waits (no spinner icon
+// duplicated in here, per the AI 대화창 공통 규칙 스펙's Case 1).
 function showFieldSpinner(wrapEl){
   if(!wrapEl || wrapEl.querySelector('.field-fill-spinner')) return;
   const s = document.createElement('div');
   s.className = 'field-fill-spinner';
-  s.innerHTML = '<div class="chat-loading-spinner"></div>';
   wrapEl.appendChild(s);
 }
 function hideFieldSpinners(){
   document.querySelectorAll('.field-fill-spinner').forEach(el => el.remove());
+}
+
+// ---- AI 대화창 공통 규칙 스펙, Case 2/3 — shared "Changes" completion card (label + Undo/Redo)
+// every chat-driven EDIT converges on (Case 1's initial generation never gets one, by design —
+// there's no "before" to revert to). `before`/`after` are opaque snapshots (whatever shape the
+// caller needs — a string, or a small object of per-clip values); `applyFn(snapshot)` is the one
+// function that knows how to restore either side. This covers whole-script edits, per-clip
+// narration/description edits, and multi-clip batch regenerations with the same mechanism. ----
+window.__chatChangeCounter = 0;
+window.__chatChanges = {};
+
+function renderChatChangeCardInnerHtml(id, label){
+  const c = window.__chatChanges[id];
+  const undoDisabled = !c || c.at === 'before';
+  const redoDisabled = !c || c.at === 'after';
+  return `
+    <span class="chat-changes-label">${escapeHtml(label)}</span>
+    <div class="chat-changes-spacer"></div>
+    <div class="controls-field-ai__undo-redo">
+      <button type="button" class="controls-field-ai__icon-btn" onclick="undoChatChange(${id})" aria-label="Undo" ${undoDisabled ? 'disabled' : ''}><img src="../../../../components/ai-social-media/icons/ui-undo.svg" alt=""></button>
+      <button type="button" class="controls-field-ai__icon-btn" onclick="redoChatChange(${id})" aria-label="Redo" ${redoDisabled ? 'disabled' : ''}><img src="../../../../components/ai-social-media/icons/ui-redo.svg" alt=""></button>
+    </div>`;
+}
+
+function pushChatChangeCard(logEl, label, beforeSnapshot, afterSnapshot, applyFn){
+  window.__chatChangeCounter++;
+  const id = window.__chatChangeCounter;
+  window.__chatChanges[id] = { before: beforeSnapshot, after: afterSnapshot, apply: applyFn, at: 'after' };
+  const card = document.createElement('div');
+  card.className = 'chat-changes-card';
+  card.id = `chatChange${id}`;
+  card.innerHTML = renderChatChangeCardInnerHtml(id, label);
+  logEl.appendChild(card);
+  return id;
+}
+
+function refreshChatChangeCard(id){
+  const card = document.getElementById(`chatChange${id}`);
+  if(!card) return;
+  const label = card.querySelector('.chat-changes-label').textContent;
+  card.innerHTML = renderChatChangeCardInnerHtml(id, label);
+}
+
+function undoChatChange(id){
+  const c = window.__chatChanges[id];
+  if(!c || c.at !== 'after') return;
+  c.apply(c.before);
+  c.at = 'before';
+  refreshChatChangeCard(id);
+}
+
+function redoChatChange(id){
+  const c = window.__chatChanges[id];
+  if(!c || c.at !== 'before') return;
+  c.apply(c.after);
+  c.at = 'after';
+  refreshChatChangeCard(id);
+}
+
+// ---- AI 대화창 공통 규칙 스펙, Case 3 — proactive chat suggestion for "must-fix" limit
+// overages (word count), shown ALONGSIDE the field's own inline red warning, never instead
+// of it. Keyed so re-triggering while still over the limit (e.g. every keystroke) is a no-op
+// until the field drops back under the limit and the key is cleared. ----
+window.__chatLimitCards = {};
+
+function showChatLimitSuggestion(key, message, buttonLabel, onClick){
+  if(window.__chatLimitCards[key]) return;
+  const log = document.getElementById('chatLog');
+  if(!log) return;
+  const card = document.createElement('div');
+  card.className = 'chat-limit-card';
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'pub-refine-chip';
+  btn.textContent = buttonLabel;
+  btn.addEventListener('click', () => { clearChatLimitSuggestion(key); onClick(); });
+  const p = document.createElement('p');
+  p.textContent = message;
+  card.appendChild(p);
+  card.appendChild(btn);
+  log.appendChild(card);
+  log.scrollTop = log.scrollHeight;
+  window.__chatLimitCards[key] = card;
+}
+
+function clearChatLimitSuggestion(key){
+  const card = window.__chatLimitCards[key];
+  if(card){ card.remove(); delete window.__chatLimitCards[key]; }
 }
 
 function runBriefToScript(){
@@ -5310,9 +5514,9 @@ function runBriefToScript(){
         );
       }
       appendChatCta(
-        'Ready to generate thumbnails?',
-        'Review each scene’s dialogue and description on the Timeline tab, then generate a thumbnail to preview how it looks.',
-        '<button class="btn btn-dark" onclick="showSub(\'reelTimeline\')">Continue to timeline</button>'
+        'Ready to generate reference images?',
+        'Move to the Timeline tab and I’ll set up each scene automatically.',
+        '<button class="btn btn-dark" onclick="continueToTimelineFromChat(this)">Continue to timeline</button>'
       );
     }
     syncGenActionBarV3();
@@ -5462,70 +5666,209 @@ function addFirstFrameImage(){ firstFrameAdded = true; renderReferenceImages(); 
 function removeFirstFrameImage(){ firstFrameAdded = false; renderReferenceImages(); }
 function addLastFrameImage(){ lastFrameAdded = true; renderReferenceImages(); }
 function removeLastFrameImage(){ lastFrameAdded = false; renderReferenceImages(); }
+// Every reference-images-row (Brief prompt box, Script/Timeline scene editors, Image post
+// and Carousel's own prompt box) uses the one real "Prompt Reference Chip" component
+// (components/ai-social-media/reference-chip.css, Figma 8727:220714/8620:121242) -- no more
+// separate "compact" vs "full" bespoke pill. Empty state opens an Upload image/My Library
+// menu (Figma 8727:220803) instead of attaching directly; My Library hands off to the wide
+// .ref-chip--detail "image" state (Figma 8614:18), same as the Content Library hand-off.
+const refChipIcon = `<img class="ref-chip-icon" src="../../../../components/ai-social-media/icons/content-image-plus.svg" alt="">`;
+// null | 'reference' | 'first' | 'last' -- which empty chip's Upload image/My Library menu
+// (Figma 9202:221430) is currently open, since Reference/First frame/Last frame each need
+// their own add-function wired but share this exact same menu shell.
+window.__refUploadMenuOpen = null;
+// Covers all five empty-chip entry points across every content type -- Reel/Short & Story
+// Video's Reference/First frame/Last frame, plus Image post's and Carousel's own Reference
+// chip (each with their own local add function, see img-/car-RenderReferenceImages below).
+const REF_UPLOAD_ADD_FN = {
+  reference: 'addReferenceImage(null)', first: 'addFirstFrameImage()', last: 'addLastFrameImage()',
+  'img-reference': 'imgAddReferenceImage()', 'car-reference': 'carAddReferenceImage()'
+};
+function refreshAllReferenceChipRows(){
+  renderReferenceImages();
+  if(typeof imgRenderReferenceImages === 'function') imgRenderReferenceImages();
+  if(typeof carRenderReferenceImages === 'function') carRenderReferenceImages();
+}
+
+function buildRefUploadMenuHtml(kind){
+  return `
+    <div class="context-menu" style="position:absolute; top:calc(100% + 4px); left:0; z-index:50;" onclick="event.stopPropagation();">
+      <button type="button" class="menu-item" onclick="closeRefUploadMenu(); ${REF_UPLOAD_ADD_FN[kind]};">Upload image</button>
+      <button type="button" class="menu-item" onclick="closeRefUploadMenu(); openMyLibraryModal('${kind}');">My Library</button>
+    </div>`;
+}
+function toggleRefUploadMenu(e, kind){
+  e.stopPropagation();
+  window.__refUploadMenuOpen = window.__refUploadMenuOpen === kind ? null : kind;
+  refreshAllReferenceChipRows();
+}
+function closeRefUploadMenu(){ window.__refUploadMenuOpen = null; refreshAllReferenceChipRows(); }
+document.addEventListener('click', () => {
+  if(window.__refUploadMenuOpen !== null){ window.__refUploadMenuOpen = null; refreshAllReferenceChipRows(); }
+});
+
 function renderReferenceImages(){
   const chips = referenceImages.map(n => `
-    <div class="ref-image-chip">
-      <div class="thumb"></div>
-      <span class="label">Image ${n}</span>
-      <button type="button" class="remove" onclick="event.stopPropagation(); removeReferenceImage(${n})" aria-label="Remove reference image ${n}" title="Remove reference"><img src="../../../../components/ai-social-media/icons/controls/chip-close-x.svg" class="icon-inline" alt=""></button>
-    </div>
-  `).join('');
-  const refIcon = `<img class="ref-add-icon" src="../../../../components/ai-social-media/icons/content-image-plus.svg" alt="">`;
-  const fullHtml = chips + `
-    <div class="ref-image-add" onclick="addReferenceImage(this)">${refIcon}<span>Reference</span></div>
-  `;
-
-  // Compact rows (Script/Timeline scene editors) use the actual Figma "Prompt Reference
-  // Chip" component (components/ai-social-media/reference-chip.css, node 8620:121242)
-  // instead of the wider Brief-row pill above -- a square chip that reveals the Remove (X)
-  // corner button once attached and the More (...) button on hover, matching Figma's
-  // empty/hover/Remove states. Attaching (click) goes straight to the Remove state, same
-  // as if the reference had just been updated.
-  const refChipIcon = `<img class="ref-chip-icon" src="../../../../components/ai-social-media/icons/content-image-plus.svg" alt="">`;
-  const compactChips = referenceImages.map(n => `
     <div class="ref-chip" data-attached="true">
       ${refChipIcon}<span class="ref-chip-label">Image ${n}</span>
-      <button type="button" class="ref-chip-more" onclick="event.stopPropagation();" title="More options"><img src="../../../../components/ai-social-media/icons/ui-ellipsis.svg" class="icon-inline" alt=""></button>
       <button type="button" class="ref-chip-remove" onclick="event.stopPropagation(); removeReferenceImage(${n})" aria-label="Remove reference image ${n}" title="Remove reference"><img src="../../../../components/ai-social-media/icons/controls/chip-close-x.svg" class="icon-inline" alt=""></button>
     </div>
   `).join('');
-  const compactHtml = compactChips + `
-    <div class="ref-chip" onclick="addReferenceImage(this)" title="Add reference image">${refChipIcon}<span class="ref-chip-label">Reference</span></div>
-  `;
+
+  const refChipMore = `<button type="button" class="ref-chip-more" title="More options"><img src="../../../../components/ai-social-media/icons/ui-ellipsis.svg" class="icon-inline" alt=""></button>`;
+  const referenceEmptyChip = (disabled) => disabled
+    ? `<div class="ref-chip disabled" title="Remove the first/last frame image to attach a reference instead">${refChipIcon}<span class="ref-chip-label">Reference</span></div>`
+    : `<div class="ref-chip" onclick="toggleRefUploadMenu(event, 'reference')" title="Add reference image">${refChipIcon}<span class="ref-chip-label">Reference</span>${refChipMore}${window.__refUploadMenuOpen === 'reference' ? buildRefUploadMenuHtml('reference') : ''}</div>`;
+
+  // A Content Library / My Library reference already attached via window.fmxRefMount()
+  // (fmxref-js, further down this file) renders its own wide .ref-chip--detail in the
+  // sibling .fmxref-row mounted just above this one -- suppress the plain empty chip here
+  // so the two reference indicators don't show side by side. See window.__fmxrefActive.
+  const fmxActive = !!window.__fmxrefActive;
+  const compactHtml = fmxActive ? '' : (chips + referenceEmptyChip(false));
 
   // Reel/Short & Story Video's Brief & Style prompt box (#referenceImagesRow) only:
   // Reference vs first/last frame are mutually exclusive attachment modes.
-  const hasReference = referenceImages.length > 0;
+  const hasReference = referenceImages.length > 0 || fmxActive;
   const hasFrame = firstFrameAdded || lastFrameAdded;
-  const referenceChipBrief = chips + (hasFrame
-    ? `<div class="ref-image-add disabled" title="Remove the first/last frame image to attach a reference instead">${refIcon}<span>Reference</span></div>`
-    : `<div class="ref-image-add" onclick="addReferenceImage(this)">${refIcon}<span>Reference</span></div>`);
+  const referenceChipBrief = fmxActive ? '' : (chips + referenceEmptyChip(hasFrame));
   const firstFrameChipBrief = firstFrameAdded ? `
-    <div class="ref-image-chip">
-      <div class="thumb"></div>
-      <span class="label">First frame</span>
-      <button type="button" class="remove" onclick="event.stopPropagation(); removeFirstFrameImage()" aria-label="Remove first frame" title="Remove first frame"><img src="../../../../components/ai-social-media/icons/controls/chip-close-x.svg" class="icon-inline" alt=""></button>
+    <div class="ref-chip" data-attached="true">
+      ${refChipIcon}<span class="ref-chip-label">First frame</span>
+      <button type="button" class="ref-chip-remove" onclick="event.stopPropagation(); removeFirstFrameImage()" aria-label="Remove first frame" title="Remove first frame"><img src="../../../../components/ai-social-media/icons/controls/chip-close-x.svg" class="icon-inline" alt=""></button>
     </div>
   ` : `
-    <div class="ref-image-add${hasReference ? ' disabled' : ''}" ${hasReference ? 'title="Remove the reference image to attach a first frame instead"' : 'onclick="addFirstFrameImage()"'}>${refIcon}<span>First frame</span></div>
+    <div class="ref-chip${hasReference ? ' disabled' : ''}" ${hasReference ? 'title="Remove the reference image to attach a first frame instead"' : 'onclick="toggleRefUploadMenu(event, \'first\')"'}>${refChipIcon}<span class="ref-chip-label">First frame</span>${hasReference ? '' : refChipMore}${window.__refUploadMenuOpen === 'first' ? buildRefUploadMenuHtml('first') : ''}</div>
   `;
   const lastFrameChipBrief = lastFrameAdded ? `
-    <div class="ref-image-chip">
-      <div class="thumb"></div>
-      <span class="label">Last frame</span>
-      <button type="button" class="remove" onclick="event.stopPropagation(); removeLastFrameImage()" aria-label="Remove last frame" title="Remove last frame"><img src="../../../../components/ai-social-media/icons/controls/chip-close-x.svg" class="icon-inline" alt=""></button>
+    <div class="ref-chip" data-attached="true">
+      ${refChipIcon}<span class="ref-chip-label">Last frame</span>
+      <button type="button" class="ref-chip-remove" onclick="event.stopPropagation(); removeLastFrameImage()" aria-label="Remove last frame" title="Remove last frame"><img src="../../../../components/ai-social-media/icons/controls/chip-close-x.svg" class="icon-inline" alt=""></button>
     </div>
   ` : `
-    <div class="ref-image-add${hasReference ? ' disabled' : ''}" ${hasReference ? 'title="Remove the reference image to attach a last frame instead"' : 'onclick="addLastFrameImage()"'}>${refIcon}<span>Last frame</span></div>
+    <div class="ref-chip${hasReference ? ' disabled' : ''}" ${hasReference ? 'title="Remove the reference image to attach a last frame instead"' : 'onclick="toggleRefUploadMenu(event, \'last\')"'}>${refChipIcon}<span class="ref-chip-label">Last frame</span>${hasReference ? '' : refChipMore}${window.__refUploadMenuOpen === 'last' ? buildRefUploadMenuHtml('last') : ''}</div>
   `;
   const briefHtml = firstFrameChipBrief + lastFrameChipBrief + referenceChipBrief;
 
-  document.querySelectorAll('.reference-images-row').forEach(row => {
-    if(row.id === 'referenceImagesRow') row.innerHTML = briefHtml;
-    else row.innerHTML = row.classList.contains('compact') ? compactHtml : fullHtml;
+  // Scoped to the Brief row (#referenceImagesRow) and the Script/Timeline scene editors'
+  // compact rows (.reference-images-row.compact) only -- Image post and Carousel have their
+  // OWN prompt box reference row (#referenceImagesRowImage / #referenceImagesRowCarousel,
+  // rendered by imgRenderReferenceImages()/carRenderReferenceImages() below) with their own
+  // local state; a blanket `.reference-images-row` selector here would clobber those every
+  // time this function runs, since all these rows share that one layout class.
+  document.querySelectorAll('#referenceImagesRow, .reference-images-row.compact').forEach(row => {
+    row.innerHTML = row.id === 'referenceImagesRow' ? briefHtml : compactHtml;
   });
 }
 renderReferenceImages();
+
+// ---- My Library picker modal (Figma 9198:133913 "Reference - My Library") -- a real
+// Controls/Segmented Control + Controls/Filter/Select filter bar, a grid of the real
+// Reference/Scene Tile·Selectable component (components/ai-social-media/reference-scene-tile.css)
+// supporting multi-select, and an Actions/Button footer. Clicking "Add" hands off to
+// window.fmxRefMount() (fmxref-js below) using the first selected item -- same entry point
+// the Content Library "Use as reference" deep-link uses, pre-filled with the default
+// strength/match. The content-type tabs and Status/Created by/Date range filters are
+// decorative here (no sample data to actually filter by), matching this prototype's usual
+// treatment of peripheral filter chrome elsewhere. ----
+const MY_LIBRARY_ITEMS = [
+  { title: 'This New Lip Tint Is Everything', thumb: '../../brand-characters/assets/imgLibLipTint.png', ratio: '9:16', isVideo: true },
+  { title: 'January Intake — Apply Now', thumb: '../../brand-characters/assets/imgLibJanIntake.png', ratio: '9:16', isVideo: false },
+  { title: 'Study in the UK', thumb: '../../brand-characters/assets/imgLibStudyUK.png', ratio: '9:16', isVideo: true },
+  { title: 'This New Lip Tint Is Everything', thumb: '../../brand-characters/assets/imgLibLipTint.png', ratio: '9:16', isVideo: false },
+  { title: 'January Intake — Apply Now', thumb: '../../brand-characters/assets/imgLibJanIntake.png', ratio: '9:16', isVideo: true },
+  { title: 'Study in the UK', thumb: '../../brand-characters/assets/imgLibStudyUK.png', ratio: '9:16', isVideo: false }
+];
+window.__myLibrarySelected = new Set();
+function buildMyLibraryTileHtml(item, i){
+  const selected = window.__myLibrarySelected.has(i);
+  return `
+    <div class="ref-scene-tile${selected ? ' selected' : ''}" onclick="toggleMyLibraryItem(${i})">
+      <img class="ref-scene-tile-thumb" src="${item.thumb}" alt="">
+      <div class="ref-scene-tile-preview">
+        <div class="ref-scene-tile-top-row">
+          <span class="ref-scene-tile-badge"><span class="ref-scene-tile-badge-icon"><span></span></span><span class="ref-scene-tile-badge-label">${item.ratio}</span></span>
+          <input type="checkbox" class="checkbox checkbox--lg" ${selected ? 'checked' : ''} onclick="event.stopPropagation(); toggleMyLibraryItem(${i});" tabindex="-1">
+        </div>
+      </div>
+      ${item.isVideo ? '<button type="button" class="scene-tile-play-btn" onclick="event.stopPropagation();"><img class="play" src="../../../../components/ai-social-media/icons/video-play-glyph.svg" alt=""></button>' : ''}
+    </div>`;
+}
+function buildMyLibraryModalHtml(){
+  return `
+    <div class="modal-overlay" id="myLibraryModalOverlay" style="display:none;" onclick="if(event.target===this) closeMyLibraryModal();">
+      <div class="modal mylib-modal">
+        <div class="mylib-header-top">
+          <h2 class="modal__title">My Library</h2>
+          <button type="button" class="modal__close" onclick="closeMyLibraryModal()"><img src="../../../../components/ai-social-media/icons/button-x-dark.svg" class="icon-inline" alt=""></button>
+        </div>
+        <div class="mylib-filter-bar">
+          <div class="mylib-filter-left">
+            <div class="controls-segmented-control">
+              <button type="button" class="controls-segment-chip controls-segment-chip--selected">All</button>
+              <button type="button" class="controls-segment-chip">Videos</button>
+              <button type="button" class="controls-segment-chip">Images</button>
+              <button type="button" class="controls-segment-chip">Carousels</button>
+            </div>
+            <div class="mylib-filter-row">
+              <div class="filter-select"><span class="filter-select__label">Status</span><img class="filter-select__caret" src="../../../../components/ai-social-media/icons/caret-down-filled.svg" alt=""></div>
+              <div class="filter-select"><span class="filter-select__label">Created by</span><img class="filter-select__caret" src="../../../../components/ai-social-media/icons/caret-down-filled.svg" alt=""></div>
+              <div class="filter-select"><span class="filter-select__label">Date range</span><img class="filter-select__caret" src="../../../../components/ai-social-media/icons/caret-down-filled.svg" alt=""></div>
+              <span class="mylib-item-count">${MY_LIBRARY_ITEMS.length} items</span>
+            </div>
+          </div>
+        </div>
+        <div class="mylib-content" id="myLibraryContent">${MY_LIBRARY_ITEMS.map((item, i) => buildMyLibraryTileHtml(item, i)).join('')}</div>
+        <div class="mylib-footer">
+          <button type="button" class="actions-btn actions-btn--secondary" onclick="clearMyLibrarySelection()">Clear all</button>
+          <button type="button" class="actions-btn actions-btn--primary" id="myLibraryAddBtn" onclick="addMyLibrarySelection()">Add 0</button>
+        </div>
+      </div>
+    </div>`;
+}
+function mountMyLibraryModal(){
+  if(document.getElementById('myLibraryModalOverlay')) return;
+  const el = document.createElement('div');
+  el.innerHTML = buildMyLibraryModalHtml();
+  document.querySelector('.app').appendChild(el.firstElementChild);
+}
+// Which chip opened the modal, so "Add" can route to the right attach function --
+// 'reference' (Reel/Short & Story Video) keeps the original wide-card fmxRefMount hand-off,
+// 'first'/'last' just attach a plain placeholder like Upload image does, and 'img-reference'/
+// 'car-reference' cover Image post and Carousel's own Reference chip (Figma's library grid
+// itself is still the Reel/Short-only 9:16 sample set -- ratio badges won't match those two
+// content types' own aspect ratio, a known placeholder-data gap, not a routing bug).
+window.__myLibraryTargetKind = 'reference';
+function openMyLibraryModal(kind){ window.__myLibraryTargetKind = kind || 'reference'; window.__myLibrarySelected = new Set(); mountMyLibraryModal(); renderMyLibraryTiles(); document.getElementById('myLibraryModalOverlay').style.display = 'flex'; }
+function closeMyLibraryModal(){ const el = document.getElementById('myLibraryModalOverlay'); if(el) el.style.display = 'none'; }
+function renderMyLibraryTiles(){
+  const content = document.getElementById('myLibraryContent');
+  if(content) content.innerHTML = MY_LIBRARY_ITEMS.map((item, i) => buildMyLibraryTileHtml(item, i)).join('');
+  const addBtn = document.getElementById('myLibraryAddBtn');
+  if(addBtn) addBtn.textContent = 'Add ' + window.__myLibrarySelected.size;
+}
+function toggleMyLibraryItem(i){
+  if(window.__myLibrarySelected.has(i)) window.__myLibrarySelected.delete(i); else window.__myLibrarySelected.add(i);
+  renderMyLibraryTiles();
+}
+function clearMyLibrarySelection(){ window.__myLibrarySelected = new Set(); renderMyLibraryTiles(); }
+function addMyLibrarySelection(){
+  const indices = Array.from(window.__myLibrarySelected);
+  if(!indices.length) return;
+  closeMyLibraryModal();
+  const kind = window.__myLibraryTargetKind;
+  if(kind === 'first'){ addFirstFrameImage(); return; }
+  if(kind === 'last'){ addLastFrameImage(); return; }
+  if(kind === 'img-reference'){ imgAddReferenceImage(); return; }
+  if(kind === 'car-reference'){ carAddReferenceImage(); return; }
+  // 'reference' (Reel/Short & Story Video): hand off exactly like the Content Library "Use
+  // as reference" deep-link does -- same fmxRefMount() entry point, same wide chip +
+  // strength/match/frame-picker popover (fmxref-js, further down this file). fmxRefMount
+  // only carries a single reference, so a multi-select here still only attaches the first
+  // item picked.
+  const item = MY_LIBRARY_ITEMS[indices[0]];
+  if(window.fmxRefMount) window.fmxRefMount({ ref: item.title, thumb: item.thumb, ratio: item.ratio });
+}
 
 let activeMentionEl = null;
 let activeMentionPop = null;
@@ -5690,10 +6033,59 @@ document.addEventListener('click', (e) => {
   if(!e.target.closest('#durationSettingChipWrap')) document.getElementById('durationSettingPopover').style.display = 'none';
 });
 function selectSettingCharacter(el, name){
-  document.querySelectorAll('.char-mini-opt').forEach(a => a.classList.remove('selected'));
+  document.querySelectorAll('#characterReplaceTrack .char-replace-cell').forEach(a => a.classList.remove('selected'));
   el.classList.add('selected');
   document.getElementById('settingCharacter').textContent = name;
   document.getElementById('characterPopover').style.display = 'none';
+}
+// Shared by every "Change Character" popover (Figma 8727:223651) — scrolls one cell+gap.
+function scrollCharReplaceCarousel(trackId){
+  const track = document.getElementById(trackId);
+  if(track) track.scrollBy({ left: 76, behavior: 'smooth' });
+}
+// Builds the horizontal-carousel cells from a Brief-screen character grid's real photos
+// (Image post has no separate voice/persona roster the way Reel/Short's chip does — its
+// "Character" chip always means this grid) — see toggleImgCharacterPopover() below.
+function buildCharReplaceCells(gridId, selectFnName){
+  const grid = document.getElementById(gridId);
+  if(!grid) return '';
+  return [...grid.querySelectorAll('.char-card:not(.new)')].map(c => {
+    const img = c.querySelector('img');
+    const name = c.querySelector('.name')?.textContent || '';
+    const selected = c.classList.contains('selected');
+    return `<button type="button" class="char-replace-cell${selected ? ' selected' : ''}" title="${escapeHtml(name)}" onclick="${selectFnName}(this,'${escapeHtml(name)}')">${img ? `<img src="${img.src}" alt="${escapeHtml(name)}">` : ''}</button>`;
+  }).join('');
+}
+// Image post's "Character" chip previously had no popover at all — built from #charGridImage
+// (the same real photos as the Brief screen's character grid) the first time it's opened.
+function toggleImgCharacterPopover(e){
+  e.stopPropagation();
+  const pop = document.getElementById('imgCharacterPopover');
+  const opening = pop.style.display !== 'block';
+  pop.style.display = opening ? 'block' : 'none';
+  if(opening && !pop.dataset.built){
+    document.getElementById('imgCharacterReplaceTrack').innerHTML = buildCharReplaceCells('charGridImage', 'selectImgSettingCharacter');
+    pop.dataset.built = '1';
+  }
+}
+document.addEventListener('click', (e) => {
+  if(!e.target.closest('#characterChipWrapImage')){
+    const pop = document.getElementById('imgCharacterPopover');
+    if(pop) pop.style.display = 'none';
+  }
+});
+function selectImgSettingCharacter(el, name){
+  document.querySelectorAll('#imgCharacterReplaceTrack .char-replace-cell').forEach(a => a.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('genSettingCharacterImage').textContent = name;
+  document.getElementById('imgCharacterPopover').style.display = 'none';
+  // keep the Brief screen's own character grid in sync with the chip's choice
+  const grid = document.getElementById('charGridImage');
+  if(grid){
+    grid.querySelectorAll('.char-card').forEach(c => c.classList.remove('selected'));
+    const match = [...grid.querySelectorAll('.char-card .name')].find(n => n.textContent === name);
+    match?.closest('.char-card')?.classList.add('selected');
+  }
 }
 function selectSettingVoice(el, label){
   document.querySelectorAll('#voiceSettingPopover .voice-item').forEach(v => v.classList.remove('selected'));
@@ -5712,6 +6104,61 @@ function appendChatCta(title, desc, buttonsHtml){
   const log = document.getElementById('chatLog');
   log.innerHTML += `<div class="msg ai"><div class="chat-cta-card"><div class="chat-cta-title">${escapeHtml(title)}</div>${desc ? `<p class="chat-cta-text">${escapeHtml(desc)}</p>` : ''}${buttonsHtml}</div></div>`;
   log.scrollTop = log.scrollHeight;
+}
+// State = "Done" — for a completed action that needs no follow-up decision at all (contrast
+// appendChatCta above, which always ends in a button/toggle/pick).
+function reelAppendDoneCard(label){
+  const log = document.getElementById('chatLog');
+  log.innerHTML += `<div class="msg ai"><div class="chat-cta-card"><div class="chat-cta-done-row"><div class="chat-cta-done-left"><img src="../../../../components/ai-social-media/icons/uploads/file-text.svg" alt=""><span class="chat-cta-done-label">${escapeHtml(label)}</span></div><img class="chat-cta-done-check" src="../../../../components/ai-social-media/icons/circle-check.svg" alt=""></div></div></div>`;
+  log.scrollTop = log.scrollHeight;
+}
+
+// ---- "Continue to timeline" -- per the AI 대화창 공통 규칙 스펙, any moment where the AI is
+// silently doing work on the user's behalf (here: setting up each clip's scene & character
+// action description and narration on the new Timeline tab) needs to narrate it: disable the
+// button that kicked it off, show a context-specific working message, then a completion message
+// the instant the destination is visible, then hand off the next action as its own card --
+// same working -> completion -> next-step-card shape as runBriefToScript() above. Shared by
+// both entry points that can trigger this (the chat card's own button, and its hidden mirror
+// #reelContinueToTimelineBtn that the bottom action bar proxies clicks to). ----
+function continueToTimelineFromChat(btnEl){
+  if(btnEl) btnEl.disabled = true;
+  showSub('reelTimeline');
+
+  const selectedTile = document.querySelector('#timelineGrid .scene-tile.selected');
+  const unit = selectedTile ? Number(selectedTile.dataset.unit) : 1;
+  showFieldSpinner(document.getElementById(`descFieldWrap_${unit}`));
+  showFieldSpinner(document.getElementById(`narrFieldWrap_tl_${unit}`));
+
+  const log = document.getElementById('chatLog');
+  const loadingEl = document.createElement('div');
+  loadingEl.className = 'msg ai loading';
+  loadingEl.innerHTML = `<span class="tag">AI</span>Filling in each clip's scene &amp; character action description and narration on the Timeline<span class="dots"><span>.</span><span>.</span><span>.</span></span>`;
+  log.appendChild(loadingEl);
+  log.scrollTop = log.scrollHeight;
+
+  setTimeout(() => {
+    hideFieldSpinners();
+    loadingEl.remove();
+
+    const status = document.createElement('div');
+    status.className = 'msg-status';
+    status.innerHTML = '<span class="worked-label">Worked</span> <span class="worked-time">for 1s</span>';
+    log.appendChild(status);
+
+    const msg = document.createElement('div');
+    msg.className = 'msg ai';
+    msg.textContent = `Filled in the scene & character action description and narration for each clip on the Timeline. Want changes? Just tell me what to adjust.`;
+    log.appendChild(msg);
+
+    appendChatCta(
+      'Timeline set up',
+      'Review each scene on the Timeline, then generate a reference image for how it looks.',
+      '<button class="btn btn-dark" onclick="generateScriptThumbnails()">Generate Reference Images</button>'
+    );
+
+    log.scrollTop = log.scrollHeight;
+  }, 900);
 }
 
 function reelConfirmScript(){
@@ -5893,6 +6340,142 @@ function renderSceneNarrationHTML(scope, unit){
     </div>
   `;
 }
+
+// Timeline tab only (Figma 8727-219846's own "Voice Section" component) -- the Script stage
+// keeps the compact block above unchanged. Word-count row swaps to the red over-limit row
+// past 15 words; the Preview button reuses the existing cached/stale/loading state machine
+// (updateVoicePreviewButton), just reskinned full-width, see voice-section.css's own note.
+function renderVoiceWordcountRowHTML(unit, script){
+  const count = countScriptWords(script);
+  if(count > 15){
+    return `
+      <div class="voice-section-error-row" id="voiceWordcountRow_${unit}">
+        <div class="voice-section-error-left">
+          <span class="voice-section-error-text">You've gone over the word limit.</span>
+          <button class="voice-section-refine-chip" type="button" onclick="refineSceneScript(${unit})">Make it shorter</button>
+        </div>
+        <span class="voice-section-error-count">${count} / 15 words</span>
+      </div>`;
+  }
+  return `<span class="voice-section-wordcount" id="voiceWordcountRow_${unit}">${count} / 15 words</span>`;
+}
+// Case 2/3 — same convergence rule as shortenFullScriptViaChat(): the Voice Section's own
+// inline "Make it shorter" chip routes through the identical chat working/completion(Undo/Redo)
+// flow as the chat's own [Shorten it] suggestion for this clip.
+function refineSceneScript(unit){
+  shortenSceneScriptViaChat(unit);
+}
+function shortenSceneScriptViaChat(unit){
+  clearChatLimitSuggestion(`scene-${unit}`);
+  const log = document.getElementById('chatLog');
+  if(!log) return;
+  const loadingEl = document.createElement('div');
+  loadingEl.className = 'msg ai loading';
+  loadingEl.innerHTML = `<span class="tag">AI</span>Shortening Clip ${unit}'s narration to fit<span class="dots"><span>.</span><span>.</span><span>.</span></span>`;
+  log.appendChild(loadingEl);
+  log.scrollTop = log.scrollHeight;
+
+  const before = getSceneScript(unit);
+  setTimeout(() => {
+    loadingEl.remove();
+    const after = fitScriptToWordLimit(before, 15);
+    updateSceneScript(unit, after);
+
+    const status = document.createElement('div');
+    status.className = 'msg-status';
+    status.innerHTML = '<span class="worked-label">Worked</span> <span class="worked-time">for 1s</span>';
+    log.appendChild(status);
+    const msg = document.createElement('div');
+    msg.className = 'msg ai';
+    msg.textContent = `Shortened the narration for Clip ${unit} to fit.`;
+    log.appendChild(msg);
+
+    pushChatChangeCard(log, `Narration · Clip ${unit}`, before, after, (snap) => updateSceneScript(unit, snap));
+
+    log.scrollTop = log.scrollHeight;
+  }, 800);
+}
+// Toggle the Voice Section's own collapse/expand -- decorative nowhere else in the app,
+// this is the one place the chevron actually does something (per explicit go-ahead).
+function toggleVoiceSection(headerEl){
+  const section = headerEl.closest('.voice-section');
+  if(!section) return;
+  const collapsed = section.classList.toggle('collapsed');
+  const caret = section.querySelector('.voice-section-caret');
+  if(caret) caret.src = `../../../../components/ai-social-media/icons/chevron-${collapsed ? 'down' : 'up'}.svg`;
+}
+// Voiceover Card row shown once a take exists -- name/time aren't tracked anywhere real yet
+// (no audio pipeline), so name falls back to the currently selected voice and the time is
+// estimated from word count at the same ~1.875 words/sec used by getMaxScriptWords().
+function renderVoiceSampleRowHTML(unit){
+  const cache = window.__voicePreviewCache[unit] || {};
+  const voiceName = cache.voice || getCurrentVoiceLabel() || 'Voice';
+  const totalSec = Math.max(1, Math.round(countScriptWords(getSceneScript(unit)) / 1.875));
+  return `
+    <div class="voice-section-sample" id="voiceSample_tl_${unit}">
+      <span class="voice-section-sample-play" onclick="document.getElementById('voicePreviewBtn_tl_${unit}').click()"><img src="../../../../components/ai-social-media/icons/audio-play.svg" alt=""></span>
+      <span class="voice-section-sample-name">${escapeHtml(voiceName)}</span>
+      <span class="voice-section-sample-time">00:00 / 00:${String(totalSec).padStart(2, '0')}</span>
+    </div>`;
+}
+// Preview replays whatever take already exists (even a stale one); Regenerate is the
+// separate button that pays to refresh it to match the current script -- see previewSceneVoice()
+// and updateVoicePreviewButton()'s figmaStyle branch for how Preview's own state differs here
+// from the single-button model still used by the Script/Video stage.
+function renderVoiceButtonAreaHTML(unit){
+  const hasCache = !!window.__voicePreviewCache[unit];
+  const invalid = countScriptWords(getSceneScript(unit)) === 0 || countScriptWords(getSceneScript(unit)) > 15 || !!window.__reelSyncPending;
+  const previewBtn = `<button class="voice-preview-btn voice-section-preview-btn" id="voicePreviewBtn_tl_${unit}" onclick="previewSceneVoice('tl', ${unit})"></button>`;
+  if(!hasCache) return `<div class="voice-section-actions" id="voiceButtonArea_${unit}">${previewBtn}</div>`;
+  return `
+    <div class="voice-section-actions" id="voiceButtonArea_${unit}">
+      ${previewBtn}
+      <button class="voice-preview-btn voice-section-preview-btn" id="voiceRegenBtn_tl_${unit}" onclick="regenerateSceneVoice(${unit})" ${invalid ? 'disabled' : ''} title="Generate a fresh take to match the current script · ${SEGMENT_VOICE_CREDIT} credits">
+        <span class="voice-section-preview-play"><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" alt=""></span> Regenerate
+      </button>
+      ${renderVoiceSampleRowHTML(unit)}
+    </div>`;
+}
+function regenerateSceneVoice(unit){
+  if(countScriptWords(getSceneScript(unit)) === 0 || countScriptWords(getSceneScript(unit)) > 15 || window.__reelSyncPending) return;
+  const btn = document.getElementById(`voiceRegenBtn_tl_${unit}`);
+  if(!btn || btn.disabled) return;
+  const scriptText = getSceneScript(unit);
+  const voice = getCurrentVoiceLabel();
+  btn.disabled = true;
+  btn.classList.add('loading');
+  btn.innerHTML = `<span class="vp-spinner"></span> Generating…`;
+  setTimeout(() => {
+    window.__voicePreviewCache[unit] = { script: scriptText, voice };
+    const area = document.getElementById(`voiceButtonArea_${unit}`);
+    if(area) area.outerHTML = renderVoiceButtonAreaHTML(unit);
+    updateVoicePreviewButton('tl', unit);
+    updateVoicePreviewButton('vid', unit);
+  }, 1100);
+}
+function renderTimelineVoiceSectionHTML(unit){
+  const script = getSceneScript(unit);
+  return `
+    <div class="voice-section">
+      <button type="button" class="voice-section-header" onclick="toggleVoiceSection(this)">
+        <span class="voice-section-title">Voice</span>
+        <div class="voice-section-header-right">
+          <span class="voice-section-spacer"></span>
+          <img class="voice-section-caret" src="../../../../components/ai-social-media/icons/chevron-up.svg" alt="">
+        </div>
+      </button>
+      <div class="voice-section-body">
+        <div class="voice-section-script-wrap">
+          <div class="field-fill-wrap" id="narrFieldWrap_tl_${unit}">
+            <textarea class="voice-script-text voice-section-script" data-scene="${unit}" oninput="updateSceneScript(${unit}, this.value)" aria-invalid="${countScriptWords(script) > 15 || countScriptWords(script) === 0}">${escapeHtml(script)}</textarea>
+          </div>
+          ${renderVoiceWordcountRowHTML(unit, script)}
+        </div>
+        ${renderVoiceButtonAreaHTML(unit)}
+      </div>
+    </div>
+  `;
+}
 function renderReelSceneEditors(){
   const count = getSceneCount();
   ensureSceneScripts(count);
@@ -5979,8 +6562,8 @@ function renderTimelineGrid(count){
         <div class="scene-tile-placeholder">
           <div class="scene-tile-placeholder-icon sparkle"><img src="../../../../components/ai-social-media/icons/sparkle-single-neutral.svg" alt=""></div>
           <div class="scene-tile-placeholder-text">
-            <span class="scene-tile-placeholder-title">Your thumbnail will appear here</span>
-            <span class="scene-tile-placeholder-sub"><p>Generate one to preview</p><p>how this scene looks.</p></span>
+            <span class="scene-tile-placeholder-title">Your reference image will appear here</span>
+            <span class="scene-tile-placeholder-sub"><p>Generate one to guide</p><p>how this scene's video looks.</p></span>
           </div>
         </div>
       </div>
@@ -6025,7 +6608,7 @@ function renderTimelineEditor(unit){
         </div>
         <p class="scene-note">AI automatically builds a scene to match this line</p>
       </div>
-      ${renderSceneNarrationHTML('tl', unit)}
+      ${renderTimelineVoiceSectionHTML(unit)}
     </div>
   `;
   renderReferenceImages();
@@ -6044,16 +6627,16 @@ function generateScriptThumbnails(){
     if(placeholder) placeholder.innerHTML = `
       <div class="scene-tile-placeholder-icon spinner"><img src="../../../../components/ai-social-media/icons/ui-spinner-lg.svg" alt=""></div>
       <div class="scene-tile-placeholder-text">
-        <span class="scene-tile-placeholder-title">Creating your thumbnail…</span>
-        <span class="scene-tile-placeholder-sub"><p>Making the first frame of your video</p></span>
+        <span class="scene-tile-placeholder-title">Creating your reference image…</span>
+        <span class="scene-tile-placeholder-sub"><p>The video will be generated using this as a guide</p></span>
       </div>`;
   });
-  showQueuePanel('#timelineGrid .scene-tile', 'thumbnail generation', () => {
+  showQueuePanel('#timelineGrid .scene-tile', 'reference image generation', () => {
     document.querySelectorAll('#timelineGrid .scene-tile').forEach((t, i) => {
       t.dataset.type = 'thumbnail';
       t.querySelector('.scene-tile-placeholder')?.remove();
       t.querySelector('.scene-tile-preview').style.backgroundImage = `url('assets/video/scene${(i % 2) + 1}.png')`;
-      t.querySelector('.scene-tile-preview').insertAdjacentHTML('afterbegin', '<div class="scene-tile-top-row"><span class="scene-tile-ready-badge">Ready</span></div>');
+      t.querySelector('.scene-tile-preview').insertAdjacentHTML('afterbegin', '<div class="scene-tile-top-row"><span class="feedback-status-chip feedback-status-chip--green">Ready</span></div>');
     });
     proceedToStudio();
   }, 'Scene');
@@ -6107,9 +6690,22 @@ function updateSceneScript(n, value){
 
   document.querySelectorAll(`.voice-guide-${n}`).forEach(g => { g.textContent = wordCountGuideText(value); });
   document.querySelectorAll(`.voice-script-text[data-scene="${n}"]`).forEach(ta => { if(ta.value !== value) ta.value = value; ta.setAttribute('aria-invalid', String(countScriptWords(value) > 15 || countScriptWords(value) === 0)); });
+  const voiceWordcountRow = document.getElementById(`voiceWordcountRow_${n}`);
+  if(voiceWordcountRow) voiceWordcountRow.outerHTML = renderVoiceWordcountRowHTML(n, value);
+  // Refreshes Regenerate's disabled state + the sample row's estimated time; skipped mid-generate
+  // so a live "Generating…" button isn't yanked out from under itself.
+  const voiceButtonArea = document.getElementById(`voiceButtonArea_${n}`);
+  if(voiceButtonArea && !voiceButtonArea.querySelector('.loading')) voiceButtonArea.outerHTML = renderVoiceButtonAreaHTML(n);
 
   updateVoicePreviewButton('tl', n);
   updateVoicePreviewButton('vid', n);
+
+  // Case 3 — proactive chat suggestion alongside this clip's own inline red warning above.
+  if(countScriptWords(value) > 15){
+    showChatLimitSuggestion(`scene-${n}`, `Clip ${n}'s narration is over 15 words for an 8s clip. Want me to shorten it to fit?`, 'Shorten it', () => shortenSceneScriptViaChat(n));
+  } else {
+    clearChatLimitSuggestion(`scene-${n}`);
+  }
 }
 
 function getCurrentVoiceLabel(){
@@ -6130,16 +6726,29 @@ function updateVoicePreviewButton(scope, n){
   const btn = document.getElementById(`voicePreviewBtn_${scope}_${n}`);
   if(!btn || btn.classList.contains('loading') || btn.classList.contains('playing')) return;
   btn.disabled = countScriptWords(getSceneScript(n)) === 0 || countScriptWords(getSceneScript(n)) > 15 || !!window.__reelSyncPending;
-  btn.classList.toggle('cached', cached);
-  btn.classList.toggle('stale', stale);
-  if(cached){
-    btn.innerHTML = `<span class="vp-icon"><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt=""></span> Preview`;
+
+  // Timeline's split Preview/Regenerate layout (voice-section-preview-btn): Preview always
+  // just replays whatever take exists, even a stale one -- the separate Regenerate button
+  // (renderVoiceButtonAreaHTML) owns "text changed, pay to refresh". The single-button
+  // model below (Script/Video stage) still folds staleness into this same button.
+  const figmaStyle = btn.classList.contains('voice-section-preview-btn');
+  const showCached = figmaStyle ? hasCache : cached;
+  btn.classList.toggle('cached', showCached);
+  btn.classList.toggle('stale', !figmaStyle && stale);
+
+  const icon = (src, sizeCls) => figmaStyle
+    ? `<span class="voice-section-preview-play"><img src="../../../../components/ai-social-media/icons/${src}" alt=""></span>`
+    : `<span class="vp-icon"><img src="../../../../components/ai-social-media/icons/${src}" class="icon-inline${sizeCls ? ' ' + sizeCls : ''}" alt=""></span>`;
+  const cost = figmaStyle ? '' : ` <span class="vp-cost"><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">${SEGMENT_VOICE_CREDIT}</span>`;
+
+  if(showCached){
+    btn.innerHTML = `${icon('refresh-ccw.svg')} Preview`;
     btn.title = 'Replay the cached preview — no extra cost';
-  } else if(stale){
-    btn.innerHTML = `<span class="vp-icon"><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt=""></span> Regenerate <span class="vp-cost"><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">${SEGMENT_VOICE_CREDIT}</span>`;
+  } else if(!figmaStyle && stale){
+    btn.innerHTML = `${icon('refresh-ccw.svg')} Regenerate${cost}`;
     btn.title = `Text changed since the last generation · ${SEGMENT_VOICE_CREDIT} credits to regenerate`;
   } else {
-    btn.innerHTML = `<span class="vp-icon"><img src="../../../../components/ai-social-media/icons/audio-play.svg" class="icon-inline icon-16" alt=""></span> Preview <span class="vp-cost"><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">${SEGMENT_VOICE_CREDIT}</span>`;
+    btn.innerHTML = `${icon('audio-play.svg', 'icon-16')} Preview${cost}`;
     btn.title = `Generate a voice preview · ${SEGMENT_VOICE_CREDIT} credits`;
   }
 }
@@ -6149,7 +6758,10 @@ function previewSceneVoice(scope, n){
   const btn = document.getElementById(`voicePreviewBtn_${scope}_${n}`);
   if(!btn || btn.disabled) return;
 
-  if(isVoicePreviewCached(n)){
+  // Timeline's Preview button (voice-section-preview-btn) replays any existing take, even a
+  // stale one -- see updateVoicePreviewButton()'s figmaStyle branch for why.
+  const figmaStyle = btn.classList.contains('voice-section-preview-btn');
+  if(isVoicePreviewCached(n) || (figmaStyle && window.__voicePreviewCache[n])){
     playVoiceButton(btn, false, () => updateVoicePreviewButton(scope, n));
     return;
   }
@@ -6165,7 +6777,16 @@ function previewSceneVoice(scope, n){
     window.__voicePreviewCache[n] = { script: scriptText, voice };
     btn.classList.remove('loading');
     btn.disabled = false;
-    playVoiceButton(btn, true, () => updateVoicePreviewButton(scope, n));
+    // Wait for the "Playing…" animation to finish before swapping in Regenerate + the
+    // sample row (a first-time generation just flipped hasCache true) -- replacing
+    // voiceButtonArea any earlier would detach `btn` mid-animation.
+    playVoiceButton(btn, true, () => {
+      if(figmaStyle){
+        const area = document.getElementById(`voiceButtonArea_${n}`);
+        if(area) area.outerHTML = renderVoiceButtonAreaHTML(n);
+      }
+      updateVoicePreviewButton(scope, n);
+    });
     updateVoicePreviewButton(scope === 'tl' ? 'vid' : 'tl', n);
   }, 1100);
 }
@@ -6206,7 +6827,7 @@ function showQueuePanel(tileSelector, jobLabel, onDone, itemName){
   `).join('');
   document.getElementById('queueJobs').innerHTML = jobsHTML;
   const badge = document.getElementById('queueBadge');
-  badge.className = 'queue-badge orange';
+  badge.className = 'feedback-status-chip feedback-status-chip--orange-icon';
   badge.innerHTML = `<img src="../../../../components/ai-social-media/icons/badge-dot.svg" alt="">${scenes.length} ACTIVE`;
   document.getElementById('queuePanel').style.display = 'block';
   setTimeout(() => {
@@ -6214,7 +6835,7 @@ function showQueuePanel(tileSelector, jobLabel, onDone, itemName){
       j.classList.add('ready');
       j.querySelector('.queue-job-status-label').textContent = 'READY';
     });
-    badge.className = 'queue-badge green';
+    badge.className = 'feedback-status-chip feedback-status-chip--green with-icon';
     badge.innerHTML = `<img src="../../../../components/ai-social-media/icons/circle-check.svg" alt="">DONE`;
   }, 1400);
   setTimeout(() => {
@@ -6394,8 +7015,22 @@ function combineVideo(){
   window.__videoCombineStale = false;
   updateVideoCta();
   document.getElementById('tabReelVideo').innerHTML = '<span class="check">✓</span> Video';
-  document.getElementById('chatLog').innerHTML += '<div class="msg ai"><span class="tag">AI</span>Combined all scenes into the final cut — free, no credits used. Your narration track from Script is already mixed in.</div>';
-  appendChatCta('Your video is ready. What\'s next?', '', '<button class="btn btn-dark" onclick="this.parentElement.querySelectorAll(\'button\').forEach(b => b.disabled = true); goToDevelop()">Continue to editing →</button><button class="btn btn-secondary" onclick="this.parentElement.querySelectorAll(\'button\').forEach(b => b.disabled = true); goToPublish()">Skip to publish</button>');
+  reelAppendDoneCard('Combined all scenes into the final cut — free, no credits used. Your narration track from Script is already mixed in.');
+  appendChatCta('Your video is ready. What\'s next?', '',
+    '<button class="btn btn-dark" onclick="this.parentElement.querySelectorAll(\'button\').forEach(b => b.disabled = true); goToDevelop()">Continue to editing →</button>' +
+    '<button class="btn btn-secondary" onclick="this.parentElement.querySelectorAll(\'button\').forEach(b => b.disabled = true); goToPublish()">Skip to publish</button>' +
+    '<div class="chat-card-feedback" id="videoCardFeedback"><span class="ccf-label">How\'s this result?</span><button type="button" class="ccf-icon-btn" onclick="ccfRate(this,\'video\',\'up\')" title="Looks great"><img src="../../../../components/ai-social-media/icons/check.svg" alt=""></button><button type="button" class="ccf-icon-btn" onclick="ccfRate(this,\'video\',\'down\')" title="Needs work"><img src="../../../../components/ai-social-media/icons/alert-sm.svg" alt=""></button></div>'
+  );
+  // Refine-this-video now happens through the AI Assistant chat itself instead of a separate
+  // right-panel prompt box — quick presets + a per-request credit hint live down by the input.
+  window.__videoRefineMode = true;
+  renderChatQuickChips([
+    { label: 'Tighten the opening', direct: () => sendVideoRefineChat('Tighten the opening') },
+    { label: 'Warmer colour', direct: () => sendVideoRefineChat('Warmer colour') },
+    { label: 'Slower pace', direct: () => sendVideoRefineChat('Slower pace') },
+    { label: 'Punchier cuts', direct: () => sendVideoRefineChat('Punchier cuts') }
+  ]);
+  setChatGuideHint('Describe a change — e.g. "tighten the opening" or "warmer tone"');
   showCombineResult();
 }
 
@@ -6410,6 +7045,7 @@ function showCombineResult(){
     return `<div class="combine-tick" style="left:${pct}%"></div>`;
   }).join('');
   renderCombineSummaryCard();
+  renderVideoRefineHistory();
   syncGenActionBarV3();
 }
 
@@ -6485,12 +7121,124 @@ function backToSceneVideos(){
   document.getElementById('combineResultView').style.display = 'none';
   document.querySelector('#subReelVideo .timeline-stage').style.display = 'flex';
   document.getElementById('settingsBar').style.display = '';
+  window.__videoRefineMode = false;
+  renderChatQuickChips([]);
+  updateChatCostHint();
   syncGenActionBarV3();
 }
 
 function playCombineResult(btn){
   btn.innerHTML = '<img class="pause" src="../../../../components/ai-social-media/icons/video-pause-glyph.svg" alt="">';
   setTimeout(() => { btn.innerHTML = '<img class="play" src="../../../../components/ai-social-media/icons/video-play-glyph.svg" alt="">'; }, 1400);
+}
+
+/* ---- Refine this video (requested from the AI Assistant chat, not a separate right-panel
+   prompt box) — a quick chip or a typed chat message both land here. A new "version" of the
+   final cut is produced each time; the version row on the canvas lets you flip back. ---- */
+window.__videoRefineVersions = [{ label: 'v1', prompt: null, ready: true }];
+window.__videoRefineActive = 0;
+const VIDEO_REFINE_COST = 6;
+
+// Shows the per-request credit cost near the chat input once there's something to send —
+// takes over the role the right-panel's "Re-render ⚡6" badge used to play.
+function updateChatCostHint(){
+  const hint = document.getElementById('chatCostHint');
+  if(!hint) return;
+  const input = document.getElementById('chatInput');
+  if(window.__videoRefineMode && input && input.value.trim()){
+    hint.textContent = `This edit uses ⚡${VIDEO_REFINE_COST} credits`;
+    hint.style.display = '';
+  } else {
+    hint.style.display = 'none';
+  }
+}
+function sendVideoRefineChat(text){
+  const vers = window.__videoRefineVersions;
+  const newLabel = 'v' + (vers.length + 1);
+  vers.push({ label: newLabel, prompt: text, ready: false });
+  window.__videoRefineActive = vers.length - 1;
+  renderVideoRefineHistory();
+  updateChatCostHint();
+
+  const player = document.getElementById('combinePlayer');
+  let ov = player.querySelector('.combine-rerender');
+  if(!ov){ ov = document.createElement('div'); ov.className = 'combine-rerender'; player.appendChild(ov); }
+  ov.innerHTML = '<span class="spin"></span><span>Re-rendering the cut…</span>';
+
+  const log = document.getElementById('chatLog');
+  log.innerHTML += `<div class="msg ai loading" id="videoRefineMsg">Re-rendering the final cut<span class="dots"><span>.</span><span>.</span><span>.</span></span></div>`;
+  log.scrollTop = log.scrollHeight;
+
+  setTimeout(() => {
+    vers[vers.length - 1].ready = true;
+    renderVideoRefineHistory();
+    if(ov) ov.remove();
+    const msg = document.getElementById('videoRefineMsg');
+    if(msg){
+      msg.classList.remove('loading');
+      msg.id = '';
+      msg.innerHTML = `<span class="tag">AI</span>Re-rendered the final cut (<b>${newLabel}</b>) with your note: “${escapeHtml(text)}”. Flip between versions on the video, or keep refining.`;
+    }
+    log.scrollTop = log.scrollHeight;
+  }, 1700);
+}
+function renderVideoRefineHistory(){
+  const row = document.getElementById('videoRefineHistoryRow');
+  if(!row) return;
+  const vers = window.__videoRefineVersions;
+  row.style.display = vers.length > 1 ? 'flex' : 'none';
+  row.innerHTML = vers.map((v, i) => `
+    <button type="button" class="img-version-chip${i === window.__videoRefineActive ? ' selected' : ''}${v.ready ? '' : ' loading'}"
+      onclick="selectVideoRefineVersion(${i})" ${v.ready ? '' : 'disabled'} title="${escapeHtml(v.prompt || 'Original combined cut')}">
+      ${v.label}${v.ready ? '' : ' …'}
+    </button>`).join('');
+  const badge = document.getElementById('combineVBadge');
+  if(badge){
+    badge.textContent = vers[window.__videoRefineActive].label;
+    badge.hidden = vers.length < 2;
+  }
+}
+function selectVideoRefineVersion(i){
+  if(!window.__videoRefineVersions[i] || !window.__videoRefineVersions[i].ready) return;
+  window.__videoRefineActive = i;
+  renderVideoRefineHistory();
+}
+/* ---- Rate this result → team (product feedback, not an edit) ----------------------- */
+window.__resultFeedback = {};
+// Icon-only feedback on the "Your video is ready" chat card — 👍 records immediately, 👎
+// reveals a one-line optional note before sending. Deliberately separate from rfRate/rfSend
+// below (still used by the Image post right-panel result), since this lives inside a chat
+// card that gets rebuilt/scrolled away rather than a persistent panel section.
+function ccfRate(btn, target, rating){
+  const wrap = btn.closest('.chat-card-feedback');
+  if(!wrap) return;
+  if(rating === 'up'){
+    window.__resultFeedback[target] = { rating: 'up', note: '', at: new Date().toISOString() };
+    wrap.innerHTML = '<span class="ccf-thanks"><img src="../../../../components/ai-social-media/icons/check.svg" alt="">Thanks for the feedback</span>';
+  } else {
+    wrap.innerHTML = `<textarea class="ccf-note" placeholder="What didn't work? (optional)"></textarea><button type="button" class="btn btn-secondary ccf-send" onclick="ccfSendNote(this,'${target}')">Send</button>`;
+  }
+}
+function ccfSendNote(btn, target){
+  const wrap = btn.closest('.chat-card-feedback');
+  const note = wrap.querySelector('.ccf-note').value.trim();
+  window.__resultFeedback[target] = { rating: 'down', note, at: new Date().toISOString() };
+  wrap.innerHTML = '<span class="ccf-thanks"><img src="../../../../components/ai-social-media/icons/check.svg" alt="">Thanks — sent to the Formee team</span>';
+}
+function rfRate(btn){
+  const wrap = btn.closest('.result-feedback');
+  wrap.querySelectorAll('.rf-btn').forEach(b => b.classList.toggle('sel', b === btn));
+  wrap.querySelector('.rf-send').disabled = false;
+}
+function rfSend(target){
+  const wrap = document.getElementById('imageResultFeedback');
+  const rating = wrap.querySelector('.rf-btn.sel')?.dataset.v || null;
+  const note = wrap.querySelector('.result-feedback-note').value.trim();
+  window.__resultFeedback[target] = { rating, note, at: new Date().toISOString() };
+  console.log('[Formee] result feedback sent', target, window.__resultFeedback[target]);
+  wrap.querySelector('.result-feedback-body').hidden = true;
+  wrap.querySelector('.result-feedback-sub').hidden = true;
+  wrap.querySelector('.rf-done').hidden = false;
 }
 
 
@@ -6503,20 +7251,42 @@ function regenerateAllScenesFromChat(){
   loadingEl.innerHTML = `<span class="tag">AI</span>Regenerating scene descriptions<span class="dots"><span>.</span><span>.</span><span>.</span></span>`;
   log.appendChild(loadingEl);
   log.scrollTop = log.scrollHeight;
+
+  const count = getSceneCount();
+  const beforeDescs = {};
+  for(let n = 1; n <= count; n++) beforeDescs[n] = window.__unitDescriptions[n];
+  const beforeTouched = { ...window.__unitDescTouched };
+  const beforeReview = { ...window.__reelPromptReview };
+
   setTimeout(() => {
     loadingEl.remove();
     window.__unitDescTouched = {};
     window.__reelPromptReview = {};
-    for(let n = 1; n <= getSceneCount(); n++) window.__unitDescriptions[n] = buildSceneDescFromNarration(n, getSceneScript(n));
+    for(let n = 1; n <= count; n++) window.__unitDescriptions[n] = buildSceneDescFromNarration(n, getSceneScript(n));
     renderReelSceneEditors();
+    const afterDescs = {};
+    for(let n = 1; n <= count; n++) afterDescs[n] = window.__unitDescriptions[n];
+
     const status = document.createElement('div');
     status.className = 'msg-status';
     status.innerHTML = '<span class="worked-label">Worked</span> <span class="worked-time">for 2s</span>';
     log.appendChild(status);
     const msg = document.createElement('div');
     msg.className = 'msg ai';
-    msg.textContent = `Refreshed the scene descriptions for all ${getSceneCount()} scenes.`;
+    msg.textContent = `Refreshed the scene descriptions for all ${count} scenes.`;
     log.appendChild(msg);
+
+    pushChatChangeCard(log, `Scene descriptions · all ${count} scenes`,
+      { descs: beforeDescs, touched: beforeTouched, review: beforeReview },
+      { descs: afterDescs, touched: {}, review: {} },
+      (snap) => {
+        Object.assign(window.__unitDescriptions, snap.descs);
+        window.__unitDescTouched = { ...snap.touched };
+        window.__reelPromptReview = { ...snap.review };
+        renderReelSceneEditors();
+      }
+    );
+
     log.scrollTop = log.scrollHeight;
   }, 1000);
 }
@@ -6958,15 +7728,15 @@ function renderPublishDestinationsTable(el){
     const connected = window.__platformConnections[p.key];
     const icon = `<img class="pub-dest-icon" src="${PUBLISH_PLATFORM_ICONS[p.key]}" alt="">`;
     const formats = window.__platformFormats[p.key];
-    // Connection status no longer disables these -- you can select a not-connected platform
-    // as a destination (it just shows the "Not connected" Connect prompt in the Publish
-    // modal instead of the normal preview/confirm box once you get there).
+    // Not-connected rows: both checkboxes are disabled (Figma's Not Connected state, sm-inactive
+    // Checkbox) -- Connect is the only usable control until the account is actually linked.
     // Leading checkbox reflects "is this platform used at all", not "every surface on" --
     // checking just Post or just Story alone should keep it checked, not clear it.
     const allChecked = surfaces.some(s => formats[s]);
+    const disabledAttr = connected ? '' : 'disabled';
     const cols = surfaces.map(s => `
       <div class="pub-dest-col">
-        <input type="checkbox" class="pub-dest-checkbox checkbox" ${formats[s] ? 'checked' : ''} onchange="toggleDestinationFormat('${p.key}','${s}')">
+        <input type="checkbox" class="pub-dest-checkbox checkbox" ${formats[s] ? 'checked' : ''} ${disabledAttr} onchange="toggleDestinationFormat('${p.key}','${s}')">
       </div>
     `).join(gap);
     const status = connected
@@ -6975,7 +7745,7 @@ function renderPublishDestinationsTable(el){
     return `
       <div class="pub-dest-row${connected ? '' : ' not-connected'}">
         <div class="pub-dest-select-col">
-          <input type="checkbox" class="pub-dest-checkbox checkbox" ${allChecked ? 'checked' : ''} onchange="toggleDestinationAllSurfaces('${p.key}', this.checked)">
+          <input type="checkbox" class="pub-dest-checkbox checkbox" ${allChecked ? 'checked' : ''} ${disabledAttr} onchange="toggleDestinationAllSurfaces('${p.key}', this.checked)">
         </div>
         <div class="pub-dest-meta">
           ${icon}
@@ -7095,6 +7865,184 @@ function refineCaptionWithAI(mode){
   }
   ta.value = text;
   onSharedCaptionInput();
+}
+
+// ---- "Refine with AI" panel (Figma 8727:218298) — 1 Closed / 2 Open / 3 Typing /
+// 4 Generating / 5 Result / 6 Applied. Shared component: components/ai-social-media/
+// controls-field-ai-assisted-text.css. The 3 instant chips above (refineCaptionWithAI)
+// are untouched -- this is the separate free-text refine flow opened by the pill itself.
+window.__captionRefine = { open: false, phase: 'idle', prompt: '', result: '' };
+// Undo/redo pair for the "Applied" head row (Figma 9377:140697) -- set once "Use this" is
+// clicked, at:'after'|'before' tracks which side of the swap the field currently shows. A
+// fresh apply always overwrites this with a new before/after pair (single-step undo/redo,
+// matching the two icon buttons Figma shows -- not a full multi-step history stack).
+window.__captionApplyHistory = null;
+
+function updateCaptionRefinePillClass(){
+  const pill = document.getElementById('pubRefineAiPill');
+  if(!pill) return;
+  const s = window.__captionRefine;
+  pill.classList.remove('is-open', 'is-engaged');
+  if(s.open) pill.classList.add((s.phase === 'idle' && !s.prompt.trim()) ? 'is-open' : 'is-engaged');
+}
+
+// Head row (Figma 9377:140697) -- a green "updated" badge + Undo/Redo, shown above the field
+// once at least one refinement has been applied this session. The instant quick-chips and
+// the pill itself stay exactly as they always were (Figma's real Applied reference keeps
+// them, unlike the generic Brand-description component demo's own simplified example).
+function renderCaptionHeadRow(){
+  const row = document.getElementById('pubCaptionHeadRow');
+  if(!row) return;
+  const h = window.__captionApplyHistory;
+  if(!h){ row.style.display = 'none'; row.innerHTML = ''; return; }
+  row.style.display = 'flex';
+  row.innerHTML = `
+    <span class="feedback-status-chip feedback-status-chip--green">updated</span>
+    <div class="controls-field-ai__head-spacer"></div>
+    <div class="controls-field-ai__undo-redo">
+      <button type="button" class="controls-field-ai__icon-btn" onclick="undoCaptionApply()" aria-label="Undo" ${h.at === 'before' ? 'disabled' : ''}><img src="../../../../components/ai-social-media/icons/ui-undo.svg" alt=""></button>
+      <button type="button" class="controls-field-ai__icon-btn" onclick="redoCaptionApply()" aria-label="Redo" ${h.at === 'after' ? 'disabled' : ''}><img src="../../../../components/ai-social-media/icons/ui-redo.svg" alt=""></button>
+    </div>
+  `;
+}
+
+function undoCaptionApply(){
+  const h = window.__captionApplyHistory;
+  if(!h || h.at !== 'after') return;
+  document.getElementById('pubCaption').value = h.before;
+  onSharedCaptionInput();
+  h.at = 'before';
+  renderCaptionHeadRow();
+}
+
+function redoCaptionApply(){
+  const h = window.__captionApplyHistory;
+  if(!h || h.at !== 'before') return;
+  document.getElementById('pubCaption').value = h.after;
+  onSharedCaptionInput();
+  h.at = 'after';
+  renderCaptionHeadRow();
+}
+
+function toggleCaptionRefinePanel(){
+  const s = window.__captionRefine;
+  s.open = !s.open;
+  if(!s.open){ s.phase = 'idle'; s.prompt = ''; s.result = ''; }
+  renderCaptionRefinePanel();
+}
+
+function onCaptionRefinePromptInput(value){
+  window.__captionRefine.prompt = value;
+  updateCaptionRefinePillClass();
+  const submitBtn = document.querySelector('#pubCaptionRefinePanel .controls-field-ai__prompt-submit');
+  if(submitBtn) submitBtn.classList.toggle('is-active', !!value.trim());
+}
+
+function quickFillCaptionRefine(text){
+  window.__captionRefine.prompt = text;
+  submitCaptionRefinePrompt();
+}
+
+function submitCaptionRefinePrompt(){
+  const s = window.__captionRefine;
+  if(!s.prompt.trim() || s.phase === 'generating') return;
+  s.phase = 'generating';
+  renderCaptionRefinePanel();
+  setTimeout(() => {
+    const base = document.getElementById('pubCaption').value.trim() || buildAutoCaption();
+    s.result = computeCaptionAiRefineResult(s.prompt, base);
+    s.phase = 'result';
+    renderCaptionRefinePanel();
+  }, 1100);
+}
+
+// Lightweight heuristic "AI" — reuses the same shorten/punchier/cta transforms as the
+// instant chips when the free-text prompt mentions them, else a generic light polish.
+function computeCaptionAiRefineResult(promptText, baseText){
+  const p = promptText.toLowerCase();
+  let text = baseText;
+  if(p.includes('short')){
+    const words = text.split(/\s+/).filter(Boolean);
+    const limit = Math.max(12, Math.round(words.length * 0.6));
+    text = words.slice(0, limit).join(' ');
+  }
+  if(p.includes('punch') || p.includes('energ') || p.includes('bold')){
+    text = text.replace(/\.(\s|$)/g, '!$1').trim();
+  }
+  if(p.includes('call to action') || p.includes('cta')){
+    const details = getBriefDetails();
+    const cta = details.cta || (window.__brandMode === 'set' ? 'Shop now — link in bio.' : 'Follow for more.');
+    if(!text.includes(cta)) text = `${text}\n${cta}`;
+  }
+  if(text === baseText){
+    text = text.trim();
+    if(text && !/[.!?]$/.test(text)) text += '.';
+  }
+  return text;
+}
+
+function undoCaptionRefineResult(){
+  const s = window.__captionRefine;
+  s.phase = 'idle';
+  s.result = '';
+  renderCaptionRefinePanel();
+}
+
+function applyCaptionRefineResult(){
+  const s = window.__captionRefine;
+  const ta = document.getElementById('pubCaption');
+  window.__captionApplyHistory = { before: ta.value, after: s.result, at: 'after' };
+  ta.value = s.result;
+  onSharedCaptionInput();
+  renderCaptionHeadRow();
+  s.open = false;
+  s.phase = 'idle';
+  s.prompt = '';
+  s.result = '';
+  renderCaptionRefinePanel();
+}
+
+function renderCaptionRefinePanel(){
+  const panel = document.getElementById('pubCaptionRefinePanel');
+  const s = window.__captionRefine;
+  updateCaptionRefinePillClass();
+  if(!panel) return;
+  if(!s.open){ panel.style.display = 'none'; panel.innerHTML = ''; return; }
+  panel.style.display = 'flex';
+
+  const icon = '../../../../components/ai-social-media/icons/ai-refine.svg';
+  const turnHtml = (s.phase === 'generating' || s.phase === 'result')
+    ? `<div class="controls-field-ai__turn"><p>${escapeHtml(s.prompt)}</p></div>` : '';
+  const loadingHtml = s.phase === 'generating' ? `
+    <div class="controls-field-ai__loading">
+      <img class="controls-field-ai__loading-spinner" src="../../../../components/ai-social-media/icons/ui-spinner.svg" alt="">
+      <div class="controls-field-ai__loading-text"><b>Rewriting…</b><span>Applying your refinement</span></div>
+    </div>` : '';
+  const resultHtml = s.phase === 'result' ? `
+    <div class="controls-field-ai__section-label"><img src="${icon}" alt=""><span>Updated by AI</span></div>
+    <div class="controls-field-ai__result-box">
+      <p>${escapeHtml(s.result)}</p>
+      <button type="button" class="controls-field-ai__undo-btn" onclick="undoCaptionRefineResult()" aria-label="Undo"><img src="../../../../components/ai-social-media/icons/ui-undo.svg" alt=""></button>
+    </div>
+    <div class="controls-field-ai__use-row">
+      <button type="button" class="btn btn-dark controls-field-ai__use-btn" onclick="applyCaptionRefineResult()">Use this</button>
+    </div>` : '';
+  const generating = s.phase === 'generating';
+  const submitActiveCls = (s.prompt.trim() && !generating) ? ' is-active' : '';
+
+  panel.innerHTML = `
+    ${turnHtml}${loadingHtml}${resultHtml}
+    <div class="controls-field-ai__section-label"><img src="${icon}" alt=""><span>Refine the caption</span></div>
+    <div class="controls-field-ai__prompt-box">
+      <input type="text" class="controls-field-ai__prompt-input" id="pubCaptionRefineInput" placeholder="e.g. shorter, and add a call to action…" value="${escapeHtml(s.prompt)}" oninput="onCaptionRefinePromptInput(this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault(); submitCaptionRefinePrompt();}" ${generating ? 'disabled' : ''}>
+      <button type="button" class="controls-field-ai__prompt-submit${submitActiveCls}" onclick="submitCaptionRefinePrompt()" ${generating ? 'disabled' : ''}><img src="../../../../components/ai-social-media/icons/arrow-up.svg" alt=""></button>
+    </div>
+    <div class="controls-field-ai__quick-chips">
+      <button type="button" class="controls-field-ai__quick-chip" onclick="quickFillCaptionRefine('shorter, but keep the key details')">Make it shorter</button>
+      <button type="button" class="controls-field-ai__quick-chip" onclick="quickFillCaptionRefine('make it punchier and more energetic')">Make it punchier</button>
+      <button type="button" class="controls-field-ai__quick-chip" onclick="quickFillCaptionRefine('add a clear call to action')">Add a call to action</button>
+    </div>
+  `;
 }
 
 // "Customize timing for each platform" (Figma node 7228-149845) — off: the original 3
@@ -7956,7 +8904,9 @@ function sendChatMessage(){
 }
 
 function reelHandleChatSend(text){
-  if(!window.__scriptConfirmed || /script|스크립트/i.test(text) || !mentionsClipOrField(text)){
+  if(window.__videoRefineMode){
+    sendVideoRefineChat(text);
+  } else if(!window.__scriptConfirmed || /script|스크립트/i.test(text) || !mentionsClipOrField(text)){
     reviseScript(text);
   } else {
     reviseSceneOrNarration(text);
@@ -8001,6 +8951,9 @@ function reviseSceneOrNarration(text){
   log.appendChild(loadingEl);
   log.scrollTop = log.scrollHeight;
 
+  const before = {};
+  targets.forEach(n => { before[n] = isNarration ? getSceneScript(n) : getVideoUnitDesc(n); });
+
   setTimeout(() => {
     loadingEl.remove();
     targets.forEach(n => {
@@ -8010,6 +8963,9 @@ function reviseSceneOrNarration(text){
         setVideoUnitDesc(n, buildRevisedScript(getVideoUnitDesc(n), text));
       }
     });
+    const after = {};
+    targets.forEach(n => { after[n] = isNarration ? getSceneScript(n) : getVideoUnitDesc(n); });
+
     const status = document.createElement('div');
     status.className = 'msg-status';
     status.innerHTML = '<span class="worked-label">Worked</span> <span class="worked-time">for 1s</span>';
@@ -8019,6 +8975,13 @@ function reviseSceneOrNarration(text){
     const whichClip = clipNum ? `Clip ${clipNum}` : (count > 1 ? 'every clip' : 'your clip');
     msg.textContent = `Updated the ${isNarration ? 'narration' : 'scene description'} for ${whichClip}.`;
     log.appendChild(msg);
+
+    pushChatChangeCard(log, `${isNarration ? 'Narration' : 'Scene description'} · ${whichClip}`, before, after, (snap) => {
+      Object.keys(snap).forEach(n => {
+        if(isNarration){ updateSceneScript(Number(n), snap[n]); } else { setVideoUnitDesc(Number(n), snap[n]); }
+      });
+    });
+
     log.scrollTop = log.scrollHeight;
   }, 900);
 }
@@ -8203,9 +9166,12 @@ fitScreenToViewport();
    Figma: library 섹션 8093:227085(도착) · 8124:128280(팝오버) ·
           8124:128886(프레임 선택) · 8128:129254(프레임 반영)
 
-   기존 마크업은 고치지 않는다. 칩 한 줄을 .prompt-top 맨 앞에 끼워 넣을 뿐이다.
+   기존 마크업은 고치지 않는다. 칩 한 줄(.fmxref-row)을 새로 만들어 넣을 뿐이다.
    .reference-images-row 안에는 넣지 않는다 — renderReferenceImages() 가 그 행의
-   innerHTML 을 통째로 갈아치우기 때문에 넣는 족족 지워진다. 형제로 둔다.
+   innerHTML 을 통째로 갈아치우기 때문에 넣는 족족 지워진다. 형제로 둔다. 다만 Figma
+   9191:135045 처럼 First frame/Last frame 과 한 줄에 나란히 보여야 해서, 그 형제 관계는
+   유지한 채로 둘을 .fmxref-line 이라는 flex-row 래퍼 하나로 같이 감싼다 (mountRows() 참고) —
+   기존 .reference-images-row 노드 자체는 옮겨지기만 할 뿐 다시 그려지지 않는다.
 
    모달·버튼은 공용 컴포넌트(components/shared/modal.css, button.css)를 그대로 쓰고,
    세그먼트는 이 파일의 .seg-control/.seg-chip 을 쓴다. 새로 정의한 건 칩·팝오버·
@@ -8216,32 +9182,24 @@ fitScreenToViewport();
 .app{position:relative;}
 
 /* ---------- 브리프 안의 레퍼런스 칩 ---------- */
-.fmxref-row{position:relative; display:flex; margin-bottom:var(--spacing-md);}
+/* .fmxref-line wraps the existing .reference-images-row + the wide .fmxref-row side by
+   side (Figma 9191:135045: First frame / Last frame / the wide REF chip all sit in one
+   row) -- mounted dynamically by mountRows(), see that function's own comment. */
+.fmxref-line{display:flex; align-items:flex-start; gap:8px; flex-wrap:wrap;}
+.fmxref-row{position:relative; display:flex;}
 .fmxref-row:empty{display:none;}
-.fmxref-chip{display:flex; align-items:center; gap:var(--spacing-sm);
-  padding:var(--spacing-sm) var(--spacing-sm) var(--spacing-sm) var(--spacing-sm);
-  background:var(--color-brand-primary-light,#eef2fb);
-  border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl);
-  font-family:var(--font-family-text); text-align:left;}
-.fmxref-chip:hover{border-color:var(--color-neutral-450);}
-.fmxref-hit{display:flex; align-items:center; gap:var(--spacing-md); min-width:0;
-  cursor:pointer; padding-right:var(--spacing-sm);}
-.fmxref-chip .th{width:40px; flex:none; aspect-ratio:9/16; border-radius:var(--radius-md);
-  object-fit:cover; display:block; background:var(--color-neutral-150);}
-.fmxref-chip[data-r="4:5"] .th{aspect-ratio:4/5;}
-.fmxref-chip[data-r="1:1"] .th{aspect-ratio:1/1;}
-.fmxref-chip .tx{display:flex; flex-direction:column; gap:2px; min-width:0;}
-.fmxref-chip .t1{display:flex; align-items:center; gap:var(--spacing-sm);
-  font-size:var(--font-size-text-sm); font-weight:var(--font-weight-semibold);
-  color:var(--color-neutral-900); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-.fmxref-chip .t2{font-size:var(--font-size-text-xs); color:var(--color-neutral-600);
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-.fmxref-tag{flex:none; padding:2px 6px; border-radius:var(--radius-sm);
-  background:var(--color-neutral-900); color:var(--color-neutral-0);
-  font-size:10px; font-weight:var(--font-weight-semibold); letter-spacing:.04em;}
-.fmxref-x{flex:none; margin-left:var(--spacing-sm); width:24px; height:24px; border:0;
-  border-radius:var(--radius-sm); background:none; cursor:pointer; line-height:1;
-  color:var(--color-neutral-500); font-size:15px; font-family:inherit;}
+/* The chip itself now renders as the real Prompt / Reference Chip's "image" state
+   (components/ai-social-media/reference-chip.css: .ref-chip .ref-chip--detail, Figma node
+   8614:18 / 8620:121242) -- this chip's own interactive logic (popover, strength, match,
+   frame picker) is untouched, only its markup/classes changed. .fmxref-hit is local-only:
+   the shared component has no separate "click to open" hit-area, but this feature does, so
+   it wraps just the thumb+labels (leaving the remove icon as its own click target). */
+.fmxref-hit{display:flex; align-items:center; gap:12px; min-width:0;
+  cursor:pointer; flex:1 1 auto;}
+.fmxref-x{flex:none; width:16px; height:16px; border:0; padding:0;
+  border-radius:var(--radius-full); background:none; cursor:pointer; line-height:1;
+  color:var(--color-neutral-600); font-size:12px; font-family:inherit;
+  display:flex; align-items:center; justify-content:center;}
 .fmxref-x:hover{background:var(--color-neutral-100); color:var(--color-neutral-800);}
 
 /* ---------- Use as reference 팝오버 ---------- */
@@ -8378,14 +9336,14 @@ fitScreenToViewport();
 
   /* ---------- 칩 ---------- */
   function chipHTML(){
-    return '<div class="fmxref-chip" data-r="' + esc(S.ratio) + '">' +
+    return '<div class="ref-chip ref-chip--detail" data-r="' + esc(S.ratio) + '">' +
       '<div class="fmxref-hit" data-fmxref="open" role="button" tabindex="0">' +
-        (S.thumb ? '<img class="th" src="' + esc(thumbSrc(S.thumb)) + '" alt=""' + onerr() + '>'
-                 : '<span class="th"></span>') +
-        '<span class="tx">' +
-          '<span class="t1"><span class="fmxref-tag">REF</span>from “' + esc(S.title) + '”</span>' +
-          '<span class="t2">' + esc(subline()) + '</span>' +
-        '</span></div>' +
+        (S.thumb ? '<img class="ref-chip-detail-thumb" src="' + esc(thumbSrc(S.thumb)) + '" alt=""' + onerr() + '>'
+                 : '<span class="ref-chip-detail-thumb"></span>') +
+        '<div class="ref-chip-detail-labels">' +
+          '<div class="ref-chip-detail-line1"><span class="ref-chip-detail-badge">REF</span><span class="ref-chip-detail-title">from “' + esc(S.title) + '”</span></div>' +
+          '<span class="ref-chip-detail-sub">' + esc(subline()) + '</span>' +
+        '</div></div>' +
       '<button type="button" class="fmxref-x" data-fmxref="remove" aria-label="Remove reference">✕</button>' +
     '</div>';
   }
@@ -8468,10 +9426,24 @@ fitScreenToViewport();
   }
   function mountRows(){
     document.querySelectorAll('.prompt-top').forEach(function(top){
-      if (top.querySelector(':scope > .fmxref-row')) return;
+      if (top.querySelector('.fmxref-row')) return;
       var row = document.createElement('div');
       row.className = 'fmxref-row';
-      top.insertBefore(row, top.firstChild);
+      /* Figma 9191:135045: the wide reference chip sits INLINE next to First frame/Last
+         frame, not stacked in its own row above them -- wrap the existing
+         .reference-images-row (untouched, still owned by renderReferenceImages()) and the
+         new .fmxref-row together in one flex-row line, re-parenting the live node rather
+         than rewriting its markup. */
+      var refRow = top.querySelector(':scope > .reference-images-row');
+      if (refRow){
+        var line = document.createElement('div');
+        line.className = 'fmxref-line';
+        refRow.parentNode.insertBefore(line, refRow);
+        line.appendChild(refRow);
+        line.appendChild(row);
+      } else {
+        top.insertBefore(row, top.firstChild);
+      }
     });
   }
   function toast(msg){
@@ -8507,7 +9479,11 @@ fitScreenToViewport();
       if (pop) pop.hidden = wasOpen;
     }
     else if (act === 'close'){ if (pop) pop.hidden = true; }
-    else if (act === 'remove'){ S = null; render(); }
+    else if (act === 'remove'){
+      S = null; render();
+      window.__fmxrefActive = false;
+      if (window.renderReferenceImages) window.renderReferenceImages();
+    }
     else if (act === 'strength'){ S.strength = hit.dataset.v; render(); }
     else if (act === 'match'){
       S.match[hit.dataset.v] = !S.match[hit.dataset.v];
@@ -8553,6 +9529,11 @@ fitScreenToViewport();
     }
     render();
     toast('Reference added from “' + d.ref + '”');
+    /* Lets the Brief row's own plain "Reference" ref-chip (new-content-to-generate.html's
+       renderReferenceImages()) know a reference is attached here, so it hides its own empty
+       chip instead of showing two reference indicators at once. */
+    window.__fmxrefActive = true;
+    if (window.renderReferenceImages) window.renderReferenceImages();
   };
 })();
 </script>

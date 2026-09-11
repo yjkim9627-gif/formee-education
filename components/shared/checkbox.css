@@ -26,3 +26,16 @@ input[type="checkbox"].checkbox:disabled {
   background-color: var(--color-neutral-150);
   cursor: not-allowed;
 }
+
+/* Size=lg (Figma node 8860:129734/129735, 28px) -- e.g. Reference / Scene Tile · Selectable's
+   selection overlay. Same check glyph, just rendered bigger (18px, up from the default's
+   implicit 12px) inside the larger box. */
+input[type="checkbox"].checkbox.checkbox--lg {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-md);
+}
+
+input[type="checkbox"].checkbox.checkbox--lg:checked {
+  background-size: 18px 18px;
+}

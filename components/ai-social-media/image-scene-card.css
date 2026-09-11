@@ -31,26 +31,14 @@
 .image-scene-card-top-row{display:flex; align-items:flex-start; justify-content:space-between; width:100%;}
 .image-scene-card[data-type="final"] .image-scene-card-top-row{justify-content:flex-end;}
 
-.image-scene-card-ready-badge{
-  display:inline-flex; align-items:center; font-family:var(--font-family-text);
-  font-size:10px; font-weight:600; line-height:14px; color:var(--color-badge-green-text);
-  background:var(--color-badge-green-bg); border-radius:999px; padding:4px 8px;
-  box-shadow:0 4px 4px rgba(15,23,41,.08),0 2px 2px rgba(15,23,41,.05);
-}
+/* Ready badge -- now the shared .feedback-status-chip.feedback-status-chip--green component
+   (feedback-status-chip.css, Figma node 5004:126953). Previous local rule had 4 wrong values
+   vs. the real Figma spec (10px not 11px font, 14px not 13px line-height, 4/8 not 2/8 padding,
+   plus a box-shadow the real component doesn't have). */
 
+/* Download/maximize action pair -- now the shared .media-card-icon-btn component
+   (media-card-icon-btn.css), reused identically by Scene Tile and Storyboard Card. */
 .image-scene-card-icon-row{display:flex; align-items:center; gap:var(--spacing-sm);}
-.image-scene-card-icon-btn{
-  width:24px; height:24px; border-radius:var(--radius-md); border:none;
-  display:flex; align-items:center; justify-content:center; padding:0; cursor:pointer;
-}
-.image-scene-card-icon-btn.download{
-  background:var(--color-neutral-0); border:1px solid var(--color-neutral-400);
-  box-shadow:0 1px 1.5px rgba(15,23,41,.1),0 1px .5px rgba(15,23,41,.04);
-}
-.image-scene-card-icon-btn.maximize{background:rgba(255,255,255,.2); backdrop-filter:blur(5px); padding:5px;}
-.image-scene-card-icon-btn img{display:block;}
-.image-scene-card-icon-btn.download img{width:14px; height:14px;}
-.image-scene-card-icon-btn.maximize img{width:16px; height:16px;}
 
 .image-scene-card-footer{
   width:100%; box-sizing:border-box; display:flex; align-items:center; justify-content:space-between;

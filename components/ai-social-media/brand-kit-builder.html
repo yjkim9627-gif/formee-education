@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>Brand Kit — Section Components</title>
+<link rel="stylesheet" href="../../tokens/tokens.css" />
+<link rel="stylesheet" href="../demo-nav.css" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&display=swap" />
+<link rel="stylesheet" href="brand-kit-builder.css" />
+<style>
+  body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
+  .demo-main { padding: var(--spacing-4xl); }
+  h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-sm); }
+  h2 { font-size: var(--font-size-text-md); font-weight: 700; color: var(--color-neutral-700); margin: var(--spacing-4xl) 0 var(--spacing-xs); }
+  h2:first-of-type { margin-top: 0; }
+  .demo-nid { font-weight: 400; color: var(--color-neutral-450); }
+  .demo-note { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); max-width: 760px; margin: 0 0 var(--spacing-3xl); line-height: 1.6; }
+  .demo-sub { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); margin: 0 0 var(--spacing-lg); line-height: 1.5; }
+  .demo-grid { display: flex; flex-wrap: wrap; gap: var(--spacing-2xl); align-items: flex-start; }
+  .demo-col { display: flex; flex-direction: column; gap: var(--spacing-sm); align-items: flex-start; }
+  .demo-state { font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--color-neutral-450); }
+  .demo-surface { padding: var(--spacing-2xl); background: var(--color-neutral-100); border-radius: 12px; }
+</style>
+</head>
+<body>
+<div class="demo-shell">
+  <nav class="demo-sidebar">
+    <a href="../../index.html" class="demo-sidebar-home">← Home</a>
+    <div class="demo-sidebar-group collapsed" data-group="forms-inputs">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Forms & Inputs</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="controls-field-ai-assisted-text.html">Controls / Field / AI assisted text</a>
+        <a href="controls-field.html">Controls / Field</a>
+        <a href="controls-filter-select.html">Controls / Filter / Select</a>
+        <a href="controls-filter-toggle.html">Controls / Filter / Toggle</a>
+        <a href="controls-misc.html">Controls — Icon Action, Popover, Carousel Arrow, Scrollbar, Segmented Control</a>
+        <a href="controls-multi-select.html">Controls / Multi Select</a>
+        <a href="controls-option-card.html">Controls / Option Card</a>
+        <a href="controls-search-field.html">Controls / Search Field</a>
+        <a href="controls-social-profile-row.html">Controls / Social profile row</a>
+        <a href="controls-toggles.html">Controls / Toggles</a>
+        <a href="date-picker.html">Date Picker</a>
+        <a href="duration-chip.html">Controls / Duration Chip</a>
+        <a href="filter-chip.html">Controls / Filter / Toggle</a>
+        <a href="input-login.html">Input / Login</a>
+        <a href="input.html">Input</a>
+        <a href="segment-chip.html">Segment Chip</a>
+        <a href="setting-chip.html">Setting Chip</a>
+        <a href="switch.html">Controls / Switch</a>
+        <a href="table-filter.html">Table / Filter</a>
+        <a href="toggle-chip.html">Controls / Toggle Chip</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="actions">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Actions</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="actions-button.html">Actions / Button</a>
+        <a href="../shared/button.html">Button</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="login">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Login</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="login.html">Login · Section</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="labels-status">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Labels & Status</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="feedback-status-chip.html">Feedback / Status Chip</a>
+        <a href="post-status-chip.html">Post Status Chip</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="navigation">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Navigation</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="nav.html">Nav / Navigation</a>
+        <a href="topbar-stepper.html">Topbar + Stepper</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="overlays-menus">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Overlays & Menus</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="controls-menu.html">Menu / Context Menu / Size Dropdown</a>
+        <a href="context-bar-popovers.html">ContextBar Popovers</a>
+        <a href="publish-social-modal.html">Publish to Social Modal</a>
+        <a href="../shared/modal-confirm.html">Modal / Confirm</a>
+        <a href="../shared/modal-form.html">Modal / Form</a>
+        <a href="../shared/modal-success.html">Modal / Success</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="images-icons">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Images & Icons</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="brand-logo.html">Brand / Logo</a>
+        <a href="icons.html">Icons</a>
+        <a href="avatar.html">Avatar</a>
+        <a href="illus-placeholder.html">Illus Placeholder</a>
+        <a href="editor-color-swatch.html">Editor / ContextBar Color Swatch</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="data-display">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Data Display</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="carousel-card-block.html">Carousel Card Block</a>
+        <a href="generate-preview-panel.html">Generate Preview Panel</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="content-editor">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Content Editor</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="brand-kit.html">Brand Kit</a>
+        <a href="editor-cell.html">Editor Cell</a>
+        <a href="editor-context-bar.html">Editor ContextBar</a>
+        <a href="editor-panel-chrome.html">Editor Panel & Controls</a>
+        <a href="editor-safe-zone-legend.html">Safe Zone Legend & Content Preview Actions</a>
+        <a href="heading.html">Heading</a>
+        <a href="w-action-bar.html">Action Bar / Editor</a>
+      </div>
+    </div>
+        <div class="demo-sidebar-group" data-group="brand-kit">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Brand Kit</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="brand-kit-builder.html" class="active">Brand Kit · Section</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="scene-storyboard">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Scene & Storyboard</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="image-scene-card.html">Image Scene Card</a>
+        <a href="media-card-icon-btn.html">Media Card Icon Button</a>
+        <a href="preview-top-row.html">Preview Top Row</a>
+        <a href="scene-tile.html">Scene Tile</a>
+        <a href="reference-scene-tile.html">Reference / Scene Tile · Selectable</a>
+        <a href="storyboard-card.html">Storyboard Card</a>
+        <a href="video-summary-card.html">Video Summary Card</a>
+        <a href="selector-style-card.html">Selector / Style Card</a>
+        <a href="selector-video-card.html">Selector / Video Card</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="editor-video">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Editor - Video</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="editor-video.html">Editor - Video · Section</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="generation-workflow">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Generation Workflow</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="music-track-row.html">Music Track Row</a>
+        <a href="queue-panel.html">Queue Job Row / Queue Panel</a>
+        <a href="voice-accordion-row.html">Voice Accordion Row</a>
+        <a href="voice-section.html">Voice Section</a>
+        <a href="character-card.html">Character Card</a>
+        <a href="action-bar-feedback.html">Action Bar / Brief</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="new-content">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>New content</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="new-content-misc.html">New content · loose controls</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="schedule">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Schedule</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="schedule.html">Schedule · Section</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="ai-assistant">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>AI Assistant</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="ai-assistant.html">10 AI Assistant · Section</a>
+        <a href="chat-panel.html">Chat Panel</a>
+        <a href="prompt-box.html">AI Prompt Box</a>
+        <a href="ai-response-card.html">AI Response Card</a>
+        <a href="reference-chip.html">Reference Chip</a>
+      </div>
+    </div>
+    <div class="demo-sidebar-group collapsed" data-group="upload-destination">
+      <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Upload & Destination</span><span class="demo-sidebar-group-caret">▾</span></button>
+      <div class="demo-sidebar-group-items">
+        <a href="upload-dropzone.html">Upload Dropzone / Dashed Upload Row</a>
+        <a href="uploads-file-badge.html">Uploads / File Badge / Source Row</a>
+        <a href="uploads-rows.html">Uploads Panel Rows</a>
+        <a href="destination-account.html">Destination Account</a>
+        <a href="publish-destination-table-row.html">Publish / Destination Table Row</a>
+      </div>
+    </div>
+  </nav>
+  <main class="demo-main">
+  <h1>Brand Kit</h1>
+  <p class="demo-note">Figma: section <strong>“Brand Kit”</strong> (node 4504:2673) — the Brand Kit <em>builder</em> components: the type scale, palette rows, colour popover, the branded post mockup and the preview rail that composes them. The older brand-asset <em>cards</em> (Logo / Image Preview, Font Swatch, Text Style Card) are a different Figma area and live on <a href="brand-kit.html">Brand Kit</a>. Role labels are set in Lora (loaded from Google Fonts, matching the brand-kit font preview). The “Formee Express” green / magenta / amber palette is illustrative demo-brand content; mockup photography uses a neutral gradient placeholder (<a href="scene-tile.html">Scene Tile</a> convention).</p>
+
+  <h2>Brand Kit / Type Scale Row <span class="demo-nid">— 4504:2728</span></h2>
+  <div class="demo-surface demo-col" style="gap:2px;">
+    <div class="bk-type-row">
+      <div class="bk-type-row__lead"><img class="bk-type-row__grip" src="icons/layer-grip.svg" alt=""><span class="bk-type-row__role">Heading</span></div>
+      <div class="bk-type-row__chips">
+        <span class="bk-type-chip">Bold <img src="icons/caret-down-filled.svg" alt=""></span>
+        <span class="bk-type-chip">63 <img src="icons/caret-down-filled.svg" alt=""></span>
+      </div>
+    </div>
+    <div class="bk-type-row bk-type-row--selected">
+      <div class="bk-type-row__lead"><img class="bk-type-row__grip" src="icons/layer-grip.svg" alt=""><span class="bk-type-row__role">Heading</span></div>
+      <div class="bk-type-row__chips">
+        <span class="bk-type-chip">Georgia <img src="icons/caret-down-filled.svg" alt=""></span>
+        <span class="bk-type-chip">Bold <img src="icons/caret-down-filled.svg" alt=""></span>
+        <span class="bk-type-chip">40 <img src="icons/caret-down-filled.svg" alt=""></span>
+      </div>
+    </div>
+  </div>
+
+  <h2>Brand Kit / Type Scale <span class="demo-nid">— 4590:3132</span></h2>
+  <div class="demo-surface">
+    <div class="bk-type-scale">
+      <div class="bk-type-scale__item"><span class="bk-type-scale__meta">Heading · Lora 32</span><span class="bk-type-scale__sample bk-type-scale__sample--heading">Discover, learn, grow</span></div>
+      <div class="bk-type-scale__item"><span class="bk-type-scale__meta">Subheading · Lora 20</span><span class="bk-type-scale__sample bk-type-scale__sample--subheading">Programs for every path</span></div>
+      <div class="bk-type-scale__item"><span class="bk-type-scale__meta">Body · DM Sans 15</span><span class="bk-type-scale__sample bk-type-scale__sample--body">Supporting copy sits at a comfortable reading size.</span></div>
+    </div>
+  </div>
+
+  <h2>Brand Kit / Palette Row <span class="demo-nid">— 5074:123204</span></h2>
+  <p class="demo-sub">Type = Fill / Line, each × Selected = false / true.</p>
+  <div class="demo-surface demo-grid">
+    <div class="demo-col"><span class="demo-state">Fill</span>
+      <div class="bk-palette-row"><span class="bk-palette-row__label">Palette 02</span>
+        <div class="bk-palette-row__swatches">
+          <span class="bk-swatch" style="background:#0e5c55"></span><span class="bk-swatch" style="background:#c81856"></span><span class="bk-swatch" style="background:#e8891f"></span><span class="bk-swatch" style="background:#33383f"></span><span class="bk-swatch" style="background:#5a8b8a"></span><span class="bk-swatch" style="background:#9c5a72"></span><span class="bk-swatch" style="background:#fff"></span>
+        </div>
+      </div>
+    </div>
+    <div class="demo-col"><span class="demo-state">Fill · selected</span>
+      <div class="bk-palette-row bk-palette-row--selected"><span class="bk-palette-row__label">Palette 02</span>
+        <div class="bk-palette-row__swatches">
+          <span class="bk-swatch" style="background:#b3a89b"></span><span class="bk-swatch" style="background:#4d4032"></span><span class="bk-swatch" style="background:#c1bdb8"></span><span class="bk-swatch" style="background:#14100d"></span><span class="bk-swatch" style="background:#927860"></span><span class="bk-swatch" style="background:#292019"></span><span class="bk-swatch" style="background:#fff"></span>
+        </div>
+      </div>
+    </div>
+    <div class="demo-col"><span class="demo-state">Line</span>
+      <div class="bk-palette-row bk-palette-row--line"><span class="bk-palette-row__label">Palette 02</span>
+        <div class="bk-palette-row__swatches">
+          <span class="bk-swatch bk-swatch--line" style="color:#0e5c55"></span><span class="bk-swatch bk-swatch--line" style="color:#c81856"></span><span class="bk-swatch bk-swatch--line" style="color:#e8891f"></span><span class="bk-swatch bk-swatch--line" style="color:#33383f"></span><span class="bk-swatch bk-swatch--line" style="color:#5a8b8a"></span><span class="bk-swatch bk-swatch--line" style="color:#9c5a72"></span><span class="bk-swatch bk-swatch--line" style="color:#e3e8f2"></span>
+        </div>
+      </div>
+    </div>
+    <div class="demo-col"><span class="demo-state">Line · selected</span>
+      <div class="bk-palette-row bk-palette-row--line bk-palette-row--selected"><span class="bk-palette-row__label">Palette 02</span>
+        <div class="bk-palette-row__swatches">
+          <span class="bk-swatch bk-swatch--line" style="color:#b3a89b"></span><span class="bk-swatch bk-swatch--line" style="color:#4d4032"></span><span class="bk-swatch bk-swatch--line" style="color:#c1bdb8"></span><span class="bk-swatch bk-swatch--line" style="color:#14100d"></span><span class="bk-swatch bk-swatch--line" style="color:#927860"></span><span class="bk-swatch bk-swatch--line" style="color:#292019"></span><span class="bk-swatch bk-swatch--line" style="color:#e3e8f2"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Brand Kit / Extracted Colour Row <span class="demo-nid">— 4860:78309</span></h2>
+  <div class="demo-surface demo-grid">
+    <div class="demo-col"><span class="demo-state">default</span>
+      <div class="bk-extracted-row">
+        <div class="bk-extracted-row__swatch"><span class="bk-extracted-row__dot" style="background:#0e5c55"></span><span class="bk-extracted-row__hex">#0E5C55</span></div>
+        <span class="bk-extracted-row__share">34%</span>
+      </div>
+    </div>
+    <div class="demo-col"><span class="demo-state">selected</span>
+      <div class="bk-extracted-row bk-extracted-row--selected">
+        <div class="bk-extracted-row__swatch"><span class="bk-extracted-row__dot" style="background:#0e5c55"></span><span class="bk-extracted-row__hex">#0E5C55</span></div>
+        <span class="bk-extracted-row__share">34%</span>
+      </div>
+    </div>
+  </div>
+
+  <h2>Brand Kit / Swatch Stack <span class="demo-nid">— 6303:127294</span></h2>
+  <div class="demo-surface demo-grid">
+    <div class="demo-col"><span class="demo-state">sm</span>
+      <span class="bk-swatch-stack bk-swatch-stack--sm"><span style="background:#0e5c55"></span><span style="background:#c81856"></span><span style="background:#e8891f"></span><span style="background:#33383f"></span><span style="background:#5a8b8a"></span></span>
+    </div>
+    <div class="demo-col"><span class="demo-state">md</span>
+      <span class="bk-swatch-stack bk-swatch-stack--md"><span style="background:#0e5c55"></span><span style="background:#c81856"></span><span style="background:#e8891f"></span><span style="background:#33383f"></span><span style="background:#5a8b8a"></span></span>
+    </div>
+  </div>
+
+  <h2>Brand Kit / Post Mockup <span class="demo-nid">— 4510:2711</span></h2>
+  <p class="demo-sub">Format = 1:1 / 4:5 / 9:16. Branded social-post preview (“Formee Express” demo brand).</p>
+  <div class="demo-surface demo-grid" style="align-items:flex-start;">
+    <div class="demo-col"><span class="demo-state">1:1</span>
+      <div class="bk-post-mockup bk-post-mockup--1-1">
+        <div class="bk-post-mockup__corner"></div><div class="bk-post-mockup__frame"></div>
+        <div class="bk-post-mockup__inner">
+          <div class="bk-post-mockup__logo">Formee&nbsp;Express</div>
+          <div class="bk-post-mockup__photo"></div>
+          <div class="bk-post-mockup__headline">Headline goes here</div>
+          <div class="bk-post-mockup__rule"></div>
+          <div class="bk-post-mockup__support">Supporting line goes here</div>
+          <div class="bk-post-mockup__cta">Learn more</div>
+        </div>
+      </div>
+    </div>
+    <div class="demo-col"><span class="demo-state">4:5</span>
+      <div class="bk-post-mockup bk-post-mockup--4-5">
+        <div class="bk-post-mockup__corner"></div><div class="bk-post-mockup__frame"></div>
+        <div class="bk-post-mockup__inner">
+          <div class="bk-post-mockup__logo">Formee&nbsp;Express</div>
+          <div class="bk-post-mockup__photo"></div>
+          <div class="bk-post-mockup__headline">Headline goes here</div>
+          <div class="bk-post-mockup__rule"></div>
+          <div class="bk-post-mockup__support">Supporting line goes here</div>
+          <div class="bk-post-mockup__cta">Learn more</div>
+        </div>
+      </div>
+    </div>
+    <div class="demo-col"><span class="demo-state">9:16</span>
+      <div class="bk-post-mockup bk-post-mockup--9-16">
+        <div class="bk-post-mockup__corner"></div><div class="bk-post-mockup__frame"></div>
+        <div class="bk-post-mockup__inner">
+          <div class="bk-post-mockup__logo">Formee&nbsp;Express</div>
+          <div class="bk-post-mockup__photo"></div>
+          <div class="bk-post-mockup__headline">Headline goes here</div>
+          <div class="bk-post-mockup__rule"></div>
+          <div class="bk-post-mockup__support">Supporting line goes here</div>
+          <div class="bk-post-mockup__cta">Learn more</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Brand Kit / Colour Popover <span class="demo-nid">— 4525:2738</span></h2>
+  <p class="demo-sub">Tab = Solid / Gradient. Full colour picker (2D area, hue, opacity, hex, eyedropper).</p>
+  <div class="demo-grid">
+    <div class="demo-col"><span class="demo-state">Solid</span>
+      <div class="bk-colour-popover">
+        <div class="bk-colour-popover__head"><span class="bk-colour-popover__title">Change colour</span><img class="bk-colour-popover__edit" src="icons/edit-pencil.svg" alt=""></div>
+        <div class="bk-colour-popover__tabs"><button class="bk-colour-popover__tab bk-colour-popover__tab--active">Solid</button><button class="bk-colour-popover__tab">Gradient</button></div>
+        <div class="bk-colour-popover__area"></div>
+        <div class="bk-colour-popover__hue"></div>
+        <div class="bk-colour-popover__opacity-row"><span class="bk-colour-popover__opacity"></span><span class="bk-colour-popover__pct">100%</span></div>
+        <div class="bk-colour-popover__input-row">
+          <span class="bk-colour-popover__current" style="background:#475069"></span>
+          <input class="bk-colour-popover__hex" value="#475069" readonly>
+          <span class="bk-colour-popover__eyedropper"><img src="icons/color-pipette.svg" alt=""></span>
+        </div>
+        <button class="bk-colour-popover__remove">Remove</button>
+      </div>
+    </div>
+    <div class="demo-col"><span class="demo-state">Gradient</span>
+      <div class="bk-colour-popover">
+        <div class="bk-colour-popover__head"><span class="bk-colour-popover__title">Change colour</span><img class="bk-colour-popover__edit" src="icons/edit-pencil.svg" alt=""></div>
+        <div class="bk-colour-popover__tabs"><button class="bk-colour-popover__tab">Solid</button><button class="bk-colour-popover__tab bk-colour-popover__tab--active">Gradient</button></div>
+        <div class="bk-colour-popover__gradient-bar"></div>
+        <div class="bk-colour-popover__seg"><button class="is-active">Linear</button><button>Radial</button><button>Angular</button></div>
+        <div class="bk-colour-popover__angle-row"><span class="label">Angle</span><span class="track"></span><span class="val">90°</span></div>
+        <div class="bk-colour-popover__area"></div>
+        <div class="bk-colour-popover__hue"></div>
+        <div class="bk-colour-popover__opacity-row"><span class="bk-colour-popover__opacity"></span><span class="bk-colour-popover__pct">100%</span></div>
+        <div class="bk-colour-popover__input-row">
+          <span class="bk-colour-popover__current" style="background:#4f6de6"></span>
+          <input class="bk-colour-popover__hex" value="#4F6DE6" readonly>
+          <span class="bk-colour-popover__eyedropper"><img src="icons/color-pipette.svg" alt=""></span>
+        </div>
+        <button class="bk-colour-popover__remove">Remove</button>
+      </div>
+    </div>
+  </div>
+
+  <h2>Brand Kit / Preview Rail <span class="demo-nid">— 4581:3105</span></h2>
+  <p class="demo-sub">Content = Social post / Empty / Partial. Composes the Post Mockup + a brand-summary block.</p>
+  <div class="demo-grid">
+    <div class="demo-col"><span class="demo-state">Social post</span>
+      <div class="bk-preview-rail">
+        <div class="bk-preview-rail__head"><h3>Brand preview</h3><span class="bk-preview-rail__format">1:1</span></div>
+        <div class="bk-preview-rail__mockup">
+          <div class="bk-post-mockup bk-post-mockup--1-1" style="width:300px;">
+            <div class="bk-post-mockup__corner"></div><div class="bk-post-mockup__frame"></div>
+            <div class="bk-post-mockup__inner">
+              <div class="bk-post-mockup__logo">Formee&nbsp;Express</div>
+              <div class="bk-post-mockup__photo"></div>
+              <div class="bk-post-mockup__headline">Headline goes here</div>
+              <div class="bk-post-mockup__rule"></div>
+              <div class="bk-post-mockup__support">Supporting line goes here</div>
+              <div class="bk-post-mockup__cta">Learn more</div>
+            </div>
+          </div>
+        </div>
+        <div class="bk-preview-rail__summary">
+          <div class="bk-preview-rail__srow"><span class="bk-preview-rail__skey">Text</span><div class="bk-preview-rail__svals"><span class="bk-preview-rail__mini-chip"><span class="ag">Ag</span> Heading</span><span class="bk-preview-rail__mini-chip"><span class="ag">Ag</span> Subheading</span><span class="bk-preview-rail__mini-chip"><span class="ag">Ag</span> Body</span></div></div>
+          <div class="bk-preview-rail__srow"><span class="bk-preview-rail__skey">Fill</span><div class="bk-preview-rail__svals">
+            <span class="bk-swatch-stack bk-swatch-stack--sm"><span style="background:#0e5c55"></span><span style="background:#c81856"></span><span style="background:#e8891f"></span><span style="background:#33383f"></span><span style="background:#fff"></span></span>
+          </div></div>
+          <div class="bk-preview-rail__srow"><span class="bk-preview-rail__skey">Stroke</span><div class="bk-preview-rail__svals">
+            <span class="bk-swatch-stack bk-swatch-stack--sm"><span style="background:#0e5c55"></span><span style="background:#c81856"></span><span style="background:#e8891f"></span></span>
+          </div></div>
+          <div class="bk-preview-rail__srow"><span class="bk-preview-rail__skey">Images</span><div class="bk-preview-rail__svals"><span class="bk-preview-rail__mini-chip">6 logos</span><span class="bk-preview-rail__mini-chip">5 graphics</span><span class="bk-preview-rail__mini-chip">5 photos</span></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="demo-col"><span class="demo-state">Empty</span>
+      <div class="bk-preview-rail">
+        <div class="bk-preview-rail__head"><h3>Brand preview</h3><span class="bk-preview-rail__format">1:1</span></div>
+        <div class="bk-preview-rail__empty">
+          <img src="icons/illus-placeholder-img.svg" alt="">
+          <strong>Nothing to preview yet</strong>
+          <span>Add logos, colours and fonts to see them applied.</span>
+        </div>
+      </div>
+    </div>
+    <div class="demo-col"><span class="demo-state">Partial</span>
+      <div class="bk-preview-rail">
+        <div class="bk-preview-rail__head"><h3>Brand preview</h3><span class="bk-preview-rail__format">1:1</span></div>
+        <div class="bk-preview-rail__mockup">
+          <div class="bk-post-mockup bk-post-mockup--1-1 bk-post-mockup--partial" style="width:300px;">
+            <div class="bk-post-mockup__corner"></div><div class="bk-post-mockup__frame"></div>
+            <div class="bk-post-mockup__inner">
+              <div class="bk-post-mockup__logo">Formee&nbsp;Express</div>
+              <div class="bk-post-mockup__photo"></div>
+              <div class="bk-post-mockup__headline">Headline goes here</div>
+              <div class="bk-post-mockup__rule"></div>
+              <div class="bk-post-mockup__support">Supporting line goes here</div>
+              <div class="bk-post-mockup__cta">Learn more</div>
+            </div>
+          </div>
+        </div>
+        <div class="bk-preview-rail__summary">
+          <div class="bk-preview-rail__srow"><span class="bk-preview-rail__skey">Text</span><div class="bk-preview-rail__svals"><span class="bk-preview-rail__dash">—</span></div></div>
+          <div class="bk-preview-rail__srow"><span class="bk-preview-rail__skey">Fill</span><div class="bk-preview-rail__svals"><span class="bk-preview-rail__dash">—</span></div></div>
+          <div class="bk-preview-rail__srow"><span class="bk-preview-rail__skey">Stroke</span><div class="bk-preview-rail__svals"><span class="bk-preview-rail__dash">—</span></div></div>
+          <div class="bk-preview-rail__srow"><span class="bk-preview-rail__skey">Images</span><div class="bk-preview-rail__svals"><span class="bk-preview-rail__mini-chip">1 logo · 0 graphics · 0 photos</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </main>
+
+</div>
+<script src="../demo-nav.js"></script>
+</body>
+</html>

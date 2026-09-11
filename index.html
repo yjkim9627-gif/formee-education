@@ -44,6 +44,15 @@
   details.group[open] summary::before{content:'▾';}
   details.group .group-note{margin-top:0;}
   details.group ul{margin-top:12px;}
+  .archive-sub-title{font-size:12px; font-weight:700; color:var(--color-neutral-700); margin:20px 0 8px;}
+  .group-note + .archive-sub-title, summary + .archive-sub-title{margin-top:0;}
+  /* Summary variant that shows its group-note description even while the <details> is
+     closed -- a plain <p class="group-note"> after </summary> is hidden until opened, so
+     this folds the description into the summary itself instead. */
+  details.group summary.summary-with-desc{align-items:flex-start;}
+  summary.summary-with-desc .summary-col{display:flex; flex-direction:column; gap:2px;}
+  summary.summary-with-desc .summary-title{font-size:14px; font-weight:700; color:var(--color-neutral-500);}
+  summary.summary-with-desc .summary-desc{font-size:12px; font-weight:400; color:var(--color-neutral-500);}
 </style>
 </head>
 <body>
@@ -56,14 +65,6 @@
     <p class="group-note">A single file combining Image post + Carousel generation through Publish. Check this first for development reference.</p>
     <ul>
       <li><a href="prototypes/ai-social-media/new-content-generation/v4/new-content-to-generate.html"><span>New Content — Image post / Carousel → Publish<span class="path">new-content-generation/v4/new-content-to-generate.html</span></span><span class="badge new">Open this</span></a></li>
-    </ul>
-  </div>
-
-  <div class="group">
-    <h2>New Content Generation · v3</h2>
-    <p class="group-note">A single file combining Image post + Carousel generation through Publish. Check this first for development reference.</p>
-    <ul>
-      <li><a href="prototypes/ai-social-media/new-content-generation/v3/new-content-to-generate.html"><span>New Content — Image post / Carousel → Publish<span class="path">new-content-generation/v3/new-content-to-generate.html</span></span><span class="badge new">Open this</span></a></li>
     </ul>
   </div>
 
@@ -107,41 +108,35 @@
   </div>
 
   <details class="group">
-    <summary>New Content Generation · v2 (separate files per flow)</summary>
-    <p class="group-note">Built screen by screen to match the Figma design system.</p>
+    <summary class="summary-with-desc"><span class="summary-col"><span class="summary-title">Archiving</span><span class="summary-desc">Previous versions and other supporting screens kept around for implementation reference — not the current working baseline.</span></span></summary>
+
+    <p class="archive-sub-title">New Content Generation · v3</p>
+    <ul>
+      <li><a href="prototypes/ai-social-media/new-content-generation/v3/new-content-to-generate.html"><span>New Content — Image post / Carousel → Publish<span class="path">new-content-generation/v3/new-content-to-generate.html</span></span><span class="arrow">→</span></a></li>
+    </ul>
+
+    <p class="archive-sub-title">New Content Generation · v2 (separate files per flow)</p>
     <ul>
       <li><a href="prototypes/ai-social-media/new-content-generation/v2/new-image-to-generate.html"><span>New Image — Brief → Draft → Versions<span class="path">v2/new-image-to-generate.html</span></span><span class="arrow">→</span></a></li>
       <li><a href="prototypes/ai-social-media/new-content-generation/v2/new-carousel-to-generate.html"><span>New Carousel — Brief → Script → Storyboard<span class="path">v2/new-carousel-to-generate.html</span></span><span class="arrow">→</span></a></li>
     </ul>
-  </details>
 
-  <details class="group">
-    <summary>Component demos (variant collection)</summary>
-    <p class="group-note">components/ai-social-media, components/shared — each link opens that Figma-section's demo pages; the sidebar there groups every component into the same accordion.</p>
-    <ul>
-      <li><a href="components/ai-social-media/brand-logo.html"><span>00 Brand<span class="path">components/ai-social-media/brand-logo.html</span></span><span class="arrow">→</span></a></li>
-      <li><a href="components/ai-social-media/icons.html"><span>01 Icons<span class="path">components/ai-social-media/icons.html</span></span><span class="arrow">→</span></a></li>
-      <li><a href="components/ai-social-media/actions-button.html"><span>02 Actions<span class="path">components/ai-social-media/actions-button.html</span></span><span class="arrow">→</span></a></li>
-      <li><a href="components/ai-social-media/controls-field-ai-assisted-text.html"><span>03 Inputs &amp; Controls<span class="path">components/ai-social-media/controls-field-ai-assisted-text.html</span></span><span class="arrow">→</span></a></li>
-      <li><a href="components/ai-social-media/nav.html"><span>04 Navigation<span class="path">components/ai-social-media/nav.html</span></span><span class="arrow">→</span></a></li>
-      <li><a href="components/ai-social-media/chat-panel.html"><span>AI Assistant<span class="path">components/ai-social-media/chat-panel.html</span></span><span class="arrow">→</span></a></li>
-      <li><a href="components/ai-social-media/heading.html"><span>Editor<span class="path">components/ai-social-media/heading.html</span></span><span class="arrow">→</span></a></li>
-      <li><a href="components/ai-social-media/character-card.html"><span>Product Selectors<span class="path">components/ai-social-media/character-card.html</span></span><span class="arrow">→</span></a></li>
-      <li><a href="components/ai-social-media/carousel-card-block.html"><span>Data Display<span class="path">components/ai-social-media/carousel-card-block.html</span></span><span class="arrow">→</span></a></li>
-      <li><a href="components/ai-social-media/publish-social-modal.html"><span>Feedback<span class="path">components/ai-social-media/publish-social-modal.html</span></span><span class="arrow">→</span></a></li>
-      <li><a href="components/shared/button.html"><span>Shared<span class="path">components/shared/button.html</span></span><span class="arrow">→</span></a></li>
-    </ul>
-  </details>
-
-  <details class="group">
-    <summary>Earlier versions (for reference)</summary>
-    <p class="group-note">Early versions prior to v2 — not the current working baseline, kept only for comparison.</p>
+    <p class="archive-sub-title">Earlier versions (for reference)</p>
     <ul>
       <li><a href="prototypes/ai-social-media/new-content-generation/new-image-to-generate.html"><span>New Image (legacy)<span class="path">new-content-generation/new-image-to-generate.html</span></span><span class="badge legacy">legacy</span></a></li>
       <li><a href="prototypes/ai-social-media/new-content-generation/new-carousel-to-generate.html"><span>New Carousel (legacy)<span class="path">new-content-generation/new-carousel-to-generate.html</span></span><span class="badge legacy">legacy</span></a></li>
       <li><a href="prototypes/ai-social-media/new-content-generation/new-content-brief-to-generate.html"><span>Reel/Short (legacy)<span class="path">new-content-generation/new-content-brief-to-generate.html</span></span><span class="badge legacy">legacy</span></a></li>
     </ul>
   </details>
+
+  <div class="group">
+    <h2>Component demos (variant collection)</h2>
+    <p class="group-note">components/ai-social-media, components/shared — the sidebar there groups every component into 12 categories (Forms &amp; Inputs, Actions, Labels &amp; Status, Navigation, Overlays &amp; Menus, Images &amp; Icons, Data Display, Content Editor, Scene &amp; Storyboard, Generation Workflow, AI Assistant, Upload &amp; Destination).</p>
+    <ul>
+      <li><a href="components/ai-social-media/controls-field-ai-assisted-text.html"><span>All components<span class="path">components/ai-social-media/controls-field-ai-assisted-text.html</span></span><span class="badge new">Open this</span></a></li>
+    </ul>
+  </div>
+
 
 </div>
 </body>

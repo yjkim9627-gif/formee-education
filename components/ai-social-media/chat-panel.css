@@ -63,6 +63,11 @@
 .chat-chip:hover:not(:disabled){border-color:var(--color-neutral-450);}
 .chat-chip:disabled{opacity:.5; cursor:default; color:var(--color-neutral-500);}
 
+/* Per-request credit cost, shown only while there's something to send that actually costs
+   credits (e.g. video refine) — takes over the role a cost badge on a removed right-panel
+   control used to play. See updateChatCostHint() in the v4 prototype. */
+.chat-cost-hint{padding:0 16px 8px; font-size:11.5px; font-weight:600; color:var(--color-neutral-500);}
+
 /* ---------- Input box ----------
    Figma node 6058-88210 (Reel/Short · Timeline — AI Assistant panel states): 항상 뉴트럴 그레이 보더,
    포커스 시에만 brand-primary로 강조 (다른 prompt-box류와 동일한 패턴, prompt-box.css 참고). */

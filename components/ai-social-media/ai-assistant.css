@@ -1,0 +1,385 @@
+/* 10 AI Assistant — section component sheet
+   Figma: FME_AI-Social-Media, section "10 AI Assistant" (node 2298:60044).
+   Covers every component in that section that doesn't already have its own demo page
+   (AI / Prompt Box -> prompt-box.html, AI / Assistant Panel -> chat-panel.html are the
+   two that already exist and are left as-is).
+
+   Everything here is built on tokens/tokens.css:
+     Figma --neutral/N        -> --color-neutral-N
+     Figma --brand/primary    -> --color-brand-primary   (#4f6de6)
+     Figma --brand/accent     -> --color-brand-accent     (#ed7797)
+     Figma --brand/primary-light -> --color-brand-primary-light (#dce7fb)
+     "DM Sans"                -> --font-family-text
+   The AI gradient text (brand -> accent, background-clip:text) is the same treatment
+   already used in heading.css (.ai-heading-refine-pill) and controls-field-ai-assisted-text.css. */
+
+/* ============================================================================
+   AI / Section Label (2163:39060) — the little "GENERATION PROMPT …" eyebrow
+   (type=prompt) and the gradient "Updated by AI" / "AI Assistant" line (type=ai).
+   ============================================================================ */
+.ai-section-label{display:flex; align-items:center; gap:6px; font-family:var(--font-family-text);}
+.ai-section-label--ai{gap:var(--spacing-xs);}
+.ai-section-label__icon{width:16px; height:16px; flex-shrink:0; display:block;}
+.ai-section-label__eyebrow{
+  font-size:var(--font-size-text-xs); line-height:var(--line-height-text-xs);
+  font-weight:var(--font-weight-semibold); letter-spacing:.6px; text-transform:uppercase;
+  color:var(--color-neutral-500); white-space:nowrap;
+}
+.ai-section-label__hint{
+  font-size:var(--font-size-text-sm); line-height:var(--line-height-text-sm);
+  font-weight:var(--font-weight-regular); color:var(--color-neutral-400);
+}
+.ai-section-label__gradient{
+  font-size:var(--font-size-text-sm); line-height:var(--line-height-text-sm);
+  font-weight:var(--font-weight-semibold); white-space:nowrap;
+  background:linear-gradient(90deg, var(--color-brand-primary), var(--color-brand-accent));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+
+/* ============================================================================
+   AI / Field Label (2963:29036) — "Selected Text", "Quick actions" mini-labels
+   ============================================================================ */
+.ai-field-label{
+  font-family:var(--font-family-text); font-size:var(--font-size-text-sm);
+  line-height:var(--line-height-text-sm); font-weight:var(--font-weight-semibold);
+  color:var(--color-neutral-700);
+}
+
+/* ============================================================================
+   AI / User Bubble (2959:49584) — right-aligned user turn in the improve/refine flows
+   ============================================================================ */
+.ai-user-bubble{
+  display:inline-flex; max-width:100%; box-sizing:border-box;
+  padding:12px 14px; background:var(--color-brand-primary-light);
+  border-radius:16px 16px 4px 16px; /* tl tr br bl — the br notch points at the sender */
+  font-family:var(--font-family-text); font-size:var(--font-size-text-md);
+  line-height:var(--line-height-text-md); font-weight:var(--font-weight-regular);
+  color:var(--color-neutral-900);
+}
+.ai-user-turn{display:flex; justify-content:flex-end; width:100%;}
+
+/* ============================================================================
+   AI / Suggestion Chip (2974:28984) — icon + label, used in the improve popover's
+   "insert a suggestion" list. Figma radius is a literal 10px (between --radius-lg 8
+   and --radius-xl 12).
+   ============================================================================ */
+.ai-suggestion-chip{
+  display:inline-flex; align-items:center; gap:10px; box-sizing:border-box;
+  padding:12px 14px; background:var(--color-neutral-0);
+  border:1px solid var(--color-neutral-400); border-radius:10px;
+  font-family:var(--font-family-text); cursor:pointer;
+}
+.ai-suggestion-chip__icon{width:16px; height:16px; flex-shrink:0; display:block;}
+.ai-suggestion-chip__label{
+  font-size:var(--font-size-text-md); line-height:var(--line-height-text-md);
+  font-weight:var(--font-weight-medium); color:var(--color-neutral-900); white-space:nowrap;
+}
+
+/* ============================================================================
+   AI / Chat Mark (4762:93606) — the gradient sparkle-in-a-speech-bubble brand mark
+   shown at the top of a new AI chat. The SVG already carries its own brand gradient.
+   ============================================================================ */
+.ai-chat-mark{width:55px; height:55px; display:block;}
+
+/* ============================================================================
+   AI / Spark Button (1488:14422) — 30px brand-blue round-square launcher with a
+   white double-sparkle. Radius is a literal 15px in Figma.
+   ============================================================================ */
+.ai-spark-button{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:30px; height:30px; padding:0; border:none;
+  background:var(--color-brand-primary); border-radius:15px;
+  box-shadow:0 3px 8px 0 rgba(79,109,230,.4); cursor:pointer;
+}
+.ai-spark-button img{width:18px; height:18px; display:block;}
+
+/* ============================================================================
+   AI / Popover Header (5993:98578) — gradient "AI Assistant" label + close (x)
+   ============================================================================ */
+.ai-popover-header{
+  display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
+  width:100%;
+}
+.ai-popover-header__close{
+  width:16px; height:16px; padding:0; border:none; background:none;
+  flex-shrink:0; cursor:pointer;
+}
+.ai-popover-header__close img{width:16px; height:16px; display:block;}
+
+/* ============================================================================
+   Script Panel / Header (5968:95627) — "AI Assistant" title + new-chat (+) button.
+   Distinct from AI / Popover Header: this one is a 16/24/700 panel title, the plus
+   sits in a 28px bordered tile.
+   ============================================================================ */
+.script-panel-header{
+  display:flex; align-items:center; justify-content:space-between;
+  height:28px; width:100%; font-family:var(--font-family-text);
+}
+.script-panel-header__title{
+  font-size:var(--font-size-text-xl); line-height:var(--line-height-text-xl);
+  font-weight:var(--font-weight-bold); color:var(--color-neutral-900); white-space:nowrap;
+}
+.script-panel-header__plus{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:28px; height:28px; padding:0; flex-shrink:0;
+  background:var(--color-neutral-0); border:1px solid var(--color-neutral-200);
+  border-radius:var(--radius-lg); cursor:pointer;
+}
+.script-panel-header__plus img{width:16px; height:16px; display:block;}
+
+/* ============================================================================
+   AI / Panel Card (1519:15117 / 1519:15177) — the small confirmation card the
+   improve flow drops after it applies a change. State=loading shows a spinner,
+   State=applied shows a check + an "Undo" affordance.
+   ============================================================================ */
+.ai-panel-card{
+  display:flex; align-items:center; gap:12px; box-sizing:border-box; width:284px;
+  padding:14px 16px; background:var(--color-neutral-50);
+  border:1px solid var(--color-neutral-400); border-radius:var(--radius-xl);
+  font-family:var(--font-family-text);
+}
+.ai-panel-card__icon{width:20px; height:20px; flex-shrink:0; display:block;}
+.ai-panel-card__icon--spinner{
+  border:2px solid var(--color-neutral-300); border-top-color:var(--color-neutral-500);
+  border-radius:var(--radius-full); animation:ai-panel-spin .8s linear infinite;
+  box-sizing:border-box;
+}
+@keyframes ai-panel-spin{to{transform:rotate(360deg);}}
+.ai-panel-card__body{display:flex; flex-direction:column; gap:2px; min-width:0; flex:1 0 0;}
+.ai-panel-card__title{
+  font-size:var(--font-size-text-md); line-height:var(--line-height-text-md);
+  font-weight:var(--font-weight-semibold); color:var(--color-neutral-900);
+}
+.ai-panel-card__detail{
+  font-size:var(--font-size-text-2xs); line-height:var(--line-height-text-2xs);
+  font-weight:var(--font-weight-regular); color:var(--color-neutral-500);
+}
+.ai-panel-card__undo{
+  margin-left:auto; flex-shrink:0; padding:0; border:none; background:none; cursor:pointer;
+  font-family:var(--font-family-text); font-size:var(--font-size-text-md);
+  line-height:var(--line-height-text-md); font-weight:var(--font-weight-semibold);
+  color:var(--color-neutral-900);
+}
+
+/* ============================================================================
+   Actions / Refine (3502:32531) — 36px send/refine icon button that sits at the
+   trailing edge of the AI prompt fields. State=Normal (neutral border),
+   State=Focused (brand border + ring), State=Input is the same button inside a
+   focused field (brand border on the field, button stays Normal).
+   ============================================================================ */
+.ai-refine-btn{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:36px; height:36px; padding:0; flex-shrink:0;
+  background:var(--color-neutral-0); border:1px solid var(--color-neutral-400);
+  border-radius:var(--radius-lg); cursor:pointer;
+}
+.ai-refine-btn img{width:16px; height:16px; display:block;}
+.ai-refine-btn--focused{
+  border-color:var(--color-brand-primary);
+  box-shadow:0 0 0 3px color-mix(in srgb, var(--color-brand-primary) 18%, transparent);
+}
+.ai-refine-btn--send{background:var(--color-brand-primary); border-color:var(--color-brand-primary);}
+.ai-refine-btn--send img{filter:brightness(0) invert(1);}
+
+/* ============================================================================
+   AI / Refine Pill (5937:3526) — standalone "Refine with AI" gradient pill with
+   Default / Hover / Active / Disabled states. (heading.css's .ai-heading-refine-pill
+   is the same component embedded as a Heading accessory — this is the free-standing
+   one, which carries the faint --neutral/100 hairline the accessory version omits.)
+   ============================================================================ */
+.ai-refine-pill{
+  display:inline-flex; align-items:center; justify-content:center; gap:var(--spacing-xs);
+  padding:6px 11px; background:var(--color-neutral-0);
+  border:1px solid var(--color-neutral-100); border-radius:var(--radius-full);
+  box-shadow:0 1px 2px 0 rgba(15,23,41,.05); cursor:pointer; font-family:var(--font-family-text);
+}
+.ai-refine-pill img{width:16px; height:16px; display:block; flex-shrink:0;}
+.ai-refine-pill span{
+  font-size:var(--font-size-text-xs); line-height:16px; /* Figma "Text/xs SemiBold Tight" */
+  font-weight:var(--font-weight-semibold); white-space:nowrap;
+  background:linear-gradient(90deg, var(--color-brand-primary), var(--color-brand-accent));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.ai-refine-pill--hover,
+.ai-refine-pill:hover{background:var(--color-neutral-50); border-color:var(--color-neutral-200);}
+.ai-refine-pill--active{
+  background:var(--color-brand-primary-light); border-color:var(--color-brand-primary-mid);
+}
+.ai-refine-pill--disabled{opacity:.4; cursor:not-allowed; box-shadow:none;}
+
+/* ============================================================================
+   AI / Review Item (2981:28994) — a numbered "here's what I changed" line:
+   "1. " + bold lead-in + neutral body.
+   ============================================================================ */
+.ai-review-item{
+  width:284px; font-family:var(--font-family-text);
+  font-size:var(--font-size-text-md); line-height:20px;
+  font-weight:var(--font-weight-regular); color:var(--color-neutral-700);
+}
+.ai-review-item strong{font-weight:var(--font-weight-bold); color:var(--color-neutral-900);}
+
+/* ============================================================================
+   Shared bits for the three composite panels below
+   (AI / Improve Popover, AI / Generation Prompt, AI / Refine · Inline)
+   ============================================================================ */
+.ai-quick-chip-row{display:flex; flex-wrap:wrap; gap:8px;}
+.ai-quick-chip{
+  display:inline-flex; align-items:center; gap:var(--spacing-xs); height:28px;
+  box-sizing:border-box; padding:0 13px; background:var(--color-neutral-0);
+  border:1px solid var(--color-neutral-400); border-radius:var(--radius-full);
+  font-family:var(--font-family-text); font-size:var(--font-size-text-xs);
+  line-height:var(--line-height-text-xs); font-weight:var(--font-weight-medium);
+  color:var(--color-neutral-700); cursor:pointer; white-space:nowrap;
+}
+/* mini prompt field used inside the panels */
+.ai-panel-field{
+  display:flex; align-items:center; gap:8px; box-sizing:border-box; width:100%;
+  padding:10px 12px 10px 14px; background:var(--color-neutral-0);
+  border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg);
+  font-family:var(--font-family-text); font-size:var(--font-size-text-md);
+  line-height:var(--line-height-text-md); color:var(--color-neutral-900);
+}
+.ai-panel-field--placeholder{color:var(--color-neutral-400);}
+.ai-panel-field--readonly{border-width:1.2px;}
+.ai-panel-field--result{border:1.5px solid var(--color-brand-primary);}
+.ai-panel-field__text{flex:1 0 0; min-width:0;}
+/* "Rewriting…/Generating…" progress strip */
+.ai-panel-progress{
+  display:flex; align-items:center; gap:12px; box-sizing:border-box; width:100%;
+  padding:14px 16px; background:var(--color-neutral-50);
+  border:1px solid var(--color-neutral-200); border-radius:var(--radius-lg);
+  font-family:var(--font-family-text);
+}
+.ai-panel-progress__spinner{
+  width:20px; height:20px; flex-shrink:0; box-sizing:border-box;
+  border:2px solid var(--color-neutral-300); border-top-color:var(--color-neutral-500);
+  border-radius:var(--radius-full); animation:ai-panel-spin .8s linear infinite;
+}
+.ai-panel-progress__title{
+  font-size:var(--font-size-text-md); line-height:var(--line-height-text-md);
+  font-weight:var(--font-weight-bold); color:var(--color-neutral-900);
+}
+.ai-panel-progress__sub{
+  font-size:var(--font-size-text-xs); line-height:var(--line-height-text-xs);
+  color:var(--color-neutral-500);
+}
+.ai-panel-progress__body{display:flex; flex-direction:column; gap:2px; min-width:0;}
+/* small "updated" pill on the Generation Prompt header */
+.ai-updated-badge{
+  display:inline-flex; align-items:center; padding:2px 8px; border-radius:var(--radius-full);
+  background:var(--color-badge-green-bg); color:var(--color-badge-green-text);
+  font-family:var(--font-family-text); font-size:var(--font-size-text-3xs);
+  line-height:var(--line-height-text-3xs); font-weight:var(--font-weight-semibold);
+  text-transform:lowercase;
+}
+
+/* ============================================================================
+   AI / Improve Popover (2960:29156) — the floating "improve this selected text"
+   card. One shell, six states (empty / typing / generating / result /
+   conversation / applied).
+   ============================================================================ */
+.ai-improve-popover{
+  display:flex; flex-direction:column; gap:8px; align-items:flex-start;
+  box-sizing:border-box; width:400px; padding:12px 16px;
+  background:var(--color-neutral-0); border-radius:var(--radius-xl);
+  box-shadow:0 8px 24px -4px rgba(26,31,51,.16); font-family:var(--font-family-text);
+}
+.ai-improve-popover > *{width:100%;}
+.ai-improve-applied{
+  display:flex; align-items:center; gap:10px; box-sizing:border-box; width:100%;
+  padding:12px 16px; background:var(--color-neutral-50);
+  border:1px solid var(--color-neutral-200); border-radius:var(--radius-lg);
+}
+.ai-improve-applied__icon{width:16px; height:16px; flex-shrink:0; display:block;}
+.ai-improve-applied__label{
+  font-size:var(--font-size-text-md); line-height:var(--line-height-text-md);
+  font-weight:var(--font-weight-semibold); color:var(--color-neutral-900);
+}
+.ai-improve-applied__detail{
+  font-size:var(--font-size-text-xs); line-height:var(--line-height-text-xs);
+  color:var(--color-neutral-500);
+}
+.ai-improve-applied__undo{
+  margin-left:auto; padding:0; border:none; background:none; cursor:pointer;
+  font-family:var(--font-family-text); font-size:var(--font-size-text-sm);
+  font-weight:var(--font-weight-semibold); color:var(--color-neutral-900);
+}
+
+/* ============================================================================
+   AI / Generation Prompt (3022:50403) — the compiled "here's the prompt we'll
+   send" block above the generate button. States: base / typing / generating /
+   result / kept.
+   ============================================================================ */
+.ai-generation-prompt{
+  display:flex; flex-direction:column; gap:12px; align-items:flex-start;
+  box-sizing:border-box; width:400px; font-family:var(--font-family-text);
+}
+.ai-generation-prompt > *{width:100%;}
+.ai-generation-prompt__readout{
+  box-sizing:border-box; width:100%; padding:12px 14px;
+  background:var(--color-neutral-0); border:1px solid var(--color-neutral-400);
+  border-radius:var(--radius-lg); font-size:var(--font-size-text-sm);
+  line-height:var(--line-height-text-sm); color:var(--color-neutral-900);
+}
+.ai-generation-prompt__readout--result{border:1.5px solid var(--color-brand-primary);}
+
+/* ============================================================================
+   AI / Refine · Inline (6047:125399) — the full-width inline refine block used on
+   the description/script screens (as opposed to the floating popover). Sits on a
+   pale tint. States: idle / result / generating / typing.
+   ============================================================================ */
+.ai-refine-inline{
+  display:flex; flex-direction:column; gap:12px; align-items:flex-start;
+  box-sizing:border-box; width:100%; max-width:640px; padding:16px 20px;
+  background:var(--color-neutral-50); border-radius:var(--radius-xl);
+  font-family:var(--font-family-text);
+}
+.ai-refine-inline > *{width:100%;}
+.ai-refine-inline__input-row{display:flex; align-items:center; gap:8px; width:100%;}
+.ai-refine-inline__field{
+  flex:1 0 0; min-width:0; box-sizing:border-box; padding:10px 14px;
+  background:var(--color-neutral-0); border:1px solid var(--color-neutral-400);
+  border-radius:var(--radius-lg); font-size:var(--font-size-text-md);
+  line-height:var(--line-height-text-md); color:var(--color-neutral-900);
+}
+.ai-refine-inline__field--placeholder{color:var(--color-neutral-400);}
+.ai-refine-inline__result{
+  display:flex; align-items:flex-start; gap:8px; box-sizing:border-box; width:100%;
+  padding:10px 14px; background:var(--color-neutral-0);
+  border:1.5px solid var(--color-brand-primary); border-radius:var(--radius-lg);
+  font-size:var(--font-size-text-md); line-height:var(--line-height-text-md);
+  color:var(--color-neutral-900);
+}
+.ai-refine-inline__result-text{flex:1 0 0; min-width:0;}
+.ai-refine-inline__revert{
+  width:36px; height:36px; flex-shrink:0; display:inline-flex; align-items:center;
+  justify-content:center; padding:0; background:var(--color-neutral-0);
+  border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); cursor:pointer;
+}
+.ai-refine-inline__revert img{width:16px; height:16px; display:block;}
+.ai-refine-inline__use-row{display:flex; justify-content:flex-end; width:100%;}
+
+/* ============================================================================
+   Script Panel — Footer Input (9215:259349 / 5968:95633) — the compact "ask for
+   changes" footer field: prompt line + attach + circular send.
+   ============================================================================ */
+.script-panel-footer{
+  display:flex; flex-direction:column; gap:14px; align-items:flex-start;
+  box-sizing:border-box; width:292px; padding:14px 14px 7px;
+  background:var(--color-neutral-0);
+  border:1px solid var(--color-neutral-300); /* Figma literal #d3d9e5 */
+  border-radius:var(--radius-xl); font-family:var(--font-family-text);
+}
+.script-panel-footer__prompt{
+  width:100%; font-size:var(--font-size-text-sm); line-height:var(--line-height-text-sm);
+  font-weight:var(--font-weight-regular); color:var(--color-neutral-500);
+}
+.script-panel-footer__row{display:flex; align-items:center; justify-content:space-between; width:100%;}
+.script-panel-footer__attach{width:18px; height:18px; padding:0; border:none; background:none; cursor:pointer;}
+.script-panel-footer__attach img{width:18px; height:18px; display:block;}
+.script-panel-footer__send{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:28px; height:28px; padding:0; flex-shrink:0; border:none;
+  background:var(--color-brand-primary); border-radius:var(--radius-full); cursor:pointer;
+}
+.script-panel-footer__send img{width:14px; height:14px; display:block; filter:brightness(0) invert(1);}

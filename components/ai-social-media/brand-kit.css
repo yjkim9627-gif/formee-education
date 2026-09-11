@@ -26,6 +26,10 @@
 .brand-kit-font-swatch-desc{font-family:var(--font-family-text); font-size:10px; font-weight:400; line-height:14px; color:var(--color-neutral-500); width:100%;}
 
 /* ---------- Brand Kit / Text Style Card (3711:66254 etc.) ----------
+   Suffixed --standalone: brand-kit-summary.css separately declares its OWN, unrelated
+   .brand-kit-text-style-card (a small compact-bar pill, not this 286px settings-page row) --
+   same class name, two different Figma components. Only harmless today because no page
+   loads both files at once, but real enough to rename rather than leave as a landmine.
    3 types (Heading/Subheading/Body, each an actual live font-family/size preview -- not a
    token, since the whole point of the card is showing what a brand's own uploaded/chosen font
    looks like) x Default/Hover(quick-add)/Focused x action=Add/Check. Default is a plain 2-line
@@ -33,16 +37,16 @@
    checked box instead of the + and drops the card back to a single row (no room for the type
    sample's own line since ---checked cards in Figma stay 56px tall like Default, just
    accommodating name+meta side-by-side with the checkbox, per the fetched 6318:3567 spec). */
-.brand-kit-text-style-card{box-sizing:border-box; width:286px; min-height:56px; display:flex; align-items:center; gap:var(--spacing-sm); padding:var(--spacing-sm) var(--spacing-md); background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); cursor:pointer;}
-.brand-kit-text-style-card.hover, .brand-kit-text-style-card:hover{border-color:var(--color-neutral-500);}
-.brand-kit-text-style-card-text{flex:1 0 0; min-width:0; display:flex; flex-direction:column; gap:4px;}
-.brand-kit-text-style-card-sample{color:var(--color-neutral-900); line-height:22px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-.brand-kit-text-style-card-sample.type-heading{font-family:Georgia, serif; font-weight:700; font-size:23px;}
-.brand-kit-text-style-card-sample.type-subheading{font-family:Georgia, serif; font-weight:700; font-size:17px; line-height:22px;}
-.brand-kit-text-style-card-sample.type-body{font-family:Impact, sans-serif; font-weight:400; font-size:13px;}
-.brand-kit-text-style-card-meta{font-family:var(--font-family-text); font-size:12px; font-weight:500; line-height:18px; color:var(--color-neutral-500); white-space:nowrap;}
-.brand-kit-text-style-card-action{width:28px; height:28px; box-sizing:border-box; flex-shrink:0; display:flex; align-items:center; justify-content:center; border:none; border-radius:var(--radius-md); cursor:pointer; padding:0;}
-.brand-kit-text-style-card-action.action-add{background:var(--color-neutral-150); border:1px solid var(--color-neutral-400);}
-.brand-kit-text-style-card-action img{width:16px; height:16px; display:block;}
-.brand-kit-text-style-card-checkbox{width:16px; height:16px; box-sizing:border-box; display:flex; align-items:center; justify-content:center; background:var(--color-neutral-900); border:1px solid var(--color-neutral-900); border-radius:var(--radius-sm);}
-.brand-kit-text-style-card-checkbox img{width:12px; height:12px; display:block;}
+.brand-kit-text-style-card--standalone{box-sizing:border-box; width:286px; min-height:56px; display:flex; align-items:center; gap:var(--spacing-sm); padding:var(--spacing-sm) var(--spacing-md); background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); cursor:pointer;}
+.brand-kit-text-style-card--standalone.hover, .brand-kit-text-style-card--standalone:hover{border-color:var(--color-neutral-500);}
+.brand-kit-text-style-card--standalone-text{flex:1 0 0; min-width:0; display:flex; flex-direction:column; gap:4px;}
+.brand-kit-text-style-card--standalone-sample{color:var(--color-neutral-900); line-height:22px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.brand-kit-text-style-card--standalone-sample.type-heading{font-family:Georgia, serif; font-weight:700; font-size:23px;}
+.brand-kit-text-style-card--standalone-sample.type-subheading{font-family:Georgia, serif; font-weight:700; font-size:17px; line-height:22px;}
+.brand-kit-text-style-card--standalone-sample.type-body{font-family:Impact, sans-serif; font-weight:400; font-size:13px;}
+.brand-kit-text-style-card--standalone-meta{font-family:var(--font-family-text); font-size:12px; font-weight:500; line-height:18px; color:var(--color-neutral-500); white-space:nowrap;}
+.brand-kit-text-style-card--standalone-action{width:28px; height:28px; box-sizing:border-box; flex-shrink:0; display:flex; align-items:center; justify-content:center; border:none; border-radius:var(--radius-md); cursor:pointer; padding:0;}
+.brand-kit-text-style-card--standalone-action.action-add{background:var(--color-neutral-150); border:1px solid var(--color-neutral-400);}
+.brand-kit-text-style-card--standalone-action img{width:16px; height:16px; display:block;}
+.brand-kit-text-style-card--standalone-checkbox{width:16px; height:16px; box-sizing:border-box; display:flex; align-items:center; justify-content:center; background:var(--color-neutral-900); border:1px solid var(--color-neutral-900); border-radius:var(--radius-sm);}
+.brand-kit-text-style-card--standalone-checkbox img{width:12px; height:12px; display:block;}

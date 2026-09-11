@@ -1,0 +1,30 @@
+/* Selector / Video Card — Figma node 8386:120080 (state = Default / Playing)
+   A published-video result tile: 304x380 bordered frame (same shell as scene-tile.css's
+   own .scene-tile) holding a thumbnail, a .preview-top-row(Format+Download) overlay, and
+   the video scrubber -- reuses scene-tile.css's .scene-tile-scrubber* and
+   .scene-tile-play-btn as-is rather than re-declaring them (same trick Figma's own
+   component uses: this card's Play button IS scene-tile.css's Play button). Below the
+   frame: title + date/platforms (.post-status-chip, post-status-chip.css) + a
+   .feedback-status-chip "Published" pill.
+*/
+
+.selector-video-card{ display:flex; flex-direction:column; gap:var(--spacing-sm); width:304px; }
+.selector-video-card-frame{
+  position:relative; width:304px; height:380px; box-sizing:border-box;
+  border:1.2px solid var(--color-neutral-400); border-radius:var(--radius-xl);
+  overflow:hidden; background:var(--color-neutral-0);
+}
+.selector-video-card-thumb{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block;}
+.selector-video-card-preview{
+  position:relative; width:100%; height:100%; box-sizing:border-box;
+  padding:var(--spacing-lg); display:flex; flex-direction:column; justify-content:space-between;
+}
+
+.selector-video-card-meta{display:flex; flex-direction:column; gap:var(--spacing-xs); width:100%;}
+.selector-video-card-title{
+  font-family:var(--font-family-text); font-size:14px; font-weight:600; line-height:22px; color:var(--color-neutral-900);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.selector-video-card-meta-row{display:flex; align-items:center; justify-content:space-between; width:100%;}
+.selector-video-card-date-platforms{display:flex; align-items:center; gap:var(--spacing-md);}
+.selector-video-card-date{font-family:var(--font-family-text); font-size:13px; font-weight:400; line-height:20px; color:var(--color-neutral-500); white-space:nowrap;}

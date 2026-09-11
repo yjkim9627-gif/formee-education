@@ -1,0 +1,43 @@
+/* Publish / Destination Table Row — Figma node 7186:149180 (Image post case, table 7175:117702)
+   State = Connected / Not Connected. Props (mirrored here as content, not variants) = Show Post /
+   Show Story -- toggle which surface column(s) render, so the same row works for Image post
+   (both), Reel/Short & Carousel (Post only) and Story Video (Story only) once those Publish
+   frames migrate off the older card-style Destination Account component (destination-account.css)
+   -- see .pub-dest-row's own not-connected checkbox note below for the one behavioral difference
+   from that older component.
+
+   Checked = brand-primary fill (not the neutral-900 used by every other checkbox/radio on this
+   screen) to match this component exactly -- checkbox APPEARANCE itself comes from the shared
+   .checkbox component (components/shared/checkbox.css); .pub-dest-checkbox only carries layout.
+*/
+
+.pub-dest-table{width:100%; box-sizing:border-box; background:var(--color-neutral-0); border:1.2px solid var(--color-neutral-400); border-radius:var(--radius-xl); overflow:hidden;}
+.pub-dest-table-header{display:flex; align-items:center; padding:12px 16px; border-bottom:1px solid var(--color-neutral-200);}
+.pub-dest-col-head{width:56px; flex-shrink:0; text-align:center; font-size:13px; font-weight:600; color:var(--color-neutral-700);}
+.pub-dest-row{display:flex; align-items:center; gap:0; padding:16px; border-bottom:1px solid var(--color-neutral-200);}
+.pub-dest-row:last-child{border-bottom:none;}
+/* Leading "select this platform" checkbox (Figma table-header's select-col, 36px) — checking
+   it turns every surface (Post/Story) this content type offers on at once; the per-surface
+   checkboxes further right stay independently toggleable afterward. Not-Connected state:
+   both this and the per-surface checkboxes are disabled (see the shared .checkbox:disabled
+   look) -- picking a destination there only makes sense once it's actually connected, so
+   the Connect button is the only usable control on that row. */
+.pub-dest-select-col{width:36px; flex-shrink:0; display:flex; align-items:center; justify-content:center;}
+.pub-dest-meta{display:flex; align-items:center; gap:10px; width:240px; flex-shrink:0; min-width:0;}
+.pub-dest-icon{width:32px; height:32px; flex-shrink:0; border-radius:var(--radius-sm); display:block;}
+.pub-dest-name-col{display:flex; flex-direction:column; gap:2px; min-width:0;}
+.pub-dest-name{font-size:14px; font-weight:600; color:var(--color-neutral-900); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.pub-dest-row.not-connected .pub-dest-name{color:var(--color-neutral-500);}
+.pub-dest-handle{font-size:12px; font-weight:400; color:var(--color-neutral-500); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.pub-dest-gap{flex:1 0 0; min-width:12px;}
+.pub-dest-col{width:56px; flex-shrink:0; display:flex; align-items:center; justify-content:center;}
+.pub-dest-status-col{width:240px; flex-shrink:0; display:flex; align-items:center; justify-content:flex-end; gap:10px;}
+/* .pub-dest-status / .connected duplicates the real Controls / Toggles feedback badge
+   (controls-toggles.css's .ctrl-feedback / --green) almost exactly (same padding/font-size/
+   line-height/radius) -- reused instead of reimplementing. .not-connected's own neutral-400/
+   neutral-700 grey has no matching shared modifier yet (the closest, --secondary, is a
+   different neutral-150/neutral-900 combo), so it stays local as .pub-dest-status--not-connected,
+   layered on top of the shared .ctrl-feedback base instead. */
+.pub-dest-status--not-connected{background:var(--color-neutral-400); color:var(--color-neutral-700); border-radius:var(--radius-full);}
+.pub-dest-connect-btn{flex-shrink:0; display:inline-flex; align-items:center; justify-content:center; padding:9px 14px; background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); font-family:var(--font-family-text); font-size:13px; font-weight:600; line-height:20px; color:var(--color-neutral-700); cursor:pointer;}
+.pub-dest-connect-btn:hover{border-color:var(--color-neutral-450);}
