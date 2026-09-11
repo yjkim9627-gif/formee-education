@@ -962,6 +962,31 @@
   .script-proposal-box.applied{border-color:var(--color-brand-primary-mid);}
   .script-proposal-title{font-size:14px; font-weight:700; color:var(--color-neutral-900); font-family:var(--font-family-text);}
 
+  /* AI 대화창 공통 규칙 스펙, Case 2/3 — the "Changes" completion card every chat-driven edit
+     converges on (Framer Agent panel reference: a small card naming what changed + Undo).
+     Reuses the same bg-75/border-400/radius-xl/padding-12 shell as .script-proposal-box and
+     .chat-cta-card (both already this exact look) rather than inventing a new container, and
+     the Undo/Redo icon-button pair reuses controls-field-ai-assisted-text.css's
+     .controls-field-ai__icon-btn as-is (same 24px/border-400/radius-md look already
+     established for the Publish caption's own Undo/Redo). */
+  .chat-changes-card{
+    display:flex; align-items:center; gap:var(--spacing-sm); margin-top:10px;
+    background:var(--color-neutral-75); border:1px solid var(--color-neutral-400); border-radius:var(--radius-xl);
+    padding:10px 12px; box-sizing:border-box;
+  }
+  .chat-changes-label{font-size:13px; font-weight:600; color:var(--color-neutral-900); font-family:var(--font-family-text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .chat-changes-spacer{flex:1 0 0; min-width:0;}
+
+  /* Case 3 — proactive over-limit suggestion card, shown in the chat alongside (not instead
+     of) the field's own inline red warning. Same shell as .chat-changes-card; the one-click
+     button reuses .pub-refine-chip (already the "Shorten" affordance's look elsewhere). */
+  .chat-limit-card{
+    display:flex; flex-direction:column; align-items:flex-start; gap:8px; margin-top:10px;
+    background:var(--color-badge-red-bg); border:1px solid var(--color-error-text); border-radius:var(--radius-xl);
+    padding:12px; box-sizing:border-box;
+  }
+  .chat-limit-card p{margin:0; font-size:13px; line-height:1.5; color:var(--color-neutral-900); font-family:var(--font-family-text);}
+
   /* -- Chat "next action" card (Generate Script/Video, Combine, etc.) now unified onto
      .chat-cta-card (see the shared rule above) — appendChatCta() used to render its own
      near-duplicate .ai-cta-card with slightly-off values (neutral-50/200 instead of
@@ -1012,11 +1037,28 @@
   #scriptPanel .stage-cta-row{display:flex; flex-wrap:wrap; justify-content:flex-start; gap:var(--spacing-sm); margin-top:var(--spacing-md);}
   /* Script screen's first-time generation — the full script box, scene cards, labels and
      reference chips render immediately as normal; only the text-filling areas (full script,
-     each clip's image prompt + narration) mask behind a spinner while runBriefToScript()'s
-     chat loading card is up, via showFieldSpinner()/hideFieldSpinners(). */
+     each clip's image prompt + narration) mask behind a diagonal shimmer sweep while
+     runBriefToScript()'s chat loading card is up, via showFieldSpinner()/hideFieldSpinners()
+     (per the AI 대화창 공통 규칙 스펙's Case 1: the empty-looking field itself should feel
+     alive while the chat panel's own spinner runs, not just sit static). Built from
+     --color-brand-primary-pale so the sweep reads as "brand AI activity" rather than a
+     generic grey skeleton shimmer -- and it runs diagonally (not horizontally) to read as
+     a distinct pattern from any ordinary loading-skeleton shimmer elsewhere in the app. */
   .field-fill-wrap{position:relative;}
-  .field-fill-spinner{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:var(--color-neutral-0); border-radius:var(--radius-lg); z-index:2;}
-  .field-fill-spinner .chat-loading-spinner{margin-top:0;}
+  .field-fill-spinner{position:absolute; inset:0; overflow:hidden; background:var(--color-neutral-0); border-radius:var(--radius-lg); z-index:2;}
+  .field-fill-spinner::after{
+    content:''; position:absolute; top:-120%; left:-40%; width:55%; height:340%;
+    background:linear-gradient(100deg, transparent 30%, var(--color-brand-primary-pale) 48%, var(--color-neutral-0) 50%, var(--color-brand-primary-pale) 52%, transparent 70%);
+    filter:blur(14px); opacity:.85;
+    animation:fieldFillShimmerSweep 1.8s linear infinite;
+  }
+  @keyframes fieldFillShimmerSweep{
+    from{ transform:translateX(-40%); }
+    to{ transform:translateX(260%); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .field-fill-spinner::after{ animation:none; opacity:.5; }
+  }
   .voice-script-text[aria-invalid="true"]{border-color:var(--color-error-text);}
   .voice-script-text[aria-invalid="true"] + .scene-guide{color:var(--color-error-text);}
   #stageAreaReel .stage-body-inner{max-width:960px; margin:0 auto; width:100%; flex:1; min-height:0; display:flex; flex-direction:column;}
@@ -4940,18 +4982,56 @@ function validateScriptLength(){
   row.classList.toggle('over', over);
   countEl.textContent = `${count} / ${max} words`;
   // Figma node 7606-229127: the over-limit state draws its own inline "Shorten" button next
-  // to the warning, rather than routing the fix through the chat (the earlier node
-  // 7254-136585 had no button here, so that version leaned on a chat quick-chip instead).
+  // to the warning, in addition to (not instead of) the chat's own proactive suggestion card
+  // below -- both routes converge on the same working/completion/Undo-Redo flow, per the AI
+  // 대화창 공통 규칙 스펙's Case 3 dual-notification rule.
   errEl.innerHTML = over
     ? `<img src="../../../../components/ai-social-media/icons/alert-sm.svg" class="icon-inline" alt="">You've gone over the word limit (${count}/${max} words). For a ${window.__videoDuration || 8}s video, up to ${max} words is safe.<button type="button" class="pub-refine-chip" onclick="refineScriptWithAI()">Shorten</button>`
     : '';
+
+  if(over){
+    showChatLimitSuggestion('fullScript', `Your script is over the word limit for a ${window.__videoDuration || 8}s video (${count}/${max} words). Want me to shorten it to fit?`, 'Shorten it', shortenFullScriptViaChat);
+  } else {
+    clearChatLimitSuggestion('fullScript');
+  }
 }
+// Case 2/3 — routes the field's own inline "Shorten" button through the same chat
+// working/completion(Undo/Redo) flow the chat's own [Shorten it] suggestion uses, so both
+// entry points behave identically (per the spec's convergence rule).
 function refineScriptWithAI(){
+  shortenFullScriptViaChat();
+}
+function shortenFullScriptViaChat(){
   const ta = document.getElementById('fullScript');
   if(!ta) return;
-  const fitted = fitScriptToWordLimit(ta.value, getMaxScriptWords());
-  ta.value = `"${fitted}"`;
-  reelOnScriptInput();
+  clearChatLimitSuggestion('fullScript');
+  const log = document.getElementById('chatLog');
+  const loadingEl = document.createElement('div');
+  loadingEl.className = 'msg ai loading';
+  loadingEl.innerHTML = `<span class="tag">AI</span>Shortening your script to fit<span class="dots"><span>.</span><span>.</span><span>.</span></span>`;
+  log.appendChild(loadingEl);
+  log.scrollTop = log.scrollHeight;
+
+  const before = ta.value;
+  setTimeout(() => {
+    loadingEl.remove();
+    const after = `"${fitScriptToWordLimit(before, getMaxScriptWords())}"`;
+    ta.value = after;
+    reelOnScriptInput();
+
+    const status = document.createElement('div');
+    status.className = 'msg-status';
+    status.innerHTML = '<span class="worked-label">Worked</span> <span class="worked-time">for 1s</span>';
+    log.appendChild(status);
+    const msg = document.createElement('div');
+    msg.className = 'msg ai';
+    msg.textContent = 'Shortened your script to fit.';
+    log.appendChild(msg);
+
+    pushChatChangeCard(log, 'Full script', before, after, (snap) => { ta.value = snap; reelOnScriptInput(); });
+
+    log.scrollTop = log.scrollHeight;
+  }, 800);
 }
 
 // ---- Advanced settings (Goal / Tone / Target audience / Call to action) ----
@@ -5028,17 +5108,107 @@ function applyScriptDraft(id, btn){
   reelConfirmScript();
 }
 
-// Masks a field's already-set text behind a spinner (rather than emptying it), so the reveal
-// after loading is instant with no flicker — used for the Script screen's first-time generation.
+// Masks a field's already-set text behind a diagonal shimmer sweep (rather than emptying it),
+// so the reveal after loading is instant with no flicker — used for the Script screen's
+// first-time generation. The chat panel already carries its own spinner for "what's
+// happening"; this is just the field itself feeling alive while it waits (no spinner icon
+// duplicated in here, per the AI 대화창 공통 규칙 스펙's Case 1).
 function showFieldSpinner(wrapEl){
   if(!wrapEl || wrapEl.querySelector('.field-fill-spinner')) return;
   const s = document.createElement('div');
   s.className = 'field-fill-spinner';
-  s.innerHTML = '<div class="chat-loading-spinner"></div>';
   wrapEl.appendChild(s);
 }
 function hideFieldSpinners(){
   document.querySelectorAll('.field-fill-spinner').forEach(el => el.remove());
+}
+
+// ---- AI 대화창 공통 규칙 스펙, Case 2/3 — shared "Changes" completion card (label + Undo/Redo)
+// every chat-driven EDIT converges on (Case 1's initial generation never gets one, by design —
+// there's no "before" to revert to). `before`/`after` are opaque snapshots (whatever shape the
+// caller needs — a string, or a small object of per-clip values); `applyFn(snapshot)` is the one
+// function that knows how to restore either side. This covers whole-script edits, per-clip
+// narration/description edits, and multi-clip batch regenerations with the same mechanism. ----
+window.__chatChangeCounter = 0;
+window.__chatChanges = {};
+
+function renderChatChangeCardInnerHtml(id, label){
+  const c = window.__chatChanges[id];
+  const undoDisabled = !c || c.at === 'before';
+  const redoDisabled = !c || c.at === 'after';
+  return `
+    <span class="chat-changes-label">${escapeHtml(label)}</span>
+    <div class="chat-changes-spacer"></div>
+    <div class="controls-field-ai__undo-redo">
+      <button type="button" class="controls-field-ai__icon-btn" onclick="undoChatChange(${id})" aria-label="Undo" ${undoDisabled ? 'disabled' : ''}><img src="../../../../components/ai-social-media/icons/ui-undo.svg" alt=""></button>
+      <button type="button" class="controls-field-ai__icon-btn" onclick="redoChatChange(${id})" aria-label="Redo" ${redoDisabled ? 'disabled' : ''}><img src="../../../../components/ai-social-media/icons/ui-redo.svg" alt=""></button>
+    </div>`;
+}
+
+function pushChatChangeCard(logEl, label, beforeSnapshot, afterSnapshot, applyFn){
+  window.__chatChangeCounter++;
+  const id = window.__chatChangeCounter;
+  window.__chatChanges[id] = { before: beforeSnapshot, after: afterSnapshot, apply: applyFn, at: 'after' };
+  const card = document.createElement('div');
+  card.className = 'chat-changes-card';
+  card.id = `chatChange${id}`;
+  card.innerHTML = renderChatChangeCardInnerHtml(id, label);
+  logEl.appendChild(card);
+  return id;
+}
+
+function refreshChatChangeCard(id){
+  const card = document.getElementById(`chatChange${id}`);
+  if(!card) return;
+  const label = card.querySelector('.chat-changes-label').textContent;
+  card.innerHTML = renderChatChangeCardInnerHtml(id, label);
+}
+
+function undoChatChange(id){
+  const c = window.__chatChanges[id];
+  if(!c || c.at !== 'after') return;
+  c.apply(c.before);
+  c.at = 'before';
+  refreshChatChangeCard(id);
+}
+
+function redoChatChange(id){
+  const c = window.__chatChanges[id];
+  if(!c || c.at !== 'before') return;
+  c.apply(c.after);
+  c.at = 'after';
+  refreshChatChangeCard(id);
+}
+
+// ---- AI 대화창 공통 규칙 스펙, Case 3 — proactive chat suggestion for "must-fix" limit
+// overages (word count), shown ALONGSIDE the field's own inline red warning, never instead
+// of it. Keyed so re-triggering while still over the limit (e.g. every keystroke) is a no-op
+// until the field drops back under the limit and the key is cleared. ----
+window.__chatLimitCards = {};
+
+function showChatLimitSuggestion(key, message, buttonLabel, onClick){
+  if(window.__chatLimitCards[key]) return;
+  const log = document.getElementById('chatLog');
+  if(!log) return;
+  const card = document.createElement('div');
+  card.className = 'chat-limit-card';
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'pub-refine-chip';
+  btn.textContent = buttonLabel;
+  btn.addEventListener('click', () => { clearChatLimitSuggestion(key); onClick(); });
+  const p = document.createElement('p');
+  p.textContent = message;
+  card.appendChild(p);
+  card.appendChild(btn);
+  log.appendChild(card);
+  log.scrollTop = log.scrollHeight;
+  window.__chatLimitCards[key] = card;
+}
+
+function clearChatLimitSuggestion(key){
+  const card = window.__chatLimitCards[key];
+  if(card){ card.remove(); delete window.__chatLimitCards[key]; }
 }
 
 function runBriefToScript(){
@@ -5844,8 +6014,41 @@ function renderVoiceWordcountRowHTML(unit, script){
   }
   return `<span class="voice-section-wordcount" id="voiceWordcountRow_${unit}">${count} / 15 words</span>`;
 }
+// Case 2/3 — same convergence rule as shortenFullScriptViaChat(): the Voice Section's own
+// inline "Make it shorter" chip routes through the identical chat working/completion(Undo/Redo)
+// flow as the chat's own [Shorten it] suggestion for this clip.
 function refineSceneScript(unit){
-  updateSceneScript(unit, fitScriptToWordLimit(getSceneScript(unit), 15));
+  shortenSceneScriptViaChat(unit);
+}
+function shortenSceneScriptViaChat(unit){
+  clearChatLimitSuggestion(`scene-${unit}`);
+  const log = document.getElementById('chatLog');
+  if(!log) return;
+  const loadingEl = document.createElement('div');
+  loadingEl.className = 'msg ai loading';
+  loadingEl.innerHTML = `<span class="tag">AI</span>Shortening Clip ${unit}'s narration to fit<span class="dots"><span>.</span><span>.</span><span>.</span></span>`;
+  log.appendChild(loadingEl);
+  log.scrollTop = log.scrollHeight;
+
+  const before = getSceneScript(unit);
+  setTimeout(() => {
+    loadingEl.remove();
+    const after = fitScriptToWordLimit(before, 15);
+    updateSceneScript(unit, after);
+
+    const status = document.createElement('div');
+    status.className = 'msg-status';
+    status.innerHTML = '<span class="worked-label">Worked</span> <span class="worked-time">for 1s</span>';
+    log.appendChild(status);
+    const msg = document.createElement('div');
+    msg.className = 'msg ai';
+    msg.textContent = `Shortened the narration for Clip ${unit} to fit.`;
+    log.appendChild(msg);
+
+    pushChatChangeCard(log, `Narration · Clip ${unit}`, before, after, (snap) => updateSceneScript(unit, snap));
+
+    log.scrollTop = log.scrollHeight;
+  }, 800);
 }
 // Toggle the Voice Section's own collapse/expand -- decorative nowhere else in the app,
 // this is the one place the chevron actually does something (per explicit go-ahead).
@@ -6151,6 +6354,13 @@ function updateSceneScript(n, value){
 
   updateVoicePreviewButton('tl', n);
   updateVoicePreviewButton('vid', n);
+
+  // Case 3 — proactive chat suggestion alongside this clip's own inline red warning above.
+  if(countScriptWords(value) > 15){
+    showChatLimitSuggestion(`scene-${n}`, `Clip ${n}'s narration is over 15 words for an 8s clip. Want me to shorten it to fit?`, 'Shorten it', () => shortenSceneScriptViaChat(n));
+  } else {
+    clearChatLimitSuggestion(`scene-${n}`);
+  }
 }
 
 function getCurrentVoiceLabel(){
@@ -6666,20 +6876,42 @@ function regenerateAllScenesFromChat(){
   loadingEl.innerHTML = `<span class="tag">AI</span>Regenerating scene descriptions<span class="dots"><span>.</span><span>.</span><span>.</span></span>`;
   log.appendChild(loadingEl);
   log.scrollTop = log.scrollHeight;
+
+  const count = getSceneCount();
+  const beforeDescs = {};
+  for(let n = 1; n <= count; n++) beforeDescs[n] = window.__unitDescriptions[n];
+  const beforeTouched = { ...window.__unitDescTouched };
+  const beforeReview = { ...window.__reelPromptReview };
+
   setTimeout(() => {
     loadingEl.remove();
     window.__unitDescTouched = {};
     window.__reelPromptReview = {};
-    for(let n = 1; n <= getSceneCount(); n++) window.__unitDescriptions[n] = buildSceneDescFromNarration(n, getSceneScript(n));
+    for(let n = 1; n <= count; n++) window.__unitDescriptions[n] = buildSceneDescFromNarration(n, getSceneScript(n));
     renderReelSceneEditors();
+    const afterDescs = {};
+    for(let n = 1; n <= count; n++) afterDescs[n] = window.__unitDescriptions[n];
+
     const status = document.createElement('div');
     status.className = 'msg-status';
     status.innerHTML = '<span class="worked-label">Worked</span> <span class="worked-time">for 2s</span>';
     log.appendChild(status);
     const msg = document.createElement('div');
     msg.className = 'msg ai';
-    msg.textContent = `Refreshed the scene descriptions for all ${getSceneCount()} scenes.`;
+    msg.textContent = `Refreshed the scene descriptions for all ${count} scenes.`;
     log.appendChild(msg);
+
+    pushChatChangeCard(log, `Scene descriptions · all ${count} scenes`,
+      { descs: beforeDescs, touched: beforeTouched, review: beforeReview },
+      { descs: afterDescs, touched: {}, review: {} },
+      (snap) => {
+        Object.assign(window.__unitDescriptions, snap.descs);
+        window.__unitDescTouched = { ...snap.touched };
+        window.__reelPromptReview = { ...snap.review };
+        renderReelSceneEditors();
+      }
+    );
+
     log.scrollTop = log.scrollHeight;
   }, 1000);
 }
@@ -8342,6 +8574,9 @@ function reviseSceneOrNarration(text){
   log.appendChild(loadingEl);
   log.scrollTop = log.scrollHeight;
 
+  const before = {};
+  targets.forEach(n => { before[n] = isNarration ? getSceneScript(n) : getVideoUnitDesc(n); });
+
   setTimeout(() => {
     loadingEl.remove();
     targets.forEach(n => {
@@ -8351,6 +8586,9 @@ function reviseSceneOrNarration(text){
         setVideoUnitDesc(n, buildRevisedScript(getVideoUnitDesc(n), text));
       }
     });
+    const after = {};
+    targets.forEach(n => { after[n] = isNarration ? getSceneScript(n) : getVideoUnitDesc(n); });
+
     const status = document.createElement('div');
     status.className = 'msg-status';
     status.innerHTML = '<span class="worked-label">Worked</span> <span class="worked-time">for 1s</span>';
@@ -8360,6 +8598,13 @@ function reviseSceneOrNarration(text){
     const whichClip = clipNum ? `Clip ${clipNum}` : (count > 1 ? 'every clip' : 'your clip');
     msg.textContent = `Updated the ${isNarration ? 'narration' : 'scene description'} for ${whichClip}.`;
     log.appendChild(msg);
+
+    pushChatChangeCard(log, `${isNarration ? 'Narration' : 'Scene description'} · ${whichClip}`, before, after, (snap) => {
+      Object.keys(snap).forEach(n => {
+        if(isNarration){ updateSceneScript(Number(n), snap[n]); } else { setVideoUnitDesc(Number(n), snap[n]); }
+      });
+    });
+
     log.scrollTop = log.scrollHeight;
   }, 900);
 }
