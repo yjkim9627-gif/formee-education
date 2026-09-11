@@ -178,6 +178,8 @@
   --radius-sm: 4px;
   --radius-md: 6px;
   --radius-lg: 8px;
+  /* HR Tool 화면(Figma: FME_HR-Tool, Create a job 등)에서 버튼/폼 필드에 쓰이는 10px 라운드 — 기존 스케일에 없어 추가 */
+  --radius-md-lg: 10px;
   --radius-xl: 12px;
   --radius-2xl: 16px;
   --radius-3xl: 24px;
