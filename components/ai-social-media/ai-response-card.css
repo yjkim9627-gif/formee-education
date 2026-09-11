@@ -58,7 +58,7 @@
 .chat-cta-done-row{display:flex; align-items:center; justify-content:space-between; gap:8px; width:100%;}
 .chat-cta-done-left{display:flex; align-items:center; gap:8px; min-width:0;}
 .chat-cta-done-left img{width:18px; height:18px; flex-shrink:0;}
-.chat-cta-done-label{font-size:14px; font-weight:500; line-height:1.4; color:var(--color-neutral-500);}
+.chat-cta-done-label{flex:1; min-width:0; font-size:14px; font-weight:500; line-height:1.4; color:var(--color-neutral-500); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 .chat-cta-done-check{width:16px; height:16px; flex-shrink:0;}
 
 /* State = "Undo"/"Redo" (nodes 9382:146084 / 9382:170356) — title sits in a header row next

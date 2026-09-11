@@ -2880,7 +2880,7 @@ function draftCopy(){
     status2s.className = 'msg-status';
     status2s.innerHTML = '<span class="worked-label">Worked</span> <span class="worked-time">for 2s</span>';
     log.appendChild(status2s);
-    imgAppendDoneCard('Filled in the Headline, Subhead, and Call to action');
+    imgAppendDoneCard('Filled copies');
     log.scrollTop = log.scrollHeight;
 
     setTimeout(() => {
@@ -2888,7 +2888,7 @@ function draftCopy(){
       copyFields.find(f => f.key === 'subhead').text = 'Applications open for the January intake';
       copyFields.find(f => f.key === 'cta').text = 'Apply Now';
       renderCopyFields();
-      imgAppendDoneCard('Generated the Headline, Subhead, and Call to action');
+      imgAppendDoneCard('Generated copies');
       renderChatQuickChips([
         { label: 'Shorten headline' },
         { label: 'Make headline more hooking' }
@@ -2922,7 +2922,7 @@ function reviseCopy(requestText){
     status1s.className = 'msg-status';
     status1s.innerHTML = '<span class="worked-label">Worked</span> <span class="worked-time">for 1s</span>';
     log.appendChild(status1s);
-    imgAppendDoneCard('Updated the Headline, Subhead, and Call to action');
+    imgAppendDoneCard('Updated copies');
   }, 1100);
 }
 
@@ -2983,7 +2983,7 @@ function draftVisualConcept(){
     status2sb.className = 'msg-status';
     status2sb.innerHTML = '<span class="worked-label">Worked</span> <span class="worked-time">for 2s</span>';
     log.appendChild(status2sb);
-    imgAppendDoneCard('Generated the visual concept based on your finalized copy');
+    imgAppendDoneCard('Generated visual concept');
     afterVisualConceptReady();
   }, 1200);
 }
@@ -3014,7 +3014,7 @@ function reviseVisualConcept(requestText){
     status1sb.className = 'msg-status';
     status1sb.innerHTML = '<span class="worked-label">Worked</span> <span class="worked-time">for 1s</span>';
     log.appendChild(status1sb);
-    imgAppendDoneCard('Updated the visual concept based on your note');
+    imgAppendDoneCard('Updated visual concept');
     afterVisualConceptReady();
   }, 1100);
 }
@@ -3029,7 +3029,7 @@ function imgAppendChatCta(title, text, buttonsHtml){
 // imgAppendChatCta above, which always ends in a button/toggle/pick).
 function imgAppendDoneCard(label){
   const log = document.getElementById('chatLog');
-  log.innerHTML += `<div class="msg ai"><div class="chat-cta-card"><div class="chat-cta-done-row"><div class="chat-cta-done-left"><img src="../../../../components/ai-social-media/icons/uploads/file-text.svg" alt=""><span class="chat-cta-done-label">${escapeHtml(label)}</span></div><img class="chat-cta-done-check" src="../../../../components/ai-social-media/icons/circle-check.svg" alt=""></div></div></div>`;
+  log.innerHTML += `<div class="msg ai"><div class="chat-cta-card"><div class="chat-cta-done-row"><div class="chat-cta-done-left"><img src="../../../../components/ai-social-media/icons/file.svg" alt=""><span class="chat-cta-done-label">${escapeHtml(label)}</span></div><img class="chat-cta-done-check" src="../../../../components/ai-social-media/icons/circle-check.svg" alt=""></div></div></div>`;
   log.scrollTop = log.scrollHeight;
 }
 
@@ -5826,7 +5826,7 @@ function appendChatCta(title, desc, buttonsHtml){
 // appendChatCta above, which always ends in a button/toggle/pick).
 function reelAppendDoneCard(label){
   const log = document.getElementById('chatLog');
-  log.innerHTML += `<div class="msg ai"><div class="chat-cta-card"><div class="chat-cta-done-row"><div class="chat-cta-done-left"><img src="../../../../components/ai-social-media/icons/uploads/file-text.svg" alt=""><span class="chat-cta-done-label">${escapeHtml(label)}</span></div><img class="chat-cta-done-check" src="../../../../components/ai-social-media/icons/circle-check.svg" alt=""></div></div></div>`;
+  log.innerHTML += `<div class="msg ai"><div class="chat-cta-card"><div class="chat-cta-done-row"><div class="chat-cta-done-left"><img src="../../../../components/ai-social-media/icons/file.svg" alt=""><span class="chat-cta-done-label">${escapeHtml(label)}</span></div><img class="chat-cta-done-check" src="../../../../components/ai-social-media/icons/circle-check.svg" alt=""></div></div></div>`;
   log.scrollTop = log.scrollHeight;
 }
 
@@ -6732,7 +6732,7 @@ function combineVideo(){
   window.__videoCombineStale = false;
   updateVideoCta();
   document.getElementById('tabReelVideo').innerHTML = '<span class="check">✓</span> Video';
-  reelAppendDoneCard('Combined all scenes into the final cut — free, no credits used. Your narration track from Script is already mixed in.');
+  reelAppendDoneCard('Combined final video');
   appendChatCta('Your video is ready. What\'s next?', '',
     '<button class="btn btn-dark" onclick="this.parentElement.querySelectorAll(\'button\').forEach(b => b.disabled = true); goToDevelop()">Continue to editing →</button>' +
     '<button class="btn btn-secondary" onclick="this.parentElement.querySelectorAll(\'button\').forEach(b => b.disabled = true); goToPublish()">Skip to publish</button>' +
