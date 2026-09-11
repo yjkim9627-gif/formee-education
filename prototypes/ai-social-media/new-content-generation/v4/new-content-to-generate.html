@@ -2979,11 +2979,144 @@ function onCopyFieldInput(i, value){
 const BRAND_KIT_LOGO_OPTIONS = ['Primary', 'Dark', 'SCG-HE', 'SCG'];
 const BRAND_KIT_COLOUR_OPTIONS = ['#0e5c55', '#c81856', '#e8891f', '#33383f', '#9c5a72', '#ffffff'];
 const BRAND_KIT_SUMMARY_CONTAINER_IDS = { img: 'brandKitSummary', car: 'globalBrandKitSummary', reel: 'reelBrandKitSummary' };
-window.__brandKitPickerState = {
-  img: { logo: 'Primary', colours: ['#0e5c55', '#c81856', '#e8891f'], logoMenuOpen: false, colourMenuOpen: false },
-  car: { logo: 'Primary', colours: ['#0e5c55', '#c81856', '#e8891f'], logoMenuOpen: false, colourMenuOpen: false },
-  reel: { logo: 'Primary', colours: ['#0e5c55', '#c81856', '#e8891f'], logoMenuOpen: false, colourMenuOpen: false }
+/* The brand kit is the single source of the defaults; New Content only *loads* them.
+   Anything changed here applies to this post alone and never writes back — so the bar
+   has to say (a) that it differs and (b) how to get back. 2026-09-10. */
+let BRAND_KIT_DEFAULTS = {
+  logo: 'Primary',
+  colours: ['#0e5c55', '#c81856', '#e8891f'],
+  mode: 'ontop',                                   // ontop | inimage
+  overlay: { text:'#ffffff', button:'#e8891f', graphic:'#c81856' }
 };
+/* The three Text Style Card previews. Hardcoded until the Brand Kit bridge below
+   replaces them with the brand's real role assignments. */
+let BRAND_KIT_FONTS = [
+  { name:'Heading',    label:'Georgia Bold',     cls:'heading' },
+  { name:'Subheading', label:'Georgia Semibold', cls:'subheading' },
+  { name:'Body',       label:'Impact Regular',   cls:'body' }
+];
+const BRAND_KIT_MODE_LABEL = { ontop: 'On top', inimage: 'In the image' };
+const BRAND_KIT_MODE_HELP = {
+  ontop: 'On top — AI creates the image only. Text, logo and button are added as editable layers.',
+  inimage: 'In the image — AI draws the text and graphics into the image. They can\'t be edited afterwards.'
+};
+function brandKitBlankState(){
+  return { logo: BRAND_KIT_DEFAULTS.logo, colours: BRAND_KIT_DEFAULTS.colours.slice(),
+           mode: BRAND_KIT_DEFAULTS.mode, overlay: Object.assign({}, BRAND_KIT_DEFAULTS.overlay),
+           logoMenuOpen: false, colourMenuOpen: false, modeMenuOpen: false, overlayMenuOpen: null };
+}
+window.__brandKitPickerState = { img: brandKitBlankState(), car: brandKitBlankState(), reel: brandKitBlankState() };
+
+/* ── Brand Kit → New Content 브리지 (읽는 쪽) ──────────────────────────────
+   브랜드 킷은 별도 앱(업무/brand setup/characters-super-admin-group-by-brand.html)
+   이라 코드를 합칠 수 없다. 같은 오리진에서 띄우면 localStorage 를 공유하므로
+   거기서 내보낸 "지금 기본값"을 읽어 이 화면의 기본값으로 삼는다.
+   읽기 전용 — 여기서 바꾼 값은 절대 브랜드 킷으로 돌아가지 않는다.  2026-09-11 */
+const FME_BK_KEY = 'fme.brandkit.v1';
+window.__brandKitSource = null;
+
+/* 브랜드 킷은 별도 앱이라 같은 오리진(로컬 브리지 ~/fme-proto)으로 띄웠을 때만
+   실제로 열 수 있다. 탭 이름을 고정해 반복 클릭해도 같은 탭을 재사용한다. */
+function fmeBrandKitUrl(tab){
+  const m = location.pathname.match(/^(.*?)\/newcontent\//);
+  if(!m) return null;
+  return m[1] + '/brandkit/characters-super-admin-group-by-brand.html'
+       + '#view=brandkit&brand=formee-express&tab=' + (tab || 'overview');
+}
+/* 진짜 <a href target> 으로 연다 — window.open 은 팝업 차단에 걸린다.
+   탭 이름을 고정해 반복 클릭해도 같은 탭을 재사용한다. */
+function fmeBrandKitAttrs(tab){
+  const url = fmeBrandKitUrl(tab);
+  return url ? `href="${url}" target="fme-brandkit"`
+             : `href="#" onclick="fmeBrandKitUnavailable(event)"`;
+}
+function fmeBrandKitUnavailable(e){
+  e.preventDefault();
+  alert('Brand Kit is a separate app. Serve both from the local bridge (~/fme-proto) to open it from here.');
+}
+function fmeOpenBrandKit(tab){
+  const url = fmeBrandKitUrl(tab);
+  if(url){ window.open(url, 'fme-brandkit'); return; }
+  fmeBrandKitUnavailable({ preventDefault(){} });
+}
+
+function fmeReadBrandKit(){
+  try{ return JSON.parse(localStorage.getItem(FME_BK_KEY) || 'null'); }
+  catch(e){ return null; }
+}
+/* none = 아무것도 없음 · partial = 일부만 · set = 로고+컬러+폰트 다 있음 */
+function fmeBrandKitCompleteness(p){
+  if(!p) return 'none';
+  const has = [!!p.logo, !!(p.palette && p.palette.length), !!(p.fonts && p.fonts.length)];
+  const n = has.filter(Boolean).length;
+  return n === 0 ? 'none' : n === 3 ? 'set' : 'partial';
+}
+function fmeAdoptBrandKit(){
+  const p = fmeReadBrandKit();
+  window.__brandKitSource = p;
+  const level = fmeBrandKitCompleteness(p);
+  if(p){
+    if(p.logo && p.logo.name) BRAND_KIT_DEFAULTS.logo = p.logo.name;
+    if(p.palette && p.palette.length) BRAND_KIT_DEFAULTS.colours = p.palette.slice(0, 3);
+    if(p.fonts && p.fonts.length){
+      const cls = { 'r-heading':'heading', 'r-subheading':'subheading', 'r-body':'body' };
+      BRAND_KIT_FONTS = p.fonts.map(f => ({ name:f.name, label:f.label, cls: cls[f.id] || 'body' }));
+    }
+    if(p.palette && p.palette.length) BRAND_KIT_COLOUR_OPTIONS.splice(0, BRAND_KIT_COLOUR_OPTIONS.length, ...p.palette);
+    /* 오버레이 자리 색도 브랜드 킷 레일에서 고른 값을 그대로 쓴다 */
+    if(p.overlay){
+      ['text','button','graphic'].forEach(k => { if(p.overlay[k]) BRAND_KIT_DEFAULTS.overlay[k] = p.overlay[k]; });
+    }
+  }
+  /* 브랜드 킷이 실제로 채워져 있을 때만 'set' — 아니면 기존 빈 카드가 나온다. */
+  window.__brandMode = (level === 'set') ? 'set' : 'none';
+  window.__brandKitLevel = level;
+  ['img','car','reel'].forEach(sc => { window.__brandKitPickerState[sc] = brandKitBlankState(); });
+  ['img','car','reel'].forEach(sc => {
+    const el = document.getElementById(BRAND_KIT_SUMMARY_CONTAINER_IDS[sc]);
+    if(el && el.innerHTML) renderBrandKitSummaryCompact(sc);
+  });
+  /* reel 만 갱신하면 Image post·Carousel 화면은 빈 카드에 머문다 — 셋 다 돌린다. */
+  if(typeof updateReelBrandKitUI === 'function') updateReelBrandKitUI();
+  if(typeof updateGlobalBrandKitUI === 'function') updateGlobalBrandKitUI();
+  /* typeof 는 let 의 TDZ 를 막아주지 못한다 — 반드시 try 로 감싼다. */
+  try {
+    const imgSum = document.getElementById('brandKitSummary'), imgEmpty = document.getElementById('brandKitEmpty');
+    if(imgSum && imgEmpty){
+      const hasBrand = window.__brandMode === 'set';
+      imgSum.style.display   = brandKitOn && hasBrand  ? 'block' : 'none';
+      imgEmpty.style.display = brandKitOn && !hasBrand ? 'flex'  : 'none';
+    }
+  } catch(e){ /* 아직 선언 전 — DOMContentLoaded 호출에서 다시 맞춰진다 */ }
+  return level;
+}
+/* 다른 탭에서 브랜드 킷을 고치면 그 즉시 이쪽도 따라간다 — 값이 흐르는 걸 눈으로 본다. */
+window.addEventListener('storage', e => { if(e.key === FME_BK_KEY) fmeAdoptBrandKit(); });
+/* load 를 기다리면 그 사이에 토글을 켠 사용자는 "브랜드 킷이 비었다"는 빈 카드를
+   보게 된다 — 실제로는 값이 있는데도. 그래서 DOMContentLoaded 로 앞당긴다.
+   파싱 시점에 부르면 안 된다: 이 아래에서 let 으로 선언되는 brandKitOn 등을
+   건드려 TDZ 예외가 나고, 그 예외가 스크립트 나머지를 통째로 중단시킨다.
+   (한 번 겪음 — 그러면 페이지 전체가 죽는다.)                     2026-09-11 */
+if(document.readyState === 'loading')
+  document.addEventListener('DOMContentLoaded', fmeAdoptBrandKit);
+else
+  fmeAdoptBrandKit();
+window.addEventListener('load', fmeAdoptBrandKit);
+
+function brandKitDiff(st){
+  const ovChanged = ['text','button','graphic']
+    .some(k => (st.overlay[k]||'').toLowerCase() !== (BRAND_KIT_DEFAULTS.overlay[k]||'').toLowerCase());
+  /* mode(Text & graphics)는 브랜드 킷이 정하는 값이 아니라 이번 콘텐츠의 레이아웃
+     선택이다 — "브랜드 기본값과 다름" 표시도, Reset 대상도 아니다.  2026-09-11 */
+  return {
+    logo: st.logo !== BRAND_KIT_DEFAULTS.logo,
+    colours: st.colours.join() !== BRAND_KIT_DEFAULTS.colours.join(),
+    overlay: ovChanged
+  };
+}
+
+function brandKitChanged(st){ const d = brandKitDiff(st); return d.logo || d.colours || d.overlay; }
+function brandKitDot(on){ return on ? '<span class="brand-kit-changed-dot"></span>' : ''; }
 
 function brandKitLogoThumbHtml(name){
   if(name === 'None'){
@@ -3025,14 +3158,21 @@ function buildBrandKitColourMenuHtml(scope){
   return `<div class="menu-popover brand-picker-popover" onclick="event.stopPropagation();">${items}</div>`;
 }
 
+/* ── 읽기 전용 (2026-09-11) ────────────────────────────────────────────────
+   브랜드에서 온 값(로고·팔레트·폰트·오버레이 색)은 여기서 바꾸지 않는다 —
+   전부 Brand Kit 에서 바꾸고, 이 화면은 "지금 무엇이 적용되는가"만 보여준다.
+   그래서 변경 점도, Reset 도, Suggest 도 없다(바뀔 수가 없으니 비교 대상이 없다).
+   예외는 Text & graphics — 브랜드 값이 아니라 이번 콘텐츠의 레이아웃 선택이다. */
 function buildBrandKitSummaryCompactHtml(scope){
   const st = window.__brandKitPickerState[scope];
+  const diff = brandKitDiff(st);
   const dots = st.colours.map(hex => `<div class="editor-color-swatch" style="--sw-color:${hex};"></div>`).join('');
   return `
     <div class="brand-kit-summary-compact">
       <div class="brand-picker">
         <button type="button" class="brand-picker-btn" onclick="toggleBrandKitLogoMenu(event,'${scope}')">
           ${brandKitLogoThumbHtml(st.logo)}
+          ${brandKitDot(diff.logo)}
           <span class="brand-picker-label">${st.logo}</span>
           <img class="brand-picker-chevron" src="../../../../components/ai-social-media/icons/chevron-down.svg" alt="">
         </button>
@@ -3041,19 +3181,158 @@ function buildBrandKitSummaryCompactHtml(scope){
       <div class="brand-kit-summary-divider"></div>
       <div class="brand-picker">
         <button type="button" class="brand-picker-btn" onclick="toggleBrandKitColourMenu(event,'${scope}')">
+          ${brandKitDot(diff.colours)}
           <div class="brand-picker-dots">${dots}</div>
-          <span class="brand-picker-label">Primary</span>
+          <span class="brand-picker-label">${st.colours.length} selected</span>
           <img class="brand-picker-chevron" src="../../../../components/ai-social-media/icons/chevron-down.svg" alt="">
         </button>
         ${st.colourMenuOpen ? buildBrandKitColourMenuHtml(scope) : ''}
       </div>
       <div class="brand-kit-summary-divider"></div>
       <div class="brand-kit-text-style-row">
-        <div class="brand-kit-text-style-card"><div class="brand-kit-text-style-pill"><span class="heading">Heading</span></div><span class="brand-kit-text-style-meta">Georgia Bold</span></div>
-        <div class="brand-kit-text-style-card"><div class="brand-kit-text-style-pill"><span class="subheading">Subheading</span></div><span class="brand-kit-text-style-meta">Georgia Semibold</span></div>
-        <div class="brand-kit-text-style-card"><div class="brand-kit-text-style-pill"><span class="body">Body</span></div><span class="brand-kit-text-style-meta">Impact Regular</span></div>
+        ${BRAND_KIT_FONTS.map(f => `<div class="brand-kit-text-style-card"><div class="brand-kit-text-style-pill"><span class="${f.cls}">${f.name}</span></div><span class="brand-kit-text-style-meta">${f.label}</span></div>`).join('')}
       </div>
-    </div>`;
+    </div>
+    <div class="brand-kit-overlay-row">
+      <div class="brand-kit-overlay-controls">
+      <span class="brand-kit-overlay-key">Text &amp; graphics</span>
+      <div class="controls-segmented-control">
+        ${['ontop','inimage'].map(m => `
+        <button type="button" class="controls-segment-chip${st.mode === m ? ' controls-segment-chip--selected' : ''}"
+                onclick="selectBrandKitMode('${scope}','${m}')">${BRAND_KIT_MODE_LABEL[m]}</button>`).join('')}
+      </div>
+      ${st.mode === 'ontop' ? `
+      <div class="brand-kit-summary-divider"></div>
+      <div class="brand-kit-overlay-group">
+        ${[['text','Text'],['button','Button'],['graphic','Graphic']].map(([k,label]) => `
+        <div class="brand-picker">
+          <button type="button" class="brand-picker-btn" onclick="toggleBrandKitOverlayMenu(event,'${scope}','${k}')">
+            <div class="editor-color-swatch size-sm" style="--sw-color:${st.overlay[k]};"></div>
+            <span class="brand-picker-label">${label}</span>
+            <img class="brand-picker-chevron" src="../../../../components/ai-social-media/icons/chevron-down.svg" alt="">
+          </button>
+          ${st.overlayMenuOpen === k ? buildBrandKitOverlayMenuHtml(scope, k) : ''}
+        </div>`).join('')}
+        <button type="button" class="actions-btn actions-btn--ghost brand-kit-suggest" onclick="suggestBrandKitOverlay('${scope}')"
+                title="Try a colour combination that stays readable">
+          <img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt="">Suggest</button>
+      </div>` : ''}
+      </div>
+      <div class="brand-kit-overlay-actions">
+      <div class="brand-kit-summary-divider"></div>
+      ${/* Reset 은 늘 자리에 있고, 되돌릴 게 없으면 비활성이다.
+           숨기면 나타날 때 줄이 밀리고, visibility:hidden 이면 빈 구멍이 남는다.
+           DS 의 --inactive 변형을 쓰면 둘 다 안 생긴다.          2026-09-11 */''}
+      <div class="brand-kit-actions">
+        ${brandKitChanged(st)
+          ? `<button type="button" class="actions-btn actions-btn--ghost brand-kit-reset" onclick="resetBrandKit('${scope}')">Reset to brand default</button>`
+          : `<button type="button" class="actions-btn actions-btn--ghost brand-kit-reset" disabled>Reset to brand default</button>`}
+        <a class="actions-btn actions-btn--ghost brand-kit-editlink" ${fmeBrandKitAttrs('overview')}>Edit in Brand Kit</a>
+      </div>
+      </div>
+    </div>
+    <p class="brand-kit-mode-help">${BRAND_KIT_MODE_HELP[st.mode]}</p>`;
+}
+
+/* ── 추천 조합 ────────────────────────────────────────────────────────────
+   무작위로 뽑으면 남색 글씨 + 남색 버튼 같은 안 읽히는 조합이 나온다. 그래서
+   브랜드 팔레트 안에서 **읽히는 조합만** 골라 돌린다:
+     Text    — 가장 밝거나 가장 어두운 쪽(대비가 큰 끝값)
+     Button  — 가장 쨍한 색(채도 우선). Text 와 안 겹치게
+     Graphic — 그다음 쨍한 색. 앞의 둘과 안 겹치게
+   누를 때마다 후보를 한 칸씩 돌려 여러 조합을 보여준다.       2026-09-11 */
+function bkHexToRgb(hex){
+  const h = String(hex||'').replace('#','');
+  if(h.length !== 6) return null;
+  return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
+}
+function bkLum(hex){
+  const c = bkHexToRgb(hex); if(!c) return 0;
+  const f = v => { v/=255; return v <= 0.03928 ? v/12.92 : Math.pow((v+0.055)/1.055, 2.4); };
+  return 0.2126*f(c[0]) + 0.7152*f(c[1]) + 0.0722*f(c[2]);
+}
+function bkSat(hex){
+  const c = bkHexToRgb(hex); if(!c) return 0;
+  const mx = Math.max(...c), mn = Math.min(...c);
+  return mx === 0 ? 0 : (mx - mn) / mx;
+}
+window.__bkSuggestSeq = 0;
+function suggestBrandKitOverlay(scope){
+  const st = window.__brandKitPickerState[scope];
+  const pool = (BRAND_KIT_COLOUR_OPTIONS || []).filter(h => bkHexToRgb(h));
+  if(pool.length < 2) return;
+
+  const byLum = [...pool].sort((a,b) => bkLum(a) - bkLum(b));
+  const vivid = [...pool].sort((a,b) => bkSat(b) - bkSat(a));
+
+  const n = window.__bkSuggestSeq++;
+  /* Text 는 밝은 끝 ↔ 어두운 끝을 번갈아 — 어느 배경에도 하나는 맞는다 */
+  const text = (n % 2 === 0) ? byLum[byLum.length - 1] : byLum[0];
+  const rest = vivid.filter(h => h !== text);
+  const button  = rest[n % Math.max(rest.length, 1)] || pool[0];
+  const graphic = rest.filter(h => h !== button)[(n + 1) % Math.max(rest.length - 1, 1)] || button;
+
+  st.overlay = { text, button, graphic };
+  st.overlayMenuOpen = null;
+  renderBrandKitSummaryCompact(scope);
+}
+
+function buildBrandKitOverlayMenuHtml(scope, slot){
+  const st = window.__brandKitPickerState[scope];
+  const cur = (st.overlay[slot]||'').toLowerCase();
+  const items = BRAND_KIT_COLOUR_OPTIONS.map(hex => `
+      <button type="button" class="menu-item--colour${hex.toLowerCase()===cur ? ' selected' : ''}" onclick="event.stopPropagation(); selectBrandKitOverlay('${scope}','${slot}','${hex}')">
+        <div class="menu-item-swatch-label">
+          <div class="editor-color-swatch" style="--sw-color:${hex};"></div>
+          <span class="menu-item-label">${hex.toUpperCase()}</span>
+        </div>
+        <img class="menu-item-check" src="../../../../components/ai-social-media/icons/panel-check.svg" alt="">
+      </button>`).join('');
+  return `<div class="menu-popover brand-picker-popover" onclick="event.stopPropagation();">${items}</div>`;
+}
+function toggleBrandKitOverlayMenu(e, scope, slot){
+  e.stopPropagation();
+  const st = window.__brandKitPickerState[scope];
+  st.overlayMenuOpen = st.overlayMenuOpen === slot ? null : slot;
+  st.logoMenuOpen = st.colourMenuOpen = st.modeMenuOpen = false;
+  renderBrandKitSummaryCompact(scope);
+}
+function selectBrandKitOverlay(scope, slot, hex){
+  const st = window.__brandKitPickerState[scope];
+  st.overlay[slot] = hex;
+  st.overlayMenuOpen = null;
+  renderBrandKitSummaryCompact(scope);
+}
+
+function buildBrandKitModeMenuHtml(scope){
+  const st = window.__brandKitPickerState[scope];
+  const items = ['ontop','inimage'].map(m => `
+      <button type="button" class="menu-item--logo${st.mode === m ? ' selected' : ''}" onclick="event.stopPropagation(); selectBrandKitMode('${scope}','${m}')">
+        <span class="menu-item-label">${BRAND_KIT_MODE_LABEL[m]}</span>
+        <img class="menu-item-check" src="../../../../components/ai-social-media/icons/panel-check.svg" alt="">
+      </button>`).join('');
+  return `<div class="menu-popover brand-picker-popover" onclick="event.stopPropagation();">${items}</div>`;
+}
+function toggleBrandKitModeMenu(e, scope){
+  e.stopPropagation();
+  const st = window.__brandKitPickerState[scope];
+  st.modeMenuOpen = !st.modeMenuOpen;
+  st.logoMenuOpen = false; st.colourMenuOpen = false;
+  renderBrandKitSummaryCompact(scope);
+}
+function selectBrandKitMode(scope, mode){
+  const st = window.__brandKitPickerState[scope];
+  st.mode = mode; st.modeMenuOpen = false;
+  renderBrandKitSummaryCompact(scope);
+}
+/* One-way: this only puts the brand kit's own values back. It never writes to the kit. */
+function resetBrandKit(scope){
+  const st = window.__brandKitPickerState[scope];
+  st.logo = BRAND_KIT_DEFAULTS.logo;
+  st.colours = BRAND_KIT_DEFAULTS.colours.slice();
+  st.overlay = Object.assign({}, BRAND_KIT_DEFAULTS.overlay);   /* mode 는 유지 — 브랜드 값이 아니다 */
+  st.logoMenuOpen = st.colourMenuOpen = st.modeMenuOpen = false;
+  renderBrandKitSummaryCompact(scope);
 }
 
 function renderBrandKitSummaryCompact(scope){
@@ -3090,7 +3369,7 @@ function toggleBrandKitColour(scope, hex){
 document.addEventListener('click', () => {
   let changed = false;
   Object.values(window.__brandKitPickerState).forEach(st => {
-    if(st.logoMenuOpen || st.colourMenuOpen){ st.logoMenuOpen = false; st.colourMenuOpen = false; changed = true; }
+    if(st.logoMenuOpen || st.colourMenuOpen || st.modeMenuOpen || st.overlayMenuOpen){ st.logoMenuOpen = false; st.colourMenuOpen = false; st.modeMenuOpen = false; st.overlayMenuOpen = null; changed = true; }
   });
   if(changed) Object.keys(BRAND_KIT_SUMMARY_CONTAINER_IDS).forEach(renderBrandKitSummaryCompact);
 });
@@ -3102,21 +3381,23 @@ Object.keys(BRAND_KIT_SUMMARY_CONTAINER_IDS).forEach(renderBrandKitSummaryCompac
 // the Logos/Colours/Fonts section shell, each section's content replaced by a dashed
 // "+ Manage X" box (8479:139506 "empty · logos" et al) instead of one generic message.
 function buildBrandKitEmptyCardHtml(goToSetupFn){
-  const emptyBox = label => `
-      <button type="button" class="brand-kit-empty-box" onclick="${goToSetupFn}()">
+  /* 각 드롭존은 브랜드 킷의 **해당 탭**으로 바로 간다 — "Manage logos" 를 눌렀는데
+     Overview 가 열리면 한 번 더 찾아 들어가야 한다. 2026-09-11 */
+  const emptyBox = (label, tab) => `
+      <a class="brand-kit-empty-box" ${fmeBrandKitAttrs(tab)}>
         <img src="../../../../components/ai-social-media/icons/pagebar-plus.svg" alt="">
         <span>${label}</span>
-      </button>`;
-  const section = (title, label) => `
+      </a>`;
+  const section = (title, label, tab) => `
       <div class="brand-kit-section">
         <div class="brand-kit-section-header"><span class="brand-kit-section-title">${title}</span></div>
-        ${emptyBox(label)}
+        ${emptyBox(label, tab)}
       </div>`;
   return `
     <div class="brand-kit-card">
-      ${section('Logos', 'Manage logos')}
-      ${section('Colours', 'Manage colours')}
-      ${section('Fonts', 'Manage fonts')}
+      ${section('Logos', 'Manage logos', 'logos')}
+      ${section('Colours', 'Manage colours', 'colours')}
+      ${section('Fonts', 'Manage fonts', 'fonts')}
     </div>`;
 }
 [['brandKitEmpty', 'imgGoToBrandSetup'], ['globalBrandKitEmpty', 'carGoToBrandSetup'], ['reelBrandKitEmpty', 'reelGoToBrandSetup']].forEach(([id, fn]) => {
@@ -3160,7 +3441,7 @@ function toggleBrandKit(){
   updateVisualConceptPrompt();
 }
 function imgGoToBrandSetup(){
-  alert('This would open Brand Setup — outside this prototype\'s scope.');
+  fmeOpenBrandKit('overview');
 }
 
 // ---- Easy / Expert mode ----
@@ -3817,7 +4098,7 @@ function carApplyBrandMode(mode){
   updateGlobalBrandKitUI();
 }
 function carGoToBrandSetup(){
-  alert('This would open Brand Setup — outside this prototype\'s scope.');
+  fmeOpenBrandKit('overview');
 }
 
 // ---- Chat ----
@@ -4310,7 +4591,7 @@ function updateReelBrandKitUI(){
   empty.style.display = on && !hasBrand ? 'flex' : 'none';
 }
 function reelGoToBrandSetup(){
-  alert('This would open Brand Setup — outside this prototype\'s scope.');
+  fmeOpenBrandKit('overview');
 }
 
 // ---- Image generation (manual "Generate images" click — mirrors the video flow's "Generate thumbnails") ----
