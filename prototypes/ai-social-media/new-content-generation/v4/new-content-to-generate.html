@@ -6574,19 +6574,29 @@ function addMyLibrarySelection(){
 // card in whichever scope's own grid opened this -- so every existing side effect (selection
 // highlight, the style-variations panel swap for Elena, etc.) keeps working unchanged instead
 // of being reimplemented here.
+// posts/styles/type counts match the Figma reference exactly (9461:146062, "Modal /
+// Character — See all (detail)" — Elena 6·8, Milo 4·3, Maya 12·6, Priya 9·5, Esther 3·2,
+// Sofia 11·6, Monster 4·3), same figures the standalone Characters library prototype
+// (brand-setup-kit-character-library.html) uses for these same characters.
 const CHAR_SEE_ALL_DATA = [
-  { id:'elena',   name:'Elena',   img:'assets/characters/elena.png',   fav:true  },
-  { id:'milo',    name:'Milo',    img:'assets/characters/milo.jpeg',   fav:true  },
-  { id:'priya',   name:'Priya',   img:'assets/characters/priya.png',   fav:true  },
-  { id:'monster', name:'Monster', img:'assets/characters/monster.jpeg', fav:false },
-  { id:'maya',    name:'Maya',    img:'assets/characters/maya.png',    fav:true  },
-  { id:'sofia',   name:'Sofia',   img:'assets/characters/sofia.png',   fav:false },
-  { id:'esther',  name:'Esther',  img:'assets/characters/esther.jpeg', fav:true  }
+  { id:'elena',   name:'Elena',   img:'assets/characters/elena.png',    fav:true,  type:'Human',     posts:6,  styles:8 },
+  { id:'milo',    name:'Milo',    img:'assets/characters/milo.jpeg',    fav:true,  type:'Anime',     posts:4,  styles:3 },
+  { id:'priya',   name:'Priya',   img:'assets/characters/priya.png',    fav:true,  type:'Human',     posts:9,  styles:5 },
+  { id:'monster', name:'Monster', img:'assets/characters/monster.jpeg', fav:false, type:'Character', posts:4,  styles:3 },
+  { id:'maya',    name:'Maya',    img:'assets/characters/maya.png',     fav:true,  type:'Human',     posts:12, styles:6 },
+  { id:'sofia',   name:'Sofia',   img:'assets/characters/sofia.png',    fav:false, type:'Human',     posts:11, styles:6 },
+  { id:'esther',  name:'Esther',  img:'assets/characters/esther.jpeg',  fav:true,  type:'Human',     posts:3,  styles:2 }
 ];
+const CHAR_SEE_ALL_BRAND = 'Formee Express';
 const CHAR_SEE_ALL_GRID_IDS = { reel:'charGrid', img:'charGridImage', car:'charGridCarousel' };
 const CHAR_CHECK_ICON = '<span class="char-check"><img src="data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBvdmVyZmxvdz0idmlzaWJsZSIgc3R5bGU9ImRpc3BsYXk6IGJsb2NrOyIgd2lkdGg9IjEyIiBoZWlnaHQ9IjEyIiB2aWV3Qm94PSIwIDAgMTIgMTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxnIGlkPSJpY29uIC8gd2ggLyBjaGVjayI+CjxwYXRoIGlkPSJWZWN0b3IiIGQ9Ik0xMCAzTDQuNSA4LjVMMiA2IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjEuNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjwvZz4KPC9zdmc+Cg==" alt=""></span>';
 window.__charSeeAllScope = 'reel';
-window.__charSeeAllTab = 'fav';
+window.__charSeeAllFavOnly = false;
+// Figma 9461:146062 ("Modal / Character — See all (detail)") — a single "Favorites" toggle
+// (not a Favorites/All tab pair) + Age/Gender filter selects (visual-only, same as every
+// other Age/Gender select in this file), a picker grid of the larger Selector / Character
+// Card, and a Cancel/Save footer -- picking a card just highlights it (pending selection)
+// until Save actually applies it, instead of the old apply-and-close-on-click behaviour.
 function buildCharSeeAllModalHtml(){
   return `
     <div class="modal-overlay" id="charSeeAllModalOverlay" style="display:none;" onclick="if(event.target===this) closeCharacterSeeAllModal();">
@@ -6597,10 +6607,10 @@ function buildCharSeeAllModalHtml(){
         </div>
         <div class="mylib-filter-bar">
           <div class="mylib-filter-left">
-            <div class="controls-segmented-control">
-              <button type="button" class="controls-segment-chip" id="charSeeAllTabFav" onclick="switchCharSeeAllTab('fav')">Favorites</button>
-              <button type="button" class="controls-segment-chip" id="charSeeAllTabAll" onclick="switchCharSeeAllTab('all')">All</button>
-            </div>
+            <button type="button" class="filter-toggle" id="charSeeAllFavToggle" onclick="toggleCharSeeAllFav()">
+              <img class="filter-toggle__icon" src="../../../../components/ai-social-media/icons/shape-star.svg" alt="">
+              <span class="filter-toggle__label">Favorites</span>
+            </button>
             <div class="mylib-filter-row">
               <div class="filter-select"><span class="filter-select__label">Age</span><img class="filter-select__caret" src="../../../../components/ai-social-media/icons/caret-down-filled.svg" alt=""></div>
               <div class="filter-select"><span class="filter-select__label">Gender</span><img class="filter-select__caret" src="../../../../components/ai-social-media/icons/caret-down-filled.svg" alt=""></div>
@@ -6608,7 +6618,11 @@ function buildCharSeeAllModalHtml(){
             </div>
           </div>
         </div>
-        <div class="mylib-content" id="charSeeAllGrid"></div>
+        <div class="mylib-content char-select-grid" id="charSeeAllGrid"></div>
+        <div class="mylib-footer">
+          <button type="button" class="actions-btn actions-btn--secondary" onclick="closeCharacterSeeAllModal()">Cancel</button>
+          <button type="button" class="actions-btn actions-btn--primary" onclick="confirmCharSeeAllSelection()">Save</button>
+        </div>
       </div>
     </div>`;
 }
@@ -6620,10 +6634,10 @@ function mountCharSeeAllModal(){
 }
 function openCharacterSeeAllModal(scope){
   window.__charSeeAllScope = scope;
-  window.__charSeeAllTab = 'fav';
+  window.__charSeeAllFavOnly = false;
   mountCharSeeAllModal();
-  document.getElementById('charSeeAllTabFav').classList.add('controls-segment-chip--selected');
-  document.getElementById('charSeeAllTabAll').classList.remove('controls-segment-chip--selected');
+  document.getElementById('charSeeAllFavToggle').classList.remove('filter-toggle--selected');
+  window.__charSeeAllPendingId = charSeeAllActiveId();
   renderCharSeeAllGrid();
   document.getElementById('charSeeAllModalOverlay').style.display = 'flex';
 }
@@ -6631,10 +6645,9 @@ function closeCharacterSeeAllModal(){
   const el = document.getElementById('charSeeAllModalOverlay');
   if(el) el.style.display = 'none';
 }
-function switchCharSeeAllTab(tab){
-  window.__charSeeAllTab = tab;
-  document.getElementById('charSeeAllTabFav').classList.toggle('controls-segment-chip--selected', tab === 'fav');
-  document.getElementById('charSeeAllTabAll').classList.toggle('controls-segment-chip--selected', tab === 'all');
+function toggleCharSeeAllFav(){
+  window.__charSeeAllFavOnly = !window.__charSeeAllFavOnly;
+  document.getElementById('charSeeAllFavToggle').classList.toggle('filter-toggle--selected', window.__charSeeAllFavOnly);
   renderCharSeeAllGrid();
 }
 // The main grid's own selection is the source of truth (a plain onclick-toggled .selected
@@ -6647,25 +6660,52 @@ function charSeeAllActiveId(){
   return m ? m[1] : null;
 }
 function renderCharSeeAllGrid(){
-  const list = window.__charSeeAllTab === 'fav' ? CHAR_SEE_ALL_DATA.filter(c => c.fav) : CHAR_SEE_ALL_DATA;
-  const activeId = charSeeAllActiveId();
+  const list = window.__charSeeAllFavOnly ? CHAR_SEE_ALL_DATA.filter(c => c.fav) : CHAR_SEE_ALL_DATA;
   document.getElementById('charSeeAllCount').textContent = `${list.length} character${list.length === 1 ? '' : 's'}`;
+  const pendingId = window.__charSeeAllPendingId;
   document.getElementById('charSeeAllGrid').innerHTML =
-    `<div class="char-card new" onclick="openCreateCharacterModal(window.__charSeeAllScope)"><div class="thumb">+</div><div class="name">Create New</div></div>` +
+    `<div class="char-select-card new" role="button" tabindex="0" onclick="openCreateCharacterModal(window.__charSeeAllScope)">
+      <div class="thumb"><img src="../../../../components/ai-social-media/icons/pagebar-plus.svg" alt=""><span>New character</span></div>
+    </div>` +
     list.map(c => `
-    <div class="char-card${c.id === activeId ? ' selected' : ''}" onclick="selectCharacterFromSeeAll('${c.id}')">
-      <div class="thumb"><img src="${c.img}" alt=""></div>
-      <div class="name">${c.name}</div>
-      ${CHAR_CHECK_ICON}
+    <div class="char-select-card${c.id === pendingId ? ' selected' : ''}" role="button" tabindex="0" onclick="pickCharSeeAllCard('${c.id}')">
+      <div class="thumb">
+        <img src="${c.img}" alt="">
+        <div class="thumb-actions">
+          <button type="button" class="thumb-action-btn fav${c.fav ? ' active' : ''}" onclick="event.stopPropagation(); toggleCharSeeAllCardFav('${c.id}')" aria-label="Favorite ${c.name}"><img src="../../../../components/ai-social-media/icons/shape-star.svg" alt=""></button>
+          <button type="button" class="thumb-action-btn" onclick="event.stopPropagation();" aria-label="More actions for ${c.name}"><img src="../../../../components/ai-social-media/icons/ui-ellipsis.svg" alt=""></button>
+        </div>
+        <div class="posts-badge"><p>${c.posts} posts · ${c.styles} ${c.styles === 1 ? 'style' : 'styles'}</p></div>
+      </div>
+      <div class="meta">
+        <p class="name">${c.name}</p>
+        <div class="type-row"><span>${c.type}</span><span>·</span><span>${CHAR_SEE_ALL_BRAND}</span></div>
+      </div>
+      <span class="feedback-status-chip feedback-status-chip--green">Ready</span>
     </div>`).join('');
+}
+function toggleCharSeeAllCardFav(charId){
+  const c = CHAR_SEE_ALL_DATA.find(x => x.id === charId);
+  if(c) c.fav = !c.fav;
+  renderCharSeeAllGrid();
+}
+// Just marks the pending pick (visual highlight) -- the actual selection is only applied
+// to the real Brief/settings-bar grid once Save is pressed, matching Figma's Cancel/Save
+// footer instead of the old immediate apply-and-close-on-click.
+function pickCharSeeAllCard(charId){
+  window.__charSeeAllPendingId = charId;
+  renderCharSeeAllGrid();
 }
 // Re-dispatches the click on the real card in the scope's own grid instead of duplicating that
 // card's selection logic here -- picks up whatever else that onclick already does (e.g.
 // reelSelectChar() swapping the style-variations panel for Elena) for free.
-function selectCharacterFromSeeAll(charId){
-  const grid = document.getElementById(CHAR_SEE_ALL_GRID_IDS[window.__charSeeAllScope]);
-  const card = grid && [...grid.querySelectorAll('.char-card')].find(c => (c.getAttribute('onclick') || '').includes(`'${charId}'`));
-  if(card) card.click();
+function confirmCharSeeAllSelection(){
+  const charId = window.__charSeeAllPendingId;
+  if(charId){
+    const grid = document.getElementById(CHAR_SEE_ALL_GRID_IDS[window.__charSeeAllScope]);
+    const card = grid && [...grid.querySelectorAll('.char-card')].find(c => (c.getAttribute('onclick') || '').includes(`'${charId}'`));
+    if(card) card.click();
+  }
   closeCharacterSeeAllModal();
 }
 
