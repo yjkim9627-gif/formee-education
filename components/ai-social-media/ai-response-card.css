@@ -77,12 +77,19 @@
 
 /* Icon-only result feedback, attached to a finished-result card (e.g. "Your video is ready")
    instead of a persistent right-panel section — see ccfRate()/ccfSendNote() in the v4
-   prototype. 👍 records immediately; 👎 swaps this row for a one-line optional note + Send. */
-.chat-card-feedback{display:flex; align-items:center; gap:8px; width:100%; padding-top:2px;}
-.ccf-label{flex:1; min-width:0; font-size:12px; font-weight:600; color:var(--color-neutral-500);}
-.ccf-icon-btn{flex-shrink:0; width:28px; height:28px; border:1px solid var(--color-neutral-400); background:var(--color-neutral-0); border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; cursor:pointer;}
+   prototype. 👍 records immediately; 👎 swaps this row for a one-line optional note + Send.
+   Matched to Figma node 7164:14 ("Title Only + 2 Buttons" state, the "How's this result?" row
+   at the bottom): label 14px/22px regular neutral-700 (was 12px/600/neutral-500), icon buttons
+   36px/radius-lg with a 16px icon (was 28px/radius-md/14px) — real thumbs-up/thumbs-down icon
+   components (icons/thumbs-up.svg, icons/thumbs-down.svg) instead of the generic check/alert
+   glyphs the row borrowed before real ones existed. Figma draws a separate flex-1 spacer
+   between the label and the button group; .ccf-label{flex:1} gets the identical left-label/
+   right-buttons result without the extra element. */
+.chat-card-feedback{display:flex; align-items:center; gap:12px; width:100%; padding-top:2px;}
+.ccf-label{flex:1; min-width:0; font-size:14px; font-weight:400; line-height:22px; color:var(--color-neutral-700);}
+.ccf-icon-btn{flex-shrink:0; width:36px; height:36px; border:1px solid var(--color-neutral-400); background:var(--color-neutral-0); border-radius:var(--radius-lg); display:flex; align-items:center; justify-content:center; cursor:pointer;}
 .ccf-icon-btn:hover{background:var(--color-neutral-75);}
-.ccf-icon-btn img{width:14px; height:14px;}
+.ccf-icon-btn img{width:16px; height:16px;}
 .ccf-thanks{display:flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:var(--color-neutral-500);}
 .ccf-thanks img{width:14px; height:14px;}
 .ccf-note{width:100%; box-sizing:border-box; border:1px solid var(--color-neutral-300); border-radius:var(--radius-md); padding:8px 10px; font-size:12.5px; font-family:var(--font-family-text); color:var(--color-neutral-900); resize:vertical; min-height:36px;}

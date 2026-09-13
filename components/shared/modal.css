@@ -6,6 +6,10 @@
 .modal-overlay {
   position: absolute;
   inset: 0;
+  z-index: 100; /* every modal built on this shell shares one stacking floor, high enough to
+    clear the highest explicit z-index anywhere else in a product screen (e.g. a settings
+    bar's chip row) without a z-index of its own — otherwise a chip like that renders in
+    front of the scrim instead of dimmed behind it, and stays clickable through the modal. */
   display: flex;
   align-items: center;
   justify-content: center;

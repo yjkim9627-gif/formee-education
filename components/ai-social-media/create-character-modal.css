@@ -1,0 +1,307 @@
+/* Create Character — modal flow (Upload images tab + Generate previews → results)
+   Ported from the "brand-setup-kit-character-library.html" prototype (a separate
+   session's already-built Characters-library flow) per Figma section 2258:43028
+   ("02_Create - upload": empty / uploading / uploaded states) -- reused here as-is
+   for the Reel/Short flow's "+ Create New" character card, rather than redrawing it.
+   Class names kept identical to that source file (m-*, ai-*, res-*, ref-*, dropzone,
+   ptile, ...) so future updates there can be diffed straight across.
+
+   Token names adjusted to this project's convention (--neutral-900 -> --color-neutral-900,
+   etc. -- the two projects alias the same values under different variable names).
+   .btn-sec/.btn-dark from the source were dropped entirely: this app's own real
+   .btn.btn-secondary/.btn.btn-dark (components/shared/button.css) are used in the
+   ported markup instead, so the modal's buttons match every other button in the app. */
+
+/* ============================ modal · Create character ==================== */
+/* Scoped to #ccModal, not the bare .modal class -- this file's markup also carries the
+   real shared .modal class (components/shared/modal.css) alongside its own id="ccModal"
+   for other reasons, and an unscoped `.modal{position:absolute; width:1000px; ...}` here
+   silently clobbered EVERY modal on the page sharing that class (same specificity, this
+   file loads later) -- including the image/reel lightboxes, which rendered with a real
+   box but zero footprint in their own flex layouts as a result. */
+.modal-layer{position:absolute;inset:0;z-index:100;}
+.scrim{position:absolute;inset:0;background:rgba(0,0,0,0.38);}
+#ccModal.step-results{top:170px;}
+#ccModal{position:absolute;left:460px;top:208px;width:1000px;height:746px;   /* centred in the 1920×1162 frame, as in the source frames */
+  background:var(--color-neutral-0);border-radius:16px;overflow:hidden;
+  box-shadow:0px 20px 48px 0px rgba(0,0,0,0.18);display:flex;flex-direction:column;}
+
+.m-header{height:72px;flex:none;display:flex;align-items:flex-start;justify-content:space-between;
+  padding:28px 28px 20px 32px;}
+.m-title{font-weight:600;font-size:16px;line-height:24px;color:var(--color-neutral-900);white-space:nowrap;}
+.m-close{width:24px;height:24px;flex:none;display:block;border-radius:4px;}
+.m-close:hover{opacity:.6;}
+
+.m-body{flex:1 0 0;min-height:1px;display:flex;align-items:flex-start;width:100%;}
+
+/* ---- left form column ---- */
+/* drawn as an inset shadow, not a border, so the 1px does not eat into the
+   content width — Figma strokes are inside-drawn and do not affect layout */
+.m-form{border-top:1px solid var(--color-neutral-200);box-shadow:inset -1px 0 0 0 var(--color-neutral-200);height:100%;
+  display:flex;flex-direction:column;align-items:flex-start;overflow:hidden;flex:none;}
+.m-form.gen{width:560px;}
+.m-form.upl{width:440px;gap:16px;padding:0 32px;}
+
+.m-tabs{border-bottom:1px solid var(--color-neutral-200);display:flex;gap:16px;align-items:flex-start;width:100%;flex:none;}
+.m-form.gen .m-tabs{padding:20px 32px 0;}
+.m-form.upl .m-tabs{padding-top:8px;}
+.m-tab{display:flex;gap:6px;align-items:center;padding-bottom:12px;flex:none;
+  border-bottom:2px solid transparent;margin-bottom:-1px;}
+.m-tab span{font-weight:600;font-size:14px;line-height:22px;color:var(--color-neutral-500);white-space:nowrap;}
+.m-tab .tab-upload{width:111px;}   /* fixed label width, as in the Figma tab component */
+.m-tab.on{border-bottom-color:var(--color-neutral-900);}
+.m-tab.on span{color:var(--color-neutral-900);}
+.m-tab .tab-gen{width:113px;}   /* the AI tab lost its sparkle icon and its indigo tint */
+
+.m-scroll{flex:1 0 0;min-height:1px;display:flex;flex-direction:column;gap:10px;align-items:flex-start;
+  padding:12px 32px 8px;width:100%;overflow-y:auto;overflow-x:hidden;
+  scrollbar-width:thin;scrollbar-color:var(--color-neutral-400) transparent;}
+.m-scroll::-webkit-scrollbar{width:6px;}
+.m-scroll::-webkit-scrollbar-thumb{background:var(--color-neutral-400);border-radius:3px;}
+.m-scroll::-webkit-scrollbar-track{background:transparent;}
+
+.m-field{display:flex;flex-direction:column;gap:8px;align-items:flex-start;width:100%;flex:none;}
+.m-lbl{font-weight:600;font-size:14px;line-height:22px;color:var(--color-neutral-800);white-space:nowrap;}
+/* the footer count label is the one label still drawn as a grey all-caps eyebrow */
+.m-images .m-lbl{font-size:12px;line-height:18px;letter-spacing:0.6px;text-transform:uppercase;
+  color:var(--color-neutral-500);}
+.m-input{background:var(--color-neutral-0);border:1px solid var(--color-neutral-400);border-radius:var(--radius-md);
+  padding:6px 11px;width:100%;display:flex;align-items:center;}   /* stroke inside-drawn → Figma height 36 */
+.m-input:focus-within{border-color:var(--color-neutral-500);}
+.m-input input{font-weight:400;font-size:14px;line-height:22px;color:var(--color-neutral-900);width:100%;}
+.m-input input::placeholder{color:var(--color-neutral-500);opacity:1;}
+.m-row2{display:flex;gap:16px;align-items:flex-start;width:100%;flex:none;}
+.m-col{flex:1 0 0;min-width:1px;display:flex;flex-direction:column;gap:8px;align-items:flex-start;}
+.m-select{background:var(--color-neutral-0);border:1px solid var(--color-neutral-400);border-radius:var(--radius-md);
+  height:35px;padding:0 11px;width:100%;display:flex;align-items:center;position:relative;}
+/* the New Style scene selects are 40 tall (6796:106176), not the 35 the
+   Create character form uses */
+.d-main .m-select{height:40px;}
+.m-select:focus-within{border-color:var(--color-neutral-500);}
+.m-select select{flex:1 0 0;min-width:1px;font-weight:400;font-size:14px;line-height:22px;
+  color:var(--color-neutral-500);cursor:pointer;}
+.m-select select.filled{color:var(--color-neutral-900);}
+.m-select .ic{pointer-events:none;}
+.m-divider{height:1px;width:100%;background:var(--color-neutral-200);flex:none;}
+.m-adv{width:100%;flex:none;display:flex;flex-direction:column;gap:12px;align-items:flex-start;padding-top:2px;}
+.m-adv-toggle{display:flex;gap:6px;align-items:center;padding:4px 0;}
+.m-adv-toggle:hover .m-lbl{color:var(--color-neutral-900);}
+.m-adv-toggle .ic{transition:transform .12s ease;}
+.m-adv.open .m-adv-toggle .ic{transform:rotate(180deg);}
+
+.m-group{display:flex;flex-direction:column;gap:16px;align-items:flex-start;width:100%;flex:none;}
+.m-identity{display:flex;gap:40px;align-items:flex-start;width:100%;flex:none;}
+.m-sub{display:flex;flex-direction:column;gap:8px;align-items:flex-start;flex:none;}
+.m-sub > .m-lbl{padding:0 2px;}
+.m-chips{display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap;}
+.m-chip{height:28px;padding:0 12px;border-radius:9999px;background:var(--color-neutral-0);
+  border:1px solid var(--color-neutral-300);display:flex;gap:4px;align-items:center;flex:none;
+  font-weight:500;font-size:12px;line-height:18px;color:var(--color-neutral-700);white-space:nowrap;}
+.m-chip:hover{background:var(--color-neutral-50);}
+.m-chip.on{background:var(--color-neutral-150);border-color:var(--color-neutral-500);font-weight:600;color:var(--color-neutral-900);}
+
+/* ---- right column: AI prompt (Generate tab) ---- */
+.m-right{flex:1 0 0;min-width:1px;height:100%;display:flex;flex-direction:column;gap:8px;
+  align-items:flex-start;padding:0 20px 20px;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;}
+.m-right::-webkit-scrollbar{width:0;display:none;}
+.ai-card{width:400px;background:var(--color-neutral-0);border-radius:var(--radius-xl);padding:12px 16px;
+  display:flex;flex-direction:column;gap:8px;align-items:flex-start;flex:none;}
+/* AI / Generation Prompt (6796:106172) — label 22 / box 63 / refine label 20 / input 56 */
+.ai-card.flush .ai-label:first-child{margin-bottom:1px;}
+.ai-card.flush .ai-box:not(.refine){min-height:64px;}
+.ai-card.flush .ai-label.tight{margin-top:0;}
+.ai-card.flush > .ai-box.refine{margin-top:1px;}
+.ai-label{display:flex;gap:6px;align-items:center;width:100%;flex:none;}
+.ai-label.tight{gap:4px;}
+.ai-cap{font-weight:600;font-size:12px;line-height:18px;letter-spacing:0.6px;text-transform:uppercase;
+  color:var(--color-neutral-500);white-space:nowrap;}
+.ai-sub{font-weight:400;font-size:14px;line-height:22px;color:var(--color-neutral-500);}
+/* "Generation prompt" is sentence-case navy; "REFERENCE IMAGES" stays a grey eyebrow */
+.ai-cap.gen{font-size:14px;line-height:22px;letter-spacing:0;text-transform:none;color:var(--color-neutral-800);}
+.ai-grad{font-weight:600;font-size:13px;line-height:20px;white-space:nowrap;
+  background:linear-gradient(to right,#4f6de6,#ed7797);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.ai-box{background:var(--color-neutral-0);border:1.2px solid var(--color-neutral-400);border-radius:var(--radius-lg);
+  padding:10px 14px;width:100%;flex:none;font-weight:400;font-size:14px;line-height:22px;
+  color:var(--color-neutral-900);white-space:pre-wrap;}
+/* the stroke is a gradient in Figma; get_design_context flattens it to #4f6de6 */
+.ai-box.result{border:1.5px solid transparent;display:flex;gap:8px;align-items:center;padding:10px 12px 10px 14px;
+  background:linear-gradient(var(--color-neutral-0),var(--color-neutral-0)) padding-box,
+             linear-gradient(to top right,#ed7797,#4f6de6) border-box;}
+.ai-box.result p{flex:1 0 0;min-width:1px;}
+.ai-box.result p[contenteditable]{outline:none;cursor:text;border-radius:4px;}
+.ai-box.result p[contenteditable]:focus{box-shadow:0 0 0 2px var(--color-brand-primary-light);}
+.ai-box.refine{border:1px solid var(--color-neutral-300);display:flex;gap:8px;align-items:center;
+  justify-content:space-between;min-height:56px;padding:9px 12px 9px 14px;}
+.ai-box.refine input{flex:1 0 0;min-width:1px;font-weight:400;font-size:14px;line-height:22px;color:var(--color-neutral-900);}
+.ai-box.refine input::placeholder{color:var(--color-neutral-400);opacity:1;}
+.user-turn{display:flex;justify-content:flex-end;width:100%;flex:none;}
+.user-bubble{background:var(--color-brand-primary-light);padding:12px 14px;
+  border-radius:16px 16px 4px 16px;font-weight:400;font-size:14px;line-height:22px;color:var(--color-neutral-900);}
+.icon36{width:36px;height:36px;border:1px solid var(--color-neutral-400);border-radius:var(--radius-lg);
+  display:flex;align-items:center;justify-content:center;flex:none;background:var(--color-neutral-0);}
+.icon36:hover{background:var(--color-neutral-50);}
+.u-btns{display:flex;gap:8px;justify-content:flex-end;padding:2px 0;width:100%;flex:none;}
+
+/* ---- right column: reference images (Upload tab) ---- */
+.m-preview-panel{width:560px;height:100%;flex:none;display:flex;flex-direction:column;gap:16px;
+  align-items:flex-start;padding:0 32px;overflow:hidden;}
+/* Upload / Upload Dropzone — 496x498 empty, 496x160 once files are in */
+.dropzone{height:498px;width:100%;flex:none;background:var(--color-neutral-50);
+  border:1px dashed var(--color-neutral-300);border-radius:var(--radius-xl);
+  display:flex;flex-direction:column;gap:0;align-items:center;justify-content:center;padding:0;}
+.dropzone.over{border-color:#4f6de6;background:#f2f6ff;}
+.upload-btn{background:none;border:0;padding:0;display:flex;gap:8px;align-items:center;flex:none;}
+.upload-btn:hover span{color:var(--color-neutral-900);}
+.upload-btn span{font-weight:600;font-size:16px;line-height:24px;color:var(--color-neutral-800);white-space:nowrap;}
+.drop-hint{font-weight:400;font-size:12px;line-height:18px;color:var(--color-neutral-500);text-align:center;width:100%;}
+.ref-note{font-weight:400;font-size:13px;line-height:20px;color:var(--color-neutral-500);width:100%;white-space:pre-wrap;}
+.ref-strip{display:flex;gap:3px;align-items:center;width:100%;flex:none;}
+.ref-strip > div{flex:1 0 0;min-width:1px;aspect-ratio:1161/1355;border-radius:2px;overflow:hidden;}
+.ref-strip img{width:100%;height:100%;object-fit:cover;display:block;}
+
+/* ---- reference images · counter · upload progress · thumbnail grid ---- */
+.ai-label.ref-head{display:flex;align-items:center;justify-content:space-between;width:100%;flex:none;}
+.ref-count{font-weight:400;font-size:13px;line-height:20px;color:var(--color-neutral-500);white-space:nowrap;}
+.dropzone.has-files{height:160px;}
+.dropzone.is-off{opacity:.55;pointer-events:none;}
+.drop-err{font-weight:400;font-size:13px;line-height:20px;color:#d92d20;width:100%;flex:none;}
+.up-prog{width:100%;height:38px;flex:none;display:flex;flex-direction:column;gap:6px;justify-content:center;}
+.up-track{width:100%;height:4px;border-radius:9999px;background:var(--color-neutral-200);overflow:hidden;}
+.up-track i{display:block;height:100%;border-radius:9999px;background:#1d80ff;transition:width .2s linear;}
+.up-row{display:flex;align-items:center;justify-content:space-between;width:100%;}
+.up-pct{font-weight:600;font-size:13px;line-height:20px;color:#1d80ff;}
+.up-of{font-weight:400;font-size:13px;line-height:20px;color:var(--color-neutral-500);}
+.ref-grid{display:grid;grid-template-columns:repeat(4,118px);gap:8px;width:100%;flex:none;
+  overflow-y:auto;align-content:start;justify-content:start;}
+.ref-grid::-webkit-scrollbar{width:6px;}
+.ref-grid::-webkit-scrollbar-thumb{background:var(--color-neutral-400);border-radius:3px;}
+.ref-tile{position:relative;width:118px;height:140px;border-radius:8px;overflow:hidden;
+  background:var(--color-neutral-100);}
+.ref-tile img{width:100%;height:100%;object-fit:cover;display:block;}
+.ref-tile.pending{display:flex;align-items:center;justify-content:center;background:var(--color-neutral-50);}
+.ref-tile.pending img{width:28px;height:28px;object-fit:contain;animation:refspin 1s linear infinite;}
+@keyframes refspin{to{transform:rotate(360deg)}}
+.ref-x{position:absolute;top:6px;right:6px;width:20px;height:20px;border-radius:9999px;
+  background:rgba(15,23,41,.82);display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:12px;line-height:1;font-weight:600;}
+.ref-x:hover{background:rgba(15,23,41,1);}
+
+/* ---- footer ---- */
+.m-footer{height:74px;flex:none;border-top:1px solid var(--color-neutral-200);background:var(--color-neutral-0);
+  display:flex;align-items:center;justify-content:space-between;padding:0 28px 0 32px;width:100%;}
+.m-images{display:flex;gap:8px;align-items:center;flex:none;}
+.imgcount{width:36px;height:36px;border:1px solid var(--color-neutral-400);border-radius:var(--radius-lg);
+  background:var(--color-neutral-0);display:flex;align-items:center;justify-content:center;flex:none;
+  font-weight:600;font-size:13px;line-height:20px;color:var(--color-neutral-900);}
+.imgcount:hover{background:var(--color-neutral-50);}
+.imgcount.on{background:var(--color-neutral-900);border-color:var(--color-neutral-900);color:#fff;}
+.m-actions{display:flex;gap:12px;align-items:center;flex:none;}
+
+
+/* ---- step 2 · hero preview + rail ---- */
+.res-stage{display:flex;gap:18px;align-items:flex-start;justify-content:center;width:100%;flex:1 0 0;min-height:1px;}
+.res-stage.single{justify-content:center;}
+.res-hero{width:336px;height:470px;flex:none;border-radius:var(--radius-xl);overflow:hidden;
+  background:var(--color-neutral-100);}
+.res-hero img{width:100%;height:100%;object-fit:cover;display:block;}
+.res-hero.skel{background:var(--color-neutral-50);display:flex;align-items:center;justify-content:center;}
+.res-hero.skel img{width:44px;height:44px;object-fit:contain;animation:refspin 1s linear infinite;}
+.res-rail{display:flex;flex-direction:column;gap:15px;flex:none;}
+.res-thumb{width:85px;height:106px;border-radius:8px;overflow:hidden;background:var(--color-neutral-100);
+  flex:none;display:block;position:relative;}
+.res-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.res-thumb.sel{outline:2px solid #4f6de6;outline-offset:2px;}
+.res-thumb.skel{background:var(--color-neutral-50);display:flex;align-items:center;justify-content:center;}
+.res-thumb.skel img{width:22px;height:22px;object-fit:contain;animation:refspin 1s linear infinite;}
+.res-footer{height:68px;justify-content:flex-end;padding-right:28px;}
+.res-footer .m-actions{gap:12px;}
+.btn-dark .gen-spin{width:16px;height:16px;animation:refspin 1s linear infinite;}
+
+/* ---- step 2: choose your favorite ---- */
+/* the result step carries its own footer, so the body flexes instead of
+   taking the whole 674px the form body used to occupy */
+.m-results{flex:1 0 0;min-height:1px;width:100%;display:flex;flex-direction:column;gap:20px;
+  align-items:center;justify-content:flex-start;padding:20px 40px;overflow:hidden;}
+.res-head{display:flex;flex-direction:column;gap:6px;align-items:center;text-align:center;flex:none;
+  padding-top:13px;}
+.res-head h2{font-weight:600;font-size:22px;line-height:24px;color:var(--color-neutral-900);white-space:nowrap;}
+.res-head p{font-weight:400;font-size:13px;line-height:20px;color:var(--color-neutral-400);white-space:nowrap;}
+.pgrid{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;align-items:flex-start;width:348px;flex:none;}
+.pgrid.single{width:336px;}
+.ptile{width:168px;height:235px;border-radius:var(--radius-xl);background:var(--color-neutral-300);
+  overflow:hidden;position:relative;flex:none;border:2px solid transparent;padding:0;}
+.pgrid.single .ptile{width:336px;height:470px;}
+.ptile img{width:100%;height:100%;object-fit:cover;display:block;}
+.ptile.sel{border-color:#1e5fd9;}
+.ptile:hover:not(.sel){border-color:var(--color-neutral-450);}
+.res-actions{display:flex;gap:12px;align-items:center;flex:none;}
+
+/* AI / Panel Card (1519:15117) — the loading row of AI / Generation Prompt */
+.ai-panel-card{background:var(--color-neutral-50);border:1px solid var(--color-neutral-400);
+  border-radius:var(--radius-xl);padding:14px 16px;display:flex;gap:12px;align-items:center;
+  width:100%;flex:none;}
+.gen-spin{width:20px;height:20px;flex:none;display:block;animation:gen-rot .8s linear infinite;}
+.gen-text{flex:1 0 0;min-width:1px;display:flex;flex-direction:column;gap:2px;align-items:flex-start;overflow:hidden;}
+.gen-t{font-weight:600;font-size:14px;line-height:22px;color:var(--color-neutral-900);width:100%;}
+.gen-s{font-weight:400;font-size:11px;line-height:16px;color:var(--color-neutral-500);width:100%;}
+@keyframes gen-rot{to{transform:rotate(360deg)}}
+
+/* AI / Refine Chip (3443:31745) — tap to drop a suggestion into the field */
+.refine-chips{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start;width:100%;flex:none;}
+.refine-chip{height:28px;padding:0 12px;border-radius:9999px;background:var(--color-neutral-0);
+  border:1px solid var(--color-neutral-300);display:flex;align-items:center;flex:none;
+  font-weight:500;font-size:12px;line-height:18px;color:var(--color-neutral-700);white-space:nowrap;}
+.refine-chip:hover{background:var(--color-neutral-50);border-color:var(--color-neutral-400);}
+.refine-chip:active{background:var(--color-neutral-150);}
+.refine-chip:disabled{opacity:.45;cursor:default;}
+
+/* AI / Panel Card, applied variant (1846:33420) — confirmation + Undo */
+.ai-applied{background:var(--color-neutral-50);border:1px solid var(--color-neutral-400);
+  border-radius:var(--radius-xl);padding:14px 16px;display:flex;flex-direction:column;gap:6px;
+  align-items:flex-start;width:100%;flex:none;}
+.ai-applied-row{display:flex;align-items:center;justify-content:space-between;width:100%;gap:8px;}
+.ai-applied-row .lhs{display:flex;gap:8px;align-items:center;flex:1 0 0;min-width:1px;overflow:hidden;}
+.ai-applied-row .lhs p{flex:1 0 0;min-width:1px;font-weight:600;font-size:14px;line-height:22px;
+  color:var(--color-neutral-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ai-applied-undo{font-weight:600;font-size:14px;line-height:22px;color:var(--color-neutral-900);flex:none;}
+.ai-applied-undo:hover{text-decoration:underline;}
+.ai-applied-detail{font-weight:400;font-size:11px;line-height:16px;color:var(--color-neutral-500);width:100%;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+/* State=kept — the sub-label is replaced by a Feedback / Badge */
+.ai-head{display:flex;gap:8px;align-items:center;width:100%;flex:none;overflow:hidden;}
+/* ── AI 스레드 · 패널 5상태 (Figma 5646:85181) ─────────────────────────────
+   .panel 이 붙은 인스턴스에만 적용된다 — 모달·New Style 은 예전 모양 그대로. */
+.ai-headbtns{margin-left:auto;display:flex;gap:8px;flex:none;}
+.ai-hb{width:24px;height:24px;display:flex;align-items:center;justify-content:center;flex:none;
+  border:0;background:none;cursor:pointer;border-radius:6px;color:var(--color-neutral-500);}
+.ai-hb:hover:not([disabled]){background:var(--color-neutral-100);}
+.ai-hb[disabled]{opacity:.3;cursor:default;}
+/* DS 아이콘 세트에 redo 가 따로 없다 — undo 를 좌우 반전해서 쓴다(원본도 같은 구성) */
+.ai-hb.redo .ic{transform:scaleX(-1);}
+/* Refine 입력은 한 줄이 아니라 78px 박스, 전송은 안쪽 우하단 원형 버튼이다 */
+.ai-box.refine.tall{display:block;position:relative;min-height:78px;padding:10px 52px 10px 14px;}
+.ai-box.refine.tall input{width:100%;display:block;}
+.ai-box.refine:not(.tall) .ai-send{position:static;}
+.ai-send{position:absolute;right:10px;bottom:10px;width:36px;height:36px;flex:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;border-radius:var(--radius-lg);
+  border:1px solid var(--color-neutral-300);background:var(--color-neutral-0);color:var(--color-neutral-600);}
+.ai-send.on{background:#4f6de6;border-color:#4f6de6;color:#fff;}
+.ai-send:hover:not([disabled]){filter:brightness(.96);}
+.ai-send-ic{display:flex;width:18px;height:18px;transform:rotate(-90deg);}
+.ai-send-ic svg{width:100%;height:100%;}
+/* 사용자 말풍선은 왼쪽 16px 만 비우고 나머지 폭을 다 쓴다 */
+.ai-card.panel .user-turn{padding-left:16px;}
+.ai-card.panel .user-bubble{flex:1 0 0;min-width:1px;}
+
+.ai-badge{background:var(--color-badge-green-bg);border-radius:var(--radius-lg);padding:2px 8px;
+  display:flex;align-items:center;justify-content:center;flex:none;
+  font-weight:600;font-size:11px;line-height:14px;color:var(--color-badge-green-text);white-space:nowrap;}
+
+.ptile.skel{background:var(--color-neutral-300);position:relative;overflow:hidden;cursor:default;}
+.ptile.skel::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(100deg,rgba(255,255,255,0) 20%,rgba(255,255,255,.55) 50%,rgba(255,255,255,0) 80%);
+  transform:translateX(-100%);animation:skel-sweep 1.15s ease-in-out infinite;}
+@keyframes skel-sweep{to{transform:translateX(100%)}}
+.ptile.pop{animation:tile-pop .28s ease-out both;}
+@keyframes tile-pop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
