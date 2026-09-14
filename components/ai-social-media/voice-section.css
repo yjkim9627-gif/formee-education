@@ -107,12 +107,21 @@ textarea.voice-section-script:focus{border-color:var(--color-brand-primary);}
 .voice-preview-btn.voice-section-preview-btn.playing{
   background:var(--color-neutral-150); border-color:var(--color-neutral-500); color:var(--color-neutral-900);
 }
+/* Figma "Music / Track Play Button" (5990:99969, reused for both Preview and -- per Figma's
+   own instance, icon glyph included -- Regenerate): 24px circle, 1.5px neutral-700 border,
+   inner glyph inset at calc(26.67% - 0.7px) on all sides of that 24px box -- resolves to a
+   ~12.6px glyph (24 - 2*(26.67%*24 - 0.7)), not the fixed 10px flexbox-centered icon this
+   drifted to before. Sized/centered with explicit width/height + transform, not
+   inset+width:auto: an absolutely positioned *replaced* element (img) with width:auto sizes
+   itself from its own intrinsic SVG dimensions regardless of inset (CSS2 10.3.8), and
+   percentage insets resolve against the padding box anyway (this box's own 1.5px border
+   would shrink the basis to 21px, not Figma's un-reduced 24px) -- both would silently miss
+   the numbers below if relied on directly. */
 .voice-section-preview-play{
-  width:24px; height:24px; flex-shrink:0; box-sizing:border-box;
+  position:relative; width:24px; height:24px; flex-shrink:0; box-sizing:border-box;
   border:1.5px solid var(--color-neutral-700); border-radius:999px;
-  display:flex; align-items:center; justify-content:center;
 }
-.voice-section-preview-play img{width:10px; height:10px; display:block;}
+.voice-section-preview-play img{position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:12.6px; height:12.6px; display:block;}
 
 /* Whole take: generated-voice-sample row (Editor / Voiceover Card, Figma 8727:220507) -- the
    fresh/idle resting look is plain white + neutral-400 border, NOT the Playing button's
@@ -124,12 +133,16 @@ textarea.voice-section-script:focus{border-color:var(--color-brand-primary);}
   border-radius:11px; /* Figma's own radius/11 -- no exact token between lg(8)/xl(12) */
   padding:var(--spacing-sm);
 }
+/* Same "Music / Track Play Button" component as .voice-section-preview-play above, just at
+   Figma's 30px size for this card (9202:241934): circle 30px, glyph inset calc(26.67% -
+   0.7px) on all sides -> 30 - 2*(26.67%*30 - 0.7) = ~15.4px. Sized/centered explicitly for
+   the same reason documented above (replaced-element auto-sizing + border-reduced padding
+   box both miss this). */
 .voice-section-sample-play{
-  width:30px; height:30px; flex-shrink:0; box-sizing:border-box;
-  border:1.5px solid var(--color-neutral-700); border-radius:999px;
-  display:flex; align-items:center; justify-content:center; cursor:pointer;
+  position:relative; width:30px; height:30px; flex-shrink:0; box-sizing:border-box;
+  border:1.5px solid var(--color-neutral-700); border-radius:999px; cursor:pointer;
 }
-.voice-section-sample-play img{width:12px; height:12px; display:block;}
+.voice-section-sample-play img{position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:15.4px; height:15.4px; display:block;}
 .voice-section-sample-name{flex:1 0 0; min-width:0; font-family:var(--font-family-text); font-size:12px; font-weight:500; line-height:18px; color:var(--color-neutral-700); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
 .voice-section-sample-time{display:flex; align-items:center; gap:4px; flex-shrink:0; font-family:var(--font-family-text); font-size:11px; font-weight:500; line-height:16px; color:var(--color-neutral-500); white-space:nowrap;}
 .voice-section-sample-time .sep{font-size:12px; line-height:18px;}

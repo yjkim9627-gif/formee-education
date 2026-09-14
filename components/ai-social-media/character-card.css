@@ -46,6 +46,50 @@
 /* state: disabled (documented for completeness — not currently used) */
 .char-card.disabled{cursor:not-allowed; opacity:.5; pointer-events:none;}
 
+/* ---------- Selector / Character Card — the larger picker-grid variant used by the
+   "Character · See all" modal (Figma 9461:146062, "Modal / Character — See all (detail)").
+   Distinct from .char-card above (that's the compact 104px Brief & Style roster strip) —
+   this is the 200px card shown in the full-library picker grid, with per-character usage
+   stats and a Ready status baked in. Reuses .feedback-status-chip--green for "Ready"
+   instead of a bespoke badge. ---------- */
+.char-select-card{
+  width:200px; flex-shrink:0; display:flex; flex-direction:column; gap:8px;
+  cursor:pointer; background:none; border:none; padding:0; text-align:left; font-family:var(--font-family-text);
+}
+.char-select-card .thumb{
+  position:relative; width:200px; height:240px; border-radius:var(--radius-xl); overflow:hidden;
+  background:linear-gradient(135deg,var(--color-neutral-300),var(--color-neutral-150));
+}
+.char-select-card .thumb img{width:100%; height:100%; object-fit:cover; display:block;}
+.char-select-card.selected .thumb{outline:2px solid var(--color-neutral-900); outline-offset:2px;}
+.char-select-card .thumb-actions{position:absolute; top:8px; right:8px; display:flex; gap:4px;}
+.char-select-card .thumb-action-btn{
+  width:36px; height:36px; border-radius:var(--radius-lg); border:none; background:var(--color-neutral-0);
+  display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0;
+  box-shadow:0 1px 1.5px rgba(15,23,41,.1),0 1px 0.5px rgba(15,23,41,.04);
+}
+.char-select-card .thumb-action-btn img{width:16px; height:16px; display:block;}
+.char-select-card .thumb-action-btn.fav.active img{filter:invert(63%) sepia(89%) saturate(2000%) hue-rotate(1deg) brightness(101%) contrast(101%);}
+.char-select-card .posts-badge{
+  position:absolute; bottom:11px; right:11px; background:rgba(15,23,41,.9); border-radius:var(--radius-full);
+  padding:2px 8px;
+}
+.char-select-card .posts-badge p{margin:0; font-size:11px; font-weight:600; line-height:13px; color:var(--color-neutral-0); white-space:nowrap;}
+.char-select-card .meta{display:flex; flex-direction:column; gap:2px;}
+.char-select-card .meta .name{margin:0; font-size:14px; font-weight:600; line-height:22px; color:var(--color-neutral-900);}
+.char-select-card .type-row{display:flex; align-items:center; gap:4px; font-size:13px; line-height:20px; color:var(--color-neutral-500);}
+
+/* "New character" tile — shorter (thumb-only, no meta/status below it), always dashed. */
+.char-select-card.new .thumb{
+  height:240px; border:1.5px dashed var(--color-neutral-300); display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:6px; background:var(--color-neutral-75);
+}
+.char-select-card.new .thumb:hover{border-color:var(--color-neutral-450);}
+.char-select-card.new .thumb img{width:24px; height:24px; object-fit:contain;}
+.char-select-card.new .thumb span{font-size:13px; font-weight:700; color:var(--color-neutral-700);}
+
+.char-select-grid{display:flex; flex-wrap:wrap; gap:12px;}
+
 /* ---------- Character grid + filter row ---------- */
 .char-grid{display:flex; gap:12px; overflow-x:auto; padding-bottom:4px;}
 .char-section{margin-top:24px;}

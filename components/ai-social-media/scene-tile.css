@@ -81,7 +81,13 @@
 /* Ready badge -- now the shared .feedback-status-chip.feedback-status-chip--green component
    (feedback-status-chip.css, Figma node 5004:126953). Previous local rule had 4 wrong values
    vs. the real Figma spec (10px not 11px font, 14px not 13px line-height, 4/8 not 2/8 padding,
-   plus a box-shadow the real component doesn't have). */
+   plus a box-shadow the real component doesn't have). That said, THIS usage -- sitting inside
+   Preview Top Row (9223:260053) on top of a photo -- does carry its own instance-level
+   drop-shadow in Figma (for legibility over the image), so it's added back here scoped to
+   .scene-tile-top-row only, not to the shared component base. */
+.scene-tile-top-row .feedback-status-chip--green{
+  filter:drop-shadow(0px 4px 4px rgba(15,23,41,.08)) drop-shadow(0px 2px 2px rgba(15,23,41,.05));
+}
 
 /* Download/maximize action pair -- now the shared .media-card-icon-btn component
    (media-card-icon-btn.css), reused identically by Image Scene Card and Storyboard Card. */
