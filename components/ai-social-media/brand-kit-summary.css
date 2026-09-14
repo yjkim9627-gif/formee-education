@@ -36,7 +36,7 @@
    see Menu / Logo Picker 9059:226477 / Menu / Colour Picker 9059:227472) + the three
    Brand Kit / Text Style Card previews, all in one row. ==================================== */
 .brand-kit-summary-compact{
-  box-sizing:border-box; width:100%; display:flex; align-items:center; gap:16px;
+  box-sizing:border-box; width:100%; display:flex; flex-wrap:wrap; align-items:center; gap:16px; row-gap:10px;
   padding:14px 16px; background:var(--color-neutral-0); border:1px solid var(--color-neutral-300);
   border-radius:10px; /* Figma's own literal value here -- doesn't land on the radius-lg(8)/xl(12) scale */
 }
@@ -68,3 +68,23 @@
 .brand-kit-text-style-pill span.subheading{font-family:'Lora',Georgia,serif; font-weight:700;}
 .brand-kit-text-style-pill span.body{font-family:Impact,'Arial Narrow Bold',sans-serif; font-weight:400;}
 .brand-kit-text-style-meta{font-size:11px; font-weight:500; line-height:16px; color:var(--color-neutral-500); white-space:nowrap;}
+
+/* the changed-from-brand-default marker: a dot, not a badge — a badge needs a word
+   ("Modified") that never says what changed or what it changed from. */
+.brand-kit-changed-dot{width:6px; height:6px; border-radius:var(--radius-full); background:var(--color-brand-primary); flex-shrink:0;}
+
+/* Still used by the standalone Text placement section (renderTextPlacementSection) --
+   the second "what AI draws vs what is composited" card this file used to also render below
+   the summary (Text/Button/Graphic colour pickers + Suggest) was never part of Figma's own
+   brand-kit-summary-compact spec (9439:145973 -- exactly one card) and has been removed. */
+.brand-kit-mode-help{margin:0; font-size:12px; line-height:18px; font-weight:500;
+  color:var(--color-neutral-500);}
+
+/* DS .actions-btn--ghost 에 강조 토큰만 얹는다 — 새 버튼 컴포넌트를 만들지 않는다 */
+.brand-kit-editlink{text-decoration:none; color:var(--color-brand-primary); font-weight:var(--font-weight-semibold);}
+
+/* 우측 액션 묶음 — Reset 이 나타났다 사라질 때 줄이 밀리지 않도록 자리를 늘 잡는다. */
+.brand-kit-actions{display:flex; align-items:center; gap:12px; flex:none;}
+/* 되돌릴 게 없을 때의 Reset — DS --inactive 는 회색 판이 깔려 버튼이 도드라진다.
+   여기선 "지금은 할 일이 없다" 정도만 말하면 되므로 배경 없이 글자만 죽인다. */
+.brand-kit-reset[disabled]{background:none; box-shadow:none; color:var(--color-neutral-400); cursor:default;}
