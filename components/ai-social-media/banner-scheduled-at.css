@@ -1,0 +1,30 @@
+/* banner · scheduled at — components/ai-social-media/banner-scheduled-at.html 참고
+   Figma: FME_AI-Social-Media, "Forms & Inputs 추가" (9329:146423) → banner · scheduled at (9062:241896)
+   3 variants: Property 1 = Default / hover / Focused. Only the fill changes: none → neutral-100 → neutral-150.
+   Children sit on space-between inside a fixed 304px row, so the gaps come from the layout, not a set gap.
+   Padding 10px horizontal is a Figma literal (between --spacing-sm 8 and --spacing-md 12).
+   Icons: icons/schedule-16.svg (exported at 16 so the 1.6 stroke holds — nav-schedule.svg is the
+   24px cut of the same glyph) and icons/pencil-line-12.svg (12px vector; the exported 14px box is
+   the stroke overhang, pulled back with a -1px margin). */
+
+.banner-scheduled-at{
+  display:flex; align-items:center; justify-content:space-between; gap:var(--spacing-sm);
+  box-sizing:border-box; width:304px; margin:0; padding:var(--spacing-sm) 10px;
+  border:none; border-radius:var(--radius-lg); background:transparent;
+  font-family:var(--font-family-text); text-align:left; cursor:pointer;
+}
+.banner-scheduled-at:hover,
+.banner-scheduled-at--hover{ background:var(--color-neutral-100); }
+.banner-scheduled-at:focus-visible,
+.banner-scheduled-at--focused{ background:var(--color-neutral-150); outline:none; }
+
+.banner-scheduled-at__icon{ width:16px; height:16px; flex-shrink:0; display:block; }
+.banner-scheduled-at__label{
+  font-size:var(--font-size-text-sm); line-height:var(--line-height-text-sm);
+  font-weight:var(--font-weight-regular); color:var(--color-neutral-500); white-space:nowrap;
+}
+.banner-scheduled-at__value{
+  font-size:var(--font-size-text-sm); line-height:var(--line-height-text-sm);
+  font-weight:var(--font-weight-semibold); color:var(--color-neutral-800); white-space:nowrap;
+}
+.banner-scheduled-at__edit{ width:14px; height:14px; margin:-1px; flex-shrink:0; display:block; }
