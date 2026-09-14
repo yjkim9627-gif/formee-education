@@ -1,0 +1,12 @@
+/* Schedule / Calendar Legend — components/ai-social-media/schedule-calendar-legend.html 참고
+   Figma: FME_AI-Social-Media, "Labels & Status" (9269:5043) → Schedule / Calendar Legend (9365:4991)
+   Three Schedule / Legend Item instances (Scheduled / Published / Failed) in a row, gap 16.
+   Each item = Schedule / Status Dot (6px) + label, gap 6. The dot is schedule.css's .sc-status-dot
+   (same node, already built for the event pills), so this file only lays out the row and label. */
+
+.sc-calendar-legend{ display:flex; align-items:center; gap:var(--spacing-lg); font-family:var(--font-family-text); }
+.sc-legend-item{ display:flex; align-items:center; gap:6px; }
+.sc-legend-item__label{
+  font-size:var(--font-size-text-xs); line-height:var(--line-height-text-xs);
+  font-weight:var(--font-weight-medium); color:var(--color-neutral-700); white-space:nowrap;
+}

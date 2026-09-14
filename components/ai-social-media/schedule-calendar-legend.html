@@ -2,16 +2,22 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
-<title>AI Prompt Box — Shared Component</title>
+<title>Schedule / Calendar Legend — Shared Component</title>
 <link rel="stylesheet" href="../../tokens/tokens.css" />
 <link rel="stylesheet" href="../demo-nav.css" />
-<link rel="stylesheet" href="prompt-box.css" />
+<link rel="stylesheet" href="schedule.css" />
+<link rel="stylesheet" href="schedule-calendar-legend.css" />
 <style>
   body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
-  .demo-main { padding: var(--spacing-4xl); max-width: 720px; }
-  h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-3xl); }
-  section { margin-bottom: var(--spacing-3xl); }
-  section h2 { font-size: var(--font-size-text-md); font-weight: var(--font-weight-semibold); color: var(--color-neutral-700); margin: 0 0 var(--spacing-lg); }
+  .demo-main { padding: var(--spacing-4xl); }
+  h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-sm); }
+  h2 { font-size: var(--font-size-text-md); font-weight: 700; color: var(--color-neutral-700); margin: var(--spacing-3xl) 0 var(--spacing-md); }
+  h2:first-of-type { margin-top: 0; }
+  .demo-note { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); max-width: 640px; margin: 0 0 var(--spacing-3xl); line-height: 1.6; }
+  .row { display: flex; align-items: center; gap: var(--spacing-2xl); flex-wrap: wrap; padding: var(--spacing-xl); background: var(--color-neutral-0); border: 1px solid var(--color-neutral-200); border-radius: 12px; }
+  .row + .row { margin-top: var(--spacing-lg); }
+  .col { display: flex; flex-direction: column; gap: var(--spacing-md); align-items: flex-start; }
+  .state { font-size: var(--font-size-text-xs); color: var(--color-neutral-500); margin: 0 0 var(--spacing-xs); }
 </style>
 </head>
 <body>
@@ -60,12 +66,12 @@
         <a href="login.html">Login · Section</a>
       </div>
     </div>
-    <div class="demo-sidebar-group collapsed" data-group="labels-status">
+    <div class="demo-sidebar-group" data-group="labels-status">
       <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Labels & Status</span><span class="demo-sidebar-group-caret">▾</span></button>
       <div class="demo-sidebar-group-items">
         <a href="feedback-status-chip.html">Feedback / Status Chip</a>
         <a href="post-status-chip.html">Post Status Chip</a>
-        <a href="schedule-calendar-legend.html">Schedule / Calendar Legend</a>
+        <a href="schedule-calendar-legend.html" class="active">Schedule / Calendar Legend</a>
       </div>
     </div>
     <div class="demo-sidebar-group collapsed" data-group="navigation">
@@ -164,12 +170,12 @@
         <a href="schedule.html">Schedule · Section</a>
       </div>
     </div>
-    <div class="demo-sidebar-group" data-group="ai-assistant">
+    <div class="demo-sidebar-group collapsed" data-group="ai-assistant">
       <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>AI Assistant</span><span class="demo-sidebar-group-caret">▾</span></button>
       <div class="demo-sidebar-group-items">
         <a href="ai-assistant.html">10 AI Assistant · Section</a>
         <a href="chat-panel.html">Chat Panel</a>
-        <a href="prompt-box.html" class="active">AI Prompt Box</a>
+        <a href="prompt-box.html">AI Prompt Box</a>
         <a href="ai-response-card.html">AI Response Card</a>
         <a href="reference-chip.html">Reference Chip</a>
       </div>
@@ -186,43 +192,13 @@
     </div>
   </nav>
   <main class="demo-main">
-  <h1>AI Prompt Box</h1>
+  <h1>Schedule / Calendar Legend</h1>
+  <p class="demo-note">Figma: "Labels &amp; Status" (9269:5043) → Schedule / Calendar Legend (9365:4991). Three Schedule / Legend Item instances — Scheduled (brand-primary), Published (badge green), Failed (badge red) — gap 16; each is a 6px Schedule / Status Dot + 12px medium neutral-700 label, gap 6. The dot reuses schedule.css's .sc-status-dot.</p>
 
-  <section>
-    <h2>Default</h2>
-    <div class="prompt-box">
-      <div class="prompt-top">
-        <textarea class="prompt-summary">밝고 에너지 넘치는 UGC 스타일 영상 — 립틴트를 손등에 발라보고, 입술에 바르는 장면.</textarea>
-      </div>
-      <div class="prompt-bottom">
-        <div class="prompt-chips">
-          <div class="prompt-chip"><div class="ic ratio-box-ic"></div>9:16</div>
-          <div class="prompt-chip-wrap">
-            <div class="prompt-chip clickable">
-              <div class="ic"></div><span>8s</span><span class="chevron">▾</span>
-            </div>
-            <div class="chip-popover">
-              <div class="chip-popover-label">Duration</div>
-              <div class="chip-option selected"><span>8 seconds</span><span class="check">✓</span></div>
-              <div class="chip-option"><span>16 seconds</span><span class="check">✓</span></div>
-            </div>
-          </div>
-        </div>
-        <div class="refine-btn">↑</div>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <h2>Refine 버튼 disabled</h2>
-    <div class="prompt-box">
-      <div class="prompt-top"><textarea class="prompt-summary" placeholder="아이디어를 설명해주세요"></textarea></div>
-      <div class="prompt-bottom">
-        <div class="prompt-chips"><div class="prompt-chip"><div class="ic"></div>9:16</div></div>
-        <button class="refine-btn" disabled>↑</button>
-      </div>
-    </div>
-  </section>
+  <h2>Default</h2>
+  <div class="row">
+    <div class="sc-calendar-legend"><span class="sc-legend-item"><span class="sc-status-dot sc-status-dot--scheduled"></span><span class="sc-legend-item__label">Scheduled</span></span><span class="sc-legend-item"><span class="sc-status-dot sc-status-dot--published"></span><span class="sc-legend-item__label">Published</span></span><span class="sc-legend-item"><span class="sc-status-dot sc-status-dot--failed"></span><span class="sc-legend-item__label">Failed</span></span></div>
+  </div>
   </main>
 </div>
 <script src="../demo-nav.js"></script>
