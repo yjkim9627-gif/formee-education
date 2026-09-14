@@ -1349,8 +1349,11 @@
      this content's own layout choice, not a brand value -- see TEXT_PLACEMENT_STANDALONE_SCOPES
      and buildBrandKitSummaryCompactHtml()'s comment on the same distinction). Segmented control
      + its dynamic helper text sit side by side in one row, same as the Figma frame. */
-  #stageAreaReel .text-placement-controls{display:flex; align-items:center; gap:var(--spacing-xl);}
-  #stageAreaReel .text-placement-controls .brand-kit-mode-help{flex:1 0 0; min-width:0; margin:0;}
+  /* Was scoped to #stageAreaReel only -- Image post/Carousel got the same
+     TEXT_PLACEMENT_STANDALONE_SCOPES markup but not this rule, so their segmented control and
+     helper text fell back to block-level stacking (help text landing below instead of beside). */
+  #stageAreaReel .text-placement-controls, #stageAreaImage .text-placement-controls, #stageAreaCarousel .text-placement-controls{display:flex; align-items:center; gap:var(--spacing-xl);}
+  #stageAreaReel .text-placement-controls .brand-kit-mode-help, #stageAreaImage .text-placement-controls .brand-kit-mode-help, #stageAreaCarousel .text-placement-controls .brand-kit-mode-help{flex:1 0 0; min-width:0; margin:0;}
   .scene-card{border:1px solid var(--color-neutral-300); border-radius:10px; padding:16px;}
   /* Card chrome for each clip now matches Carousel's own .carousel-card-block (same white
      card, header row, title style) instead of a Reel-only shape — see
