@@ -899,6 +899,62 @@
   }
   .reel-lightbox-stage img{width:100%; height:100%; display:block; object-fit:cover;}
 
+  /* ---- Reel/Short Video tab lightbox — Figma node 9619:195592 ("Reel/Short · Timeline -
+     Video lightbox"), opened from a Video tab tile's Maximize button (expandVideoTile()).
+     Same outer shell as .reel-lightbox-* (nav arrows / Scene N pill header / close / stage /
+     Download footer), but this stage also carries a real scrubber overlay (time / volume /
+     progress + a center play-pause button) since Figma's spec has this modal actually play
+     the generated video back, not just show a static frame like the other two lightboxes --
+     reuses the same .video-scrubber-* pieces the Combine-result player (#combinePlayer)
+     already established, just composed inside a lightbox stage instead of inline on canvas. */
+  .video-lightbox-overlay{position:fixed; background:color-mix(in srgb, var(--color-neutral-900) 45%, transparent);}
+  .video-lightbox-row{display:flex; align-items:center; gap:var(--spacing-xl);}
+  .video-lightbox-nav{
+    width:36px; height:36px; flex-shrink:0; border-radius:var(--radius-full);
+    background:var(--color-neutral-0); border:1px solid var(--color-neutral-400);
+    box-shadow:0 4px 8px rgba(15,23,41,.08),0 2px 4px rgba(15,23,41,.05);
+    display:flex; align-items:center; justify-content:center; padding:0; cursor:pointer;
+  }
+  .video-lightbox-nav:disabled{opacity:.35; cursor:default; box-shadow:none;}
+  .video-lightbox-nav img{width:24px; height:24px; display:block;}
+  .video-lightbox-modal{
+    width:auto; max-width:none; padding:var(--spacing-xl); gap:var(--spacing-lg);
+    align-items:flex-end; border-radius:var(--radius-2xl); box-shadow:0 8px 32px rgba(0,0,0,.25);
+    box-sizing:border-box;
+  }
+  .video-lightbox-header{display:flex; align-items:center; justify-content:space-between; gap:var(--spacing-sm); width:100%;}
+  .video-lightbox-pills{display:flex; gap:var(--spacing-sm); flex-wrap:wrap;}
+  .video-lightbox-pills .filter-toggle:disabled{opacity:.4; cursor:default;}
+  .video-lightbox-close{
+    width:36px; height:36px; flex-shrink:0; border-radius:var(--radius-lg); border:none;
+    background:var(--color-neutral-0); border:1px solid var(--color-neutral-400);
+    box-shadow:0 1px 1.5px rgba(15,23,41,.1),0 1px .5px rgba(15,23,41,.04);
+    display:flex; align-items:center; justify-content:center; padding:0; cursor:pointer;
+  }
+  .video-lightbox-close img{width:16px; height:16px; display:block;}
+  .video-lightbox-stage{
+    position:relative; flex-shrink:0; aspect-ratio:303/539; border-radius:var(--radius-xl);
+    overflow:hidden; height:683px; width:auto; box-sizing:border-box; padding:16px;
+    display:flex; flex-direction:column; justify-content:flex-end;
+    background:linear-gradient(135deg,var(--color-neutral-400),var(--color-neutral-200));
+    background-size:cover; background-position:center;
+  }
+  .video-lightbox-stage .video-play-btn{
+    display:flex; align-items:center; justify-content:center;
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:48px; height:48px; border-radius:999px; border:none;
+    background:rgba(255,255,255,.75); backdrop-filter:blur(5px); opacity:.9; cursor:pointer;
+  }
+  .video-lightbox-stage .video-play-btn img.play,
+  .video-lightbox-stage .video-play-btn img.pause{width:24px; height:24px; display:block;}
+  .video-lightbox-stage .video-scrubber{position:relative; display:flex; flex-direction:column; gap:12px; width:100%;}
+  .video-lightbox-stage .video-scrubber-time-row{display:flex; align-items:center; justify-content:space-between; width:100%;}
+  .video-lightbox-stage .video-scrubber-time{font-family:var(--font-family-text); font-size:11px; line-height:16px; color:#fff;}
+  .video-lightbox-stage .video-scrubber-controls{display:flex; align-items:center; gap:12px;}
+  .video-lightbox-stage .video-scrubber-controls img{display:block; width:18px; height:18px;}
+  .video-lightbox-stage .video-scrubber-progress{width:100%; height:4px; border-radius:999px; background:rgba(255,255,255,.35); overflow:hidden;}
+  .video-lightbox-stage .video-scrubber-progress-fill{height:100%; width:37.5%; background:#fff; border-radius:inherit; transition:width 1.4s linear;}
+
   /* =====================================================================
      REEL/SHORT (Script/Video) — ported from
      new-content-brief-to-generate.html as a third native content type,
@@ -1342,9 +1398,21 @@
   .video-tile-overlay-top{position:absolute; top:8px; left:8px; right:8px; display:flex; align-items:center; justify-content:space-between; gap:6px;}
   .video-tile-ready-badge{display:none; align-items:center; gap:3px; font-size:10px; font-weight:700; color:var(--color-badge-green-text); background:#fff; padding:3px 7px; border-radius:999px;}
   .video-tile.ready .video-tile-ready-badge{display:inline-flex;}
-  .video-tile-regen-btn{display:none; width:24px; height:24px; border-radius:999px; border:none; background:rgba(255,255,255,0.92); align-items:center; justify-content:center; font-size:12px; color:var(--color-neutral-700); cursor:pointer; margin-left:auto;}
+  /* Figma Video/Scene Tile ready state (8727:220203) -- Download + Maximize reuse the
+     shared media-card-icon-btn component (28px/radius-lg/18px icon, same as Timeline
+     thumbnails/Storyboard/Image versions) for sizing, but THIS tile's own two instances
+     are both the dark blurred-glass fill (bg rgba(15,23,41,.4) + blur(5px)), not that
+     shared class's white .download / light-glass .maximize variants -- video tiles are
+     full-bleed photo all the way to the corners, so the lighter fills wouldn't read.
+     Icons flip to white via filter since the source SVGs are dark-stroke (made for the
+     white/light-glass buttons elsewhere). Regenerate isn't in that Figma node, but it's
+     this file's own existing feature -- kept in the same trailing group rather than removed. */
+  .video-tile-icon-group{display:none; align-items:center; gap:8px; margin-left:auto;}
+  .video-tile.ready .video-tile-icon-group{display:flex;}
+  .video-tile-icon-group .media-card-icon-btn{background:rgba(15,23,41,.4); backdrop-filter:blur(5px); border:none; box-shadow:none; padding:5px;}
+  .video-tile-icon-group .media-card-icon-btn img{filter:brightness(0) invert(1);}
+  .video-tile-regen-btn{width:24px; height:24px; border-radius:999px; border:none; background:rgba(255,255,255,0.92); display:flex; align-items:center; justify-content:center; font-size:12px; color:var(--color-neutral-700); cursor:pointer;}
   .video-tile-regen-btn:hover{background:#fff; color:var(--color-neutral-900);}
-  .video-tile.ready .video-tile-regen-btn{display:flex;}
   .video-tile.generating .video-tile-badge{display:none;}
   .video-play-btn{display:none; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:40px; height:40px; border-radius:999px; border:none; background:rgba(255,255,255,0.92); align-items:center; justify-content:center; cursor:pointer;}
   .video-play-btn:hover{background:#fff;}
@@ -2947,6 +3015,36 @@
         </button>
       </div>
       <button type="button" class="reel-lightbox-nav" id="reelLightboxNext" onclick="reelLightboxNext()"><img src="../../../../components/ai-social-media/icons/chevron-right.svg" alt="Next scene"></button>
+    </div>
+  </div>
+
+  <!-- Reel/Short Video tab lightbox -- Figma 9619:195592, opened from a Video tab tile's
+       Maximize button (expandVideoTile()). Same shell as the Timeline lightbox above, plus a
+       real scrubber (time/volume/progress + play-pause) since this one plays the video back. -->
+  <div class="modal-overlay video-lightbox-overlay" id="videoLightboxOverlay" style="display:none;" onclick="if(event.target===this) closeVideoLightbox();">
+    <div class="video-lightbox-row">
+      <button type="button" class="video-lightbox-nav" id="videoLightboxPrev" onclick="videoLightboxPrev()"><img src="../../../../components/ai-social-media/icons/chevron-left.svg" alt="Previous scene"></button>
+      <div class="modal video-lightbox-modal">
+        <div class="video-lightbox-header">
+          <div class="video-lightbox-pills" id="videoLightboxPills"></div>
+          <button type="button" class="video-lightbox-close" onclick="closeVideoLightbox()"><img src="../../../../components/ai-social-media/icons/panel-close.svg" alt="Close"></button>
+        </div>
+        <div class="video-lightbox-stage" id="videoLightboxStage">
+          <div class="video-scrubber">
+            <div class="video-scrubber-time-row">
+              <span class="video-scrubber-time" id="videoLightboxTime">0:03 / 0:08</span>
+              <span class="video-scrubber-controls"><img src="../../../../components/ai-social-media/icons/volume-2.svg" alt=""></span>
+            </div>
+            <div class="video-scrubber-progress"><div class="video-scrubber-progress-fill" id="videoLightboxProgressFill"></div></div>
+          </div>
+          <button type="button" class="video-play-btn" id="videoLightboxPlayBtn" onclick="toggleVideoLightboxPlay()" title="Play"><img class="play" src="../../../../components/ai-social-media/icons/video-play-glyph.svg" alt=""></button>
+        </div>
+        <button type="button" class="actions-btn actions-btn--primary" onclick="downloadVideoScene(window.__videoLightboxIndex + 1)">
+          <img src="../../../../components/ai-social-media/icons/actions/download-icon-white.svg" alt="">
+          <span>Download</span>
+        </button>
+      </div>
+      <button type="button" class="video-lightbox-nav" id="videoLightboxNext" onclick="videoLightboxNext()"><img src="../../../../components/ai-social-media/icons/chevron-right.svg" alt="Next scene"></button>
     </div>
   </div>
 
@@ -7964,6 +8062,73 @@ function reelLightboxGoTo(i){
 }
 function reelLightboxPrev(){ reelLightboxGoTo(window.__reelLightboxIndex - 1); }
 function reelLightboxNext(){ reelLightboxGoTo(window.__reelLightboxIndex + 1); }
+
+// ---- Reel/Short Video tab lightbox (Figma 9619:195592) -- opened from a Video tab tile's
+// Maximize button. Unlike openReelLightbox()/openImageLightbox() (both just show a static
+// frame), this one also drives a real scrubber -- the same faked play/pause + progress-fill
+// state machine playCombineResult() already uses, since there's no actual <video> element
+// anywhere in this prototype, just a background-image tile standing in for a generated clip.
+window.__videoLightboxEntries = [];
+window.__videoLightboxIndex = 0;
+function expandVideoTile(unit){
+  const tiles = document.querySelectorAll('#videoGrid .video-tile');
+  window.__videoLightboxEntries = Array.from(tiles).map((t, i) => {
+    const preview = t.querySelector('.video-tile-preview');
+    const bg = preview ? preview.style.backgroundImage : '';
+    const src = bg ? bg.slice(4, -1).replace(/["']/g, '') : '';
+    return { label: 'Scene ' + (i + 1), ready: t.classList.contains('ready'), src };
+  });
+  openVideoLightbox(unit - 1);
+}
+function openVideoLightbox(index){
+  window.__videoLightboxIndex = index;
+  renderVideoLightboxPills();
+  renderVideoLightboxStage();
+  document.getElementById('videoLightboxOverlay').style.display = 'flex';
+}
+function closeVideoLightbox(){
+  document.getElementById('videoLightboxOverlay').style.display = 'none';
+}
+function renderVideoLightboxPills(){
+  const entries = window.__videoLightboxEntries;
+  const i = window.__videoLightboxIndex;
+  document.getElementById('videoLightboxPills').innerHTML = entries.map((e, idx) => `
+    <button type="button" class="filter-toggle${idx === i ? ' filter-toggle--selected' : ''}" ${e.ready ? '' : 'disabled'} onclick="videoLightboxGoTo(${idx})">
+      <span class="filter-toggle__label">${escapeHtml(e.label)}</span>
+    </button>`).join('');
+  document.getElementById('videoLightboxPrev').disabled = i <= 0;
+  document.getElementById('videoLightboxNext').disabled = i >= entries.length - 1;
+}
+function renderVideoLightboxStage(){
+  const entry = window.__videoLightboxEntries[window.__videoLightboxIndex];
+  document.getElementById('videoLightboxStage').style.backgroundImage = entry && entry.src ? `url('${entry.src}')` : '';
+  resetVideoLightboxPlayback();
+}
+function videoLightboxGoTo(i){
+  if(!window.__videoLightboxEntries[i] || !window.__videoLightboxEntries[i].ready) return;
+  window.__videoLightboxIndex = i;
+  renderVideoLightboxPills();
+  renderVideoLightboxStage();
+  selectVideoScene(i + 1);
+}
+function videoLightboxPrev(){ videoLightboxGoTo(window.__videoLightboxIndex - 1); }
+function videoLightboxNext(){ videoLightboxGoTo(window.__videoLightboxIndex + 1); }
+function resetVideoLightboxPlayback(){
+  const btn = document.getElementById('videoLightboxPlayBtn');
+  const fill = document.getElementById('videoLightboxProgressFill');
+  if(btn) btn.innerHTML = '<img class="play" src="../../../../components/ai-social-media/icons/video-play-glyph.svg" alt="">';
+  if(fill){ fill.style.transition = 'none'; fill.style.width = '37.5%'; }
+  const time = document.getElementById('videoLightboxTime');
+  if(time) time.textContent = '0:03 / 0:08';
+}
+function toggleVideoLightboxPlay(){
+  const btn = document.getElementById('videoLightboxPlayBtn');
+  const fill = document.getElementById('videoLightboxProgressFill');
+  btn.innerHTML = '<img class="pause" src="../../../../components/ai-social-media/icons/video-pause-glyph.svg" alt="">';
+  requestAnimationFrame(() => { fill.style.transition = 'width 1.4s linear'; fill.style.width = '100%'; });
+  setTimeout(resetVideoLightboxPlayback, 1400);
+}
+function downloadVideoScene(n){}
 function buildTimelineSegmentNav(count){
   const nav = document.getElementById('timelineSegmentNav');
   if(!nav || !count) return;
@@ -8365,7 +8530,11 @@ function startVideoGeneration(){
       <div class="video-tile-preview">
         <div class="video-tile-overlay-top">
           <span class="video-tile-ready-badge">✓ Ready</span>
-          <button class="video-tile-regen-btn" onclick="event.stopPropagation(); regenerateVideoScene(${i + 1})" title="Regenerate · ⚡${VIDEO_COST_PER_UNIT}"><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt=""></button>
+          <div class="video-tile-icon-group">
+            <button class="media-card-icon-btn download" type="button" onclick="event.stopPropagation(); downloadVideoScene(${i + 1})" title="Download"><img src="../../../../components/ai-social-media/icons/download-ui.svg" alt=""></button>
+            <button class="media-card-icon-btn maximize" type="button" onclick="event.stopPropagation(); expandVideoTile(${i + 1})" title="Maximize"><img src="../../../../components/ai-social-media/icons/maximize.svg" alt=""></button>
+            <button class="video-tile-regen-btn" onclick="event.stopPropagation(); regenerateVideoScene(${i + 1})" title="Regenerate · ⚡${VIDEO_COST_PER_UNIT}"><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt=""></button>
+          </div>
         </div>
         <div class="spinner-mini"></div>
         <button class="video-play-btn" onclick="event.stopPropagation(); playVideoScene(${i + 1})" title="Play"><img class="play" src="../../../../components/ai-social-media/icons/video-play-glyph.svg" alt=""></button>
