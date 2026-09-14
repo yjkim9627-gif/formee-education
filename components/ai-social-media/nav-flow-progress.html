@@ -2,23 +2,28 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
-<title>Controls / Social profile row — Shared Component</title>
+<title>Nav / Flow Progress — Shared Component</title>
 <link rel="stylesheet" href="../../tokens/tokens.css" />
 <link rel="stylesheet" href="../demo-nav.css" />
-<link rel="stylesheet" href="controls-social-profile-row.css" />
+<link rel="stylesheet" href="nav-flow-progress.css" />
 <style>
   body { margin: 0; background: var(--color-neutral-50); font-family: var(--font-family-text); color: var(--color-neutral-900); }
   .demo-main { padding: var(--spacing-4xl); }
   h1 { font-size: var(--font-size-display-xs); line-height: var(--line-height-display-xs); font-weight: var(--font-weight-display-xs); margin: 0 0 var(--spacing-sm); }
+  h2 { font-size: var(--font-size-text-md); font-weight: 700; color: var(--color-neutral-700); margin: var(--spacing-3xl) 0 var(--spacing-md); }
+  h2:first-of-type { margin-top: 0; }
   .demo-note { font-size: var(--font-size-text-sm); color: var(--color-neutral-500); max-width: 640px; margin: 0 0 var(--spacing-3xl); line-height: 1.6; }
-  .row { padding: var(--spacing-xl); background: var(--color-neutral-0); border: 1px solid var(--color-neutral-200); border-radius: 12px; display: flex; flex-direction: column; gap: var(--spacing-lg); }
+  .row { display: flex; align-items: center; gap: var(--spacing-2xl); flex-wrap: wrap; padding: var(--spacing-xl); background: var(--color-neutral-0); border: 1px solid var(--color-neutral-200); border-radius: 12px; }
+  .row + .row { margin-top: var(--spacing-lg); }
+  .col { display: flex; flex-direction: column; gap: var(--spacing-md); align-items: flex-start; }
+  .state { font-size: var(--font-size-text-xs); color: var(--color-neutral-500); margin: 0 0 var(--spacing-xs); }
 </style>
 </head>
 <body>
 <div class="demo-shell">
   <nav class="demo-sidebar">
     <a href="../../index.html" class="demo-sidebar-home">← Home</a>
-    <div class="demo-sidebar-group" data-group="forms-inputs">
+    <div class="demo-sidebar-group collapsed" data-group="forms-inputs">
       <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Forms & Inputs</span><span class="demo-sidebar-group-caret">▾</span></button>
       <div class="demo-sidebar-group-items">
         <a href="auth-checkbox.html">Auth / Checkbox</a>
@@ -32,7 +37,7 @@
         <a href="controls-option-card.html">Controls / Option Card</a>
         <a href="controls-otp-code-input.html">Controls / OTP Code Input</a>
         <a href="controls-search-field.html">Controls / Search Field</a>
-        <a href="controls-social-profile-row.html" class="active">Controls / Social profile row</a>
+        <a href="controls-social-profile-row.html">Controls / Social profile row</a>
         <a href="controls-toggles.html">Controls / Toggles</a>
         <a href="date-picker.html">Date Picker</a>
         <a href="duration-chip.html">Controls / Duration Chip</a>
@@ -68,10 +73,10 @@
         <a href="schedule-calendar-legend.html">Schedule / Calendar Legend</a>
       </div>
     </div>
-    <div class="demo-sidebar-group collapsed" data-group="navigation">
+    <div class="demo-sidebar-group" data-group="navigation">
       <button type="button" class="demo-sidebar-group-toggle" onclick="toggleDemoGroup(this)"><span>Navigation</span><span class="demo-sidebar-group-caret">▾</span></button>
       <div class="demo-sidebar-group-items">
-        <a href="nav-flow-progress.html">Nav / Flow Progress</a>
+        <a href="nav-flow-progress.html" class="active">Nav / Flow Progress</a>
         <a href="nav.html">Nav / Navigation</a>
         <a href="topbar-stepper.html">Topbar + Stepper</a>
       </div>
@@ -188,33 +193,44 @@
     </div>
   </nav>
   <main class="demo-main">
-  <h1>Controls / Social profile row</h1>
-  <p class="demo-note">Figma: "03 Inputs &amp; Controls" (1124:30) — "Controls / Social profile row" (4708:103012), a single-symbol row pairing a platform icon with a handle input. Swap the icon per platform using the existing icons/social-*.svg set.</p>
+  <h1>Nav / Flow Progress</h1>
+  <p class="demo-note">Figma: "Navigation" (1124:10324) → Nav / Flow Progress (4860:109491). 8 variants, Active = 1…8: 7 pill segments (48×6, gap 4) in a 360px bar, the first N filled neutral-900 and the rest neutral-200. Active=8 looks the same as Active=7 (every segment filled). Use the buttons under Interactive to step through it.</p>
 
+  <h2>Active</h2>
   <div class="row">
-    <div class="controls-social-row">
-      <p class="controls-social-row__label">Social profiles</p>
-      <div class="controls-social-row__row">
-        <img class="controls-social-row__icon" src="icons/social-instagram.svg" alt="Instagram">
-        <input class="controls-social-row__input" type="text" placeholder="@yourbrand" />
-      </div>
-      <p class="controls-social-row__helper">Add the channels your brand currently uses.</p>
+    <div class="col">
+      <div><p class="state">Active=1</p><div class="nav-flow-progress" role="progressbar" aria-valuemin="0" aria-valuemax="7" aria-valuenow="1"><span class="nav-flow-progress__segment is-done"></span><span class="nav-flow-progress__segment"></span><span class="nav-flow-progress__segment"></span><span class="nav-flow-progress__segment"></span><span class="nav-flow-progress__segment"></span><span class="nav-flow-progress__segment"></span><span class="nav-flow-progress__segment"></span></div></div>
+      <div><p class="state">Active=2</p><div class="nav-flow-progress" role="progressbar" aria-valuemin="0" aria-valuemax="7" aria-valuenow="2"><span class="nav-flow-progress__segment is-done"></span><span class="nav-flow-progress__segment is-done"></span><span class="nav-flow-progress__segment"></span><span class="nav-flow-progress__segment"></span><span class="nav-flow-progress__segment"></span><span class="nav-flow-progress__segment"></span><span class="nav-flow-progress__segment"></span></div></div>
+      <div><p class="state">Active=3</p><div class="nav-flow-progress" role="progressbar" aria-valuemin="0" aria-valuemax="7" aria-valuenow="3"><span class="nav-flow-progress__segment is-done"></span><span class="nav-flow-progress__segment is-done"></span><span class="nav-flow-progress__segment is-done"></span><span class="nav-flow-progress__segment"></span><span class="nav-flow-progress__segment"></span><span class="nav-flow-progress__segment"></span><span class="nav-flow-progress__segment"></span></div></div>
+      <div><p class="state">Active=4</p><div class="nav-flow-progress" role="progressbar" aria-valuemin="0" aria-valuemax="7" aria-valuenow="4"><span class="nav-flow-progress__segment is-done"></span><span class="nav-flow-progress__segment is-done"></span><span class="nav-flow-progress__segment is-done"></span><span class="nav-flow-progress__segment is-done"></span><span class="nav-flow-progress__segment"></span><span class="nav-flow-progress__segment"></span><span class="nav-flow-progress__segment"></span></div></div>
+      <div><p class="state">Active=5</p><div class="nav-flow-progress" role="progressbar" aria-valuemin="0" aria-valuemax="7" aria-valuenow="5"><span class="nav-flow-progress__segment is-done"></span><span class="nav-flow-progress__segment is-done"></span><span class="nav-flow-progress__segment is-done"></span><span class="nav-flow-progress__segment is-done"></span><span class="nav-flow-progress__segment is-done"></span><span class="nav-flow-progress__segment"></span><span class="nav-flow-progress__segment"></span></div></div>
+      <div><p class="state">Active=6</p><div class="nav-flow-progress" role="progressbar" aria-valuemin="0" aria-valuemax="7" aria-valuenow="6"><span class="nav-flow-progress__segment is-done"></span><span class="nav-flow-progress__segment is-done"></span><span class="nav-flow-progress__segment is-done"></span><span class="nav-flow-progress__segment is-done"></span><span class="nav-flow-progress__segment is-done"></span><span class="nav-flow-progress__segment is-done"></span><span class="nav-flow-progress__segment"></span></div></div>
+      <div><p class="state">Active=7</p><div class="nav-flow-progress" role="progressbar" aria-valuemin="0" aria-valuemax="7" aria-valuenow="7"><span class="nav-flow-progress__segment is-done"></span><span class="nav-flow-progress__segment is-done"></span><span class="nav-flow-progress__segment is-done"></span><span class="nav-flow-progress__segment is-done"></span><span class="nav-flow-progress__segment is-done"></span><span class="nav-flow-progress__segment is-done"></span><span class="nav-flow-progress__segment is-done"></span></div></div>
+      <div><p class="state">Active=8</p><div class="nav-flow-progress" role="progressbar" aria-valuemin="0" aria-valuemax="7" aria-valuenow="7"><span class="nav-flow-progress__segment is-done"></span><span class="nav-flow-progress__segment is-done"></span><span class="nav-flow-progress__segment is-done"></span><span class="nav-flow-progress__segment is-done"></span><span class="nav-flow-progress__segment is-done"></span><span class="nav-flow-progress__segment is-done"></span><span class="nav-flow-progress__segment is-done"></span></div></div>
     </div>
-    <div class="controls-social-row">
-      <div class="controls-social-row__row">
-        <img class="controls-social-row__icon" src="icons/social-tiktok.svg" alt="TikTok">
-        <input class="controls-social-row__input" type="text" placeholder="@yourbrand" />
-      </div>
-    </div>
-    <div class="controls-social-row">
-      <div class="controls-social-row__row">
-        <img class="controls-social-row__icon" src="icons/social-youtube.svg" alt="YouTube">
-        <input class="controls-social-row__input" type="text" placeholder="@yourbrand" />
-      </div>
+  </div>
+
+  <h2>Interactive</h2>
+  <div class="row">
+    <div class="col" data-flow-demo>
+      <div class="nav-flow-progress" role="progressbar" aria-valuemin="0" aria-valuemax="7" aria-valuenow="1"><span class="nav-flow-progress__segment is-done"></span><span class="nav-flow-progress__segment"></span><span class="nav-flow-progress__segment"></span><span class="nav-flow-progress__segment"></span><span class="nav-flow-progress__segment"></span><span class="nav-flow-progress__segment"></span><span class="nav-flow-progress__segment"></span></div>
+      <div style="display:flex; gap:var(--spacing-sm);"><button type="button" data-step="-1">Back</button><button type="button" data-step="1">Next</button></div>
     </div>
   </div>
   </main>
 </div>
 <script src="../demo-nav.js"></script>
+<script>
+document.querySelectorAll('[data-flow-demo]').forEach(demo => {
+  const bar = demo.querySelector('.nav-flow-progress');
+  const segs = Array.from(bar.children);
+  let active = 1;
+  demo.querySelectorAll('[data-step]').forEach(btn => btn.addEventListener('click', () => {
+    active = Math.min(8, Math.max(1, active + Number(btn.dataset.step)));
+    segs.forEach((s, i) => s.classList.toggle('is-done', i < active));
+    bar.setAttribute('aria-valuenow', String(Math.min(active, 7)));
+  }));
+});
+</script>
 </body>
 </html>
