@@ -7085,11 +7085,14 @@ function voiceRowHtml(v){
       <span class="voice-check">✓</span>
     </div>`;
 }
+// Figma 9523:151259 -- "Cloned & Designed by you" column always ends with a dashed
+// "+ New voice" row below the mapped voice rows (was missing entirely before this fix).
+const VOICE_MODAL_NEW_ROW_HTML = `<button type="button" class="voice-modal-new-row" onclick="alert('Create Voice — flow TBD')"><img src="../../../../components/ai-social-media/icons/pagebar-plus.svg" alt="">New voice</button>`;
 function renderVoiceSelectModalRows(){
   const lib = YOUR_VOICES_DATA.filter(v => v.source === 'library');
   const cloned = YOUR_VOICES_DATA.filter(v => v.source === 'cloned');
   document.getElementById('voiceSelectGroupLib').innerHTML = lib.map(voiceRowHtml).join('');
-  document.getElementById('voiceSelectGroupCloned').innerHTML = cloned.map(voiceRowHtml).join('');
+  document.getElementById('voiceSelectGroupCloned').innerHTML = cloned.map(voiceRowHtml).join('') + VOICE_MODAL_NEW_ROW_HTML;
   document.getElementById('voiceSelectLibLabel').textContent = `From ElevenLabs Library (${lib.length})`;
   document.getElementById('voiceSelectClonedLabel').textContent = `Cloned & Designed by you (${cloned.length})`;
 }

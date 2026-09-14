@@ -70,6 +70,18 @@
 .voice-modal-col-rows .voice-play.playing{border-color:var(--color-brand-primary); background:none;}
 .voice-modal-col-rows .voice-item-name{font-size:12px; font-weight:500; color:var(--color-neutral-700);}
 .voice-modal-col-rows .voice-item-tag{font-size:11px; font-weight:400; color:var(--color-neutral-500);}
+/* "New voice" row (Figma 9523:151259, "Cloned & Designed by you" column) -- was missing
+   entirely; renderVoiceSelectModalRows() only rendered the mapped voice rows with nothing
+   appended after them. Dashed like every other "add new" affordance in this file
+   (.char-select-card.new, .voice-new-card) but its own rule since it sits inside
+   .voice-modal-col-rows next to 52px-tall .voice-item rows, not those components' contexts. */
+.voice-modal-new-row{
+  display:flex; align-items:center; justify-content:center; gap:4px; width:100%; box-sizing:border-box;
+  border:1px dashed var(--color-neutral-400); border-radius:var(--radius-lg); padding:var(--spacing-sm);
+  background:none; cursor:pointer; font-family:var(--font-family-text); font-size:14px; font-weight:500; color:var(--color-neutral-700);
+}
+.voice-modal-new-row:hover{border-color:var(--color-neutral-450); color:var(--color-neutral-900);}
+.voice-modal-new-row img{width:24px; height:24px; flex-shrink:0;}
 /* ElevenLabs library tab -- same panel content as the Brief screen's inline browse panel,
    just without that panel's own margin-top/border/radius (this modal's .voice-modal-body
    already supplies the card chrome around it). Fixed to the same 438px as the My-voices tab
