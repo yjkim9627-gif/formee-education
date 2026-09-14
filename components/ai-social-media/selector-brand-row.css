@@ -1,13 +1,12 @@
 /* Selector / Brand Row — components/ai-social-media/selector-brand-row.html 참고
-   Figma: FME_AI-Social-Media, "Forms & Inputs 추가" (9329:146423) → Selector / Brand Row (4005:2538)
+   Figma: FME_AI-Social-Media, "Forms & Inputs" (1124:30) → Selector / Brand Row (4005:2538)
    3 variants: State = Default / Hover / Focused.
      Default  neutral-0 fill, neutral-400 border
      Hover    neutral-0 fill, neutral-500 border
      Focused  neutral-150 fill, neutral-500 border at 1.2px
    Figma strokes are inside, so the padding gives back the border width to keep the row at 72px.
-   Padding 14px vertical is a Figma literal. The 36px logo tile holds a brand logo image up to 24px wide —
-   the Figma logos (SCEI-HE, SCEI, Formee Express) are image fills, so the demo uses the brand marks
-   already in icons/brand/ as stand-ins (sche-emblem.svg is white-on-transparent, so it isn't used here). */
+   Padding 14px vertical is a Figma literal. The 36px logo tile is the logo component (logo.css);
+   images are images/brand-logos/*.png, exported from Figma at 3x. */
 
 .selector-brand-row{
   display:flex; align-items:center; gap:var(--spacing-md);
@@ -30,7 +29,7 @@
   box-sizing:border-box; width:36px; height:36px;
   border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg);
 }
-.selector-brand-row__logo img{ display:block; max-width:24px; max-height:24px; }
+.selector-brand-row__logo img{ display:block; width:24px; height:auto; }
 
 .selector-brand-row__text{ display:flex; flex-direction:column; gap:var(--spacing-2); flex:1 1 auto; min-width:0; }
 .selector-brand-row__name{

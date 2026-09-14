@@ -1,0 +1,12 @@
+/* Brand / Lockup — components/ai-social-media/brand-lockup.html 참고
+   Figma: FME_AI-Social-Media, "Images & Icons" (9269:5042) → Brand / Lockup (3982:63652)
+   Brand/Formee Education/mark (49×48) + a two-line wordmark, gap 16:
+   "Formee Education" DM Sans Bold 20/28 neutral-900, "AI Social Media" Regular 18/28 neutral-700.
+   The mark is icons/brand/formee-education.svg (same 41:40 gradient mark, drawn at 49×48).
+   The name uses the display-xs size (20/28); 18px has no token (text-xl is 16), so it is a Figma literal. */
+
+.brand-lockup{ display:inline-flex; align-items:center; gap:var(--spacing-lg); font-family:var(--font-family-text); }
+.brand-lockup__mark{ display:block; width:49px; height:48px; flex-shrink:0; }
+.brand-lockup__text{ display:flex; flex-direction:column; }
+.brand-lockup__name{ font-size:var(--font-size-display-xs); line-height:var(--line-height-display-xs); font-weight:var(--font-weight-bold); color:var(--color-neutral-900); white-space:nowrap; }
+.brand-lockup__product{ font-size:18px; line-height:var(--line-height-display-xs); font-weight:var(--font-weight-regular); color:var(--color-neutral-700); white-space:nowrap; }

@@ -1,0 +1,13 @@
+/* logo — components/ai-social-media/logo.html 참고
+   Figma: FME_AI-Social-Media, "Images & Icons" (9269:5042) → logo (4211:67526)
+   3 variants: Property 1 = Formee Express / SCEI / SCEI-HE. A 36×36 tile with a neutral-400 border
+   (inside) and 8px radius, the brand's logo image centred at 24px wide.
+   Logos: images/brand-logos/*.png, exported from the image layers at 3x.
+   Used inside Selector / Brand Row (selector-brand-row.css keeps its own copy of the tile). */
+
+.logo-tile{
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  box-sizing:border-box; width:36px; height:36px;
+  border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg);
+}
+.logo-tile img{ display:block; width:24px; height:auto; }

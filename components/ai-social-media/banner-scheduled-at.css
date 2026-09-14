@@ -1,5 +1,5 @@
 /* banner · scheduled at — components/ai-social-media/banner-scheduled-at.html 참고
-   Figma: FME_AI-Social-Media, "Forms & Inputs 추가" (9329:146423) → banner · scheduled at (9062:241896)
+   Figma: FME_AI-Social-Media, "Forms & Inputs" (1124:30) → banner · scheduled at (9062:241896)
    3 variants: Property 1 = Default / hover / Focused. Only the fill changes: none → neutral-100 → neutral-150.
    Children sit on space-between inside a fixed 304px row, so the gaps come from the layout, not a set gap.
    Padding 10px horizontal is a Figma literal (between --spacing-sm 8 and --spacing-md 12).
