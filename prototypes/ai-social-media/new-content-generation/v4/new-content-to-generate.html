@@ -49,6 +49,9 @@
 <link rel="stylesheet" href="../../../../components/ai-social-media/publish-social-modal.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/controls-misc.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/controls-toggles.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/controls-search-field.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/style-card.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/character-detail-panel.css">
 <!-- Playfair Display: only used live for the Draft screen's brand-kit font-preview tags (Formee
      Express's Heading face, matching brand-setup-kit-character-library.html's own import). -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap">
@@ -955,14 +958,8 @@
   .video-lightbox-stage .video-scrubber-progress{width:100%; height:4px; border-radius:999px; background:rgba(255,255,255,.35); overflow:hidden;}
   .video-lightbox-stage .video-scrubber-progress-fill{height:100%; width:37.5%; background:#fff; border-radius:inherit; transition:width 1.4s linear;}
 
-  /* ---- Character Detail modal -- see openCharDetailModal() ----
-     #charDetailGrid reuses .mylib-content (the see-all modal's own grid container) but needs
-     to stack "Favorites"/"All styles" as separate labeled sections instead of that class's
-     own flex-wrap tile row, hence the column override scoped to this one id. */
-  #charDetailGrid{flex-direction:column; flex-wrap:nowrap; align-items:stretch; gap:var(--spacing-lg);}
-  .mylib-section-label{width:100%; margin:0; font-family:var(--font-family-text); font-size:13px; font-weight:600; color:var(--color-neutral-700);}
-  .char-detail-tags{display:flex; gap:8px; width:100%;}
-  .char-detail-tags .d-tag{font-family:var(--font-family-text); font-size:12px; font-weight:500; color:var(--color-neutral-700); background:var(--color-neutral-100); border-radius:999px; padding:3px 10px;}
+  /* Character Detail modal layout (breadcrumb, two-column body, tags, style grids) now lives
+     in components/ai-social-media/character-detail-panel.css, matching Figma 9619:195199. */
 
   /* =====================================================================
      REEL/SHORT (Script/Video) — ported from
@@ -3061,13 +3058,28 @@
        modal above (openCharDetailModal()/pickCharSeeAllCard()). Reuses the same .mylib-*
        shell + .char-select-card/.char-select-grid tiles as that modal for a consistent look. -->
   <div class="modal-overlay" id="charDetailModalOverlay" style="display:none;" onclick="if(event.target===this) closeCharDetailModal();">
-    <div class="modal mylib-modal">
+    <div class="modal mylib-modal mylib-modal--wide">
       <div class="mylib-header-top">
-        <h2 class="modal__title" id="charDetailName">Character</h2>
+        <div class="char-detail-breadcrumb">
+          <button type="button" class="crumb-root" onclick="closeCharDetailModal()">Characters</button>
+          <span class="crumb-sep">&rsaquo;</span>
+          <span class="crumb-current" id="charDetailName">Character</span>
+        </div>
         <button type="button" class="modal__close" onclick="closeCharDetailModal()"><img src="../../../../components/ai-social-media/icons/button-x-dark.svg" class="icon-inline" alt=""></button>
       </div>
-      <div class="char-detail-tags" id="charDetailTags"></div>
-      <div class="mylib-content" id="charDetailGrid" style="max-height:60vh; overflow-y:auto;"></div>
+      <div class="char-detail-body">
+        <div class="char-detail-left">
+          <div class="char-detail-name-row">
+            <p class="name" id="charDetailNameLg">Character</p>
+            <img src="../../../../components/ai-social-media/icons/shape-star-filled-large.svg" alt="">
+          </div>
+          <div class="char-detail-tags" id="charDetailTags"></div>
+          <div id="charDetailSourceWrap"></div>
+          <div class="char-detail-spacer"></div>
+          <button type="button" class="btn btn-dark" style="width:100%;" onclick="closeCharDetailModal()">Create new content</button>
+        </div>
+        <div class="char-detail-right" id="charDetailGrid"></div>
+      </div>
       <div class="mylib-footer">
         <button type="button" class="actions-btn actions-btn--secondary" onclick="closeCharDetailModal()">Cancel</button>
         <button type="button" class="actions-btn actions-btn--primary" onclick="confirmCharDetailSelection()">Save</button>
@@ -6654,7 +6666,7 @@ window.__charSeeAllFavOnly = false;
 function buildCharSeeAllModalHtml(){
   return `
     <div class="modal-overlay" id="charSeeAllModalOverlay" style="display:none;" onclick="if(event.target===this) closeCharacterSeeAllModal();">
-      <div class="modal mylib-modal">
+      <div class="modal mylib-modal mylib-modal--wide">
         <div class="mylib-header-top">
           <h2 class="modal__title">Characters</h2>
           <button type="button" class="modal__close" onclick="closeCharacterSeeAllModal()"><img src="../../../../components/ai-social-media/icons/button-x-dark.svg" class="icon-inline" alt=""></button>
@@ -6765,15 +6777,14 @@ function confirmCharSeeAllSelection(){
 }
 
 // ---- Character Detail modal -- opened from a card in the "Character · See all" modal
-// above (pickCharSeeAllCard()). Drills into that one character's own style picker
-// (Favorites + All styles), matching the Figma "Character details" drill-down -- the
-// canvas instance for that spec was removed after an earlier session's height-matching
-// pass, so this is built from the last-seen screenshot + reuses this file's own already-
-// working style data instead of guessing new pixel values. Elena is the only character
-// with a real named style set anywhere in this prototype (matching #charStylesGridReel/
-// Image/Carousel's own static markup); everyone else falls back to a single "Default" tile
-// using their base photo so the modal never renders empty. Reuses the same
-// .char-select-card/.char-select-grid component as the see-all grid itself for the tiles.
+// above (pickCharSeeAllCard()). Drills into that one character's own style picker, matching
+// Figma "Modal / Body · Character details" (9619:195199) exactly: a breadcrumb
+// ("Characters › Name") replaces the plain title, a 320px left column holds identity tags +
+// Source Images + "Create new content", and the right column holds a search field, a
+// "Favorites" filter toggle, and two grouped Selector/Style Card (style-card.css) grids.
+// Elena is the only character with real named styles + source photos anywhere in this
+// prototype; everyone else falls back to a single "Default" tile using their base photo and
+// no Source Images block, so the modal never renders empty.
 const CHAR_STYLE_LIBRARY = {
   elena: [
     { name:'Headshot', img:'assets/characters/elena-styles/headshot.png', fav:true },
@@ -6784,6 +6795,20 @@ const CHAR_STYLE_LIBRARY = {
     { name:'Beige Blazer', img:'assets/characters/elena-styles/beige-blazer.png', fav:false },
     { name:'Bright Hallway', img:'assets/characters/elena-styles/bright-hallway.png', fav:false },
   ],
+};
+// Per-character left-column data (tags + Source Images) -- see file header note above on why
+// only Elena has a real set. tags order matches Figma's Human/Female/18–24 row exactly.
+const CHAR_DETAIL_DATA = {
+  elena: {
+    tags: ['Human', 'Female', '18–24'],
+    sourceImages: [
+      'assets/characters/elena-styles/source-1.png',
+      'assets/characters/elena-styles/source-2.png',
+      'assets/characters/elena-styles/source-3.png',
+      'assets/characters/elena-styles/source-4.png',
+      'assets/characters/elena-styles/source-5.png',
+    ],
+  },
 };
 // Per-scope DOM the real style pick has to land on once Save re-dispatches it, same idea as
 // CHAR_SEE_ALL_GRID_IDS above but for each scope's #charStylesGrid* panel + its select fn.
@@ -6801,7 +6826,14 @@ function openCharDetailModal(charId){
   const styles = charDetailStyles(charId);
   window.__charDetailPendingStyle = (styles.find(s => s.fav) || styles[0]).name;
   document.getElementById('charDetailName').textContent = c.name;
-  document.getElementById('charDetailTags').innerHTML = `<span class="d-tag">${escapeHtml(c.type)}</span><span class="d-tag">${escapeHtml(CHAR_SEE_ALL_BRAND)}</span>`;
+  document.getElementById('charDetailNameLg').textContent = c.name;
+  const detail = CHAR_DETAIL_DATA[charId];
+  const tags = detail ? detail.tags : [c.type, CHAR_SEE_ALL_BRAND];
+  document.getElementById('charDetailTags').innerHTML = tags.map(t =>
+    `<span class="filter-toggle"><span class="filter-toggle__label">${escapeHtml(t)}</span></span>`).join('');
+  document.getElementById('charDetailSourceWrap').innerHTML = (detail && detail.sourceImages && detail.sourceImages.length)
+    ? `<p class="char-detail-source-label">Source Images</p><div class="char-detail-source-grid">${detail.sourceImages.map(src => `<img src="${src}" alt="">`).join('')}</div>`
+    : '';
   renderCharDetailGrid();
   document.getElementById('charSeeAllModalOverlay').style.display = 'none';
   document.getElementById('charDetailModalOverlay').style.display = 'flex';
@@ -6809,6 +6841,7 @@ function openCharDetailModal(charId){
 // X and Cancel both just back out to the see-all grid, not close everything -- the user is
 // still mid-pick, not done with the flow.
 function closeCharDetailModal(){
+  closeCharDetailStyleMenu();
   document.getElementById('charDetailModalOverlay').style.display = 'none';
   document.getElementById('charSeeAllModalOverlay').style.display = 'flex';
 }
@@ -6817,18 +6850,78 @@ function renderCharDetailGrid(){
   const favs = styles.filter(s => s.fav);
   const pending = window.__charDetailPendingStyle;
   const cardHtml = s => `
-    <div class="char-select-card${s.name === pending ? ' selected' : ''}" role="button" tabindex="0" onclick="pickCharDetailStyle('${escapeHtml(s.name)}')">
-      <div class="thumb"><img src="${s.img}" alt=""></div>
-      <div class="meta"><p class="name">${escapeHtml(s.name)}</p></div>
+    <div class="style-card${s.name === pending ? ' selected' : ''}" role="button" tabindex="0" onclick="pickCharDetailStyle('${escapeHtml(s.name)}')">
+      <img class="style-card-photo" src="${s.img}" alt="">
+      <div class="style-card-scrim"></div>
+      <p class="style-card-name">${escapeHtml(s.name)}</p>
+      <div class="style-card-top-row" onclick="event.stopPropagation();">
+        <button type="button" class="thumb-action-btn fav${s.fav ? ' active' : ''}" onclick="toggleCharDetailStyleFav('${escapeHtml(s.name)}')" aria-label="Favorite ${escapeHtml(s.name)}"><img src="../../../../components/ai-social-media/icons/${s.fav ? 'shape-star-filled' : 'shape-star'}.svg" alt=""></button>
+        <button type="button" class="thumb-action-btn" onclick="toggleCharDetailStyleMenu(event, '${escapeHtml(s.name)}')" aria-label="More actions for ${escapeHtml(s.name)}"><img src="../../../../components/ai-social-media/icons/ui-ellipsis.svg" alt=""></button>
+      </div>
+    </div>`;
+  const newTileHtml = `
+    <div class="style-card new" role="button" tabindex="0">
+      <img src="../../../../components/ai-social-media/icons/pagebar-plus.svg" alt="">
+      <span>New Style</span>
     </div>`;
   document.getElementById('charDetailGrid').innerHTML = `
-    ${favs.length ? `<p class="mylib-section-label">Favorites &middot; ${favs.length}</p><div class="char-select-grid">${favs.map(cardHtml).join('')}</div>` : ''}
-    <p class="mylib-section-label">All styles &middot; ${styles.length}</p>
-    <div class="char-select-grid">${styles.map(cardHtml).join('')}</div>
+    <div class="search-field search-field--expanded"><img src="../../../../components/ai-social-media/icons/ui-search.svg" alt=""><input class="search-field__input" type="text" placeholder="Search styles"></div>
+    <button type="button" class="filter-toggle filter-toggle--selected" onclick="this.classList.toggle('filter-toggle--selected')">
+      <img class="filter-toggle__icon" src="../../../../components/ai-social-media/icons/controls/star-fill-selected.svg" alt="">
+      <span class="filter-toggle__label">Favorites</span>
+    </button>
+    ${favs.length ? `
+    <div class="char-detail-group-head"><p>Favorites &middot; ${favs.length}</p><div class="rule"></div></div>
+    <div class="char-style-grid">${newTileHtml}${favs.map(cardHtml).join('')}</div>` : ''}
+    <div class="char-detail-group-head"><p>All styles &middot; ${styles.length}</p><div class="rule"></div></div>
+    <div class="char-style-grid--fixed4">${styles.map(cardHtml).join('')}</div>
   `;
 }
 function pickCharDetailStyle(name){
   window.__charDetailPendingStyle = name;
+  renderCharDetailGrid();
+}
+function toggleCharDetailStyleFav(name){
+  const s = charDetailStyles(window.__charDetailId).find(x => x.name === name);
+  if(s) s.fav = !s.fav;
+  renderCharDetailGrid();
+}
+// "..." context menu -- reuses the real .context-menu/.menu-item shared component
+// (components/ai-social-media/controls-menu.css), appended to <body> and positioned under
+// the clicked button so it isn't clipped by the modal's own overflow:auto grid.
+window.__charDetailMenuEl = null;
+function toggleCharDetailStyleMenu(evt, name){
+  evt.stopPropagation();
+  const already = !!window.__charDetailMenuEl;
+  closeCharDetailStyleMenu();
+  if(already) return;
+  const btn = evt.currentTarget;
+  const menu = document.createElement('div');
+  menu.className = 'context-menu style-card-menu';
+  menu.innerHTML = `
+    <button type="button" class="menu-item">Create new content</button>
+    <button type="button" class="menu-item">Edit</button>
+    <button type="button" class="menu-item menu-item--danger" onclick="deleteCharDetailStyle('${escapeHtml(name)}')">Delete</button>
+  `;
+  document.body.appendChild(menu);
+  const r = btn.getBoundingClientRect();
+  menu.style.position = 'fixed';
+  menu.style.top = (r.bottom + 4) + 'px';
+  menu.style.left = (r.right - 200) + 'px';
+  window.__charDetailMenuEl = menu;
+  setTimeout(() => document.addEventListener('click', closeCharDetailStyleMenu, { once:true }), 0);
+}
+function closeCharDetailStyleMenu(){
+  if(window.__charDetailMenuEl){ window.__charDetailMenuEl.remove(); window.__charDetailMenuEl = null; }
+}
+function deleteCharDetailStyle(name){
+  const styles = charDetailStyles(window.__charDetailId);
+  const idx = styles.findIndex(s => s.name === name);
+  if(idx > -1) styles.splice(idx, 1);
+  if(window.__charDetailPendingStyle === name){
+    window.__charDetailPendingStyle = (styles.find(s => s.fav) || styles[0] || {}).name;
+  }
+  closeCharDetailStyleMenu();
   renderCharDetailGrid();
 }
 // Save applies both picks in one go: select the character on the real underlying grid (the

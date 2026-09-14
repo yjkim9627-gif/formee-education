@@ -1,0 +1,46 @@
+/* Character detail drill-down — shared component (Figma "Modal / Body · Character details",
+   9619:195199, reached by clicking a card in the "Character · See all" modal, 9619:191736).
+   Two-column body inside the same .mylib-modal shell: a fixed 320px left column (identity +
+   source images + "Create new content") and a flexible right column (search + Favorites
+   filter + grouped Selector/Style Card grids). Uses the real .filter-toggle (unselected, for
+   the plain Human/Female/18–24 tags — selected, for the "Favorites" toggle), .search-field
+   (Controls / Search Field), and .context-menu/.menu-item (Controls / Context Menu) shared
+   components instead of drawing bespoke equivalents. */
+
+.char-detail-breadcrumb{
+  display:flex; align-items:center; gap:8px; font-family:var(--font-family-text); font-size:14px; line-height:22px; white-space:nowrap;
+}
+.char-detail-breadcrumb .crumb-root{font-weight:500; color:var(--color-neutral-500); background:none; border:none; padding:0; cursor:pointer; font-family:inherit; font-size:inherit; line-height:inherit;}
+.char-detail-breadcrumb .crumb-root:hover{color:var(--color-neutral-700);}
+.char-detail-breadcrumb .crumb-sep{font-weight:500; color:var(--color-neutral-300);}
+.char-detail-breadcrumb .crumb-current{font-weight:600; color:var(--color-neutral-900);}
+
+.char-detail-body{display:flex; align-items:stretch; width:100%;}
+
+.char-detail-left{
+  display:flex; flex-direction:column; gap:var(--spacing-xl); align-items:flex-start;
+  width:320px; flex-shrink:0; box-sizing:border-box;
+  border-right:1px solid var(--color-neutral-200); padding:var(--spacing-2xl) 24px var(--spacing-2xl) 0;
+}
+.char-detail-name-row{display:flex; align-items:center; gap:var(--spacing-sm); width:100%;}
+.char-detail-name-row .name{margin:0; font-family:var(--font-family-text); font-size:20px; font-weight:700; line-height:28px; color:var(--color-neutral-900);}
+.char-detail-name-row img{width:20px; height:20px; flex-shrink:0;}
+.char-detail-tags{display:flex; flex-wrap:wrap; gap:var(--spacing-sm); width:100%;}
+.char-detail-source-label{margin:0; font-family:var(--font-family-text); font-size:14px; font-weight:600; line-height:22px; color:var(--color-neutral-800);}
+.char-detail-source-grid{display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:8px; width:100%;}
+.char-detail-source-grid img{aspect-ratio:85/106; width:100%; object-fit:cover; border-radius:var(--radius-lg); display:block;}
+.char-detail-spacer{flex:1 0 0; min-height:0; width:100%;}
+
+.char-detail-right{
+  display:flex; flex-direction:column; gap:var(--spacing-md); align-items:flex-start; flex:1 0 0; min-width:0;
+  box-sizing:border-box; padding:var(--spacing-xl) 0 var(--spacing-xl) 24px; max-height:60vh; overflow-y:auto;
+}
+.char-detail-right .search-field--expanded{width:100%; box-sizing:border-box;}
+.char-detail-group-head{display:flex; align-items:center; gap:var(--spacing-sm); width:100%;}
+.char-detail-group-head p{margin:0; font-family:var(--font-family-text); font-size:16px; font-weight:600; line-height:24px; color:var(--color-neutral-900); white-space:nowrap;}
+.char-detail-group-head .rule{flex:1 0 0; height:1px; background:var(--color-neutral-200);}
+
+/* "..." context menu popover, anchored to whichever style card's more-button opened it --
+   position:fixed is set inline (its coords come from getBoundingClientRect(), viewport-
+   relative) since the menu is appended to <body>, not to a positioned ancestor. */
+.style-card-menu{z-index:20;}

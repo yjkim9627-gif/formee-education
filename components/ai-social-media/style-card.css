@@ -1,0 +1,44 @@
+/* Selector / Style Card — shared component (Figma "Modal / Body · Character details",
+   9619:195199 — the right-hand styles grid inside a character's detail drill-down).
+   Distinct from .char-select-card (character-card.css): that one shows a photo card with
+   name/type/status BELOW the image. This one is photo-only — the whole card IS the photo
+   (aspect 246/295), with the name overlaid at the bottom inside a dark gradient scrim, and
+   the favorite/more actions overlaid at the top. No border (the photo fills the full
+   rounded-12 card edge to edge). */
+.style-card{
+  position:relative; aspect-ratio:246/295; width:100%; border-radius:12px; overflow:hidden;
+  background:linear-gradient(135deg,var(--color-neutral-300),var(--color-neutral-150));
+  cursor:pointer;
+}
+.style-card img.style-card-photo{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block;}
+.style-card-scrim{
+  position:absolute; left:0; right:0; bottom:0; height:78px;
+  background:linear-gradient(to bottom, rgba(11,20,40,0), rgba(11,20,40,.72));
+}
+.style-card-name{
+  position:absolute; left:10px; right:10px; bottom:12px; margin:0;
+  font-family:var(--font-family-text); font-size:13px; font-weight:600; line-height:20px; color:var(--color-neutral-0);
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.style-card-top-row{position:absolute; left:0; right:0; top:14px; display:flex; align-items:center; justify-content:space-between; padding:0 12px;}
+.style-card-top-row .thumb-action-btn{flex-shrink:0;}
+
+/* "New Style" tile — dashed placeholder, same visual language as .char-select-card.new. */
+.style-card.new{
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px;
+  border:1px dashed var(--color-neutral-400); box-sizing:border-box; background:var(--color-neutral-75);
+}
+.style-card.new:hover{border-color:var(--color-neutral-450);}
+.style-card.new img{width:24px; height:24px; object-fit:contain;}
+.style-card.new span{font-size:14px; font-weight:500; color:var(--color-neutral-700); text-align:center;}
+
+/* Favorites row (Figma: flex, flex-wrap, each card flex-grow:1/shrink:0/basis:0 -- however
+   many cards are in it divide the row's width evenly, edge to edge) vs. All-styles grid
+   (Figma: a strict CSS grid, always 4 columns, wrapping to additional rows past 4 items --
+   NOT evenly redividing across however many items exist). Two different layouts, not one
+   reused for both. */
+.char-style-grid{display:flex; flex-wrap:wrap; gap:12px; width:100%;}
+.char-style-grid .style-card{flex:1 0 0; min-width:180px;}
+.char-style-grid .style-card.new{flex:1 0 0; min-width:180px; width:auto;}
+
+.char-style-grid--fixed4{display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:12px; width:100%;}

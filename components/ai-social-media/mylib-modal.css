@@ -22,6 +22,10 @@
    Reference Scene Tiles. Keep both modals' markup on these same classes rather than
    forking a second set -- that's what keeps them visually identical dialog shells. */
 .mylib-modal{max-width:1088px; width:100%; padding:var(--spacing-xl); border-radius:16px; gap:var(--spacing-md); border:none; box-shadow:0px 20px 24px rgba(0,0,0,.18);}
+/* Wider variant — Character "See all" (Figma 9619:191736, a 1290px body / 6-per-row grid)
+   and its detail drill-down (9619:195199, same 1290px body). Everything else on .mylib-modal
+   (My Library's own 1088px/5-per-row spec) is untouched. */
+.mylib-modal--wide{max-width:1330px;}
 .mylib-header-top{display:flex; align-items:flex-start; justify-content:space-between; width:100%;}
 .mylib-header-top .modal__close{position:static; width:36px; height:36px; border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); box-shadow:0 1px 1.5px rgba(15,23,41,.1),0 1px 0.5px rgba(15,23,41,.04);}
 .mylib-filter-bar{display:flex; align-items:center; justify-content:space-between; height:64px; width:100%;}
