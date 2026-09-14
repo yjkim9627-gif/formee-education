@@ -33,6 +33,8 @@
 <link rel="stylesheet" href="../../../../components/ai-social-media/brand-kit-summary.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/ai-response-card.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/create-character-modal.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/change-voice-modal.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/mylib-modal.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/editor-cell.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/editor-color-swatch.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/controls-menu.css">
@@ -227,28 +229,8 @@
   .reference-images-row{display:flex; gap:8px; flex-wrap:wrap;}
   .reference-images-row:empty{display:none;}
 
-  /* -- My Library picker modal (Figma 9198:133913 "Reference - My Library") — real
-     Controls/Segmented Control + Controls/Filter/Select + Reference/Scene Tile·Selectable
-     grid (multi-select) + Actions/Button footer. Selecting tiles then clicking "Add"
-     hands off to window.fmxRefMount() (see reference-images-row above / fmxref-js below),
-     same as the Content Library "Use as reference" deep-link. -- */
-  /* Figma 9329:145797's card has NO border at all (just bg white + a drop shadow) -- the
-     shared .modal class's generic 1px border (meant for the confirm/success/form dialogs)
-     was quietly eating 2px of usable width here (border-box sizing), which was just enough
-     to drop the tile grid from Figma's real 5-per-row (5*200 + 4*12 gap = 1048, exactly
-     .mylib-content's width at the real 1088px/20px-padding modal size) to 4-per-row --
-     leaving a large uneven gap on the right of every row instead of the grid filling it.
-     Removing the border (and swapping the shadow for Figma's own literal instead of the
-     generic --shadow-modal token) fixes both the look and the width. */
-  .mylib-modal{max-width:1088px; width:100%; padding:var(--spacing-xl); border-radius:16px; gap:var(--spacing-md); border:none; box-shadow:0px 20px 24px rgba(0,0,0,.18);}
-  .mylib-header-top{display:flex; align-items:flex-start; justify-content:space-between; width:100%;}
-  .mylib-header-top .modal__close{position:static; width:36px; height:36px; border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); box-shadow:0 1px 1.5px rgba(15,23,41,.1),0 1px 0.5px rgba(15,23,41,.04);}
-  .mylib-filter-bar{display:flex; align-items:center; justify-content:space-between; height:64px; width:100%;}
-  .mylib-filter-left{display:flex; align-items:center; gap:8px;}
-  .mylib-filter-row{display:flex; align-items:center; gap:var(--spacing-md);}
-  .mylib-item-count{font-family:var(--font-family-text); font-size:12px; font-weight:500; color:var(--color-neutral-500); white-space:nowrap;}
-  .mylib-content{display:flex; flex-wrap:wrap; gap:var(--spacing-md); max-height:60vh; overflow-y:auto;}
-  .mylib-footer{display:flex; align-items:center; justify-content:flex-end; gap:var(--spacing-md); padding-top:16px; width:100%;}
+  /* My Library picker modal + Character "See all" modal (shared .mylib-* shell) —
+     components/ai-social-media/mylib-modal.css */
 
   /* -- Character section (Brief & Style) — .char-section/.char-panel/.char-filters/.char-grid/
      .char-card + Filter Chip now in components/ai-social-media/character-card.css + filter-chip.css. -- */
@@ -1032,66 +1014,8 @@
   .voice-lib-add{border:1px solid var(--color-neutral-300); background:#fff; border-radius:999px; padding:3px 10px; font-size:10.5px; font-weight:600; color:var(--color-neutral-700); cursor:pointer; flex-shrink:0; font-family:var(--font-family-text);}
   .voice-lib-add:hover{border-color:var(--color-brand-primary); color:var(--color-brand-primary);}
 
-  /* ---- "Change voice" modal (Figma 8727:223765 "My voices" tab + 8727:223551 "ElevenLabs
-     voice library" tab) -- ONE modal with two tabs, opened from the Generate-stage settings-bar
-     Voice chip (openVoiceSelectModal()). Previously built as two entirely separate modals (a
-     "Select voice" one with two stacked groups + a "Browse ElevenLabs Voice Library" button,
-     which pushed to a second modal for the library) -- neither the layout, sizing, nor the
-     push-to-a-second-modal flow matches Figma, which is a single 912px modal, tabs (not a
-     button) switching its body, and the two "My voices" sources shown as two SIDE-BY-SIDE
-     columns inside one bordered body box, not stacked groups. Reuses .voice-lib-row/.voice-lib-
-     grid (ElevenLabs tab rows, defined just above -- already matches Figma's "Editor / Audio
-     Row" almost exactly) and .voice-item (My-voices tab rows), rescoped below to the same
-     Editor/Audio Row spec instead of its own brand-tinted-selection look (that's still correct
-     for the OTHER two places .voice-item renders: the Brief screen's horizontal .row-card row
-     and the Character section's card row -- not touched here, only the modal usage is). */
-  .voice-select-overlay{background:rgba(15,23,41,.4);} /* Figma's own literal for this screen -- not the shared .modal-overlay's 55% */
-  .voice-select-modal{width:912px; max-width:calc(100vw - 48px); box-sizing:border-box; align-items:flex-end;}
-  .voice-modal-header{display:flex; align-items:center; justify-content:space-between; width:100%;}
-  .voice-modal-title{margin:0; font-family:var(--font-family-text); font-size:16px; line-height:24px; font-weight:600; color:var(--color-neutral-900);}
-  .voice-modal-close{width:24px; height:24px; flex-shrink:0; border:none; background:none; padding:0; cursor:pointer; display:flex;}
-  .voice-modal-close img{width:24px; height:24px; display:block;}
-  .voice-modal-tabs{display:flex; align-items:flex-start; width:100%;}
-  .voice-modal-tab{
-    flex:1 0 0; min-width:0; text-align:center; padding:5px 16px 9px; border:none; border-bottom:1px solid var(--color-neutral-300);
-    background:none; cursor:pointer; font-family:var(--font-family-text); font-size:14px; font-weight:500; color:var(--color-neutral-500);
-  }
-  .voice-modal-tab.active{border-bottom:2px solid var(--color-neutral-800); font-weight:700; color:var(--color-neutral-800);}
-  .voice-modal-body{width:100%; box-sizing:border-box; background:var(--color-neutral-75); border:1px solid var(--color-neutral-300); border-radius:12px; padding:16px; display:flex; gap:16px;}
-  .voice-modal-body--my{height:438px;}
-  .voice-modal-col{display:flex; flex-direction:column; gap:16px; flex:1 0 0; min-width:0; height:438px;}
-  .voice-modal-col-label{font-family:var(--font-family-text); font-size:14px; line-height:22px; font-weight:500; color:var(--color-neutral-700);}
-  .voice-modal-col-rows{display:flex; flex-direction:column; gap:20px; width:100%; overflow-y:auto;}
-  .voice-modal-footer{display:flex; gap:12px; align-items:center;}
-  /* My-voices row, rescoped from .voice-item's own brand-tinted look (correct for the Brief/
-     Character screens' .row-card usage, wrong here) to the real Editor/Audio Row spec:
-     52px tall, neutral-400 border, selected = neutral-150 bg + neutral-500 border (not
-     brand-light), no checkmark glyph (Figma has none -- the bg/border change IS the
-     indicator), 32px play circle with the same bare-triangle inset math as
-     .voice-section-preview-play/.voice-lib-play use elsewhere. */
-  .voice-modal-col-rows .voice-item{
-    height:52px; box-sizing:border-box; gap:8px; padding:8px 12px; border-radius:var(--radius-lg);
-    border:1px solid var(--color-neutral-400); background:var(--color-neutral-0);
-  }
-  .voice-modal-col-rows .voice-item:hover{background:var(--color-neutral-0); border-color:var(--color-neutral-500);}
-  .voice-modal-col-rows .voice-item.selected{background:var(--color-neutral-150); border-color:var(--color-neutral-500);}
-  .voice-modal-col-rows .voice-check{display:none;}
-  .voice-modal-col-rows .voice-play{
-    position:relative; width:32px; height:32px; border-radius:999px; border:1.5px solid var(--color-neutral-700);
-    background:none; box-sizing:border-box;
-  }
-  .voice-modal-col-rows .voice-play img{position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:16.8px; height:16.8px;} /* 32 - 2*(26.67%*32 - 0.7) */
-  .voice-modal-col-rows .voice-play.playing{border-color:var(--color-brand-primary); background:none;}
-  .voice-modal-col-rows .voice-item-name{font-size:12px; font-weight:500; color:var(--color-neutral-700);}
-  .voice-modal-col-rows .voice-item-tag{font-size:11px; font-weight:400; color:var(--color-neutral-500);}
-  /* ElevenLabs library tab -- same panel content as the Brief screen's inline browse panel,
-     just without that panel's own margin-top/border/radius (this modal's .voice-modal-body
-     already supplies the card chrome around it). Fixed to the same 438px as the My-voices tab
-     (.voice-modal-body--my) so switching tabs doesn't resize the modal -- search row + filter
-     chips take whatever height they need, and the grid itself (flex:1, see
-     .voice-lib-grid--modal below) absorbs the rest, scrolling vertically once it runs out. */
-  #voiceModalBodyLib{flex-direction:column; align-items:stretch; height:438px;}
-  .voice-lib-grid--modal{flex:1; min-height:0; max-height:none; align-content:start;}
+  /* "Change voice" modal (My voices + ElevenLabs tabs) —
+     components/ai-social-media/change-voice-modal.css */
 
   /* ---- Chat attachments (not covered by chat-panel.css) ---- */
   .chat-attachments{padding:12px 16px 0; border-bottom:1px solid var(--color-neutral-200); display:flex; flex-direction:column; gap:8px;}

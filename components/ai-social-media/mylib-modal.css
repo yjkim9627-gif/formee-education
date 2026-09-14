@@ -1,0 +1,32 @@
+/* My Library picker modal (Figma 9198:133913 "Reference - My Library") -- real
+   Controls/Segmented Control + Controls/Filter/Select + Reference/Scene Tile·Selectable
+   grid (multi-select) + Actions/Button footer. Selecting tiles then clicking "Add"
+   hands off to window.fmxRefMount() (see reference-images-row / fmxref-js in
+   new-content-to-generate.html), same as the Content Library "Use as reference" deep-link.
+
+   Figma 9329:145797's card has NO border at all (just bg white + a drop shadow) -- the
+   shared .modal class's generic 1px border (meant for the confirm/success/form dialogs)
+   was quietly eating 2px of usable width here (border-box sizing), which was just enough
+   to drop the tile grid from Figma's real 5-per-row (5*200 + 4*12 gap = 1048, exactly
+   .mylib-content's width at the real 1088px/20px-padding modal size) to 4-per-row --
+   leaving a large uneven gap on the right of every row instead of the grid filling it.
+   Removing the border (and swapping the shadow for Figma's own literal instead of the
+   generic --shadow-modal token) fixes both the look and the width.
+
+   This same shell (.mylib-*, all an instance of the shared "Modal / Dialog" component set)
+   is reused as-is by the Character "See all" modal (Figma "Modal / Body · Character (see
+   all)" 9523:150796, opened from Image post/Reel·Story Video/Carousel's Character section)
+   -- buildCharSeeAllModalHtml() renders the identical .mylib-header-top/.mylib-filter-bar/
+   .mylib-content/.mylib-footer structure, just with a .char-select-grid of
+   .char-select-card tiles (components/ai-social-media/character-card.css) instead of
+   Reference Scene Tiles. Keep both modals' markup on these same classes rather than
+   forking a second set -- that's what keeps them visually identical dialog shells. */
+.mylib-modal{max-width:1088px; width:100%; padding:var(--spacing-xl); border-radius:16px; gap:var(--spacing-md); border:none; box-shadow:0px 20px 24px rgba(0,0,0,.18);}
+.mylib-header-top{display:flex; align-items:flex-start; justify-content:space-between; width:100%;}
+.mylib-header-top .modal__close{position:static; width:36px; height:36px; border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); box-shadow:0 1px 1.5px rgba(15,23,41,.1),0 1px 0.5px rgba(15,23,41,.04);}
+.mylib-filter-bar{display:flex; align-items:center; justify-content:space-between; height:64px; width:100%;}
+.mylib-filter-left{display:flex; align-items:center; gap:8px;}
+.mylib-filter-row{display:flex; align-items:center; gap:var(--spacing-md);}
+.mylib-item-count{font-family:var(--font-family-text); font-size:12px; font-weight:500; color:var(--color-neutral-500); white-space:nowrap;}
+.mylib-content{display:flex; flex-wrap:wrap; gap:var(--spacing-md); max-height:60vh; overflow-y:auto;}
+.mylib-footer{display:flex; align-items:center; justify-content:flex-end; gap:var(--spacing-md); padding-top:16px; width:100%;}
