@@ -4606,11 +4606,68 @@ function carSelectRatio(value){
   carUpdateBriefMeta();
 }
 function selectCardCount(n){
+  const oldN = window.__cardCount;
   window.__cardCount = n;
   document.getElementById('cardsChipText').textContent = `${n} Cards`;
   document.querySelectorAll('#cardsPopover .chip-option').forEach(o => o.classList.toggle('selected', Number(o.dataset.cards) === n));
   document.getElementById('cardsPopover').style.display = 'none';
   carUpdateBriefMeta();
+
+  // This chip lives on the Brief screen, reachable at any time via the "Brief & Style" step
+  // nav (goToBrief()) -- so changing it here can happen either before the script exists yet
+  // (draftScript() just runs fresh for the new count when Generate is entered) or after going
+  // back from an already-drafted Script stage, which is the case the chat needs to narrate
+  // (Figma "AI Assistant · Card Count Changed" gallery, 8727:224037).
+  if(scriptDraftStarted && oldN !== n){
+    narrateCardCountChange(oldN, n);
+  }
+}
+
+function narrateCardCountChange(oldN, n){
+  addChatMsg('user', `Card count changed to ${n} (was ${oldN})`);
+
+  const log = document.getElementById('chatLog');
+  const loadingEl = document.createElement('div');
+  loadingEl.className = 'msg ai loading';
+  loadingEl.innerHTML = `<span class="tag">AI</span>Rewriting the script for ${n} cards<span class="dots"><span>.</span><span>.</span><span>.</span></span>`;
+  log.appendChild(loadingEl);
+  beatIn(loadingEl);
+
+  setTimeout(() => {
+    loadingEl.remove();
+    for(let i = 1; i <= n; i++){
+      if(window.__cardScripts[i] === undefined) window.__cardScripts[i] = SCRIPT_TEMPLATES[i - 1] || `Card ${i} — key message goes here.`;
+    }
+    renderScriptCards();
+
+    const status = document.createElement('div');
+    status.className = 'msg-status';
+    status.innerHTML = '<span class="worked-label">Worked</span> <span class="worked-time">for 1s</span>';
+    log.appendChild(status);
+    beatIn(status);
+
+    const introMsg = document.createElement('div');
+    introMsg.className = 'msg ai';
+    introMsg.textContent = `Card count changed to ${n} (was ${oldN}), so I rewrote the script for all ${n} cards.`;
+    log.appendChild(introMsg);
+    beatIn(introMsg);
+
+    carAppendChatCta(
+      'Updated Script',
+      `Each card's text is ready — see Card 1–${n} on the right. Edit any card directly, or tell me here for a different angle.`,
+      `<div class="chat-cta-checklist"><img src="../../../../components/ai-social-media/icons/check.svg" alt=""><span>Applied to card scripts</span></div><button class="btn btn-dark" data-chat-action="carConfirmScript" onclick="confirmScript()">Continue to Storyboard</button>`
+    );
+    beatIn();
+
+    renderChatQuickChips([
+      { label: 'Regenerate all' },
+      { label: 'Make it punchier' }
+    ]);
+    beatIn(document.getElementById('chatQuickChips'));
+
+    setChatGuideHint('Tweak one card: "make card 2 shorter" or "try a warmer tone"');
+    log.scrollTop = log.scrollHeight;
+  }, 900);
 }
 function carUpdateBriefMeta(){
   const ratio = window.__carouselRatio;
@@ -7909,11 +7966,128 @@ function selectDuration(seconds){
 }
 
 function autoAdjustScriptForDuration(oldSeconds, newSeconds){
-  if(!window.__reelScriptEdited){
-    document.getElementById('fullScript').value = buildDurationScript();
+  // Whatever script is currently in the field -- freshly auto-drafted or hand-edited, doesn't
+  // matter -- needs narrating in the chat when the duration change actually affects it, which
+  // tab is showing decides what "affects it" means: the Script tab cares about the word budget
+  // (see getMaxScriptWords()), the Timeline tab cares about scene/clip count (see
+  // getVideoUnitCount()), since that's the only thing visible there.
+  const onTimeline = document.getElementById('subReelTimeline')?.style.display !== 'none';
+  if(onTimeline){
+    syncReelClipsFromScript();
+    narrateDurationChangeTimeline(oldSeconds, newSeconds);
+  } else {
+    narrateDurationChangeScript(oldSeconds, newSeconds);
   }
-  // Preserve authored text on duration changes; show over-limit feedback instead of cutting it.
-  syncReelClipsFromScript();
+}
+
+// Script tab: a duration cut can push the already-authored script over the new word budget --
+// narrate trimming it to fit (Figma 8727:223864 "Duration Changed" gallery). Growing the
+// duration only ever raises the budget, so there's nothing to trim there -- same silent no-op
+// as before, just a resync.
+function narrateDurationChangeScript(oldSeconds, newSeconds){
+  const ta = document.getElementById('fullScript');
+  const bareBefore = ta.value.trim().replace(/^"|"$/g, '');
+  const oldWords = countScriptWords(bareBefore);
+  const max = getMaxScriptWords();
+  if(oldWords <= max){
+    syncReelClipsFromScript();
+    return;
+  }
+
+  addChatMsg('user', `Duration changed to ${newSeconds}s`);
+  const log = document.getElementById('chatLog');
+  const loadingEl = document.createElement('div');
+  loadingEl.className = 'msg ai loading';
+  loadingEl.innerHTML = `<span class="tag">AI</span>Adjusting the script<span class="dots"><span>.</span><span>.</span><span>.</span></span>`;
+  log.appendChild(loadingEl);
+  beatIn(loadingEl);
+
+  setTimeout(() => {
+    loadingEl.remove();
+    const after = fitScriptToWordLimit(bareBefore, max);
+    const newWords = countScriptWords(after);
+    ta.value = `"${after}"`;
+    reelOnScriptInput();
+    syncReelClipsFromScript();
+
+    const status = document.createElement('div');
+    status.className = 'msg-status';
+    status.innerHTML = '<span class="worked-label">Worked</span> <span class="worked-time">for 1s</span>';
+    log.appendChild(status);
+    beatIn(status);
+
+    const verb = newWords < oldWords ? 'trimmed' : 'expanded';
+    const introText = `Duration changed to ${newSeconds}s (was ${oldSeconds}s), so I ${verb} the script from ${oldWords} to ${newWords} words to fit.`;
+    const ctaHtml = window.__thumbnailMode === 'on'
+      ? '<button class="btn btn-dark" data-chat-action="continueToTimeline" onclick="continueToTimelineFromChat()">Continue to timeline</button>'
+      : '';
+    log.innerHTML += renderScriptProposalMessageApplied(after, introText, 'Updated Script', 'Applied to Script panel', ctaHtml);
+    beatIn();
+
+    setChatGuideHint('Requests like "make it shorter" or "redo Seg 2 only" work here too');
+    log.scrollTop = log.scrollHeight;
+  }, 900);
+}
+
+// Timeline tab: nothing here reads the full script's word count -- what's visible is scene/clip
+// tiles, one per 8s unit (see getVideoUnitCount()), so the narration is scene-count based
+// instead (Figma 9742:1393 "Duration Changed via Timeline (Applied)").
+function narrateDurationChangeTimeline(oldSeconds, newSeconds){
+  const oldCount = Math.max(1, Math.round(oldSeconds / 8));
+  const newCount = getVideoUnitCount();
+  const delta = newCount - oldCount;
+  if(delta === 0) return;
+
+  addChatMsg('user', `Duration changed to ${newSeconds}s`);
+  const log = document.getElementById('chatLog');
+  const status = document.createElement('div');
+  status.className = 'msg-status';
+  status.innerHTML = '<span class="worked-label working">Worked</span>';
+  log.appendChild(status);
+  beatIn(status);
+
+  setTimeout(() => {
+    status.innerHTML = '<span class="worked-label">Worked</span> <span class="worked-time">for 1s</span>';
+
+    const changeText = delta < 0 ? `removed ${-delta} scene${-delta === 1 ? '' : 's'}` : `added ${delta} scene${delta === 1 ? '' : 's'}`;
+    const introMsg = document.createElement('div');
+    introMsg.className = 'msg ai';
+    introMsg.innerHTML = `<span class="tag">AI</span>${escapeHtml(`Duration changed to ${newSeconds}s (was ${oldSeconds}s) from the Timeline tab, so I ${changeText} to fit — ${newCount} scene${newCount === 1 ? '' : 's'} total now.`)}`;
+    log.appendChild(introMsg);
+    beatIn(introMsg);
+
+    const body = newCount === 1
+      ? `Scene 1 now runs the full ${newSeconds} seconds.`
+      : `Scenes 1–${newCount} are ready, 8 seconds each.`;
+    appendChatCta('Updated Timeline', body, '');
+
+    setChatGuideHint('Requests like "make it 16s again" or "swap scene order" work here too');
+    log.scrollTop = log.scrollHeight;
+  }, 900);
+}
+
+// Same shape as renderScriptProposalMessage() but for a change the AI already applied on its
+// own (no "Use this script" click needed) -- the box renders straight into its .applied state
+// (see .script-proposal-box.applied/.script-applied-note in the stylesheet) with a next-step
+// CTA in place of the spent "✓ Applied" button, since there's no decision left for the user to
+// make, just somewhere to go next.
+function renderScriptProposalMessageApplied(scriptText, introText, proposalTitle, appliedNoteText, ctaHtml){
+  scriptDraftCounter++;
+  const id = scriptDraftCounter;
+  window.__scriptDrafts[id] = scriptText;
+  window.__latestScriptText = scriptText;
+  return `
+    <div class="msg ai">
+      <span class="tag">AI</span>${escapeHtml(introText)}
+      <div class="script-proposal-box applied" id="scriptProposal${id}">
+        <span class="script-proposal-title">${escapeHtml(proposalTitle)}</span>
+        <div class="script-proposal-text">"${escapeHtml(scriptText)}"</div>
+        <span class="script-applied-note">✓ ${escapeHtml(appliedNoteText)}</span>
+        ${ctaHtml}
+      </div>
+      <span class="chat-edit-hint">Want changes? Type them below (e.g. "make it shorter") and I'll revise it.</span>
+    </div>
+  `;
 }
 
 // ---- Scene editors: per-clip image prompt + narration (rebuilt per duration) ----
