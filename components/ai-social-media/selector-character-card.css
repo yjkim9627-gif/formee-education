@@ -1,0 +1,46 @@
+/* Selector / Character Card — components/ai-social-media/selector-character-card.html 참고
+   Figma: FME_AI-Social-Media, "Data Display" (1124:10591) → Selector / Character Card (3224:53728)
+   2 variants: Card Type = Character Card / New character.
+   Character Card (246 wide): a 246×295 thumb (neutral-100, neutral-400 border, radius 12) holding a
+   centred 40px characters placeholder, a Favorite + More row 14px from the top (preview-top-row.css's
+   .preview-action-btn pair, 12px side inset) and a Primary "6 posts" chip 12px from the bottom-right;
+   then meta (name, type · brand) and a green Ready chip (feedback-status-chip.css).
+   A real portrait drops into the thumb as an <img>, covering the placeholder.
+   New character: the same 246×295 thumb shape, dashed, with a 24px plus + "New character".
+   Favorite icon: icons/favorite-star-16.svg (Figma's 16px outline star, 1.2 stroke — shape-star.svg is the 20px cut).
+   Figma strokes are inside, so absolute offsets inside the thumb give back its 1px border.
+   Related: character-card.css's .char-select-card is an older 200px take on this card, built from the
+   See-all modal before this component existed — left as-is. */
+
+.selector-character-card{
+  display:flex; flex-direction:column; align-items:flex-start; gap:var(--spacing-sm);
+  width:246px; font-family:var(--font-family-text);
+}
+.selector-character-card__thumb{
+  position:relative; display:flex; align-items:center; justify-content:center;
+  box-sizing:border-box; width:100%; height:295px; overflow:hidden;
+  border:1px solid var(--color-neutral-400); border-radius:var(--radius-xl); background:var(--color-neutral-100);
+}
+.selector-character-card__placeholder{ display:block; width:40px; height:40px; }
+.selector-character-card__thumb > img.selector-character-card__photo{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.selector-character-card__actions{ position:absolute; top:calc(14px - 1px); left:-1px; right:-1px; }
+.selector-character-card__actions .preview-top-row{ box-sizing:border-box; }
+.selector-character-card__posts{ position:absolute; right:calc(var(--spacing-md) - 1px); bottom:calc(var(--spacing-md) - 1px); }
+
+.selector-character-card__meta{ display:flex; flex-direction:column; gap:var(--spacing-xs); width:100%; padding-top:var(--spacing-sm); }
+.selector-character-card__name{
+  font-size:var(--font-size-text-md); line-height:var(--line-height-text-md);
+  font-weight:var(--font-weight-semibold); color:var(--color-neutral-900);
+}
+.selector-character-card__type{
+  display:flex; align-items:center; gap:3px;
+  font-size:var(--font-size-text-sm); line-height:var(--line-height-text-sm);
+  font-weight:var(--font-weight-regular); color:var(--color-neutral-500); white-space:nowrap;
+}
+
+.selector-character-card--new .selector-character-card__thumb{
+  flex-direction:column; gap:var(--spacing-sm); background:none; border-style:dashed; cursor:pointer; font-family:inherit;
+  font-size:var(--font-size-text-md); line-height:var(--line-height-text-md);
+  font-weight:var(--font-weight-medium); color:var(--color-neutral-700);
+}
+.selector-character-card--new .selector-character-card__thumb img{ width:24px; height:24px; display:block; }

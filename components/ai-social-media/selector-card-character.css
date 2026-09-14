@@ -1,0 +1,51 @@
+/* Selector / Card / character — components/ai-social-media/selector-card-character.html 참고
+   Figma: FME_AI-Social-Media, "Data Display" (1124:10591) → Selector / Card / character (89:15632)
+   4 variants: State = Default / Hover / Selected / CreateNew. A 104-wide picker tile:
+   Selector / Character (88×88 portrait, selector-character.css) over a centred 13/20 medium name.
+     Default    neutral-0 fill, neutral-400 border, neutral-700 name
+     Hover      same shell, neutral-900 name, empty 16px checkbox top-right
+     Selected   neutral-100 fill, neutral-500 border, neutral-900 name, checked checkbox
+     CreateNew  dashed shell, 88px neutral-75 tile (neutral-300 border) with a 24px plus, "Create" 14/22
+   Padding 8/8/4/8 (CreateNew 8 all round); Figma strokes are inside, so the padding gives back 1px.
+   The checkbox is components/shared/checkbox.css, 12px from the top-right corner.
+   Related: character-card.css's .char-card is the same tile as first lifted from the carousel/image
+   brief screens (hover border, no hover checkbox) — left as-is. */
+
+.selector-card-character{
+  position:relative; display:flex; flex-direction:column; align-items:center; gap:var(--spacing-xs);
+  box-sizing:border-box; width:104px; margin:0;
+  padding:calc(var(--spacing-sm) - 1px) calc(var(--spacing-sm) - 1px) calc(var(--spacing-xs) - 1px);
+  border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); background:var(--color-neutral-0);
+  font-family:var(--font-family-text); cursor:pointer;
+}
+button.selector-card-character{ font-family:var(--font-family-text); }
+.selector-card-character__name{
+  width:88px; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  font-size:var(--font-size-text-sm); line-height:var(--line-height-text-sm);
+  font-weight:var(--font-weight-medium); color:var(--color-neutral-700);
+}
+.selector-card-character input[type="checkbox"].checkbox{
+  position:absolute; top:calc(var(--spacing-md) - 1px); right:calc(var(--spacing-md) - 1px); display:none;
+}
+
+.selector-card-character:hover .selector-card-character__name,
+.selector-card-character--hover .selector-card-character__name{ color:var(--color-neutral-900); }
+.selector-card-character:hover input[type="checkbox"].checkbox,
+.selector-card-character--hover input[type="checkbox"].checkbox{ display:block; }
+
+.selector-card-character:has(input:checked),
+.selector-card-character--selected{ background:var(--color-neutral-100); border-color:var(--color-neutral-500); }
+.selector-card-character:has(input:checked) .selector-card-character__name,
+.selector-card-character--selected .selector-card-character__name{ color:var(--color-neutral-900); }
+.selector-card-character:has(input:checked) input[type="checkbox"].checkbox,
+.selector-card-character--selected input[type="checkbox"].checkbox{ display:block; }
+
+.selector-card-character--create{ gap:var(--spacing-sm); padding:calc(var(--spacing-sm) - 1px); border-style:dashed; }
+.selector-card-character__create-tile{
+  display:flex; align-items:center; justify-content:center; box-sizing:border-box; width:88px; height:88px;
+  border:1px solid var(--color-neutral-300); border-radius:var(--radius-md); background:var(--color-neutral-75);
+}
+.selector-card-character__create-tile img{ width:24px; height:24px; display:block; }
+.selector-card-character--create .selector-card-character__name{
+  font-size:var(--font-size-text-md); line-height:var(--line-height-text-md); color:var(--color-neutral-900);
+}

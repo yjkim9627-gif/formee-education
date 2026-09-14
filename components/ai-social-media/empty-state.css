@@ -1,0 +1,26 @@
+/* empty-state — components/ai-social-media/empty-state.html 참고
+   Figma: FME_AI-Social-Media, "Data Display" (1124:10591) → empty-state (8479:135684)
+   3 variants: Property 1 = No characters / No content / No results. A 480-wide centred column, gap 12:
+   an 80px neutral-100 circle with a 48px icon (the nav/ui icons drawn at 2x, so their 1.6 stroke
+   becomes Figma's 3.2), a title (display-xs 20/28, bold, neutral-900) over a 14/22 neutral-500 line
+   (gap 3), and an Actions / Button — Primary with a plus for the two "create" states, Secondary
+   "Clear filters" for No results (actions-button.css). */
+
+.empty-state{
+  display:flex; flex-direction:column; align-items:center; gap:var(--spacing-md);
+  width:480px; max-width:100%; font-family:var(--font-family-text); text-align:center;
+}
+.empty-state__glyph{
+  display:flex; align-items:center; justify-content:center; width:80px; height:80px;
+  border-radius:var(--radius-full); background:var(--color-neutral-100);
+}
+.empty-state__glyph img{ display:block; width:48px; height:48px; }
+.empty-state__text{ display:flex; flex-direction:column; align-items:center; gap:3px; }
+.empty-state__title{
+  margin:0; font-size:var(--font-size-display-xs); line-height:var(--line-height-display-xs);
+  font-weight:var(--font-weight-bold); color:var(--color-neutral-900);
+}
+.empty-state__body{
+  margin:0; font-size:var(--font-size-text-md); line-height:var(--line-height-text-md);
+  font-weight:var(--font-weight-regular); color:var(--color-neutral-500);
+}
