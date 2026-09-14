@@ -1,5 +1,5 @@
 /* Controls / OTP Code Input — components/ai-social-media/controls-otp-code-input.html 참고
-   Figma: FME_AI-Social-Media, "Forms & Inputs 추가" (9329:146423) → Controls / OTP Code Input (4035:2562)
+   Figma: FME_AI-Social-Media, "Forms & Inputs" (1124:30) → Controls / OTP Code Input (4035:2562)
    Single component (no variants): 6 digit cells, the "Didn't receive the code? Resend" row
    (an Auth / Sign-up Row instance with its text overridden) and the expiry line.
    Figma literals with no token: column gap 10px, cell radius 10px (= --radius-md-lg), digit 20px.

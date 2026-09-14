@@ -1,5 +1,5 @@
 /* Auth / Checkbox — components/ai-social-media/auth-checkbox.html 참고
-   Figma: FME_AI-Social-Media, "Forms & Inputs 추가" (9329:146423) → Auth / Checkbox (4035:64396)
+   Figma: FME_AI-Social-Media, "Forms & Inputs" (1124:30) → Auth / Checkbox (4035:64396)
    2 variants: Selected = False / True. The box is a Checkbox [Size=sm] instance — same neutral-400 →
    neutral-900 fill and the same check glyph as components/shared/checkbox.css, so this reuses that
    file and only sizes the box up to this node's 20px. Label is neutral-700 at 80% opacity. */
