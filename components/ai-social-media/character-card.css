@@ -58,35 +58,45 @@
 }
 .char-select-card .thumb{
   position:relative; width:200px; height:240px; border-radius:var(--radius-xl); overflow:hidden;
+  border:1px solid var(--color-neutral-400); box-sizing:border-box;
   background:linear-gradient(135deg,var(--color-neutral-300),var(--color-neutral-150));
 }
 .char-select-card .thumb img{width:100%; height:100%; object-fit:cover; display:block;}
 .char-select-card.selected .thumb{outline:2px solid var(--color-neutral-900); outline-offset:2px;}
-.char-select-card .thumb-actions{position:absolute; top:8px; right:8px; display:flex; gap:4px;}
+/* Figma: the fav/more pair is a full-width row (left:-1px/right:-1px, top:13px,
+   justify-content:space-between with 12px inner padding = an effective 11px inset each
+   side, matching .posts-badge's own 11px convention below) -- NOT a tight top-right
+   cluster. Clustering both 36px buttons into a right:8px corner (the old rule) still
+   technically fit inside the 200px thumb, but read as cramped/overflowing next to
+   Figma's real spread-apart layout -- that mismatch is what "icon popping out" was. */
+.char-select-card .thumb-actions{position:absolute; top:13px; left:11px; right:11px; display:flex; align-items:center; justify-content:space-between;}
 .char-select-card .thumb-action-btn{
-  width:36px; height:36px; border-radius:var(--radius-lg); border:none; background:var(--color-neutral-0);
+  width:36px; height:36px; border-radius:var(--radius-lg); border:1px solid var(--color-neutral-400); background:var(--color-neutral-0);
   display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0;
   box-shadow:0 1px 1.5px rgba(15,23,41,.1),0 1px 0.5px rgba(15,23,41,.04);
 }
 .char-select-card .thumb-action-btn img{width:16px; height:16px; display:block;}
-.char-select-card .thumb-action-btn.fav.active img{filter:invert(63%) sepia(89%) saturate(2000%) hue-rotate(1deg) brightness(101%) contrast(101%);}
+/* Favorited state: neutral-150 bg + neutral-500 border (not a color-filtered icon --
+   Figma swaps to a genuinely filled star ASSET, icons/shape-star-filled.svg, chosen in
+   the render function instead of recoloring the outline icon here). */
+.char-select-card .thumb-action-btn.fav.active{background:var(--color-neutral-150); border-color:var(--color-neutral-500);}
 .char-select-card .posts-badge{
-  position:absolute; bottom:11px; right:11px; background:rgba(15,23,41,.9); border-radius:var(--radius-full);
+  position:absolute; bottom:11px; right:11px; background:var(--color-neutral-950); border-radius:var(--radius-full);
   padding:2px 8px;
 }
 .char-select-card .posts-badge p{margin:0; font-size:11px; font-weight:600; line-height:13px; color:var(--color-neutral-0); white-space:nowrap;}
-.char-select-card .meta{display:flex; flex-direction:column; gap:2px;}
+.char-select-card .meta{display:flex; flex-direction:column; gap:4px;}
 .char-select-card .meta .name{margin:0; font-size:14px; font-weight:600; line-height:22px; color:var(--color-neutral-900);}
-.char-select-card .type-row{display:flex; align-items:center; gap:4px; font-size:13px; line-height:20px; color:var(--color-neutral-500);}
+.char-select-card .type-row{display:flex; align-items:center; gap:3px; font-size:13px; line-height:20px; color:var(--color-neutral-500);}
 
 /* "New character" tile — shorter (thumb-only, no meta/status below it), always dashed. */
 .char-select-card.new .thumb{
-  height:240px; border:1.5px dashed var(--color-neutral-300); display:flex; flex-direction:column;
-  align-items:center; justify-content:center; gap:6px; background:var(--color-neutral-75);
+  height:240px; border:1px dashed var(--color-neutral-400); box-sizing:border-box; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:8px; background:var(--color-neutral-75);
 }
 .char-select-card.new .thumb:hover{border-color:var(--color-neutral-450);}
 .char-select-card.new .thumb img{width:24px; height:24px; object-fit:contain;}
-.char-select-card.new .thumb span{font-size:13px; font-weight:700; color:var(--color-neutral-700);}
+.char-select-card.new .thumb span{font-size:14px; font-weight:500; color:var(--color-neutral-700);}
 
 .char-select-grid{display:flex; flex-wrap:wrap; gap:12px;}
 

@@ -6601,7 +6601,7 @@ function renderCharSeeAllGrid(){
       <div class="thumb">
         <img src="${c.img}" alt="">
         <div class="thumb-actions">
-          <button type="button" class="thumb-action-btn fav${c.fav ? ' active' : ''}" onclick="event.stopPropagation(); toggleCharSeeAllCardFav('${c.id}')" aria-label="Favorite ${c.name}"><img src="../../../../components/ai-social-media/icons/shape-star.svg" alt=""></button>
+          <button type="button" class="thumb-action-btn fav${c.fav ? ' active' : ''}" onclick="event.stopPropagation(); toggleCharSeeAllCardFav('${c.id}')" aria-label="Favorite ${c.name}"><img src="../../../../components/ai-social-media/icons/${c.fav ? 'shape-star-filled' : 'shape-star'}.svg" alt=""></button>
           <button type="button" class="thumb-action-btn" onclick="event.stopPropagation();" aria-label="More actions for ${c.name}"><img src="../../../../components/ai-social-media/icons/ui-ellipsis.svg" alt=""></button>
         </div>
         <div class="posts-badge"><p>${c.posts} posts · ${c.styles} ${c.styles === 1 ? 'style' : 'styles'}</p></div>
