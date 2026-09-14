@@ -955,6 +955,15 @@
   .video-lightbox-stage .video-scrubber-progress{width:100%; height:4px; border-radius:999px; background:rgba(255,255,255,.35); overflow:hidden;}
   .video-lightbox-stage .video-scrubber-progress-fill{height:100%; width:37.5%; background:#fff; border-radius:inherit; transition:width 1.4s linear;}
 
+  /* ---- Character Detail modal -- see openCharDetailModal() ----
+     #charDetailGrid reuses .mylib-content (the see-all modal's own grid container) but needs
+     to stack "Favorites"/"All styles" as separate labeled sections instead of that class's
+     own flex-wrap tile row, hence the column override scoped to this one id. */
+  #charDetailGrid{flex-direction:column; flex-wrap:nowrap; align-items:stretch; gap:var(--spacing-lg);}
+  .mylib-section-label{width:100%; margin:0; font-family:var(--font-family-text); font-size:13px; font-weight:600; color:var(--color-neutral-700);}
+  .char-detail-tags{display:flex; gap:8px; width:100%;}
+  .char-detail-tags .d-tag{font-family:var(--font-family-text); font-size:12px; font-weight:500; color:var(--color-neutral-700); background:var(--color-neutral-100); border-radius:999px; padding:3px 10px;}
+
   /* =====================================================================
      REEL/SHORT (Script/Video) — ported from
      new-content-brief-to-generate.html as a third native content type,
@@ -3045,6 +3054,24 @@
         </button>
       </div>
       <button type="button" class="video-lightbox-nav" id="videoLightboxNext" onclick="videoLightboxNext()"><img src="../../../../components/ai-social-media/icons/chevron-right.svg" alt="Next scene"></button>
+    </div>
+  </div>
+
+  <!-- Character Detail modal -- opened from a card click inside the "Character · See all"
+       modal above (openCharDetailModal()/pickCharSeeAllCard()). Reuses the same .mylib-*
+       shell + .char-select-card/.char-select-grid tiles as that modal for a consistent look. -->
+  <div class="modal-overlay" id="charDetailModalOverlay" style="display:none;" onclick="if(event.target===this) closeCharDetailModal();">
+    <div class="modal mylib-modal">
+      <div class="mylib-header-top">
+        <h2 class="modal__title" id="charDetailName">Character</h2>
+        <button type="button" class="modal__close" onclick="closeCharDetailModal()"><img src="../../../../components/ai-social-media/icons/button-x-dark.svg" class="icon-inline" alt=""></button>
+      </div>
+      <div class="char-detail-tags" id="charDetailTags"></div>
+      <div class="mylib-content" id="charDetailGrid" style="max-height:60vh; overflow-y:auto;"></div>
+      <div class="mylib-footer">
+        <button type="button" class="actions-btn actions-btn--secondary" onclick="closeCharDetailModal()">Cancel</button>
+        <button type="button" class="actions-btn actions-btn--primary" onclick="confirmCharDetailSelection()">Save</button>
+      </div>
     </div>
   </div>
 
@@ -6716,12 +6743,13 @@ function toggleCharSeeAllCardFav(charId){
   if(c) c.fav = !c.fav;
   renderCharSeeAllGrid();
 }
-// Just marks the pending pick (visual highlight) -- the actual selection is only applied
-// to the real Brief/settings-bar grid once Save is pressed, matching Figma's Cancel/Save
-// footer instead of the old immediate apply-and-close-on-click.
+// Clicking a card drills into that character's own detail/style picker instead of just
+// marking a pending pick -- see openCharDetailModal() below, which is what actually applies
+// the selection now (via its own Save). window.__charSeeAllPendingId / confirmCharSeeAllSelection()
+// stay as a fallback for the see-all modal's own footer (reaffirms whatever's already the
+// real selection if the user never drills into a card).
 function pickCharSeeAllCard(charId){
-  window.__charSeeAllPendingId = charId;
-  renderCharSeeAllGrid();
+  openCharDetailModal(charId);
 }
 // Re-dispatches the click on the real card in the scope's own grid instead of duplicating that
 // card's selection logic here -- picks up whatever else that onclick already does (e.g.
@@ -6732,6 +6760,101 @@ function confirmCharSeeAllSelection(){
     const grid = document.getElementById(CHAR_SEE_ALL_GRID_IDS[window.__charSeeAllScope]);
     const card = grid && [...grid.querySelectorAll('.char-card')].find(c => (c.getAttribute('onclick') || '').includes(`'${charId}'`));
     if(card) card.click();
+  }
+  closeCharacterSeeAllModal();
+}
+
+// ---- Character Detail modal -- opened from a card in the "Character · See all" modal
+// above (pickCharSeeAllCard()). Drills into that one character's own style picker
+// (Favorites + All styles), matching the Figma "Character details" drill-down -- the
+// canvas instance for that spec was removed after an earlier session's height-matching
+// pass, so this is built from the last-seen screenshot + reuses this file's own already-
+// working style data instead of guessing new pixel values. Elena is the only character
+// with a real named style set anywhere in this prototype (matching #charStylesGridReel/
+// Image/Carousel's own static markup); everyone else falls back to a single "Default" tile
+// using their base photo so the modal never renders empty. Reuses the same
+// .char-select-card/.char-select-grid component as the see-all grid itself for the tiles.
+const CHAR_STYLE_LIBRARY = {
+  elena: [
+    { name:'Headshot', img:'assets/characters/elena-styles/headshot.png', fav:true },
+    { name:'Studio Portrait', img:'assets/characters/elena-styles/studio-portrait.png', fav:true },
+    { name:'Armchair Library', img:'assets/characters/elena-styles/armchair-library.png', fav:true },
+    { name:'Autumn Park', img:'assets/characters/elena-styles/autumn-park.png', fav:false },
+    { name:'Balcony Plants', img:'assets/characters/elena-styles/balcony-plants.png', fav:false },
+    { name:'Beige Blazer', img:'assets/characters/elena-styles/beige-blazer.png', fav:false },
+    { name:'Bright Hallway', img:'assets/characters/elena-styles/bright-hallway.png', fav:false },
+  ],
+};
+// Per-scope DOM the real style pick has to land on once Save re-dispatches it, same idea as
+// CHAR_SEE_ALL_GRID_IDS above but for each scope's #charStylesGrid* panel + its select fn.
+const CHAR_STYLES_GRID_IDS = { reel:'charStylesGridReel', img:'charStylesGridImage', car:'charStylesGrid' };
+window.__charDetailId = null;
+window.__charDetailPendingStyle = null;
+function charDetailStyles(charId){
+  const c = CHAR_SEE_ALL_DATA.find(x => x.id === charId);
+  return CHAR_STYLE_LIBRARY[charId] || [{ name:'Default', img: c ? c.img : '', fav:true }];
+}
+function openCharDetailModal(charId){
+  const c = CHAR_SEE_ALL_DATA.find(x => x.id === charId);
+  if(!c) return;
+  window.__charDetailId = charId;
+  const styles = charDetailStyles(charId);
+  window.__charDetailPendingStyle = (styles.find(s => s.fav) || styles[0]).name;
+  document.getElementById('charDetailName').textContent = c.name;
+  document.getElementById('charDetailTags').innerHTML = `<span class="d-tag">${escapeHtml(c.type)}</span><span class="d-tag">${escapeHtml(CHAR_SEE_ALL_BRAND)}</span>`;
+  renderCharDetailGrid();
+  document.getElementById('charSeeAllModalOverlay').style.display = 'none';
+  document.getElementById('charDetailModalOverlay').style.display = 'flex';
+}
+// X and Cancel both just back out to the see-all grid, not close everything -- the user is
+// still mid-pick, not done with the flow.
+function closeCharDetailModal(){
+  document.getElementById('charDetailModalOverlay').style.display = 'none';
+  document.getElementById('charSeeAllModalOverlay').style.display = 'flex';
+}
+function renderCharDetailGrid(){
+  const styles = charDetailStyles(window.__charDetailId);
+  const favs = styles.filter(s => s.fav);
+  const pending = window.__charDetailPendingStyle;
+  const cardHtml = s => `
+    <div class="char-select-card${s.name === pending ? ' selected' : ''}" role="button" tabindex="0" onclick="pickCharDetailStyle('${escapeHtml(s.name)}')">
+      <div class="thumb"><img src="${s.img}" alt=""></div>
+      <div class="meta"><p class="name">${escapeHtml(s.name)}</p></div>
+    </div>`;
+  document.getElementById('charDetailGrid').innerHTML = `
+    ${favs.length ? `<p class="mylib-section-label">Favorites &middot; ${favs.length}</p><div class="char-select-grid">${favs.map(cardHtml).join('')}</div>` : ''}
+    <p class="mylib-section-label">All styles &middot; ${styles.length}</p>
+    <div class="char-select-grid">${styles.map(cardHtml).join('')}</div>
+  `;
+}
+function pickCharDetailStyle(name){
+  window.__charDetailPendingStyle = name;
+  renderCharDetailGrid();
+}
+// Save applies both picks in one go: select the character on the real underlying grid (the
+// same re-dispatch trick confirmCharSeeAllSelection() uses), then, if a non-default style was
+// chosen, re-dispatch that same click on the matching style card in whichever per-scope
+// styles panel that just revealed -- picks up every existing side effect of both clicks
+// (style-panel reveal, selection state, etc.) instead of duplicating that logic here.
+function confirmCharDetailSelection(){
+  const charId = window.__charDetailId;
+  const styleName = window.__charDetailPendingStyle;
+  const scope = window.__charSeeAllScope;
+  document.getElementById('charDetailModalOverlay').style.display = 'none';
+  const grid = document.getElementById(CHAR_SEE_ALL_GRID_IDS[scope]);
+  const card = grid && [...grid.querySelectorAll('.char-card')].find(c => (c.getAttribute('onclick') || '').includes(`'${charId}'`));
+  // toggleCharCardSelect() is a real toggle (clicking an already-selected card deselects it) --
+  // only dispatch the click when a state change is actually needed, so re-confirming a
+  // character/style that's already selected (e.g. Elena's own default "Headshot") doesn't
+  // accidentally deselect it.
+  if(card && !card.classList.contains('selected')) card.click();
+  if(styleName){
+    const stylesGrid = document.getElementById(CHAR_STYLES_GRID_IDS[scope]);
+    const styleCard = stylesGrid && [...stylesGrid.querySelectorAll('.char-card:not(.new)')].find(el => {
+      const n = el.querySelector('.name');
+      return n && n.textContent === styleName;
+    });
+    if(styleCard && !styleCard.classList.contains('selected')) styleCard.click();
   }
   closeCharacterSeeAllModal();
 }
