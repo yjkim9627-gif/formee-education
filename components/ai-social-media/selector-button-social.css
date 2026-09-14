@@ -1,0 +1,24 @@
+/* Selector / Button / Social — components/ai-social-media/selector-button-social.html 참고
+   Figma: FME_AI-Social-Media, "Upload & Destination" (1124:10636) → Selector / Button / Social (81:11415)
+   11 variants: State = default / selected × Type = instagram / tiktok / youtube / linkedin / metaAds,
+   plus State = addAccount (Type = none).
+     default     neutral-0 fill, neutral-400 border, neutral-700 label
+     selected    neutral-100 fill, neutral-500 border, neutral-900 label
+     addAccount  default shell, plus icon, neutral-500 label, gap 4 instead of 8
+   Plus icon: icons/plus-20-grey.svg (20px box, 12px strokes at 1.2, neutral-500 — pagebar-plus.svg is the 16px neutral-700 cut).
+   36px tall, hugs width, padding 8/12 (Figma strokes are inside, so the padding gives back 1px). */
+
+.selector-button-social{
+  display:inline-flex; align-items:center; gap:var(--spacing-sm);
+  box-sizing:border-box; height:36px; margin:0; padding:calc(var(--spacing-sm) - 1px) calc(var(--spacing-md) - 1px);
+  border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg);
+  background:var(--color-neutral-0); cursor:pointer;
+  font-family:var(--font-family-text); font-size:var(--font-size-text-md); line-height:var(--line-height-text-md);
+  font-weight:var(--font-weight-medium); color:var(--color-neutral-700); white-space:nowrap;
+}
+.selector-button-social img{ width:20px; height:20px; flex-shrink:0; display:block; }
+.selector-button-social[aria-pressed="true"],
+.selector-button-social--selected{
+  background:var(--color-neutral-100); border-color:var(--color-neutral-500); color:var(--color-neutral-900);
+}
+.selector-button-social--add{ gap:var(--spacing-xs); color:var(--color-neutral-500); }
