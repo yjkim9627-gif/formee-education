@@ -81,10 +81,16 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
   display:flex; align-items:center; gap:var(--spacing-sm);
   height:64px; margin-top:var(--spacing-xl);
 }
-.vl-chip-row{display:flex; align-items:center; gap:var(--spacing-sm); flex-wrap:wrap; flex:1; min-width:0;}
+/* Figma's own "sticky · filter bar" frame (9732:257434 / Music's 9750:259324) never wraps
+   this row to a second line -- its filter-chips content is sized to fit the sticky bar's
+   fixed height. Matching that here: nowrap + horizontal scroll instead of wrap, same
+   treatment as the Voice Design prompt's preset-chip-row, so an extra/longer filter never
+   grows the sticky bar's height. */
+.vl-chip-row{display:flex; align-items:center; gap:var(--spacing-sm); flex-wrap:nowrap; overflow-x:auto; flex:1; min-width:0;}
+.vl-chip-row::-webkit-scrollbar{height:0;}
 /* chip · Genre default state (Text/xs Medium, 12/18/500) */
 .vl-fchip{
-  display:inline-flex; align-items:center; gap:var(--spacing-xs); height:28px; box-sizing:border-box;
+  display:inline-flex; align-items:center; gap:var(--spacing-xs); height:28px; box-sizing:border-box; flex-shrink:0;
   padding:0 13px; border:1px solid var(--color-neutral-400); border-radius:var(--radius-full); background:var(--color-neutral-0);
   font-family:var(--font-family-text); font-size:var(--font-size-text-xs); line-height:var(--line-height-text-xs); font-weight:var(--font-weight-medium); color:var(--color-neutral-700);
   cursor:pointer; white-space:nowrap;

@@ -112,12 +112,18 @@
   font-family:var(--font-family-text); font-size:var(--font-size-text-md); line-height:var(--line-height-text-md); font-weight:var(--font-weight-regular); color:var(--color-neutral-900);
 }
 .vd-prompt-block.readonly .vd-prompt-text{min-height:64px; color:var(--color-neutral-700); background:var(--color-neutral-50);}
-.vd-preset-row{display:flex; flex-wrap:wrap; gap:var(--spacing-xs); padding:var(--spacing-xs); background:var(--color-neutral-150);}
+/* Figma (9750:259723) never wraps this row -- its own natural content width (657px) is
+   wider than the 560px prompt-input-block it sits in, so it scrolls horizontally instead
+   of wrapping to a second line (confirmed against the "Voice Design — form" frame,
+   9680:15). overflow-x:auto instead of a visible scrollbar-less clip, since this is a
+   real interactive picker, not a decorative overflow. */
+.vd-preset-row{display:flex; flex-wrap:nowrap; overflow-x:auto; gap:var(--spacing-xs); padding:var(--spacing-xs); background:var(--color-neutral-150);}
+.vd-preset-row::-webkit-scrollbar{height:0;}
 /* preset chip (type=text default state has NO border/bg, just grey text -- unlike
    controls-filter-toggle.css's .filter-toggle, which always carries a border+white bg
    even unselected, so that shared class isn't reused here) */
 .vd-preset-chip{
-  display:inline-flex; align-items:center; height:28px; box-sizing:border-box; padding:0 var(--spacing-md);
+  display:inline-flex; align-items:center; height:28px; box-sizing:border-box; padding:0 var(--spacing-md); flex-shrink:0;
   border:1px solid transparent; border-radius:var(--radius-full); background:none;
   font-family:var(--font-family-text); font-size:var(--font-size-text-xs); line-height:var(--line-height-text-xs); font-weight:var(--font-weight-medium); color:var(--color-neutral-500);
   cursor:pointer; white-space:nowrap;
