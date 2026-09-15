@@ -50,7 +50,10 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
    as e.g. voice-section.css's radius/11 comment. Vertical rhythm below is real tokens:
    header->Container 20px (spacing-xl), Container->sticky bar 20px (spacing-xl), sticky
    bar->grid 0 (no gap in Figma -- scroll content starts flush under the sticky bar). */
-.page-pad{max-width:1602px; margin:0 auto; padding:28px 28px var(--spacing-6xl); box-sizing:border-box;}
+/* Figma "page-pad" (9690:239): 1658 wide x 1024 tall, padding 28px on all four sides
+   (not just top/left/right) -- confirmed against the frame's own metadata (first child
+   "header" sits at x=28,y=28; content column is 1602 = 1658 - 28*2). */
+.page-pad{max-width:1602px; margin:0 auto; padding:28px; box-sizing:border-box;}
 
 /* ---------- header (9585:182743) ---------- */
 .vl-page-header{display:flex; align-items:center; justify-content:space-between; gap:var(--spacing-lg);}
