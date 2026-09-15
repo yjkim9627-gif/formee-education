@@ -180,6 +180,11 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
   padding:var(--spacing-md) var(--spacing-lg); background:var(--color-neutral-0);
   border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg);
   transition:border-color .15s ease, box-shadow .15s ease;
+  /* .vl-grid is a CSS grid with 1fr columns -- a grid item's default min-width is "auto"
+     (its content's intrinsic width), not 0, so without this the card refuses to shrink
+     to the track width and blows out the whole grid instead of ellipsing its own text.
+     This is what was overflowing off the right edge of the page. */
+  min-width:0;
 }
 .voice-card:hover{border-color:var(--color-neutral-450); box-shadow:var(--shadow-cell-action);}
 
@@ -262,6 +267,7 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
   padding:13px; background:var(--color-neutral-0);
   border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg);
   transition:border-color .15s ease, box-shadow .15s ease;
+  min-width:0; /* same CSS-grid min-width:auto overflow fix as .voice-card above */
 }
 .music-card:hover{border-color:var(--color-neutral-450); box-shadow:var(--shadow-cell-action);}
 .music-card .voice-section-sample-play{width:32px; height:32px;}
