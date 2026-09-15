@@ -1,0 +1,57 @@
+/* Data / Card / Brand · v2 — components/ai-social-media/data-card-brand-v2.html 참고
+   Figma: FME_AI-Social-Media, "Data Display" (1124:10591) → Data / Card / Brand · v2 (6205:3802)
+   2 variants: Card Type = Brand / add. 390 wide, neutral-400 border, radius 12.
+   Brand: body (padding 16, gap 12) = head [36px brand mark · name 16/24 semibold + handle 13/20 ·
+   Favorite + More (preview-top-row.css's .preview-action-btn, gap 8)], a 13/20 description, and a
+   284×36 palette strip (seven swatches, neutral-300 border, radius 8); then a footer (padding 12/16,
+   top border only) with stats and 18px social icons, gap 8.
+   add: 390×210 dashed, a 24px plus over "Add brand".
+   Figma strokes are inside, so the outer padding gives back 1px.
+   ⚠️ The stats colour is raw #6b7385 in Figma (not bound to a variable; nearest token neutral-600 #687188). */
+
+.data-card-brand{
+  display:flex; flex-direction:column; box-sizing:border-box; width:390px; overflow:hidden;
+  border:1px solid var(--color-neutral-400); border-radius:var(--radius-xl); background:var(--color-neutral-0);
+  font-family:var(--font-family-text);
+}
+.data-card-brand__body{
+  display:flex; flex-direction:column; gap:var(--spacing-md);
+  padding:calc(var(--spacing-lg) - 1px) calc(var(--spacing-lg) - 1px) var(--spacing-lg);
+}
+.data-card-brand__head{ display:flex; align-items:center; gap:var(--spacing-md); }
+.data-card-brand__logo{ display:block; width:36px; height:35px; flex-shrink:0; }
+.data-card-brand__titles{ display:flex; flex-direction:column; flex:1 1 auto; min-width:0; }
+.data-card-brand__name{
+  font-size:var(--font-size-text-xl); line-height:var(--line-height-text-xl);
+  font-weight:var(--font-weight-semibold); color:var(--color-neutral-900);
+}
+.data-card-brand__handle{
+  font-size:var(--font-size-text-sm); line-height:var(--line-height-text-sm);
+  font-weight:var(--font-weight-regular); color:var(--color-neutral-500);
+}
+.data-card-brand__actions{ display:flex; align-items:flex-start; gap:var(--spacing-sm); align-self:flex-start; }
+.data-card-brand__desc{
+  margin:0; font-size:var(--font-size-text-sm); line-height:var(--line-height-text-sm);
+  font-weight:var(--font-weight-regular); color:var(--color-neutral-700);
+}
+.data-card-brand__palette{
+  display:flex; box-sizing:border-box; width:284px; height:36px; overflow:hidden;
+  border:1px solid var(--color-neutral-300); border-radius:var(--radius-lg);
+}
+.data-card-brand__palette span{ flex:1 1 0; }
+.data-card-brand__footer{
+  display:flex; align-items:center; justify-content:space-between; gap:var(--spacing-md);
+  padding:var(--spacing-md) calc(var(--spacing-lg) - 1px) calc(var(--spacing-md) - 1px);
+  border-top:1px solid var(--color-neutral-400);
+}
+.data-card-brand__stats{ font-size:var(--font-size-text-xs); line-height:var(--line-height-text-xs); color:#6b7385; }
+.data-card-brand__socials{ display:flex; align-items:center; gap:var(--spacing-sm); }
+.data-card-brand__socials img{ display:block; width:18px; height:18px; }
+
+.data-card-brand--add{
+  align-items:center; justify-content:center; gap:var(--spacing-sm); height:210px;
+  border-style:dashed; background:none; cursor:pointer; font-family:var(--font-family-text);
+  font-size:var(--font-size-text-md); line-height:var(--line-height-text-md);
+  font-weight:var(--font-weight-medium); color:var(--color-neutral-700);
+}
+.data-card-brand--add img{ display:block; width:24px; height:24px; }

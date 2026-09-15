@@ -1,0 +1,329 @@
+/* "Create voice" modal flow — Voice Library "New Voice" button (voice-library.html).
+   Figma "Modal / Dialog" shell (9619:194341: 20px padding, 12px gap, radius-2xl, shadow
+   0px 20px 48px rgba(0,0,0,.18) -- same literal already used by create-character-modal.css
+   for the identical shell, no exact tokens.css shadow token matches this one) wraps the
+   "Voice Design · preset/default/Generate voice/success" panel states (Figma section
+   9619:193196, a side-panel component set) -- adapted from panel to modal per this app's
+   own request: same field composition, but width fixed 600 / height fixed so switching
+   between the 3 Voice Design steps never resizes the dialog (only .cvm-body scrolls).
+
+   Chooser step (Create voice -> Voice Design / Instant Voice Clone / Voice Remixing) has
+   no matching Figma node given -- built to match the existing screenshot the app already
+   shows, using this same .cvm-modal shell at a narrower auto-height size. */
+
+.cvm-overlay{
+  position:absolute; inset:0; z-index:100; display:flex; align-items:center; justify-content:center;
+  padding:var(--spacing-2xl); background:color-mix(in srgb, var(--color-neutral-900) 45%, transparent);
+}
+.cvm-overlay[hidden]{display:none;}
+
+.cvm-modal[hidden]{display:none;}
+.cvm-modal{
+  position:relative; display:flex; flex-direction:column; gap:var(--spacing-md);
+  box-sizing:border-box; padding:var(--spacing-xl); background:var(--color-neutral-0);
+  border-radius:var(--radius-2xl); box-shadow:0px 20px 48px 0px rgba(0,0,0,.18);
+  font-family:var(--font-family-text); color:var(--color-neutral-900);
+}
+
+/* ---- step 0 · Create voice (chooser) ---- */
+.cvm-modal--choose{width:600px; max-width:calc(100vw - 48px);}
+.cvm-choose-title{margin:0; font-size:var(--font-size-display-xs); line-height:var(--line-height-display-xs); font-weight:var(--font-weight-display-xs); color:var(--color-neutral-900);}
+.cv-option-list{display:flex; flex-direction:column; gap:var(--spacing-md);}
+.cv-option-card{
+  display:flex; flex-direction:column; align-items:flex-start; gap:var(--spacing-sm); width:100%; box-sizing:border-box;
+  padding:var(--spacing-xl); background:var(--color-neutral-0); border:1px solid var(--color-neutral-300); border-radius:var(--radius-xl);
+  text-align:left; cursor:pointer; transition:border-color .15s ease, box-shadow .15s ease;
+}
+.cv-option-card:hover{border-color:var(--color-neutral-400); box-shadow:var(--shadow-cell-action);}
+.cv-option-title{margin:0; font-size:var(--font-size-text-xl); line-height:var(--line-height-text-xl); font-weight:var(--font-weight-bold); color:var(--color-neutral-900);}
+.cv-option-desc{margin:0; font-size:var(--font-size-text-md); line-height:var(--line-height-text-md); font-weight:var(--font-weight-regular); color:var(--color-neutral-500);}
+.cv-option-time{
+  display:inline-flex; align-items:center; padding:var(--spacing-xs) var(--spacing-md); border-radius:var(--radius-full);
+  background:var(--color-neutral-150); font-size:var(--font-size-text-xs); line-height:var(--line-height-text-xs); font-weight:var(--font-weight-semibold); color:var(--color-neutral-700);
+}
+
+/* ---- shared shell · Voice Design flow (form / choose-voice / success) ---- */
+.cvm-modal--design{width:600px; max-width:calc(100vw - 48px); height:700px; max-height:calc(100vh - 48px);}
+/* Instant Voice Clone reuses .cvm-modal--design for width/shell but has lighter content than
+   Voice Design (no gender/age chips, dropdowns, prompt box, preset row) -- 700px left a lot
+   of dead space in the shorter states, so this overrides just the height. Combined selector
+   (not a later rule) so it wins regardless of the two classes' order in the stylesheet. */
+.cvm-modal--design.cvm-modal--clone{height:600px;}
+.vd-header{flex-shrink:0; display:flex; align-items:center; justify-content:space-between; width:100%;}
+.vd-header-left{display:flex; align-items:center; gap:var(--spacing-sm);}
+.vd-back{
+  display:flex; align-items:center; justify-content:center; width:24px; height:24px; padding:var(--spacing-xs); box-sizing:border-box;
+  border:none; background:none; border-radius:var(--radius-md); cursor:pointer;
+}
+.vd-back:hover{background:var(--color-neutral-75);}
+.vd-back img{width:16px; height:16px; display:block;}
+.vd-title{margin:0; font-size:var(--font-size-text-xl); line-height:var(--line-height-text-xl); font-weight:var(--font-weight-bold); color:var(--color-neutral-900); white-space:nowrap;}
+.cvm-close{
+  width:36px; height:36px; flex-shrink:0; display:flex; align-items:center; justify-content:center;
+  border:none; background:none; border-radius:var(--radius-lg); padding:0; cursor:pointer;
+}
+.cvm-close:hover{background:var(--color-neutral-75);}
+.cvm-close img{width:24px; height:24px; display:block;}
+
+.cvm-body{flex:1 1 auto; min-height:0; overflow-y:auto; display:flex; flex-direction:column; gap:var(--spacing-lg); width:100%;}
+.cvm-body::-webkit-scrollbar{width:6px;}
+.cvm-body::-webkit-scrollbar-thumb{background:var(--color-neutral-400); border-radius:3px;}
+.cvm-body::-webkit-scrollbar-track{background:transparent;}
+.cvm-footer{flex-shrink:0; display:flex; align-items:center; gap:var(--spacing-md); width:100%;}
+.cvm-footer[hidden]{display:none;}
+.vd-step[hidden]{display:none;}
+.vd-step{display:flex; flex-direction:column; gap:var(--spacing-lg); width:100%;}
+
+/* field groups (Gender / Age) */
+.vd-field-group{display:flex; flex-direction:column; gap:var(--spacing-sm); width:100%; flex-shrink:0;}
+.vd-field-label{margin:0; font-size:var(--font-size-text-sm); line-height:var(--line-height-text-sm); font-weight:var(--font-weight-semibold); color:var(--color-neutral-700);}
+.vd-chip-row{display:flex; align-items:center; gap:var(--spacing-sm); flex-wrap:wrap; width:100%;}
+.vd-chip{
+  display:inline-flex; align-items:center; height:28px; box-sizing:border-box; padding:0 var(--spacing-md);
+  border:1px solid var(--color-neutral-400); border-radius:var(--radius-full); background:var(--color-neutral-0);
+  font-family:var(--font-family-text); font-size:var(--font-size-text-xs); line-height:var(--line-height-text-xs); font-weight:var(--font-weight-medium); color:var(--color-neutral-700);
+  cursor:pointer; white-space:nowrap;
+}
+.vd-chip:hover:not(.selected){background:var(--color-neutral-50);}
+.vd-chip.selected{background:var(--color-neutral-150); border-color:var(--color-neutral-500); font-weight:var(--font-weight-semibold); color:var(--color-neutral-900);}
+
+/* Language / Use case row */
+.vd-field-row{display:flex; gap:var(--spacing-lg); width:100%; flex-shrink:0;}
+.vd-field-col{flex:1 0 0; min-width:0; display:flex; flex-direction:column; gap:var(--spacing-sm);}
+.vd-select{
+  position:relative; height:36px; box-sizing:border-box; display:flex; align-items:center;
+  border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); background:var(--color-neutral-0);
+}
+.vd-select select{
+  appearance:none; -webkit-appearance:none; width:100%; height:100%; border:none; background:none; cursor:pointer;
+  padding:0 32px 0 var(--spacing-md); font-family:var(--font-family-text); font-size:var(--font-size-text-md); line-height:var(--line-height-text-md); color:var(--color-neutral-900);
+}
+.vd-select:focus-within{border-color:var(--color-neutral-500);}
+.vd-select img{position:absolute; right:8px; top:50%; transform:translateY(-50%); width:20px; height:20px; pointer-events:none;}
+
+/* Prompt section */
+.vd-section{display:flex; flex-direction:column; gap:var(--spacing-sm); width:100%; flex-shrink:0;}
+.vd-section-header{display:flex; align-items:center; justify-content:space-between; width:100%;}
+.vd-section-title{margin:0; font-size:var(--font-size-text-md); line-height:var(--line-height-text-md); font-weight:var(--font-weight-semibold); color:var(--color-neutral-800);}
+.vd-prompt-block{border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); overflow:hidden; width:100%; box-sizing:border-box;}
+.vd-prompt-text{
+  display:block; width:100%; min-height:110px; box-sizing:border-box; padding:var(--spacing-md); border:none; border-bottom:1px solid var(--color-neutral-400);
+  background:var(--color-neutral-0); resize:none; outline:none;
+  font-family:var(--font-family-text); font-size:var(--font-size-text-md); line-height:var(--line-height-text-md); font-weight:var(--font-weight-regular); color:var(--color-neutral-900);
+}
+.vd-prompt-block.readonly .vd-prompt-text{min-height:64px; color:var(--color-neutral-700); background:var(--color-neutral-50);}
+.vd-preset-row{display:flex; flex-wrap:wrap; gap:var(--spacing-xs); padding:var(--spacing-xs); background:var(--color-neutral-150);}
+/* preset chip (type=text default state has NO border/bg, just grey text -- unlike
+   controls-filter-toggle.css's .filter-toggle, which always carries a border+white bg
+   even unselected, so that shared class isn't reused here) */
+.vd-preset-chip{
+  display:inline-flex; align-items:center; height:28px; box-sizing:border-box; padding:0 var(--spacing-md);
+  border:1px solid transparent; border-radius:var(--radius-full); background:none;
+  font-family:var(--font-family-text); font-size:var(--font-size-text-xs); line-height:var(--line-height-text-xs); font-weight:var(--font-weight-medium); color:var(--color-neutral-500);
+  cursor:pointer; white-space:nowrap;
+}
+.vd-preset-chip:hover:not(.selected){color:var(--color-neutral-700);}
+.vd-preset-chip.selected{background:var(--color-neutral-0); border-color:var(--color-neutral-500); font-weight:var(--font-weight-semibold); color:var(--color-neutral-900);}
+
+/* Custom preview text section -- collapsed by default; the on/off switch only decides
+   whether Generate voice uses this text, it no longer gates visibility/editing (both are
+   controlled solely by the caret's expand/collapse state now). */
+.vd-toggle-row{display:flex; align-items:center; justify-content:space-between; width:100%;}
+.vd-toggle-row-right{display:flex; align-items:center; gap:var(--spacing-sm);}
+.vd-preview-caret-btn{
+  display:flex; align-items:center; justify-content:center; width:24px; height:24px; padding:var(--spacing-xs); box-sizing:border-box;
+  border:none; background:none; border-radius:var(--radius-lg); cursor:pointer;
+}
+.vd-preview-caret-btn:hover{background:var(--color-neutral-75);}
+.vd-preview-caret-btn img{width:16px; height:16px; display:block;}
+.vd-preview-box{
+  display:flex; flex-direction:column; align-items:flex-end; gap:var(--spacing-lg); width:100%; box-sizing:border-box;
+  padding:var(--spacing-md); border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); background:var(--color-neutral-0);
+}
+.vd-preview-box[hidden]{display:none;}
+.vd-preview-text{
+  display:block; width:100%; min-height:88px; border:none; outline:none; resize:none; background:none;
+  font-family:var(--font-family-text); font-size:var(--font-size-text-md); line-height:var(--line-height-text-md); font-weight:var(--font-weight-regular); color:var(--color-neutral-500);
+}
+.vd-try-another img{width:16px; height:16px;}
+/* Credit-cost badge next to "Regenerate" (Figma 9767:264741 shows a bolt icon + "5" after
+   the label -- reads as "this costs 5 credits"). Small pill, not a full component elsewhere
+   in this file, so it's scoped to this one button. */
+.vd-credit-badge{
+  display:inline-flex; align-items:center; justify-content:center; height:18px; padding:0 6px; border-radius:var(--radius-full);
+  background:var(--color-neutral-150); font-family:var(--font-family-text); font-size:11px; font-weight:600; color:var(--color-neutral-700);
+}
+
+/* Generate voice / primary full-width footer button */
+.vd-btn-primary-full{
+  width:100%; box-sizing:border-box; display:flex; align-items:center; justify-content:center; gap:var(--spacing-sm);
+  padding:9px 14px; border:none; border-radius:var(--radius-lg); cursor:pointer; position:relative;
+  background:linear-gradient(to bottom, #323232, #222222); color:var(--color-neutral-0);
+  box-shadow:0 1px 2px rgba(13,13,13,.1), inset 0 -1px 1.2px #121212, inset 0 0.5px 1px rgba(255,255,255,.15);
+  font-family:var(--font-family-text); font-size:var(--font-size-text-sm); line-height:var(--line-height-text-sm); font-weight:var(--font-weight-semibold);
+}
+.vd-btn-primary-full img{width:16px; height:16px; animation:vd-spin .9s linear infinite;}
+@keyframes vd-spin{to{transform:rotate(360deg);}}
+
+/* Loading state (Generate voice click) */
+.vd-loading{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:var(--spacing-md); width:100%; padding:var(--spacing-6xl) 0; flex:1 0 0;}
+.vd-loading img{width:28px; height:28px; animation:vd-spin .9s linear infinite;}
+.vd-loading p{margin:0; font-size:var(--font-size-text-sm); line-height:var(--line-height-text-sm); font-weight:var(--font-weight-medium); color:var(--color-neutral-500);}
+
+/* divider between Prompt (recap) and Choose a voice */
+.vd-divider{height:1px; width:100%; background:var(--color-neutral-100); flex-shrink:0;}
+
+/* Choose a voice — reuses voice-section.css's .voice-section-sample/-play/-name/-time
+   (Editor / Voiceover Card) as-is; only the "selected" state is new here. */
+.vd-voice-list{display:flex; flex-direction:column; gap:var(--spacing-md); width:100%;}
+.voice-section-sample.vd-selectable{cursor:pointer;}
+.voice-section-sample.vd-selectable.selected{background:var(--color-neutral-150); border-color:var(--color-neutral-500);}
+
+/* Name / Description fields */
+.vd-input{
+  width:100%; box-sizing:border-box; padding:8px var(--spacing-md); border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg);
+  background:var(--color-neutral-0); font-family:var(--font-family-text); font-size:var(--font-size-text-md); line-height:var(--line-height-text-md); color:var(--color-neutral-900);
+}
+.vd-input::placeholder{color:var(--color-neutral-500);}
+.vd-input:focus{outline:none; border-color:var(--color-neutral-500);}
+textarea.vd-input{min-height:76px; resize:none;}
+
+/* Categories section (name+tag step) -- Figma 9733:1482's later revision collapsed a wall of
+   toggle chips down to 3 dropdown-trigger chips (Language/Gender/Use case), reusing the
+   toolbar's own .vl-fselect/.vl-fselect--filled/.vl-fselect-menu look as-is rather than a
+   new chip style. Custom categories (not in Figma yet -- this app's own addition) get their
+   own small removable-chip row underneath; a brand-new one still joins the shared VOICE_CATS
+   array (see vdAddCustomTag() in the script) so it becomes a real filter chip afterward. */
+.vd-tag-dropdowns{display:flex; align-items:center; gap:var(--spacing-sm); flex-wrap:wrap; width:100%;}
+
+.vd-tag-custom-row{display:flex; align-items:center; gap:var(--spacing-sm); flex-wrap:wrap; width:100%; margin-top:var(--spacing-sm);}
+.vd-tag-custom-chip{
+  display:inline-flex; align-items:center; gap:6px; height:28px; box-sizing:border-box; padding:0 var(--spacing-sm) 0 var(--spacing-md);
+  border:1px solid var(--color-neutral-400); border-radius:var(--radius-full); background:var(--color-neutral-0);
+  font-family:var(--font-family-text); font-size:var(--font-size-text-xs); line-height:var(--line-height-text-xs); font-weight:var(--font-weight-medium); color:var(--color-neutral-700);
+}
+.vd-tag-custom-chip button{
+  width:16px; height:16px; padding:0; border:none; background:none; cursor:pointer; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; border-radius:var(--radius-full); color:var(--color-neutral-500);
+}
+.vd-tag-custom-chip button:hover{background:var(--color-neutral-150); color:var(--color-neutral-900);}
+.vd-tag-add-trigger{
+  display:inline-flex; align-items:center; gap:6px; height:28px; box-sizing:border-box; padding:0 var(--spacing-md);
+  border:1px dashed var(--color-neutral-400); border-radius:var(--radius-full); background:none; cursor:pointer;
+  font-family:var(--font-family-text); font-size:var(--font-size-text-xs); line-height:var(--line-height-text-xs); font-weight:var(--font-weight-medium); color:var(--color-neutral-500);
+}
+.vd-tag-add-trigger:hover{background:var(--color-neutral-50); color:var(--color-neutral-700);}
+.vd-tag-add-input-wrap{display:inline-flex; align-items:center; gap:6px;}
+.vd-tag-add-input-wrap input{
+  height:28px; box-sizing:border-box; padding:0 var(--spacing-sm); border:1px solid var(--color-neutral-400); border-radius:var(--radius-full);
+  font-family:var(--font-family-text); font-size:var(--font-size-text-xs); color:var(--color-neutral-900); width:140px; background:var(--color-neutral-0);
+}
+.vd-tag-add-input-wrap input:focus{outline:none; border-color:var(--color-neutral-500);}
+.vd-tag-add-input-wrap button{
+  height:28px; padding:0 var(--spacing-sm); border:none; border-radius:var(--radius-full); background:var(--color-neutral-900); color:var(--color-neutral-0);
+  font-family:var(--font-family-text); font-size:var(--font-size-text-xs); font-weight:var(--font-weight-semibold); cursor:pointer;
+}
+
+/* Success step */
+.vd-success-msg{display:flex; flex-direction:column; align-items:center; gap:var(--spacing-sm); width:100%; padding-top:var(--spacing-md);}
+.vd-success-icon{width:48px; height:48px; color:var(--color-brand-primary);}
+.vd-success-icon svg{width:100%; height:100%;}
+.vd-success-title{margin:0; font-size:var(--font-size-text-xl); line-height:var(--line-height-text-xl); font-weight:var(--font-weight-semibold); color:var(--color-neutral-900);}
+.vd-summary-cap{margin:0; text-align:center; font-size:var(--font-size-text-xs); line-height:var(--line-height-text-xs); font-weight:var(--font-weight-regular); color:var(--color-neutral-500);}
+.vd-audio-row{
+  display:flex; align-items:center; justify-content:space-between; gap:var(--spacing-sm); width:100%; box-sizing:border-box;
+  padding:var(--spacing-sm); border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); background:var(--color-neutral-0);
+}
+.vd-audio-row-main{display:flex; align-items:center; gap:10px; flex:1 0 0; min-width:0;}
+.vd-audio-row-text{display:flex; flex-direction:column; min-width:0; overflow:hidden;}
+.vd-audio-row-name{font-size:var(--font-size-text-xs); line-height:var(--line-height-text-xs); font-weight:var(--font-weight-medium); color:var(--color-neutral-700); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.vd-audio-row-sub{font-size:var(--font-size-text-2xs); line-height:var(--line-height-text-2xs); font-weight:var(--font-weight-regular); color:var(--color-neutral-500); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.vd-audio-row-delete{
+  width:30px; height:30px; flex-shrink:0; display:flex; align-items:center; justify-content:center;
+  border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); background:var(--color-neutral-0); cursor:pointer;
+}
+.vd-audio-row-delete img{width:16px; height:16px;}
+
+/* ---- Instant Voice Clone flow (Figma "voice cloning - panel states", 9619:192991) ----
+   Same 600x700 .cvm-modal--design shell as the Voice Design flow above, reused on purpose:
+   switching the Record/Upload segmented tab never resizes the modal (only .cvm-body's
+   content changes), so the dialog can't jump around as the user flips between options. */
+.vc-subtitle{margin:0; font-size:var(--font-size-text-xs); line-height:var(--line-height-text-xs); font-weight:var(--font-weight-regular); color:var(--color-neutral-500);}
+
+/* "Start Recording" idle action row -- same shell as Editor / Panel Action Row elsewhere
+   (border neutral-400, radius-lg), just centered content instead of space-between. */
+.vc-action-row{
+  display:flex; align-items:center; justify-content:center; gap:var(--spacing-sm); width:100%; box-sizing:border-box;
+  padding:13px var(--spacing-md); border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); background:var(--color-neutral-0);
+  cursor:pointer;
+}
+.vc-action-row:hover{background:var(--color-neutral-50);}
+.vc-action-row img{width:20px; height:20px; display:block;}
+.vc-action-row span{font-family:var(--font-family-text); font-size:13px; font-weight:600; line-height:20px; color:var(--color-neutral-700);}
+
+/* Recording / Paused panel */
+.vc-recording-panel{display:flex; flex-direction:column; gap:12px; width:100%;}
+.vc-recording-row{
+  display:flex; align-items:center; justify-content:space-between; width:100%; box-sizing:border-box;
+  padding:13px 12px; border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); background:var(--color-neutral-0);
+}
+.vc-recording-status{display:flex; align-items:center; gap:8px;}
+.vc-recording-status img{width:8px; height:8px; display:block;}
+.vc-recording-status span{font-family:var(--font-family-text); font-size:13px; font-weight:600; line-height:20px; color:var(--color-neutral-700);}
+.vc-timer{display:flex; align-items:center; gap:var(--spacing-xs);}
+.vc-timer-pill{display:flex; align-items:center; justify-content:center; padding:2px 6px; border-radius:var(--radius-full); background:var(--color-neutral-150);}
+.vc-timer-pill span{font-family:var(--font-family-text); font-size:11px; font-weight:500; line-height:16px; color:var(--color-neutral-700);}
+.vc-timer-sep{font-family:var(--font-family-text); font-size:12px; font-weight:500; line-height:18px; color:var(--color-neutral-500);}
+.vc-recording-buttons{display:flex; gap:12px; width:100%;}
+.vc-btn-secondary{
+  flex:1 0 0; display:flex; align-items:center; justify-content:center; gap:6px; padding:9px var(--spacing-md); box-sizing:border-box;
+  border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); background:var(--color-neutral-0); cursor:pointer;
+  font-family:var(--font-family-text); font-size:13px; font-weight:600; line-height:20px; color:var(--color-neutral-700);
+}
+.vc-btn-secondary img{width:16px; height:16px; display:block;}
+
+/* Consent checkbox rows ("Remove background noise" during recording, "rights confirm" on
+   the details step) -- shared .checkbox component, this class only carries row layout. */
+.vc-consent-row{display:flex; align-items:center; gap:var(--spacing-sm); width:100%;}
+.vc-consent-row.align-start{align-items:flex-start;}
+.vc-consent-row.align-start .checkbox{margin-top:1px;}
+.vc-consent-row span{flex:1 0 0; font-family:var(--font-family-text); font-size:12px; font-weight:500; line-height:18px; color:var(--color-neutral-500);}
+
+/* Full-width override -- .upload-dropzone is authored at a fixed 284px for its other call
+   sites, but this modal's content column is ~560px wide. */
+.upload-dropzone.vc-dropzone-full{width:100%;}
+
+/* Recorded/uploaded clip list -- reuses .voice-section-sample + .voice-section-sample-play
+   (Editor / Voiceover Card's own row shell + 30px play circle, already styled in
+   voice-section.css) and .vd-audio-row-delete for the trash button; only the stacked
+   name/duration text block below is new. */
+.vc-clip-list{display:flex; flex-direction:column; gap:var(--spacing-md); width:100%;}
+.vc-clip-text{display:flex; flex-direction:column; flex:1 0 0; min-width:0; overflow:hidden;}
+.vc-clip-name{font-family:var(--font-family-text); font-size:12px; font-weight:500; line-height:18px; color:var(--color-neutral-700); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.vc-clip-duration{font-family:var(--font-family-text); font-size:11px; font-weight:400; line-height:16px; color:var(--color-neutral-500);}
+
+/* Details step -- combined-take preview row. Same row shell as .voice-section-sample, but
+   the border swaps to brand-primary (this app's "AI is acting on this element" convention,
+   see AI Prompt Box in style-reference.md §9) since this row is the AI-combined result of
+   every recorded/uploaded clip, not a plain list item. */
+.vc-preview-row{
+  display:flex; align-items:center; justify-content:space-between; gap:10px; width:100%; box-sizing:border-box;
+  height:46px; padding:8px; border:1.2px solid var(--color-brand-primary); border-radius:12px; background:var(--color-neutral-0);
+}
+.vc-preview-row-main{display:flex; align-items:center; gap:10px; min-width:0;}
+.vc-preview-row-name{font-family:var(--font-family-text); font-size:13px; font-weight:600; line-height:20px; color:var(--color-neutral-900); white-space:nowrap;}
+.vc-preview-row-time{font-family:var(--font-family-text); font-size:11px; font-weight:500; line-height:16px; color:var(--color-neutral-500); white-space:nowrap;}
+
+/* Recording-quality tips (not from Figma -- this app's own take on the reference screens the
+   request pointed at, restyled to fit our narrower 1-column modal instead of a 3-column
+   layout). Shown for both Record and Upload since the guidance applies to either audio
+   source. */
+.vc-tips{display:flex; flex-direction:column; gap:6px; width:100%; box-sizing:border-box; padding:var(--spacing-md); background:var(--color-neutral-50); border-radius:var(--radius-lg);}
+.vc-tips-title{margin:0 0 2px; font-family:var(--font-family-text); font-size:11px; font-weight:600; line-height:16px; color:var(--color-neutral-500); text-transform:uppercase; letter-spacing:.4px;}
+.vc-tips-row{display:flex; align-items:flex-start; gap:6px;}
+.vc-tips-dot{width:4px; height:4px; margin-top:7px; border-radius:50%; background:var(--color-neutral-400); flex-shrink:0;}
+.vc-tips-text{font-family:var(--font-family-text); font-size:12px; line-height:18px; font-weight:400; color:var(--color-neutral-500);}
+.vc-tips-text b{color:var(--color-neutral-700); font-weight:600;}
+
+/* Recommended-length hint under the idle "Start Recording" row. */
+.vc-hint{margin:6px 0 0; text-align:center; font-family:var(--font-family-text); font-size:11px; font-weight:500; line-height:16px; color:var(--color-neutral-500);}

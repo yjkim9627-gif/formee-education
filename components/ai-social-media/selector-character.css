@@ -1,0 +1,10 @@
+/* Selector / Character — components/ai-social-media/selector-character.html 참고
+   Figma: FME_AI-Social-Media, "Images & Icons" (9269:5042) → Selector / Character (1131:71)
+   7 variants: Character = Elena / Milo / Maya / Priya / Esther / monster / Sofia.
+   An 88×88 portrait with a 6px radius (--radius-md), image filling the tile.
+   Portraits: images/characters/*.png, exported from each variant at 2x. */
+
+.selector-character{
+  display:block; width:88px; height:88px; flex-shrink:0;
+  border-radius:var(--radius-md); overflow:hidden; object-fit:cover;
+}

@@ -1,0 +1,92 @@
+/* ---- "Change voice" modal (Figma "Modal · Change voice · My voices" 9523:151259 /
+   "Modal · Change voice · ElevenLabs" 9523:157260, both instances of the shared
+   "Modal / Dialog" component set) -- ONE modal with two tabs, opened from the
+   Generate-stage settings-bar Voice chip (openVoiceSelectModal()). Previously built as
+   two entirely separate modals (a "Select voice" one with two stacked groups + a
+   "Browse ElevenLabs Voice Library" button, which pushed to a second modal for the
+   library) -- neither the layout, sizing, nor the push-to-a-second-modal flow matches
+   Figma, which is a single 912px modal, tabs (not a button) switching its body, and the
+   two "My voices" sources shown as two SIDE-BY-SIDE columns inside one bordered body box,
+   not stacked groups. Reuses .voice-lib-row/.voice-lib-grid (ElevenLabs tab rows,
+   defined inline in new-content-to-generate.html's "Browse ElevenLabs Voice Library"
+   section -- already matches Figma's "Editor / Audio Row" almost exactly) and .voice-item
+   (My-voices tab rows), rescoped below to the same Editor/Audio Row spec instead of its
+   own brand-tinted-selection look (that's still correct for the OTHER two places
+   .voice-item renders: the Brief screen's horizontal .row-card row and the Character
+   section's card row -- not touched here, only the modal usage is).
+
+   Applies only to Reel/Short and Story Video (Story Video reuses the Reel/Short DOM
+   verbatim) -- Image post and Carousel have no voice section and never open this modal. */
+.voice-select-overlay{background:rgba(15,23,41,.4);} /* Figma's own literal for this screen -- not the shared .modal-overlay's 55% */
+/* Shell overrides -- the shared .modal class (components/shared/modal.css) is tuned for the
+   confirm/success/form dialogs (40px padding, 32px gap, 12px radius, a visible border, a
+   subtle shadow) and this modal never overrode any of it, so it was rendering at the wrong
+   size/roundness/weight the whole time. Figma's "Modal / Dialog" instance for this screen
+   specifically wants 20px padding, 12px gap, 16px radius, no border, and a much heavier
+   drop shadow -- all four were silently wrong before this fix. */
+.voice-select-modal{
+  width:912px; max-width:calc(100vw - 48px); box-sizing:border-box; align-items:flex-end;
+  padding:var(--spacing-xl); gap:var(--spacing-md); border-radius:var(--radius-2xl); border:none;
+  box-shadow:0px 20px 24px rgba(0,0,0,.18);
+}
+.voice-modal-header{display:flex; align-items:center; justify-content:space-between; width:100%;}
+.voice-modal-title{margin:0; font-family:var(--font-family-text); font-size:16px; line-height:24px; font-weight:600; color:var(--color-neutral-900);}
+.voice-modal-close{width:36px; height:36px; flex-shrink:0; border:none; background:none; border-radius:var(--radius-lg); padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center;}
+.voice-modal-close img{width:24px; height:24px; display:block;}
+/* Figma's own export represents this modal's title->tabs->card spacing as two nested 8px/20px
+   gaps (an auto-layout wrapper quirk); since these are flat siblings here under one shared
+   .voice-select-modal gap (12px, correct for card->footer), the tabs and body rows each need
+   their own +8px on top of that to land on Figma's real 20px title->tabs and tabs->card gaps. */
+.voice-modal-tabs{display:flex; align-items:flex-start; width:100%; margin-top:8px;}
+.voice-modal-tab{
+  flex:1 0 0; min-width:0; text-align:center; padding:5px 16px 9px; border:none; border-bottom:1px solid var(--color-neutral-300);
+  background:none; cursor:pointer; font-family:var(--font-family-text); font-size:14px; font-weight:500; color:var(--color-neutral-500);
+}
+.voice-modal-tab.active{border-bottom:2px solid var(--color-neutral-800); font-weight:700; color:var(--color-neutral-800);}
+.voice-modal-body{width:100%; box-sizing:border-box; background:var(--color-neutral-75); border:1px solid var(--color-neutral-300); border-radius:12px; padding:16px; display:flex; gap:16px; margin-top:8px;}
+.voice-modal-body--my{height:438px;}
+.voice-modal-col{display:flex; flex-direction:column; gap:16px; flex:1 0 0; min-width:0; height:438px;}
+.voice-modal-col-label{font-family:var(--font-family-text); font-size:14px; line-height:22px; font-weight:500; color:var(--color-neutral-700);}
+.voice-modal-col-rows{display:flex; flex-direction:column; gap:20px; width:100%; overflow-y:auto;}
+.voice-modal-footer{display:flex; gap:12px; align-items:center;}
+/* My-voices row, rescoped from .voice-item's own brand-tinted look (correct for the Brief/
+   Character screens' .row-card usage, wrong here) to the real Editor/Audio Row spec:
+   52px tall, neutral-400 border, selected = neutral-150 bg + neutral-500 border (not
+   brand-light), no checkmark glyph (Figma has none -- the bg/border change IS the
+   indicator), 32px play circle with the same bare-triangle inset math as
+   .voice-section-preview-play/.voice-lib-play use elsewhere. */
+.voice-modal-col-rows .voice-item{
+  height:52px; box-sizing:border-box; gap:8px; padding:8px 12px; border-radius:var(--radius-lg);
+  border:1px solid var(--color-neutral-400); background:var(--color-neutral-0);
+}
+.voice-modal-col-rows .voice-item:hover{background:var(--color-neutral-0); border-color:var(--color-neutral-500);}
+.voice-modal-col-rows .voice-item.selected{background:var(--color-neutral-150); border-color:var(--color-neutral-500);}
+.voice-modal-col-rows .voice-check{display:none;}
+.voice-modal-col-rows .voice-play{
+  position:relative; width:32px; height:32px; border-radius:999px; border:1.5px solid var(--color-neutral-700);
+  background:none; box-sizing:border-box;
+}
+.voice-modal-col-rows .voice-play img{position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:16.8px; height:16.8px;} /* 32 - 2*(26.67%*32 - 0.7) */
+.voice-modal-col-rows .voice-play.playing{border-color:var(--color-brand-primary); background:none;}
+.voice-modal-col-rows .voice-item-name{font-size:12px; font-weight:500; color:var(--color-neutral-700);}
+.voice-modal-col-rows .voice-item-tag{font-size:11px; font-weight:400; color:var(--color-neutral-500);}
+/* "New voice" row (Figma 9523:151259, "Cloned & Designed by you" column) -- was missing
+   entirely; renderVoiceSelectModalRows() only rendered the mapped voice rows with nothing
+   appended after them. Dashed like every other "add new" affordance in this file
+   (.char-select-card.new, .voice-new-card) but its own rule since it sits inside
+   .voice-modal-col-rows next to 52px-tall .voice-item rows, not those components' contexts. */
+.voice-modal-new-row{
+  display:flex; align-items:center; justify-content:center; gap:4px; width:100%; box-sizing:border-box;
+  border:1px dashed var(--color-neutral-400); border-radius:var(--radius-lg); padding:var(--spacing-sm);
+  background:none; cursor:pointer; font-family:var(--font-family-text); font-size:14px; font-weight:500; color:var(--color-neutral-700);
+}
+.voice-modal-new-row:hover{border-color:var(--color-neutral-450); color:var(--color-neutral-900);}
+.voice-modal-new-row img{width:24px; height:24px; flex-shrink:0;}
+/* ElevenLabs library tab -- same panel content as the Brief screen's inline browse panel,
+   just without that panel's own margin-top/border/radius (this modal's .voice-modal-body
+   already supplies the card chrome around it). Fixed to the same 438px as the My-voices tab
+   (.voice-modal-body--my) so switching tabs doesn't resize the modal -- search row + filter
+   chips take whatever height they need, and the grid itself (flex:1, see
+   .voice-lib-grid--modal below) absorbs the rest, scrolling vertically once it runs out. */
+#voiceModalBodyLib{flex-direction:column; align-items:stretch; height:438px;}
+.voice-lib-grid--modal{flex:1; min-height:0; max-height:none; align-content:start;}

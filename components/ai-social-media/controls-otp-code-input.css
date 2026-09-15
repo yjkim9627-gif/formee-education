@@ -1,0 +1,38 @@
+/* Controls / OTP Code Input — components/ai-social-media/controls-otp-code-input.html 참고
+   Figma: FME_AI-Social-Media, "Forms & Inputs" (1124:30) → Controls / OTP Code Input (4035:2562)
+   Single component (no variants): 6 digit cells, the "Didn't receive the code? Resend" row
+   (an Auth / Sign-up Row instance with its text overridden) and the expiry line.
+   Figma literals with no token: column gap 10px, cell radius 10px (= --radius-md-lg), digit 20px.
+   Focus: Figma has no focused cell — the neutral-500 border here follows the product's other
+   inputs' focused stroke, so the demo is usable with a keyboard. */
+
+.otp-code-input{
+  display:flex; flex-direction:column; gap:10px;
+  width:360px; font-family:var(--font-family-text);
+}
+
+.otp-code-input__digits{ display:flex; gap:var(--spacing-sm); }
+.otp-code-input__digit{
+  flex:1 1 0; min-width:0; height:56px; box-sizing:border-box; margin:0; padding:0;
+  border:1px solid var(--color-neutral-400); border-radius:var(--radius-md-lg);
+  background:var(--color-neutral-0); outline:none; text-align:center;
+  font-family:var(--font-family-text); font-size:20px; font-weight:var(--font-weight-semibold);
+  color:var(--color-neutral-950);
+}
+.otp-code-input__digit:focus{ border-color:var(--color-neutral-500); }
+
+.otp-code-input__resend{
+  display:flex; align-items:center; justify-content:center; gap:6px;
+  font-size:var(--font-size-text-md); line-height:var(--line-height-text-md);
+}
+.otp-code-input__resend .prompt{ font-weight:var(--font-weight-medium); color:var(--color-neutral-700); }
+.otp-code-input__resend .link{
+  margin:0; padding:0; border:none; background:none; cursor:pointer;
+  font:inherit; font-weight:var(--font-weight-semibold); color:var(--color-neutral-800);
+}
+
+.otp-code-input__meta{
+  display:flex; align-items:center; justify-content:space-between; gap:var(--spacing-sm);
+  font-size:var(--font-size-text-xs); line-height:var(--line-height-text-xs);
+  font-weight:var(--font-weight-regular); color:var(--color-neutral-500);
+}

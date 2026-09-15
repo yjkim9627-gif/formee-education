@@ -1,0 +1,13 @@
+/* Nav / Flow Progress — components/ai-social-media/nav-flow-progress.html 참고
+   Figma: FME_AI-Social-Media, "Navigation" (1124:10324) → Nav / Flow Progress (4860:109491)
+   8 variants: Active = 1…8. A 360×6 bar of 7 pill segments (48 wide, gap 4); the first N are
+   neutral-900, the rest neutral-200. Active=8 is drawn identically to Active=7 (all seven filled) —
+   the "flow finished" step. In code the count is data: set --active (0–7) on the bar, or mark
+   segments with .is-done. */
+
+.nav-flow-progress{ display:flex; gap:var(--spacing-xs); width:360px; height:6px; }
+.nav-flow-progress__segment{
+  flex:1 1 0; min-width:0; height:100%;
+  border-radius:var(--radius-full); background:var(--color-neutral-200);
+}
+.nav-flow-progress__segment.is-done{ background:var(--color-neutral-900); }

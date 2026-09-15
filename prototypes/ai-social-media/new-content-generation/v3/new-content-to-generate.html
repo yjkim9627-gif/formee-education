@@ -7329,13 +7329,17 @@ fitScreenToViewport();
 /* 딥링크로 들어온 화면에는 돌아갈 길이 없다. 보낸 쪽이 from/back 을 실어 보내면
    상단 바 왼쪽에 이 알약이 뜨고, back 의 해시 그대로 원래 화면으로 되돌린다.
    본문이 아니라 상단 바인 이유는 하나 — 본문에 두면 한 번 스크롤에 사라진다. */
-.fmx-back{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;
-  background:var(--color-neutral-0,#fff);border:1px solid var(--color-neutral-300,#d6ddeb);
-  border-radius:9999px;text-decoration:none;
-  font-family:var(--font-family-text),-apple-system,sans-serif;font-size:13px;font-weight:600;
-  color:var(--color-neutral-900,#0f1729);white-space:nowrap;}
+/* Figma Brand Kit 상단 바(6828:106703)의 back 묶음과 같은 규격 */
+.fmx-back{display:inline-flex;align-items:center;gap:4px;padding:8px 12px;
+  background:var(--color-neutral-0,#fff);border:1px solid var(--color-neutral-400,#c8d1e1);
+  border-radius:8px;text-decoration:none;
+  font-family:var(--font-family-text),-apple-system,sans-serif;
+  font-size:13px;font-weight:600;line-height:20px;
+  color:var(--color-neutral-700,#475069);white-space:nowrap;}
 .fmx-back:hover{background:var(--color-neutral-50,#f6f8fc);}
-.fmx-back i{font-style:normal;color:var(--color-neutral-500,#8a93a8);}
+.fmx-back svg{width:16px;height:16px;flex:none;display:block;
+  stroke:var(--color-neutral-500,#8a93a8);stroke-width:1.6;
+  stroke-linecap:round;stroke-linejoin:round;}
 .fmx-back-slot{display:flex;align-items:center;gap:12px;flex-shrink:0;}
 .fmx-back-rule{width:1px;height:24px;background:var(--color-neutral-300,#d6ddeb);flex:none;}
 </style>
@@ -7372,7 +7376,7 @@ fitScreenToViewport();
     var a = document.createElement('a');
     a.className = 'fmx-back';
     a.href = home.href + (safe ? '#' + safe : '');
-    a.innerHTML = '<i>\u2190</i>';
+    a.innerHTML = '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 12.67 3.33 8 8 3.34"/><path d="M12.67 8H3.33"/></svg>';
     a.appendChild(document.createTextNode('Back to ' + home.label));
     var bar = document.querySelector('.topbar');
     if (bar && !bar.querySelector('.fmx-back-slot')){

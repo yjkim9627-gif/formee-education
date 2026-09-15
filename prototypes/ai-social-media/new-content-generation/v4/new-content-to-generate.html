@@ -33,6 +33,8 @@
 <link rel="stylesheet" href="../../../../components/ai-social-media/brand-kit-summary.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/ai-response-card.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/create-character-modal.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/change-voice-modal.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/mylib-modal.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/editor-cell.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/editor-color-swatch.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/controls-menu.css">
@@ -47,6 +49,9 @@
 <link rel="stylesheet" href="../../../../components/ai-social-media/publish-social-modal.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/controls-misc.css">
 <link rel="stylesheet" href="../../../../components/ai-social-media/controls-toggles.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/controls-search-field.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/style-card.css">
+<link rel="stylesheet" href="../../../../components/ai-social-media/character-detail-panel.css">
 <!-- Playfair Display: only used live for the Draft screen's brand-kit font-preview tags (Formee
      Express's Heading face, matching brand-setup-kit-character-library.html's own import). -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap">
@@ -227,28 +232,8 @@
   .reference-images-row{display:flex; gap:8px; flex-wrap:wrap;}
   .reference-images-row:empty{display:none;}
 
-  /* -- My Library picker modal (Figma 9198:133913 "Reference - My Library") — real
-     Controls/Segmented Control + Controls/Filter/Select + Reference/Scene Tile·Selectable
-     grid (multi-select) + Actions/Button footer. Selecting tiles then clicking "Add"
-     hands off to window.fmxRefMount() (see reference-images-row above / fmxref-js below),
-     same as the Content Library "Use as reference" deep-link. -- */
-  /* Figma 9329:145797's card has NO border at all (just bg white + a drop shadow) -- the
-     shared .modal class's generic 1px border (meant for the confirm/success/form dialogs)
-     was quietly eating 2px of usable width here (border-box sizing), which was just enough
-     to drop the tile grid from Figma's real 5-per-row (5*200 + 4*12 gap = 1048, exactly
-     .mylib-content's width at the real 1088px/20px-padding modal size) to 4-per-row --
-     leaving a large uneven gap on the right of every row instead of the grid filling it.
-     Removing the border (and swapping the shadow for Figma's own literal instead of the
-     generic --shadow-modal token) fixes both the look and the width. */
-  .mylib-modal{max-width:1088px; width:100%; padding:var(--spacing-xl); border-radius:16px; gap:var(--spacing-md); border:none; box-shadow:0px 20px 24px rgba(0,0,0,.18);}
-  .mylib-header-top{display:flex; align-items:flex-start; justify-content:space-between; width:100%;}
-  .mylib-header-top .modal__close{position:static; width:36px; height:36px; border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); box-shadow:0 1px 1.5px rgba(15,23,41,.1),0 1px 0.5px rgba(15,23,41,.04);}
-  .mylib-filter-bar{display:flex; align-items:center; justify-content:space-between; height:64px; width:100%;}
-  .mylib-filter-left{display:flex; align-items:center; gap:8px;}
-  .mylib-filter-row{display:flex; align-items:center; gap:var(--spacing-md);}
-  .mylib-item-count{font-family:var(--font-family-text); font-size:12px; font-weight:500; color:var(--color-neutral-500); white-space:nowrap;}
-  .mylib-content{display:flex; flex-wrap:wrap; gap:var(--spacing-md); max-height:60vh; overflow-y:auto;}
-  .mylib-footer{display:flex; align-items:center; justify-content:flex-end; gap:var(--spacing-md); padding-top:16px; width:100%;}
+  /* My Library picker modal + Character "See all" modal (shared .mylib-* shell) —
+     components/ai-social-media/mylib-modal.css */
 
   /* -- Character section (Brief & Style) — .char-section/.char-panel/.char-filters/.char-grid/
      .char-card + Filter Chip now in components/ai-social-media/character-card.css + filter-chip.css. -- */
@@ -917,6 +902,65 @@
   }
   .reel-lightbox-stage img{width:100%; height:100%; display:block; object-fit:cover;}
 
+  /* ---- Reel/Short Video tab lightbox — Figma node 9619:195592 ("Reel/Short · Timeline -
+     Video lightbox"), opened from a Video tab tile's Maximize button (expandVideoTile()).
+     Same outer shell as .reel-lightbox-* (nav arrows / Scene N pill header / close / stage /
+     Download footer), but this stage also carries a real scrubber overlay (time / volume /
+     progress + a center play-pause button) since Figma's spec has this modal actually play
+     the generated video back, not just show a static frame like the other two lightboxes --
+     reuses the same .video-scrubber-* pieces the Combine-result player (#combinePlayer)
+     already established, just composed inside a lightbox stage instead of inline on canvas. */
+  .video-lightbox-overlay{position:fixed; background:color-mix(in srgb, var(--color-neutral-900) 45%, transparent);}
+  .video-lightbox-row{display:flex; align-items:center; gap:var(--spacing-xl);}
+  .video-lightbox-nav{
+    width:36px; height:36px; flex-shrink:0; border-radius:var(--radius-full);
+    background:var(--color-neutral-0); border:1px solid var(--color-neutral-400);
+    box-shadow:0 4px 8px rgba(15,23,41,.08),0 2px 4px rgba(15,23,41,.05);
+    display:flex; align-items:center; justify-content:center; padding:0; cursor:pointer;
+  }
+  .video-lightbox-nav:disabled{opacity:.35; cursor:default; box-shadow:none;}
+  .video-lightbox-nav img{width:24px; height:24px; display:block;}
+  .video-lightbox-modal{
+    width:auto; max-width:none; padding:var(--spacing-xl); gap:var(--spacing-lg);
+    align-items:flex-end; border-radius:var(--radius-2xl); box-shadow:0 8px 32px rgba(0,0,0,.25);
+    box-sizing:border-box;
+  }
+  .video-lightbox-header{display:flex; align-items:center; justify-content:space-between; gap:var(--spacing-sm); width:100%;}
+  .video-lightbox-pills{display:flex; gap:var(--spacing-sm); flex-wrap:wrap;}
+  .video-lightbox-pills .filter-toggle:disabled{opacity:.4; cursor:default;}
+  .video-lightbox-close{
+    width:36px; height:36px; flex-shrink:0; border-radius:var(--radius-lg); border:none;
+    background:var(--color-neutral-0); border:1px solid var(--color-neutral-400);
+    box-shadow:0 1px 1.5px rgba(15,23,41,.1),0 1px .5px rgba(15,23,41,.04);
+    display:flex; align-items:center; justify-content:center; padding:0; cursor:pointer;
+  }
+  .video-lightbox-close img{width:16px; height:16px; display:block;}
+  .video-lightbox-stage{
+    position:relative; flex-shrink:0; aspect-ratio:303/539; border-radius:var(--radius-xl);
+    overflow:hidden; height:683px; width:auto; box-sizing:border-box; padding:16px;
+    display:flex; flex-direction:column; justify-content:flex-end;
+    background:linear-gradient(135deg,var(--color-neutral-400),var(--color-neutral-200));
+    background-size:cover; background-position:center;
+  }
+  .video-lightbox-stage .video-play-btn{
+    display:flex; align-items:center; justify-content:center;
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:48px; height:48px; border-radius:999px; border:none;
+    background:rgba(255,255,255,.75); backdrop-filter:blur(5px); opacity:.9; cursor:pointer;
+  }
+  .video-lightbox-stage .video-play-btn img.play,
+  .video-lightbox-stage .video-play-btn img.pause{width:24px; height:24px; display:block;}
+  .video-lightbox-stage .video-scrubber{position:relative; display:flex; flex-direction:column; gap:12px; width:100%;}
+  .video-lightbox-stage .video-scrubber-time-row{display:flex; align-items:center; justify-content:space-between; width:100%;}
+  .video-lightbox-stage .video-scrubber-time{font-family:var(--font-family-text); font-size:11px; line-height:16px; color:#fff;}
+  .video-lightbox-stage .video-scrubber-controls{display:flex; align-items:center; gap:12px;}
+  .video-lightbox-stage .video-scrubber-controls img{display:block; width:18px; height:18px;}
+  .video-lightbox-stage .video-scrubber-progress{width:100%; height:4px; border-radius:999px; background:rgba(255,255,255,.35); overflow:hidden;}
+  .video-lightbox-stage .video-scrubber-progress-fill{height:100%; width:37.5%; background:#fff; border-radius:inherit; transition:width 1.4s linear;}
+
+  /* Character Detail modal layout (breadcrumb, two-column body, tags, style grids) now lives
+     in components/ai-social-media/character-detail-panel.css, matching Figma 9619:195199. */
+
   /* =====================================================================
      REEL/SHORT (Script/Video) — ported from
      new-content-brief-to-generate.html as a third native content type,
@@ -1032,66 +1076,8 @@
   .voice-lib-add{border:1px solid var(--color-neutral-300); background:#fff; border-radius:999px; padding:3px 10px; font-size:10.5px; font-weight:600; color:var(--color-neutral-700); cursor:pointer; flex-shrink:0; font-family:var(--font-family-text);}
   .voice-lib-add:hover{border-color:var(--color-brand-primary); color:var(--color-brand-primary);}
 
-  /* ---- "Change voice" modal (Figma 8727:223765 "My voices" tab + 8727:223551 "ElevenLabs
-     voice library" tab) -- ONE modal with two tabs, opened from the Generate-stage settings-bar
-     Voice chip (openVoiceSelectModal()). Previously built as two entirely separate modals (a
-     "Select voice" one with two stacked groups + a "Browse ElevenLabs Voice Library" button,
-     which pushed to a second modal for the library) -- neither the layout, sizing, nor the
-     push-to-a-second-modal flow matches Figma, which is a single 912px modal, tabs (not a
-     button) switching its body, and the two "My voices" sources shown as two SIDE-BY-SIDE
-     columns inside one bordered body box, not stacked groups. Reuses .voice-lib-row/.voice-lib-
-     grid (ElevenLabs tab rows, defined just above -- already matches Figma's "Editor / Audio
-     Row" almost exactly) and .voice-item (My-voices tab rows), rescoped below to the same
-     Editor/Audio Row spec instead of its own brand-tinted-selection look (that's still correct
-     for the OTHER two places .voice-item renders: the Brief screen's horizontal .row-card row
-     and the Character section's card row -- not touched here, only the modal usage is). */
-  .voice-select-overlay{background:rgba(15,23,41,.4);} /* Figma's own literal for this screen -- not the shared .modal-overlay's 55% */
-  .voice-select-modal{width:912px; max-width:calc(100vw - 48px); box-sizing:border-box; align-items:flex-end;}
-  .voice-modal-header{display:flex; align-items:center; justify-content:space-between; width:100%;}
-  .voice-modal-title{margin:0; font-family:var(--font-family-text); font-size:16px; line-height:24px; font-weight:600; color:var(--color-neutral-900);}
-  .voice-modal-close{width:24px; height:24px; flex-shrink:0; border:none; background:none; padding:0; cursor:pointer; display:flex;}
-  .voice-modal-close img{width:24px; height:24px; display:block;}
-  .voice-modal-tabs{display:flex; align-items:flex-start; width:100%;}
-  .voice-modal-tab{
-    flex:1 0 0; min-width:0; text-align:center; padding:5px 16px 9px; border:none; border-bottom:1px solid var(--color-neutral-300);
-    background:none; cursor:pointer; font-family:var(--font-family-text); font-size:14px; font-weight:500; color:var(--color-neutral-500);
-  }
-  .voice-modal-tab.active{border-bottom:2px solid var(--color-neutral-800); font-weight:700; color:var(--color-neutral-800);}
-  .voice-modal-body{width:100%; box-sizing:border-box; background:var(--color-neutral-75); border:1px solid var(--color-neutral-300); border-radius:12px; padding:16px; display:flex; gap:16px;}
-  .voice-modal-body--my{height:438px;}
-  .voice-modal-col{display:flex; flex-direction:column; gap:16px; flex:1 0 0; min-width:0; height:438px;}
-  .voice-modal-col-label{font-family:var(--font-family-text); font-size:14px; line-height:22px; font-weight:500; color:var(--color-neutral-700);}
-  .voice-modal-col-rows{display:flex; flex-direction:column; gap:20px; width:100%; overflow-y:auto;}
-  .voice-modal-footer{display:flex; gap:12px; align-items:center;}
-  /* My-voices row, rescoped from .voice-item's own brand-tinted look (correct for the Brief/
-     Character screens' .row-card usage, wrong here) to the real Editor/Audio Row spec:
-     52px tall, neutral-400 border, selected = neutral-150 bg + neutral-500 border (not
-     brand-light), no checkmark glyph (Figma has none -- the bg/border change IS the
-     indicator), 32px play circle with the same bare-triangle inset math as
-     .voice-section-preview-play/.voice-lib-play use elsewhere. */
-  .voice-modal-col-rows .voice-item{
-    height:52px; box-sizing:border-box; gap:8px; padding:8px 12px; border-radius:var(--radius-lg);
-    border:1px solid var(--color-neutral-400); background:var(--color-neutral-0);
-  }
-  .voice-modal-col-rows .voice-item:hover{background:var(--color-neutral-0); border-color:var(--color-neutral-500);}
-  .voice-modal-col-rows .voice-item.selected{background:var(--color-neutral-150); border-color:var(--color-neutral-500);}
-  .voice-modal-col-rows .voice-check{display:none;}
-  .voice-modal-col-rows .voice-play{
-    position:relative; width:32px; height:32px; border-radius:999px; border:1.5px solid var(--color-neutral-700);
-    background:none; box-sizing:border-box;
-  }
-  .voice-modal-col-rows .voice-play img{position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:16.8px; height:16.8px;} /* 32 - 2*(26.67%*32 - 0.7) */
-  .voice-modal-col-rows .voice-play.playing{border-color:var(--color-brand-primary); background:none;}
-  .voice-modal-col-rows .voice-item-name{font-size:12px; font-weight:500; color:var(--color-neutral-700);}
-  .voice-modal-col-rows .voice-item-tag{font-size:11px; font-weight:400; color:var(--color-neutral-500);}
-  /* ElevenLabs library tab -- same panel content as the Brief screen's inline browse panel,
-     just without that panel's own margin-top/border/radius (this modal's .voice-modal-body
-     already supplies the card chrome around it). Fixed to the same 438px as the My-voices tab
-     (.voice-modal-body--my) so switching tabs doesn't resize the modal -- search row + filter
-     chips take whatever height they need, and the grid itself (flex:1, see
-     .voice-lib-grid--modal below) absorbs the rest, scrolling vertically once it runs out. */
-  #voiceModalBodyLib{flex-direction:column; align-items:stretch; height:438px;}
-  .voice-lib-grid--modal{flex:1; min-height:0; max-height:none; align-content:start;}
+  /* "Change voice" modal (My voices + ElevenLabs tabs) —
+     components/ai-social-media/change-voice-modal.css */
 
   /* ---- Chat attachments (not covered by chat-panel.css) ---- */
   .chat-attachments{padding:12px 16px 0; border-bottom:1px solid var(--color-neutral-200); display:flex; flex-direction:column; gap:8px;}
@@ -1349,8 +1335,11 @@
      this content's own layout choice, not a brand value -- see TEXT_PLACEMENT_STANDALONE_SCOPES
      and buildBrandKitSummaryCompactHtml()'s comment on the same distinction). Segmented control
      + its dynamic helper text sit side by side in one row, same as the Figma frame. */
-  #stageAreaReel .text-placement-controls{display:flex; align-items:center; gap:var(--spacing-xl);}
-  #stageAreaReel .text-placement-controls .brand-kit-mode-help{flex:1 0 0; min-width:0; margin:0;}
+  /* Was scoped to #stageAreaReel only -- Image post/Carousel got the same
+     TEXT_PLACEMENT_STANDALONE_SCOPES markup but not this rule, so their segmented control and
+     helper text fell back to block-level stacking (help text landing below instead of beside). */
+  #stageAreaReel .text-placement-controls, #stageAreaImage .text-placement-controls, #stageAreaCarousel .text-placement-controls{display:flex; align-items:center; gap:var(--spacing-xl);}
+  #stageAreaReel .text-placement-controls .brand-kit-mode-help, #stageAreaImage .text-placement-controls .brand-kit-mode-help, #stageAreaCarousel .text-placement-controls .brand-kit-mode-help{flex:1 0 0; min-width:0; margin:0;}
   .scene-card{border:1px solid var(--color-neutral-300); border-radius:10px; padding:16px;}
   /* Card chrome for each clip now matches Carousel's own .carousel-card-block (same white
      card, header row, title style) instead of a Reel-only shape — see
@@ -1415,9 +1404,21 @@
   .video-tile-overlay-top{position:absolute; top:8px; left:8px; right:8px; display:flex; align-items:center; justify-content:space-between; gap:6px;}
   .video-tile-ready-badge{display:none; align-items:center; gap:3px; font-size:10px; font-weight:700; color:var(--color-badge-green-text); background:#fff; padding:3px 7px; border-radius:999px;}
   .video-tile.ready .video-tile-ready-badge{display:inline-flex;}
-  .video-tile-regen-btn{display:none; width:24px; height:24px; border-radius:999px; border:none; background:rgba(255,255,255,0.92); align-items:center; justify-content:center; font-size:12px; color:var(--color-neutral-700); cursor:pointer; margin-left:auto;}
+  /* Figma Video/Scene Tile ready state (8727:220203) -- Download + Maximize reuse the
+     shared media-card-icon-btn component (28px/radius-lg/18px icon, same as Timeline
+     thumbnails/Storyboard/Image versions) for sizing, but THIS tile's own two instances
+     are both the dark blurred-glass fill (bg rgba(15,23,41,.4) + blur(5px)), not that
+     shared class's white .download / light-glass .maximize variants -- video tiles are
+     full-bleed photo all the way to the corners, so the lighter fills wouldn't read.
+     Icons flip to white via filter since the source SVGs are dark-stroke (made for the
+     white/light-glass buttons elsewhere). Regenerate isn't in that Figma node, but it's
+     this file's own existing feature -- kept in the same trailing group rather than removed. */
+  .video-tile-icon-group{display:none; align-items:center; gap:8px; margin-left:auto;}
+  .video-tile.ready .video-tile-icon-group{display:flex;}
+  .video-tile-icon-group .media-card-icon-btn{background:rgba(15,23,41,.4); backdrop-filter:blur(5px); border:none; box-shadow:none; padding:5px;}
+  .video-tile-icon-group .media-card-icon-btn img{filter:brightness(0) invert(1);}
+  .video-tile-regen-btn{width:24px; height:24px; border-radius:999px; border:none; background:rgba(255,255,255,0.92); display:flex; align-items:center; justify-content:center; font-size:12px; color:var(--color-neutral-700); cursor:pointer;}
   .video-tile-regen-btn:hover{background:#fff; color:var(--color-neutral-900);}
-  .video-tile.ready .video-tile-regen-btn{display:flex;}
   .video-tile.generating .video-tile-badge{display:none;}
   .video-play-btn{display:none; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:40px; height:40px; border-radius:999px; border:none; background:rgba(255,255,255,0.92); align-items:center; justify-content:center; cursor:pointer;}
   .video-play-btn:hover{background:#fff;}
@@ -3023,6 +3024,69 @@
     </div>
   </div>
 
+  <!-- Reel/Short Video tab lightbox -- Figma 9619:195592, opened from a Video tab tile's
+       Maximize button (expandVideoTile()). Same shell as the Timeline lightbox above, plus a
+       real scrubber (time/volume/progress + play-pause) since this one plays the video back. -->
+  <div class="modal-overlay video-lightbox-overlay" id="videoLightboxOverlay" style="display:none;" onclick="if(event.target===this) closeVideoLightbox();">
+    <div class="video-lightbox-row">
+      <button type="button" class="video-lightbox-nav" id="videoLightboxPrev" onclick="videoLightboxPrev()"><img src="../../../../components/ai-social-media/icons/chevron-left.svg" alt="Previous scene"></button>
+      <div class="modal video-lightbox-modal">
+        <div class="video-lightbox-header">
+          <div class="video-lightbox-pills" id="videoLightboxPills"></div>
+          <button type="button" class="video-lightbox-close" onclick="closeVideoLightbox()"><img src="../../../../components/ai-social-media/icons/panel-close.svg" alt="Close"></button>
+        </div>
+        <div class="video-lightbox-stage" id="videoLightboxStage">
+          <div class="video-scrubber">
+            <div class="video-scrubber-time-row">
+              <span class="video-scrubber-time" id="videoLightboxTime">0:03 / 0:08</span>
+              <span class="video-scrubber-controls"><img src="../../../../components/ai-social-media/icons/volume-2.svg" alt=""></span>
+            </div>
+            <div class="video-scrubber-progress"><div class="video-scrubber-progress-fill" id="videoLightboxProgressFill"></div></div>
+          </div>
+          <button type="button" class="video-play-btn" id="videoLightboxPlayBtn" onclick="toggleVideoLightboxPlay()" title="Play"><img class="play" src="../../../../components/ai-social-media/icons/video-play-glyph.svg" alt=""></button>
+        </div>
+        <button type="button" class="actions-btn actions-btn--primary" onclick="downloadVideoScene(window.__videoLightboxIndex + 1)">
+          <img src="../../../../components/ai-social-media/icons/actions/download-icon-white.svg" alt="">
+          <span>Download</span>
+        </button>
+      </div>
+      <button type="button" class="video-lightbox-nav" id="videoLightboxNext" onclick="videoLightboxNext()"><img src="../../../../components/ai-social-media/icons/chevron-right.svg" alt="Next scene"></button>
+    </div>
+  </div>
+
+  <!-- Character Detail modal -- opened from a card click inside the "Character · See all"
+       modal above (openCharDetailModal()/pickCharSeeAllCard()). Reuses the same .mylib-*
+       shell + .char-select-card/.char-select-grid tiles as that modal for a consistent look. -->
+  <div class="modal-overlay" id="charDetailModalOverlay" style="display:none;" onclick="if(event.target===this) closeCharDetailModal();">
+    <div class="modal mylib-modal mylib-modal--wide">
+      <div class="mylib-header-top">
+        <div class="char-detail-breadcrumb">
+          <button type="button" class="crumb-root" onclick="closeCharDetailModal()">Characters</button>
+          <span class="crumb-sep">&rsaquo;</span>
+          <span class="crumb-current" id="charDetailName">Character</span>
+        </div>
+        <button type="button" class="modal__close" onclick="closeCharDetailModal()"><img src="../../../../components/ai-social-media/icons/button-x-dark.svg" class="icon-inline" alt=""></button>
+      </div>
+      <div class="char-detail-body">
+        <div class="char-detail-left">
+          <div class="char-detail-name-row">
+            <p class="name" id="charDetailNameLg">Character</p>
+            <img src="../../../../components/ai-social-media/icons/shape-star-filled-large.svg" alt="">
+          </div>
+          <div class="char-detail-tags" id="charDetailTags"></div>
+          <div id="charDetailSourceWrap"></div>
+          <div class="char-detail-spacer"></div>
+          <button type="button" class="btn btn-dark" style="width:100%;" onclick="closeCharDetailModal()">Create new content</button>
+        </div>
+        <div class="char-detail-right" id="charDetailGrid"></div>
+      </div>
+      <div class="mylib-footer">
+        <button type="button" class="actions-btn actions-btn--secondary" onclick="closeCharDetailModal()">Cancel</button>
+        <button type="button" class="actions-btn actions-btn--primary" onclick="confirmCharDetailSelection()">Save</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Create character -- ported wholesale from another session's already-built Characters
        library prototype ("brand-setup-kit-character-library.html", per Figma section
        2258:43028 "02_Create - upload") rather than redrawn here -- see
@@ -3514,7 +3578,9 @@ let BRAND_KIT_FONTS = [
 const BRAND_KIT_MODE_LABEL = { ontop: 'On top', inimage: 'In the image' };
 const BRAND_KIT_MODE_HELP = {
   ontop: 'On top — AI creates the image only. Text, logo and button are added as editable layers.',
-  inimage: 'In the image — AI draws the text and graphics into the image. They can\'t be edited afterwards.'
+  /* Figma 9430:191906 (Text placement, "In the image" state) -- no "In the image —" prefix here,
+     the segmented control button to its left already says that. */
+  inimage: 'AI generates the image with text, logo and button embedded. To make changes, you\'ll need to regenerate the image.'
 };
 function brandKitBlankState(){
   return { logo: BRAND_KIT_DEFAULTS.logo, colours: BRAND_KIT_DEFAULTS.colours.slice(),
@@ -4540,11 +4606,68 @@ function carSelectRatio(value){
   carUpdateBriefMeta();
 }
 function selectCardCount(n){
+  const oldN = window.__cardCount;
   window.__cardCount = n;
   document.getElementById('cardsChipText').textContent = `${n} Cards`;
   document.querySelectorAll('#cardsPopover .chip-option').forEach(o => o.classList.toggle('selected', Number(o.dataset.cards) === n));
   document.getElementById('cardsPopover').style.display = 'none';
   carUpdateBriefMeta();
+
+  // This chip lives on the Brief screen, reachable at any time via the "Brief & Style" step
+  // nav (goToBrief()) -- so changing it here can happen either before the script exists yet
+  // (draftScript() just runs fresh for the new count when Generate is entered) or after going
+  // back from an already-drafted Script stage, which is the case the chat needs to narrate
+  // (Figma "AI Assistant · Card Count Changed" gallery, 8727:224037).
+  if(scriptDraftStarted && oldN !== n){
+    narrateCardCountChange(oldN, n);
+  }
+}
+
+function narrateCardCountChange(oldN, n){
+  addChatMsg('user', `Card count changed to ${n} (was ${oldN})`);
+
+  const log = document.getElementById('chatLog');
+  const loadingEl = document.createElement('div');
+  loadingEl.className = 'msg ai loading';
+  loadingEl.innerHTML = `<span class="tag">AI</span>Rewriting the script for ${n} cards<span class="dots"><span>.</span><span>.</span><span>.</span></span>`;
+  log.appendChild(loadingEl);
+  beatIn(loadingEl);
+
+  setTimeout(() => {
+    loadingEl.remove();
+    for(let i = 1; i <= n; i++){
+      if(window.__cardScripts[i] === undefined) window.__cardScripts[i] = SCRIPT_TEMPLATES[i - 1] || `Card ${i} — key message goes here.`;
+    }
+    renderScriptCards();
+
+    const status = document.createElement('div');
+    status.className = 'msg-status';
+    status.innerHTML = '<span class="worked-label">Worked</span> <span class="worked-time">for 1s</span>';
+    log.appendChild(status);
+    beatIn(status);
+
+    const introMsg = document.createElement('div');
+    introMsg.className = 'msg ai';
+    introMsg.textContent = `Card count changed to ${n} (was ${oldN}), so I rewrote the script for all ${n} cards.`;
+    log.appendChild(introMsg);
+    beatIn(introMsg);
+
+    carAppendChatCta(
+      'Updated Script',
+      `Each card's text is ready — see Card 1–${n} on the right. Edit any card directly, or tell me here for a different angle.`,
+      `<div class="chat-cta-checklist"><img src="../../../../components/ai-social-media/icons/check.svg" alt=""><span>Applied to card scripts</span></div><button class="btn btn-dark" data-chat-action="carConfirmScript" onclick="confirmScript()">Continue to Storyboard</button>`
+    );
+    beatIn();
+
+    renderChatQuickChips([
+      { label: 'Regenerate all' },
+      { label: 'Make it punchier' }
+    ]);
+    beatIn(document.getElementById('chatQuickChips'));
+
+    setChatGuideHint('Tweak one card: "make card 2 shorter" or "try a warmer tone"');
+    log.scrollTop = log.scrollHeight;
+  }, 900);
 }
 function carUpdateBriefMeta(){
   const ratio = window.__carouselRatio;
@@ -6600,7 +6723,7 @@ window.__charSeeAllFavOnly = false;
 function buildCharSeeAllModalHtml(){
   return `
     <div class="modal-overlay" id="charSeeAllModalOverlay" style="display:none;" onclick="if(event.target===this) closeCharacterSeeAllModal();">
-      <div class="modal mylib-modal">
+      <div class="modal mylib-modal mylib-modal--wide">
         <div class="mylib-header-top">
           <h2 class="modal__title">Characters</h2>
           <button type="button" class="modal__close" onclick="closeCharacterSeeAllModal()"><img src="../../../../components/ai-social-media/icons/button-x-dark.svg" class="icon-inline" alt=""></button>
@@ -6672,7 +6795,7 @@ function renderCharSeeAllGrid(){
       <div class="thumb">
         <img src="${c.img}" alt="">
         <div class="thumb-actions">
-          <button type="button" class="thumb-action-btn fav${c.fav ? ' active' : ''}" onclick="event.stopPropagation(); toggleCharSeeAllCardFav('${c.id}')" aria-label="Favorite ${c.name}"><img src="../../../../components/ai-social-media/icons/shape-star.svg" alt=""></button>
+          <button type="button" class="thumb-action-btn fav${c.fav ? ' active' : ''}" onclick="event.stopPropagation(); toggleCharSeeAllCardFav('${c.id}')" aria-label="Favorite ${c.name}"><img src="../../../../components/ai-social-media/icons/${c.fav ? 'shape-star-filled' : 'shape-star'}.svg" alt=""></button>
           <button type="button" class="thumb-action-btn" onclick="event.stopPropagation();" aria-label="More actions for ${c.name}"><img src="../../../../components/ai-social-media/icons/ui-ellipsis.svg" alt=""></button>
         </div>
         <div class="posts-badge"><p>${c.posts} posts · ${c.styles} ${c.styles === 1 ? 'style' : 'styles'}</p></div>
@@ -6689,12 +6812,13 @@ function toggleCharSeeAllCardFav(charId){
   if(c) c.fav = !c.fav;
   renderCharSeeAllGrid();
 }
-// Just marks the pending pick (visual highlight) -- the actual selection is only applied
-// to the real Brief/settings-bar grid once Save is pressed, matching Figma's Cancel/Save
-// footer instead of the old immediate apply-and-close-on-click.
+// Clicking a card drills into that character's own detail/style picker instead of just
+// marking a pending pick -- see openCharDetailModal() below, which is what actually applies
+// the selection now (via its own Save). window.__charSeeAllPendingId / confirmCharSeeAllSelection()
+// stay as a fallback for the see-all modal's own footer (reaffirms whatever's already the
+// real selection if the user never drills into a card).
 function pickCharSeeAllCard(charId){
-  window.__charSeeAllPendingId = charId;
-  renderCharSeeAllGrid();
+  openCharDetailModal(charId);
 }
 // Re-dispatches the click on the real card in the scope's own grid instead of duplicating that
 // card's selection logic here -- picks up whatever else that onclick already does (e.g.
@@ -6705,6 +6829,182 @@ function confirmCharSeeAllSelection(){
     const grid = document.getElementById(CHAR_SEE_ALL_GRID_IDS[window.__charSeeAllScope]);
     const card = grid && [...grid.querySelectorAll('.char-card')].find(c => (c.getAttribute('onclick') || '').includes(`'${charId}'`));
     if(card) card.click();
+  }
+  closeCharacterSeeAllModal();
+}
+
+// ---- Character Detail modal -- opened from a card in the "Character · See all" modal
+// above (pickCharSeeAllCard()). Drills into that one character's own style picker, matching
+// Figma "Modal / Body · Character details" (9619:195199) exactly: a breadcrumb
+// ("Characters › Name") replaces the plain title, a 320px left column holds identity tags +
+// Source Images + "Create new content", and the right column holds a search field, a
+// "Favorites" filter toggle, and two grouped Selector/Style Card (style-card.css) grids.
+// Elena is the only character with real named styles + source photos anywhere in this
+// prototype; everyone else falls back to a single "Default" tile using their base photo and
+// no Source Images block, so the modal never renders empty.
+const CHAR_STYLE_LIBRARY = {
+  elena: [
+    { name:'Headshot', img:'assets/characters/elena-styles/headshot.png', fav:true },
+    { name:'Studio Portrait', img:'assets/characters/elena-styles/studio-portrait.png', fav:true },
+    { name:'Armchair Library', img:'assets/characters/elena-styles/armchair-library.png', fav:true },
+    { name:'Autumn Park', img:'assets/characters/elena-styles/autumn-park.png', fav:false },
+    { name:'Balcony Plants', img:'assets/characters/elena-styles/balcony-plants.png', fav:false },
+    { name:'Beige Blazer', img:'assets/characters/elena-styles/beige-blazer.png', fav:false },
+    { name:'Bright Hallway', img:'assets/characters/elena-styles/bright-hallway.png', fav:false },
+  ],
+};
+// Per-character left-column data (tags + Source Images) -- see file header note above on why
+// only Elena has a real set. tags order matches Figma's Human/Female/18–24 row exactly.
+const CHAR_DETAIL_DATA = {
+  elena: {
+    tags: ['Human', 'Female', '18–24'],
+    sourceImages: [
+      'assets/characters/elena-styles/source-1.png',
+      'assets/characters/elena-styles/source-2.png',
+      'assets/characters/elena-styles/source-3.png',
+      'assets/characters/elena-styles/source-4.png',
+      'assets/characters/elena-styles/source-5.png',
+    ],
+  },
+};
+// Per-scope DOM the real style pick has to land on once Save re-dispatches it, same idea as
+// CHAR_SEE_ALL_GRID_IDS above but for each scope's #charStylesGrid* panel + its select fn.
+const CHAR_STYLES_GRID_IDS = { reel:'charStylesGridReel', img:'charStylesGridImage', car:'charStylesGrid' };
+window.__charDetailId = null;
+window.__charDetailPendingStyle = null;
+function charDetailStyles(charId){
+  const c = CHAR_SEE_ALL_DATA.find(x => x.id === charId);
+  return CHAR_STYLE_LIBRARY[charId] || [{ name:'Default', img: c ? c.img : '', fav:true }];
+}
+function openCharDetailModal(charId){
+  const c = CHAR_SEE_ALL_DATA.find(x => x.id === charId);
+  if(!c) return;
+  window.__charDetailId = charId;
+  const styles = charDetailStyles(charId);
+  window.__charDetailPendingStyle = (styles.find(s => s.fav) || styles[0]).name;
+  document.getElementById('charDetailName').textContent = c.name;
+  document.getElementById('charDetailNameLg').textContent = c.name;
+  const detail = CHAR_DETAIL_DATA[charId];
+  const tags = detail ? detail.tags : [c.type, CHAR_SEE_ALL_BRAND];
+  document.getElementById('charDetailTags').innerHTML = tags.map(t =>
+    `<span class="filter-toggle"><span class="filter-toggle__label">${escapeHtml(t)}</span></span>`).join('');
+  document.getElementById('charDetailSourceWrap').innerHTML = (detail && detail.sourceImages && detail.sourceImages.length)
+    ? `<p class="char-detail-source-label">Source Images</p><div class="char-detail-source-grid">${detail.sourceImages.map(src => `<img src="${src}" alt="">`).join('')}</div>`
+    : '';
+  renderCharDetailGrid();
+  document.getElementById('charSeeAllModalOverlay').style.display = 'none';
+  document.getElementById('charDetailModalOverlay').style.display = 'flex';
+}
+// X and Cancel both just back out to the see-all grid, not close everything -- the user is
+// still mid-pick, not done with the flow.
+function closeCharDetailModal(){
+  closeCharDetailStyleMenu();
+  document.getElementById('charDetailModalOverlay').style.display = 'none';
+  document.getElementById('charSeeAllModalOverlay').style.display = 'flex';
+}
+function renderCharDetailGrid(){
+  const styles = charDetailStyles(window.__charDetailId);
+  const favs = styles.filter(s => s.fav);
+  const pending = window.__charDetailPendingStyle;
+  const cardHtml = s => `
+    <div class="style-card${s.name === pending ? ' selected' : ''}" role="button" tabindex="0" onclick="pickCharDetailStyle('${escapeHtml(s.name)}')">
+      <img class="style-card-photo" src="${s.img}" alt="">
+      <div class="style-card-scrim"></div>
+      <p class="style-card-name">${escapeHtml(s.name)}</p>
+      <div class="style-card-top-row" onclick="event.stopPropagation();">
+        <button type="button" class="thumb-action-btn fav${s.fav ? ' active' : ''}" onclick="toggleCharDetailStyleFav('${escapeHtml(s.name)}')" aria-label="Favorite ${escapeHtml(s.name)}"><img src="../../../../components/ai-social-media/icons/${s.fav ? 'shape-star-filled' : 'shape-star'}.svg" alt=""></button>
+        <button type="button" class="thumb-action-btn" onclick="toggleCharDetailStyleMenu(event, '${escapeHtml(s.name)}')" aria-label="More actions for ${escapeHtml(s.name)}"><img src="../../../../components/ai-social-media/icons/ui-ellipsis.svg" alt=""></button>
+      </div>
+    </div>`;
+  const newTileHtml = `
+    <div class="style-card new" role="button" tabindex="0">
+      <img src="../../../../components/ai-social-media/icons/pagebar-plus.svg" alt="">
+      <span>New Style</span>
+    </div>`;
+  document.getElementById('charDetailGrid').innerHTML = `
+    <div class="search-field search-field--expanded"><img src="../../../../components/ai-social-media/icons/ui-search.svg" alt=""><input class="search-field__input" type="text" placeholder="Search styles"></div>
+    <button type="button" class="filter-toggle filter-toggle--selected" onclick="this.classList.toggle('filter-toggle--selected')">
+      <img class="filter-toggle__icon" src="../../../../components/ai-social-media/icons/controls/star-fill-selected.svg" alt="">
+      <span class="filter-toggle__label">Favorites</span>
+    </button>
+    ${favs.length ? `
+    <div class="char-detail-group-head"><p>Favorites &middot; ${favs.length}</p><div class="rule"></div></div>
+    <div class="char-style-grid">${newTileHtml}${favs.map(cardHtml).join('')}</div>` : ''}
+    <div class="char-detail-group-head"><p>All styles &middot; ${styles.length}</p><div class="rule"></div></div>
+    <div class="char-style-grid--fixed4">${styles.map(cardHtml).join('')}</div>
+  `;
+}
+function pickCharDetailStyle(name){
+  window.__charDetailPendingStyle = name;
+  renderCharDetailGrid();
+}
+function toggleCharDetailStyleFav(name){
+  const s = charDetailStyles(window.__charDetailId).find(x => x.name === name);
+  if(s) s.fav = !s.fav;
+  renderCharDetailGrid();
+}
+// "..." context menu -- reuses the real .context-menu/.menu-item shared component
+// (components/ai-social-media/controls-menu.css), appended to <body> and positioned under
+// the clicked button so it isn't clipped by the modal's own overflow:auto grid.
+window.__charDetailMenuEl = null;
+function toggleCharDetailStyleMenu(evt, name){
+  evt.stopPropagation();
+  const already = !!window.__charDetailMenuEl;
+  closeCharDetailStyleMenu();
+  if(already) return;
+  const btn = evt.currentTarget;
+  const menu = document.createElement('div');
+  menu.className = 'context-menu style-card-menu';
+  menu.innerHTML = `
+    <button type="button" class="menu-item">Create new content</button>
+    <button type="button" class="menu-item">Edit</button>
+    <button type="button" class="menu-item menu-item--danger" onclick="deleteCharDetailStyle('${escapeHtml(name)}')">Delete</button>
+  `;
+  document.body.appendChild(menu);
+  const r = btn.getBoundingClientRect();
+  menu.style.position = 'fixed';
+  menu.style.top = (r.bottom + 4) + 'px';
+  menu.style.left = (r.right - 200) + 'px';
+  window.__charDetailMenuEl = menu;
+  setTimeout(() => document.addEventListener('click', closeCharDetailStyleMenu, { once:true }), 0);
+}
+function closeCharDetailStyleMenu(){
+  if(window.__charDetailMenuEl){ window.__charDetailMenuEl.remove(); window.__charDetailMenuEl = null; }
+}
+function deleteCharDetailStyle(name){
+  const styles = charDetailStyles(window.__charDetailId);
+  const idx = styles.findIndex(s => s.name === name);
+  if(idx > -1) styles.splice(idx, 1);
+  if(window.__charDetailPendingStyle === name){
+    window.__charDetailPendingStyle = (styles.find(s => s.fav) || styles[0] || {}).name;
+  }
+  closeCharDetailStyleMenu();
+  renderCharDetailGrid();
+}
+// Save applies both picks in one go: select the character on the real underlying grid (the
+// same re-dispatch trick confirmCharSeeAllSelection() uses), then, if a non-default style was
+// chosen, re-dispatch that same click on the matching style card in whichever per-scope
+// styles panel that just revealed -- picks up every existing side effect of both clicks
+// (style-panel reveal, selection state, etc.) instead of duplicating that logic here.
+function confirmCharDetailSelection(){
+  const charId = window.__charDetailId;
+  const styleName = window.__charDetailPendingStyle;
+  const scope = window.__charSeeAllScope;
+  document.getElementById('charDetailModalOverlay').style.display = 'none';
+  const grid = document.getElementById(CHAR_SEE_ALL_GRID_IDS[scope]);
+  const card = grid && [...grid.querySelectorAll('.char-card')].find(c => (c.getAttribute('onclick') || '').includes(`'${charId}'`));
+  // toggleCharCardSelect() is a real toggle (clicking an already-selected card deselects it) --
+  // only dispatch the click when a state change is actually needed, so re-confirming a
+  // character/style that's already selected (e.g. Elena's own default "Headshot") doesn't
+  // accidentally deselect it.
+  if(card && !card.classList.contains('selected')) card.click();
+  if(styleName){
+    const stylesGrid = document.getElementById(CHAR_STYLES_GRID_IDS[scope]);
+    const styleCard = stylesGrid && [...stylesGrid.querySelectorAll('.char-card:not(.new)')].find(el => {
+      const n = el.querySelector('.name');
+      return n && n.textContent === styleName;
+    });
+    if(styleCard && !styleCard.classList.contains('selected')) styleCard.click();
   }
   closeCharacterSeeAllModal();
 }
@@ -7156,11 +7456,14 @@ function voiceRowHtml(v){
       <span class="voice-check">✓</span>
     </div>`;
 }
+// Figma 9523:151259 -- "Cloned & Designed by you" column always ends with a dashed
+// "+ New voice" row below the mapped voice rows (was missing entirely before this fix).
+const VOICE_MODAL_NEW_ROW_HTML = `<button type="button" class="voice-modal-new-row" onclick="alert('Create Voice — flow TBD')"><img src="../../../../components/ai-social-media/icons/pagebar-plus.svg" alt="">New voice</button>`;
 function renderVoiceSelectModalRows(){
   const lib = YOUR_VOICES_DATA.filter(v => v.source === 'library');
   const cloned = YOUR_VOICES_DATA.filter(v => v.source === 'cloned');
   document.getElementById('voiceSelectGroupLib').innerHTML = lib.map(voiceRowHtml).join('');
-  document.getElementById('voiceSelectGroupCloned').innerHTML = cloned.map(voiceRowHtml).join('');
+  document.getElementById('voiceSelectGroupCloned').innerHTML = cloned.map(voiceRowHtml).join('') + VOICE_MODAL_NEW_ROW_HTML;
   document.getElementById('voiceSelectLibLabel').textContent = `From ElevenLabs Library (${lib.length})`;
   document.getElementById('voiceSelectClonedLabel').textContent = `Cloned & Designed by you (${cloned.length})`;
 }
@@ -7663,11 +7966,128 @@ function selectDuration(seconds){
 }
 
 function autoAdjustScriptForDuration(oldSeconds, newSeconds){
-  if(!window.__reelScriptEdited){
-    document.getElementById('fullScript').value = buildDurationScript();
+  // Whatever script is currently in the field -- freshly auto-drafted or hand-edited, doesn't
+  // matter -- needs narrating in the chat when the duration change actually affects it, which
+  // tab is showing decides what "affects it" means: the Script tab cares about the word budget
+  // (see getMaxScriptWords()), the Timeline tab cares about scene/clip count (see
+  // getVideoUnitCount()), since that's the only thing visible there.
+  const onTimeline = document.getElementById('subReelTimeline')?.style.display !== 'none';
+  if(onTimeline){
+    syncReelClipsFromScript();
+    narrateDurationChangeTimeline(oldSeconds, newSeconds);
+  } else {
+    narrateDurationChangeScript(oldSeconds, newSeconds);
   }
-  // Preserve authored text on duration changes; show over-limit feedback instead of cutting it.
-  syncReelClipsFromScript();
+}
+
+// Script tab: a duration cut can push the already-authored script over the new word budget --
+// narrate trimming it to fit (Figma 8727:223864 "Duration Changed" gallery). Growing the
+// duration only ever raises the budget, so there's nothing to trim there -- same silent no-op
+// as before, just a resync.
+function narrateDurationChangeScript(oldSeconds, newSeconds){
+  const ta = document.getElementById('fullScript');
+  const bareBefore = ta.value.trim().replace(/^"|"$/g, '');
+  const oldWords = countScriptWords(bareBefore);
+  const max = getMaxScriptWords();
+  if(oldWords <= max){
+    syncReelClipsFromScript();
+    return;
+  }
+
+  addChatMsg('user', `Duration changed to ${newSeconds}s`);
+  const log = document.getElementById('chatLog');
+  const loadingEl = document.createElement('div');
+  loadingEl.className = 'msg ai loading';
+  loadingEl.innerHTML = `<span class="tag">AI</span>Adjusting the script<span class="dots"><span>.</span><span>.</span><span>.</span></span>`;
+  log.appendChild(loadingEl);
+  beatIn(loadingEl);
+
+  setTimeout(() => {
+    loadingEl.remove();
+    const after = fitScriptToWordLimit(bareBefore, max);
+    const newWords = countScriptWords(after);
+    ta.value = `"${after}"`;
+    reelOnScriptInput();
+    syncReelClipsFromScript();
+
+    const status = document.createElement('div');
+    status.className = 'msg-status';
+    status.innerHTML = '<span class="worked-label">Worked</span> <span class="worked-time">for 1s</span>';
+    log.appendChild(status);
+    beatIn(status);
+
+    const verb = newWords < oldWords ? 'trimmed' : 'expanded';
+    const introText = `Duration changed to ${newSeconds}s (was ${oldSeconds}s), so I ${verb} the script from ${oldWords} to ${newWords} words to fit.`;
+    const ctaHtml = window.__thumbnailMode === 'on'
+      ? '<button class="btn btn-dark" data-chat-action="continueToTimeline" onclick="continueToTimelineFromChat()">Continue to timeline</button>'
+      : '';
+    log.innerHTML += renderScriptProposalMessageApplied(after, introText, 'Updated Script', 'Applied to Script panel', ctaHtml);
+    beatIn();
+
+    setChatGuideHint('Requests like "make it shorter" or "redo Seg 2 only" work here too');
+    log.scrollTop = log.scrollHeight;
+  }, 900);
+}
+
+// Timeline tab: nothing here reads the full script's word count -- what's visible is scene/clip
+// tiles, one per 8s unit (see getVideoUnitCount()), so the narration is scene-count based
+// instead (Figma 9742:1393 "Duration Changed via Timeline (Applied)").
+function narrateDurationChangeTimeline(oldSeconds, newSeconds){
+  const oldCount = Math.max(1, Math.round(oldSeconds / 8));
+  const newCount = getVideoUnitCount();
+  const delta = newCount - oldCount;
+  if(delta === 0) return;
+
+  addChatMsg('user', `Duration changed to ${newSeconds}s`);
+  const log = document.getElementById('chatLog');
+  const status = document.createElement('div');
+  status.className = 'msg-status';
+  status.innerHTML = '<span class="worked-label working">Worked</span>';
+  log.appendChild(status);
+  beatIn(status);
+
+  setTimeout(() => {
+    status.innerHTML = '<span class="worked-label">Worked</span> <span class="worked-time">for 1s</span>';
+
+    const changeText = delta < 0 ? `removed ${-delta} scene${-delta === 1 ? '' : 's'}` : `added ${delta} scene${delta === 1 ? '' : 's'}`;
+    const introMsg = document.createElement('div');
+    introMsg.className = 'msg ai';
+    introMsg.innerHTML = `<span class="tag">AI</span>${escapeHtml(`Duration changed to ${newSeconds}s (was ${oldSeconds}s) from the Timeline tab, so I ${changeText} to fit — ${newCount} scene${newCount === 1 ? '' : 's'} total now.`)}`;
+    log.appendChild(introMsg);
+    beatIn(introMsg);
+
+    const body = newCount === 1
+      ? `Scene 1 now runs the full ${newSeconds} seconds.`
+      : `Scenes 1–${newCount} are ready, 8 seconds each.`;
+    appendChatCta('Updated Timeline', body, '');
+
+    setChatGuideHint('Requests like "make it 16s again" or "swap scene order" work here too');
+    log.scrollTop = log.scrollHeight;
+  }, 900);
+}
+
+// Same shape as renderScriptProposalMessage() but for a change the AI already applied on its
+// own (no "Use this script" click needed) -- the box renders straight into its .applied state
+// (see .script-proposal-box.applied/.script-applied-note in the stylesheet) with a next-step
+// CTA in place of the spent "✓ Applied" button, since there's no decision left for the user to
+// make, just somewhere to go next.
+function renderScriptProposalMessageApplied(scriptText, introText, proposalTitle, appliedNoteText, ctaHtml){
+  scriptDraftCounter++;
+  const id = scriptDraftCounter;
+  window.__scriptDrafts[id] = scriptText;
+  window.__latestScriptText = scriptText;
+  return `
+    <div class="msg ai">
+      <span class="tag">AI</span>${escapeHtml(introText)}
+      <div class="script-proposal-box applied" id="scriptProposal${id}">
+        <span class="script-proposal-title">${escapeHtml(proposalTitle)}</span>
+        <div class="script-proposal-text">"${escapeHtml(scriptText)}"</div>
+        <span class="script-applied-note">✓ ${escapeHtml(appliedNoteText)}</span>
+        ${ctaHtml}
+      </div>
+      <span class="chat-edit-hint">Want changes? Type them below (e.g. "make it shorter") and I'll revise it.</span>
+    </div>
+  `;
 }
 
 // ---- Scene editors: per-clip image prompt + narration (rebuilt per duration) ----
@@ -8032,6 +8452,73 @@ function reelLightboxGoTo(i){
 }
 function reelLightboxPrev(){ reelLightboxGoTo(window.__reelLightboxIndex - 1); }
 function reelLightboxNext(){ reelLightboxGoTo(window.__reelLightboxIndex + 1); }
+
+// ---- Reel/Short Video tab lightbox (Figma 9619:195592) -- opened from a Video tab tile's
+// Maximize button. Unlike openReelLightbox()/openImageLightbox() (both just show a static
+// frame), this one also drives a real scrubber -- the same faked play/pause + progress-fill
+// state machine playCombineResult() already uses, since there's no actual <video> element
+// anywhere in this prototype, just a background-image tile standing in for a generated clip.
+window.__videoLightboxEntries = [];
+window.__videoLightboxIndex = 0;
+function expandVideoTile(unit){
+  const tiles = document.querySelectorAll('#videoGrid .video-tile');
+  window.__videoLightboxEntries = Array.from(tiles).map((t, i) => {
+    const preview = t.querySelector('.video-tile-preview');
+    const bg = preview ? preview.style.backgroundImage : '';
+    const src = bg ? bg.slice(4, -1).replace(/["']/g, '') : '';
+    return { label: 'Scene ' + (i + 1), ready: t.classList.contains('ready'), src };
+  });
+  openVideoLightbox(unit - 1);
+}
+function openVideoLightbox(index){
+  window.__videoLightboxIndex = index;
+  renderVideoLightboxPills();
+  renderVideoLightboxStage();
+  document.getElementById('videoLightboxOverlay').style.display = 'flex';
+}
+function closeVideoLightbox(){
+  document.getElementById('videoLightboxOverlay').style.display = 'none';
+}
+function renderVideoLightboxPills(){
+  const entries = window.__videoLightboxEntries;
+  const i = window.__videoLightboxIndex;
+  document.getElementById('videoLightboxPills').innerHTML = entries.map((e, idx) => `
+    <button type="button" class="filter-toggle${idx === i ? ' filter-toggle--selected' : ''}" ${e.ready ? '' : 'disabled'} onclick="videoLightboxGoTo(${idx})">
+      <span class="filter-toggle__label">${escapeHtml(e.label)}</span>
+    </button>`).join('');
+  document.getElementById('videoLightboxPrev').disabled = i <= 0;
+  document.getElementById('videoLightboxNext').disabled = i >= entries.length - 1;
+}
+function renderVideoLightboxStage(){
+  const entry = window.__videoLightboxEntries[window.__videoLightboxIndex];
+  document.getElementById('videoLightboxStage').style.backgroundImage = entry && entry.src ? `url('${entry.src}')` : '';
+  resetVideoLightboxPlayback();
+}
+function videoLightboxGoTo(i){
+  if(!window.__videoLightboxEntries[i] || !window.__videoLightboxEntries[i].ready) return;
+  window.__videoLightboxIndex = i;
+  renderVideoLightboxPills();
+  renderVideoLightboxStage();
+  selectVideoScene(i + 1);
+}
+function videoLightboxPrev(){ videoLightboxGoTo(window.__videoLightboxIndex - 1); }
+function videoLightboxNext(){ videoLightboxGoTo(window.__videoLightboxIndex + 1); }
+function resetVideoLightboxPlayback(){
+  const btn = document.getElementById('videoLightboxPlayBtn');
+  const fill = document.getElementById('videoLightboxProgressFill');
+  if(btn) btn.innerHTML = '<img class="play" src="../../../../components/ai-social-media/icons/video-play-glyph.svg" alt="">';
+  if(fill){ fill.style.transition = 'none'; fill.style.width = '37.5%'; }
+  const time = document.getElementById('videoLightboxTime');
+  if(time) time.textContent = '0:03 / 0:08';
+}
+function toggleVideoLightboxPlay(){
+  const btn = document.getElementById('videoLightboxPlayBtn');
+  const fill = document.getElementById('videoLightboxProgressFill');
+  btn.innerHTML = '<img class="pause" src="../../../../components/ai-social-media/icons/video-pause-glyph.svg" alt="">';
+  requestAnimationFrame(() => { fill.style.transition = 'width 1.4s linear'; fill.style.width = '100%'; });
+  setTimeout(resetVideoLightboxPlayback, 1400);
+}
+function downloadVideoScene(n){}
 function buildTimelineSegmentNav(count){
   const nav = document.getElementById('timelineSegmentNav');
   if(!nav || !count) return;
@@ -8433,7 +8920,11 @@ function startVideoGeneration(){
       <div class="video-tile-preview">
         <div class="video-tile-overlay-top">
           <span class="video-tile-ready-badge">✓ Ready</span>
-          <button class="video-tile-regen-btn" onclick="event.stopPropagation(); regenerateVideoScene(${i + 1})" title="Regenerate · ⚡${VIDEO_COST_PER_UNIT}"><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt=""></button>
+          <div class="video-tile-icon-group">
+            <button class="media-card-icon-btn download" type="button" onclick="event.stopPropagation(); downloadVideoScene(${i + 1})" title="Download"><img src="../../../../components/ai-social-media/icons/download-ui.svg" alt=""></button>
+            <button class="media-card-icon-btn maximize" type="button" onclick="event.stopPropagation(); expandVideoTile(${i + 1})" title="Maximize"><img src="../../../../components/ai-social-media/icons/maximize.svg" alt=""></button>
+            <button class="video-tile-regen-btn" onclick="event.stopPropagation(); regenerateVideoScene(${i + 1})" title="Regenerate · ⚡${VIDEO_COST_PER_UNIT}"><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt=""></button>
+          </div>
         </div>
         <div class="spinner-mini"></div>
         <button class="video-play-btn" onclick="event.stopPropagation(); playVideoScene(${i + 1})" title="Play"><img class="play" src="../../../../components/ai-social-media/icons/video-play-glyph.svg" alt=""></button>
@@ -10645,22 +11136,28 @@ fitScreenToViewport();
   color:var(--color-neutral-500,#8a93a8);font-size:14px;line-height:1;padding:2px 4px;}
 /* 딥링크로 들어온 화면에는 돌아갈 길이 없다. 보낸 쪽이 from/back 을 실어 보내면
    이 알약이 왼쪽 위에 뜨고, back 의 해시 그대로 원래 보던 화면으로 되돌린다. */
+/* Figma Brand Kit 상단 바(6828:106703)의 back 묶음과 같은 규격이다.
+   알약(9999)이 아니라 라운드 8, 테두리 neutral/400, 글자 neutral/700.
+   화살표는 글리프가 아니라 icon / ui / back 의 선을 그대로 옮긴 것이다. */
 .fmx-back{position:fixed;left:16px;top:12px;z-index:9999;display:inline-flex;align-items:center;
-  gap:6px;padding:8px 14px;background:var(--color-neutral-0,#fff);
-  border:1px solid var(--color-neutral-300,#d6ddeb);border-radius:9999px;
+  gap:4px;padding:8px 12px;background:var(--color-neutral-0,#fff);
+  border:1px solid var(--color-neutral-400,#c8d1e1);border-radius:8px;
   box-shadow:0 6px 20px rgba(15,23,41,.14);text-decoration:none;
-  font-family:var(--font-family-text),-apple-system,sans-serif;font-size:13px;font-weight:600;
-  color:var(--color-neutral-900,#0f1729);white-space:nowrap;}
+  font-family:var(--font-family-text),-apple-system,sans-serif;
+  font-size:13px;font-weight:600;line-height:20px;
+  color:var(--color-neutral-700,#475069);white-space:nowrap;}
 .fmx-back:hover{background:var(--color-neutral-50,#f6f8fc);}
-.fmx-back i{font-style:normal;color:var(--color-neutral-500,#8a93a8);}
+.fmx-back svg{width:16px;height:16px;flex:none;display:block;
+  stroke:var(--color-neutral-500,#8a93a8);stroke-width:1.6;
+  stroke-linecap:round;stroke-linejoin:round;}
+.fmx-back-slot{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.fmx-back-rule{width:1px;height:24px;background:var(--color-neutral-300,#d6ddeb);flex:none;}
 /* 상단 바 왼쪽, 스테퍼 앞. Figma 는 Nav / App TopBar 의 "Show back" 토글로
    같은 자리를 낸다. 제목 위가 아니라 여기인 이유는 하나 — Publish 는 길어서
    본문에 두면 한 번 스크롤에 사라진다. 상단 바는 남는다.
    스테퍼(지금 어디냐)와 역할이 달라서 구분선으로 갈라 둔다.
    상단 바를 못 찾으면 아래 떠 있는 버전이 대신 뜬다. */
-.fmx-back-slot{display:flex;align-items:center;gap:12px;flex-shrink:0;}
 .fmx-back--bar{position:static;box-shadow:none;}
-.fmx-back-rule{width:1px;height:24px;background:var(--color-neutral-300,#d6ddeb);flex:none;}
 </style>
 <script id="fmx-deeplink-js">
 /* Content Library 딥링크
@@ -10698,7 +11195,7 @@ fitScreenToViewport();
       var a = document.createElement('a');
       a.className = 'fmx-back';
       a.href = home.href + (safe ? '#' + safe : '');
-      a.innerHTML = '<i>\u2190</i>';
+      a.innerHTML = '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 12.67 3.33 8 8 3.34"/><path d="M12.67 8H3.33"/></svg>';
       a.appendChild(document.createTextNode('Back to ' + home.label));
       return a;
     }

@@ -126,9 +126,26 @@ input:focus-visible{outline:none;}   /* the wrapping field already shows focus v
 .avatar:hover{filter:brightness(.96);}
 .avatar span{font-weight:700;font-size:11px;line-height:16px;letter-spacing:0.8px;color:var(--neutral-800);text-align:center;}
 
-/* breadcrumb (floating child of the frame) */
-.breadcrumb{position:absolute;left:286px;top:19px;display:flex;gap:8px;align-items:center;
+/* breadcrumb (floating child of the frame)
+   백 버튼이 36 이라 줄 높이를 36 으로 잡고 상단 바(56) 한가운데에 앉힌다.
+   글자만 있을 때도 같은 줄에 세로 가운데로 들어간다. */
+.breadcrumb{position:absolute;left:286px;top:10px;height:36px;display:flex;gap:8px;align-items:center;
   font-size:14px;line-height:22px;white-space:nowrap;overflow:hidden;}
+/* Figma Brand Kit 상단 바의 back 묶음. 알약이 아니라 라운드 8 이고,
+   화살표는 icon / ui / back 의 선을 그대로 옮긴 것이다. */
+/* 높이를 36 으로 못박는다. 여백 8 + 글줄 20 + 여백 8 에 테두리 2 를 더하면 38 이
+   되어 줄(36) 밖으로 삐져나가고, 크럼 줄이 overflow:hidden 이라 테두리가 깎였다.
+   Figma 는 테두리가 안쪽으로 그려져 36 이 총 높이다 — border-box 로 같게 맞춘다. */
+.bc-back{display:inline-flex;align-items:center;gap:4px;box-sizing:border-box;
+  height:36px;padding:7px 12px;flex:none;
+  background:var(--neutral-0);border:1px solid var(--neutral-400);border-radius:8px;
+  font-family:inherit;font-size:13px;font-weight:600;line-height:20px;
+  color:var(--neutral-700);white-space:nowrap;cursor:pointer;}
+.bc-back:hover{background:var(--neutral-50);}
+.bc-back svg{width:16px;height:16px;flex:none;display:block;
+  stroke:var(--neutral-500);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+/* 구분선 양옆이 12 가 되도록 — 줄 자체 간격이 8 이라 4 씩만 더한다 */
+.bc-back-rule{width:1px;height:24px;flex:none;background:var(--neutral-300);margin:0 4px;}
 .breadcrumb .bc-parent{font-weight:500;color:var(--neutral-500);}
 .breadcrumb .bc-parent:hover{color:var(--neutral-700);}
 .breadcrumb .bc-sep{font-weight:500;color:var(--neutral-300);}
@@ -21808,6 +21825,8 @@ function bsSectionHTML(b, st, i){
 function renderBrandDetail(){
   const b = bsBrand(B_DATA.find(x=>x.id===bState.brandId));
   $('#crumb').innerHTML = `
+    <button type="button" class="bc-back" id="bcBackToBrands"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 12.67 3.33 8 8 3.34"/><path d="M12.67 8H3.33"/></svg> Back to Brands</button>
+    <span class="bc-back-rule"></span>
     <button type="button" class="bc-parent" id="bcToWorkspace">Brands</button>
     <p class="bc-sep">›</p><p class="bc-parent">Brand Setup</p>
     <p class="bc-sep">›</p><p class="bc-current">${esc(b.name)}</p>`;
@@ -21827,7 +21846,6 @@ function renderBrandDetail(){
      있어야 같은 페이지의 두 탭으로 읽힌다.                                     */
   $('#brandMain').innerHTML = `
     <div class="bs-wrap bs-setupwrap">
-      <button type="button" class="bs-back" id="btnBack">← Back to Brands</button>
       <div class="bs-head">
         <p class="bs-title">${esc(b.name)}</p>
         <p class="bs-sub">Brand Setup · what AI reads before it writes</p>
@@ -21876,7 +21894,6 @@ function renderBrandDetail(){
       </div>
     </div>`;
 
-  $('#btnBack').addEventListener('click', backToWorkspace);
   $('#bcToWorkspace').addEventListener('click', backToWorkspace);
   bindBrandTabs();
 
@@ -24947,6 +24964,8 @@ function renderBrandKit(){
      뒤처져, 첫 수정 뒤에도 Undo 가 꺼진 채로 그려진다. */
   bkTrack(b);
   $('#crumb').innerHTML = `
+    <button type="button" class="bc-back" id="bcBackToBrand"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 12.67 3.33 8 8 3.34"/><path d="M12.67 8H3.33"/></svg> Back to Brand</button>
+    <span class="bc-back-rule"></span>
     <button type="button" class="bc-parent" id="bcToWorkspace">Brands</button>
     <p class="bc-sep">›</p><button type="button" class="bc-parent" id="bcToDetail">${esc(b.name)}</button>
     <p class="bc-sep">›</p><p class="bc-current">Brand Kit</p>`;
@@ -24964,7 +24983,6 @@ function renderBrandKit(){
 
   $('#brandMain').innerHTML = `
     <div class="bs-wrap" style="width:1380px">
-      <button type="button" class="bs-back" id="btnBack">← Back to Brands</button>
       <div class="bs-head"><p class="bs-title">${esc(b.name)}</p><p class="bs-sub">Brand Kit · same panel the editor's Brand tab reads from</p></div>
       <div class="bk-topbar">${brandTabsHTML('kit')}${bkActionBarHTML(b)}</div>
       <div class="bk-layout">
@@ -24976,10 +24994,14 @@ function renderBrandKit(){
     </div>
     ${bkzOverlayHTML(b)}`;
 
-  $('#btnBack').addEventListener('click', backToWorkspace);
   bindBrandTabs();
+  const _bcBackBrands = $('#bcBackToBrands');
+  if (_bcBackBrands) _bcBackBrands.addEventListener('click', backToWorkspace);
   $('#bcToWorkspace').addEventListener('click', backToWorkspace);
   $('#bcToDetail').addEventListener('click', backToDetail);
+  /* 크럼의 브랜드 이름과 같은 곳으로 간다 — 버튼은 눌러야 할 곳을 눈에 띄게 할 뿐이다 */
+  const _bcBack = $('#bcBackToBrand');
+  if (_bcBack) _bcBack.addEventListener('click', backToDetail);
   document.querySelectorAll('[data-bktab]').forEach(el=>{
     el.addEventListener('click', ()=>{ bState.bkTab = el.dataset.bktab; bkResetMedia(); bState.pickerOpen = false; bState.cpTab = {}; bState.cpStop = {};
       bState.pickerFor = null; bState.palMenu = null; bState.palRename = null; renderBrand(); });

@@ -36,7 +36,7 @@
    see Menu / Logo Picker 9059:226477 / Menu / Colour Picker 9059:227472) + the three
    Brand Kit / Text Style Card previews, all in one row. ==================================== */
 .brand-kit-summary-compact{
-  box-sizing:border-box; width:100%; display:flex; align-items:center; gap:16px;
+  box-sizing:border-box; width:100%; display:flex; flex-wrap:wrap; align-items:center; gap:16px; row-gap:10px;
   padding:14px 16px; background:var(--color-neutral-0); border:1px solid var(--color-neutral-300);
   border-radius:10px; /* Figma's own literal value here -- doesn't land on the radius-lg(8)/xl(12) scale */
 }
