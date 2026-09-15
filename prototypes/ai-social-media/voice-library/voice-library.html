@@ -318,14 +318,20 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
 
   <!-- NAV — components/ai-social-media/nav.css (Figma "Nav / Navigation" 9154:132343) -->
   <div class="nav" id="sideNav">
+    <!-- Matches components/ai-social-media/nav.css's canonical "Expanded (default)" demo
+         (nav.html) and brand-setup-kit-character-library.html's actual nav exactly: the
+         Formee Education platform lockup + collapse toggle, then the role scope below it --
+         not a per-tenant "Formee Express" brand switcher (that was this file's own,
+         non-matching invention). -->
     <div class="nav-account">
       <div class="nav-brand">
-        <div class="link">
-          <img class="mark" src="../../../components/ai-social-media/icons/brand/formee-mark.svg" alt="" onerror="this.style.display='none'">
-          <div class="txt"><b>Formee Express</b><span>Super admin</span></div>
-        </div>
+        <span class="link">
+          <img class="mark" src="../../../components/ai-social-media/icons/brand-formee-education-mark.svg" alt="Formee Education">
+          <span class="txt"><b>Formee Education</b><span>AI Social Media</span></span>
+        </span>
+        <button type="button" class="collapse-btn" aria-label="Collapse navigation" onclick="document.getElementById('sideNav').classList.toggle('collapsed')"><img src="../../../components/ai-social-media/icons/ui-panel.svg" alt=""></button>
       </div>
-      <div class="nav-workspace"><span>Formee Express</span><span class="chevron"><img src="../../../components/ai-social-media/icons/chevron-down.svg" alt=""></span></div>
+      <div class="nav-workspace"><span>Super admin (All)</span></div>
     </div>
     <div class="nav-items">
       <div class="nav-item"><span class="ic"><img src="../../../components/ai-social-media/icons/nav-home.svg" alt=""></span><span class="label">Home</span></div>
