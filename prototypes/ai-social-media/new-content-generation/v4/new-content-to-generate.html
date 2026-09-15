@@ -8975,7 +8975,23 @@ function startVideoGeneration(){
       applySampleVideoFrame(t, i);
     });
     updateVideoCta();
+    // Same working -> completion -> Done-card narration as generateScriptThumbnails() above --
+    // this beat was jumping straight from the plain "Generating N video clips now." line
+    // (proceedToStudio()) to the Combine card with no confirmation that the clips actually
+    // finished, unlike every other AI-did-work step in this chat (Figma 8727:220247's own
+    // "Worked for 4s" / "Rendered a video clip for each of your N scenes..." beat).
+    const log = document.getElementById('chatLog');
+    const status = document.createElement('div');
+    status.className = 'msg-status';
+    status.innerHTML = '<span class="worked-label">Worked</span> <span class="worked-time">for 4s</span>';
+    log.appendChild(status);
+    const msg = document.createElement('div');
+    msg.className = 'msg ai';
+    msg.textContent = `Rendered a video clip for each of your ${count} scene${count > 1 ? 's' : ''}, ready to combine into the final cut.`;
+    log.appendChild(msg);
+    reelAppendDoneCard('Generated video clips');
     appendChatCta('Combine into Final Video', 'Combine your scene clips into one final video. This step is free — no credits used.', '<button class="btn btn-dark" data-chat-action="combineVideo" onclick="combineVideo()">Combine into final video →</button>');
+    log.scrollTop = log.scrollHeight;
   }, 'Video');
 }
 // Prototype stand-in for a real generated clip's first frame — cycles between the two sample
