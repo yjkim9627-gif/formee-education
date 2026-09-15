@@ -1,0 +1,9 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Music / Track Play Button">
+<mask id="path-1-inside-1_0_96" fill="white">
+<path d="M0 8C0 3.58172 3.58172 0 8 0V0C12.4183 0 16 3.58172 16 8V8C16 12.4183 12.4183 16 8 16V16C3.58172 16 0 12.4183 0 8V8Z"/>
+</mask>
+<path d="M0 8M16 8M16 8M0 8M8 0M16 8M8 16M0 8M8 16V14.8C4.24446 14.8 1.2 11.7555 1.2 8H0H-1.2C-1.2 13.081 2.91898 17.2 8 17.2V16ZM16 8H14.8C14.8 11.7555 11.7555 14.8 8 14.8V16V17.2C13.081 17.2 17.2 13.081 17.2 8H16ZM8 0V1.2C11.7555 1.2 14.8 4.24446 14.8 8H16H17.2C17.2 2.91898 13.081 -1.2 8 -1.2V0ZM8 0V-1.2C2.91898 -1.2 -1.2 2.91898 -1.2 8H0H1.2C1.2 4.24446 4.24446 1.2 8 1.2V0Z" fill="#C4271B" mask="url(#path-1-inside-1_0_96)"/>
+<circle id="Ellipse 5341" cx="8" cy="8" r="5.86667" fill="#C4271B"/>
+</g>
+</svg>

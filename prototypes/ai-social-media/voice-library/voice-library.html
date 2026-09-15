@@ -1,0 +1,1907 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>Voices · Voice Library (draft)</title>
+<link rel="stylesheet" href="../../../tokens/tokens.css">
+<link rel="stylesheet" href="../../../components/shared/button.css">
+<link rel="stylesheet" href="../../../components/ai-social-media/nav.css">
+<link rel="stylesheet" href="../../../components/ai-social-media/topbar-stepper.css">
+<link rel="stylesheet" href="../../../components/ai-social-media/heading.css">
+<link rel="stylesheet" href="../../../components/ai-social-media/controls-search-field.css">
+<link rel="stylesheet" href="../../../components/ai-social-media/table-filter.css">
+<link rel="stylesheet" href="../../../components/ai-social-media/filter-chip.css">
+<link rel="stylesheet" href="../../../components/ai-social-media/controls-misc.css">
+<link rel="stylesheet" href="../../../components/ai-social-media/actions-button.css">
+<link rel="stylesheet" href="../../../components/ai-social-media/controls-filter-toggle.css">
+<link rel="stylesheet" href="../../../components/ai-social-media/switch.css">
+<link rel="stylesheet" href="../../../components/ai-social-media/voice-section.css">
+<link rel="stylesheet" href="../../../components/ai-social-media/music-track-row.css">
+<link rel="stylesheet" href="../../../components/shared/checkbox.css">
+<link rel="stylesheet" href="../../../components/ai-social-media/upload-dropzone.css">
+<link rel="stylesheet" href="../../../components/ai-social-media/create-voice-modal.css">
+<link rel="stylesheet" href="../../../components/shared/modal.css">
+<link rel="stylesheet" href="../../../components/ai-social-media/mylib-modal.css">
+<link rel="stylesheet" href="../../../components/ai-social-media/scene-tile.css">
+<link rel="stylesheet" href="../../../components/ai-social-media/reference-scene-tile.css">
+<link rel="stylesheet" href="../../../components/ai-social-media/controls-filter-select.css">
+<style>
+/* ============================================================================
+   Draft shell — function-first sketch for the Voice Library redesign (Figma
+   node 9580-153588, a copy of the Character module shell with the title
+   swapped). Nav / TopBar / search / sticky filter bar reuse the app's real
+   shared components as-is; only the content grid below the filter bar is new
+   (voice-sample cards, adapted from Editor / Audio Row + the existing
+   "Music / Track Play Button" convention already used in voice-section.css).
+   Same 1920x1080 fixed-frame + scale-to-fit pattern as the v4 prototype, so
+   this can sit side by side with it during review. */
+html{display:flex; align-items:center; justify-content:center; min-height:100vh; margin:0; background:var(--color-neutral-200);}
+body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
+.app{position:relative; width:1920px; height:1080px; flex-shrink:0; background:#fff; overflow:hidden; display:flex; border:1px solid var(--color-neutral-300); transform-origin:top left;}
+.main{flex:1; display:flex; flex-direction:column; min-width:0; position:relative; background:var(--color-neutral-50);}
+.view{position:absolute; inset:56px 0 0 0; overflow-y:auto;}
+.view[hidden]{display:none;}
+/* Figma "Main Content" (9580:153592): outer gutter is 28px each side (Main Content
+   1658 wide, "header" frame 1602 wide, centered -- (1658-1602)/2 = 28). No token matches
+   28 exactly (spacing-2xl=24 / spacing-3xl=32), so this is a literal value, same convention
+   as e.g. voice-section.css's radius/11 comment. Vertical rhythm below is real tokens:
+   header->Container 20px (spacing-xl), Container->sticky bar 20px (spacing-xl), sticky
+   bar->grid 0 (no gap in Figma -- scroll content starts flush under the sticky bar). */
+.page-pad{max-width:1602px; margin:0 auto; padding:28px 28px var(--spacing-6xl); box-sizing:border-box;}
+
+/* ---------- header (9585:182743) ---------- */
+.vl-page-header{display:flex; align-items:center; justify-content:space-between; gap:var(--spacing-lg);}
+.vl-title-block{display:flex; flex-direction:column; align-items:flex-start; gap:var(--spacing-xs); overflow:hidden;}
+/* Display/sm (--font-size/--line-height/--font-weight-display-sm = 22/30/700). Figma also
+   specifies -0.1px letter-spacing on this style; no letter-spacing token exists in
+   tokens.css, so this one value is a literal (same "no matching token" precedent as the
+   28px gutter above). */
+.vl-title{font-family:var(--font-family-text); font-size:var(--font-size-display-sm); font-weight:var(--font-weight-display-sm); line-height:var(--line-height-display-sm); color:var(--color-neutral-900); letter-spacing:-0.1px; margin:0; white-space:nowrap;}
+.vl-sub{font-family:var(--font-family-text); font-size:var(--font-size-text-sm); font-weight:var(--font-weight-regular); line-height:var(--line-height-text-sm); color:var(--color-neutral-500); margin:0; white-space:nowrap;}
+
+/* ---------- Container / toolbar row (9585:184291): Search Field + Filters + Sort ---------- */
+.vl-toolbar{display:flex; align-items:center; gap:var(--spacing-sm); margin-top:var(--spacing-xl);}
+.vl-search-field{flex:1 1 auto; min-width:0; width:auto;}
+/* search-field--expanded's placeholder inherits the input's own font-weight (medium, for
+   typed values) -- Figma's empty-state text here is Text/sm Regular (400), so this page
+   overrides just the placeholder weight rather than editing the shared component. */
+.vl-search-field .search-field__input::placeholder{font-weight:var(--font-weight-regular);}
+.vl-search-row{display:flex; align-items:center; gap:var(--spacing-md); flex-shrink:0;}
+/* Table/Filter + Table/Sort both use Figma's --color/border-dark (#c5cee0), which IS an
+   exact token match (--color-neutral-350) -- table-filter.css's own border-color predates
+   that token and stays on neutral-400 for its other consumers, so this page overrides
+   locally rather than changing the shared file's long-documented default. */
+.vl-filter-btn{border-color:var(--color-neutral-350);}
+.vl-sort-btn{width:36px; height:36px; padding:0; gap:0; justify-content:center;}
+.vl-sort-btn img{width:20px; height:20px;}
+
+/* ---------- sticky · filter bar (9585:184248): Segmented Control + filter chips ---------- */
+.vl-sticky-bar{
+  position:sticky; top:0; z-index:5; background:var(--color-neutral-50);
+  display:flex; align-items:center; gap:var(--spacing-sm);
+  height:64px; margin-top:var(--spacing-xl);
+}
+.vl-chip-row{display:flex; align-items:center; gap:var(--spacing-sm); flex-wrap:wrap; flex:1; min-width:0;}
+/* chip · Genre default state (Text/xs Medium, 12/18/500) */
+.vl-fchip{
+  display:inline-flex; align-items:center; gap:var(--spacing-xs); height:28px; box-sizing:border-box;
+  padding:0 13px; border:1px solid var(--color-neutral-400); border-radius:var(--radius-full); background:var(--color-neutral-0);
+  font-family:var(--font-family-text); font-size:var(--font-size-text-xs); line-height:var(--line-height-text-xs); font-weight:var(--font-weight-medium); color:var(--color-neutral-700);
+  cursor:pointer; white-space:nowrap;
+}
+.vl-fchip:hover:not(.active){background:var(--color-neutral-50);}
+.vl-fchip.has-caret{padding-right:11px;}
+.vl-fchip img{width:16px; height:16px; flex-shrink:0;}
+/* Figma didn't show a selected chip in this row -- reusing controls-filter-toggle.css's
+   selected treatment (neutral-150 bg / neutral-500 border) for consistency with the rest
+   of the app's pill-filter selected state. */
+.vl-fchip.active{background:var(--color-neutral-150); border-color:var(--color-neutral-500); font-weight:var(--font-weight-semibold); color:var(--color-neutral-900);}
+.vl-fchip-divider{width:1px; height:16px; background:var(--color-neutral-600); flex-shrink:0;}
+/* Favorites chip (Figma "Controls / Filter / Toggle", 9619:201589) -- bold label + trailing
+   12px star (vs the other chips' 16px trailing icons), even in its default unselected state. */
+.vl-fchip-favorites{font-weight:var(--font-weight-bold);}
+.vl-fchip-favorites img{width:12px; height:12px;}
+
+/* ---------- Gender / Language filter dropdown (Figma "Controls / Filter / Select", 3544:1796) ----------
+   Two trigger states -- unselected (white pill, label + caret) and filled (dark pill, X-to-
+   clear + label + divider + value) -- swapped by re-rendering the trigger's own innerHTML,
+   since the two states aren't just a class toggle on the same children (filled drops the
+   caret entirely and gains a leading X + divider). Both Gender and Language share this same
+   trigger + menu shell; only the menu's contents differ (plain option rows vs a search box
+   with checkbox rows for Language's multi-select). */
+.vl-fselect-wrap{position:relative; flex-shrink:0;}
+.vl-fselect{
+  display:inline-flex; align-items:center; gap:4px; box-sizing:border-box; padding:5px 10px 5px 12px;
+  border:1px solid var(--color-neutral-400); border-radius:var(--radius-full); background:var(--color-neutral-0);
+  cursor:pointer; white-space:nowrap;
+}
+.vl-fselect:hover{background:var(--color-neutral-50);}
+.vl-fselect-label{font-family:var(--font-family-text); font-size:var(--font-size-text-xs); line-height:var(--line-height-text-xs); font-weight:var(--font-weight-medium); color:var(--color-neutral-700);}
+.vl-fselect-caret{width:16px; height:16px; flex-shrink:0;}
+.vl-fselect--filled{gap:7px; padding:5px 14px 5px 11px; border-color:transparent; background:var(--color-neutral-900);}
+.vl-fselect--filled:hover{background:var(--color-neutral-900);}
+.vl-fselect--filled .vl-fselect-label{font-weight:var(--font-weight-semibold); color:var(--color-neutral-0);}
+.vl-fselect-x{width:18px; height:18px; flex-shrink:0; cursor:pointer;}
+.vl-fselect-divider{width:1px; height:13px; background:var(--color-neutral-0); flex-shrink:0;}
+.vl-fselect-value{font-family:var(--font-family-text); font-size:var(--font-size-text-xs); line-height:var(--line-height-text-xs); font-weight:var(--font-weight-semibold); color:var(--color-neutral-0); white-space:nowrap;}
+
+.vl-fselect-menu{
+  position:absolute; top:calc(100% + 6px); left:0; z-index:20; min-width:160px; box-sizing:border-box;
+  background:var(--color-neutral-0); border:1px solid var(--color-neutral-300); border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-popover); padding:6px;
+}
+.vl-fselect-row{
+  padding:8px 10px; border-radius:var(--radius-md); cursor:pointer;
+  font-family:var(--font-family-text); font-size:13px; font-weight:500; color:var(--color-neutral-700); white-space:nowrap;
+}
+.vl-fselect-row:hover{background:var(--color-neutral-75);}
+.vl-fselect-row.selected{background:var(--color-neutral-75); font-weight:600; color:var(--color-neutral-900);}
+
+.vl-fselect-menu--lang{width:260px;}
+.vl-fselect-search{
+  display:flex; align-items:center; gap:var(--spacing-xs); box-sizing:border-box; width:100%; margin-bottom:6px;
+  padding:7px var(--spacing-sm); border:1px solid var(--color-neutral-400); border-radius:var(--radius-md); background:var(--color-neutral-0);
+}
+.vl-fselect-search img{width:14px; height:14px; flex-shrink:0; opacity:.6;}
+.vl-fselect-search input{flex:1 0 0; min-width:0; border:none; outline:none; background:none; font-family:var(--font-family-text); font-size:13px; color:var(--color-neutral-900);}
+.vl-fselect-search input::placeholder{color:var(--color-neutral-500);}
+.vl-fselect-list{display:flex; flex-direction:column; max-height:264px; overflow-y:auto;}
+.vl-fselect-list::-webkit-scrollbar{width:6px;}
+.vl-fselect-list::-webkit-scrollbar-thumb{background:var(--color-neutral-400); border-radius:3px;}
+.vl-fselect-row-lang{
+  display:flex; align-items:center; gap:8px; padding:7px 8px; border-radius:var(--radius-md); cursor:pointer;
+  font-family:var(--font-family-text); font-size:13px; font-weight:500; color:var(--color-neutral-700);
+}
+.vl-fselect-row-lang:hover{background:var(--color-neutral-75);}
+.vl-fselect-flag{font-size:14px; line-height:1; flex-shrink:0;}
+.vl-fselect-empty{margin:0; padding:8px 10px; font-family:var(--font-family-text); font-size:12px; color:var(--color-neutral-500);}
+.vl-count{font-family:var(--font-family-text); font-size:12px; font-weight:500; color:var(--color-neutral-500); white-space:nowrap; flex-shrink:0;}
+
+/* ---------- Voice card grid ----------
+   Plain compact row, 2 columns -- NOT a thumb/portrait card. Voices carry no artwork, so
+   an earlier pass that gave each card a big decorative gradient thumb just added empty
+   visual weight for nothing; this reverts to the original row anatomy (play button +
+   name/desc/tags + right-aligned actions), just spread across 2 columns instead of 4. */
+.vl-grid{display:grid; grid-template-columns:repeat(2, 1fr); gap:var(--spacing-md);}
+.voice-card{
+  position:relative; display:flex; align-items:center; gap:var(--spacing-md); box-sizing:border-box;
+  padding:var(--spacing-md) var(--spacing-lg); background:var(--color-neutral-0);
+  border:1px solid var(--color-neutral-300); border-radius:var(--radius-lg);
+  transition:border-color .15s ease, box-shadow .15s ease;
+}
+.voice-card:hover{border-color:var(--color-neutral-400); box-shadow:var(--shadow-cell-action);}
+
+.voice-card-info{flex:1 1 0; min-width:0;}
+.voice-card-name-row{display:flex; align-items:center; gap:var(--spacing-sm);}
+.voice-card-name{flex:0 1 auto; min-width:0; font-family:var(--font-family-text); font-size:14px; font-weight:600; line-height:22px; color:var(--color-neutral-900); margin:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.voice-card-name-input{
+  flex:0 1 auto; min-width:0; font-family:var(--font-family-text); font-size:14px; font-weight:600; line-height:22px; color:var(--color-neutral-900);
+  border:1px solid var(--color-neutral-450); border-radius:var(--radius-sm); padding:0 4px; margin:-1px -4px; background:var(--color-neutral-0);
+}
+.voice-card-name-input:focus{outline:none; border-color:var(--color-brand-primary);}
+.voice-card-badge{flex-shrink:0; display:inline-flex; align-items:center; padding:2px 8px; border-radius:var(--radius-lg); background:var(--color-badge-green-bg);}
+.voice-card-badge span{font-family:var(--font-family-text); font-size:11px; font-weight:600; line-height:14px; color:var(--color-badge-green-text); white-space:nowrap;}
+.voice-card-desc{
+  font-family:var(--font-family-text); font-size:12px; font-weight:400; line-height:18px; color:var(--color-neutral-500); margin:1px 0 0;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.voice-card-tags{display:flex; align-items:center; flex-wrap:wrap; gap:6px; margin-top:6px;}
+.voice-card-tag{
+  padding:3px 10px; border-radius:999px; background:var(--color-neutral-100);
+  font-family:var(--font-family-text); font-size:11px; font-weight:500; color:var(--color-neutral-700); white-space:nowrap;
+}
+.voice-card-tag-more{font-family:var(--font-family-text); font-size:11px; font-weight:500; color:var(--color-neutral-500);}
+
+.voice-card-actions{display:flex; align-items:center; gap:var(--spacing-sm); flex-shrink:0;}
+.voice-add-btn{
+  display:inline-flex; align-items:center; gap:6px; height:32px; padding:0 14px; box-sizing:border-box;
+  border:1px solid var(--color-neutral-400); border-radius:999px; background:var(--color-neutral-0); cursor:pointer;
+  font-family:var(--font-family-text); font-size:12.5px; font-weight:600; color:var(--color-neutral-700); white-space:nowrap;
+}
+.voice-add-btn:hover{background:var(--color-neutral-75);}
+.voice-add-btn.added{background:var(--color-neutral-900); border-color:var(--color-neutral-900); color:var(--color-neutral-0);}
+/* plain icon buttons (favorite / more) -- no border/shadow chrome, matches the compact
+   row's lighter-weight feel; hover-only background is enough affordance at this size */
+.voice-card-icon-btn{
+  width:32px; height:32px; flex-shrink:0; box-sizing:border-box; padding:0; cursor:pointer;
+  border:none; background:none; border-radius:var(--radius-md);
+  display:flex; align-items:center; justify-content:center; position:relative;
+}
+.voice-card-icon-btn:hover{background:var(--color-neutral-100);}
+.voice-card-icon-btn img{width:16px; height:16px; display:block;}
+.voice-card-icon-btn.more.active{background:var(--color-neutral-100);}
+
+/* kebab dropdown -- functional parity with character-card's roster menu (Set as default
+   [multi-brand submenu] / Rename / Delete), adapted to this file's own token-only CSS
+   instead of porting brand-setup-kit-character-library.html's bespoke --neutral-* aliases. */
+.vl-kebab-menu{
+  position:absolute; top:calc(100% + 4px); right:0; z-index:20; min-width:180px;
+  background:var(--color-neutral-0); border:1px solid var(--color-neutral-300); border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-popover); padding:6px; display:flex; flex-direction:column; gap:2px;
+}
+.vl-menu-row{
+  display:flex; align-items:center; justify-content:space-between; gap:var(--spacing-sm); padding:8px 10px; border-radius:var(--radius-md); cursor:pointer;
+  font-family:var(--font-family-text); font-size:13px; font-weight:500; color:var(--color-neutral-700);
+}
+.vl-menu-row:hover, .vl-menu-row.active{background:var(--color-neutral-75);}
+.vl-menu-row.danger{color:var(--color-badge-red-text);}
+.vl-menu-caret{width:14px; height:14px; flex-shrink:0; opacity:.6;}
+
+/* "Default for <brand>" flyout -- opens to the LEFT of the kebab menu (not the right, as
+   the source screen does) so it never clips past the frame's right edge for right-column
+   cards in this 2-up grid. */
+.vl-brandpop{
+  position:absolute; top:0; right:calc(100% + 4px); width:200px; box-sizing:border-box;
+  background:var(--color-neutral-0); border:1px solid var(--color-neutral-300); border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-popover); padding:6px;
+}
+.vl-brandpop-cap{margin:0; padding:6px 10px 4px; font-family:var(--font-family-text); font-size:11px; font-weight:600; line-height:16px; letter-spacing:.5px; text-transform:uppercase; color:var(--color-neutral-500);}
+.vl-brandpop-row{display:flex; align-items:center; justify-content:space-between; gap:var(--spacing-sm); padding:8px 10px; border-radius:var(--radius-md); cursor:pointer;}
+.vl-brandpop-row:hover{background:var(--color-neutral-75);}
+.vl-brandpop-row span:first-child{font-family:var(--font-family-text); font-size:13px; font-weight:500; color:var(--color-neutral-900);}
+
+/* ---------- Music card grid ----------
+   Same compact audio-row anatomy as .voice-card (play + info + right-aligned actions),
+   spread across the same 2-column .vl-grid. No add/remove toggle here -- Music has no
+   "My Music" bucket anymore, just Favorite + the "Adapt in your project" action below. */
+.music-card{
+  position:relative; display:flex; align-items:center; gap:var(--spacing-md); box-sizing:border-box;
+  padding:var(--spacing-md) var(--spacing-lg); background:var(--color-neutral-0);
+  border:1px solid var(--color-neutral-300); border-radius:var(--radius-lg);
+  transition:border-color .15s ease, box-shadow .15s ease;
+}
+.music-card:hover{border-color:var(--color-neutral-400); box-shadow:var(--shadow-cell-action);}
+.music-card-info{flex:1 1 0; min-width:0; display:flex; align-items:baseline; gap:var(--spacing-sm); overflow:hidden;}
+.music-card-name{
+  margin:0; flex:0 1 auto; min-width:0; font-family:var(--font-family-text); font-size:14px; font-weight:600; line-height:22px; color:var(--color-neutral-900);
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.music-card-attribution{
+  flex:0 1 auto; min-width:0; font-family:var(--font-family-text); font-size:12px; font-weight:400; line-height:18px; color:var(--color-neutral-500);
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.music-card-meta{display:flex; align-items:center; gap:var(--spacing-lg); flex-shrink:0;}
+.music-card-meta span{font-family:var(--font-family-text); font-size:12px; font-weight:500; color:var(--color-neutral-500); white-space:nowrap;}
+.music-card-actions{display:flex; align-items:center; gap:var(--spacing-sm); flex-shrink:0;}
+/* mirrors .voice-add-btn's pill weight -- this replaces that button's role now that tracks
+   don't get "added" to a library, they get applied straight onto a piece of content */
+.music-card-apply-btn{
+  display:inline-flex; align-items:center; gap:6px; height:32px; padding:0 14px; box-sizing:border-box;
+  border:1px solid var(--color-neutral-400); border-radius:999px; background:var(--color-neutral-0); cursor:pointer;
+  font-family:var(--font-family-text); font-size:12.5px; font-weight:600; color:var(--color-neutral-700); white-space:nowrap;
+}
+.music-card-apply-btn:hover{background:var(--color-neutral-75);}
+.music-card-apply-btn img{width:16px; height:16px; flex-shrink:0;}
+
+.vl-empty{padding:var(--spacing-4xl) 0; text-align:center; font-family:var(--font-family-text); font-size:13px; color:var(--color-neutral-500);}
+
+/* ---------- Apply-to-content modal (video picker) ----------
+   Reuses .mylib-modal/.ref-scene-tile as-is (Figma 9329:145797, "My Library" picker) --
+   video-only for now per this feature's first pass, so no format tabs are shown.
+   components/shared/modal.css's .modal-overlay has no [hidden] override (its own call
+   sites toggle display:none via inline style instead) -- this page uses the hidden
+   attribute everywhere else (create-voice-modal.css already does this for .cvm-overlay),
+   so add the matching override here rather than fork the toggle convention for one modal. */
+.modal-overlay[hidden]{display:none;}
+.music-apply-track-recap{
+  display:flex; align-items:center; gap:var(--spacing-md); width:100%; box-sizing:border-box;
+  padding:var(--spacing-md); border:1px solid var(--color-neutral-300); border-radius:var(--radius-lg); background:var(--color-neutral-50);
+}
+.music-apply-track-recap .voice-section-sample-play{flex-shrink:0;}
+.music-apply-track-name{margin:0; font-family:var(--font-family-text); font-size:13px; font-weight:600; color:var(--color-neutral-900);}
+.music-apply-track-meta{margin:2px 0 0; font-family:var(--font-family-text); font-size:12px; font-weight:400; color:var(--color-neutral-500);}
+.ref-scene-tile-title{
+  position:absolute; left:0; right:0; bottom:0; box-sizing:border-box; padding:var(--spacing-sm) var(--spacing-md);
+  background:linear-gradient(to top, rgba(15,23,41,.65), transparent);
+  font-family:var(--font-family-text); font-size:12px; font-weight:500; color:var(--color-neutral-0);
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- NAV — components/ai-social-media/nav.css (Figma "Nav / Navigation" 9154:132343) -->
+  <div class="nav" id="sideNav">
+    <div class="nav-account">
+      <div class="nav-brand">
+        <div class="link">
+          <img class="mark" src="../../../components/ai-social-media/icons/brand/formee-mark.svg" alt="" onerror="this.style.display='none'">
+          <div class="txt"><b>Formee Express</b><span>Super admin</span></div>
+        </div>
+      </div>
+      <div class="nav-workspace"><span>Formee Express</span><span class="chevron"><img src="../../../components/ai-social-media/icons/chevron-down.svg" alt=""></span></div>
+    </div>
+    <div class="nav-items">
+      <div class="nav-item"><span class="ic"><img src="../../../components/ai-social-media/icons/nav-home.svg" alt=""></span><span class="label">Home</span></div>
+      <div class="nav-group">
+        <div class="nav-label">Create</div>
+        <div class="nav-item"><span class="ic"><img src="../../../components/ai-social-media/icons/ai-sparkle-outline-grey.svg" alt=""></span><span class="label">New Content</span></div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-label">Content</div>
+        <div class="nav-item"><span class="ic"><img src="../../../components/ai-social-media/icons/nav-library.svg" alt=""></span><span class="label">Library</span></div>
+        <div class="nav-item"><span class="ic"><img src="../../../components/ai-social-media/icons/nav-schedule.svg" alt=""></span><span class="label">Schedule</span></div>
+        <div class="nav-item"><span class="ic"><img src="../../../components/ai-social-media/icons/data-trending-up.svg" alt=""></span><span class="label">Trends</span></div>
+        <div class="nav-item"><span class="ic"><img src="../../../components/ai-social-media/icons/nav-analytics.svg" alt=""></span><span class="label">Analytics</span></div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-label">Asset</div>
+        <div class="nav-item"><span class="ic"><img src="../../../components/ai-social-media/icons/nav-workspace-03.svg" alt=""></span><span class="label">Brand Setup</span></div>
+        <div class="nav-item"><span class="ic"><img src="../../../components/ai-social-media/icons/nav-characters.svg" alt=""></span><span class="label">Characters</span></div>
+        <div class="nav-item active" id="navVoices" onclick="switchView('voices')" style="cursor:pointer;"><span class="ic"><img src="../../../components/ai-social-media/icons/nav-voices.svg" alt=""></span><span class="label">Voices</span></div>
+        <div class="nav-item" id="navMusic" onclick="switchView('music')" style="cursor:pointer;"><span class="ic"><img src="../../../components/ai-social-media/icons/nav-audio.svg" alt=""></span><span class="label">Music</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+    <!-- TOPBAR — components/ai-social-media/topbar-stepper.css (no stepper here, plain library topbar) -->
+    <div class="topbar">
+      <div class="topbar-spacer"></div>
+      <div class="topbar-actions">
+        <button class="topbar-icon-btn" type="button"><img src="../../../components/ai-social-media/icons/ui-search.svg" alt="Search" style="width:18px;height:18px;"></button>
+        <button class="topbar-icon-btn" type="button"><img src="../../../components/ai-social-media/icons/nav-bell.svg" alt="Notifications" style="width:18px;height:18px;"><span class="dot"></span></button>
+        <div class="topbar-avatar">YK</div>
+      </div>
+    </div>
+
+    <!-- ============================================================ VOICES ============================================================ -->
+    <div class="view" id="viewVoices">
+      <div class="page-pad">
+        <div class="vl-page-header">
+          <div class="vl-title-block">
+            <p class="vl-title">Voice Library</p>
+            <p class="vl-sub">Narration voices for your videos — explore the library or manage the ones you've added.</p>
+          </div>
+          <button type="button" class="actions-btn actions-btn--primary" onclick="openCreateVoiceModal()">
+            <span class="actions-btn-ai-icon"><span><img src="../../../components/ai-social-media/icons/actions/btn-ai-icon-white-a.svg" alt=""></span><span><img src="../../../components/ai-social-media/icons/actions/btn-ai-icon-white-b.svg" alt=""></span></span>
+            <span>New Voice</span>
+          </button>
+        </div>
+
+        <div class="vl-toolbar">
+          <div class="search-field search-field--expanded vl-search-field">
+            <img src="../../../components/ai-social-media/icons/ui-search.svg" alt="">
+            <input class="search-field__input" type="text" id="voiceSearch" placeholder="Search voices…" autocomplete="off" oninput="renderVoices()">
+          </div>
+          <div class="vl-search-row">
+            <button type="button" class="table-filter-btn vl-filter-btn"><span>Filters</span><img class="icon" src="../../../components/ai-social-media/icons/list-filter.svg" alt=""></button>
+            <button type="button" class="table-filter-btn vl-filter-btn vl-sort-btn"><img src="../../../components/ai-social-media/icons/arrow-down-wide-narrow.svg" alt="Sort"></button>
+          </div>
+        </div>
+
+        <div class="vl-sticky-bar">
+          <div class="controls-segmented-control" id="voiceSegment">
+            <button type="button" class="controls-segment-chip controls-segment-chip--selected" data-tab="explore" onclick="setVoiceTab('explore')">ElevenLabs Library</button>
+            <button type="button" class="controls-segment-chip" data-tab="mine" onclick="setVoiceTab('mine')">My Voices</button>
+          </div>
+          <div class="vl-chip-row" id="voiceChipRow">
+            <button type="button" class="vl-fchip vl-fchip-favorites" id="voiceFavChip" onclick="toggleVoiceFavOnly()">Favorites<img src="../../../components/ai-social-media/icons/controls/star-fill-default.svg" alt=""></button>
+            <div class="vl-fselect-wrap">
+              <button type="button" class="vl-fselect" id="voiceLangTrigger" onclick="event.stopPropagation(); toggleVoiceLangMenu()">
+                <span class="vl-fselect-label">Any language</span><img class="vl-fselect-caret" src="../../../components/ai-social-media/icons/caret-down-filled.svg" alt="">
+              </button>
+              <div class="vl-fselect-menu vl-fselect-menu--lang" id="voiceLangMenu" onclick="event.stopPropagation()" hidden>
+                <div class="vl-fselect-search">
+                  <img src="../../../components/ai-social-media/icons/ui-search.svg" alt="">
+                  <input type="text" id="voiceLangSearchInput" placeholder="Search languages" oninput="renderVoiceLangOptions()">
+                </div>
+                <div class="vl-fselect-list" id="voiceLangList"></div>
+              </div>
+            </div>
+            <div class="vl-fselect-wrap">
+              <button type="button" class="vl-fselect" id="voiceGenderTrigger" onclick="event.stopPropagation(); toggleVoiceGenderMenu()">
+                <span class="vl-fselect-label">Gender</span><img class="vl-fselect-caret" src="../../../components/ai-social-media/icons/caret-down-filled.svg" alt="">
+              </button>
+              <div class="vl-fselect-menu" id="voiceGenderMenu" onclick="event.stopPropagation()" hidden></div>
+            </div>
+            <span class="vl-fchip-divider"></span>
+            <span id="voiceCatChips" style="display:contents;"></span>
+          </div>
+          <p class="vl-count" id="voiceCount"></p>
+        </div>
+
+        <div class="vl-grid" id="voiceGrid"></div>
+        <p class="vl-empty" id="voiceEmpty" hidden>No voices match these filters yet.</p>
+      </div>
+    </div>
+
+    <!-- ============================================================ MUSIC ============================================================ -->
+    <div class="view" id="viewMusic" hidden>
+      <div class="page-pad">
+        <div class="vl-page-header">
+          <div>
+            <p class="vl-title">Music</p>
+            <p class="vl-sub">Background tracks for your videos — explore the library or manage the ones you've added.</p>
+          </div>
+          <button type="button" class="actions-btn actions-btn--primary" onclick="alert('Upload track — not part of this draft yet')">
+            <img src="../../../components/ai-social-media/icons/menu-upload.svg" alt="" onerror="this.style.display='none'">
+            <span>Upload track</span>
+          </button>
+        </div>
+
+        <div class="vl-toolbar">
+          <div class="search-field search-field--expanded vl-search-field">
+            <img src="../../../components/ai-social-media/icons/ui-search.svg" alt="">
+            <input class="search-field__input" type="text" id="musicSearch" placeholder="Search music…" autocomplete="off" oninput="renderMusic()">
+          </div>
+          <div class="vl-search-row">
+            <button type="button" class="table-filter-btn vl-filter-btn"><span>Filters</span><img class="icon" src="../../../components/ai-social-media/icons/list-filter.svg" alt=""></button>
+            <button type="button" class="table-filter-btn vl-filter-btn vl-sort-btn"><img src="../../../components/ai-social-media/icons/arrow-down-wide-narrow.svg" alt="Sort"></button>
+          </div>
+        </div>
+
+        <div class="vl-sticky-bar">
+          <div class="vl-chip-row" id="musicChipRow"></div>
+          <p class="vl-count" id="musicCount"></p>
+        </div>
+
+        <div class="vl-grid" id="musicList"></div>
+        <p class="vl-empty" id="musicEmpty" hidden>No tracks match these filters yet.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ============================================================ CREATE VOICE MODAL ============================================================
+       Flow: chooser (Voice Design / Instant Voice Clone / Voice Remixing) -> Voice Design
+       form (Figma "Voice Design · default", 9619:193251) -> generating -> choose a voice
+       (Figma "Voice Design · Generate voice", 9619:193305) -> success (9619:193341).
+       Modal shell adapted from the side-panel component set to Figma's "Modal / Dialog"
+       shell (9619:194341) per this app's own request -- see create-voice-modal.css. -->
+  <div class="cvm-overlay" id="cvOverlay" hidden onclick="if(event.target===this) closeCreateVoiceModal()">
+
+    <!-- step: chooser -->
+    <div class="cvm-modal cvm-modal--choose" id="cvChooseModal" hidden>
+      <div class="vd-header">
+        <h2 class="cvm-choose-title">Create voice</h2>
+        <button type="button" class="cvm-close" onclick="closeCreateVoiceModal()"><img src="../../../components/ai-social-media/icons/controls/chip-close-x.svg" alt="Close"></button>
+      </div>
+      <div class="cv-option-list">
+        <button type="button" class="cv-option-card" onclick="openVoiceDesignForm()">
+          <p class="cv-option-title">Voice Design</p>
+          <p class="cv-option-desc">Design an entirely new voice from a text prompt.</p>
+          <span class="cv-option-time">~30 seconds</span>
+        </button>
+        <button type="button" class="cv-option-card" onclick="openVoiceCloneModal()">
+          <p class="cv-option-title">Instant Voice Clone</p>
+          <p class="cv-option-desc">Clone a voice from a short recording or uploaded audio sample.</p>
+          <span class="cv-option-time">~1 minute</span>
+        </button>
+        <button type="button" class="cv-option-card" onclick="alert('Voice Remixing — not part of this draft yet')">
+          <p class="cv-option-title">Voice Remixing</p>
+          <p class="cv-option-desc">Transform one of your existing voices with a text prompt.</p>
+          <span class="cv-option-time">~30 seconds</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- steps: form / generating / pick / name+tags (shared 600×700 shell so height never jumps).
+         Header dropped its back-arrow per the updated Figma "Modal / Title Row" component
+         (9767:264741) -- that component has no back-arrow slot at all; every step's own
+         footer "Back" button is the sole way back now (vdGoBack() below still drives it). -->
+    <div class="cvm-modal cvm-modal--design" id="cvDesignModal" hidden>
+      <div class="vd-header">
+        <h2 class="vd-title">Design a new voice</h2>
+        <button type="button" class="cvm-close" onclick="closeCreateVoiceModal()"><img src="../../../components/ai-social-media/icons/controls/chip-close-x.svg" alt="Close"></button>
+      </div>
+
+      <div class="cvm-body">
+        <!-- vd-step: form -->
+        <div class="vd-step" id="vdFormStep">
+          <div class="vd-field-group">
+            <p class="vd-field-label">Gender</p>
+            <div class="vd-chip-row" id="vdGenderRow"></div>
+          </div>
+          <div class="vd-field-group">
+            <p class="vd-field-label">Age</p>
+            <div class="vd-chip-row" id="vdAgeRow"></div>
+          </div>
+          <div class="vd-field-row">
+            <div class="vd-field-col">
+              <p class="vd-field-label">Language</p>
+              <div class="vd-select">
+                <select id="vdLanguage" onchange="vdOnFieldChange()"></select>
+                <img src="../../../components/ai-social-media/icons/chevron-down.svg" alt="">
+              </div>
+            </div>
+            <div class="vd-field-col">
+              <p class="vd-field-label">Use case</p>
+              <div class="vd-select">
+                <select id="vdUseCase" onchange="vdOnFieldChange()"></select>
+                <img src="../../../components/ai-social-media/icons/chevron-down.svg" alt="">
+              </div>
+            </div>
+          </div>
+          <div class="vd-section">
+            <div class="vd-section-header"><p class="vd-section-title">Prompt</p></div>
+            <div class="vd-prompt-block">
+              <textarea class="vd-prompt-text" id="vdPromptText" rows="4"></textarea>
+              <div class="vd-preset-row" id="vdPresetRow"></div>
+            </div>
+          </div>
+          <div class="vd-section">
+            <div class="vd-toggle-row">
+              <p class="vd-section-title">Custom preview text</p>
+              <div class="vd-toggle-row-right">
+                <button type="button" class="field-switch" id="vdPreviewSwitch" onclick="vdTogglePreviewSwitch()"><span class="knob"></span></button>
+                <button type="button" class="vd-preview-caret-btn" id="vdPreviewCaretBtn" onclick="vdTogglePreviewCollapse()" aria-expanded="false" aria-label="Toggle custom preview text">
+                  <img id="vdPreviewCaret" src="../../../components/ai-social-media/icons/chevron-down.svg" alt="">
+                </button>
+              </div>
+            </div>
+            <div class="vd-preview-box" id="vdPreviewBox" hidden>
+              <textarea class="vd-preview-text" id="vdPreviewText" rows="4"></textarea>
+              <button type="button" class="actions-btn actions-btn--secondary vd-try-another" onclick="vdTryAnotherPreview()">
+                <img src="../../../components/ai-social-media/icons/rotate-ccw.svg" alt="">
+                <span>Try another</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- vd-step: generating (loading) -->
+        <div class="vd-step" id="vdGeneratingStep" hidden>
+          <div class="vd-loading">
+            <img src="../../../components/ai-social-media/icons/ui-spinner.svg" alt="">
+            <p>Generating voice previews…</p>
+          </div>
+        </div>
+
+        <!-- vd-step: pick a generated voice. Prompt recap is now the same live-looking
+             prompt-block + preset row as the form step (Figma 9767:264741 dropped the
+             smaller greyed-out "readonly" recap in favor of just re-showing the real block,
+             chips included) -- the chips render but aren't interactive here, this is a recap
+             not a re-edit. Name/Description moved to their own step below. -->
+        <div class="vd-step" id="vdPickStep" hidden>
+          <div class="vd-section">
+            <div class="vd-section-header"><p class="vd-section-title">Prompt</p></div>
+            <div class="vd-prompt-block">
+              <div class="vd-prompt-text" id="vdPromptRecap"></div>
+              <div class="vd-preset-row" id="vdPresetRecapRow"></div>
+            </div>
+          </div>
+          <div class="vd-divider"></div>
+          <div class="vd-section">
+            <div class="vd-section-header">
+              <p class="vd-section-title">Choose a voice</p>
+              <button type="button" class="actions-btn actions-btn--secondary vd-try-another" id="vdGenerateMoreBtn" onclick="vdGenerateMoreVoices()">
+                <img src="../../../components/ai-social-media/icons/zap-sm.svg" alt="">
+                <span>Regenerate</span>
+                <span class="vd-credit-badge">5</span>
+              </button>
+            </div>
+            <div class="vd-voice-list" id="vdVoiceList"></div>
+          </div>
+        </div>
+
+        <!-- vd-step: name your voice + assign categories (this used to be a "success" screen
+             with a checkmark/celebration -- Figma 9767:264741's last frame drops all of that
+             and is just Name + Description now, so the celebratory bit is gone; saving here
+             closes the modal straight into My Voices instead of showing a separate success
+             screen). Categories redrawn per Figma 9733:1482's later revision -- a flat wall of
+             toggle chips was too many, so Language/Gender/Use case are now the same dropdown-
+             trigger chip (.vl-fselect, reused as-is from the toolbar's own Gender/Language
+             filters) collapsed to one row, defaulting to whatever the form step already
+             chose. Custom categories (not drawn in Figma yet -- this app's own addition per
+             the original request) get their own small removable chips below, and a brand-new
+             one still joins VOICE_CATS so it's a real filter chip in the toolbar afterward. -->
+        <div class="vd-step" id="vdSuccessStep" hidden>
+          <div class="vd-field-group">
+            <p class="vd-field-label">Name</p>
+            <input type="text" class="vd-input" id="vdNameInput" placeholder="e.g. Hype Reel">
+          </div>
+          <div class="vd-field-group">
+            <p class="vd-field-label">Description</p>
+            <textarea class="vd-input" id="vdDescInput" placeholder="e.g. High-energy, fast-paced voice for viral hooks and trend videos"></textarea>
+          </div>
+          <div class="vd-field-group">
+            <p class="vd-field-label">Categories</p>
+            <div class="vd-tag-dropdowns" id="vdTagDropdowns"></div>
+            <div class="vd-tag-custom-row" id="vdCustomTagRow"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cvm-footer" id="vdFooterForm">
+        <button type="button" class="vd-btn-primary-full" id="vdGenerateBtn" onclick="vdGenerateVoice()"><span>Generate voice</span></button>
+      </div>
+      <!-- Figma's pick step also reads "Save voice" here (9767:264741), but there's no
+           metadata to save yet at this point in the flow -- clicking it advances to the
+           name+tags step below, which is the one that actually creates the voice. -->
+      <div class="cvm-footer" id="vdFooterPick" hidden>
+        <button type="button" class="actions-btn actions-btn--secondary" onclick="vdGoBack()">Back</button>
+        <button type="button" class="actions-btn actions-btn--primary" style="flex:1 0 0;" onclick="vdGoToNaming()">Save voice</button>
+      </div>
+      <div class="cvm-footer" id="vdFooterSuccess" hidden>
+        <button type="button" class="actions-btn actions-btn--secondary" onclick="vdGoBack()">Back</button>
+        <button type="button" class="actions-btn actions-btn--primary" style="flex:1 0 0;" onclick="vdSaveVoice()">Save voice</button>
+      </div>
+    </div>
+
+    <!-- ============================================================ INSTANT VOICE CLONE ============================================================
+         Flow: main (Record/Upload segmented tab, shared clip list below either the mic panel
+         or the dropzone -- Figma "voice cloning - panel states" 9619:192991 shows uploaded
+         AND recorded clips sitting in the same list regardless of which tab is active) ->
+         details (combined-take preview + name/description + rights consent) -> success.
+         Same 600x700 shell as the Voice Design modal above, reused on purpose per this app's
+         own request: Record vs Upload never resizes the dialog, only .cvm-body's content
+         changes, so switching tabs can't make the modal jump around. -->
+    <div class="cvm-modal cvm-modal--design cvm-modal--clone" id="cvCloneModal" hidden>
+      <div class="vd-header">
+        <div class="vd-header-left">
+          <button type="button" class="vd-back" id="vcBackBtn" onclick="vcGoBack()"><img src="../../../components/ai-social-media/icons/ui-back.svg" alt="Back"></button>
+          <h2 class="vd-title">Clone your voice</h2>
+        </div>
+        <button type="button" class="cvm-close" onclick="closeCreateVoiceModal()"><img src="../../../components/ai-social-media/icons/controls/chip-close-x.svg" alt="Close"></button>
+      </div>
+      <p class="vc-subtitle">Add multiple recordings or audio files — we'll combine them into one cloned voice.</p>
+
+      <div class="cvm-body">
+        <!-- vc-step: main (Record/Upload + tips + clip list) -->
+        <div class="vd-step" id="vcMainStep">
+          <div class="controls-segmented-control" id="vcMethodSegment">
+            <button type="button" class="controls-segment-chip controls-segment-chip--selected" data-method="record" onclick="vcSetMethod('record')">Record</button>
+            <button type="button" class="controls-segment-chip" data-method="upload" onclick="vcSetMethod('upload')">Upload</button>
+          </div>
+          <div class="vc-tips">
+            <p class="vc-tips-title">Tips for a clean clone</p>
+            <div class="vc-tips-row"><span class="vc-tips-dot"></span><span class="vc-tips-text"><b>Avoid noisy environments</b> — background sound interferes with the result.</span></div>
+            <div class="vc-tips-row"><span class="vc-tips-dot"></span><span class="vc-tips-text"><b>Check your microphone</b> — an external or headset mic captures cleaner audio.</span></div>
+            <div class="vc-tips-row"><span class="vc-tips-dot"></span><span class="vc-tips-text"><b>Stay consistent</b> — don't switch recording equipment between takes.</span></div>
+          </div>
+          <div id="vcMethodArea"></div>
+          <div class="vc-clip-list" id="vcClipList"></div>
+        </div>
+
+        <!-- vc-step: details (combined preview + description + consent) -->
+        <div class="vd-step" id="vcDetailsStep" hidden>
+          <div class="vc-preview-row">
+            <div class="vc-preview-row-main">
+              <span class="voice-section-sample-play" id="vcPreviewPlay" onclick="toggleVoicePlay(this)"><img src="../../../components/ai-social-media/icons/audio-row-play-triangle.svg" alt=""></span>
+              <span class="vc-preview-row-name">Preview voice</span>
+            </div>
+            <span class="vc-preview-row-time" id="vcPreviewDuration">00:00</span>
+          </div>
+          <div class="vd-field-group">
+            <p class="vd-field-label">Voice name</p>
+            <input type="text" class="vd-input" id="vcNameInput" placeholder="e.g. My Professional Voice" oninput="vcOnDetailsFieldChange()">
+          </div>
+          <div class="vd-field-group">
+            <p class="vd-field-label">Description</p>
+            <textarea class="vd-input" id="vcDescInput" placeholder="e.g. Warm, upbeat tone for social ads"></textarea>
+          </div>
+          <div class="vc-consent-row align-start">
+            <input type="checkbox" class="checkbox" id="vcConsentCheckbox" onchange="vcOnDetailsFieldChange()">
+            <span>I confirm I have the rights to clone this voice and consent to ElevenLabs processing this audio.</span>
+          </div>
+        </div>
+
+        <!-- vc-step: success -->
+        <div class="vd-step" id="vcSuccessStep" hidden>
+          <div class="vd-success-msg">
+            <span class="vd-success-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 12.5l2.5 2.5L16 9.5"></path></svg></span>
+            <p class="vd-success-title">Voice created</p>
+          </div>
+          <div class="vd-field-group">
+            <div class="vd-audio-row">
+              <div class="vd-audio-row-main">
+                <span class="voice-section-sample-play" id="vcSuccessPlay" onclick="toggleVoicePlay(this)"><img src="../../../components/ai-social-media/icons/audio-row-play-triangle.svg" alt=""></span>
+                <div class="vd-audio-row-text">
+                  <span class="vd-audio-row-name" id="vcSuccessName"></span>
+                  <span class="vd-audio-row-sub" id="vcSuccessSub"></span>
+                </div>
+              </div>
+              <button type="button" class="vd-audio-row-delete" onclick="alert('Delete voice — not part of this draft yet')"><img src="../../../components/ai-social-media/icons/edit-trash.svg" alt="Remove"></button>
+            </div>
+            <p class="vd-summary-cap">Ready to use in your video — continue to write a script and generate a voiceover with this voice.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="cvm-footer" id="vcFooterMain" style="justify-content:flex-end;">
+        <button type="button" class="actions-btn actions-btn--inactive" id="vcNextBtn" disabled onclick="vcGoToDetails()">Next</button>
+      </div>
+      <div class="cvm-footer" id="vcFooterDetails" hidden>
+        <button type="button" class="actions-btn actions-btn--secondary" onclick="vcBackToMain()">Back</button>
+        <button type="button" class="actions-btn actions-btn--inactive" id="vcCreateBtn" style="flex:1 0 0;" disabled onclick="vcCreateVoice()">Create voice</button>
+      </div>
+      <div class="cvm-footer" id="vcFooterSuccess" hidden>
+        <button type="button" class="actions-btn actions-btn--secondary" onclick="closeCreateVoiceModal()">Back to library</button>
+        <button type="button" class="actions-btn actions-btn--primary" style="flex:1 0 0;" onclick="closeCreateVoiceModal()">Use this voice</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ MUSIC: ADAPT IN YOUR PROJECT MODAL ============================================================
+     "Adapt in your project" on a music card -> pick a video from the Content Library to apply
+     this track to as background music. Video-only for this first pass. Reuses the "My Library"
+     picker shell (.mylib-modal/.ref-scene-tile, Figma 9329:145797) already established by the
+     New Content flow's reference-image picker. -->
+<div class="modal-overlay" id="musicApplyOverlay" hidden onclick="if(event.target===this) closeMusicApplyModal()">
+  <div class="modal mylib-modal">
+    <div class="mylib-header-top">
+      <h2 class="modal__title">Adapt in your project</h2>
+      <button type="button" class="modal__close" onclick="closeMusicApplyModal()"><img src="../../../components/ai-social-media/icons/button-x-dark.svg" alt="Close"></button>
+    </div>
+
+    <div class="music-apply-track-recap">
+      <span class="voice-section-sample-play"><img src="../../../components/ai-social-media/icons/audio-row-play-triangle.svg" alt=""></span>
+      <div>
+        <p class="music-apply-track-name" id="musicApplyTrackName"></p>
+        <p class="music-apply-track-meta" id="musicApplyTrackMeta"></p>
+      </div>
+    </div>
+
+    <div class="mylib-filter-bar">
+      <div class="mylib-filter-left">
+        <span class="controls-segment-chip controls-segment-chip--selected" style="cursor:default;">Videos</span>
+        <div class="mylib-filter-row">
+          <div class="filter-select"><span class="filter-select__label">Status</span><img class="filter-select__caret" src="../../../components/ai-social-media/icons/caret-down-filled.svg" alt=""></div>
+          <div class="filter-select"><span class="filter-select__label">Created by</span><img class="filter-select__caret" src="../../../components/ai-social-media/icons/caret-down-filled.svg" alt=""></div>
+          <div class="filter-select"><span class="filter-select__label">Date range</span><img class="filter-select__caret" src="../../../components/ai-social-media/icons/caret-down-filled.svg" alt=""></div>
+          <span class="mylib-item-count" id="musicApplyCount"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mylib-content" id="musicApplyGrid"></div>
+
+    <div class="mylib-footer">
+      <button type="button" class="actions-btn actions-btn--secondary" onclick="clearMusicApplySelection()">Clear all</button>
+      <button type="button" class="actions-btn actions-btn--inactive" id="musicApplyBtn" disabled onclick="confirmMusicApply()">Apply</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const ICON = '../../../components/ai-social-media/icons/';
+
+/* ---------------- data (dummy — function-first draft) ---------------- */
+// Matches Figma's own category taxonomy for this row exactly (9585:184250, "filter-row") --
+// each voice's cats below were re-mapped from the old mood-based set (Warm/Energetic/...) to
+// these use-case categories based on what its desc already says the voice is good for.
+const VOICE_CATS = ['Social Media','Advertisement','Characters Animations','Conversational','Entertainment TV','Informative Educational','Narrative Story'];
+const BRANDS = ['Formee Express', 'SCEI'];
+const voices = [
+  { id:'v1', name:'Maya', desc:'Warm, conversational female voice — great for lifestyle and wellness content.', cats:['Conversational','Social Media'], langs:['English (US)','English (UK)','Korean'], mine:true, fav:false, defaultFor:['Formee Express'] },
+  { id:'v2', name:'Jordan', desc:'High-energy male voice with a confident edge — built for hype and promo reels.', cats:['Advertisement','Social Media'], langs:['English (US)'], mine:false, fav:false, defaultFor:[] },
+  { id:'v3', name:'Ava', desc:'Calm, soothing female narration — ideal for tutorials and explainer scripts.', cats:['Informative Educational'], langs:['English (US)','Spanish'], mine:true, fav:true, defaultFor:[] },
+  { id:'v4', name:'Elliot', desc:'Polished, professional male voice — a natural fit for corporate announcements.', cats:['Advertisement'], langs:['English (UK)','French','German'], mine:false, fav:false, defaultFor:[] },
+  { id:'v5', name:'Sora', desc:'Bright, youthful female voice with a playful lilt — great for Gen-Z social clips.', cats:['Social Media'], langs:['Korean','English (US)'], mine:false, fav:false, defaultFor:[] },
+  { id:'v6', name:'Marcus', desc:'Deep, resonant male voice — cinematic weight for trailers and brand films.', cats:['Entertainment TV','Advertisement'], langs:['English (US)'], mine:false, fav:false, defaultFor:[] },
+  { id:'v7', name:'Nina', desc:'Warm and reassuring — a steady narrator voice for long-form storytelling.', cats:['Narrative Story'], langs:['English (US)','Portuguese'], mine:false, fav:false, defaultFor:[] },
+  { id:'v8', name:'Theo', desc:'Crisp, professional delivery with quick pacing — suited to news-style reels.', cats:['Informative Educational','Social Media'], langs:['English (UK)'], mine:true, fav:false, defaultFor:['SCEI'] },
+  { id:'v9', name:'Luna', desc:'Bright and energetic — upbeat pacing that fits fast-cut product demos.', cats:['Advertisement'], langs:['English (US)','Japanese','Korean'], mine:false, fav:false, defaultFor:[] },
+  { id:'v10', name:'Owen', desc:'Deep, calm delivery with a documentary feel — great for voice-over narration.', cats:['Narrative Story'], langs:['English (US)'], mine:false, fav:false, defaultFor:[] },
+  // v11+ -- bulk sample set standing in for the real library's much larger (infinite-scroll)
+  // catalog; names/descriptions loosely modeled on a reference ElevenLabs Voice Library screen.
+  { id:'v11', name:'Viraj', desc:'Warm, energetic and lively — a friendly, upbeat voice designed to draw listeners in.', cats:['Social Media','Conversational'], langs:['Hindi'], mine:false, fav:false, defaultFor:[] },
+  { id:'v12', name:'Adam', desc:'American, dark and tough — a rugged hero\'s voice, weathered by years on the road.', cats:['Characters Animations','Entertainment TV'], langs:['English (US)'], mine:false, fav:false, defaultFor:[] },
+  { id:'v13', name:'William', desc:'Flamboyant, bold and sassy — larger-than-life delivery for character-driven content.', cats:['Characters Animations'], langs:['English (US)'], mine:false, fav:false, defaultFor:[] },
+  { id:'v14', name:'Bella', desc:'Professional, bright and warm — clear and engaging, ideal for educational explainers.', cats:['Informative Educational'], langs:['English (US)'], mine:false, fav:true, defaultFor:[] },
+  { id:'v15', name:'Roger', desc:'Laid-back, casual and resonant — easy-going pacing that suits relaxed conversational clips.', cats:['Conversational'], langs:['English (US)'], mine:false, fav:false, defaultFor:[] },
+  { id:'v16', name:'Sarah', desc:'Mature, reassuring and confident — a young adult woman with a confident, grounded tone.', cats:['Conversational','Advertisement'], langs:['English (US)'], mine:true, fav:false, defaultFor:[] },
+  { id:'v17', name:'Laura', desc:'Enthusiast with a quirky attitude — playful young adult female voice for social content.', cats:['Social Media'], langs:['English (US)'], mine:false, fav:false, defaultFor:[] },
+  { id:'v18', name:'Charlie', desc:'Deep, confident and energetic — a young Australian male with a warm, assured delivery.', cats:['Conversational'], langs:['English (Australian)'], mine:false, fav:false, defaultFor:[] },
+  { id:'v19', name:'George', desc:'Warm, captivating storyteller — resonant British narration that draws listeners in instantly.', cats:['Narrative Story'], langs:['English (UK)'], mine:false, fav:false, defaultFor:[] },
+  { id:'v20', name:'Callum', desc:'Husky trickster — deceptively gravelly, yet unsettling, great for mischievous characters.', cats:['Characters Animations'], langs:['English (US)'], mine:false, fav:false, defaultFor:[] },
+  { id:'v21', name:'River', desc:'Relaxed, neutral and informative — a versatile voice ready for narration and explainers.', cats:['Informative Educational','Narrative Story'], langs:['English (US)'], mine:false, fav:false, defaultFor:[] },
+  { id:'v22', name:'Harry', desc:'Fierce warrior — an animated, battle-ready voice for game and character content.', cats:['Characters Animations','Entertainment TV'], langs:['English (US)'], mine:false, fav:false, defaultFor:[] },
+  { id:'v23', name:'Liam', desc:'Energetic social media creator — a young adult voice full of energy and enthusiasm.', cats:['Social Media'], langs:['English (US)'], mine:false, fav:false, defaultFor:[] },
+  { id:'v24', name:'Alice', desc:'Clear, engaging educator — friendly woman\'s voice built for tutorials and explainers.', cats:['Informative Educational'], langs:['English (UK)'], mine:false, fav:false, defaultFor:[] },
+  { id:'v25', name:'Matilda', desc:'Knowledgeable and professional — a composed woman\'s voice with a pleasing, steady tone.', cats:['Informative Educational','Advertisement'], langs:['English (US)'], mine:false, fav:false, defaultFor:[] },
+  { id:'v26', name:'Will', desc:'Relaxed optimist — conversational and laid back, great for casual voiceovers.', cats:['Conversational'], langs:['English (US)'], mine:false, fav:false, defaultFor:[] },
+];
+
+const MUSIC_CATS = ['Funny','Uplifting','Hype','Energetic','Mellow','Calm','Dramatic'];
+const tracks = [
+  { id:'m1', title:'Funky Chunk', attribution:'Kevin MacLeod (incompetech.com)', duration:'03:59', mood:'Energetic', bpm:115, cats:['Energetic'], fav:false },
+  { id:'m2', title:'Slow Bloom', attribution:'Bensound.com', duration:'02:41', mood:'Calm', bpm:88, cats:['Calm'], fav:true },
+  { id:'m3', title:'Skyline Drift', attribution:'Artlist.io', duration:'03:12', mood:'Dramatic', bpm:96, cats:['Dramatic'], fav:false },
+  { id:'m4', title:'Quiet Boardroom', attribution:'Kevin MacLeod (incompetech.com)', duration:'02:58', mood:'Mellow', bpm:100, cats:['Mellow'], fav:false },
+  { id:'m5', title:'Soft Static', attribution:'Bensound.com', duration:'04:05', mood:'Calm', bpm:70, cats:['Calm'], fav:false },
+  { id:'m6', title:'Bounce House', attribution:'Kevin MacLeod (incompetech.com)', duration:'02:12', mood:'Funny', bpm:124, cats:['Funny'], fav:false },
+  { id:'m7', title:'Neon Rush', attribution:'Artlist.io', duration:'03:05', mood:'Hype', bpm:128, cats:['Hype'], fav:false },
+  { id:'m8', title:'Porch Light', attribution:'Bensound.com', duration:'02:20', mood:'Uplifting', bpm:92, cats:['Uplifting'], fav:false },
+];
+
+/* ---------------- nav switching ---------------- */
+function switchView(which){
+  document.getElementById('viewVoices').hidden = which !== 'voices';
+  document.getElementById('viewMusic').hidden = which !== 'music';
+  document.getElementById('navVoices').classList.toggle('active', which === 'voices');
+  document.getElementById('navMusic').classList.toggle('active', which === 'music');
+}
+
+/* ---------------- Voices ---------------- */
+let voiceTab = 'explore';
+let voiceCat = null;
+let voiceFavOnly = false;
+let addedVoices = new Set(voices.filter(v => v.mine).map(v => v.id));
+
+const VOICE_GENDER_OPTIONS = ['Male','Female','Neutral','Any'];
+// Now wired against v.gender (renderVoices() filters on it) -- voices created via Voice
+// Design carry a real gender from vdSaveVoice()'s tag step; the original seed voices below
+// have no .gender field, so they simply never match a gender filter until tagged.
+let voiceGenderFilter = null;
+let voiceGenderMenuOpen = false;
+
+const VOICE_LANGUAGES = [
+  {name:'Afrikaans', flag:'🇿🇦'}, {name:'Arabic', flag:'🇦🇪'}, {name:'Armenian', flag:'🇦🇲'},
+  {name:'Assamese', flag:'🇮🇳'}, {name:'Asturian', flag:'🇪🇸'}, {name:'Azerbaijani', flag:'🇦🇿'},
+  {name:'Belarusian', flag:'🇧🇾'}, {name:'Bengali', flag:'🇮🇳'}, {name:'Bosnian', flag:'🇧🇦'},
+  {name:'Bulgarian', flag:'🇧🇬'}, {name:'Catalan', flag:'🇪🇸'}, {name:'Chinese', flag:'🇨🇳'},
+  {name:'Croatian', flag:'🇭🇷'}, {name:'Czech', flag:'🇨🇿'}, {name:'Danish', flag:'🇩🇰'},
+  {name:'Dutch', flag:'🇳🇱'}, {name:'English', flag:'🇺🇸'}, {name:'Estonian', flag:'🇪🇪'},
+  {name:'Filipino', flag:'🇵🇭'}, {name:'Finnish', flag:'🇫🇮'}, {name:'French', flag:'🇫🇷'},
+  {name:'Galician', flag:'🇪🇸'}, {name:'Georgian', flag:'🇬🇪'}, {name:'German', flag:'🇩🇪'},
+  {name:'Greek', flag:'🇬🇷'}, {name:'Hebrew', flag:'🇮🇱'}, {name:'Hindi', flag:'🇮🇳'},
+  {name:'Hungarian', flag:'🇭🇺'}, {name:'Icelandic', flag:'🇮🇸'}, {name:'Indonesian', flag:'🇮🇩'},
+  {name:'Italian', flag:'🇮🇹'}, {name:'Japanese', flag:'🇯🇵'}, {name:'Kannada', flag:'🇮🇳'},
+  {name:'Korean', flag:'🇰🇷'}, {name:'Latvian', flag:'🇱🇻'}, {name:'Lithuanian', flag:'🇱🇹'},
+  {name:'Malay', flag:'🇲🇾'}, {name:'Malayalam', flag:'🇮🇳'}, {name:'Marathi', flag:'🇮🇳'},
+  {name:'Norwegian', flag:'🇳🇴'}, {name:'Polish', flag:'🇵🇱'}, {name:'Portuguese', flag:'🇵🇹'},
+  {name:'Romanian', flag:'🇷🇴'}, {name:'Russian', flag:'🇷🇺'}, {name:'Serbian', flag:'🇷🇸'},
+  {name:'Slovak', flag:'🇸🇰'}, {name:'Slovenian', flag:'🇸🇮'}, {name:'Spanish', flag:'🇪🇸'},
+  {name:'Swahili', flag:'🇰🇪'}, {name:'Swedish', flag:'🇸🇪'}, {name:'Tamil', flag:'🇮🇳'},
+  {name:'Telugu', flag:'🇮🇳'}, {name:'Thai', flag:'🇹🇭'}, {name:'Turkish', flag:'🇹🇷'},
+  {name:'Ukrainian', flag:'🇺🇦'}, {name:'Urdu', flag:'🇵🇰'}, {name:'Vietnamese', flag:'🇻🇳'},
+];
+let voiceLangFilter = new Set();
+let voiceLangMenuOpen = false;
+
+function closeVoiceFselectMenus(){
+  voiceGenderMenuOpen = false; voiceLangMenuOpen = false;
+  document.getElementById('voiceGenderMenu').hidden = true;
+  document.getElementById('voiceLangMenu').hidden = true;
+}
+function toggleVoiceGenderMenu(){
+  const opening = !voiceGenderMenuOpen;
+  closeVoiceFselectMenus();
+  voiceGenderMenuOpen = opening;
+  document.getElementById('voiceGenderMenu').hidden = !opening;
+  if (opening) renderVoiceGenderOptions();
+}
+function renderVoiceGenderOptions(){
+  document.getElementById('voiceGenderMenu').innerHTML = VOICE_GENDER_OPTIONS.map(opt =>
+    `<div class="vl-fselect-row${opt === voiceGenderFilter ? ' selected' : ''}" onclick="selectVoiceGender('${opt}')">${opt}</div>`
+  ).join('');
+}
+function selectVoiceGender(opt){
+  voiceGenderFilter = opt;
+  renderVoiceGenderTrigger();
+  closeVoiceFselectMenus();
+}
+function clearVoiceGenderFilter(){
+  voiceGenderFilter = null;
+  renderVoiceGenderTrigger();
+}
+function renderVoiceGenderTrigger(){
+  const trigger = document.getElementById('voiceGenderTrigger');
+  if (voiceGenderFilter){
+    trigger.className = 'vl-fselect vl-fselect--filled';
+    trigger.innerHTML = `<img class="vl-fselect-x" src="${ICON}close-x.svg" alt="" onclick="event.stopPropagation(); clearVoiceGenderFilter();"><span class="vl-fselect-label">Gender</span><span class="vl-fselect-divider"></span><span class="vl-fselect-value">${voiceGenderFilter}</span>`;
+  } else {
+    trigger.className = 'vl-fselect';
+    trigger.innerHTML = `<span class="vl-fselect-label">Gender</span><img class="vl-fselect-caret" src="${ICON}caret-down-filled.svg" alt="">`;
+  }
+}
+
+function toggleVoiceLangMenu(){
+  const opening = !voiceLangMenuOpen;
+  closeVoiceFselectMenus();
+  voiceLangMenuOpen = opening;
+  document.getElementById('voiceLangMenu').hidden = !opening;
+  if (opening){
+    document.getElementById('voiceLangSearchInput').value = '';
+    renderVoiceLangOptions();
+    document.getElementById('voiceLangSearchInput').focus();
+  }
+}
+function renderVoiceLangOptions(){
+  const q = (document.getElementById('voiceLangSearchInput').value || '').toLowerCase().trim();
+  const list = VOICE_LANGUAGES.filter(l => l.name.toLowerCase().includes(q));
+  document.getElementById('voiceLangList').innerHTML = list.length ? list.map(l => `
+    <label class="vl-fselect-row-lang">
+      <input type="checkbox" class="checkbox" ${voiceLangFilter.has(l.name) ? 'checked' : ''} onchange="toggleVoiceLangOption('${l.name}')">
+      <span class="vl-fselect-flag">${l.flag}</span><span>${l.name}</span>
+    </label>`).join('') : `<p class="vl-fselect-empty">No languages found</p>`;
+}
+function toggleVoiceLangOption(name){
+  if (voiceLangFilter.has(name)) voiceLangFilter.delete(name); else voiceLangFilter.add(name);
+  renderVoiceLangTrigger();
+  renderVoices();
+}
+function clearVoiceLangFilter(){
+  voiceLangFilter.clear();
+  renderVoiceLangTrigger();
+  renderVoices();
+}
+function renderVoiceLangTrigger(){
+  const trigger = document.getElementById('voiceLangTrigger');
+  const n = voiceLangFilter.size;
+  if (n > 0){
+    const first = Array.from(voiceLangFilter)[0];
+    const valueText = n === 1 ? first : `${first} +${n - 1}`;
+    trigger.className = 'vl-fselect vl-fselect--filled';
+    trigger.innerHTML = `<img class="vl-fselect-x" src="${ICON}close-x.svg" alt="" onclick="event.stopPropagation(); clearVoiceLangFilter();"><span class="vl-fselect-label">Language</span><span class="vl-fselect-divider"></span><span class="vl-fselect-value">${escHtml(valueText)}</span>`;
+  } else {
+    trigger.className = 'vl-fselect';
+    trigger.innerHTML = `<span class="vl-fselect-label">Any language</span><img class="vl-fselect-caret" src="${ICON}caret-down-filled.svg" alt="">`;
+  }
+}
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.vl-fselect-wrap') && (voiceGenderMenuOpen || voiceLangMenuOpen)) closeVoiceFselectMenus();
+});
+
+/* kebab-menu state: which card's "more" menu (and its "Default for" flyout) is open,
+   and which card is mid-rename. Tracked in JS (not just DOM hidden toggles) because
+   renderVoices() fully re-renders the grid on every interaction, same pattern the rest
+   of this file already uses for add/favorite toggles. */
+let openMenuFor = null;
+let brandPopFor = null;
+let renamingVoiceId = null;
+
+function escHtml(s){ return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
+
+function setVoiceTab(tab){
+  voiceTab = tab;
+  document.querySelectorAll('#voiceSegment .controls-segment-chip').forEach(btn => {
+    btn.classList.toggle('controls-segment-chip--selected', btn.dataset.tab === tab);
+  });
+  openMenuFor = null; brandPopFor = null; renamingVoiceId = null;
+  renderVoices();
+}
+
+function renderVoiceChips(){
+  const row = document.getElementById('voiceCatChips');
+  row.innerHTML = VOICE_CATS.map(cat =>
+    `<button type="button" class="vl-fchip${cat === voiceCat ? ' active' : ''}" onclick="setVoiceCat('${cat}')">${cat}</button>`
+  ).join('');
+}
+function setVoiceCat(cat){ voiceCat = (voiceCat === cat) ? null : cat; renderVoices(); }
+function toggleVoiceFavOnly(){
+  voiceFavOnly = !voiceFavOnly;
+  const chip = document.getElementById('voiceFavChip');
+  chip.classList.toggle('active', voiceFavOnly);
+  chip.querySelector('img').src = ICON + (voiceFavOnly ? 'controls/star-fill-selected.svg' : 'controls/star-fill-default.svg');
+  renderVoices();
+}
+
+function brandPopHTML(v){
+  const defaultFor = v.defaultFor || [];
+  return `<div class="vl-brandpop" onclick="event.stopPropagation()">
+    <p class="vl-brandpop-cap">Default for</p>
+    ${BRANDS.map(b => `
+      <div class="vl-brandpop-row" onclick="toggleDefaultBrand('${v.id}', '${b.replace(/'/g, "\\'")}')">
+        <span>${escHtml(b)}</span>
+        <span class="field-switch${defaultFor.includes(b) ? ' on' : ''}"><span class="knob"></span></span>
+      </div>`).join('')}
+  </div>`;
+}
+
+function voiceMenuHTML(v){
+  if (openMenuFor !== v.id) return '';
+  const popOpen = brandPopFor === v.id;
+  return `<div class="vl-kebab-menu" onclick="event.stopPropagation()">
+    <div class="vl-menu-row${popOpen ? ' active' : ''}" onclick="toggleBrandPop('${v.id}')">
+      <span>Set as default</span><img class="vl-menu-caret" src="${ICON}chevron-right.svg" alt="">
+    </div>
+    <div class="vl-menu-row" onclick="startRenameVoice('${v.id}')"><span>Rename</span></div>
+    <div class="vl-menu-row danger" onclick="confirmDeleteVoice('${v.id}')"><span>Delete</span></div>
+    ${popOpen ? brandPopHTML(v) : ''}
+  </div>`;
+}
+
+function renderVoices(){
+  renderVoiceChips();
+  const q = (document.getElementById('voiceSearch').value || '').toLowerCase().trim();
+  let list = voices.filter(v => voiceTab === 'explore' || addedVoices.has(v.id));
+  if (voiceCat) list = list.filter(v => v.cats.includes(voiceCat));
+  if (voiceFavOnly) list = list.filter(v => v.fav);
+  // wired now that voices created via Voice Design carry a real .gender (see vdSaveVoice) --
+  // older seed voices have no .gender yet, so they simply never match a gender filter.
+  if (voiceGenderFilter) list = list.filter(v => v.gender === voiceGenderFilter);
+  if (voiceLangFilter.size){
+    // startsWith so a plain filter name like "English" also matches langs data's regional
+    // variants ("English (US)", "English (UK)") already stored on each voice.
+    const selected = Array.from(voiceLangFilter).map(s => s.toLowerCase());
+    list = list.filter(v => v.langs.some(l => selected.some(sel => l.toLowerCase().startsWith(sel))));
+  }
+  if (q) list = list.filter(v => v.name.toLowerCase().includes(q) || v.desc.toLowerCase().includes(q));
+
+  document.getElementById('voiceCount').textContent = list.length + (list.length === 1 ? ' voice' : ' voices');
+  document.getElementById('voiceEmpty').hidden = list.length !== 0;
+
+  document.getElementById('voiceGrid').innerHTML = list.map(v => {
+    const langsShown = v.langs.slice(0, 3);
+    const more = v.langs.length - langsShown.length;
+    const added = addedVoices.has(v.id);
+    const defaultFor = v.defaultFor || [];
+    const nameEl = renamingVoiceId === v.id
+      ? `<input type="text" class="voice-card-name-input" id="voiceRenameInput" value="${escHtml(v.name)}" onclick="event.stopPropagation()" onkeydown="onVoiceRenameKey(event,'${v.id}')" onblur="commitVoiceRename('${v.id}', this.value)">`
+      : `<p class="voice-card-name">${escHtml(v.name)}</p>`;
+    return `
+    <div class="voice-card" data-id="${v.id}">
+      <span class="voice-section-sample-play" onclick="toggleVoicePlay(this)"><img src="${ICON}audio-row-play-triangle.svg" alt=""></span>
+      <div class="voice-card-info">
+        <div class="voice-card-name-row">
+          ${nameEl}
+          ${defaultFor.length ? `<span class="voice-card-badge"><span>${defaultFor.length === 1 ? 'Default' : 'Default · ' + defaultFor.length + ' brands'}</span></span>` : ''}
+        </div>
+        <p class="voice-card-desc">${escHtml(v.desc)}</p>
+        <div class="voice-card-tags">
+          ${langsShown.map(l => `<span class="voice-card-tag">${escHtml(l)}</span>`).join('')}
+          ${more > 0 ? `<span class="voice-card-tag-more">+${more} more</span>` : ''}
+        </div>
+      </div>
+      <div class="voice-card-actions">
+        <button type="button" class="voice-card-icon-btn fav${v.fav ? ' active' : ''}" onclick="toggleFavVoice('${v.id}')" aria-pressed="${v.fav}" aria-label="Favorite ${escHtml(v.name)}">
+          <img src="${ICON}shape-star${v.fav ? '-filled' : ''}.svg" alt="">
+        </button>
+        <button type="button" class="voice-add-btn${added ? ' added' : ''}" onclick="toggleAddVoice('${v.id}', this)">
+          ${added ? `<img src="${ICON}check.svg" alt="" onerror="this.style.display='none'">` : ''}
+          <span>${added ? 'Added' : '+ Add'}</span>
+        </button>
+        <button type="button" class="voice-card-icon-btn more${openMenuFor === v.id ? ' active' : ''}" onclick="toggleVoiceMenu('${v.id}')" aria-label="More actions for ${escHtml(v.name)}">
+          <img src="${ICON}ui-ellipsis.svg" alt="">
+        </button>
+        ${voiceMenuHTML(v)}
+      </div>
+    </div>`;
+  }).join('');
+
+  if (renamingVoiceId){
+    const inp = document.getElementById('voiceRenameInput');
+    if (inp){ inp.focus(); inp.select(); }
+  }
+}
+
+function toggleVoicePlay(el){
+  const playing = el.classList.toggle('playing');
+  el.querySelector('img').src = ICON + (playing ? 'audio-pause.svg' : 'audio-row-play-triangle.svg');
+  if (playing){
+    document.querySelectorAll('.voice-section-sample-play.playing').forEach(other => {
+      if (other !== el){ other.classList.remove('playing'); other.querySelector('img').src = ICON + 'audio-row-play-triangle.svg'; }
+    });
+  }
+}
+function toggleAddVoice(id, btn){
+  if (addedVoices.has(id)) addedVoices.delete(id); else addedVoices.add(id);
+  renderVoices();
+}
+function toggleFavVoice(id){
+  const v = voices.find(x => x.id === id);
+  if (v) v.fav = !v.fav;
+  renderVoices();
+}
+function toggleVoiceMenu(id){
+  openMenuFor = (openMenuFor === id) ? null : id;
+  brandPopFor = null;
+  renderVoices();
+}
+function toggleBrandPop(id){
+  brandPopFor = (brandPopFor === id) ? null : id;
+  renderVoices();
+}
+function toggleDefaultBrand(id, brand){
+  const v = voices.find(x => x.id === id);
+  if (!v) return;
+  v.defaultFor = v.defaultFor || [];
+  if (v.defaultFor.includes(brand)){
+    v.defaultFor = v.defaultFor.filter(b => b !== brand);
+  } else {
+    // only one voice can be the default for a given brand at a time
+    voices.forEach(o => { if (o.id !== id) o.defaultFor = (o.defaultFor || []).filter(b => b !== brand); });
+    v.defaultFor.push(brand);
+  }
+  renderVoices();
+}
+function startRenameVoice(id){
+  renamingVoiceId = id;
+  openMenuFor = null; brandPopFor = null;
+  renderVoices();
+}
+function commitVoiceRename(id, value){
+  if (renamingVoiceId !== id) return; // already committed via Enter/Escape before this blur fired
+  const v = voices.find(x => x.id === id);
+  const trimmed = (value || '').trim();
+  if (v && trimmed) v.name = trimmed;
+  renamingVoiceId = null;
+  renderVoices();
+}
+function onVoiceRenameKey(e, id){
+  if (e.key === 'Enter'){ e.preventDefault(); commitVoiceRename(id, e.target.value); }
+  if (e.key === 'Escape'){ e.preventDefault(); renamingVoiceId = null; renderVoices(); }
+}
+function confirmDeleteVoice(id){
+  const v = voices.find(x => x.id === id);
+  openMenuFor = null; brandPopFor = null;
+  if (!v) { renderVoices(); return; }
+  if (confirm(`Delete ${v.name}?`)){
+    voices.splice(voices.indexOf(v), 1);
+    addedVoices.delete(id);
+  }
+  renderVoices();
+}
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.voice-card-icon-btn.more') && !e.target.closest('.vl-kebab-menu')){
+    if (openMenuFor || brandPopFor){ openMenuFor = null; brandPopFor = null; renderVoices(); }
+  }
+});
+
+/* ---------------- Music ----------------
+   No more Explore/My Music split -- Music is one library, filtered by Favorites + genre,
+   same pattern as Voices' own Favorites chip. "Add to my library" is gone too: a track's
+   only action now is Favorite (browsing) and "Adapt in your project" (apply it as
+   background music on a piece of content), via the music-apply modal below. */
+let musicCat = null;
+let musicFavOnly = false;
+
+function renderMusicChips(){
+  const row = document.getElementById('musicChipRow');
+  row.innerHTML = `
+    <button type="button" class="vl-fchip vl-fchip-favorites${musicFavOnly ? ' active' : ''}" id="musicFavChip" onclick="toggleMusicFavOnly()">Favorites<img src="${ICON}controls/star-fill-${musicFavOnly ? 'selected' : 'default'}.svg" alt=""></button>
+    ${MUSIC_CATS.map(cat => `<button type="button" class="vl-fchip${cat === musicCat ? ' active' : ''}" onclick="setMusicCat('${cat}')">${cat}</button>`).join('')}
+  `;
+}
+function toggleMusicFavOnly(){ musicFavOnly = !musicFavOnly; renderMusic(); }
+function setMusicCat(cat){ musicCat = (musicCat === cat) ? null : cat; renderMusic(); }
+
+function renderMusic(){
+  renderMusicChips();
+  const q = (document.getElementById('musicSearch').value || '').toLowerCase().trim();
+  let list = tracks.slice();
+  if (musicCat) list = list.filter(t => t.cats.includes(musicCat));
+  if (musicFavOnly) list = list.filter(t => t.fav);
+  if (q) list = list.filter(t => t.title.toLowerCase().includes(q));
+
+  document.getElementById('musicCount').textContent = list.length + (list.length === 1 ? ' track' : ' tracks');
+  document.getElementById('musicEmpty').hidden = list.length !== 0;
+
+  document.getElementById('musicList').innerHTML = list.map(t => `
+    <div class="music-card" data-id="${t.id}">
+      <span class="voice-section-sample-play" onclick="toggleVoicePlay(this)"><img src="${ICON}audio-row-play-triangle.svg" alt=""></span>
+      <div class="music-card-info">
+        <p class="music-card-name">${escHtml(t.title)}</p>
+        <span class="music-card-attribution">${escHtml(t.attribution)}</span>
+      </div>
+      <div class="music-card-meta">
+        <span>${t.duration}</span><span>${t.mood}</span><span>BPM ${t.bpm}</span>
+      </div>
+      <div class="music-card-actions">
+        <button type="button" class="music-card-apply-btn" onclick="openMusicApplyModal('${t.id}')">
+          <img src="${ICON}content-reel.svg" alt="">
+          <span>Adapt in your project</span>
+        </button>
+        <button type="button" class="voice-card-icon-btn fav${t.fav ? ' active' : ''}" onclick="toggleFav('${t.id}')" aria-pressed="${t.fav}" aria-label="Favorite ${escHtml(t.title)}">
+          <img src="${ICON}shape-star${t.fav ? '-filled' : ''}.svg" alt="">
+        </button>
+      </div>
+    </div>`).join('');
+}
+function toggleFav(id){
+  const t = tracks.find(x => x.id === id);
+  t.fav = !t.fav;
+  renderMusic();
+}
+
+/* ---------------- Music → apply-to-content modal ----------------
+   Video-only for this first pass (per this feature's own scope) -- reuses the "My Library"
+   picker shell (.mylib-modal/.ref-scene-tile, Figma 9329:145797) built for the New Content
+   flow's reference-image picker, just pointed at video content and a single-track context
+   instead of multi-reference images. */
+const MUSIC_APPLY_VIDEOS = [
+  { id:'c1', title:'This New Lip Tint Is Everything', thumb:'../brand-characters/assets/imgLibLipTint.png', status:'Published', author:'Me', date:'Aug 26, 2026' },
+  { id:'c2', title:'Study in the UK — Applications Open', thumb:'../brand-characters/assets/imgLibStudyUK.png', status:'Scheduled', author:'Tabir', date:'Aug 24, 2026' },
+  { id:'c3', title:'January Intake — Apply Now', thumb:'../brand-characters/assets/imgLibJanIntake.png', status:'Draft', author:'Norimi', date:'Aug 21, 2026' },
+  { id:'c4', title:'Behind the Scenes: Studio Day', thumb:'../brand-characters/assets/imgLibLipTint.png', status:'Published', author:'Me', date:'Aug 18, 2026' },
+  { id:'c5', title:'Campus Tour Highlights', thumb:'../brand-characters/assets/imgLibStudyUK.png', status:'Scheduled', author:'Tabir', date:'Aug 14, 2026' },
+  { id:'c6', title:'Enrollment Countdown', thumb:'../brand-characters/assets/imgLibJanIntake.png', status:'Draft', author:'Me', date:'Aug 09, 2026' },
+];
+let musicApplyTrackId = null;
+let musicApplySelected = new Set();
+
+function openMusicApplyModal(trackId){
+  musicApplyTrackId = trackId;
+  musicApplySelected = new Set();
+  const t = tracks.find(x => x.id === trackId);
+  document.getElementById('musicApplyTrackName').textContent = t.title;
+  document.getElementById('musicApplyTrackMeta').textContent = `${t.duration} · ${t.mood} · BPM ${t.bpm}`;
+  renderMusicApplyGrid();
+  document.getElementById('musicApplyOverlay').hidden = false;
+}
+function closeMusicApplyModal(){
+  document.getElementById('musicApplyOverlay').hidden = true;
+  musicApplyTrackId = null;
+}
+function renderMusicApplyGrid(){
+  document.getElementById('musicApplyCount').textContent = MUSIC_APPLY_VIDEOS.length + ' videos';
+  document.getElementById('musicApplyGrid').innerHTML = MUSIC_APPLY_VIDEOS.map(v => {
+    const selected = musicApplySelected.has(v.id);
+    return `
+    <div class="ref-scene-tile${selected ? ' selected' : ''}" onclick="toggleMusicApplyItem('${v.id}')">
+      <img class="ref-scene-tile-thumb" src="${v.thumb}" alt="">
+      <div class="ref-scene-tile-preview">
+        <div class="ref-scene-tile-top-row">
+          <span class="ref-scene-tile-badge"><span class="ref-scene-tile-badge-icon"><span></span></span><span class="ref-scene-tile-badge-label">9:16</span></span>
+          <input type="checkbox" class="checkbox checkbox--lg" ${selected ? 'checked' : ''} onclick="event.stopPropagation(); toggleMusicApplyItem('${v.id}');" tabindex="-1">
+        </div>
+      </div>
+      <button type="button" class="scene-tile-play-btn" onclick="event.stopPropagation();"><img class="play" src="${ICON}video-play-glyph.svg" alt=""></button>
+      <p class="ref-scene-tile-title">${escHtml(v.title)}</p>
+    </div>`;
+  }).join('');
+  const btn = document.getElementById('musicApplyBtn');
+  const n = musicApplySelected.size;
+  btn.textContent = n > 0 ? `Apply to ${n} video${n === 1 ? '' : 's'}` : 'Apply';
+  btn.classList.toggle('actions-btn--inactive', n === 0);
+  btn.classList.toggle('actions-btn--primary', n > 0);
+  btn.disabled = n === 0;
+}
+function toggleMusicApplyItem(id){
+  if (musicApplySelected.has(id)) musicApplySelected.delete(id); else musicApplySelected.add(id);
+  renderMusicApplyGrid();
+}
+function clearMusicApplySelection(){ musicApplySelected = new Set(); renderMusicApplyGrid(); }
+function confirmMusicApply(){
+  if (!musicApplySelected.size) return;
+  const t = tracks.find(x => x.id === musicApplyTrackId);
+  const n = musicApplySelected.size;
+  closeMusicApplyModal();
+  alert(`${t.title} added as background music to ${n} video${n === 1 ? '' : 's'}.`);
+}
+
+renderVoices();
+renderMusic();
+
+/* ---------------- Create voice modal (New Voice button) ----------------
+   Flow: chooser (Voice Design / Instant Voice Clone / Voice Remixing) -> Voice Design
+   form, "Hype Reel" preset auto-selected on entry -> generating -> choose a voice
+   (3 generated takes, pick + name it) -> success. Presets bundle gender/age/language/
+   use case + a canned prompt (Figma 9619:193305's "Hype Reel" text is used verbatim);
+   manually changing any of the 4 fields instead recomposes the prompt from a template
+   and drops the active preset, per the brief ("설정값이 바뀌면 자동으로 프롬프트가 업데이트"). */
+const GENDER_OPTIONS = ['Male','Female','Neutral','Any'];
+const AGE_OPTIONS = ['Young','Middle-aged','Old','Any'];
+const LANGUAGE_OPTIONS = ['English (US)','English (UK)','English (Australian)','Korean','Japanese','Spanish','French','German','Portuguese'];
+// Matches Figma's own "Prompt template rule" use-case taxonomy (9619:194237) exactly -- the
+// preset prompts below are written against these 7 categories, so the dropdown has to offer
+// the same set or a preset's usecase wouldn't show as selected in it.
+const USECASE_OPTIONS = ['Social media','Conversational','Educational','Advertisement','Entertainment','Characters','Narration'];
+
+/* Prompt composition (Figma 9619:194237, "Prompt template rule"):
+     [Gender+Age] speaking [Language] with [tone keywords]. [additional description] — perfect for [use for].
+   vdSubjectPhrase() builds the "[Gender+Age]" clause from the live gender/age chips (shared by
+   both the generic path and every preset below), so THAT clause is the only thing a gender/age
+   chip change ever touches -- everything else in the sentence is untouched by construction,
+   not by trying to preserve old text after the fact. */
+const VD_GENDER_WORDS = {
+  Male:    { noun:'man',   subj:'he',   poss:'his' },
+  Female:  { noun:'woman', subj:'she',  poss:'her' },
+  Neutral: { noun:'voice', subj:'they', poss:'their' },
+  Any:     { noun:'voice', subj:'they', poss:'their' },
+};
+const VD_AGE_ADJ_WORD = { Young:'young', 'Middle-aged':'middle-aged', Old:'older', Any:'' };
+const VD_LANGUAGE_PHRASE = { 'English (US)':'American English', 'English (UK)':'British English', 'English (Australian)':'Australian English' };
+function vdLangPhrase(lang){ return VD_LANGUAGE_PHRASE[lang] || lang; }
+function vdArticleFor(word){ return /^[aeiou]/i.test(word) ? 'An' : 'A'; }
+function vdSubjectPhrase(gender, age, extraAdj){
+  const gw = VD_GENDER_WORDS[gender] || VD_GENDER_WORDS.Neutral;
+  const adj = [VD_AGE_ADJ_WORD[age], extraAdj].filter(Boolean).join(', ');
+  const article = vdArticleFor(adj || gw.noun);
+  return { phrase:`${article} ${adj ? adj + ' ' : ''}${gw.noun}`, subj:gw.subj, poss:gw.poss };
+}
+
+// Per-usecase tone/description/use-for table, straight from the same "Prompt template rule".
+// Backs the generic (no active preset) composition path.
+const VD_USECASE_TABLE = {
+  'Social media':   { tone:'fast, excited energy', detail:'frequent laughs and exclamations, addictive rapid-fire pacing', useFor:'short-form video hooks and intros' },
+  'Conversational': { tone:'warm, casual tone', detail:'natural pace, playful giggles here and there, genuinely relatable', useFor:'vlogs, reviews, casual chats' },
+  'Educational':    { tone:'calm, clear, patient tone', detail:'moderate pace, explains things step by step, reassuring delivery', useFor:'how-to videos, tutorials, explainer content' },
+  'Advertisement':  { tone:'confident, polished commercial energy', detail:'persuasive and upbeat, brisk pace', useFor:'product promos, ad reads, and calls to action' },
+  'Entertainment':  { tone:'deep, dramatic tone', detail:'builds anticipation, intense and suspenseful delivery', useFor:'teaser hooks, reveal moments, and trailers' },
+  'Characters':     { tone:'playful, exaggerated tone', detail:'sharp comedic timing, flips between deadpan and over-the-top, frequent laughs', useFor:'comedic skits, meme voiceovers, and character voices' },
+  'Narration':      { tone:'steady, measured tone', detail:'even pacing, warm but neutral delivery, no exaggerated emotion', useFor:'storytelling, documentary-style voiceover, and long-form narrative content' },
+};
+
+// Each preset's build() reproduces its Figma-authored copy (9619:194237) verbatim at the
+// preset's own default gender/age/language -- verified word-for-word against the fetched
+// design. gender/age/language are passed in live (not baked in) so editing those chips just
+// re-runs the SAME template with the new subject clause; only vdOnFieldChange()'s usecase
+// change drops the active preset, since usecase is what actually defines a preset's content.
+const VD_PRESET_ORDER = ['Hype Reel','Best Friend Confidant','Calm Educator','Confident Pitch','Dramatic Hook','Playful Skit'];
+const VD_PRESETS = {
+  'Hype Reel': { gender:'Female', age:'Young', language:'English (US)', usecase:'Social media',
+    build:(gender, age, lang) => { const s = vdSubjectPhrase(gender, age);
+      return `${s.phrase} in ${s.poss} early 20s speaking ${vdLangPhrase(lang)} with fast, excited energy — like ${s.subj}'s hyping up a viral trend. Frequent laughs and exclamations, addictive rapid-fire pacing. Perfect for short-form video hooks and intros.`; } },
+  'Best Friend Confidant': { gender:'Female', age:'Young', language:'English (US)', usecase:'Conversational',
+    build:(gender, age, lang) => { const s = vdSubjectPhrase(gender, age);
+      return `${s.phrase} in ${s.poss} late 20s speaking ${vdLangPhrase(lang)} with a warm, casual tone, like ${s.subj}'s candidly chatting with ${s.poss} best friend. Natural pace, playful giggles here and there, genuinely relatable and easy to listen to.`; } },
+  'Calm Educator': { gender:'Neutral', age:'Middle-aged', language:'English (Australian)', usecase:'Educational',
+    build:(gender, age, lang) => { const s = vdSubjectPhrase(gender, age);
+      return `${s.phrase} speaking ${vdLangPhrase(lang)}, calm and clear, explaining things step by step. Patient and reassuring tone, moderate pace — perfect for how-to videos or educational content that needs to feel trustworthy.`; } },
+  'Confident Pitch': { gender:'Male', age:'Middle-aged', language:'English (US)', usecase:'Advertisement',
+    build:(gender, age, lang) => { const s = vdSubjectPhrase(gender, age);
+      return `${s.phrase} speaking ${vdLangPhrase(lang)} with confident, polished commercial energy. Persuasive and upbeat, brisk pace — ideal for product promos, ad reads, and calls to action.`; } },
+  'Dramatic Hook': { gender:'Male', age:'Old', language:'English (UK)', usecase:'Entertainment',
+    build:(gender, age, lang) => { const s = vdSubjectPhrase(gender, age);
+      return `${s.phrase} speaking ${vdLangPhrase(lang)} with a deep, dramatic voice building anticipation in the first few seconds. Intense, suspenseful delivery — perfect for teaser hooks or reveal moments that need to stop the scroll.`; } },
+  'Playful Skit': { gender:'Neutral', age:'Young', language:'English (US)', usecase:'Characters',
+    build:(gender, age, lang) => { const s = vdSubjectPhrase(gender, age, 'playful');
+      return `${s.phrase} speaking ${vdLangPhrase(lang)} with exaggerated, sharp comedic timing, flipping between deadpan and over-the-top enthusiasm. Frequent laughs — perfect for comedic skits or meme voiceovers.`; } },
+};
+const VD_PREVIEW_TEXTS = [
+  "Okay wait, have you seen this? [laughs] I'm actually obsessed with it — like, genuinely can't stop thinking about it! Who even comes up with this stuff? [light chuckle] You seriously need to try this before everyone else finds out.",
+  "No but actually — stop what you're doing right now. [laughs] This is the thing everyone's going to be talking about next week, I promise you. [gasps] I found it first and I'm not even mad about it.",
+  "Wait wait wait, okay so this just happened and I need you to know immediately. [laughs] I've watched it like five times already and it just keeps getting better. You're going to lose it, I swear.",
+  "Okay hear me out for a second. [chuckles] This might be the best thing I've seen all month, and that's saying a lot. [laughs] Drop everything and watch this before it's everywhere."
+];
+
+const vd = {
+  gender:'Female', age:'Young', language:'English (US)', usecase:'Social media',
+  activePreset:'Hype Reel', previewIndex:0, previewOn:false, previewExpanded:false,
+  selectedVoiceIdx:0, playingVoiceIdx:-1, playTimer:null, step:'choose', voiceCount:3,
+  tagGender:null, tagLanguage:null, tagUsecase:null, tagMenuOpen:null, customTags:[], addingCustomTag:false,
+};
+
+function openCreateVoiceModal(){
+  document.getElementById('cvOverlay').hidden = false;
+  vdShowStep('choose');
+}
+function closeCreateVoiceModal(){
+  document.getElementById('cvOverlay').hidden = true;
+  vdStopPlayback();
+  vcStopAll();
+  renderVoices();
+}
+// Chooser (cvChooseModal) is shared by both the Voice Design and Instant Voice Clone flows,
+// so any step-show has to hide every modal first, not just the one flow's own design modal.
+function cvHideAllModals(){
+  document.getElementById('cvChooseModal').hidden = true;
+  document.getElementById('cvDesignModal').hidden = true;
+  document.getElementById('cvCloneModal').hidden = true;
+}
+function vdShowStep(step){
+  vd.step = step;
+  cvHideAllModals();
+  document.getElementById(step === 'choose' ? 'cvChooseModal' : 'cvDesignModal').hidden = false;
+  document.getElementById('vdFormStep').hidden = step !== 'form';
+  document.getElementById('vdGeneratingStep').hidden = step !== 'generating';
+  document.getElementById('vdPickStep').hidden = step !== 'pick';
+  document.getElementById('vdSuccessStep').hidden = step !== 'success';
+  document.getElementById('vdFooterForm').hidden = step !== 'form';
+  document.getElementById('vdFooterPick').hidden = step !== 'pick';
+  document.getElementById('vdFooterSuccess').hidden = step !== 'success';
+}
+function vdGoBack(){
+  if (vd.step === 'form'){ vdShowStep('choose'); return; }
+  if (vd.step === 'pick'){ vdStopPlayback(); vdShowStep('form'); return; }
+  if (vd.step === 'success'){ vdShowStep('pick'); return; }
+  vdShowStep('choose');
+}
+
+/* ---------------- Instant Voice Clone modal ----------------
+   Flow: main (Record/Upload segmented tab; one shared clip list sits below whichever "add"
+   affordance is active, since Figma's own uploaded-state screen shows recorded AND uploaded
+   clips mixed in the same list -- switching tabs only changes how you add the next clip, not
+   which clips already exist) -> details (combined-take preview + name/description + rights
+   consent, Create voice disabled until both are filled) -> success. Reuses the same fixed
+   600x700 .cvm-modal--design shell as the Voice Design flow above so Record/Upload never
+   resizes the dialog. Recording is faked with a setInterval timer (no real mic capture, same
+   "function-first draft" convention as the rest of this file's dummy data). */
+const vc = {
+  method:'record', recordState:'idle', clips:[], clipSeq:0, removeNoise:true, timerSec:0, timerHandle:null,
+  name:'', desc:'', consent:false, step:'main',
+};
+const VC_UPLOAD_SAMPLE_NAMES = ['interview_clip.mp4','voice_sample.wav','narration_take.mp3','studio_recording.mp4'];
+
+function vcFormatTime(sec){
+  const m = Math.floor(sec / 60), s = Math.floor(sec % 60);
+  return String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+}
+function vcStopAll(){
+  clearInterval(vc.timerHandle);
+  vc.timerHandle = null;
+}
+function vcResetState(){
+  vcStopAll();
+  vc.method = 'record'; vc.recordState = 'idle'; vc.clips = []; vc.removeNoise = true; vc.timerSec = 0;
+  vc.name = ''; vc.desc = ''; vc.consent = false;
+}
+
+function openVoiceCloneModal(){
+  vcResetState();
+  document.querySelectorAll('#vcMethodSegment .controls-segment-chip').forEach(btn => {
+    btn.classList.toggle('controls-segment-chip--selected', btn.dataset.method === 'record');
+  });
+  vcRenderMain();
+  vcShowStep('main');
+}
+function vcShowStep(step){
+  vc.step = step;
+  cvHideAllModals();
+  document.getElementById(step === 'choose' ? 'cvChooseModal' : 'cvCloneModal').hidden = false;
+  document.getElementById('vcMainStep').hidden = step !== 'main';
+  document.getElementById('vcDetailsStep').hidden = step !== 'details';
+  document.getElementById('vcSuccessStep').hidden = step !== 'success';
+  document.getElementById('vcFooterMain').hidden = step !== 'main';
+  document.getElementById('vcFooterDetails').hidden = step !== 'details';
+  document.getElementById('vcFooterSuccess').hidden = step !== 'success';
+  document.getElementById('vcBackBtn').style.visibility = (step === 'success') ? 'hidden' : 'visible';
+}
+function vcGoBack(){
+  vcStopAll();
+  if (vc.step === 'details'){ vc.recordState = 'idle'; vcRenderMain(); vcShowStep('main'); return; }
+  vcShowStep('choose');
+}
+
+/* ---- main step: Record/Upload + shared clip list ---- */
+function vcSetMethod(method){
+  vc.method = method;
+  document.querySelectorAll('#vcMethodSegment .controls-segment-chip').forEach(btn => {
+    btn.classList.toggle('controls-segment-chip--selected', btn.dataset.method === method);
+  });
+  vcRenderMethodArea();
+}
+function vcUpdateNextBtnState(){
+  const next = document.getElementById('vcNextBtn');
+  const valid = vc.clips.length > 0;
+  next.disabled = !valid;
+  next.classList.toggle('actions-btn--inactive', !valid);
+  next.classList.toggle('actions-btn--primary', valid);
+}
+function vcRenderMain(){
+  vcRenderMethodArea();
+  vcRenderClipList();
+  vcUpdateNextBtnState();
+}
+function vcRenderMethodArea(){
+  const area = document.getElementById('vcMethodArea');
+  if (vc.method === 'upload'){
+    area.innerHTML = `
+      <div class="upload-dropzone vc-dropzone-full" style="cursor:pointer;" onclick="vcSimulateUpload()">
+        <div class="upload-dropzone-title-row">
+          <img src="${ICON}upload-dropzone-arrow.svg" alt="">
+          <span class="upload-dropzone-title">Upload audio or video files</span>
+        </div>
+        <span class="upload-dropzone-sub">Drag and drop, or click to browse — audio or video, up to 10MB each</span>
+      </div>`;
+    return;
+  }
+  if (vc.recordState === 'idle'){
+    area.innerHTML = `
+      <button type="button" class="vc-action-row" onclick="vcStartRecording()">
+        <img src="${ICON}audio-mic.svg" alt="">
+        <span>Start Recording</span>
+      </button>
+      <p class="vc-hint">30+ seconds recommended (min 5s)</p>`;
+    return;
+  }
+  const paused = vc.recordState === 'paused';
+  area.innerHTML = `
+    <div class="vc-recording-panel">
+      <div class="vc-recording-row">
+        <div class="vc-recording-status">
+          <img src="${ICON}audio-record-dot.svg" alt="">
+          <span>${paused ? 'Paused' : 'Recording...'}</span>
+        </div>
+        <div class="vc-timer">
+          <span class="vc-timer-pill"><span>${vcFormatTime(vc.timerSec)}</span></span>
+          <span class="vc-timer-sep">/</span>
+          <span class="vc-timer-pill"><span>${vcFormatTime(30)}</span></span>
+        </div>
+      </div>
+      <div class="vc-recording-buttons">
+        <button type="button" class="vc-btn-secondary" onclick="${paused ? 'vcResumeRecording()' : 'vcPauseRecording()'}">
+          <img src="${ICON}${paused ? 'audio-resume-dot.svg' : 'audio-pause-bars-glyph.svg'}" alt="">
+          <span>${paused ? 'Resume' : 'Pause'}</span>
+        </button>
+        <button type="button" class="actions-btn actions-btn--primary" style="flex:1 0 0;" onclick="vcFinishRecording()">Finish</button>
+      </div>
+      <div class="vc-consent-row">
+        <input type="checkbox" class="checkbox" id="vcNoiseCheckbox" ${vc.removeNoise ? 'checked' : ''} onchange="vc.removeNoise = this.checked">
+        <span>Remove background noise from recordings</span>
+      </div>
+    </div>`;
+}
+function vcRenderClipList(){
+  document.getElementById('vcClipList').innerHTML = vc.clips.map(c => `
+    <div class="voice-section-sample">
+      <span class="voice-section-sample-play" onclick="toggleVoicePlay(this)"><img src="${ICON}audio-row-play-triangle.svg" alt=""></span>
+      <div class="vc-clip-text">
+        <span class="vc-clip-name">${escHtml(c.name)}</span>
+        <span class="vc-clip-duration">${vcFormatTime(c.sec)}</span>
+      </div>
+      <button type="button" class="vd-audio-row-delete" onclick="vcDeleteClip('${c.id}')"><img src="${ICON}edit-trash.svg" alt="Remove"></button>
+    </div>`).join('');
+}
+function vcDeleteClip(id){
+  vc.clips = vc.clips.filter(c => c.id !== id);
+  vcRenderMain();
+}
+function vcSimulateUpload(){
+  const name = VC_UPLOAD_SAMPLE_NAMES[vc.clips.length % VC_UPLOAD_SAMPLE_NAMES.length];
+  const sec = 20 + (vc.clips.length * 7) % 40;
+  vc.clips.push({ id:'clip' + (++vc.clipSeq), name, sec });
+  vcRenderMain();
+}
+
+/* ---- recording sub-state (Record tab only) ---- */
+function vcBeginTimer(){
+  clearInterval(vc.timerHandle);
+  vc.timerHandle = setInterval(() => {
+    vc.timerSec++;
+    if (vc.timerSec >= 30){ vcFinishRecording(); return; }
+    const el = document.querySelector('.vc-timer-pill span');
+    if (el) el.textContent = vcFormatTime(vc.timerSec);
+  }, 1000);
+}
+function vcStartRecording(){
+  vc.recordState = 'recording'; vc.timerSec = 0;
+  vcRenderMethodArea();
+  vcBeginTimer();
+}
+function vcPauseRecording(){
+  vc.recordState = 'paused';
+  clearInterval(vc.timerHandle); vc.timerHandle = null;
+  vcRenderMethodArea();
+}
+function vcResumeRecording(){
+  vc.recordState = 'recording';
+  vcRenderMethodArea();
+  vcBeginTimer();
+}
+function vcFinishRecording(){
+  clearInterval(vc.timerHandle); vc.timerHandle = null;
+  vc.clips.push({ id:'clip' + (++vc.clipSeq), name:`Recording ${vc.clipSeq}.mp4`, sec:Math.max(1, vc.timerSec) });
+  vc.recordState = 'idle'; vc.timerSec = 0;
+  vcRenderMain();
+}
+
+/* ---- details step (preview + name + description + consent) ---- */
+function vcGoToDetails(){
+  if (vc.clips.length === 0) return;
+  const totalSec = vc.clips.reduce((sum, c) => sum + c.sec, 0);
+  document.getElementById('vcPreviewDuration').textContent = vcFormatTime(totalSec);
+  document.getElementById('vcNameInput').value = vc.name;
+  document.getElementById('vcDescInput').value = vc.desc;
+  document.getElementById('vcConsentCheckbox').checked = vc.consent;
+  vcUpdateCreateBtnState();
+  vcShowStep('details');
+}
+function vcOnDetailsFieldChange(){
+  vc.name = document.getElementById('vcNameInput').value;
+  vc.desc = document.getElementById('vcDescInput').value;
+  vc.consent = document.getElementById('vcConsentCheckbox').checked;
+  vcUpdateCreateBtnState();
+}
+function vcUpdateCreateBtnState(){
+  const valid = vc.name.trim().length > 0 && vc.consent;
+  const btn = document.getElementById('vcCreateBtn');
+  btn.disabled = !valid;
+  btn.classList.toggle('actions-btn--inactive', !valid);
+  btn.classList.toggle('actions-btn--primary', valid);
+}
+function vcBackToMain(){
+  vcRenderMain();
+  vcShowStep('main');
+}
+function vcCreateVoice(){
+  if (document.getElementById('vcCreateBtn').disabled) return;
+  const name = vc.name.trim();
+  document.getElementById('vcSuccessName').textContent = name;
+  document.getElementById('vcSuccessSub').textContent = vc.desc.trim() || `${vc.clips.length} clip${vc.clips.length === 1 ? '' : 's'} combined`;
+  vcShowStep('success');
+}
+
+function openVoiceDesignForm(){
+  vdRenderChipRow('vdGenderRow', GENDER_OPTIONS, vd.gender, 'gender');
+  vdRenderChipRow('vdAgeRow', AGE_OPTIONS, vd.age, 'age');
+  vdRenderSelect('vdLanguage', LANGUAGE_OPTIONS, vd.language);
+  vdRenderSelect('vdUseCase', USECASE_OPTIONS, vd.usecase);
+  vdRenderPresetRow();
+  vdRecomposePrompt();
+  document.getElementById('vdPreviewSwitch').classList.toggle('on', vd.previewOn);
+  document.getElementById('vdPreviewText').value = VD_PREVIEW_TEXTS[vd.previewIndex];
+  vdSetPreviewExpanded(vd.previewExpanded);
+  vdShowStep('form');
+}
+
+function vdRenderChipRow(rowId, options, current, field){
+  document.getElementById(rowId).innerHTML = options.map(opt =>
+    `<button type="button" class="vd-chip${opt === current ? ' selected' : ''}" onclick="vdSelectChip('${field}','${opt}')">${opt}</button>`
+  ).join('');
+}
+// Gender/age chips never drop the active preset -- vdRecomposePrompt() just re-runs the SAME
+// preset's build() with the new value, so only the subject clause changes (see VD_PRESETS
+// above). Usecase is the one field that actually defines which preset applies (see
+// vdOnFieldChange below), so it's the only chip-adjacent change that clears activePreset.
+function vdSelectChip(field, value){
+  vd[field] = value;
+  vdRenderChipRow(field === 'gender' ? 'vdGenderRow' : 'vdAgeRow', field === 'gender' ? GENDER_OPTIONS : AGE_OPTIONS, value, field);
+  vdRecomposePrompt();
+}
+function vdRenderSelect(id, options, current){
+  document.getElementById(id).innerHTML = options.map(opt => `<option value="${opt}"${opt === current ? ' selected' : ''}>${opt}</option>`).join('');
+}
+function vdOnFieldChange(){
+  const newUsecase = document.getElementById('vdUseCase').value;
+  if (newUsecase !== vd.usecase) vd.activePreset = null; // usecase defines the preset's own content, so changing it leaves the preset
+  vd.language = document.getElementById('vdLanguage').value;
+  vd.usecase = newUsecase;
+  vdRenderPresetRow();
+  vdRecomposePrompt();
+}
+function vdRenderPresetRow(){
+  document.getElementById('vdPresetRow').innerHTML = VD_PRESET_ORDER.map(name =>
+    `<button type="button" class="vd-preset-chip${name === vd.activePreset ? ' selected' : ''}" onclick="vdSelectPreset('${name.replace(/'/g, "\\'")}')">${name}</button>`
+  ).join('');
+}
+// Pick step's recap of the same preset row -- plain spans, not buttons, since this is a
+// read-back of what was generated, not a live re-edit (changing it here would desync from
+// the previews already generated on the "pick" step).
+function vdRenderPresetRecapRow(){
+  document.getElementById('vdPresetRecapRow').innerHTML = VD_PRESET_ORDER.map(name =>
+    `<span class="vd-preset-chip${name === vd.activePreset ? ' selected' : ''}" style="cursor:default;">${name}</span>`
+  ).join('');
+}
+function vdSelectPreset(name){
+  const preset = VD_PRESETS[name];
+  if (!preset) return;
+  vd.activePreset = name;
+  vd.gender = preset.gender; vd.age = preset.age; vd.language = preset.language; vd.usecase = preset.usecase;
+  vdRenderChipRow('vdGenderRow', GENDER_OPTIONS, vd.gender, 'gender');
+  vdRenderChipRow('vdAgeRow', AGE_OPTIONS, vd.age, 'age');
+  vdRenderSelect('vdLanguage', LANGUAGE_OPTIONS, vd.language);
+  vdRenderSelect('vdUseCase', USECASE_OPTIONS, vd.usecase);
+  vdRenderPresetRow();
+  vdRecomposePrompt();
+}
+function vdRecomposePrompt(){
+  const preset = vd.activePreset && VD_PRESETS[vd.activePreset];
+  document.getElementById('vdPromptText').value = preset
+    ? preset.build(vd.gender, vd.age, vd.language)
+    : vdComposeGenericPrompt();
+}
+function vdComposeGenericPrompt(){
+  const s = vdSubjectPhrase(vd.gender, vd.age);
+  const u = VD_USECASE_TABLE[vd.usecase] || VD_USECASE_TABLE['Social media'];
+  const detail = u.detail.charAt(0).toUpperCase() + u.detail.slice(1);
+  return `${s.phrase} speaking ${vdLangPhrase(vd.language)} with ${u.tone}. ${detail} — perfect for ${u.useFor}.`;
+}
+
+function vdTogglePreviewSwitch(){
+  vd.previewOn = !vd.previewOn;
+  document.getElementById('vdPreviewSwitch').classList.toggle('on', vd.previewOn);
+  if (vd.previewOn) vdSetPreviewExpanded(true); // turning it on reveals the text right away
+}
+function vdSetPreviewExpanded(expanded){
+  vd.previewExpanded = expanded;
+  document.getElementById('vdPreviewBox').hidden = !expanded;
+  document.getElementById('vdPreviewCaretBtn').setAttribute('aria-expanded', String(expanded));
+  document.getElementById('vdPreviewCaret').src = ICON + (expanded ? 'chevron-up.svg' : 'chevron-down.svg');
+}
+function vdTogglePreviewCollapse(){
+  vdSetPreviewExpanded(!vd.previewExpanded);
+}
+function vdTryAnotherPreview(){
+  vd.previewIndex = (vd.previewIndex + 1) % VD_PREVIEW_TEXTS.length;
+  document.getElementById('vdPreviewText').value = VD_PREVIEW_TEXTS[vd.previewIndex];
+}
+
+function vdGenerateVoice(){
+  vdShowStep('generating');
+  setTimeout(() => {
+    const promptUsed = document.getElementById('vdPromptText').value;
+    document.getElementById('vdPromptRecap').textContent = promptUsed;
+    vdRenderPresetRecapRow();
+    vd.selectedVoiceIdx = 0;
+    vd.voiceCount = 3;
+    vdRenderVoiceList();
+    vdShowStep('pick');
+  }, 1100);
+}
+// "Generate" next to Choose a voice -- makes another batch of takes from the SAME prompt
+// (vdPromptRecap's text never changes), just appended after the existing ones so an
+// already-selected/playing take isn't disturbed.
+function vdGenerateMoreVoices(){
+  const btn = document.getElementById('vdGenerateMoreBtn');
+  btn.disabled = true;
+  setTimeout(() => {
+    vd.voiceCount += 3;
+    vdRenderVoiceList();
+    btn.disabled = false;
+  }, 900);
+}
+// Idle rows show just the total duration; only the actively-playing row switches to
+// "elapsed / total" (Figma 9767:264741 -- Voice 1 mid-playback reads "00:02 / 00:10",
+// Voice 2/3 idle just read "00:10").
+function vdVoiceIdleTimeHTML(){ return '00:10'; }
+function vdVoicePlayingTimeHTML(sec){ return '00:' + String(sec).padStart(2, '0') + '<span class="sep">&nbsp;/&nbsp;</span>00:10'; }
+function vdRenderVoiceList(){
+  document.getElementById('vdVoiceList').innerHTML = Array.from({length: vd.voiceCount}, (_, i) => i).map(i => `
+    <div class="voice-section-sample vd-selectable${i === vd.selectedVoiceIdx ? ' selected' : ''}" onclick="vdSelectVoice(${i})">
+      <span class="voice-section-sample-play" onclick="event.stopPropagation(); vdTogglePlayVoice(${i})"><img src="${ICON}audio-row-play-triangle.svg" alt=""></span>
+      <span class="voice-section-sample-name">Voice ${i + 1}</span>
+      <span class="voice-section-sample-time" id="vdVoiceTime${i}">${vdVoiceIdleTimeHTML()}</span>
+    </div>`).join('');
+}
+function vdSelectVoice(idx){
+  vd.selectedVoiceIdx = idx;
+  document.querySelectorAll('#vdVoiceList .voice-section-sample').forEach((el, i) => el.classList.toggle('selected', i === idx));
+}
+function vdTogglePlayVoice(idx){
+  vdSelectVoice(idx);
+  if (vd.playingVoiceIdx === idx){ vdStopPlayback(); return; }
+  vdStopPlayback();
+  vd.playingVoiceIdx = idx;
+  document.querySelectorAll('#vdVoiceList .voice-section-sample-play')[idx].querySelector('img').src = ICON + 'audio-pause.svg';
+  let sec = 0;
+  vd.playTimer = setInterval(() => {
+    sec++;
+    const timeEl = document.getElementById('vdVoiceTime' + idx);
+    if (timeEl) timeEl.innerHTML = vdVoicePlayingTimeHTML(sec);
+    if (sec >= 10) vdStopPlayback();
+  }, 1000);
+}
+function vdStopPlayback(){
+  if (vd.playTimer){ clearInterval(vd.playTimer); vd.playTimer = null; }
+  document.querySelectorAll('#vdVoiceList .voice-section-sample-play img').forEach(img => img.src = ICON + 'audio-row-play-triangle.svg');
+  if (vd.playingVoiceIdx >= 0){
+    const timeEl = document.getElementById('vdVoiceTime' + vd.playingVoiceIdx);
+    if (timeEl) timeEl.innerHTML = vdVoiceIdleTimeHTML();
+  }
+  vd.playingVoiceIdx = -1;
+}
+
+/* ---- name + categories step (was the "success" screen; Figma 9767:264741 dropped the
+   celebration entirely and made this just Name/Description). Categories redrawn per Figma
+   9733:1482's later revision: Language/Gender/Use case are one dropdown-chip row each
+   (reusing the toolbar's own .vl-fselect/.vl-fselect-menu, same trigger + menu pattern as
+   voiceGenderTrigger/voiceLangTrigger above -- only one state object, not shared DOM ids,
+   since these are a separate selection from the toolbar's own filters), defaulting to
+   whatever the form step already chose. Custom categories are this app's own addition (not
+   in Figma yet) -- a brand-new one still joins VOICE_CATS so it's a real filter chip in the
+   toolbar afterward, same as before. ---- */
+const VD_TAG_DIMS = [
+  { key:'gender', label:'Gender', options: GENDER_OPTIONS.filter(g => g !== 'Any') },
+  { key:'language', label:'Language', options: LANGUAGE_OPTIONS },
+  { key:'usecase', label:'Use case', options: USECASE_OPTIONS },
+];
+function vdGoToNaming(){
+  document.getElementById('vdNameInput').value = vd.activePreset || '';
+  document.getElementById('vdDescInput').value = '';
+  vd.tagGender = null;
+  vd.tagLanguage = null;
+  vd.tagUsecase = vd.usecase;
+  vd.tagMenuOpen = null;
+  vd.customTags = [];
+  vd.addingCustomTag = false;
+  vdRenderTagDropdowns();
+  vdRenderCustomTags();
+  vdStopPlayback();
+  vdShowStep('success');
+}
+function vdTagDimValue(key){ return key === 'gender' ? vd.tagGender : key === 'language' ? vd.tagLanguage : vd.tagUsecase; }
+function vdSetTagDimValue(key, value){
+  if (key === 'gender') vd.tagGender = value;
+  else if (key === 'language') vd.tagLanguage = value;
+  else vd.tagUsecase = value;
+}
+function vdRenderTagDropdowns(){
+  document.getElementById('vdTagDropdowns').innerHTML = VD_TAG_DIMS.map(dim => {
+    const value = vdTagDimValue(dim.key);
+    const menuOpen = vd.tagMenuOpen === dim.key;
+    const trigger = value
+      ? `<button type="button" class="vl-fselect vl-fselect--filled" onclick="event.stopPropagation(); vdToggleTagMenu('${dim.key}')">
+           <img class="vl-fselect-x" src="${ICON}close-x.svg" alt="" onclick="event.stopPropagation(); vdClearTagValue('${dim.key}');">
+           <span class="vl-fselect-label">${dim.label}</span><span class="vl-fselect-divider"></span><span class="vl-fselect-value">${escHtml(value)}</span>
+         </button>`
+      : `<button type="button" class="vl-fselect" onclick="event.stopPropagation(); vdToggleTagMenu('${dim.key}')">
+           <span class="vl-fselect-label">${dim.label}</span><img class="vl-fselect-caret" src="${ICON}caret-down-filled.svg" alt="">
+         </button>`;
+    const menu = menuOpen
+      ? `<div class="vl-fselect-menu" onclick="event.stopPropagation()">
+           ${dim.options.map(opt => `<div class="vl-fselect-row${opt === value ? ' selected' : ''}" onclick="vdSelectTagValue('${dim.key}','${opt.replace(/'/g, "\\'")}')">${escHtml(opt)}</div>`).join('')}
+         </div>`
+      : '';
+    return `<div class="vl-fselect-wrap">${trigger}${menu}</div>`;
+  }).join('');
+}
+function vdToggleTagMenu(key){
+  vd.tagMenuOpen = vd.tagMenuOpen === key ? null : key;
+  vdRenderTagDropdowns();
+}
+function vdSelectTagValue(key, value){
+  vdSetTagDimValue(key, value);
+  vd.tagMenuOpen = null;
+  vdRenderTagDropdowns();
+}
+function vdClearTagValue(key){
+  vdSetTagDimValue(key, null);
+  vd.tagMenuOpen = null;
+  vdRenderTagDropdowns();
+}
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('#vdTagDropdowns') && vd.tagMenuOpen){ vd.tagMenuOpen = null; vdRenderTagDropdowns(); }
+});
+
+function vdRenderCustomTags(){
+  const chips = vd.customTags.map(tag => `
+    <span class="vd-tag-custom-chip">${escHtml(tag)}<button type="button" onclick="vdRemoveCustomTag('${tag.replace(/'/g, "\\'")}')" aria-label="Remove ${escHtml(tag)}">&times;</button></span>
+  `).join('');
+  const addUi = vd.addingCustomTag
+    ? `<span class="vd-tag-add-input-wrap">
+         <input type="text" id="vdTagInput" placeholder="Category name" autofocus onkeydown="if(event.key==='Enter'){event.preventDefault();vdAddCustomTag();} if(event.key==='Escape'){vd.addingCustomTag=false;vdRenderCustomTags();}">
+         <button type="button" onclick="vdAddCustomTag()">Add</button>
+       </span>`
+    : `<button type="button" class="vd-tag-add-trigger" onclick="vd.addingCustomTag=true; vdRenderCustomTags(); document.getElementById('vdTagInput').focus();">+ Add category</button>`;
+  document.getElementById('vdCustomTagRow').innerHTML = chips + addUi;
+  if (vd.addingCustomTag) document.getElementById('vdTagInput').focus();
+}
+// Case-insensitive de-dupe against VOICE_CATS -- e.g. Use case's "Social media" should land
+// on the toolbar's existing "Social Media" chip, not create a near-duplicate. Returns the
+// EXISTING chip's casing if one matches, otherwise registers `raw` as a new chip verbatim.
+// Used both for the Use case value at save time and for typed-in custom categories, since
+// both feed the same VOICE_CATS-backed filter chip row.
+function vdEnsureCatTag(raw){
+  const existing = VOICE_CATS.find(c => c.toLowerCase() === raw.toLowerCase());
+  if (existing) return existing;
+  VOICE_CATS.push(raw);
+  return raw;
+}
+function vdAddCustomTag(){
+  const input = document.getElementById('vdTagInput');
+  const raw = (input.value || '').trim();
+  if (!raw){ vd.addingCustomTag = false; vdRenderCustomTags(); return; }
+  const tag = vdEnsureCatTag(raw);
+  if (!vd.customTags.some(t => t.toLowerCase() === tag.toLowerCase())) vd.customTags.push(tag);
+  vd.addingCustomTag = false;
+  vdRenderCustomTags();
+}
+function vdRemoveCustomTag(tag){
+  vd.customTags = vd.customTags.filter(t => t !== tag);
+  vdRenderCustomTags();
+}
+
+function vdSaveVoice(){
+  const name = (document.getElementById('vdNameInput').value || '').trim() || 'New voice';
+  const desc = (document.getElementById('vdDescInput').value || '').trim() || `${vd.gender} voice — ${(VD_USECASE_TABLE[vd.usecase] || {}).tone || ''}`;
+  const id = 'v_' + Date.now();
+  const gender = vd.tagGender || vd.gender;
+  const langs = vd.tagLanguage ? [vd.tagLanguage] : [vd.language];
+  // Use case ("Social media") and VOICE_CATS ("Social Media") are two vocabularies that
+  // happen to overlap in meaning but not casing -- normalize through the same lookup
+  // vdAddCustomTag uses so this doesn't silently mint a near-duplicate filter chip.
+  const cats = [vd.tagUsecase ? vdEnsureCatTag(vd.tagUsecase) : null, ...vd.customTags].filter(Boolean);
+  voices.unshift({ id, name, desc, gender, cats, langs, mine:true, fav:false, defaultFor:[] });
+  addedVoices.add(id);
+  closeCreateVoiceModal();
+  setVoiceTab('mine');
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && !document.getElementById('cvOverlay').hidden) closeCreateVoiceModal();
+});
+
+/* ---------------- fit-to-viewport (same technique as v4) ---------------- */
+function fitScreenToViewport(){
+  const FRAME_MARGIN = 40;
+  const scale = Math.min((window.innerWidth - FRAME_MARGIN * 2) / 1920, (window.innerHeight - FRAME_MARGIN * 2) / 1080);
+  const appEl = document.querySelector('.app');
+  appEl.style.transform = `scale(${scale})`;
+  document.body.style.width = (1920 * scale) + 'px';
+  document.body.style.height = (1080 * scale) + 'px';
+}
+window.addEventListener('resize', fitScreenToViewport);
+fitScreenToViewport();
+
+if (/(^|[#&])view=music(&|$)/.test(location.hash)) switchView('music');
+</script>
+</body>
+</html>
