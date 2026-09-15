@@ -39,6 +39,9 @@ html{display:flex; align-items:center; justify-content:center; min-height:100vh;
 body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
 .app{position:relative; width:1920px; height:1080px; flex-shrink:0; background:#fff; overflow:hidden; display:flex; border:1px solid var(--color-neutral-300); transform-origin:top left;}
 .main{flex:1; display:flex; flex-direction:column; min-width:0; position:relative; background:var(--color-neutral-50);}
+/* Topbar breadcrumb label (Figma "Nav / Stepper/Nav/Breadcrumb", Text/md SemiBold) --
+   a single static crumb, not a multi-step Stepper (this page has no steps). */
+.topbar-crumb{font-family:var(--font-family-text); font-size:var(--font-size-text-md); line-height:var(--line-height-text-md); font-weight:var(--font-weight-semibold); color:var(--color-neutral-900); white-space:nowrap;}
 .view{position:absolute; inset:56px 0 0 0; overflow-y:auto;}
 .view[hidden]{display:none;}
 /* Figma "Main Content" (9580:153592): outer gutter is 28px each side (Main Content
@@ -169,15 +172,18 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
    visual weight for nothing; this reverts to the original row anatomy (play button +
    name/desc/tags + right-aligned actions), just spread across 2 columns instead of 4. */
 .vl-grid{display:grid; grid-template-columns:repeat(2, 1fr); gap:var(--spacing-md);}
+/* Voice Library Card — Figma symbol 9684:9, reproduced exactly: play + text (flex) +
+   tags + actions all as siblings in ONE row (tags is its own column to the RIGHT of the
+   text block, not stacked underneath it), 3 uniform 36px bordered icon actions. */
 .voice-card{
   position:relative; display:flex; align-items:center; gap:var(--spacing-md); box-sizing:border-box;
   padding:var(--spacing-md) var(--spacing-lg); background:var(--color-neutral-0);
-  border:1px solid var(--color-neutral-300); border-radius:var(--radius-lg);
+  border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg);
   transition:border-color .15s ease, box-shadow .15s ease;
 }
-.voice-card:hover{border-color:var(--color-neutral-400); box-shadow:var(--shadow-cell-action);}
+.voice-card:hover{border-color:var(--color-neutral-450); box-shadow:var(--shadow-cell-action);}
 
-.voice-card-info{flex:1 1 0; min-width:0;}
+.voice-card-info{flex:1 1 0; min-width:0; display:flex; flex-direction:column; gap:2px;}
 .voice-card-name-row{display:flex; align-items:center; gap:var(--spacing-sm);}
 .voice-card-name{flex:0 1 auto; min-width:0; font-family:var(--font-family-text); font-size:14px; font-weight:600; line-height:22px; color:var(--color-neutral-900); margin:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
 .voice-card-name-input{
@@ -188,34 +194,32 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
 .voice-card-badge{flex-shrink:0; display:inline-flex; align-items:center; padding:2px 8px; border-radius:var(--radius-lg); background:var(--color-badge-green-bg);}
 .voice-card-badge span{font-family:var(--font-family-text); font-size:11px; font-weight:600; line-height:14px; color:var(--color-badge-green-text); white-space:nowrap;}
 .voice-card-desc{
-  font-family:var(--font-family-text); font-size:12px; font-weight:400; line-height:18px; color:var(--color-neutral-500); margin:1px 0 0;
+  font-family:var(--font-family-text); font-size:12px; font-weight:400; line-height:18px; color:var(--color-neutral-500); margin:0;
   overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
 }
-.voice-card-tags{display:flex; align-items:center; flex-wrap:wrap; gap:6px; margin-top:6px;}
+/* sibling of .voice-card-info (not nested inside it) -- Figma's "tags" frame sits to the
+   right of the text block, in its own column, not stacked under the description. */
+.voice-card-tags{display:flex; align-items:center; gap:6px; flex-shrink:0;}
 .voice-card-tag{
   padding:3px 10px; border-radius:999px; background:var(--color-neutral-100);
   font-family:var(--font-family-text); font-size:11px; font-weight:500; color:var(--color-neutral-700); white-space:nowrap;
 }
-.voice-card-tag-more{font-family:var(--font-family-text); font-size:11px; font-weight:500; color:var(--color-neutral-500);}
+.voice-card-tag-more{font-family:var(--font-family-text); font-size:11px; font-weight:500; color:var(--color-neutral-500); white-space:nowrap;}
 
 .voice-card-actions{display:flex; align-items:center; gap:var(--spacing-sm); flex-shrink:0;}
-.voice-add-btn{
-  display:inline-flex; align-items:center; gap:6px; height:32px; padding:0 14px; box-sizing:border-box;
-  border:1px solid var(--color-neutral-400); border-radius:999px; background:var(--color-neutral-0); cursor:pointer;
-  font-family:var(--font-family-text); font-size:12.5px; font-weight:600; color:var(--color-neutral-700); white-space:nowrap;
-}
-.voice-add-btn:hover{background:var(--color-neutral-75);}
-.voice-add-btn.added{background:var(--color-neutral-900); border-color:var(--color-neutral-900); color:var(--color-neutral-0);}
-/* plain icon buttons (favorite / more) -- no border/shadow chrome, matches the compact
-   row's lighter-weight feel; hover-only background is enough affordance at this size */
+/* Actions / Icon Button, Actions / Favorite Button, Actions / More Button -- all three the
+   same 36px bordered white square (Figma reuses one shell for all three, only the glyph
+   and the fav-active fill differ). */
 .voice-card-icon-btn{
-  width:32px; height:32px; flex-shrink:0; box-sizing:border-box; padding:0; cursor:pointer;
-  border:none; background:none; border-radius:var(--radius-md);
+  width:36px; height:36px; flex-shrink:0; box-sizing:border-box; padding:0; cursor:pointer;
+  border:1px solid var(--color-neutral-400); background:var(--color-neutral-0); border-radius:var(--radius-lg);
   display:flex; align-items:center; justify-content:center; position:relative;
 }
-.voice-card-icon-btn:hover{background:var(--color-neutral-100);}
+.voice-card-icon-btn:hover{background:var(--color-neutral-50);}
 .voice-card-icon-btn img{width:16px; height:16px; display:block;}
 .voice-card-icon-btn.more.active{background:var(--color-neutral-100);}
+.voice-card-icon-btn.add.added{background:var(--color-neutral-900); border-color:var(--color-neutral-900);}
+.voice-card-icon-btn.add.added img{filter:brightness(0) invert(1);}
 
 /* kebab dropdown -- functional parity with character-card's roster menu (Set as default
    [multi-brand submenu] / Rename / Delete), adapted to this file's own token-only CSS
@@ -247,37 +251,32 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
 .vl-brandpop-row span:first-child{font-family:var(--font-family-text); font-size:13px; font-weight:500; color:var(--color-neutral-900);}
 
 /* ---------- Music card grid ----------
-   Same compact audio-row anatomy as .voice-card (play + info + right-aligned actions),
-   spread across the same 2-column .vl-grid. No add/remove toggle here -- Music has no
-   "My Music" bucket anymore, just Favorite + the "Adapt in your project" action below. */
+   Figma "audio" component, 9750:258156/9750:258157 ("type=default, state=normal"),
+   reproduced exactly: 32px play button (2px bigger than Voice Library Card's 30px one --
+   a real, deliberate difference between the two components, not a rounding slip), title +
+   attribution side by side (not stacked), a fixed 180px duration/mood/bpm block with each
+   value right-aligned in its own third, and 2 plain 36px bordered icon actions (apply-to-
+   content + Favorite -- no third/More action here, unlike the Voice Library Card). */
 .music-card{
-  position:relative; display:flex; align-items:center; gap:var(--spacing-md); box-sizing:border-box;
-  padding:var(--spacing-md) var(--spacing-lg); background:var(--color-neutral-0);
-  border:1px solid var(--color-neutral-300); border-radius:var(--radius-lg);
+  position:relative; display:flex; align-items:center; gap:var(--spacing-lg); box-sizing:border-box;
+  padding:13px; background:var(--color-neutral-0);
+  border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg);
   transition:border-color .15s ease, box-shadow .15s ease;
 }
-.music-card:hover{border-color:var(--color-neutral-400); box-shadow:var(--shadow-cell-action);}
-.music-card-info{flex:1 1 0; min-width:0; display:flex; align-items:baseline; gap:var(--spacing-sm); overflow:hidden;}
+.music-card:hover{border-color:var(--color-neutral-450); box-shadow:var(--shadow-cell-action);}
+.music-card .voice-section-sample-play{width:32px; height:32px;}
+.music-card-info{flex:1 1 0; min-width:0; display:flex; align-items:center; gap:var(--spacing-md); overflow:hidden;}
 .music-card-name{
-  margin:0; flex:0 1 auto; min-width:0; font-family:var(--font-family-text); font-size:14px; font-weight:600; line-height:22px; color:var(--color-neutral-900);
+  margin:0; flex:0 1 auto; min-width:0; font-family:var(--font-family-text); font-size:13px; font-weight:500; line-height:20px; color:var(--color-neutral-700);
   overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
 }
 .music-card-attribution{
-  flex:0 1 auto; min-width:0; font-family:var(--font-family-text); font-size:12px; font-weight:400; line-height:18px; color:var(--color-neutral-500);
+  flex:0 1 auto; min-width:0; font-family:var(--font-family-text); font-size:12px; font-weight:500; line-height:18px; color:var(--color-neutral-500);
   overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
 }
-.music-card-meta{display:flex; align-items:center; gap:var(--spacing-lg); flex-shrink:0;}
-.music-card-meta span{font-family:var(--font-family-text); font-size:12px; font-weight:500; color:var(--color-neutral-500); white-space:nowrap;}
+.music-card-meta{display:flex; align-items:center; width:180px; flex-shrink:0;}
+.music-card-meta span{flex:1 0 0; text-align:right; font-family:var(--font-family-text); font-size:12px; font-weight:500; color:var(--color-neutral-500); white-space:nowrap;}
 .music-card-actions{display:flex; align-items:center; gap:var(--spacing-sm); flex-shrink:0;}
-/* mirrors .voice-add-btn's pill weight -- this replaces that button's role now that tracks
-   don't get "added" to a library, they get applied straight onto a piece of content */
-.music-card-apply-btn{
-  display:inline-flex; align-items:center; gap:6px; height:32px; padding:0 14px; box-sizing:border-box;
-  border:1px solid var(--color-neutral-400); border-radius:999px; background:var(--color-neutral-0); cursor:pointer;
-  font-family:var(--font-family-text); font-size:12.5px; font-weight:600; color:var(--color-neutral-700); white-space:nowrap;
-}
-.music-card-apply-btn:hover{background:var(--color-neutral-75);}
-.music-card-apply-btn img{width:16px; height:16px; flex-shrink:0;}
 
 .vl-empty{padding:var(--spacing-4xl) 0; text-align:center; font-family:var(--font-family-text); font-size:13px; color:var(--color-neutral-500);}
 
@@ -343,11 +342,19 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
   </div>
 
   <div class="main">
-    <!-- TOPBAR — components/ai-social-media/topbar-stepper.css (no stepper here, plain library topbar) -->
+    <!-- TOPBAR — components/ai-social-media/topbar-stepper.css shell + Controls / Search Field
+         (components/ai-social-media/controls-search-field.css), matching Figma's "Nav / App
+         TopBar" exactly (9732:256713 Voices / 9732:256845 Music): a single breadcrumb-style
+         label on the left (Text/md SemiBold, neutral-900 — not a full Stepper, this page has
+         no steps) + a real 240px expanded search field, not just an icon button. -->
     <div class="topbar">
+      <div class="topbar-crumb" id="topbarCrumb">Voice Library</div>
       <div class="topbar-spacer"></div>
+      <div class="search-field search-field--expanded" style="width:240px;">
+        <img src="../../../components/ai-social-media/icons/ui-search.svg" alt="">
+        <input class="search-field__input" type="text" placeholder="Search">
+      </div>
       <div class="topbar-actions">
-        <button class="topbar-icon-btn" type="button"><img src="../../../components/ai-social-media/icons/ui-search.svg" alt="Search" style="width:18px;height:18px;"></button>
         <button class="topbar-icon-btn" type="button"><img src="../../../components/ai-social-media/icons/nav-bell.svg" alt="Notifications" style="width:18px;height:18px;"><span class="dot"></span></button>
         <div class="topbar-avatar">YK</div>
       </div>
@@ -821,6 +828,7 @@ function switchView(which){
   document.getElementById('viewMusic').hidden = which !== 'music';
   document.getElementById('navVoices').classList.toggle('active', which === 'voices');
   document.getElementById('navMusic').classList.toggle('active', which === 'music');
+  document.getElementById('topbarCrumb').textContent = which === 'music' ? 'Music' : 'Voice Library';
 }
 
 /* ---------------- Voices ---------------- */
@@ -1040,18 +1048,17 @@ function renderVoices(){
           ${defaultFor.length ? `<span class="voice-card-badge"><span>${defaultFor.length === 1 ? 'Default' : 'Default · ' + defaultFor.length + ' brands'}</span></span>` : ''}
         </div>
         <p class="voice-card-desc">${escHtml(v.desc)}</p>
-        <div class="voice-card-tags">
-          ${langsShown.map(l => `<span class="voice-card-tag">${escHtml(l)}</span>`).join('')}
-          ${more > 0 ? `<span class="voice-card-tag-more">+${more} more</span>` : ''}
-        </div>
+      </div>
+      <div class="voice-card-tags">
+        ${langsShown.map(l => `<span class="voice-card-tag">${escHtml(l)}</span>`).join('')}
+        ${more > 0 ? `<span class="voice-card-tag-more">+${more} more</span>` : ''}
       </div>
       <div class="voice-card-actions">
+        <button type="button" class="voice-card-icon-btn add${added ? ' added' : ''}" onclick="toggleAddVoice('${v.id}', this)" aria-pressed="${added}" aria-label="${added ? 'Remove' : 'Add'} ${escHtml(v.name)}">
+          <img src="${ICON}${added ? 'check' : 'pagebar-plus'}.svg" alt="">
+        </button>
         <button type="button" class="voice-card-icon-btn fav${v.fav ? ' active' : ''}" onclick="toggleFavVoice('${v.id}')" aria-pressed="${v.fav}" aria-label="Favorite ${escHtml(v.name)}">
           <img src="${ICON}shape-star${v.fav ? '-filled' : ''}.svg" alt="">
-        </button>
-        <button type="button" class="voice-add-btn${added ? ' added' : ''}" onclick="toggleAddVoice('${v.id}', this)">
-          ${added ? `<img src="${ICON}check.svg" alt="" onerror="this.style.display='none'">` : ''}
-          <span>${added ? 'Added' : '+ Add'}</span>
         </button>
         <button type="button" class="voice-card-icon-btn more${openMenuFor === v.id ? ' active' : ''}" onclick="toggleVoiceMenu('${v.id}')" aria-label="More actions for ${escHtml(v.name)}">
           <img src="${ICON}ui-ellipsis.svg" alt="">
@@ -1180,9 +1187,8 @@ function renderMusic(){
         <span>${t.duration}</span><span>${t.mood}</span><span>BPM ${t.bpm}</span>
       </div>
       <div class="music-card-actions">
-        <button type="button" class="music-card-apply-btn" onclick="openMusicApplyModal('${t.id}')">
+        <button type="button" class="voice-card-icon-btn" onclick="openMusicApplyModal('${t.id}')" aria-label="Adapt ${escHtml(t.title)} in your project">
           <img src="${ICON}content-reel.svg" alt="">
-          <span>Adapt in your project</span>
         </button>
         <button type="button" class="voice-card-icon-btn fav${t.fav ? ' active' : ''}" onclick="toggleFav('${t.id}')" aria-pressed="${t.fav}" aria-label="Favorite ${escHtml(t.title)}">
           <img src="${ICON}shape-star${t.fav ? '-filled' : ''}.svg" alt="">
