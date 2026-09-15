@@ -1547,17 +1547,17 @@
       </div>
       <div class="nav-group">
         <div class="nav-label">Content</div>
-        <div class="nav-item"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-library.svg" alt=""></span><span class="label">Library</span></div>
-        <div class="nav-item"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-schedule.svg" alt=""></span><span class="label">Schedule</span></div>
+        <div class="nav-item" onclick="window.location.href='../../brand-characters/brand-setup-kit-character-library.html#view=library'" style="cursor:pointer;"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-library.svg" alt=""></span><span class="label">Library</span></div>
+        <div class="nav-item" onclick="window.location.href='../../schedule/schedule.html'" style="cursor:pointer;"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-schedule.svg" alt=""></span><span class="label">Schedule</span></div>
         <div class="nav-item"><span class="ic"><img src="../../../../components/ai-social-media/icons/data-trending-up.svg" alt=""></span><span class="label">Trends</span></div>
         <div class="nav-item"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-analytics.svg" alt=""></span><span class="label">Analytics</span></div>
       </div>
       <div class="nav-group">
         <div class="nav-label">Asset</div>
         <div class="nav-item" id="navBrandSetup" onclick="goToBrandSetupPage()" style="cursor:pointer;"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-workspace-03.svg" alt=""></span><span class="label">Brand Setup</span></div>
-        <div class="nav-item"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-characters.svg" alt=""></span><span class="label">Characters</span></div>
-        <div class="nav-item"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-voices.svg" alt=""></span><span class="label">Voices</span></div>
-        <div class="nav-item"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-audio.svg" alt=""></span><span class="label">Audio Library</span></div>
+        <div class="nav-item" onclick="window.location.href='../../brand-characters/brand-setup-kit-character-library.html'" style="cursor:pointer;"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-characters.svg" alt=""></span><span class="label">Characters</span></div>
+        <div class="nav-item" onclick="window.location.href='../../voice-library/voice-library.html'" style="cursor:pointer;"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-voices.svg" alt=""></span><span class="label">Voices</span></div>
+        <div class="nav-item" onclick="window.location.href='../../voice-library/voice-library.html#view=music'" style="cursor:pointer;"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-audio.svg" alt=""></span><span class="label">Music</span></div>
       </div>
     </div>
   </div>
@@ -3242,7 +3242,7 @@ function disableChatActionPair(action){
 // per-content-type imgGoToBrandSetup()/carGoToBrandSetup()/reelGoToBrandSetup() CTAs shown
 // inside the "Use brand kit" toggle's empty state, but all four now point at the same place.
 function goToBrandSetupPage(){
-  window.location.href = '../../brand-characters/brand-setup-kit-character-library.html#view=brandsetup&brand=formee-express';
+  window.location.href = '../../brand-characters/brand-setup-kit-v2.html#view=brandsetup&brand=formee-express';
 }
 
 // Shared "More" popover for an attached .ref-chip (Figma 8708:207411's Actions/More Button
@@ -3959,7 +3959,7 @@ function toggleBrandKit(){
   updateVisualConceptPrompt();
 }
 function imgGoToBrandSetup(){
-  window.location.href = '../../brand-characters/brand-setup-kit-character-library.html#view=brandsetup&brand=formee-express';
+  window.location.href = '../../brand-characters/brand-setup-kit-v2.html#view=brandsetup&brand=formee-express';
 }
 
 // ---- Visual concept prompt template ----
@@ -4727,7 +4727,7 @@ function carApplyBrandMode(mode){
   updateGlobalBrandKitUI();
 }
 function carGoToBrandSetup(){
-  window.location.href = '../../brand-characters/brand-setup-kit-character-library.html#view=brandsetup&brand=formee-express';
+  window.location.href = '../../brand-characters/brand-setup-kit-v2.html#view=brandsetup&brand=formee-express';
 }
 
 // ---- Chat ----
@@ -5360,7 +5360,7 @@ function updateReelBrandKitUI(){
   empty.style.display = on ? 'none' : 'flex';
 }
 function reelGoToBrandSetup(){
-  window.location.href = '../../brand-characters/brand-setup-kit-character-library.html#view=brandsetup&brand=formee-express';
+  window.location.href = '../../brand-characters/brand-setup-kit-v2.html#view=brandsetup&brand=formee-express';
 }
 
 // ---- Image generation (manual "Generate images" click — mirrors the video flow's "Generate thumbnails") ----
