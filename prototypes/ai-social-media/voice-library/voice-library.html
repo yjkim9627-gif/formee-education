@@ -61,14 +61,13 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
    as e.g. voice-section.css's radius/11 comment. Vertical rhythm below is real tokens:
    header->Container 20px (spacing-xl), Container->sticky bar 20px (spacing-xl), sticky
    bar->grid 0 (no gap in Figma -- scroll content starts flush under the sticky bar). */
-/* Figma "page-pad" (9690:239): 1658 wide x 1024 tall, padding 28px on all four sides
-   (not just top/left/right) -- confirmed against the frame's own metadata (first child
-   "header" sits at x=28,y=28; content column is 1602 = 1658 - 28*2). page-pad IS the
-   full 1658-wide frame with 28px padding baked in -- it is not a narrower 1602 box
-   centered inside a wider one, so this must not carry its own centering margin (a
-   max-width + margin:0 auto here silently doubled the left/right inset to 56px, since
-   .main is already exactly 1658 wide and the auto-margin had 56px of slack to split). */
-.page-pad{width:100%; padding:28px; box-sizing:border-box;}
+/* Figma "page-pad" (9690:239) redesign: content column narrowed from edge-to-edge
+   1602px to a centered 960px column -- 28px top/bottom (unchanged), 349px left/right
+   ((1658-960)/2 = 349, confirmed against both the Voices and Music page-pad frames).
+   page-pad IS the full 1658-wide frame with this padding baked in -- it is not a
+   narrower 960 box centered inside a wider one via margin, so this must not carry its
+   own centering margin (see the doubled-inset bug this file had before). */
+.page-pad{width:100%; padding:28px 349px; box-sizing:border-box;}
 
 /* ---------- header (9585:182743) ---------- */
 .vl-page-header{display:flex; align-items:center; justify-content:space-between; gap:var(--spacing-lg);}
@@ -185,16 +184,23 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
 .vl-count{font-family:var(--font-family-text); font-size:12px; font-weight:500; color:var(--color-neutral-500); white-space:nowrap; flex-shrink:0;}
 
 /* ---------- Voice card grid ----------
-   Plain compact row, 2 columns -- NOT a thumb/portrait card. Voices carry no artwork, so
-   an earlier pass that gave each card a big decorative gradient thumb just added empty
-   visual weight for nothing; this reverts to the original row anatomy (play button +
-   name/desc/tags + right-aligned actions), just spread across 2 columns instead of 4. */
-.vl-grid{display:grid; grid-template-columns:repeat(2, 1fr); gap:var(--spacing-md);}
-/* Voice Library Card — Figma symbol 9684:9, reproduced exactly: play + text (flex) +
-   tags + actions all as siblings in ONE row (tags is its own column to the RIGHT of the
-   text block, not stacked underneath it), 3 uniform 36px bordered icon actions. */
+   Plain compact row -- NOT a thumb/portrait card. Voices carry no artwork, so an earlier
+   pass that gave each card a big decorative gradient thumb just added empty visual weight
+   for nothing; this keeps the original row anatomy (play button + name/desc/tags +
+   right-aligned actions). Single column now (was 2-up) -- the page-pad redesign narrowed
+   the whole content column to 960px specifically so this list reads as one clean stack,
+   confirmed against the new card-grid metadata (8 cards, one per row, 960 wide each).
+   #musicList shares this class but uses an 8px gap instead of the 12px default (its own
+   "audio" row is shorter, 54px vs Voice Library Card's 66px, with a tighter Figma gap). */
+.vl-grid{display:flex; flex-direction:column; gap:var(--spacing-md);}
+#musicList{gap:var(--spacing-sm);}
+/* Voice Library Card — Figma symbol 9684:9, reproduced exactly: play + text + tags are
+   grouped into one "Content" cluster, actions is a separate sibling cluster, with a wider
+   24px gap between the two clusters (vs. the 12px gap used *within* Content) -- Figma's
+   own restructure of this component, ported 1:1 rather than keeping the old flat "all four
+   as equal siblings at one gap value" layout. */
 .voice-card{
-  position:relative; display:flex; align-items:center; gap:var(--spacing-md); box-sizing:border-box;
+  position:relative; display:flex; align-items:center; gap:var(--spacing-2xl); box-sizing:border-box;
   padding:var(--spacing-md) var(--spacing-lg); background:var(--color-neutral-0);
   border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg);
   transition:border-color .15s ease, box-shadow .15s ease;
@@ -205,6 +211,11 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
   min-width:0;
 }
 .voice-card:hover{border-color:var(--color-neutral-450); box-shadow:var(--shadow-cell-action);}
+
+/* Figma "Content" (9976:260552) -- groups play + info + tags so they move as one cluster,
+   at the tighter 12px rhythm, while .voice-card's own gap (above) handles the wider
+   24px gap out to .voice-card-actions. */
+.voice-card-content{display:flex; align-items:center; gap:var(--spacing-md); flex:1 1 0; min-width:0;}
 
 .voice-card-info{flex:1 1 0; min-width:0; display:flex; flex-direction:column; gap:2px;}
 .voice-card-name-row{display:flex; align-items:center; gap:var(--spacing-sm);}
@@ -230,9 +241,11 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
 .voice-card-tag-more{font-family:var(--font-family-text); font-size:11px; font-weight:500; color:var(--color-neutral-500); white-space:nowrap;}
 
 .voice-card-actions{display:flex; align-items:center; gap:var(--spacing-sm); flex-shrink:0;}
-/* Actions / Icon Button, Actions / Favorite Button, Actions / More Button -- all three the
-   same 36px bordered white square (Figma reuses one shell for all three, only the glyph
-   and the fav-active fill differ). */
+/* Actions / Icon Button, Actions / Favorite Button -- Figma 9965:292091's final 2-3 button
+   set (add is Library-only; fav + setdefault are on every variant). The old third "more"
+   kebab (rename/delete/per-brand default submenu) is gone from the Figma component, so it's
+   gone here too -- setdefault now does the single most common thing that menu did (toggle
+   default-for-the-active-brand) directly, matching Figma's Idle/Set circle-check button. */
 .voice-card-icon-btn{
   width:36px; height:36px; flex-shrink:0; box-sizing:border-box; padding:0; cursor:pointer;
   border:1px solid var(--color-neutral-400); background:var(--color-neutral-0); border-radius:var(--radius-lg);
@@ -240,9 +253,17 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
 }
 .voice-card-icon-btn:hover{background:var(--color-neutral-50);}
 .voice-card-icon-btn img{width:16px; height:16px; display:block;}
-.voice-card-icon-btn.more.active{background:var(--color-neutral-100);}
-.voice-card-icon-btn.add.added{background:var(--color-neutral-900); border-color:var(--color-neutral-900);}
-.voice-card-icon-btn.add.added img{filter:brightness(0) invert(1);}
+/* Selected-state colors pulled directly from the real components, not guessed:
+   Icon Button "State=Focused" (2207:1388) is fill neutral-150 / border neutral-500 --
+   never a dark-900 fill, that was this file's own invention. Favorite Button
+   "State=Ghost selected" (7114:140004) has NO fill/border at all -- selecting a
+   favorite drops the button chrome entirely rather than filling it. */
+.voice-card-icon-btn.setdefault.on{background:var(--color-neutral-150); border-color:var(--color-neutral-500);}
+.voice-card-icon-btn.fav.active{background:transparent; border-color:transparent;}
+/* Not a real disabled state -- clicking it still works, it just routes through the
+   "change your default voice?" confirm modal instead of toggling immediately. Muted so
+   it doesn't compete visually with the one card that IS the current default. */
+.voice-card-icon-btn.setdefault.muted{opacity:.45;}
 
 /* kebab dropdown -- functional parity with character-card's roster menu (Set as default
    [multi-brand submenu] / Rename / Delete), adapted to this file's own token-only CSS
@@ -301,6 +322,53 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
 .music-card-meta{display:flex; align-items:center; width:180px; flex-shrink:0;}
 .music-card-meta span{flex:1 0 0; text-align:right; font-family:var(--font-family-text); font-size:12px; font-weight:500; color:var(--color-neutral-500); white-space:nowrap;}
 .music-card-actions{display:flex; align-items:center; gap:var(--spacing-sm); flex-shrink:0;}
+
+/* ---------- Music "AI / Prompt Box" (Figma 9767:268350) ----------
+   New section on the Music tab, between the header and the toolbar -- an AI-generate-a-
+   track prompt box, reusing the same shared "AI Prompt Box" shell the New Content flows
+   use elsewhere in the app. The three reference chips (First frame / Last frame /
+   Reference) are frame/video concepts that don't apply to audio, so Figma shows them
+   disabled/greyed rather than dropping them (same shared shell, this variant just turns
+   those three off). The example prompt text in the source frame was leftover copy from
+   an image-generation duplicate ("Latino/a · Human · Female..." -- a person description,
+   not a track description) -- swapped here for a real music-prompt placeholder instead of
+   reproducing what was clearly an un-updated placeholder. */
+.music-ai-box{
+  width:100%; box-sizing:border-box; padding:var(--spacing-xl);
+  background:var(--color-neutral-0); border:1.2px solid var(--color-neutral-400); border-radius:var(--radius-xl);
+  display:flex; flex-direction:column; gap:var(--spacing-3xl);
+}
+.music-ai-top{display:flex; flex-direction:column; gap:var(--spacing-xl); width:100%;}
+.music-ai-refchips{display:flex; gap:var(--spacing-sm);}
+.music-ai-refchip{
+  display:flex; align-items:center; justify-content:center; gap:6px;
+  width:120px; padding:24px 16px; box-sizing:border-box;
+  background:var(--color-neutral-100); border:none; border-radius:var(--radius-lg);
+  font-family:var(--font-family-text); font-size:12px; font-weight:500; color:var(--color-neutral-450);
+  cursor:not-allowed;
+}
+.music-ai-refchip img{width:20px; height:20px; display:block; flex-shrink:0; opacity:.6;}
+.music-ai-prompt-text{margin:0; font-family:var(--font-family-text); font-size:14px; font-weight:400; line-height:22px; color:var(--color-neutral-500); width:100%;}
+.music-ai-bottom{display:flex; align-items:center; justify-content:space-between; width:100%;}
+.music-ai-specs{display:flex; align-items:center; gap:var(--spacing-sm);}
+.music-ai-spec-pill{
+  display:inline-flex; align-items:center; gap:5px; padding:7px 12px 7px 10px; box-sizing:border-box;
+  background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg);
+  font-family:var(--font-family-text); font-size:14px; font-weight:500; color:var(--color-neutral-700);
+}
+/* "icon / spec / 9-16" (2203:17718) has no exported asset -- Figma draws it as a small
+   bordered rectangle, not an svg -- so this reproduces it the same way instead of hunting
+   for a nonexistent icon file. */
+.music-ai-spec-pill .ratio-swatch{position:relative; width:16px; height:16px; flex-shrink:0;}
+.music-ai-spec-pill .ratio-swatch::after{content:''; position:absolute; top:50%; left:50%; width:8px; height:14px; border:1.2px solid var(--color-neutral-500); border-radius:var(--radius-xs); transform:translate(-50%,-50%);}
+.music-ai-spec-pill img{width:16px; height:16px; display:block; flex-shrink:0;}
+.music-ai-refine-btn{
+  width:36px; height:36px; flex-shrink:0; padding:0; cursor:pointer;
+  background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg);
+  display:flex; align-items:center; justify-content:center;
+}
+.music-ai-refine-btn:hover{background:var(--color-neutral-50);}
+.music-ai-refine-btn img{width:16px; height:16px; display:block;}
 
 .vl-empty{padding:var(--spacing-4xl) 0; text-align:center; font-family:var(--font-family-text); font-size:13px; color:var(--color-neutral-500);}
 
@@ -457,12 +525,30 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
         <div class="vl-page-header">
           <div>
             <p class="vl-title">Music</p>
-            <p class="vl-sub">Background tracks for your videos — explore the library or manage the ones you've added.</p>
+            <p class="vl-sub">Background tracks and music beds for your videos.</p>
           </div>
           <button type="button" class="actions-btn actions-btn--primary" onclick="alert('Upload track — not part of this draft yet')">
             <img src="../../../components/ai-social-media/icons/menu-upload.svg" alt="" onerror="this.style.display='none'">
             <span>Upload track</span>
           </button>
+        </div>
+
+        <div class="music-ai-box">
+          <div class="music-ai-top">
+            <div class="music-ai-refchips">
+              <button type="button" class="music-ai-refchip" disabled><img src="../../../components/ai-social-media/icons/content-image-plus.svg" alt="">First frame</button>
+              <button type="button" class="music-ai-refchip" disabled><img src="../../../components/ai-social-media/icons/content-image-plus.svg" alt="">Last frame</button>
+              <button type="button" class="music-ai-refchip" disabled><img src="../../../components/ai-social-media/icons/content-image-plus.svg" alt="">Reference</button>
+            </div>
+            <p class="music-ai-prompt-text">Warm, upbeat corporate track with light percussion and a hopeful melody — 90 BPM, no vocals.</p>
+          </div>
+          <div class="music-ai-bottom">
+            <div class="music-ai-specs">
+              <span class="music-ai-spec-pill"><span class="ratio-swatch"></span>9:16</span>
+              <span class="music-ai-spec-pill"><img src="../../../components/ai-social-media/icons/spec-duration.svg" alt="">16s</span>
+            </div>
+            <button type="button" class="music-ai-refine-btn" aria-label="Generate" onclick="alert('Generate with AI — not part of this draft yet')"><img src="../../../components/ai-social-media/icons/arrow-up.svg" alt=""></button>
+          </div>
         </div>
 
         <div class="vl-toolbar">
@@ -653,14 +739,18 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
       </div>
       <!-- Figma's pick step also reads "Save voice" here (9767:264741), but there's no
            metadata to save yet at this point in the flow -- clicking it advances to the
-           name+tags step below, which is the one that actually creates the voice. -->
-      <div class="cvm-footer" id="vdFooterPick" hidden>
+           name+tags step below, which is the one that actually creates the voice. Button
+           SIZING now matches Figma exactly though: Back(59px) and Save voice(95px) sit at
+           their natural width with a big gap between them (space-between), not a
+           full-width stretched primary -- confirmed against 9767:261357/9767:261410's
+           real geometry (secondary x=0 w=59, primary x=465 w=95 in a 560-wide row). -->
+      <div class="cvm-footer" id="vdFooterPick" hidden style="justify-content:space-between;">
         <button type="button" class="actions-btn actions-btn--secondary" onclick="vdGoBack()">Back</button>
-        <button type="button" class="actions-btn actions-btn--primary" style="flex:1 0 0;" onclick="vdGoToNaming()">Save voice</button>
+        <button type="button" class="actions-btn actions-btn--primary" onclick="vdGoToNaming()">Save voice</button>
       </div>
-      <div class="cvm-footer" id="vdFooterSuccess" hidden>
+      <div class="cvm-footer" id="vdFooterSuccess" hidden style="justify-content:space-between;">
         <button type="button" class="actions-btn actions-btn--secondary" onclick="vdGoBack()">Back</button>
-        <button type="button" class="actions-btn actions-btn--primary" style="flex:1 0 0;" onclick="vdSaveVoice()">Save voice</button>
+        <button type="button" class="actions-btn actions-btn--primary" onclick="vdSaveVoice()">Save voice</button>
       </div>
     </div>
 
@@ -800,6 +890,19 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
   </div>
 </div>
 
+<div class="modal-overlay" id="vlSetDefaultOverlay" hidden onclick="if(event.target===this) closeSetDefaultConfirm()">
+  <div class="modal modal--confirm">
+    <div class="modal__content">
+      <h3 class="modal__title">Change your default voice?</h3>
+      <p class="modal__body" id="vlSetDefaultBody"></p>
+    </div>
+    <div class="modal__footer">
+      <button type="button" class="actions-btn actions-btn--secondary" onclick="closeSetDefaultConfirm()">Cancel</button>
+      <button type="button" class="actions-btn actions-btn--primary" onclick="confirmSetDefault()">Confirm</button>
+    </div>
+  </div>
+</div>
+
 <a class="home-fab" href="../../../index.html" title="Back to all screens">
   <svg viewBox="0 0 16 16" fill="none"><path d="M2 7.2 8 2l6 5.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.3 6.2V13a.8.8 0 0 0 .8.8h3V10h1.8v3.8h3a.8.8 0 0 0 .8-.8V6.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
   <span>Home</span>
@@ -814,6 +917,9 @@ const ICON = '../../../components/ai-social-media/icons/';
 // these use-case categories based on what its desc already says the voice is good for.
 const VOICE_CATS = ['Social Media','Advertisement','Characters Animations','Conversational','Entertainment TV','Informative Educational','Narrative Story'];
 const BRANDS = ['Formee Express', 'SCEI'];
+// No real per-tenant brand switcher yet (see the comment near the top nav) -- the
+// setdefault button always acts against this one, same as the rest of this draft.
+const ACTIVE_BRAND = 'Formee Express';
 const voices = [
   { id:'v1', name:'Maya', desc:'Warm, conversational female voice — great for lifestyle and wellness content.', cats:['Conversational','Social Media'], langs:['English (US)','English (UK)','Korean'], mine:true, fav:false, defaultFor:['Formee Express'] },
   { id:'v2', name:'Jordan', desc:'High-energy male voice with a confident edge — built for hype and promo reels.', cats:['Advertisement','Social Media'], langs:['English (US)'], mine:false, fav:false, defaultFor:[] },
@@ -1066,39 +1172,49 @@ function renderVoices(){
   document.getElementById('voiceCount').textContent = list.length + (list.length === 1 ? ' voice' : ' voices');
   document.getElementById('voiceEmpty').hidden = list.length !== 0;
 
+  // Only one voice can be "Default" for the active brand at a time -- every other
+  // card's setdefault button gets visually muted (not truly disabled: clicking it still
+  // works, it just routes through requestSetDefault()'s confirm modal instead of toggling
+  // straight away, same idea as a disabled-but-explainable control).
+  const currentDefaultVoice = voices.find(o => (o.defaultFor || []).includes(ACTIVE_BRAND));
+
   document.getElementById('voiceGrid').innerHTML = list.map(v => {
     const langsShown = v.langs.slice(0, 3);
     const more = v.langs.length - langsShown.length;
     const added = addedVoices.has(v.id);
     const defaultFor = v.defaultFor || [];
+    const isDefault = defaultFor.includes(ACTIVE_BRAND);
+    const defaultLocked = !isDefault && !!currentDefaultVoice;
     const nameEl = renamingVoiceId === v.id
       ? `<input type="text" class="voice-card-name-input" id="voiceRenameInput" value="${escHtml(v.name)}" onclick="event.stopPropagation()" onkeydown="onVoiceRenameKey(event,'${v.id}')" onblur="commitVoiceRename('${v.id}', this.value)">`
       : `<p class="voice-card-name">${escHtml(v.name)}</p>`;
     return `
     <div class="voice-card" data-id="${v.id}">
-      <span class="voice-section-sample-play" onclick="toggleVoicePlay(this)"><img src="${ICON}audio-row-play-triangle.svg" alt=""></span>
-      <div class="voice-card-info">
-        <div class="voice-card-name-row">
-          ${nameEl}
-          ${defaultFor.length ? `<span class="voice-card-badge"><span>${defaultFor.length === 1 ? 'Default' : 'Default · ' + defaultFor.length + ' brands'}</span></span>` : ''}
+      <div class="voice-card-content">
+        <span class="voice-section-sample-play" onclick="toggleVoicePlay(this)"><img src="${ICON}audio-row-play-triangle.svg" alt=""></span>
+        <div class="voice-card-info">
+          <div class="voice-card-name-row">
+            ${nameEl}
+            ${defaultFor.length ? `<span class="voice-card-badge"><span>${defaultFor.length === 1 ? 'Default' : 'Default · ' + defaultFor.length + ' brands'}</span></span>` : ''}
+          </div>
+          <p class="voice-card-desc">${escHtml(v.desc)}</p>
         </div>
-        <p class="voice-card-desc">${escHtml(v.desc)}</p>
-      </div>
-      <div class="voice-card-tags">
-        ${langsShown.map(l => `<span class="voice-card-tag">${escHtml(l)}</span>`).join('')}
-        ${more > 0 ? `<span class="voice-card-tag-more">+${more} more</span>` : ''}
+        <div class="voice-card-tags">
+          ${langsShown.map(l => `<span class="voice-card-tag">${escHtml(l)}</span>`).join('')}
+          ${more > 0 ? `<span class="voice-card-tag-more">+${more} more</span>` : ''}
+        </div>
       </div>
       <div class="voice-card-actions">
-        <button type="button" class="voice-card-icon-btn add${added ? ' added' : ''}" onclick="toggleAddVoice('${v.id}', this)" aria-pressed="${added}" aria-label="${added ? 'Remove' : 'Add'} ${escHtml(v.name)}">
-          <img src="${ICON}${added ? 'check' : 'pagebar-plus'}.svg" alt="">
-        </button>
+        ${voiceTab === 'explore' ? `
+        <button type="button" class="voice-card-icon-btn add" onclick="toggleAddVoice('${v.id}', this)" aria-pressed="${added}" aria-label="${added ? 'Remove' : 'Add'} ${escHtml(v.name)}">
+          <img src="${ICON}pagebar-plus.svg" alt="">
+        </button>` : ''}
         <button type="button" class="voice-card-icon-btn fav${v.fav ? ' active' : ''}" onclick="toggleFavVoice('${v.id}')" aria-pressed="${v.fav}" aria-label="Favorite ${escHtml(v.name)}">
           <img src="${ICON}shape-star${v.fav ? '-filled' : ''}.svg" alt="">
         </button>
-        <button type="button" class="voice-card-icon-btn more${openMenuFor === v.id ? ' active' : ''}" onclick="toggleVoiceMenu('${v.id}')" aria-label="More actions for ${escHtml(v.name)}">
-          <img src="${ICON}ui-ellipsis.svg" alt="">
+        <button type="button" class="voice-card-icon-btn setdefault${isDefault ? ' on' : ''}${defaultLocked ? ' muted' : ''}" onclick="requestSetDefault('${v.id}', ACTIVE_BRAND)" aria-pressed="${isDefault}" aria-label="${isDefault ? 'Remove as default' : 'Set as default'} for ${escHtml(v.name)}">
+          <img src="${ICON}circle-check-glyph.svg" alt="">
         </button>
-        ${voiceMenuHTML(v)}
       </div>
     </div>`;
   }).join('');
@@ -1149,6 +1265,35 @@ function toggleDefaultBrand(id, brand){
   }
   renderVoices();
 }
+
+let pendingDefaultChange = null;
+// Card-level entry point for the setdefault button. Unsetting your own current default,
+// or picking a default when none exists yet, both just happen -- there's nothing to lose.
+// Taking the default away from ANOTHER voice is the one destructive-ish action here, so
+// that path stops at a confirm modal instead of swapping silently.
+function requestSetDefault(id, brand){
+  const v = voices.find(x => x.id === id);
+  if (!v) return;
+  const isCurrentlyDefault = (v.defaultFor || []).includes(brand);
+  if (isCurrentlyDefault){ toggleDefaultBrand(id, brand); return; }
+  const currentDefault = voices.find(o => (o.defaultFor || []).includes(brand));
+  if (!currentDefault){ toggleDefaultBrand(id, brand); return; }
+  pendingDefaultChange = { id, brand, oldName: currentDefault.name, newName: v.name };
+  document.getElementById('vlSetDefaultBody').textContent =
+    `${currentDefault.name} will no longer be your default voice. ${v.name} will be set as the new default instead.`;
+  document.getElementById('vlSetDefaultOverlay').hidden = false;
+}
+function closeSetDefaultConfirm(){
+  pendingDefaultChange = null;
+  document.getElementById('vlSetDefaultOverlay').hidden = true;
+}
+function confirmSetDefault(){
+  if (!pendingDefaultChange) return;
+  const { id, brand } = pendingDefaultChange;
+  closeSetDefaultConfirm();
+  toggleDefaultBrand(id, brand);
+}
+
 function startRenameVoice(id){
   renamingVoiceId = id;
   openMenuFor = null; brandPopFor = null;
