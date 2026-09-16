@@ -325,32 +325,37 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
 .music-card-meta span{flex:1 0 0; text-align:right; font-family:var(--font-family-text); font-size:12px; font-weight:500; color:var(--color-neutral-500); white-space:nowrap;}
 .music-card-actions{display:flex; align-items:center; gap:var(--spacing-sm); flex-shrink:0;}
 
-/* ---------- Music "AI / Prompt Box" (Figma 9767:268350) ----------
-   New section on the Music tab, between the header and the toolbar -- an AI-generate-a-
-   track prompt box, reusing the same shared "AI Prompt Box" shell the New Content flows
-   use elsewhere in the app. The three reference chips (First frame / Last frame /
-   Reference) are frame/video concepts that don't apply to audio, so Figma shows them
-   disabled/greyed rather than dropping them (same shared shell, this variant just turns
-   those three off). The example prompt text in the source frame was leftover copy from
-   an image-generation duplicate ("Latino/a · Human · Female..." -- a person description,
-   not a track description) -- swapped here for a real music-prompt placeholder instead of
-   reproducing what was clearly an un-updated placeholder. */
+/* ---------- Music "AI / Prompt Box" -- Text to Music v1 (Figma 9767:268350, node
+   9767:268339 "Music tab") ----------
+   Re-fetched against the real "Music tab" frame (this box previously predated that node and
+   was built off a generic/shared prompt-box shell) -- Figma's own version drops the First
+   frame/Last frame/Reference chips entirely (those are video/image concepts, not present on
+   this frame at all, so they're removed here too rather than kept disabled) and is just
+   prompt + duration + vocals + generate. Two real deviations from the static frame, both
+   deliberate:
+   1. The duration pill's icon in Figma is literally the "icon / spec / 9-16" aspect-ratio
+      swatch component with its label text swapped to "16s" -- a leftover from duplicating a
+      video prompt box, not a real clock glyph. Swapped for the actual spec-duration.svg icon
+      already in this icon set instead of reproducing a misleading glyph.
+   2. Neither pill has a caret in the static frame (Figma never modeled an open/interactive
+      state for either), but both are real dropdowns here -- caret added to both, reusing the
+      vocals-toggle pill's own caret asset/size for consistency between the two.
+   ElevenLabs Music API integration is scoped tight per this feature's own request: only
+   prompt/duration/force_instrumental are surfaced. Model is hardcoded to music_v2_5, output
+   is always mp3 -- neither has any UI. Composition Plan, Audio Reference, Inpainting,
+   Finetunes and a model picker are all explicitly out of scope for this pass. */
 .music-ai-box{
   width:100%; box-sizing:border-box; padding:var(--spacing-xl);
   background:var(--color-neutral-0); border:1.2px solid var(--color-neutral-400); border-radius:var(--radius-xl);
   display:flex; flex-direction:column; gap:var(--spacing-3xl);
 }
 .music-ai-top{display:flex; flex-direction:column; gap:var(--spacing-xl); width:100%;}
-.music-ai-refchips{display:flex; gap:var(--spacing-sm);}
-.music-ai-refchip{
-  display:flex; align-items:center; justify-content:center; gap:6px;
-  width:120px; padding:24px 16px; box-sizing:border-box;
-  background:var(--color-neutral-100); border:none; border-radius:var(--radius-lg);
-  font-family:var(--font-family-text); font-size:12px; font-weight:500; color:var(--color-neutral-450);
-  cursor:not-allowed;
+.music-ai-prompt-input{
+  display:block; width:100%; height:22px; margin:0; padding:0; box-sizing:border-box; border:none; outline:none; resize:none; overflow:hidden;
+  background:none; font-family:var(--font-family-text); font-size:14px; font-weight:400; line-height:22px; color:var(--color-neutral-900);
 }
-.music-ai-refchip img{width:20px; height:20px; display:block; flex-shrink:0; opacity:.6;}
-.music-ai-prompt-text{margin:0; font-family:var(--font-family-text); font-size:14px; font-weight:400; line-height:22px; color:var(--color-neutral-500); width:100%;}
+.music-ai-prompt-input::placeholder{color:var(--color-neutral-500);}
+.music-ai-prompt-input:disabled{color:var(--color-neutral-500); cursor:default;}
 .music-ai-bottom{display:flex; align-items:center; justify-content:space-between; width:100%;}
 .music-ai-specs{display:flex; align-items:center; gap:var(--spacing-sm);}
 .music-ai-spec-pill{
@@ -358,19 +363,37 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
   background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg);
   font-family:var(--font-family-text); font-size:14px; font-weight:500; color:var(--color-neutral-700);
 }
-/* "icon / spec / 9-16" (2203:17718) has no exported asset -- Figma draws it as a small
-   bordered rectangle, not an svg -- so this reproduces it the same way instead of hunting
-   for a nonexistent icon file. */
-.music-ai-spec-pill .ratio-swatch{position:relative; width:16px; height:16px; flex-shrink:0;}
-.music-ai-spec-pill .ratio-swatch::after{content:''; position:absolute; top:50%; left:50%; width:8px; height:14px; border:1.2px solid var(--color-neutral-500); border-radius:var(--radius-xs); transform:translate(-50%,-50%);}
 .music-ai-spec-pill img{width:16px; height:16px; display:block; flex-shrink:0;}
+/* Duration/Vocals dropdown triggers -- same pill shell as above, just made interactive.
+   Menu reuses .vl-fselect-wrap/.vl-fselect-menu/.vl-fselect-row as-is (toolbar's own
+   Gender/Language filter dropdowns), since this pill only needed a trigger of its own. */
+.music-ai-fselect{cursor:pointer;}
+.music-ai-fselect:hover{background:var(--color-neutral-50);}
+.music-ai-fselect-caret{width:14px; height:14px; flex-shrink:0;}
 .music-ai-refine-btn{
   width:36px; height:36px; flex-shrink:0; padding:0; cursor:pointer;
   background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg);
   display:flex; align-items:center; justify-content:center;
 }
 .music-ai-refine-btn:hover{background:var(--color-neutral-50);}
+.music-ai-refine-btn:disabled{opacity:.45; cursor:default;}
+.music-ai-refine-btn:disabled:hover{background:var(--color-neutral-0);}
 .music-ai-refine-btn img{width:16px; height:16px; display:block;}
+
+/* "Composing your track…" placeholder card -- Case 1 (최초 생성) of the AI chat-panel rules:
+   a brand-new item never gets an Undo/Redo, it just narrates a concrete working message and
+   then the real card lands in the list the instant it's ready. This page has no chat log to
+   post that message into, so the message rides along on a temporary card sitting exactly
+   where the finished track will appear -- same shell as .music-card, swapped for a spinner +
+   working text instead of the play button/meta/actions. */
+.music-card--generating{cursor:default;}
+.music-card--generating:hover{border-color:var(--color-neutral-400); box-shadow:none;}
+.music-generating-spinner{
+  width:32px; height:32px; flex-shrink:0; box-sizing:border-box; border-radius:50%;
+  border:2px solid var(--color-neutral-300); border-top-color:var(--color-neutral-600);
+  animation:music-generating-spin .8s linear infinite;
+}
+@keyframes music-generating-spin{to{transform:rotate(360deg);}}
 
 .vl-empty{padding:var(--spacing-4xl) 0; text-align:center; font-family:var(--font-family-text); font-size:13px; color:var(--color-neutral-500);}
 
@@ -537,19 +560,27 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
 
         <div class="music-ai-box">
           <div class="music-ai-top">
-            <div class="music-ai-refchips">
-              <button type="button" class="music-ai-refchip" disabled><img src="../../../components/ai-social-media/icons/content-image-plus.svg" alt="">First frame</button>
-              <button type="button" class="music-ai-refchip" disabled><img src="../../../components/ai-social-media/icons/content-image-plus.svg" alt="">Last frame</button>
-              <button type="button" class="music-ai-refchip" disabled><img src="../../../components/ai-social-media/icons/content-image-plus.svg" alt="">Reference</button>
-            </div>
-            <p class="music-ai-prompt-text">Warm, upbeat corporate track with light percussion and a hopeful melody — 90 BPM, no vocals.</p>
+            <textarea class="music-ai-prompt-input" id="musicPromptInput" rows="1" placeholder="Upbeat lo-fi hip-hop with a mellow piano melody, soft drums, and a relaxed tempo — good for study or vlog background." oninput="musicOnPromptInput(this)"></textarea>
           </div>
           <div class="music-ai-bottom">
             <div class="music-ai-specs">
-              <span class="music-ai-spec-pill"><span class="ratio-swatch"></span>9:16</span>
-              <span class="music-ai-spec-pill"><img src="../../../components/ai-social-media/icons/spec-duration.svg" alt="">16s</span>
+              <div class="vl-fselect-wrap">
+                <button type="button" class="music-ai-spec-pill music-ai-fselect" id="musicDurationTrigger" onclick="event.stopPropagation(); musicToggleDurationMenu()">
+                  <img src="../../../components/ai-social-media/icons/spec-duration.svg" alt="">
+                  <span id="musicDurationLabel">16s</span>
+                  <img class="music-ai-fselect-caret" src="../../../components/ai-social-media/icons/caret-down-filled.svg" alt="">
+                </button>
+                <div class="vl-fselect-menu" id="musicDurationMenu" onclick="event.stopPropagation()" hidden></div>
+              </div>
+              <div class="vl-fselect-wrap">
+                <button type="button" class="music-ai-spec-pill music-ai-fselect" id="musicVocalsTrigger" onclick="event.stopPropagation(); musicToggleVocalsMenu()">
+                  <span id="musicVocalsLabel">Instrumental</span>
+                  <img class="music-ai-fselect-caret" src="../../../components/ai-social-media/icons/caret-down-filled.svg" alt="">
+                </button>
+                <div class="vl-fselect-menu" id="musicVocalsMenu" onclick="event.stopPropagation()" hidden></div>
+              </div>
             </div>
-            <button type="button" class="music-ai-refine-btn" aria-label="Generate" onclick="alert('Generate with AI — not part of this draft yet')"><img src="../../../components/ai-social-media/icons/arrow-up.svg" alt=""></button>
+            <button type="button" class="music-ai-refine-btn" id="musicGenerateBtn" aria-label="Generate" disabled onclick="musicGenerateTrack()"><img src="../../../components/ai-social-media/icons/arrow-up.svg" alt=""></button>
           </div>
         </div>
 
@@ -1375,7 +1406,7 @@ function renderMusic(){
         <span class="music-card-attribution">${escHtml(t.attribution)}</span>
       </div>
       <div class="music-card-meta">
-        <span>${t.duration}</span><span>${t.mood}</span><span>BPM ${t.bpm}</span>
+        <span>${t.duration}</span><span>${t.mood}</span><span>${t.bpm ? 'BPM ' + t.bpm : ''}</span>
       </div>
       <div class="music-card-actions">
         <button type="button" class="voice-card-icon-btn" onclick="openMusicApplyModal('${t.id}')" aria-label="Adapt ${escHtml(t.title)} in your project">
@@ -1391,6 +1422,116 @@ function toggleFav(id){
   const t = tracks.find(x => x.id === id);
   t.fav = !t.fav;
   renderMusic();
+}
+
+/* ---------------- Music → Text to Music (ElevenLabs Music API, v1 scope) ----------------
+   Only prompt + duration + force_instrumental are surfaced, per this feature's own request
+   to keep the first pass minimal. Model is hardcoded to music_v2_5 and output to mp3 --
+   neither is ever shown in the UI, so there's no state for them here at all. Composition
+   Plan, Audio Reference, Inpainting, Music Finetunes and a model picker are all out of scope
+   for this pass (see the CSS comment above .music-ai-box for the Figma node this was built
+   against and the deviations from its static frame). */
+const MUSIC_DURATION_OPTIONS = [5, 8, 10, 12, 16, 20, 24]; // seconds — the API itself allows
+  // 3s–5min, but the UI only exposes up to this platform's own 24s max content length.
+let musicDuration = 16;
+let musicVocals = 'instrumental'; // 'instrumental' | 'with_vocals' -> force_instrumental bool
+let musicDurationMenuOpen = false;
+let musicVocalsMenuOpen = false;
+let musicGenSeq = 0;
+
+function musicOnPromptInput(el){
+  document.getElementById('musicGenerateBtn').disabled = el.value.trim().length === 0;
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
+}
+function closeMusicFselectMenus(){
+  musicDurationMenuOpen = false; musicVocalsMenuOpen = false;
+  document.getElementById('musicDurationMenu').hidden = true;
+  document.getElementById('musicVocalsMenu').hidden = true;
+}
+function musicToggleDurationMenu(){
+  const opening = !musicDurationMenuOpen;
+  closeMusicFselectMenus();
+  musicDurationMenuOpen = opening;
+  document.getElementById('musicDurationMenu').hidden = !opening;
+  if (opening) renderMusicDurationOptions();
+}
+function renderMusicDurationOptions(){
+  document.getElementById('musicDurationMenu').innerHTML = MUSIC_DURATION_OPTIONS.map(sec =>
+    `<div class="vl-fselect-row${sec === musicDuration ? ' selected' : ''}" onclick="selectMusicDuration(${sec})">${sec}s</div>`
+  ).join('');
+}
+function selectMusicDuration(sec){
+  musicDuration = sec;
+  document.getElementById('musicDurationLabel').textContent = sec + 's';
+  closeMusicFselectMenus();
+}
+function musicToggleVocalsMenu(){
+  const opening = !musicVocalsMenuOpen;
+  closeMusicFselectMenus();
+  musicVocalsMenuOpen = opening;
+  document.getElementById('musicVocalsMenu').hidden = !opening;
+  if (opening) renderMusicVocalsOptions();
+}
+function renderMusicVocalsOptions(){
+  const opts = [{ v:'instrumental', label:'Instrumental' }, { v:'with_vocals', label:'With vocals' }];
+  document.getElementById('musicVocalsMenu').innerHTML = opts.map(o =>
+    `<div class="vl-fselect-row${o.v === musicVocals ? ' selected' : ''}" onclick="selectMusicVocals('${o.v}')">${o.label}</div>`
+  ).join('');
+}
+function selectMusicVocals(v){
+  musicVocals = v;
+  document.getElementById('musicVocalsLabel').textContent = v === 'instrumental' ? 'Instrumental' : 'With vocals';
+  closeMusicFselectMenus();
+}
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('#musicDurationTrigger') && !e.target.closest('#musicDurationMenu')
+    && !e.target.closest('#musicVocalsTrigger') && !e.target.closest('#musicVocalsMenu')
+    && (musicDurationMenuOpen || musicVocalsMenuOpen)) closeMusicFselectMenus();
+});
+
+function musicTitleFromPrompt(prompt){
+  const words = prompt.replace(/[.,!?—-]+$/, '').split(/\s+/).slice(0, 5).join(' ');
+  return words.charAt(0).toUpperCase() + words.slice(1);
+}
+/* Case 1 (최초 생성) of the AI chat-panel rules: a brand-new track has nothing to converge
+   back onto, so it never gets an Undo/Redo -- it just narrates a concrete working message,
+   then the finished card lands in the list the instant it's ready. This page has no chat
+   log, so the working message rides on a temporary card sitting exactly where the real one
+   will land (see .music-card--generating above). Faked with a timer since there's no real
+   ElevenLabs Music API call wired up yet. */
+function musicGenerateTrack(){
+  const promptEl = document.getElementById('musicPromptInput');
+  const prompt = promptEl.value.trim();
+  if (!prompt) return;
+
+  const seq = ++musicGenSeq;
+  const btn = document.getElementById('musicGenerateBtn');
+  btn.disabled = true;
+  promptEl.disabled = true;
+
+  const card = document.createElement('div');
+  card.className = 'music-card music-card--generating';
+  card.innerHTML = `
+    <span class="music-generating-spinner"></span>
+    <div class="music-card-info">
+      <p class="music-card-name">Composing your track based on your prompt…</p>
+      <span class="music-card-attribution">"${escHtml(prompt)}"</span>
+    </div>`;
+  document.getElementById('musicList').prepend(card);
+
+  setTimeout(() => {
+    if (seq !== musicGenSeq) return;
+    card.remove();
+    tracks.unshift({
+      id:'gen' + Date.now(), title:musicTitleFromPrompt(prompt), attribution:'Generated with AI',
+      duration:vcFormatTime(musicDuration), mood:'AI Generated', bpm:'', cats:[], fav:false,
+    });
+    renderMusic();
+    promptEl.value = '';
+    promptEl.style.height = '';
+    promptEl.disabled = false;
+  }, 2200);
 }
 
 /* ---------------- Music → apply-to-content modal ----------------

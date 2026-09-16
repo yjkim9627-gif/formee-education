@@ -12,6 +12,12 @@
       "runtimeExecutable": "/bin/sh",
       "runtimeArgs": ["-c", "cd \"/Users/yejin.kim/Library/CloudStorage/OneDrive-FORMEEHOLDINGS/04 UI:UX/_v4-branch-preview\" && exec python3 -m http.server 8001"],
       "port": 8001
+    },
+    {
+      "name": "static-server",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8743", "--directory", "/Users/kimyejin/design-prototype"],
+      "port": 8743
     }
   ]
 }
