@@ -1,6 +1,9 @@
-/* ---- "Change voice" modal (Figma "Modal · Change voice · My voices" 9523:151259 /
-   "Modal · Change voice · ElevenLabs" 9523:157260, both instances of the shared
-   "Modal / Dialog" component set) -- ONE modal with two tabs, opened from the
+/* ---- "Change voice" modal (Figma "_Modal / Body · Change voice" 9849:169096, a real
+   component set with Tab=My voices / Tab=ElevenLabs variants -- both "Modal · Change voice ·
+   My voices" 9523:151259 and "Modal · Change voice · ElevenLabs" 9523:157260 are now
+   instances of it, alongside the Brief & Style "Voice · See all" modal (9461:146646) and the
+   Brief screen's own inline "Browse ElevenLabs Voice Library" panel (8727:219237) -- one
+   shared component, four call sites) -- ONE modal with two tabs, opened from the
    Generate-stage settings-bar Voice chip (openVoiceSelectModal()). Previously built as
    two entirely separate modals (a "Select voice" one with two stacked groups + a
    "Browse ElevenLabs Voice Library" button, which pushed to a second modal for the
@@ -43,11 +46,11 @@
   background:none; cursor:pointer; font-family:var(--font-family-text); font-size:14px; font-weight:500; color:var(--color-neutral-500);
 }
 .voice-modal-tab.active{border-bottom:2px solid var(--color-neutral-800); font-weight:700; color:var(--color-neutral-800);}
-.voice-modal-body{width:100%; box-sizing:border-box; background:var(--color-neutral-75); border:1px solid var(--color-neutral-300); border-radius:12px; padding:16px; display:flex; gap:16px; margin-top:8px;}
+.voice-modal-body{width:100%; box-sizing:border-box; background:var(--color-neutral-75); border:1px solid var(--color-neutral-300); border-radius:12px; padding:8px 16px 16px; display:flex; gap:16px; margin-top:8px;}
 .voice-modal-body--my{height:438px;}
 .voice-modal-col{display:flex; flex-direction:column; gap:16px; flex:1 0 0; min-width:0; height:438px;}
 .voice-modal-col-label{font-family:var(--font-family-text); font-size:14px; line-height:22px; font-weight:500; color:var(--color-neutral-700);}
-.voice-modal-col-rows{display:flex; flex-direction:column; gap:20px; width:100%; overflow-y:auto;}
+.voice-modal-col-rows{display:flex; flex-direction:column; gap:12px; width:100%; overflow-y:auto;}
 .voice-modal-footer{display:flex; gap:12px; align-items:center;}
 /* My-voices row, rescoped from .voice-item's own brand-tinted look (correct for the Brief/
    Character screens' .row-card usage, wrong here) to the real Editor/Audio Row spec:
@@ -70,6 +73,19 @@
 .voice-modal-col-rows .voice-play.playing{border-color:var(--color-brand-primary); background:none;}
 .voice-modal-col-rows .voice-item-name{font-size:12px; font-weight:500; color:var(--color-neutral-700);}
 .voice-modal-col-rows .voice-item-tag{font-size:11px; font-weight:400; color:var(--color-neutral-500);}
+/* Trailing per-row action button (Figma 9849:169096's new "Actions / Favorite Button"/
+   "Actions / Icon Button" instances -- this modal previously had no trailing button at all on
+   either column). Library-sourced rows get a star toggle ("favorite" this voice, session-only,
+   no filtering hookup yet); cloned rows get a trash button that actually removes the voice from
+   "Cloned & Designed by you" -- that column is the user's own voices, so deleting one is real,
+   not just decorative. Both share the same 30px/radius-8/neutral-border chrome. */
+.voice-modal-action-btn{
+  width:30px; height:30px; flex-shrink:0; box-sizing:border-box; display:flex; align-items:center; justify-content:center;
+  border:1px solid var(--color-neutral-400); border-radius:var(--radius-md); background:var(--color-neutral-0); cursor:pointer; padding:0;
+}
+.voice-modal-action-btn:hover{border-color:var(--color-neutral-500);}
+.voice-modal-action-btn img{width:16px; height:16px;}
+.voice-modal-action-btn.favorited{border-color:var(--color-neutral-500);}
 /* "New voice" row (Figma 9523:151259, "Cloned & Designed by you" column) -- was missing
    entirely; renderVoiceSelectModalRows() only rendered the mapped voice rows with nothing
    appended after them. Dashed like every other "add new" affordance in this file

@@ -1835,7 +1835,7 @@
                     <img src="../../../../components/ai-social-media/icons/ui-search.svg" alt="">
                     <input type="text" class="voice-lib-search" placeholder="Search voice" oninput="filterVoiceLib(this.value,'voiceLibGrid')">
                   </div>
-                  <div class="table-filter-btn"><span>Filter</span><img class="icon" src="../../../../components/ai-social-media/icons/list-filter.svg" alt=""></div>
+                  <div class="table-filter-btn"><span>Filters</span><img class="icon" src="../../../../components/ai-social-media/icons/list-filter.svg" alt=""></div>
                   <div class="table-filter-btn" style="width:36px; justify-content:center; padding:8px;"><img class="icon" src="../../../../components/ai-social-media/icons/arrow-down-wide-narrow.svg" alt=""></div>
                 </div>
                 <div class="voice-browse-chips">
@@ -1843,7 +1843,6 @@
                   <div class="filter-select"><span class="filter-select__label">Language</span><img class="filter-select__caret" src="../../../../components/ai-social-media/icons/caret-down-filled.svg" alt=""></div>
                   <div class="filter-select"><span class="filter-select__label">Gender</span><img class="filter-select__caret" src="../../../../components/ai-social-media/icons/caret-down-filled.svg" alt=""></div>
                   <div class="voice-browse-chip-divider"></div>
-                  <div class="filter-toggle"><span class="filter-toggle__label">All</span></div>
                   <div class="filter-toggle"><span class="filter-toggle__label">Social Media</span></div>
                   <div class="filter-toggle"><span class="filter-toggle__label">Advertisement</span></div>
                   <div class="filter-toggle"><span class="filter-toggle__label">Characters Animations</span></div>
@@ -3131,7 +3130,7 @@
             <img src="../../../../components/ai-social-media/icons/ui-search.svg" alt="">
             <input type="text" class="voice-lib-search" placeholder="Search voice" oninput="filterVoiceLib(this.value,'voiceLibGridModal')">
           </div>
-          <div class="table-filter-btn"><span>Filter</span><img class="icon" src="../../../../components/ai-social-media/icons/list-filter.svg" alt=""></div>
+          <div class="table-filter-btn"><span>Filters</span><img class="icon" src="../../../../components/ai-social-media/icons/list-filter.svg" alt=""></div>
           <div class="table-filter-btn" style="width:36px; justify-content:center; padding:8px;"><img class="icon" src="../../../../components/ai-social-media/icons/arrow-down-wide-narrow.svg" alt=""></div>
         </div>
         <div class="voice-browse-chips">
@@ -3139,9 +3138,13 @@
           <div class="filter-select"><span class="filter-select__label">Language</span><img class="filter-select__caret" src="../../../../components/ai-social-media/icons/caret-down-filled.svg" alt=""></div>
           <div class="filter-select"><span class="filter-select__label">Gender</span><img class="filter-select__caret" src="../../../../components/ai-social-media/icons/caret-down-filled.svg" alt=""></div>
           <div class="voice-browse-chip-divider"></div>
-          <div class="filter-toggle"><span class="filter-toggle__label">All</span></div>
           <div class="filter-toggle"><span class="filter-toggle__label">Social Media</span></div>
           <div class="filter-toggle"><span class="filter-toggle__label">Advertisement</span></div>
+          <div class="filter-toggle"><span class="filter-toggle__label">Characters Animations</span></div>
+          <div class="filter-toggle"><span class="filter-toggle__label">Conversational</span></div>
+          <div class="filter-toggle"><span class="filter-toggle__label">Entertainment TV</span></div>
+          <div class="filter-toggle"><span class="filter-toggle__label">Informative Educational</span></div>
+          <div class="filter-toggle"><span class="filter-toggle__label">Narrative Story</span></div>
         </div>
         <div class="voice-lib-grid voice-lib-grid--modal" id="voiceLibGridModal"></div>
       </div>
@@ -7449,12 +7452,29 @@ function voiceRowHtml(v){
   // audio-row-play-triangle.svg is the bare glyph (no baked-in circle) -- see
   // .voice-modal-col-rows .voice-play's own CSS comment for why audio-play.svg (which draws
   // its own circle) doesn't belong inside a span that already draws one.
+  // Trailing action button (Figma 9849:169096): a star favorite-toggle on Library rows, a
+  // trash delete on Cloned rows -- stopPropagation so clicking it doesn't also select the row.
+  const actionBtn = v.source === 'cloned'
+    ? `<button type="button" class="voice-modal-action-btn" onclick="event.stopPropagation(); deleteClonedVoice('${v.id}')" title="Delete voice"><img src="../../../../components/ai-social-media/icons/edit-trash.svg" alt=""></button>`
+    : `<button type="button" class="voice-modal-action-btn${v.favorited ? ' favorited' : ''}" onclick="event.stopPropagation(); toggleVoiceFavorite('${v.id}')" title="Favorite voice"><img src="../../../../components/ai-social-media/icons/${v.favorited ? 'shape-star-filled' : 'favorite-star-16'}.svg" alt=""></button>`;
   return `
     <div class="voice-item${selected ? ' selected' : ''}" onclick="selectSettingVoice(this,'${escapeHtml(v.name)}'); this.dataset.voiceId='${v.id}';" data-voice-id="${v.id}">
       <div class="voice-play" onclick="togglePreview(event,this)"><img src="../../../../components/ai-social-media/icons/audio-row-play-triangle.svg" alt=""></div>
       <div class="voice-item-info"><span class="voice-item-name">${escapeHtml(v.name)}</span><span class="voice-item-tag">${escapeHtml(v.tag)}</span></div>
       <span class="voice-check">✓</span>
+      ${actionBtn}
     </div>`;
+}
+function toggleVoiceFavorite(id){
+  const v = YOUR_VOICES_DATA.find(v => v.id === id);
+  if(v){ v.favorited = !v.favorited; renderVoiceSelectModalRows(); }
+}
+function deleteClonedVoice(id){
+  const idx = YOUR_VOICES_DATA.findIndex(v => v.id === id);
+  if(idx === -1) return;
+  YOUR_VOICES_DATA.splice(idx, 1);
+  if(selectedVoiceId === id) selectedVoiceId = YOUR_VOICES_DATA[0]?.id;
+  renderVoiceSelectModalRows();
 }
 // Figma 9523:151259 -- "Cloned & Designed by you" column always ends with a dashed
 // "+ New voice" row below the mapped voice rows (was missing entirely before this fix).
