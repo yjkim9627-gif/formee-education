@@ -7929,6 +7929,7 @@ function updateVideoUnitDesc(unit, value){
   if(!window.__unitDescriptions) window.__unitDescriptions = {};
   window.__unitDescriptions[unit] = value;
   window.__unitDescTouched[unit] = true;
+  syncReelThumbRegenBtn(unit);
 }
 // Programmatic version of the above (AI chat rewrites, "Regenerate all") that also has to
 // push the new text into whichever textarea(s) are on screen, since — unlike a live oninput
@@ -8563,11 +8564,18 @@ function selectTimelineTile(n){
 // both, which is what this used to render (the Voice section markup was appended INSIDE
 // the .scene-card div). #timelineEditorPanel now supplies that 24px gap itself (see the CSS
 // above), so this just needs to emit them as two siblings, not one.
+// Cost shown on Figma 9059:244772's per-scene "Regenerate" pill -- happens to be the same
+// number as VIDEO_COST_PER_UNIT, but named separately since it's a distinct action (regenerating
+// just this scene's reference image, not its video clip).
+const THUMB_REGEN_COST = 175;
 function renderTimelineEditor(unit){
   document.getElementById('timelineEditorPanel').innerHTML = `
     <div class="scene-card" id="timelineSceneEditor${unit}">
       <div class="scene-desc-block">
-        <label class="scene-desc-label-reel">Scene &amp; character action description</label>
+        <div class="scene-card-head-row">
+          <label class="scene-desc-label-reel">Scene &amp; character action description</label>
+          <button type="button" class="img-prompt-regen-btn used" id="reelThumbRegenBtn${unit}" onclick="regenerateReelThumb(${unit})" disabled><img src="../../../../components/ai-social-media/icons/refresh-ccw.svg" class="icon-inline" alt="">Regenerate <span class="cost"><img src="../../../../components/ai-social-media/icons/zap.svg" class="icon-inline" alt="">${THUMB_REGEN_COST}</span></button>
+        </div>
         <div class="scene-desc-box">
           <div class="reference-images-row compact"></div>
           <div class="mention-wrap field-fill-wrap" id="descFieldWrap_${unit}">
@@ -8583,6 +8591,57 @@ function renderTimelineEditor(unit){
   renderReferenceImages();
   document.querySelectorAll('#timelineEditorPanel .mention-wrap textarea').forEach(bindMentionTextarea);
   updateVoicePreviewButton('tl', unit);
+  if(!window.__reelThumbDescBaseline) window.__reelThumbDescBaseline = {};
+  window.__reelThumbDescBaseline[unit] = getVideoUnitDesc(unit);
+}
+// Regenerate starts inactive -- the reference image (once generated) already matches this
+// exact description -- and only lights up once the text diverges from what it was last
+// generated from, same convention as syncVideoPromptRegenBtn()/syncVersionsRegenBtn().
+function syncReelThumbRegenBtn(unit){
+  const btn = document.getElementById('reelThumbRegenBtn' + unit);
+  if(!btn) return;
+  const baseline = window.__reelThumbDescBaseline && window.__reelThumbDescBaseline[unit];
+  if(baseline === undefined) return;
+  btn.disabled = getVideoUnitDesc(unit).trim() === baseline.trim();
+}
+// Regenerates just this scene's reference-image tile (Figma 9059:244772's per-scene
+// "Regenerate" pill) -- mirrors regenerateVideoScene()'s generating -> ready cycle, just for a
+// Timeline scene-tile (data-type attribute) instead of a Video tile (.ready/.generating classes).
+function regenerateReelThumb(unit){
+  const tile = document.getElementById('timelineTile' + unit);
+  if(!tile) return;
+  tile.dataset.type = 'generating';
+  const preview = tile.querySelector('.scene-tile-preview');
+  preview.querySelector('.scene-tile-top-row')?.remove();
+  preview.style.backgroundImage = '';
+  let placeholder = preview.querySelector('.scene-tile-placeholder');
+  if(!placeholder){
+    placeholder = document.createElement('div');
+    placeholder.className = 'scene-tile-placeholder';
+    preview.appendChild(placeholder);
+  }
+  placeholder.innerHTML = `
+    <div class="scene-tile-placeholder-icon spinner"><img src="../../../../components/ai-social-media/icons/ui-spinner-lg.svg" alt=""></div>
+    <div class="scene-tile-placeholder-text">
+      <span class="scene-tile-placeholder-title">Creating your reference image…</span>
+      <span class="scene-tile-placeholder-sub"><p>The video will be generated using this as a guide</p></span>
+    </div>`;
+  setTimeout(() => {
+    tile.dataset.type = 'thumbnail';
+    placeholder.remove();
+    preview.style.backgroundImage = `url('assets/video/scene${(unit % 2) + 1}.png')`;
+    preview.insertAdjacentHTML('afterbegin', `
+      <div class="scene-tile-top-row">
+        <span class="feedback-status-chip feedback-status-chip--green">Ready</span>
+        <div class="scene-tile-icon-row">
+          <button class="media-card-icon-btn download" type="button" onclick="event.stopPropagation(); downloadReelThumb(${unit})"><img src="../../../../components/ai-social-media/icons/download-ui.svg" alt=""></button>
+          <button class="media-card-icon-btn maximize" type="button" onclick="event.stopPropagation(); expandReelThumb(${unit})"><img src="../../../../components/ai-social-media/icons/maximize.svg" alt=""></button>
+        </div>
+      </div>`);
+    if(!window.__reelThumbDescBaseline) window.__reelThumbDescBaseline = {};
+    window.__reelThumbDescBaseline[unit] = getVideoUnitDesc(unit);
+    syncReelThumbRegenBtn(unit);
+  }, 1400);
 }
 
 // "Generate Thumbnails" CTA (bottom action bar, Timeline tab) — every tile runs through
