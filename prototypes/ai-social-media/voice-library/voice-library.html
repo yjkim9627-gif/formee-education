@@ -779,13 +779,16 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
             <button type="button" class="controls-segment-chip controls-segment-chip--selected" data-method="record" onclick="vcSetMethod('record')">Record</button>
             <button type="button" class="controls-segment-chip" data-method="upload" onclick="vcSetMethod('upload')">Upload</button>
           </div>
-          <div class="vc-tips">
+          <div id="vcMethodArea"></div>
+          <!-- Figma (9680:19) only shows tips in the idle Record sub-state -- it's a
+               sibling AFTER method-area, not shown at all once recording starts or while
+               on the Upload tab. Toggled by vcRenderMain()/vcRenderMethodArea(). -->
+          <div class="vc-tips" id="vcTips">
             <p class="vc-tips-title">Tips for a clean clone</p>
             <div class="vc-tips-row"><span class="vc-tips-dot"></span><span class="vc-tips-text"><b>Avoid noisy environments</b> — background sound interferes with the result.</span></div>
             <div class="vc-tips-row"><span class="vc-tips-dot"></span><span class="vc-tips-text"><b>Check your microphone</b> — an external or headset mic captures cleaner audio.</span></div>
             <div class="vc-tips-row"><span class="vc-tips-dot"></span><span class="vc-tips-text"><b>Stay consistent</b> — don't switch recording equipment between takes.</span></div>
           </div>
-          <div id="vcMethodArea"></div>
           <div class="vc-clip-list" id="vcClipList"></div>
         </div>
 
@@ -834,8 +837,14 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
         </div>
       </div>
 
-      <div class="cvm-footer" id="vcFooterMain" style="justify-content:flex-end;">
-        <button type="button" class="actions-btn actions-btn--inactive" id="vcNextBtn" disabled onclick="vcGoToDetails()">Next</button>
+      <!-- Figma's idle-state footer (9814:271781) is Next-only, but the recording/paused
+           states (9814:272421 / 9814:272433) add a "Back" here too -- shown/hidden by
+           vcRenderMethodArea() alongside the rest of the recording UI. This Back cancels
+           the in-progress take (vcCancelRecording), not the whole modal -- that's what the
+           header's own back arrow is already for. -->
+      <div class="cvm-footer" id="vcFooterMain" style="justify-content:space-between;">
+        <button type="button" class="actions-btn actions-btn--secondary" id="vcCancelRecordBtn" onclick="vcCancelRecording()" hidden>Back</button>
+        <button type="button" class="actions-btn actions-btn--inactive" id="vcNextBtn" disabled onclick="vcGoToDetails()" style="margin-left:auto;">Next</button>
       </div>
       <div class="cvm-footer" id="vcFooterDetails" hidden>
         <button type="button" class="actions-btn actions-btn--secondary" onclick="vcBackToMain()">Back</button>
@@ -1654,6 +1663,13 @@ function vcRenderMain(){
 }
 function vcRenderMethodArea(){
   const area = document.getElementById('vcMethodArea');
+  const isRecordingOrPaused = vc.method === 'record' && vc.recordState !== 'idle';
+  // Figma (9680:19 vs 9814:271870/9814:272363): tips only show in the idle Record
+  // sub-state -- gone on Upload, gone once recording starts. Same story for the
+  // footer's extra "Back" (cancel this take), which only exists while recording/paused.
+  document.getElementById('vcTips').hidden = vc.method !== 'record' || vc.recordState !== 'idle';
+  document.getElementById('vcCancelRecordBtn').hidden = !isRecordingOrPaused;
+
   if (vc.method === 'upload'){
     area.innerHTML = `
       <div class="upload-dropzone vc-dropzone-full" style="cursor:pointer;" onclick="vcSimulateUpload()">
@@ -1675,31 +1691,31 @@ function vcRenderMethodArea(){
     return;
   }
   const paused = vc.recordState === 'paused';
+  const waveformBars = Array.from({ length: 40 }, (_, i) =>
+    `<span style="animation-delay:${(i * 0.045).toFixed(2)}s"></span>`).join('');
   area.innerHTML = `
-    <div class="vc-recording-panel">
-      <div class="vc-recording-row">
-        <div class="vc-recording-status">
-          <img src="${ICON}audio-record-dot.svg" alt="">
-          <span>${paused ? 'Paused' : 'Recording...'}</span>
-        </div>
-        <div class="vc-timer">
-          <span class="vc-timer-pill"><span>${vcFormatTime(vc.timerSec)}</span></span>
-          <span class="vc-timer-sep">/</span>
-          <span class="vc-timer-pill"><span>${vcFormatTime(30)}</span></span>
-        </div>
+    <div class="vc-record-box${paused ? ' is-paused' : ''}">
+      <div class="vc-record-timer">
+        <span class="vc-timer-pill" id="vcTimerCurrent">${vcFormatTime(vc.timerSec)}</span>
+        <span class="vc-timer-sep">/</span>
+        <span class="vc-timer-pill">${vcFormatTime(30)}</span>
       </div>
+      <div class="vc-waveform" aria-hidden="true">${waveformBars}</div>
       <div class="vc-recording-buttons">
         <button type="button" class="vc-btn-secondary" onclick="${paused ? 'vcResumeRecording()' : 'vcPauseRecording()'}">
           <img src="${ICON}${paused ? 'audio-resume-dot.svg' : 'audio-pause-bars-glyph.svg'}" alt="">
           <span>${paused ? 'Resume' : 'Pause'}</span>
         </button>
-        <button type="button" class="actions-btn actions-btn--primary" style="flex:1 0 0;" onclick="vcFinishRecording()">Finish</button>
+        <button type="button" class="actions-btn actions-btn--primary" onclick="vcFinishRecording()">Finish</button>
       </div>
-      <div class="vc-consent-row">
-        <input type="checkbox" class="checkbox" id="vcNoiseCheckbox" ${vc.removeNoise ? 'checked' : ''} onchange="vc.removeNoise = this.checked">
-        <span>Remove background noise from recordings</span>
-      </div>
+    </div>
+    <div class="vc-record-status">
+      <span class="vc-record-status-dot"></span>
+      <span id="vcRecordStatusText">${vcRecordStatusText(paused)}</span>
     </div>`;
+}
+function vcRecordStatusText(paused){
+  return `${paused ? 'Paused' : 'Recording...'} ${vcFormatTime(vc.timerSec)} - ${vc.timerSec < 5 ? 'need 5s minimum' : 'long enough, stop anytime'}`;
 }
 function vcRenderClipList(){
   document.getElementById('vcClipList').innerHTML = vc.clips.map(c => `
@@ -1729,8 +1745,13 @@ function vcBeginTimer(){
   vc.timerHandle = setInterval(() => {
     vc.timerSec++;
     if (vc.timerSec >= 30){ vcFinishRecording(); return; }
-    const el = document.querySelector('.vc-timer-pill span');
-    if (el) el.textContent = vcFormatTime(vc.timerSec);
+    // Patch the two live text nodes directly rather than re-rendering the whole area --
+    // a full innerHTML replace would restart every waveform bar's CSS animation on each
+    // tick instead of letting it run continuously.
+    const timerEl = document.getElementById('vcTimerCurrent');
+    if (timerEl) timerEl.textContent = vcFormatTime(vc.timerSec);
+    const statusEl = document.getElementById('vcRecordStatusText');
+    if (statusEl) statusEl.textContent = vcRecordStatusText(vc.recordState === 'paused');
   }, 1000);
 }
 function vcStartRecording(){
@@ -1751,6 +1772,13 @@ function vcResumeRecording(){
 function vcFinishRecording(){
   clearInterval(vc.timerHandle); vc.timerHandle = null;
   vc.clips.push({ id:'clip' + (++vc.clipSeq), name:`Recording ${vc.clipSeq}.mp4`, sec:Math.max(1, vc.timerSec) });
+  vc.recordState = 'idle'; vc.timerSec = 0;
+  vcRenderMain();
+}
+// Footer "Back" during recording/paused (Figma 9814:272421/9814:272433) -- discards the
+// in-progress take instead of saving it, then returns to the idle Start Recording state.
+function vcCancelRecording(){
+  clearInterval(vc.timerHandle); vc.timerHandle = null;
   vc.recordState = 'idle'; vc.timerSec = 0;
   vcRenderMain();
 }

@@ -267,26 +267,54 @@ textarea.vd-input{min-height:76px; resize:none;}
 .vc-action-row img{width:20px; height:20px; display:block;}
 .vc-action-row span{font-family:var(--font-family-text); font-size:13px; font-weight:600; line-height:20px; color:var(--color-neutral-700);}
 
-/* Recording / Paused panel */
-.vc-recording-panel{display:flex; flex-direction:column; gap:12px; width:100%;}
-.vc-recording-row{
-  display:flex; align-items:center; justify-content:space-between; width:100%; box-sizing:border-box;
-  padding:13px 12px; border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); background:var(--color-neutral-0);
+/* Recording / Paused -- Figma 9814:271870 (recording) / 9814:272363 (paused). The
+   "Voice / Instant voice clone" box is a single 184px-tall bordered frame: timer pinned
+   top-right, Pause/Finish centered near the bottom. Figma draws the middle of that box
+   empty -- the waveform filling it is this file's own addition (asked for separately),
+   not something copied from the design. The red status banner below is a sibling of the
+   box, not nested inside it. */
+.vc-record-box{
+  position:relative; width:100%; height:184px; box-sizing:border-box;
+  border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); background:var(--color-neutral-0);
+  padding:var(--spacing-md); overflow:hidden;
 }
-.vc-recording-status{display:flex; align-items:center; gap:8px;}
-.vc-recording-status img{width:8px; height:8px; display:block;}
-.vc-recording-status span{font-family:var(--font-family-text); font-size:13px; font-weight:600; line-height:20px; color:var(--color-neutral-700);}
-.vc-timer{display:flex; align-items:center; gap:var(--spacing-xs);}
-.vc-timer-pill{display:flex; align-items:center; justify-content:center; padding:2px 6px; border-radius:var(--radius-full); background:var(--color-neutral-150);}
-.vc-timer-pill span{font-family:var(--font-family-text); font-size:11px; font-weight:500; line-height:16px; color:var(--color-neutral-700);}
+.vc-record-timer{display:flex; align-items:center; justify-content:flex-end; gap:var(--spacing-xs); width:100%;}
+.vc-timer-pill{display:flex; align-items:center; justify-content:center; padding:2px 6px; border-radius:var(--radius-full); background:var(--color-neutral-150);
+  font-family:var(--font-family-text); font-size:11px; font-weight:500; line-height:16px; color:var(--color-neutral-700);}
 .vc-timer-sep{font-family:var(--font-family-text); font-size:12px; font-weight:500; line-height:18px; color:var(--color-neutral-500);}
-.vc-recording-buttons{display:flex; gap:12px; width:100%;}
+
+.vc-waveform{
+  position:absolute; left:var(--spacing-lg); right:var(--spacing-lg); top:52px; bottom:72px;
+  display:flex; align-items:center; justify-content:center; gap:3px;
+}
+.vc-waveform span{
+  display:block; flex-shrink:0; width:3px; border-radius:var(--radius-full); background:var(--color-neutral-400);
+  height:15%; animation:vc-wave 1.1s ease-in-out infinite;
+}
+.vc-record-box.is-paused .vc-waveform span{animation-play-state:paused; opacity:.5;}
+@keyframes vc-wave{
+  0%, 100%{height:15%;}
+  50%{height:85%;}
+}
+
+.vc-recording-buttons{
+  position:absolute; left:50%; bottom:var(--spacing-xl); transform:translateX(-50%);
+  display:flex; gap:12px; align-items:center; justify-content:center;
+}
 .vc-btn-secondary{
-  flex:1 0 0; display:flex; align-items:center; justify-content:center; gap:6px; padding:9px var(--spacing-md); box-sizing:border-box;
+  display:flex; align-items:center; justify-content:center; gap:6px; padding:9px var(--spacing-md); box-sizing:border-box;
   border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); background:var(--color-neutral-0); cursor:pointer;
   font-family:var(--font-family-text); font-size:13px; font-weight:600; line-height:20px; color:var(--color-neutral-700);
 }
 .vc-btn-secondary img{width:16px; height:16px; display:block;}
+
+.vc-record-status{
+  display:flex; align-items:center; gap:var(--spacing-sm); width:100%; box-sizing:border-box;
+  margin-top:var(--spacing-lg); padding:var(--spacing-sm) var(--spacing-lg);
+  border-radius:var(--radius-lg); background:var(--color-badge-red-bg);
+}
+.vc-record-status-dot{width:6px; height:6px; border-radius:50%; background:var(--color-badge-red-text); flex-shrink:0;}
+.vc-record-status span{font-family:var(--font-family-text); font-size:14px; font-weight:600; color:var(--color-badge-red-text);}
 
 /* Consent checkbox rows ("Remove background noise" during recording, "rights confirm" on
    the details step) -- shared .checkbox component, this class only carries row layout. */
@@ -325,6 +353,10 @@ textarea.vd-input{min-height:76px; resize:none;}
    layout). Shown for both Record and Upload since the guidance applies to either audio
    source. */
 .vc-tips{display:flex; flex-direction:column; gap:6px; width:100%; box-sizing:border-box; padding:var(--spacing-md); background:var(--color-neutral-50); border-radius:var(--radius-lg);}
+/* Same fix as .modal-overlay[hidden]/.cvm-footer[hidden] elsewhere in this file --
+   .vc-tips's own display:flex has equal specificity to the browser's [hidden] rule and
+   wins on source order, so the hidden attribute alone silently does nothing without this. */
+.vc-tips[hidden]{display:none;}
 .vc-tips-title{margin:0 0 2px; font-family:var(--font-family-text); font-size:11px; font-weight:600; line-height:16px; color:var(--color-neutral-500); text-transform:uppercase; letter-spacing:.4px;}
 .vc-tips-row{display:flex; align-items:flex-start; gap:6px;}
 .vc-tips-dot{width:4px; height:4px; margin-top:7px; border-radius:50%; background:var(--color-neutral-400); flex-shrink:0;}
