@@ -267,6 +267,21 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
    it doesn't compete visually with the one card that IS the current default. */
 .voice-card-icon-btn.setdefault.muted{opacity:.45;}
 
+/* Icon-button tooltip -- "Editor / Panel Action Row/Tooltip" (Figma 4554:89321) for the
+   bubble itself (bg neutral-900, radius-md, spacing-xs/sm padding, 12px/500/18 text), same
+   hover-reveal mechanics (absolute + opacity transition off the trigger's own :hover, no JS)
+   already used by image-editing.html's .toggle-chip__tooltip elsewhere in this app. Anchored
+   above the button rather than below since these buttons sit inside a scrolling row grid, not
+   a fixed top toolbar. */
+.voice-card-icon-btn .vl-icon-tooltip{
+  position:absolute; bottom:calc(100% + 8px); left:50%; transform:translateX(-50%);
+  display:inline-flex; align-items:center; padding:var(--spacing-xs) var(--spacing-sm);
+  background:var(--color-neutral-900); border-radius:var(--radius-md);
+  font-family:var(--font-family-text); font-size:12px; font-weight:500; line-height:18px; color:var(--color-neutral-0);
+  white-space:nowrap; opacity:0; pointer-events:none; transition:opacity .12s ease; z-index:10;
+}
+.voice-card-icon-btn:hover .vl-icon-tooltip{opacity:1;}
+
 /* kebab dropdown -- functional parity with character-card's roster menu (Set as default
    [multi-brand submenu] / Rename / Delete), adapted to this file's own token-only CSS
    instead of porting brand-setup-kit-character-library.html's bespoke --neutral-* aliases. */
@@ -1250,12 +1265,15 @@ function renderVoices(){
         ${voiceTab === 'explore' ? `
         <button type="button" class="voice-card-icon-btn add" onclick="toggleAddVoice('${v.id}', this)" aria-pressed="${added}" aria-label="${added ? 'Remove' : 'Add'} ${escHtml(v.name)}">
           <img src="${ICON}pagebar-plus.svg" alt="">
+          <span class="vl-icon-tooltip">${added ? 'Remove from My Voices' : 'Add to My Voices'}</span>
         </button>` : ''}
         <button type="button" class="voice-card-icon-btn fav${v.fav ? ' active' : ''}" onclick="toggleFavVoice('${v.id}')" aria-pressed="${v.fav}" aria-label="Favorite ${escHtml(v.name)}">
           <img src="${ICON}shape-star${v.fav ? '-filled' : ''}.svg" alt="">
+          <span class="vl-icon-tooltip">${v.fav ? 'Remove from Favorites' : 'Add to Favorites'}</span>
         </button>
         <button type="button" class="voice-card-icon-btn setdefault${isDefault ? ' on' : ''}${defaultLocked ? ' muted' : ''}" onclick="requestSetDefault('${v.id}', ACTIVE_BRAND)" aria-pressed="${isDefault}" aria-label="${isDefault ? 'Remove as default' : 'Set as default'} for ${escHtml(v.name)}">
           <img src="${ICON}circle-check-glyph.svg" alt="">
+          <span class="vl-icon-tooltip">${isDefault ? 'Remove as default voice' : 'Set as default voice'}</span>
         </button>
       </div>
     </div>`;
