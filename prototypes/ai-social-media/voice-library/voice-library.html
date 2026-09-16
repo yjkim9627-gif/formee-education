@@ -253,13 +253,15 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
 }
 .voice-card-icon-btn:hover{background:var(--color-neutral-50);}
 .voice-card-icon-btn img{width:16px; height:16px; display:block;}
-/* Selected-state colors pulled directly from the real components, not guessed:
-   Icon Button "State=Focused" (2207:1388) is fill neutral-150 / border neutral-500 --
-   never a dark-900 fill, that was this file's own invention. Favorite Button
-   "State=Ghost selected" (7114:140004) has NO fill/border at all -- selecting a
-   favorite drops the button chrome entirely rather than filling it. */
-.voice-card-icon-btn.setdefault.on{background:var(--color-neutral-150); border-color:var(--color-neutral-500);}
-.voice-card-icon-btn.fav.active{background:transparent; border-color:transparent;}
+/* Selected-state colors -- re-verified against get_design_context (which resolves the
+   real nested-instance render), not the earlier plugin-API paint read that missed a
+   nesting level and reported the wrong node as empty. Both the card's live "Favorited=On"
+   instance (9965:9 -> Favorite Button child I9965:24;3356:1608) and the setdefault
+   button's "State=Focused" render to the exact same chrome: fill neutral-150, border
+   neutral-500. Never a dark-900 fill, and never fully transparent/borderless either --
+   those were both this file's own earlier mistakes. */
+.voice-card-icon-btn.setdefault.on,
+.voice-card-icon-btn.fav.active{background:var(--color-neutral-150); border-color:var(--color-neutral-500);}
 /* Not a real disabled state -- clicking it still works, it just routes through the
    "change your default voice?" confirm modal instead of toggling immediately. Muted so
    it doesn't compete visually with the one card that IS the current default. */
