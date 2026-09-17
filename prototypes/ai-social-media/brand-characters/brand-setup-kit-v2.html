@@ -1658,8 +1658,15 @@ input.card-name::selection{background:var(--brand-primary-mid);}
      카드는 세로 9:16 타일이라 이미지가 카드 전체를 채우고, 배지·액션·스크러버가
      그 위에 얹힌다 — 아래 흰 영역은 제목/날짜/상태뿐이다. -->
 <div class="main" id="libMain" hidden>
+  <!-- Figma `Content Library · full list · top` 10149:177119 — header 1602x54 는
+       제목 + 부제 + 오른쪽 `New Content` 135x38 이다.                 2026-09-17 -->
   <div class="lib-head">
-    <h1 class="lib-title">Content Library</h1>
+    <div class="title-block">
+      <h1 class="lib-title">Content Library</h1>
+      <p class="lib-pagesub">Videos, images and carousels across all brands in this account.</p>
+    </div>
+    <button type="button" class="btn-primary lib-new">
+      <div class="ic clip" style="width:16px;height:16px;"><div class="f" style="inset:50% 20.83% 50% 20.83%"><div class="f" style="inset:-0.8px -5.71%"><img src="assets/imgPlus1.svg" alt=""></div></div><div class="f" style="inset:20.83% 50% 20.83% 50%"><div class="f" style="inset:-5.71% -0.8px"><img src="assets/imgPlus2.svg" alt=""></div></div></div><span>New Content</span><span class="btn-inset"></span></button>
   </div>
 
   <div class="lib-toolbar">
@@ -1668,7 +1675,19 @@ input.card-name::selection{background:var(--brand-primary-mid);}
         <circle cx="7" cy="7" r="4.6"/><path d="m10.6 10.6 3 3" stroke-linecap="round"/></svg>
       <input type="text" placeholder="Search content…" aria-label="Search content">
     </label>
-    <!-- 2026-09-04 Figma `Filters · Status / Created by / Date open`
+  </div>
+
+  <!-- Figma `viewport · library` 1602x920 — 검색 아래만 스크롤하고, 세그먼트+필터가
+       그 위에 붙는다(sticky 64). 오른쪽에 6px 스크롤바, 맨 아래 `load more`.  2026-09-17 -->
+  <div class="lib-scroll" id="libScroll">
+    <div class="lib-stickybar">
+<div class="lib-seg" role="tablist" aria-label="Content type">
+    <button type="button" class="lib-seg-i on" role="tab" aria-selected="true">All</button>
+    <button type="button" class="lib-seg-i" role="tab" aria-selected="false">Videos</button>
+    <button type="button" class="lib-seg-i" role="tab" aria-selected="false">Images</button>
+    <button type="button" class="lib-seg-i" role="tab" aria-selected="false">Carousels</button>
+  </div>
+<!-- 2026-09-04 Figma `Filters · Status / Created by / Date open`
          (8449:123072 / 123094 / 123116) 기준으로 다시 만들었다.
          칩은 두 모습이다 — 안 걸렸을 땐 흰 알약 + 캐럿, 걸렸을 땐 남색 알약 +
          ✕ + 라벨 | 값. ✕ 를 누르면 그 필터만 해제된다.
@@ -1693,8 +1712,9 @@ input.card-name::selection{background:var(--brand-primary-mid);}
         </div>
       </div>
       <div class="lib-fwrap">
-        <button type="button" class="lib-fchip" data-lfilter="date" aria-expanded="false"><span class="lib-fx"><svg viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round"><path d="m5.5 5.5 7 7m0-7-7 7"/></svg></span><span class="lib-flabel">Date</span><span class="lib-fdiv"></span><span class="lib-fval"></span><i></i></button>
+        <button type="button" class="lib-fchip" data-lfilter="date" aria-expanded="false"><span class="lib-fx"><svg viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round"><path d="m5.5 5.5 7 7m0-7-7 7"/></svg></span><span class="lib-flabel">Date range</span><span class="lib-fdiv"></span><span class="lib-fval"></span><i></i></button>
         <div class="lib-fmenu" data-lmenu="date" role="menu" hidden>
+        <button type="button" class="lib-fitem" role="menuitemcheckbox" aria-checked="false" data-v=""><span>All time</span></button>
         <button type="button" class="lib-fitem" role="menuitemcheckbox" aria-checked="false" data-v="7"><span>Last 7 days</span></button>
         <button type="button" class="lib-fitem" role="menuitemcheckbox" aria-checked="false" data-v="30"><span>Last 30 days</span></button>
         <button type="button" class="lib-fitem" role="menuitemcheckbox" aria-checked="false" data-v="90"><span>Last 90 days</span></button>
@@ -1703,20 +1723,14 @@ input.card-name::selection{background:var(--brand-primary-mid);}
       </div>
       <span class="lib-count">24 items</span>
     </div>
-  </div>
+    </div>
 
-  <div class="lib-seg" role="tablist" aria-label="Content type">
-    <button type="button" class="lib-seg-i on" role="tab" aria-selected="true">All</button>
-    <button type="button" class="lib-seg-i" role="tab" aria-selected="false">Videos</button>
-    <button type="button" class="lib-seg-i" role="tab" aria-selected="false">Images</button>
-    <button type="button" class="lib-seg-i" role="tab" aria-selected="false">Carousels</button>
-  </div>
 
   <!-- 2026-09-04 Figma `Content Library · empty` 7891:125077 / `· no results` 8479:140946.
        한 껍데기에 두 얼굴이다 — 라이브러리가 통째로 비었을 때(empty)와
        필터·검색 결과만 없을 때(nores). 아이콘은 좌측 nav 의 Library 아이콘을 그대로 쓴다. -->
   <div class="lib-empty" id="libNoResults" data-mode="nores" hidden>
-    <div class="lib-empty-glyph"><div class="ic clip" style="width:48px;height:48px;"><div class="f" style="inset:28.57% 16.67% 13.1% 66.67%"><div class="f" style="inset:-6.86% -24.01%"><img src="assets/imgVector11.svg" alt=""></div></div><div class="f" style="inset:28.57% 50% 13.1% 50%"><div class="f" style="inset:-6.86% -0.8px"><img src="assets/imgVector12.svg" alt=""></div></div><div class="f" style="inset:35.71% 66.67% 14.29% 33.33%"><div class="f" style="inset:-8% -0.8px"><img src="assets/imgVector13.svg" alt=""></div></div><div class="f" style="inset:21.43% 83.33% 11.9% 16.67%"><div class="f" style="inset:-6% -0.8px"><img src="assets/imgVector14.svg" alt=""></div></div></div></div>
+    <div class="lib-empty-glyph"><svg class="lib-empty-mag" viewBox="0 0 48 48" fill="none" stroke="#8A93A8" stroke-width="3.2" stroke-linecap="round" aria-hidden="true"><circle cx="20" cy="20" r="14"/><path d="m30.5 30.5 6.5 6.5"/></svg><div class="ic clip" style="width:48px;height:48px;"><div class="f" style="inset:28.57% 16.67% 13.1% 66.67%"><div class="f" style="inset:-6.86% -24.01%"><img src="assets/imgVector11.svg" alt=""></div></div><div class="f" style="inset:28.57% 50% 13.1% 50%"><div class="f" style="inset:-6.86% -0.8px"><img src="assets/imgVector12.svg" alt=""></div></div><div class="f" style="inset:35.71% 66.67% 14.29% 33.33%"><div class="f" style="inset:-8% -0.8px"><img src="assets/imgVector13.svg" alt=""></div></div><div class="f" style="inset:21.43% 83.33% 11.9% 16.67%"><div class="f" style="inset:-6% -0.8px"><img src="assets/imgVector14.svg" alt=""></div></div></div></div>
     <div class="lib-empty-copy">
       <p class="lib-empty-t" id="libEmptyTitle">No contents yet</p>
       <p class="lib-empty-b" id="libEmptyBody">Create your first piece of content to see it here.</p>
@@ -1742,14 +1756,8 @@ input.card-name::selection{background:var(--brand-primary-mid);}
             <img class="lib-thumb" src="assets/imgLibLipTint.png" alt="">
             <div class="lib-tile-ov">
               <div class="lib-tile-top">
-                <span class="lib-fmt">
-                  <svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.4" aria-hidden="true">
-                    <rect x="4.5" y="1.8" width="7" height="12.4" rx="1.6"/></svg>9:16</span>
+                <span class="lib-fmt"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="4.5" y="1.8" width="7" height="12.4" rx="1.6"/></svg>9:16</span>
                 <span class="lib-acts">
-                  <button type="button" class="lib-iconbtn" aria-label="Download">
-                    <svg viewBox="0 0 20 20" fill="none" stroke="#0F1729" stroke-width="1.6"
-                         stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M10 3.5v8m0 0 3-3m-3 3-3-3M4 14.5h12"/></svg></button>
                   <button type="button" class="lib-iconbtn" aria-label="More">
                     <svg viewBox="0 0 20 20" fill="#0F1729" aria-hidden="true">
                       <circle cx="5" cy="10" r="1.5"/><circle cx="10" cy="10" r="1.5"/>
@@ -1779,7 +1787,7 @@ input.card-name::selection{background:var(--brand-primary-mid);}
           </div>
           <div class="lib-meta">
             <p class="lib-name">This New Lip Tint Is Everything</p>
-            <p class="lib-sub"><span class="lib-date">Aug 26, 2026</span>
+            <p class="lib-sub"><span class="lib-datep"><span class="lib-date">Aug 26, 2026</span><span class="lib-plats"><span class="lib-plat" data-p="ig"></span><span class="lib-plat" data-p="tt"></span><span class="lib-plat" data-p="yt"></span></span></span>
               <span class="lib-badge ok">Published</span></p>
           </div>
         </article>
@@ -1792,14 +1800,8 @@ input.card-name::selection{background:var(--brand-primary-mid);}
             <img class="lib-thumb" src="assets/imgLibStudyUK.png" alt="">
             <div class="lib-tile-ov">
               <div class="lib-tile-top">
-                <span class="lib-fmt">
-                  <svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.4" aria-hidden="true">
-                    <rect x="3" y="2.4" width="10" height="11.2" rx="1.6"/></svg>4:5</span>
+                <span class="lib-fmt"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="3.4" y="2.2" width="9.2" height="11.6" rx="1.6"/></svg>4:5</span>
                 <span class="lib-acts">
-                  <button type="button" class="lib-iconbtn" aria-label="Download">
-                    <svg viewBox="0 0 20 20" fill="none" stroke="#0F1729" stroke-width="1.6"
-                         stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M10 3.5v8m0 0 3-3m-3 3-3-3M4 14.5h12"/></svg></button>
                   <button type="button" class="lib-iconbtn" aria-label="More">
                     <svg viewBox="0 0 20 20" fill="#0F1729" aria-hidden="true">
                       <circle cx="5" cy="10" r="1.5"/><circle cx="10" cy="10" r="1.5"/>
@@ -1810,7 +1812,7 @@ input.card-name::selection{background:var(--brand-primary-mid);}
           </div>
           <div class="lib-meta">
             <p class="lib-name">Study in the UK — Applications Open</p>
-            <p class="lib-sub"><span class="lib-date">Aug 24, 2026</span>
+            <p class="lib-sub"><span class="lib-datep"><span class="lib-date">Aug 24, 2026</span><span class="lib-plats"><span class="lib-plat" data-p="ig"></span><span class="lib-plat" data-p="fb"></span></span></span>
               <span class="lib-badge sched">Scheduled</span></p>
           </div>
         </article>
@@ -1823,14 +1825,8 @@ input.card-name::selection{background:var(--brand-primary-mid);}
             <img class="lib-thumb" src="assets/imgLibJanIntake.png" alt="">
             <div class="lib-tile-ov">
               <div class="lib-tile-top">
-                <span class="lib-fmt">
-                  <svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.4" aria-hidden="true">
-                    <rect x="2.6" y="2.6" width="10.8" height="10.8" rx="1.6"/></svg>1:1</span>
+                <span class="lib-fmt"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="2.6" y="2.6" width="10.8" height="10.8" rx="1.6"/></svg>1:1</span>
                 <span class="lib-acts">
-                  <button type="button" class="lib-iconbtn" aria-label="Download">
-                    <svg viewBox="0 0 20 20" fill="none" stroke="#0F1729" stroke-width="1.6"
-                         stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M10 3.5v8m0 0 3-3m-3 3-3-3M4 14.5h12"/></svg></button>
                   <button type="button" class="lib-iconbtn" aria-label="More">
                     <svg viewBox="0 0 20 20" fill="#0F1729" aria-hidden="true">
                       <circle cx="5" cy="10" r="1.5"/><circle cx="10" cy="10" r="1.5"/>
@@ -1841,13 +1837,694 @@ input.card-name::selection{background:var(--brand-primary-mid);}
           </div>
           <div class="lib-meta">
             <p class="lib-name">UK Applications — January Intake</p>
-            <p class="lib-sub"><span class="lib-date">Aug 21, 2026</span>
+            <p class="lib-sub"><span class="lib-datep"><span class="lib-date">Aug 21, 2026</span><span class="lib-plats"><span class="lib-plat" data-p="ig"></span><span class="lib-plat" data-p="li"></span></span></span>
               <span class="lib-badge draft">Draft</span></p>
           </div>
         </article>
 
+        <article class="lib-card r916" data-format="video" data-status="published"
+                 data-title="A Day on Campus in the UK" data-thumb="assets/imgLibCampus.png"
+                 data-author="Me" data-date="2026-08-26">
+          <div class="lib-tile">
+            <img class="lib-thumb" src="assets/imgLibCampus.png" alt="">
+            <div class="lib-tile-ov">
+              <div class="lib-tile-top">
+                <span class="lib-fmt"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="4.5" y="1.8" width="7" height="12.4" rx="1.6"/></svg>9:16</span>
+                <span class="lib-acts">
+                  <button type="button" class="lib-iconbtn" aria-label="More">
+                    <svg viewBox="0 0 20 20" fill="#0F1729" aria-hidden="true">
+                      <circle cx="5" cy="10" r="1.5"/><circle cx="10" cy="10" r="1.5"/>
+                      <circle cx="15" cy="10" r="1.5"/></svg></button>
+                </span>
+              </div>
+              <button type="button" class="lib-play" aria-label="Play">
+                <svg viewBox="0 0 22 22" fill="#475069" aria-hidden="true">
+                  <path d="M6 3.2v15.6L19 11z"/></svg></button>
+              <div class="lib-scrub">
+                <div class="lib-scrub-row">
+                  <span class="lib-time">0:03 <b>/</b> 0:08</span>
+                  <span class="lib-scrub-ct">
+                    <button type="button" class="lib-sbtn" aria-label="Unmute">
+                      <svg viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="1.5"
+                           stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 6.8h2.4L9.6 4v10L6.4 11.2H4z"/><path d="m12.2 7 3.4 4m0-4-3.4 4"/></svg></button>
+                    <button type="button" class="lib-sbtn" aria-label="Full screen">
+                      <svg viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="1.5"
+                           stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6.6 2.6H2.6v4m8.8-4h4v4m0 4.8v4h-4m-4.8 0h-4v-4"/></svg></button>
+                  </span>
+                </div>
+                <div class="lib-bar"><span class="lib-bar-fill"></span><i class="lib-playhead"></i></div>
+              </div>
+            </div>
+          </div>
+          <div class="lib-meta">
+            <p class="lib-name">A Day on Campus in the UK</p>
+            <p class="lib-sub"><span class="lib-datep"><span class="lib-date">Aug 26, 2026</span><span class="lib-plats"><span class="lib-plat" data-p="ig"></span><span class="lib-plat" data-p="tt"></span><span class="lib-plat" data-p="yt"></span></span></span>
+              <span class="lib-badge ok">Published</span></p>
+          </div>
+        </article>
+
+        <article class="lib-card r45" data-format="image" data-status="scheduled"
+                 data-title="Your Visa Checklist, Step by Step" data-thumb="assets/imgLibVisa.png"
+                 data-author="Yejin" data-date="2026-08-24">
+          <div class="lib-tile">
+            <img class="lib-thumb" src="assets/imgLibVisa.png" alt="">
+            <div class="lib-tile-ov">
+              <div class="lib-tile-top">
+                <span class="lib-fmt"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="3.4" y="2.2" width="9.2" height="11.6" rx="1.6"/></svg>4:5</span>
+                <span class="lib-acts">
+                  <button type="button" class="lib-iconbtn" aria-label="More">
+                    <svg viewBox="0 0 20 20" fill="#0F1729" aria-hidden="true">
+                      <circle cx="5" cy="10" r="1.5"/><circle cx="10" cy="10" r="1.5"/>
+                      <circle cx="15" cy="10" r="1.5"/></svg></button>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="lib-meta">
+            <p class="lib-name">Your Visa Checklist, Step by Step</p>
+            <p class="lib-sub"><span class="lib-datep"><span class="lib-date">Aug 24, 2026</span><span class="lib-plats"><span class="lib-plat" data-p="ig"></span><span class="lib-plat" data-p="fb"></span></span></span>
+              <span class="lib-badge sched">Scheduled</span></p>
+          </div>
+        </article>
+
+        <article class="lib-card r11" data-format="image" data-status="draft"
+                 data-title="Free 1:1 Counselling, Book Anytime" data-thumb="assets/imgLibCounselling.png"
+                 data-author="Abeer" data-date="2026-08-21">
+          <div class="lib-tile">
+            <img class="lib-thumb" src="assets/imgLibCounselling.png" alt="">
+            <div class="lib-tile-ov">
+              <div class="lib-tile-top">
+                <span class="lib-fmt"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="2.6" y="2.6" width="10.8" height="10.8" rx="1.6"/></svg>1:1</span>
+                <span class="lib-acts">
+                  <button type="button" class="lib-iconbtn" aria-label="More">
+                    <svg viewBox="0 0 20 20" fill="#0F1729" aria-hidden="true">
+                      <circle cx="5" cy="10" r="1.5"/><circle cx="10" cy="10" r="1.5"/>
+                      <circle cx="15" cy="10" r="1.5"/></svg></button>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="lib-meta">
+            <p class="lib-name">Free 1:1 Counselling, Book Anytime</p>
+            <p class="lib-sub"><span class="lib-datep"><span class="lib-date">Aug 21, 2026</span><span class="lib-plats"><span class="lib-plat" data-p="ig"></span><span class="lib-plat" data-p="li"></span></span></span>
+              <span class="lib-badge draft">Draft</span></p>
+          </div>
+        </article>
+
+        <article class="lib-card r916" data-format="video" data-status="published"
+                 data-title="First Week in Toronto" data-thumb="assets/imgLibToronto.png"
+                 data-author="Tabir" data-date="2026-08-26">
+          <div class="lib-tile">
+            <img class="lib-thumb" src="assets/imgLibToronto.png" alt="">
+            <div class="lib-tile-ov">
+              <div class="lib-tile-top">
+                <span class="lib-fmt"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="4.5" y="1.8" width="7" height="12.4" rx="1.6"/></svg>9:16</span>
+                <span class="lib-acts">
+                  <button type="button" class="lib-iconbtn" aria-label="More">
+                    <svg viewBox="0 0 20 20" fill="#0F1729" aria-hidden="true">
+                      <circle cx="5" cy="10" r="1.5"/><circle cx="10" cy="10" r="1.5"/>
+                      <circle cx="15" cy="10" r="1.5"/></svg></button>
+                </span>
+              </div>
+              <button type="button" class="lib-play" aria-label="Play">
+                <svg viewBox="0 0 22 22" fill="#475069" aria-hidden="true">
+                  <path d="M6 3.2v15.6L19 11z"/></svg></button>
+              <div class="lib-scrub">
+                <div class="lib-scrub-row">
+                  <span class="lib-time">0:03 <b>/</b> 0:08</span>
+                  <span class="lib-scrub-ct">
+                    <button type="button" class="lib-sbtn" aria-label="Unmute">
+                      <svg viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="1.5"
+                           stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 6.8h2.4L9.6 4v10L6.4 11.2H4z"/><path d="m12.2 7 3.4 4m0-4-3.4 4"/></svg></button>
+                    <button type="button" class="lib-sbtn" aria-label="Full screen">
+                      <svg viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="1.5"
+                           stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6.6 2.6H2.6v4m8.8-4h4v4m0 4.8v4h-4m-4.8 0h-4v-4"/></svg></button>
+                  </span>
+                </div>
+                <div class="lib-bar"><span class="lib-bar-fill"></span><i class="lib-playhead"></i></div>
+              </div>
+            </div>
+          </div>
+          <div class="lib-meta">
+            <p class="lib-name">First Week in Toronto</p>
+            <p class="lib-sub"><span class="lib-datep"><span class="lib-date">Aug 26, 2026</span><span class="lib-plats"><span class="lib-plat" data-p="ig"></span><span class="lib-plat" data-p="tt"></span><span class="lib-plat" data-p="yt"></span></span></span>
+              <span class="lib-badge ok">Published</span></p>
+          </div>
+        </article>
+
+        <article class="lib-card r45" data-format="image" data-status="scheduled"
+                 data-title="Meet Your Future Classmates" data-thumb="assets/imgLibClassmates.png"
+                 data-author="Norimi" data-date="2026-08-24">
+          <div class="lib-tile">
+            <img class="lib-thumb" src="assets/imgLibClassmates.png" alt="">
+            <div class="lib-tile-ov">
+              <div class="lib-tile-top">
+                <span class="lib-fmt"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="3.4" y="2.2" width="9.2" height="11.6" rx="1.6"/></svg>4:5</span>
+                <span class="lib-acts">
+                  <button type="button" class="lib-iconbtn" aria-label="More">
+                    <svg viewBox="0 0 20 20" fill="#0F1729" aria-hidden="true">
+                      <circle cx="5" cy="10" r="1.5"/><circle cx="10" cy="10" r="1.5"/>
+                      <circle cx="15" cy="10" r="1.5"/></svg></button>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="lib-meta">
+            <p class="lib-name">Meet Your Future Classmates</p>
+            <p class="lib-sub"><span class="lib-datep"><span class="lib-date">Aug 24, 2026</span><span class="lib-plats"><span class="lib-plat" data-p="ig"></span><span class="lib-plat" data-p="fb"></span></span></span>
+              <span class="lib-badge sched">Scheduled</span></p>
+          </div>
+        </article>
+
+        <article data-page="2" class="lib-card r916" data-format="video" data-status="published"
+                 data-title="This New Lip Tint Is Everything" data-thumb="assets/imgLibLipTint.png"
+                 data-author="Me" data-date="2026-08-26">
+          <div class="lib-tile">
+            <img class="lib-thumb" src="assets/imgLibLipTint.png" alt="">
+            <div class="lib-tile-ov">
+              <div class="lib-tile-top">
+                <span class="lib-fmt"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="4.5" y="1.8" width="7" height="12.4" rx="1.6"/></svg>9:16</span>
+                <span class="lib-acts">
+                  <button type="button" class="lib-iconbtn" aria-label="More">
+                    <svg viewBox="0 0 20 20" fill="#0F1729" aria-hidden="true">
+                      <circle cx="5" cy="10" r="1.5"/><circle cx="10" cy="10" r="1.5"/>
+                      <circle cx="15" cy="10" r="1.5"/></svg></button>
+                </span>
+              </div>
+              <button type="button" class="lib-play" aria-label="Play">
+                <svg viewBox="0 0 22 22" fill="#475069" aria-hidden="true">
+                  <path d="M6 3.2v15.6L19 11z"/></svg></button>
+              <div class="lib-scrub">
+                <div class="lib-scrub-row">
+                  <span class="lib-time">0:03 <b>/</b> 0:08</span>
+                  <span class="lib-scrub-ct">
+                    <button type="button" class="lib-sbtn" aria-label="Unmute">
+                      <svg viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="1.5"
+                           stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 6.8h2.4L9.6 4v10L6.4 11.2H4z"/><path d="m12.2 7 3.4 4m0-4-3.4 4"/></svg></button>
+                    <button type="button" class="lib-sbtn" aria-label="Full screen">
+                      <svg viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="1.5"
+                           stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6.6 2.6H2.6v4m8.8-4h4v4m0 4.8v4h-4m-4.8 0h-4v-4"/></svg></button>
+                  </span>
+                </div>
+                <div class="lib-bar"><span class="lib-bar-fill"></span><i class="lib-playhead"></i></div>
+              </div>
+            </div>
+          </div>
+          <div class="lib-meta">
+            <p class="lib-name">This New Lip Tint Is Everything</p>
+            <p class="lib-sub"><span class="lib-datep"><span class="lib-date">Aug 26, 2026</span><span class="lib-plats"><span class="lib-plat" data-p="ig"></span><span class="lib-plat" data-p="tt"></span><span class="lib-plat" data-p="yt"></span></span></span>
+              <span class="lib-badge ok">Published</span></p>
+          </div>
+        </article>
+
+        <article data-page="2" class="lib-card r45" data-format="image" data-status="scheduled"
+                 data-title="Study in the UK — Applications Open" data-thumb="assets/imgLibStudyUK.png"
+                 data-author="Tabir" data-date="2026-08-24">
+          <div class="lib-tile">
+            <img class="lib-thumb" src="assets/imgLibStudyUK.png" alt="">
+            <div class="lib-tile-ov">
+              <div class="lib-tile-top">
+                <span class="lib-fmt"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="3.4" y="2.2" width="9.2" height="11.6" rx="1.6"/></svg>4:5</span>
+                <span class="lib-acts">
+                  <button type="button" class="lib-iconbtn" aria-label="More">
+                    <svg viewBox="0 0 20 20" fill="#0F1729" aria-hidden="true">
+                      <circle cx="5" cy="10" r="1.5"/><circle cx="10" cy="10" r="1.5"/>
+                      <circle cx="15" cy="10" r="1.5"/></svg></button>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="lib-meta">
+            <p class="lib-name">Study in the UK — Applications Open</p>
+            <p class="lib-sub"><span class="lib-datep"><span class="lib-date">Aug 24, 2026</span><span class="lib-plats"><span class="lib-plat" data-p="ig"></span><span class="lib-plat" data-p="fb"></span></span></span>
+              <span class="lib-badge sched">Scheduled</span></p>
+          </div>
+        </article>
+
+        <article data-page="2" class="lib-card r11" data-format="image" data-status="draft"
+                 data-title="UK Applications — January Intake" data-thumb="assets/imgLibJanIntake.png"
+                 data-author="Norimi" data-date="2026-08-21">
+          <div class="lib-tile">
+            <img class="lib-thumb" src="assets/imgLibJanIntake.png" alt="">
+            <div class="lib-tile-ov">
+              <div class="lib-tile-top">
+                <span class="lib-fmt"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="2.6" y="2.6" width="10.8" height="10.8" rx="1.6"/></svg>1:1</span>
+                <span class="lib-acts">
+                  <button type="button" class="lib-iconbtn" aria-label="More">
+                    <svg viewBox="0 0 20 20" fill="#0F1729" aria-hidden="true">
+                      <circle cx="5" cy="10" r="1.5"/><circle cx="10" cy="10" r="1.5"/>
+                      <circle cx="15" cy="10" r="1.5"/></svg></button>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="lib-meta">
+            <p class="lib-name">UK Applications — January Intake</p>
+            <p class="lib-sub"><span class="lib-datep"><span class="lib-date">Aug 21, 2026</span><span class="lib-plats"><span class="lib-plat" data-p="ig"></span><span class="lib-plat" data-p="li"></span></span></span>
+              <span class="lib-badge draft">Draft</span></p>
+          </div>
+        </article>
+
+        <article data-page="2" class="lib-card r916" data-format="video" data-status="published"
+                 data-title="A Day on Campus in the UK" data-thumb="assets/imgLibCampus.png"
+                 data-author="Me" data-date="2026-08-26">
+          <div class="lib-tile">
+            <img class="lib-thumb" src="assets/imgLibCampus.png" alt="">
+            <div class="lib-tile-ov">
+              <div class="lib-tile-top">
+                <span class="lib-fmt"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="4.5" y="1.8" width="7" height="12.4" rx="1.6"/></svg>9:16</span>
+                <span class="lib-acts">
+                  <button type="button" class="lib-iconbtn" aria-label="More">
+                    <svg viewBox="0 0 20 20" fill="#0F1729" aria-hidden="true">
+                      <circle cx="5" cy="10" r="1.5"/><circle cx="10" cy="10" r="1.5"/>
+                      <circle cx="15" cy="10" r="1.5"/></svg></button>
+                </span>
+              </div>
+              <button type="button" class="lib-play" aria-label="Play">
+                <svg viewBox="0 0 22 22" fill="#475069" aria-hidden="true">
+                  <path d="M6 3.2v15.6L19 11z"/></svg></button>
+              <div class="lib-scrub">
+                <div class="lib-scrub-row">
+                  <span class="lib-time">0:03 <b>/</b> 0:08</span>
+                  <span class="lib-scrub-ct">
+                    <button type="button" class="lib-sbtn" aria-label="Unmute">
+                      <svg viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="1.5"
+                           stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 6.8h2.4L9.6 4v10L6.4 11.2H4z"/><path d="m12.2 7 3.4 4m0-4-3.4 4"/></svg></button>
+                    <button type="button" class="lib-sbtn" aria-label="Full screen">
+                      <svg viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="1.5"
+                           stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6.6 2.6H2.6v4m8.8-4h4v4m0 4.8v4h-4m-4.8 0h-4v-4"/></svg></button>
+                  </span>
+                </div>
+                <div class="lib-bar"><span class="lib-bar-fill"></span><i class="lib-playhead"></i></div>
+              </div>
+            </div>
+          </div>
+          <div class="lib-meta">
+            <p class="lib-name">A Day on Campus in the UK</p>
+            <p class="lib-sub"><span class="lib-datep"><span class="lib-date">Aug 26, 2026</span><span class="lib-plats"><span class="lib-plat" data-p="ig"></span><span class="lib-plat" data-p="tt"></span><span class="lib-plat" data-p="yt"></span></span></span>
+              <span class="lib-badge ok">Published</span></p>
+          </div>
+        </article>
+
+        <article data-page="2" class="lib-card r45" data-format="image" data-status="scheduled"
+                 data-title="Your Visa Checklist, Step by Step" data-thumb="assets/imgLibVisa.png"
+                 data-author="Yejin" data-date="2026-08-24">
+          <div class="lib-tile">
+            <img class="lib-thumb" src="assets/imgLibVisa.png" alt="">
+            <div class="lib-tile-ov">
+              <div class="lib-tile-top">
+                <span class="lib-fmt"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="3.4" y="2.2" width="9.2" height="11.6" rx="1.6"/></svg>4:5</span>
+                <span class="lib-acts">
+                  <button type="button" class="lib-iconbtn" aria-label="More">
+                    <svg viewBox="0 0 20 20" fill="#0F1729" aria-hidden="true">
+                      <circle cx="5" cy="10" r="1.5"/><circle cx="10" cy="10" r="1.5"/>
+                      <circle cx="15" cy="10" r="1.5"/></svg></button>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="lib-meta">
+            <p class="lib-name">Your Visa Checklist, Step by Step</p>
+            <p class="lib-sub"><span class="lib-datep"><span class="lib-date">Aug 24, 2026</span><span class="lib-plats"><span class="lib-plat" data-p="ig"></span><span class="lib-plat" data-p="fb"></span></span></span>
+              <span class="lib-badge sched">Scheduled</span></p>
+          </div>
+        </article>
+
+        <article data-page="2" class="lib-card r11" data-format="image" data-status="draft"
+                 data-title="Free 1:1 Counselling, Book Anytime" data-thumb="assets/imgLibCounselling.png"
+                 data-author="Abeer" data-date="2026-08-21">
+          <div class="lib-tile">
+            <img class="lib-thumb" src="assets/imgLibCounselling.png" alt="">
+            <div class="lib-tile-ov">
+              <div class="lib-tile-top">
+                <span class="lib-fmt"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="2.6" y="2.6" width="10.8" height="10.8" rx="1.6"/></svg>1:1</span>
+                <span class="lib-acts">
+                  <button type="button" class="lib-iconbtn" aria-label="More">
+                    <svg viewBox="0 0 20 20" fill="#0F1729" aria-hidden="true">
+                      <circle cx="5" cy="10" r="1.5"/><circle cx="10" cy="10" r="1.5"/>
+                      <circle cx="15" cy="10" r="1.5"/></svg></button>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="lib-meta">
+            <p class="lib-name">Free 1:1 Counselling, Book Anytime</p>
+            <p class="lib-sub"><span class="lib-datep"><span class="lib-date">Aug 21, 2026</span><span class="lib-plats"><span class="lib-plat" data-p="ig"></span><span class="lib-plat" data-p="li"></span></span></span>
+              <span class="lib-badge draft">Draft</span></p>
+          </div>
+        </article>
+
+        <article data-page="2" class="lib-card r916" data-format="video" data-status="published"
+                 data-title="First Week in Toronto" data-thumb="assets/imgLibToronto.png"
+                 data-author="Tabir" data-date="2026-08-26">
+          <div class="lib-tile">
+            <img class="lib-thumb" src="assets/imgLibToronto.png" alt="">
+            <div class="lib-tile-ov">
+              <div class="lib-tile-top">
+                <span class="lib-fmt"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="4.5" y="1.8" width="7" height="12.4" rx="1.6"/></svg>9:16</span>
+                <span class="lib-acts">
+                  <button type="button" class="lib-iconbtn" aria-label="More">
+                    <svg viewBox="0 0 20 20" fill="#0F1729" aria-hidden="true">
+                      <circle cx="5" cy="10" r="1.5"/><circle cx="10" cy="10" r="1.5"/>
+                      <circle cx="15" cy="10" r="1.5"/></svg></button>
+                </span>
+              </div>
+              <button type="button" class="lib-play" aria-label="Play">
+                <svg viewBox="0 0 22 22" fill="#475069" aria-hidden="true">
+                  <path d="M6 3.2v15.6L19 11z"/></svg></button>
+              <div class="lib-scrub">
+                <div class="lib-scrub-row">
+                  <span class="lib-time">0:03 <b>/</b> 0:08</span>
+                  <span class="lib-scrub-ct">
+                    <button type="button" class="lib-sbtn" aria-label="Unmute">
+                      <svg viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="1.5"
+                           stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 6.8h2.4L9.6 4v10L6.4 11.2H4z"/><path d="m12.2 7 3.4 4m0-4-3.4 4"/></svg></button>
+                    <button type="button" class="lib-sbtn" aria-label="Full screen">
+                      <svg viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="1.5"
+                           stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6.6 2.6H2.6v4m8.8-4h4v4m0 4.8v4h-4m-4.8 0h-4v-4"/></svg></button>
+                  </span>
+                </div>
+                <div class="lib-bar"><span class="lib-bar-fill"></span><i class="lib-playhead"></i></div>
+              </div>
+            </div>
+          </div>
+          <div class="lib-meta">
+            <p class="lib-name">First Week in Toronto</p>
+            <p class="lib-sub"><span class="lib-datep"><span class="lib-date">Aug 26, 2026</span><span class="lib-plats"><span class="lib-plat" data-p="ig"></span><span class="lib-plat" data-p="tt"></span><span class="lib-plat" data-p="yt"></span></span></span>
+              <span class="lib-badge ok">Published</span></p>
+          </div>
+        </article>
+
+        <article data-page="2" class="lib-card r45" data-format="image" data-status="scheduled"
+                 data-title="Meet Your Future Classmates" data-thumb="assets/imgLibClassmates.png"
+                 data-author="Norimi" data-date="2026-08-24">
+          <div class="lib-tile">
+            <img class="lib-thumb" src="assets/imgLibClassmates.png" alt="">
+            <div class="lib-tile-ov">
+              <div class="lib-tile-top">
+                <span class="lib-fmt"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="3.4" y="2.2" width="9.2" height="11.6" rx="1.6"/></svg>4:5</span>
+                <span class="lib-acts">
+                  <button type="button" class="lib-iconbtn" aria-label="More">
+                    <svg viewBox="0 0 20 20" fill="#0F1729" aria-hidden="true">
+                      <circle cx="5" cy="10" r="1.5"/><circle cx="10" cy="10" r="1.5"/>
+                      <circle cx="15" cy="10" r="1.5"/></svg></button>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="lib-meta">
+            <p class="lib-name">Meet Your Future Classmates</p>
+            <p class="lib-sub"><span class="lib-datep"><span class="lib-date">Aug 24, 2026</span><span class="lib-plats"><span class="lib-plat" data-p="ig"></span><span class="lib-plat" data-p="fb"></span></span></span>
+              <span class="lib-badge sched">Scheduled</span></p>
+          </div>
+        </article>
       </div>
     </section>
+    <section class="lib-group">
+      <div class="lib-group-head"><h2>SCEI</h2><span class="lib-rule"></span></div>
+      <div class="lib-grid">
+
+        <article class="lib-card r916" data-format="video" data-status="published"
+                 data-title="This New Lip Tint Is Everything" data-thumb="assets/imgLibLipTint.png"
+                 data-author="Me" data-date="2026-08-26">
+          <div class="lib-tile">
+            <img class="lib-thumb" src="assets/imgLibLipTint.png" alt="">
+            <div class="lib-tile-ov">
+              <div class="lib-tile-top">
+                <span class="lib-fmt"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="4.5" y="1.8" width="7" height="12.4" rx="1.6"/></svg>9:16</span>
+                <span class="lib-acts">
+                  <button type="button" class="lib-iconbtn" aria-label="More">
+                    <svg viewBox="0 0 20 20" fill="#0F1729" aria-hidden="true">
+                      <circle cx="5" cy="10" r="1.5"/><circle cx="10" cy="10" r="1.5"/>
+                      <circle cx="15" cy="10" r="1.5"/></svg></button>
+                </span>
+              </div>
+              <button type="button" class="lib-play" aria-label="Play">
+                <svg viewBox="0 0 22 22" fill="#475069" aria-hidden="true">
+                  <path d="M6 3.2v15.6L19 11z"/></svg></button>
+              <div class="lib-scrub">
+                <div class="lib-scrub-row">
+                  <span class="lib-time">0:03 <b>/</b> 0:08</span>
+                  <span class="lib-scrub-ct">
+                    <button type="button" class="lib-sbtn" aria-label="Unmute">
+                      <svg viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="1.5"
+                           stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 6.8h2.4L9.6 4v10L6.4 11.2H4z"/><path d="m12.2 7 3.4 4m0-4-3.4 4"/></svg></button>
+                    <button type="button" class="lib-sbtn" aria-label="Full screen">
+                      <svg viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="1.5"
+                           stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6.6 2.6H2.6v4m8.8-4h4v4m0 4.8v4h-4m-4.8 0h-4v-4"/></svg></button>
+                  </span>
+                </div>
+                <div class="lib-bar"><span class="lib-bar-fill"></span><i class="lib-playhead"></i></div>
+              </div>
+            </div>
+          </div>
+          <div class="lib-meta">
+            <p class="lib-name">This New Lip Tint Is Everything</p>
+            <p class="lib-sub"><span class="lib-datep"><span class="lib-date">Aug 26, 2026</span><span class="lib-plats"><span class="lib-plat" data-p="ig"></span><span class="lib-plat" data-p="tt"></span><span class="lib-plat" data-p="yt"></span></span></span>
+              <span class="lib-badge ok">Published</span></p>
+          </div>
+        </article>
+
+        <article class="lib-card r45" data-format="image" data-status="scheduled"
+                 data-title="Study in the UK — Applications Open" data-thumb="assets/imgLibStudyUK.png"
+                 data-author="Tabir" data-date="2026-08-24">
+          <div class="lib-tile">
+            <img class="lib-thumb" src="assets/imgLibStudyUK.png" alt="">
+            <div class="lib-tile-ov">
+              <div class="lib-tile-top">
+                <span class="lib-fmt"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="3.4" y="2.2" width="9.2" height="11.6" rx="1.6"/></svg>4:5</span>
+                <span class="lib-acts">
+                  <button type="button" class="lib-iconbtn" aria-label="More">
+                    <svg viewBox="0 0 20 20" fill="#0F1729" aria-hidden="true">
+                      <circle cx="5" cy="10" r="1.5"/><circle cx="10" cy="10" r="1.5"/>
+                      <circle cx="15" cy="10" r="1.5"/></svg></button>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="lib-meta">
+            <p class="lib-name">Study in the UK — Applications Open</p>
+            <p class="lib-sub"><span class="lib-datep"><span class="lib-date">Aug 24, 2026</span><span class="lib-plats"><span class="lib-plat" data-p="ig"></span><span class="lib-plat" data-p="fb"></span></span></span>
+              <span class="lib-badge sched">Scheduled</span></p>
+          </div>
+        </article>
+
+        <article class="lib-card r11" data-format="image" data-status="draft"
+                 data-title="UK Applications — January Intake" data-thumb="assets/imgLibJanIntake.png"
+                 data-author="Norimi" data-date="2026-08-21">
+          <div class="lib-tile">
+            <img class="lib-thumb" src="assets/imgLibJanIntake.png" alt="">
+            <div class="lib-tile-ov">
+              <div class="lib-tile-top">
+                <span class="lib-fmt"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="2.6" y="2.6" width="10.8" height="10.8" rx="1.6"/></svg>1:1</span>
+                <span class="lib-acts">
+                  <button type="button" class="lib-iconbtn" aria-label="More">
+                    <svg viewBox="0 0 20 20" fill="#0F1729" aria-hidden="true">
+                      <circle cx="5" cy="10" r="1.5"/><circle cx="10" cy="10" r="1.5"/>
+                      <circle cx="15" cy="10" r="1.5"/></svg></button>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="lib-meta">
+            <p class="lib-name">UK Applications — January Intake</p>
+            <p class="lib-sub"><span class="lib-datep"><span class="lib-date">Aug 21, 2026</span><span class="lib-plats"><span class="lib-plat" data-p="ig"></span><span class="lib-plat" data-p="li"></span></span></span>
+              <span class="lib-badge draft">Draft</span></p>
+          </div>
+        </article>
+
+        <article class="lib-card r916" data-format="video" data-status="published"
+                 data-title="A Day on Campus in the UK" data-thumb="assets/imgLibCampus.png"
+                 data-author="Me" data-date="2026-08-26">
+          <div class="lib-tile">
+            <img class="lib-thumb" src="assets/imgLibCampus.png" alt="">
+            <div class="lib-tile-ov">
+              <div class="lib-tile-top">
+                <span class="lib-fmt"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="4.5" y="1.8" width="7" height="12.4" rx="1.6"/></svg>9:16</span>
+                <span class="lib-acts">
+                  <button type="button" class="lib-iconbtn" aria-label="More">
+                    <svg viewBox="0 0 20 20" fill="#0F1729" aria-hidden="true">
+                      <circle cx="5" cy="10" r="1.5"/><circle cx="10" cy="10" r="1.5"/>
+                      <circle cx="15" cy="10" r="1.5"/></svg></button>
+                </span>
+              </div>
+              <button type="button" class="lib-play" aria-label="Play">
+                <svg viewBox="0 0 22 22" fill="#475069" aria-hidden="true">
+                  <path d="M6 3.2v15.6L19 11z"/></svg></button>
+              <div class="lib-scrub">
+                <div class="lib-scrub-row">
+                  <span class="lib-time">0:03 <b>/</b> 0:08</span>
+                  <span class="lib-scrub-ct">
+                    <button type="button" class="lib-sbtn" aria-label="Unmute">
+                      <svg viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="1.5"
+                           stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 6.8h2.4L9.6 4v10L6.4 11.2H4z"/><path d="m12.2 7 3.4 4m0-4-3.4 4"/></svg></button>
+                    <button type="button" class="lib-sbtn" aria-label="Full screen">
+                      <svg viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="1.5"
+                           stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6.6 2.6H2.6v4m8.8-4h4v4m0 4.8v4h-4m-4.8 0h-4v-4"/></svg></button>
+                  </span>
+                </div>
+                <div class="lib-bar"><span class="lib-bar-fill"></span><i class="lib-playhead"></i></div>
+              </div>
+            </div>
+          </div>
+          <div class="lib-meta">
+            <p class="lib-name">A Day on Campus in the UK</p>
+            <p class="lib-sub"><span class="lib-datep"><span class="lib-date">Aug 26, 2026</span><span class="lib-plats"><span class="lib-plat" data-p="ig"></span><span class="lib-plat" data-p="tt"></span><span class="lib-plat" data-p="yt"></span></span></span>
+              <span class="lib-badge ok">Published</span></p>
+          </div>
+        </article>
+
+        <article data-page="2" class="lib-card r916" data-format="video" data-status="published"
+                 data-title="This New Lip Tint Is Everything" data-thumb="assets/imgLibLipTint.png"
+                 data-author="Me" data-date="2026-08-26">
+          <div class="lib-tile">
+            <img class="lib-thumb" src="assets/imgLibLipTint.png" alt="">
+            <div class="lib-tile-ov">
+              <div class="lib-tile-top">
+                <span class="lib-fmt"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="4.5" y="1.8" width="7" height="12.4" rx="1.6"/></svg>9:16</span>
+                <span class="lib-acts">
+                  <button type="button" class="lib-iconbtn" aria-label="More">
+                    <svg viewBox="0 0 20 20" fill="#0F1729" aria-hidden="true">
+                      <circle cx="5" cy="10" r="1.5"/><circle cx="10" cy="10" r="1.5"/>
+                      <circle cx="15" cy="10" r="1.5"/></svg></button>
+                </span>
+              </div>
+              <button type="button" class="lib-play" aria-label="Play">
+                <svg viewBox="0 0 22 22" fill="#475069" aria-hidden="true">
+                  <path d="M6 3.2v15.6L19 11z"/></svg></button>
+              <div class="lib-scrub">
+                <div class="lib-scrub-row">
+                  <span class="lib-time">0:03 <b>/</b> 0:08</span>
+                  <span class="lib-scrub-ct">
+                    <button type="button" class="lib-sbtn" aria-label="Unmute">
+                      <svg viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="1.5"
+                           stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 6.8h2.4L9.6 4v10L6.4 11.2H4z"/><path d="m12.2 7 3.4 4m0-4-3.4 4"/></svg></button>
+                    <button type="button" class="lib-sbtn" aria-label="Full screen">
+                      <svg viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="1.5"
+                           stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6.6 2.6H2.6v4m8.8-4h4v4m0 4.8v4h-4m-4.8 0h-4v-4"/></svg></button>
+                  </span>
+                </div>
+                <div class="lib-bar"><span class="lib-bar-fill"></span><i class="lib-playhead"></i></div>
+              </div>
+            </div>
+          </div>
+          <div class="lib-meta">
+            <p class="lib-name">This New Lip Tint Is Everything</p>
+            <p class="lib-sub"><span class="lib-datep"><span class="lib-date">Aug 26, 2026</span><span class="lib-plats"><span class="lib-plat" data-p="ig"></span><span class="lib-plat" data-p="tt"></span><span class="lib-plat" data-p="yt"></span></span></span>
+              <span class="lib-badge ok">Published</span></p>
+          </div>
+        </article>
+
+        <article data-page="2" class="lib-card r45" data-format="image" data-status="scheduled"
+                 data-title="Study in the UK — Applications Open" data-thumb="assets/imgLibStudyUK.png"
+                 data-author="Tabir" data-date="2026-08-24">
+          <div class="lib-tile">
+            <img class="lib-thumb" src="assets/imgLibStudyUK.png" alt="">
+            <div class="lib-tile-ov">
+              <div class="lib-tile-top">
+                <span class="lib-fmt"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="3.4" y="2.2" width="9.2" height="11.6" rx="1.6"/></svg>4:5</span>
+                <span class="lib-acts">
+                  <button type="button" class="lib-iconbtn" aria-label="More">
+                    <svg viewBox="0 0 20 20" fill="#0F1729" aria-hidden="true">
+                      <circle cx="5" cy="10" r="1.5"/><circle cx="10" cy="10" r="1.5"/>
+                      <circle cx="15" cy="10" r="1.5"/></svg></button>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="lib-meta">
+            <p class="lib-name">Study in the UK — Applications Open</p>
+            <p class="lib-sub"><span class="lib-datep"><span class="lib-date">Aug 24, 2026</span><span class="lib-plats"><span class="lib-plat" data-p="ig"></span><span class="lib-plat" data-p="fb"></span></span></span>
+              <span class="lib-badge sched">Scheduled</span></p>
+          </div>
+        </article>
+
+        <article data-page="2" class="lib-card r11" data-format="image" data-status="draft"
+                 data-title="UK Applications — January Intake" data-thumb="assets/imgLibJanIntake.png"
+                 data-author="Norimi" data-date="2026-08-21">
+          <div class="lib-tile">
+            <img class="lib-thumb" src="assets/imgLibJanIntake.png" alt="">
+            <div class="lib-tile-ov">
+              <div class="lib-tile-top">
+                <span class="lib-fmt"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="2.6" y="2.6" width="10.8" height="10.8" rx="1.6"/></svg>1:1</span>
+                <span class="lib-acts">
+                  <button type="button" class="lib-iconbtn" aria-label="More">
+                    <svg viewBox="0 0 20 20" fill="#0F1729" aria-hidden="true">
+                      <circle cx="5" cy="10" r="1.5"/><circle cx="10" cy="10" r="1.5"/>
+                      <circle cx="15" cy="10" r="1.5"/></svg></button>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="lib-meta">
+            <p class="lib-name">UK Applications — January Intake</p>
+            <p class="lib-sub"><span class="lib-datep"><span class="lib-date">Aug 21, 2026</span><span class="lib-plats"><span class="lib-plat" data-p="ig"></span><span class="lib-plat" data-p="li"></span></span></span>
+              <span class="lib-badge draft">Draft</span></p>
+          </div>
+        </article>
+
+        <article data-page="2" class="lib-card r916" data-format="video" data-status="published"
+                 data-title="A Day on Campus in the UK" data-thumb="assets/imgLibCampus.png"
+                 data-author="Me" data-date="2026-08-26">
+          <div class="lib-tile">
+            <img class="lib-thumb" src="assets/imgLibCampus.png" alt="">
+            <div class="lib-tile-ov">
+              <div class="lib-tile-top">
+                <span class="lib-fmt"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="4.5" y="1.8" width="7" height="12.4" rx="1.6"/></svg>9:16</span>
+                <span class="lib-acts">
+                  <button type="button" class="lib-iconbtn" aria-label="More">
+                    <svg viewBox="0 0 20 20" fill="#0F1729" aria-hidden="true">
+                      <circle cx="5" cy="10" r="1.5"/><circle cx="10" cy="10" r="1.5"/>
+                      <circle cx="15" cy="10" r="1.5"/></svg></button>
+                </span>
+              </div>
+              <button type="button" class="lib-play" aria-label="Play">
+                <svg viewBox="0 0 22 22" fill="#475069" aria-hidden="true">
+                  <path d="M6 3.2v15.6L19 11z"/></svg></button>
+              <div class="lib-scrub">
+                <div class="lib-scrub-row">
+                  <span class="lib-time">0:03 <b>/</b> 0:08</span>
+                  <span class="lib-scrub-ct">
+                    <button type="button" class="lib-sbtn" aria-label="Unmute">
+                      <svg viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="1.5"
+                           stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 6.8h2.4L9.6 4v10L6.4 11.2H4z"/><path d="m12.2 7 3.4 4m0-4-3.4 4"/></svg></button>
+                    <button type="button" class="lib-sbtn" aria-label="Full screen">
+                      <svg viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="1.5"
+                           stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6.6 2.6H2.6v4m8.8-4h4v4m0 4.8v4h-4m-4.8 0h-4v-4"/></svg></button>
+                  </span>
+                </div>
+                <div class="lib-bar"><span class="lib-bar-fill"></span><i class="lib-playhead"></i></div>
+              </div>
+            </div>
+          </div>
+          <div class="lib-meta">
+            <p class="lib-name">A Day on Campus in the UK</p>
+            <p class="lib-sub"><span class="lib-datep"><span class="lib-date">Aug 26, 2026</span><span class="lib-plats"><span class="lib-plat" data-p="ig"></span><span class="lib-plat" data-p="tt"></span><span class="lib-plat" data-p="yt"></span></span></span>
+              <span class="lib-badge ok">Published</span></p>
+          </div>
+        </article>
+      </div>
+    </section>
+  </div>
+    <div class="load-more" id="libMore"><button type="button" class="load-more-btn" id="libMoreBtn">Show 12 more</button></div>
   </div>
 </div>
 
@@ -18029,8 +18706,13 @@ $('#confirmLayer').addEventListener('click', e => {
   const hit = e.target.closest('[data-confirm]');
   if (!hit) return;
   if (hit.dataset.confirm === 'ok' && state.confirm){
-    const i = DATA.findIndex(x => x.id === state.confirm.id);
-    if (i >= 0) DATA.splice(i, 1);
+    if (state.confirm.lib){
+      state.confirm.lib.remove();
+      if (typeof libFilter === 'function') libFilter();
+    } else {
+      const i = DATA.findIndex(x => x.id === state.confirm.id);
+      if (i >= 0) DATA.splice(i, 1);
+    }
   }
   closeConfirm();
   render();
@@ -26194,18 +26876,72 @@ if (_libNav) _libNav.addEventListener('click', () => { if (detail) closeDetail()
 /* ── 라이브러리 카드 액션 ────────────────────────────────────────────────────
    ⋯ 메뉴는 상태에 따라 항목이 달라진다. 발행된 글에 "Publish now" 를 띄우거나
    실패한 생성에 "Schedule" 을 띄우면 안 되기 때문이다. */
-const LIB_MENU = {
-  draft:     ['Edit','Regenerate','Use as reference','Download','-',
-              'Publish now','Schedule','-','Delete'],
-  scheduled: ['Edit','Regenerate','Use as reference','Download','-',
-              'Reschedule','Unschedule','-','Delete'],
-  published: ['View post','Regenerate','Use as reference','Download','-','Delete'],
-  failed:    ['Try again','Use as reference','-','Delete']
-};
+/* 2026-09-17 Figma `Controls / Context Menu · library card` 8456:123106 —
+   상태별로 갈라 두었던 것을 한 벌로 합쳤다. 어느 카드든 같은 다섯 줄이다. */
+const LIB_MENU_ITEMS = ['View post','Use as reference','Duplicate','Download','-','Delete'];
 function libCloseMenu(){ const m = $('#libMenu'); if (m) m.remove(); }
+/* ⋯ 메뉴의 다섯 항목 — Figma `Content Library · download toast` 8465:125154 /
+   `· delete confirm` 8463:123179 / `View post` 8511:9 가 각각의 결과 화면이다. */
+function libViewPost(card){
+  if (typeof window.libOpenPreview === 'function') window.libOpenPreview(card);
+}
+const LIB_OK_ICON = '<svg viewBox="0 0 18 18" fill="none" stroke="#8A93A8" stroke-width="1.6"'
+  + ' stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+  + '<circle cx="9" cy="9" r="7.5"/><path d="m5.8 9.2 2.2 2.2 4.2-4.6"/></svg>';
+/* Figma `Duplicate · 2 duplicated` 8907:131782 — 사본은 그룹 맨 앞에 Draft 로 들어가고
+   제목 뒤에 `(copy)` 가 붙는다. 날짜는 프로토타입의 오늘(LIB_NOW)이다. */
+function libDuplicate(card){
+  const copy = card.cloneNode(true);
+  copy.removeAttribute('data-page');          /* 사본은 첫 쪽에 바로 보인다 */
+  const name = (card.dataset.title || '') + ' (copy)';
+  copy.dataset.title = name;
+  copy.dataset.status = 'draft';
+  copy.dataset.date = LIB_NOW.toISOString().slice(0, 10);
+  copy.querySelector('.lib-name').textContent = name;
+  const shown = LIB_NOW.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+  copy.querySelector('.lib-date').textContent = shown;
+  const badge = copy.querySelector('.lib-badge');
+  badge.className = 'lib-badge draft'; badge.textContent = 'Draft';
+  card.closest('.lib-grid').prepend(copy);
+  document.querySelectorAll('#libMain .lib-plat').forEach(el => {
+    if (!el.firstChild) el.innerHTML = PLAT_ICON[el.dataset.p] || '';
+  });
+  libFilter();
+  libToast('Duplicated \u2014 \u201c' + (card.dataset.title || '') + '\u201d saved to Drafts', LIB_OK_ICON);
+}
+const LIB_DL_ICON = '<svg viewBox="0 0 18 18" fill="none" stroke="#8A93A8" stroke-width="1.6"'
+  + ' stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+  + '<circle cx="9" cy="9" r="7.5"/><path d="M9 5.4v6m0 0 2.4-2.4M9 11.4 6.6 9"/></svg>';
+function libDownload(card){
+  libToast('Download started \u2014 \u201c' + (card.dataset.title || '') + '\u201d', LIB_DL_ICON);
+}
+/* 되돌릴 수 없는 하나뿐인 동작이라 메뉴에서 바로 지우지 않는다 — 캐릭터 삭제와
+   같은 `Modal · Confirm` 560 을 그대로 쓴다. */
+function libAskDelete(card){
+  const name = card.dataset.title || '';
+  const kind = card.dataset.format === 'video' ? 'video'
+             : card.dataset.format === 'carousel' ? 'carousel' : 'image';
+  state.confirm = { lib: card };
+  const layer = $('#confirmLayer');
+  $('.confirm', layer).innerHTML =
+    '<div class="confirm-head">'
+    + '<p class="confirm-title" id="confirmTitle">Delete \u201c' + esc(name) + '\u201d?</p>'
+    + '<button type="button" class="confirm-close" data-confirm="cancel" aria-label="Close">'
+    + '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" stroke="#475069" stroke-width="1.6" stroke-linecap="round"/></svg>'
+    + '</button></div>'
+    + '<div class="confirm-bodywrap"><p class="confirm-body">This ' + kind
+    + ' will be removed from your Content Library. Posts already published to social channels stay unchanged. This cannot be undone.</p></div>'
+    + '<div class="confirm-actions">'
+    + '<button type="button" class="btn-sec" data-confirm="cancel">Cancel</button>'
+    + '<button type="button" class="btn-danger" data-confirm="ok">Delete content</button>'
+    + '</div>';
+  layer.hidden = false;
+  const cancel = $('[data-confirm="cancel"]', layer);
+  if (cancel) cancel.focus();
+}
 function libOpenMenu(btn, card){
   libCloseMenu();
-  const items = LIB_MENU[card.dataset.status] || LIB_MENU.draft;
+  const items = LIB_MENU_ITEMS;
   const pop = document.createElement('div');
   pop.className = 'lib-menu'; pop.id = 'libMenu'; pop.setAttribute('role','menu');
   pop.innerHTML = items.map(x => x === '-' ? '<hr>' :
@@ -26238,11 +26974,13 @@ function libRegenerate(card){
   libToast('Opening a new take in New Content Generation…');
   window.open(url, '_blank', 'noopener');
 }
-function libToast(msg){
+function libToast(msg, icon){
   let t = $('#libToast');
   if (!t){ t = document.createElement('div'); t.id = 'libToast'; t.className = 'lib-toast';
            document.body.appendChild(t); }
-  t.textContent = msg; t.hidden = false;
+  t.innerHTML = (icon || '') + '<span></span>';
+  t.lastChild.textContent = msg;
+  t.hidden = false;
   clearTimeout(libToast._t);
   libToast._t = setTimeout(() => { t.hidden = true; }, 2400);
 }
@@ -26294,7 +27032,10 @@ if (_libMain){
     if (act){ const card = act.closest('.lib-card'), what = act.dataset.libact;
               libCloseMenu();
               if (what === 'Use as reference') libUseAsReference(card);
-              if (what === 'Regenerate' || what === 'Try again') libRegenerate(card);
+              else if (what === 'View post')   libViewPost(card);
+              else if (what === 'Duplicate')   libDuplicate(card);
+              else if (what === 'Download')    libDownload(card);
+              else if (what === 'Delete')      libAskDelete(card);
               return; }
     libCloseMenu();
   });
@@ -26309,7 +27050,7 @@ document.addEventListener('click', e => {
 const LIB_TAB = { 'All':null, 'Videos':'video', 'Images':'image', 'Carousels':'carousel' };
 /* 필터 상태. status 만 다중선택이라 배열이고 나머지는 값 하나다.
    NOW 는 씨앗 데이터(2026-08) 기준의 "오늘" — 프로토타입이라 고정한다. */
-const LIB_F = { status: [], author: null, date: null };
+const LIB_F = { status: [], author: null, date: '' };   /* date '' = All time */
 const LIB_NOW = new Date('2026-08-27T00:00:00');
 const LIB_DATE_LABEL = { '7':'Last 7 days', '30':'Last 30 days', '90':'Last 90 days', year:'This year' };
 function libDateOk(iso){
@@ -26318,6 +27059,9 @@ function libDateOk(iso){
   if (LIB_F.date === 'year') return d.getFullYear() === LIB_NOW.getFullYear();
   return (LIB_NOW - d) / 86400000 <= (+LIB_F.date);
 }
+/* 첫 화면은 12 장, `Show 12 more` 로 나머지를 연다 — Figma `load more` 1602x70.
+   개수(`24 items`)는 페이지와 무관하게 걸러진 전체를 센다. */
+let LIB_PAGE = 1;
 function libFilter(){
   const tabEl = document.querySelector('#libMain .lib-seg-i.on');
   const want  = LIB_TAB[(tabEl ? tabEl.textContent : 'All').trim()];
@@ -26325,7 +27069,7 @@ function libFilter(){
   const favOn = !!(favEl && favEl.getAttribute('aria-pressed') === 'true');
   const qEl   = document.querySelector('#libMain .lib-search input');
   const q     = (qEl ? qEl.value : '').trim().toLowerCase();
-  let shown = 0;
+  let shown = 0, rest = 0;
   document.querySelectorAll('#libMain .lib-card').forEach(c => {
     const okTab = !want || c.dataset.format === want;
     const fav = c.querySelector('.lib-fav');
@@ -26335,14 +27079,22 @@ function libFilter(){
     const okAu  = !LIB_F.author || c.dataset.author === LIB_F.author;
     const okDt  = libDateOk(c.dataset.date);
     const on    = okTab && okFav && okQ && okSt && okAu && okDt;
-    c.hidden = !on;
+    const paged = c.dataset.page === '2' && LIB_PAGE < 2;
+    c.hidden = !on || paged;
     if (on) shown++;
+    if (on && paged) rest++;
   });
   document.querySelectorAll('#libMain .lib-group').forEach(g => {
     g.hidden = !g.querySelector('.lib-card:not([hidden])');
   });
   const count = document.querySelector('#libMain .lib-count');
   if (count) count.textContent = shown + (shown === 1 ? ' item' : ' items');
+  const more = $('#libMore');
+  if (more){
+    more.hidden = !rest;
+    const btn = $('#libMoreBtn');
+    if (btn) btn.textContent = 'Show ' + rest + ' more';
+  }
   /* 라이브러리가 통째로 빈 것과, 필터 때문에 결과가 없는 것은 다른 화면이다.
      total 은 필터 이전의 카드 수 — libForceEmpty 는 캡처용 딥링크(#libempty=1). */
   const total = document.querySelectorAll('#libMain .lib-card').length;
@@ -26379,6 +27131,12 @@ if (_libFav) _libFav.addEventListener('click', () => {
 });
 const _libSearch = document.querySelector('#libMain .lib-search input');
 if (_libSearch) _libSearch.addEventListener('input', libFilter);
+/* 카드 메타의 채널 아이콘 — PLAT_ICON 을 그대로 꽂는다(브랜드 마크라 색을 바꾸지 않는다) */
+document.querySelectorAll('#libMain .lib-plat').forEach(el => {
+  el.innerHTML = PLAT_ICON[el.dataset.p] || '';
+});
+const _libMoreBtn = $('#libMoreBtn');
+if (_libMoreBtn) _libMoreBtn.addEventListener('click', () => { LIB_PAGE = 2; libFilter(); });
 
 /* ── 필터 칩 · 드롭다운 ────────────────────────────────────────────────────
    칩을 누르면 열리고, 바깥이나 Esc 로 닫힌다. 칩의 ✕ 는 열지 않고 해제만 한다. */
@@ -26412,7 +27170,7 @@ document.addEventListener('click', e => {
     const key = chip.dataset.lfilter;
     /* ✕ 는 해제 전용 — 눌러도 메뉴가 열리면 안 된다 */
     if (e.target.closest('.lib-fx') && chip.classList.contains('on')){
-      if (key === 'status') LIB_F.status = []; else LIB_F[key] = null;
+      if (key === 'status') LIB_F.status = []; else LIB_F[key] = (key === 'date') ? '' : null;
       libSyncChip(key); libCloseMenus(null); libFilter(); return;
     }
     const menu = chip.parentNode.querySelector('.lib-fmenu');
@@ -26439,13 +27197,14 @@ document.addEventListener('click', e => {
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') libCloseMenus(null); });
 ['status','author','date'].forEach(libSyncChip);
+libFilter();                       /* 첫 화면에서 2쪽 카드를 접어 둔다 */
 
 /* 빈 상태의 버튼 — empty 면 New Content(v3), nores 면 필터 전체 해제 */
 const _libEmptyBtn = $('#libEmptyBtn');
 if (_libEmptyBtn) _libEmptyBtn.addEventListener('click', () => {
   const mode = $('#libNoResults').dataset.mode;
   if (mode === 'empty'){ window.open(NC_V3_URL, '_blank', 'noopener'); return; }
-  LIB_F.status = []; LIB_F.author = null; LIB_F.date = null;
+  LIB_F.status = []; LIB_F.author = null; LIB_F.date = '';
   ['status','author','date'].forEach(libSyncChip);
   const q = document.querySelector('#libMain .lib-search input'); if (q) q.value = '';
   const all = document.querySelector('#libMain .lib-seg-i');
@@ -35316,24 +36075,38 @@ body.bk2-clean #roleSwitch { display:none !important; }
    채운다. 제목·날짜·상태가 같은 높이에서 읽혀야 목록을 훑을 수 있고, 날짜순
    정렬이 왼→오른쪽으로 흐르려면 카드 높이가 같아야 한다.
    실제 비율은 좌상단 배지가 알려주고, 원본은 프리뷰·다운로드에서 그대로 나간다. */
-#libMain{--lib-card-w:303px;--lib-tile-h:380px;
-  padding:28px;display:flex;flex-direction:column;gap:20px;align-items:stretch;overflow:auto;}
-.lib-head{display:flex;align-items:flex-start;justify-content:space-between;}
+#libMain{--lib-card-w:304px;--lib-tile-h:380px;
+  padding:28px;display:flex;flex-direction:column;gap:20px;align-items:stretch;}
+/* Figma `Content Library · full list · top` 10149:177119            2026-09-17
+   header 1602x54 = 제목 + 부제 + 오른쪽 New Content 135x38.
+   검색은 단독 줄에서 폭을 다 쓰고, 세그먼트+필터는 스크롤 뷰포트 위에 붙는다. */
+.lib-head{display:flex;align-items:center;justify-content:space-between;height:54px;}
 .lib-title{margin:0;font-size:22px;line-height:30px;font-weight:700;color:var(--neutral-900);}
+.lib-pagesub{margin:0;font-size:13px;line-height:20px;font-weight:400;color:var(--neutral-500);}
+#libMain .title-block{display:flex;flex-direction:column;gap:4px;align-items:flex-start;}
+#libMain{overflow:hidden;}
 
 .lib-toolbar{display:flex;align-items:center;gap:46px;justify-content:flex-start;}
-.lib-head,.lib-toolbar,.lib-seg{flex:none;}
-.lib-seg{align-self:flex-start;}
-.lib-search{display:flex;align-items:center;gap:8px;width:339px;height:36px;padding:8px 12px;
-  background:var(--neutral-0);border:1px solid var(--neutral-300);border-radius:8px;}
+.lib-head,.lib-toolbar{flex:none;}
+.lib-scroll{flex:1 1 auto;min-height:0;width:100%;overflow-y:auto;overflow-x:hidden;
+  display:flex;flex-direction:column;gap:28px;align-items:stretch;}
+.lib-scroll::-webkit-scrollbar{width:6px;}
+.lib-scroll::-webkit-scrollbar-track{background:transparent;}
+.lib-scroll::-webkit-scrollbar-thumb{background:var(--neutral-400);border-radius:3px;}
+/* 스티키 바 64 = 세그먼트 46 을 위아래 9 로 감싼 값 (캐릭터 flat list 와 같은 규칙) */
+.lib-stickybar{position:sticky;top:0;z-index:3;display:flex;align-items:center;gap:8px;
+  padding:9px 0;background:var(--neutral-50);flex:none;}
+.lib-search{display:flex;align-items:center;gap:8px;width:100%;height:36px;padding:8px 12px;
+  background:var(--neutral-0);border:1px solid var(--neutral-400);border-radius:8px;}
 .lib-search svg{width:16px;height:16px;flex:none;}
 .lib-search input{flex:1;min-width:0;border:0;outline:0;background:none;padding:0;
   font-family:inherit;font-size:13px;color:var(--neutral-900);}
 .lib-search input::placeholder{color:var(--neutral-450);}
 .lib-filters{display:flex;align-items:center;gap:12px;}
-.lib-fchip{display:inline-flex;align-items:center;gap:4px;height:28px;padding:5px 10px 5px 12px;
-  background:var(--neutral-0);border:1px solid var(--neutral-300);border-radius:9999px;
-  font-family:inherit;font-size:13px;font-weight:500;color:var(--neutral-800);cursor:pointer;}
+.lib-fchip{display:inline-flex;align-items:center;gap:4px;height:28px;box-sizing:border-box;
+  padding:5px 10px 5px 12px;background:var(--neutral-0);border:1px solid var(--neutral-400);
+  border-radius:9999px;font-family:inherit;font-size:12px;line-height:18px;font-weight:500;
+  color:var(--neutral-700);cursor:pointer;}
 .lib-fchip:hover{background:var(--neutral-50);}
 .lib-fchip i{width:7px;height:7px;flex:none;margin-left:2px;
   border-right:1.6px solid var(--neutral-450);border-bottom:1.6px solid var(--neutral-450);
@@ -35370,7 +36143,7 @@ body.bk2-clean #roleSwitch { display:none !important; }
 .lib-fitem[aria-checked="true"] .lib-cb svg{display:block;}
 
 /* Controls / Segmented Control · content type */
-.lib-seg{display:inline-flex;align-self:flex-start;gap:0;padding:4px;
+.lib-seg{display:inline-flex;align-self:center;flex:none;gap:0;padding:4px;
   background:var(--neutral-100);border-radius:12px;}
 .lib-seg-i{height:38px;padding:8px 20px;border:0;border-radius:8px;background:none;
   font-family:inherit;font-size:14px;font-weight:500;color:var(--neutral-500);cursor:pointer;}
@@ -35381,35 +36154,37 @@ body.bk2-clean #roleSwitch { display:none !important; }
 .lib-group{display:flex;flex-direction:column;gap:14px;}
 .lib-group-head{display:flex;align-items:center;gap:8px;}
 .lib-group-head h2{margin:0;font-size:16px;line-height:24px;font-weight:600;color:var(--neutral-900);}
-.lib-rule{flex:1;height:1px;background:var(--neutral-200);}
+.lib-rule{flex:1;height:1px;}
 /* 카드는 늘어나지 않는다 — 남는 폭은 오른쪽에 그대로 둔다(Figma 와 동일) */
-.lib-grid{display:grid;grid-template-columns:repeat(auto-fill,var(--lib-card-w));gap:24px;
-  justify-content:start;}
+/* Figma `grid` — 가로 16, 세로 24 로 다르다. 카드는 늘어나지 않고 남는 폭은 오른쪽에 둔다 */
+.lib-grid{display:grid;grid-template-columns:repeat(auto-fill,var(--lib-card-w));gap:24px 16px;
+  justify-content:start;padding-right:10px;}
 
 .lib-card{position:relative;display:flex;flex-direction:column;gap:8px;min-width:0;}
 .lib-tile{position:relative;height:var(--lib-tile-h);border-radius:12px;overflow:hidden;
-  background:var(--neutral-0);border:1.2px solid var(--neutral-300);}
+  background:var(--neutral-0);box-shadow:inset 0 0 0 1px var(--neutral-400);}
 .lib-thumb{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;}
 /* 위·아래 끝에서만 어둡게 — 가운데 인물은 가리지 않는다 */
 .lib-tile-ov{position:absolute;inset:0;padding:16px;display:flex;flex-direction:column;
-  justify-content:space-between;
-  background:linear-gradient(180deg,rgba(15,23,41,.45) 0%,rgba(15,23,41,0) 22%,
-    rgba(15,23,41,0) 62%,rgba(15,23,41,.55) 100%);}
+  justify-content:space-between;}
 .lib-tile-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
-.lib-fmt{display:inline-flex;align-items:center;gap:5px;height:36px;padding:7px 12px 7px 10px;
-  background:var(--neutral-900);border:1px solid var(--neutral-300);border-radius:8px;
-  font-size:14px;font-weight:500;color:var(--neutral-0);}
+.lib-fmt{display:inline-flex;align-items:center;gap:5px;height:36px;box-sizing:border-box;
+  padding:7px 12px 7px 10px;background:var(--neutral-0);border:1px solid var(--neutral-400);
+  border-radius:8px;font-size:14px;line-height:22px;font-weight:500;color:var(--neutral-700);}
 .lib-fmt svg{width:16px;height:16px;flex:none;}
 .lib-acts{display:flex;gap:4px;}
 .lib-iconbtn{width:36px;height:36px;display:flex;align-items:center;justify-content:center;
-  background:var(--neutral-0);border:1px solid var(--neutral-450);border-radius:8px;
-  cursor:pointer;padding:0;}
+  background:var(--neutral-0);border:1px solid var(--neutral-400);border-radius:8px;
+  cursor:pointer;padding:0;box-sizing:border-box;}
 .lib-iconbtn:hover{background:var(--neutral-50);}
 .lib-iconbtn svg{width:20px;height:20px;}
 .lib-play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
-  width:48px;height:48px;border:0;border-radius:999px;background:rgba(255,255,255,.75);
+  width:48px;height:48px;border:0;border-radius:999px;
+  background:linear-gradient(180deg,rgba(255,255,255,.68) 0%,rgba(255,255,255,.46) 100%);
+  -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+  box-shadow:0 2px 8px rgba(15,23,41,.18);
   display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;}
-.lib-play svg{width:22px;height:22px;margin-left:2px;}
+.lib-play svg{width:22.4px;height:22.4px;margin-left:2px;}
 .lib-scrub{display:flex;flex-direction:column;gap:12px;}
 .lib-scrub-row{display:flex;align-items:center;justify-content:space-between;gap:16px;}
 .lib-time{font-size:12px;font-weight:500;color:var(--neutral-0);}
@@ -35427,12 +36202,18 @@ body.bk2-clean #roleSwitch { display:none !important; }
 .lib-meta{display:flex;flex-direction:column;gap:4px;min-width:0;}
 .lib-name{margin:0;font-size:14px;line-height:22px;font-weight:600;color:var(--neutral-900);
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.lib-sub{margin:0;display:flex;align-items:center;justify-content:space-between;gap:8px;}
-.lib-date{font-size:13px;line-height:20px;color:var(--neutral-450);}
-.lib-badge{flex:none;padding:4px 8px;border-radius:999px;font-size:10px;font-weight:600;}
+.lib-sub{margin:0;height:36px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+.lib-datep{display:flex;align-items:center;gap:16px;min-width:0;}
+.lib-date{font-size:13px;line-height:20px;color:var(--neutral-500);white-space:nowrap;}
+/* 게시될 채널 — Figma `platform-icons` 20px 아이콘을 4px 간격으로 늘어놓는다 */
+.lib-plats{display:flex;align-items:center;gap:4px;padding:0 4px;}
+.lib-plat{width:20px;height:20px;flex:none;display:block;}
+.lib-plat svg{width:100%;height:100%;display:block;}
+.lib-badge{flex:none;padding:2px 8px;border-radius:9999px;
+  font-size:11px;line-height:13px;font-weight:600;white-space:nowrap;}
 .lib-badge.ok{background:var(--badge-green-bg);color:var(--badge-green-text);}
-.lib-badge.sched{background:var(--brand-primary-light);color:var(--neutral-800);}
-.lib-badge.draft{background:var(--neutral-150);color:var(--neutral-500);}
+.lib-badge.sched{background:#e8f0ff;color:#155eef;}
+.lib-badge.draft{background:var(--neutral-150);color:var(--neutral-900);}
 
 /* New Content 상단의 레퍼런스 배너 — 라이브러리에서 넘어왔을 때만 */
 
@@ -35476,8 +36257,10 @@ body.bk2-clean #roleSwitch { display:none !important; }
 @keyframes libspin{to{transform:rotate(360deg);}}
 
 .lib-toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:60;
-  padding:10px 16px;border-radius:9999px;background:var(--neutral-900);color:var(--neutral-0);
-  font-size:13px;font-weight:500;box-shadow:0 6px 20px rgba(15,23,41,.25);}
+  display:flex;align-items:center;gap:8px;height:40px;box-sizing:border-box;
+  padding:10px 16px 10px 14px;border-radius:8px;background:var(--neutral-900);color:var(--neutral-0);
+  font-size:13px;line-height:20px;font-weight:500;box-shadow:0 6px 20px rgba(15,23,41,.25);}
+.lib-toast svg{width:18px;height:18px;flex:none;}
 .lib-toast[hidden]{display:none;}
 /* ── 빈 상태 (Figma 8479:135682 `empty-state`, 480×278) ────────────────────
    glyph 80 원형 + 제목 20/28 Bold + 본문 14/22 + 버튼. empty 와 nores 가 같은 껍데기다. */
@@ -35497,6 +36280,9 @@ body.bk2-clean #roleSwitch { display:none !important; }
 .lib-empty[data-mode="nores"] .lib-empty-btn{background:var(--neutral-0);color:var(--neutral-700);
   border:1px solid var(--neutral-400);box-shadow:none;}
 .lib-empty[data-mode="nores"] .lib-empty-btn svg{display:none;}
+.lib-empty-mag{width:48px;height:48px;display:none;}
+.lib-empty[data-mode="nores"] .lib-empty-mag{display:block;}
+.lib-empty[data-mode="nores"] .lib-empty-glyph .ic{display:none;}
 
 
 
@@ -35505,15 +36291,15 @@ body.bk2-clean #roleSwitch { display:none !important; }
 
 
 /* 카드 ⋯ 메뉴 — 타일 기준 절대배치라 카드 밖으로 안 새어 나간다 */
-.lib-menu{position:absolute;z-index:5;min-width:196px;padding:6px;
-  background:var(--neutral-0);border:1px solid var(--neutral-300);border-radius:10px;
+.lib-menu{position:absolute;z-index:5;width:200px;box-sizing:border-box;padding:6px;
+  background:var(--neutral-0);border:1px solid var(--neutral-400);border-radius:10px;
   box-shadow:0 4px 10px rgba(0,0,0,.10);display:flex;flex-direction:column;gap:2px;}
-.lib-menu button{display:block;width:100%;min-height:36px;padding:7px 8px;border:0;
+.lib-menu button{display:block;width:100%;height:36px;box-sizing:border-box;padding:7px 8px;border:0;
   border-radius:6px;background:none;text-align:left;cursor:pointer;
-  font-family:inherit;font-size:14px;font-weight:500;color:var(--neutral-900);}
+  font-family:inherit;font-size:14px;line-height:22px;font-weight:500;color:var(--neutral-900);}
 .lib-menu button:hover{background:var(--neutral-100);}
 .lib-menu button.danger{color:var(--badge-red-text);}
-.lib-menu hr{margin:4px 6px;border:0;border-top:1px solid var(--neutral-200);}
+.lib-menu hr{margin:0 16px;border:0;border-top:1px solid var(--neutral-400);}
 
 .lib-dots{display:flex;gap:6px;align-self:center;}
 .lib-dots i{width:6px;height:6px;border-radius:999px;background:rgba(255,255,255,.45);}
@@ -35648,34 +36434,45 @@ body{margin:auto;padding:0;background:#e5e5e5;}
    1920×1162 프레임 안에서 1400×860. 안쪽 여백 16, 미디어 774 정사각(라운드), 정보 열 578. */
 .libprev-layer{position:absolute;inset:0;z-index:120;}
 .libprev-scrim{position:absolute;inset:0;background:rgba(15,23,41,.38);}
-.libprev{position:absolute;left:260px;top:151px;width:1400px;height:860px;
-  display:flex;flex-direction:column;padding:16px;
+/* 2026-09-17 Figma `Modal · Content Preview` (9329:143895 / 8319:208574) —
+   1360x952 @ (280,105). 다른 모달과 같은 세 칸이다:
+   title row `28 28 20 32` / body `0 32 24 32` / footer `18 28 18 32`. */
+.libprev{position:absolute;left:280px;top:105px;width:1360px;height:952px;box-sizing:border-box;
+  display:flex;flex-direction:column;padding:0;
   background:var(--neutral-0);border-radius:16px;
   box-shadow:0 28px 72px rgba(15,23,41,.30);}
-.libprev-body{display:flex;gap:16px;flex:1 1 auto;min-height:0;}
+.libprev-title{display:flex;align-items:center;justify-content:space-between;gap:12px;flex:none;
+  height:84px;box-sizing:border-box;padding:28px 28px 20px 32px;}
+.libprev-title h2{margin:0;font-weight:700;font-size:16px;line-height:24px;color:var(--neutral-900);}
+.libprev-body{display:flex;gap:24px;flex:1 1 auto;min-height:0;padding:0 32px 24px 32px;}
 
 /* ── 좌측 미디어 ── */
 .libprev-media{width:774px;flex:none;position:relative;overflow:hidden;
   border-radius:var(--radius-xl);background:var(--neutral-100);}
 .libprev-media img{width:100%;height:100%;object-fit:cover;display:block;}
+/* 포맷 칩은 카드와 같은 유리 버튼이다 — 어두운 알약이 아니다 */
 .libprev-fmt{position:absolute;right:28px;top:20px;display:inline-flex;align-items:center;gap:5px;
-  height:36px;padding:0 12px;border-radius:var(--radius-lg);
-  background:rgba(15,23,41,.70);color:#fff;font-weight:600;font-size:13px;}
-.libprev-fmt svg{width:14px;height:14px;}
+  height:36px;box-sizing:border-box;padding:7px 12px 7px 10px;border-radius:8px;
+  background:linear-gradient(180deg,rgba(255,255,255,.68) 0%,rgba(255,255,255,.46) 100%);
+  border:1px solid rgba(255,255,255,.55);
+  -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+  color:var(--neutral-700);font-weight:500;font-size:14px;line-height:22px;}
+.libprev-fmt svg{width:16px;height:16px;}
 .libprev-arrow{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;
-  display:grid;place-items:center;border:0;border-radius:9999px;cursor:pointer;
-  background:var(--neutral-0);box-shadow:0 2px 6px rgba(15,23,41,.20);}
+  display:grid;place-items:center;border:1px solid var(--neutral-400);border-radius:9999px;
+  cursor:pointer;box-sizing:border-box;background:var(--neutral-0);}
 .libprev-arrow.prev{left:32px;}
 .libprev-arrow.next{right:32px;}
 .libprev-arrow svg{width:14px;height:14px;}
 /* 카운터는 하단 우측. 포스터가 하단 중앙에 자기 문구를 두기 때문에 중앙을 피한다 */
-.libprev-count{position:absolute;right:20px;bottom:20px;padding:5px 10px;border-radius:9999px;
-  background:rgba(15,23,41,.70);color:#fff;font-weight:600;font-size:12px;
+.libprev-count{position:absolute;right:17px;bottom:20px;height:26px;box-sizing:border-box;
+  display:inline-flex;align-items:center;padding:4px 10px;border-radius:9999px;
+  background:rgba(15,23,41,.70);color:#fff;font-weight:600;font-size:12px;line-height:18px;
   font-variant-numeric:tabular-nums;}
 
 /* ── 우측 정보 열 ── */
-.libprev-detail{flex:1 1 auto;min-width:0;position:relative;
-  display:flex;flex-direction:column;gap:18px;padding:24px;}
+.libprev-detail{width:498px;flex:none;min-width:0;position:relative;
+  display:flex;flex-direction:column;gap:18px;padding:0;}
 /* 스크롤바는 오른쪽 여백 위에 떠 있다 — 자리를 따로 차지하지 않아 좌우 여백이 대칭이다 */
 .libprev-bar{position:absolute;right:8px;top:24px;bottom:24px;width:6px;border-radius:9999px;
   background:var(--neutral-200);}
@@ -35690,11 +36487,12 @@ body{margin:auto;padding:0;background:#e5e5e5;}
 .libprev-close:hover{background:var(--neutral-100);}
 .libprev-close svg{width:16px;height:16px;}
 
-.libprev-label{font-weight:700;font-size:13px;line-height:20px;color:var(--neutral-900);flex:none;}
+.libprev-label{font-weight:700;font-size:16px;line-height:24px;color:var(--neutral-900);flex:none;}
 .libprev-caption,.libprev-prompt{font-weight:400;font-size:14px;line-height:22px;
   color:var(--neutral-700);white-space:pre-line;flex:none;}
 .libprev-meta{font-weight:400;font-size:12px;line-height:18px;color:var(--neutral-500);flex:none;}
 .libprev-div{height:1px;background:var(--neutral-200);flex:none;}
+.libprev-bar{display:none;}
 .libprev-grow{flex:1 1 auto;min-height:0;}
 
 /* 목적지별 결과 — 카드의 줄과 같은 어휘를 쓴다 */
@@ -35706,14 +36504,17 @@ body{margin:auto;padding:0;background:#e5e5e5;}
 .libprev-dest .none{color:var(--neutral-500);}
 
 /* ── 푸터 ── */
-.libprev-footer{display:flex;align-items:center;justify-content:flex-end;gap:12px;
-  flex:none;padding-top:16px;border-top:1px solid var(--neutral-200);}
-.libprev-btn{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 14px;cursor:pointer;
-  border-radius:var(--radius-lg);font-family:inherit;font-weight:600;font-size:14px;line-height:20px;}
+.libprev-footer{display:flex;align-items:center;justify-content:flex-end;gap:12px;flex:none;
+  height:74px;box-sizing:border-box;padding:18px 28px 18px 32px;
+  border-top:1px solid var(--neutral-200);}
+.libprev-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:38px;
+  box-sizing:border-box;padding:9px 14px;cursor:pointer;border-radius:8px;
+  font-family:inherit;font-weight:600;font-size:13px;line-height:20px;white-space:nowrap;}
 .libprev-btn svg{width:16px;height:16px;}
-.libprev-btn.pri{background:#2b2b2b;color:#fff;border:1px solid #2b2b2b;}
-.libprev-btn.sec{background:var(--neutral-0);color:var(--neutral-900);border:1px solid var(--neutral-300);}
-.libprev-btn.ghost{background:none;color:var(--neutral-700);border:1px solid transparent;}
+.libprev-btn.pri{background:linear-gradient(to bottom,#323232,#222);color:#fff;border:0;
+  filter:drop-shadow(0px 1px 2px rgba(13,13,13,0.1));}
+.libprev-btn.sec,.libprev-btn.ghost{background:var(--neutral-0);color:var(--neutral-700);
+  border:1px solid var(--neutral-400);}
 
 /* 상태별 표시 — 콘텐츠 상태 하나로 푸터와 목적지 줄이 갈린다 */
 .libprev [data-only]{display:none;}
@@ -35728,6 +36529,14 @@ body{margin:auto;padding:0;background:#e5e5e5;}
   <div class="libprev-scrim" data-libprev="close"></div>
   <div class="libprev" id="libprev" role="dialog" aria-modal="true"
        aria-label="Content preview" data-state="published">
+
+    <div class="libprev-title">
+      <h2>My Library</h2>
+      <button type="button" class="libprev-close" data-libprev="close" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M18 6 6 18M6 6l12 12" stroke="#475069" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+    </div>
 
     <div class="libprev-body">
       <div class="libprev-media">
@@ -35746,16 +36555,7 @@ body{margin:auto;padding:0;background:#e5e5e5;}
       </div>
 
       <div class="libprev-detail">
-        <span class="libprev-bar"></span>
-        <div class="libprev-head">
-          <span class="libprev-badge" id="libprevStatus">Published</span>
-          <span class="libprev-badge muted">From your idea</span>
-          <span class="libprev-sp"></span>
-          <button type="button" class="libprev-close" data-libprev="close" aria-label="Close">
-            <svg viewBox="0 0 16 16" fill="none" stroke="#8A93A8" stroke-width="1.6" stroke-linecap="round">
-              <path d="M4 4l8 8M12 4l-8 8"/></svg></button>
-        </div>
-
+        <span class="libprev-badge" id="libprevStatus" hidden></span>
         <p class="libprev-label">Caption</p>
         <p class="libprev-caption" id="libprevCap"></p>
 
@@ -35763,39 +36563,22 @@ body{margin:auto;padding:0;background:#e5e5e5;}
 
         <p class="libprev-label">Original prompt</p>
         <p class="libprev-prompt" id="libprevPrompt"></p>
-
-        <span class="libprev-div"></span>
-
-        <p class="libprev-label">Details</p>
-        <p class="libprev-meta" id="libprevMeta"></p>
-        <div class="libprev-dest" id="libprevDest"></div>
+        <p class="libprev-meta" id="libprevMeta" hidden></p>
+        <div class="libprev-dest" id="libprevDest" hidden></div>
 
         <span class="libprev-grow"></span>
       </div>
     </div>
 
     <div class="libprev-footer">
-      <button type="button" class="libprev-btn ghost" data-libprev="dl">
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"
-             stroke-linecap="round" stroke-linejoin="round">
-          <path d="M8 2.8v6.6m0 0 2.4-2.4M8 9.4 5.6 7M3 12.6h10"/></svg>
-        Download</button>
+      <button type="button" class="libprev-btn sec" data-libprev="dl">Download</button>
 
       <!-- 2026-09-04 Figma `Content Preview · published (view only)` 8319:208574 기준:
            게시된 글의 푸터는 Download + View on Social 둘뿐이다.
            `Duplicate & edit` 는 새 디자인에서 빠졌다. -->
-      <button type="button" class="libprev-btn pri" data-libprev="social" data-only="published">
-        <svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.5"
-             stroke-linecap="round" stroke-linejoin="round">
-          <path d="M9.4 2.6h4v4"/><path d="M13.4 2.6 7.6 8.4"/>
-          <path d="M12.2 9.6v3a1.4 1.4 0 0 1-1.4 1.4H3.4A1.4 1.4 0 0 1 2 12.6V5.2a1.4 1.4 0 0 1 1.4-1.4h3"/></svg>
-        View on Social</button>
+      <button type="button" class="libprev-btn pri" data-libprev="social" data-only="published">View on Social</button>
 
-      <button type="button" class="libprev-btn pri" data-libprev="editpub" data-only="draft scheduled">
-        <svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.5"
-             stroke-linecap="round" stroke-linejoin="round">
-          <path d="M11.2 2.8a1.7 1.7 0 0 1 2.4 2.4L5.9 12.9l-3.2.8.8-3.2z"/></svg>
-        Go back to Edit &amp; Publish</button>
+      <button type="button" class="libprev-btn pri" data-libprev="editpub" data-only="draft scheduled">Go back to Edit &amp; Publish</button>
     </div>
   </div>
 </div>
@@ -35806,6 +36589,10 @@ body{margin:auto;padding:0;background:#e5e5e5;}
 (function(){
   var $ = function(s, r){ return (r||document).querySelector(s); };
   var layer = $('#libprevLayer'), box = $('#libprev');
+  /* 레이어가 body 바로 밑에 있으면 프레임 배율을 안 따라가서 좌표(280,105)가 어긋난다.
+     다른 모달처럼 .frame 안으로 옮겨 둔다.                              2026-09-17 */
+  (function(){ var f = document.querySelector('.frame');
+               if (f && layer.parentNode !== f) f.appendChild(layer); })();
   if (!layer || !box) return;
 
   var CAPTION =
@@ -35857,6 +36644,7 @@ body{margin:auto;padding:0;background:#e5e5e5;}
     layer.hidden = false;
   }
   function close(){ layer.hidden = true; }
+  window.libOpenPreview = open;   /* ⋯ 메뉴의 `View post` 가 쓰는 입구 */
 
   /* 편집은 v3 의 Edit & Publish 단계로 보낸다. 캡션·해시태그·플랫폼별 문구·목적지·시점이
      전부 거기 모여 있어서, 모달에 옮겨오면 같은 UI 가 두 곳으로 갈라진다. */
@@ -35891,7 +36679,8 @@ body{margin:auto;padding:0;background:#e5e5e5;}
       return;
     }
     var card = e.target.closest('.lib-card');
-    if (card && !e.target.closest('.lib-iconbtn')) { box.dataset.title = card.dataset.title || ''; open(card); }
+    if (card && !e.target.closest('.lib-iconbtn') && !e.target.closest('.lib-menu')) {
+      box.dataset.title = card.dataset.title || ''; open(card); }
   });
   document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && !layer.hidden) close(); });
 
