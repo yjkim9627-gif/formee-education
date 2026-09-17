@@ -169,7 +169,9 @@ body{
 .fmenu .cb svg{width:12px;height:12px;stroke:#fff;fill:none;stroke-width:2;
   stroke-linecap:round;stroke-linejoin:round;display:none;}
 .fmenu button[aria-checked="true"] .cb svg{display:block;}
-/* 단일 선택(Date range)은 선택 행 자체가 강조되고 우측에 체크 */
+/* 단일 선택(Date range)은 선택 행 자체가 강조되고 우측에 체크.
+   글자는 Medium — 고른 줄이라고 더 굵어지지는 않는다(체크박스 메뉴만 Regular). */
+.fmenu button.single{font-weight:var(--font-weight-medium);}
 .fmenu button.single[aria-checked="true"]{background:var(--color-neutral-100);}
 .fmenu button.single .tick{margin-left:auto;width:16px;height:16px;flex:none;
   stroke:var(--color-neutral-900);fill:none;stroke-width:2;stroke-linecap:round;
