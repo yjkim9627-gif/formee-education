@@ -154,8 +154,12 @@ input:focus-visible{outline:none;}   /* the wrapping field already shows focus v
   align-items:flex-start;padding:28px 27px;width:100%;overflow-x:hidden;overflow-y:auto;
   scrollbar-width:none;}
 .main::-webkit-scrollbar{width:0;display:none;}
+/* 캐릭터 화면은 .char-scroll 이 스크롤을 맡는다 — main 이 같이 굴러가면
+   스티키 필터가 헤더까지 데리고 올라간다. */
+#mainCharacters{overflow:hidden;}
 
 .page-header{display:flex;align-items:center;justify-content:space-between;width:100%;flex:none;overflow:hidden;}
+.is-empty .page-header .btn-primary{display:none;}
 .title-block{display:flex;flex-direction:column;gap:4px;align-items:flex-start;white-space:nowrap;overflow:hidden;}
 .page-title{font-weight:700;font-size:22px;line-height:30px;letter-spacing:-0.1px;color:var(--neutral-900);}
 .page-sub{font-weight:400;font-size:13px;line-height:20px;color:var(--neutral-500);}
@@ -181,7 +185,22 @@ input:focus-visible{outline:none;}   /* the wrapping field already shows focus v
 .search-field input::placeholder{color:var(--neutral-500);opacity:1;}
 
 .filter-row{display:flex;align-items:center;justify-content:space-between;width:100%;flex:none;}
-.filters{display:flex;gap:12px;align-items:flex-start;}
+/* Figma `List - all` 7867:208067 — header·search 는 고정이고 그 아래만 스크롤한다.
+   뷰포트 1602x920(clip) + 오른쪽에 보이는 6px 스크롤바(#c8d1e1, r3).
+   묶지 않은 목록에서만 필터 줄이 뷰포트 위에 붙는다 — `List - grouped`(7867:208010)
+   에는 뷰포트도 스티키도 없어서 그 프레임 그대로 뒀다.                2026-09-17 */
+.char-scroll{width:100%;flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;
+  display:flex;flex-direction:column;gap:20px;align-items:flex-start;}
+/* 스크롤바도 `List - all` 에만 보인다. 묶은 목록에서 띄우면 6px 을 먹어
+   콘텐츠 폭이 1602 → 1596 으로 줄고 프레임 1 과 어긋난다. */
+.char-scroll::-webkit-scrollbar{width:0;}
+.is-flat .char-scroll::-webkit-scrollbar{width:6px;}
+.is-flat .char-scroll::-webkit-scrollbar-track{background:transparent;}
+.is-flat .char-scroll::-webkit-scrollbar-thumb{background:var(--neutral-400);border-radius:3px;}
+/* 스티키 줄은 46 이 아니라 64 다 — 위아래 9 를 더해 뒤로 지나가는 카드를 가린다 */
+.is-flat .char-scroll .filter-row{position:sticky;top:0;z-index:3;
+  padding:9px 0;background:var(--neutral-50);}
+.filters{display:flex;gap:12px;align-items:center;}   /* Figma MIN/CENTER */
 .chip-wrap{position:relative;}
 .chip{
   background:var(--neutral-0);border:1px solid var(--neutral-400);border-radius:9999px;
@@ -242,9 +261,18 @@ input:focus-visible{outline:none;}   /* the wrapping field already shows focus v
 .group-head{display:flex;gap:8px;align-items:center;width:100%;flex:none;overflow:hidden;}
 .group-title{font-weight:600;font-size:16px;line-height:24px;color:var(--neutral-900);white-space:nowrap;}
 .group-rule{flex:1 0 0;height:1px;min-width:1px;}
-.roster-count{flex:1 0 0;min-width:1px;text-align:center;font-weight:500;font-size:14px;line-height:22px;color:var(--neutral-500);}
+/* Figma `filters` 안 다섯 번째 자식 — Gender 칩 바로 옆, Medium 12/16 neutral/500.
+   가운데 정렬 스페이서가 아니다 (7867:208067 · 208010 둘 다).            2026-09-17 */
+.roster-count{flex:none;font-weight:500;font-size:12px;line-height:16px;
+  color:var(--neutral-500);white-space:nowrap;}
 .see-all{font-weight:500;font-size:14px;line-height:22px;color:var(--neutral-700);white-space:nowrap;flex:none;}
 .see-all:hover{color:var(--neutral-900);}
+/* Figma `load more` — 1604x70 · pad 8 0 24 · 가운데. 버튼은 114x38 r8. */
+.load-more{width:100%;display:flex;justify-content:center;padding:8px 0 24px;flex:none;}
+.load-more-btn{box-sizing:border-box;height:38px;padding:9px 14px;border-radius:8px;
+  background:var(--neutral-0);border:1px solid var(--neutral-400);
+  font-weight:600;font-size:13px;line-height:20px;color:var(--neutral-700);white-space:nowrap;}
+.load-more-btn:hover{background:var(--neutral-50);}
 
 /* A group holds 12 slots — 6 columns x 2 rows, the Create New tile counted as one.
    Inside that it simply wraps: nothing is hidden, so no arrow, no fade, no See all. */
@@ -254,48 +282,73 @@ input:focus-visible{outline:none;}   /* the wrapping field already shows focus v
    down. Slots are paired into vertical columns, so both rows stay full at every count —
    fill order is top, bottom, then move right. A fixed slot height is what keeps the
    second row aligned; without it the shorter cards float and the row breaks up. */
+/* Figma 는 한 줄이다 — `grid` 1602x382 · NO_WRAP · clipsContent (7867:208010).
+   예전엔 6열 x 2행(12칸)으로 깔고 그 뒤에 가로 스크롤했다.            2026-09-17 */
 .grid.carousel{flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;}
-.grid.carousel .col{display:flex;flex-direction:column;gap:24px;flex:none;width:244px;}
-.grid.carousel .card{height:383px;}
-.grid.carousel .card-new .thumb-new{height:383px;}
+.grid.carousel .card{height:382px;}
+.grid.carousel .card-new .thumb-new{height:382px;}
 
-.carousel-arrow{position:absolute;top:417px;width:32px;height:32px;   /* vertical centre of the two rows */
+/* 화살표는 썸네일(295)의 세로 중앙에 온다 — 카드 전체가 아니라.
+   그룹 기준 top 167 = 헤더 24 + gap 14 + (295/2 - 16), right 18. */
+.carousel-arrow{position:absolute;top:167px;width:32px;height:32px;
   background:var(--neutral-0);border:1px solid var(--neutral-400);border-radius:9999px;
-  box-shadow:0px 0px 6px 0px var(--neutral-150);overflow:hidden;display:block;z-index:2;}
-.arrow-r{right:18px;}   /* the 18px gutter puts the arrow's right edge on the card edge, 1584 */
+  overflow:hidden;display:block;z-index:2;}
+.arrow-r{right:18px;}
 .arrow-l{left:12px;}
 /* the fade says the row continues past the clip — it goes once you reach the end */
-.cfade{position:absolute;top:38px;right:18px;width:120px;height:790px;pointer-events:none;
+.cfade{position:absolute;top:38px;right:18px;width:120px;height:382px;pointer-events:none;
   background:linear-gradient(90deg,rgba(248,250,255,0) 0%,var(--neutral-50) 100%);}
 .arrow-l .ic{transform:scaleX(-1);}   /* mirrored instance of the same chevron asset */
 .carousel-arrow:hover{background:var(--neutral-50);}
 
 /* ---------------------------------------------------------------- card */
-.card{position:relative;display:flex;flex-direction:column;gap:8px;align-items:flex-start;width:244px;flex:none;}
+/* Figma `Selector / Character Card` 는 246 이다 (List - grouped 7867:208010) */
+.card{position:relative;display:flex;flex-direction:column;gap:8px;align-items:flex-start;width:246px;flex:none;}
 .card{cursor:pointer;}
 .card-new{cursor:default;}
+/* 테두리를 border 로 그리면 absolute 자식의 기준 상자가 1px 안으로 밀려
+   별·⋯·뱃지가 전부 1px 어긋난다. Figma 는 stroke INSIDE 라 안 밀린다.
+   inset 그림자로 바꾸고 이미지는 폭을 고정하지 않는다.            2026-09-17 */
 .thumb{position:relative;height:295px;width:100%;flex:none;
-  border:1px solid var(--neutral-400);border-radius:var(--radius-xl);overflow:hidden;}
-.thumb-img{position:absolute;inset:-1px;width:244px;height:295px;max-width:none;
+  box-shadow:inset 0 0 0 1px var(--neutral-400);border-radius:var(--radius-xl);overflow:hidden;}
+.thumb-img{position:absolute;inset:0;width:100%;height:100%;max-width:none;
   object-fit:cover;border-radius:var(--radius-xl);pointer-events:none;} /* fill spans under the inside-drawn 1px stroke, as in Figma */
-.posts-badge{position:absolute;bottom:11px;right:11px;background:var(--neutral-900);
-  display:flex;align-items:center;justify-content:center;padding:2px 8px;border-radius:8px;}
-.posts-badge p{font-weight:600;font-size:11px;line-height:14px;color:#fff;white-space:nowrap;}
+/* Figma `Feedback / Status Chip` (List - grouped 7867:208010) — 알약이고 배경은
+   neutral/900 이 아니라 순검정이다. 높이 17 = pad 2 + 13 줄높이.        2026-09-17 */
+.posts-badge{position:absolute;bottom:12px;right:12px;background:#000;
+  display:flex;align-items:center;justify-content:center;padding:2px 8px;border-radius:9999px;}
+.posts-badge p{font-weight:600;font-size:11px;line-height:13px;color:#fff;white-space:nowrap;}
 
-.iconbtn{position:absolute;top:9px;width:36px;height:36px;border-radius:8px;
-  display:flex;align-items:center;justify-content:center;
-  background:#fff;border:1px solid var(--neutral-400);filter:var(--shadow-sm);}
-.iconbtn.fav{left:8px;}
-.iconbtn.more{left:197px;}
-.iconbtn:hover{background:var(--neutral-50);}
-.iconbtn.fav.active{background:var(--neutral-150);border-color:var(--neutral-500);}
-.iconbtn.more.active{background:var(--neutral-150);border-color:var(--neutral-450);}
+/* Figma `Actions / Favorite Button` / `More Button` — 흰 버튼이 아니라 유리다.
+   흰색 68%→46% 세로 그라디언트 · 1px 흰 테두리 55% · 배경 블러 18 ·
+   inner 0 1 0 흰색 55% · drop 0 2 8 #0f1729 18%.                      2026-09-17 */
+.iconbtn{position:absolute;top:14px;width:36px;height:36px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;box-sizing:border-box;
+  background:linear-gradient(180deg,rgba(255,255,255,.68) 0%,rgba(255,255,255,.46) 100%);
+  border:1px solid rgba(255,255,255,.55);
+  -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55), 0 2px 8px rgba(15,23,41,.18);}
+.iconbtn.fav{left:12px;}
+.iconbtn.more{left:198px;}
+/* 상태도 유리를 유지한다 — 평평한 회색으로 덮으면 Normal 만 유리고 나머지는 딴 물건이 된다.
+   Figma `State=Selected` 는 흰색 96%→88% · 테두리 90%.                  2026-09-17 */
+.iconbtn:hover{background:linear-gradient(180deg,rgba(255,255,255,.82) 0%,rgba(255,255,255,.62) 100%);}
+.iconbtn.fav.active,
+.iconbtn.more.active{
+  background:linear-gradient(180deg,rgba(255,255,255,.96) 0%,rgba(255,255,255,.88) 100%);
+  border-color:rgba(255,255,255,.9);}
 
 .meta{display:flex;flex-direction:column;gap:4px;align-items:flex-start;padding-top:8px;width:100%;flex:none;overflow:hidden;}
 .card-name{font-weight:600;font-size:14px;line-height:22px;color:var(--neutral-900);width:100%;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-input.card-name{background:var(--neutral-0);box-shadow:0 0 0 1px var(--neutral-450);border-radius:4px;
-  padding:0 3px;margin:0 -3px;width:calc(100% + 6px);}
+/* Figma `Uploads / Folder Rename Field` (Character - rename 7867:208200) —
+   네모 입력칸이 아니라 **밑줄** 이다: 246x24, 채움·테두리 없음, 아래 1px neutral/400,
+   선택 영역은 brand-primary-mid.                                    2026-09-17
+   글자 크기는 카드 이름(14/22)에 맞춰 둔다 — Figma 의 13/20 을 따르면
+   이름을 고치는 순간 글자가 한 번 튄다. */
+input.card-name{background:transparent;box-shadow:none;border-radius:0;
+  border-bottom:1px solid var(--neutral-400);padding:0;margin:0;width:100%;}
+input.card-name::selection{background:var(--brand-primary-mid);}
 .type-row{display:flex;gap:3px;align-items:center;width:100%;overflow:hidden;
   font-weight:400;font-size:13px;line-height:20px;color:var(--neutral-500);white-space:nowrap;}
 
@@ -303,6 +356,10 @@ input.card-name{background:var(--neutral-0);box-shadow:0 0 0 1px var(--neutral-4
 .badge p{font-weight:600;font-size:11px;line-height:14px;white-space:nowrap;}
 .badge-green{background:var(--badge-green-bg);}
 .badge-green p{color:var(--badge-green-text);}
+/* 캐릭터 카드의 상태 칩은 Figma `Feedback / Status Chip` — 알약(9999)에 높이 17.
+   .badge 는 브랜드킷 레일도 쓰므로 카드 안쪽으로만 한정한다.          2026-09-17 */
+.card > .badge{border-radius:9999px;}
+.card > .badge p{line-height:13px;}
 .badge-ghost p{color:transparent;}
 
 .card-new{gap:0;}
@@ -317,13 +374,19 @@ input.card-name{background:var(--neutral-0);box-shadow:0 0 0 1px var(--neutral-4
 
 /* an account with no characters at all — Figma `Characters · empty` 8516:219271.
    Not the same thing as a search that found nothing, which keeps .empty-note. */
+/* Figma `Characters - empty` 8479:141279 — empty-area 1602x854 가운데,
+   블록 480x278 · gap 12 · glyph 80(neutral/100) · 아이콘 48 · 제목 Bold 20/28 ·
+   제목↔부제 3 · 부제 Regular 14/22.                                  2026-09-17 */
 .empty-state{width:100%;display:flex;flex-direction:column;align-items:center;
-  justify-content:center;padding:250px 0;}
-.empty-icon{width:72px;height:72px;border-radius:9999px;background:var(--neutral-100);
-  display:flex;align-items:center;justify-content:center;margin-bottom:20px;}
-.empty-title{font-weight:700;font-size:18px;line-height:26px;color:var(--neutral-900);}
-.empty-sub{font-weight:400;font-size:14px;line-height:22px;color:var(--neutral-500);margin-top:4px;}
-.empty-state .btn-primary{margin-top:16px;}
+  justify-content:center;gap:12px;padding:250px 0;}
+.empty-icon{width:80px;height:80px;border-radius:9999px;background:var(--neutral-100);
+  display:flex;align-items:center;justify-content:center;flex:none;}
+.empty-icon svg{width:48px;height:48px;}
+.empty-title{font-weight:700;font-size:20px;line-height:28px;color:var(--neutral-900);}
+.empty-sub{font-weight:400;font-size:14px;line-height:22px;color:var(--neutral-500);margin-top:3px;}
+/* 제목과 부제는 3 만 띄우므로 블록 gap(12) 을 그 사이에서만 지운다 */
+.empty-title + .empty-sub{margin-top:calc(3px - 12px);}
+.empty-state .btn-primary{height:38px;box-sizing:border-box;}
 
 /* ------------------------------------------------------------ context menu */
 .ctx-menu{position:absolute;left:36px;top:54px;width:200px;height:124px;background:#fff;
@@ -388,16 +451,28 @@ input.card-name{background:var(--neutral-0);box-shadow:0 0 0 1px var(--neutral-4
 /* the destructive dialog dims with neutral/900 at 35%, a touch lighter and
    bluer than the plain black scrim the Create modal uses */
 .confirm-layer{position:absolute;inset:0;z-index:200;}
-.confirm-layer .scrim{background:rgba(15,23,41,0.35);}
-/* dialog · delete character (6795:106012) — 520x198, 24 padding, 16 gaps */
-.confirm{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:520px;
-  background:var(--neutral-0);border-radius:16px;padding:24px;flex:none;
-  display:flex;flex-direction:column;gap:16px;align-items:flex-start;
+.confirm-layer .scrim{background:rgba(0,0,0,0.38);}
+/* Figma `Modal · Confirm` (Character - delete 7867:208145) — 560 폭, r16.
+   한 덩어리가 아니라 세 칸이다: title row `28 28 20 32` / body `0 32 24 32` /
+   footer `18 28 18 32` + 상단 구분선. 제목은 20/28 이 아니라 **Bold 16/24**.
+   footer 높이를 만드는 건 제목이 아니라 36 짜리 닫기 버튼이다.        2026-09-17 */
+.confirm{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:560px;
+  background:var(--neutral-0);border-radius:16px;padding:0;flex:none;
+  display:flex;flex-direction:column;gap:0;align-items:stretch;
   box-shadow:0px 20px 48px 0px rgba(0,0,0,0.18);}
-.confirm-title{font-weight:600;font-size:20px;line-height:28px;color:var(--neutral-900);}
+.confirm-head{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:28px 28px 20px 32px;}
+.confirm-title{font-weight:700;font-size:16px;line-height:24px;color:var(--neutral-900);}
+.confirm-close{width:36px;height:36px;border-radius:8px;flex:none;
+  display:flex;align-items:center;justify-content:center;}
+.confirm-close:hover{background:var(--neutral-100);}
+.confirm-close svg{width:24px;height:24px;display:block;}
+.confirm-bodywrap{padding:0 32px 24px 32px;}
 .confirm-body{font-weight:400;font-size:14px;line-height:22px;color:var(--neutral-700);}
-.confirm-actions{display:flex;gap:12px;justify-content:flex-end;width:100%;padding-top:8px;}
-.btn-danger{background:var(--badge-red-text);border-radius:var(--radius-lg);padding:9px 14px;flex:none;
+.confirm-actions{display:flex;gap:12px;justify-content:flex-end;width:100%;
+  padding:18px 28px 18px 32px;border-top:1px solid var(--neutral-200);}
+/* Figma 는 `#b80000` (alert/bg) — badge-red-text(#c4271b) 가 아니다 */
+.btn-danger{background:#b80000;border-radius:var(--radius-lg);padding:9px 14px;flex:none;
   font-weight:600;font-size:13px;line-height:20px;color:#fff;white-space:nowrap;}
 .btn-danger:hover{filter:brightness(1.08);}
 .btn-danger:focus-visible,.btn-sec:focus-visible{outline:2px solid #4f6de6;outline-offset:2px;}
@@ -509,16 +584,19 @@ input.card-name{background:var(--neutral-0);box-shadow:0 0 0 1px var(--neutral-4
 /* header (28,28) and detail-row (28,126) sit on a 28px gutter with no bottom
    padding — the row runs to the bottom of Main Content (6317:96056) */
 #mainCharacters,#charDetailMain{padding-left:28px;padding-right:28px;}
-#charDetailMain{padding-bottom:0;}
+/* Figma `Main Content` 는 위아래 28 이 같다 (Detail - favorites 6317:96044) */
+#charDetailMain{padding-bottom:28px;}
 .cd-body{flex:1 0 0;min-height:1px;width:100%;display:flex;gap:24px;align-items:stretch;}
-.cd-left{width:320px;flex:none;background:var(--neutral-0);border:1px solid #e3e8f2;
-  border-radius:var(--radius-xl);padding:24px;display:flex;flex-direction:column;gap:10px;
+/* Figma `detail-left` 320 · pad 24 · r16 · stroke neutral/300(#d6ddeb) */
+.cd-left{width:320px;flex:none;background:var(--neutral-0);border:1px solid var(--neutral-300);
+  border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:10px;
   align-items:flex-start;overflow-y:auto;scrollbar-width:thin;}
 .cd-left::-webkit-scrollbar{width:6px;}
 .cd-left::-webkit-scrollbar-thumb{background:var(--neutral-400);border-radius:3px;}
 .cd-left .d-foot{margin-top:auto;padding-top:24px;}
 .cd-left .d-foot .btn-dark{height:38px;}
-.cd-right{flex:1 0 0;min-width:1px;display:flex;flex-direction:column;gap:16px;
+/* Figma `detail-right` 도 r16 이다 */
+.cd-right{flex:1 0 0;min-width:1px;display:flex;flex-direction:column;gap:16px;border-radius:16px;
   align-items:flex-start;overflow-y:auto;padding:24px;scrollbar-width:none;}
 .cd-right::-webkit-scrollbar{width:0;display:none;}
 .cd-sec{width:100%;flex:none;display:flex;flex-direction:column;gap:16px;align-items:flex-start;}
@@ -526,7 +604,11 @@ input.card-name{background:var(--neutral-0);box-shadow:0 0 0 1px var(--neutral-4
 .cd-sec-head{display:flex;gap:8px;align-items:center;width:100%;height:24px;flex:none;}
 .cd-sec-t{font-weight:600;font-size:16px;line-height:24px;color:var(--neutral-900);white-space:nowrap;}
 .page-title-row{display:flex;gap:10px;align-items:center;}
-.cd-back{font-weight:400;font-size:13px;line-height:20px;color:var(--neutral-700);
+/* Figma 의 title-block 은 제목+부제 54 뿐이다 — 본문 안 `← Back to Characters` 가 없다.
+   상단 breadcrumb(Assets › Characters › 이름)이 이미 돌아가는 길이라 두 곳이면 갈린다.
+   브랜드 킷에서 `← Back to Brands` 를 뺀 것과 같은 이유다.          2026-09-17
+   되돌리려면 이 display:none 한 줄만 지우면 된다. */
+.cd-back{display:none;font-weight:400;font-size:13px;line-height:20px;color:var(--neutral-700);
   white-space:nowrap;flex:none;}
 .cd-back:hover{color:var(--neutral-900);text-decoration:underline;}
 .cd-star{width:20px;height:20px;border-radius:var(--radius-sm,4px);display:flex;align-items:center;
@@ -620,7 +702,8 @@ input.card-name{background:var(--neutral-0);box-shadow:0 0 0 1px var(--neutral-4
 .d-blank .gen-spin{width:28px;height:28px;animation:refspin 1s linear infinite;}
 .d-blank em{font-style:normal;font-weight:400;font-size:13px;line-height:20px;color:var(--neutral-500);}
 .d-actions{width:100%;justify-content:flex-end;margin-top:0;padding-top:0;}
-.btn-dark.is-off{background:var(--neutral-400);pointer-events:none;filter:none;}
+/* Figma 의 비활성 primary 는 neutral/300 (#d6ddeb) 이다 */
+.btn-dark.is-off{background:var(--neutral-300);pointer-events:none;filter:none;}
 .btn-dark.is-busy{pointer-events:none;filter:none;}
 .btn-dark.is-busy .gen-spin{filter:brightness(0) invert(1);}
 
@@ -1132,15 +1215,20 @@ input.card-name{background:var(--neutral-0);box-shadow:0 0 0 1px var(--neutral-4
 .modal-layer{position:absolute;inset:0;z-index:100;}
 .scrim{position:absolute;inset:0;background:rgba(0,0,0,0.38);}
 .modal.step-results{top:170px;}
-.modal{position:absolute;left:460px;top:208px;width:1000px;height:746px;   /* centred in the 1920×1162 frame, as in the source frames */
+/* Figma `Modal · Create character` 1120x746 (Create - upload 3756:69259 등)
+   — 왼쪽 폼이 440 이 아니라 560 이라 전체가 120 넓다.                 2026-09-17 */
+.modal{position:absolute;left:400px;top:208px;width:1120px;height:746px;
   background:var(--neutral-0);border-radius:16px;overflow:hidden;
   box-shadow:0px 20px 48px 0px rgba(0,0,0,0.18);display:flex;flex-direction:column;}
 
-.m-header{height:72px;flex:none;display:flex;align-items:flex-start;justify-content:space-between;
+.m-header{height:84px;flex:none;display:flex;align-items:center;justify-content:space-between;
   padding:28px 28px 20px 32px;}
-.m-title{font-weight:600;font-size:16px;line-height:24px;color:var(--neutral-900);white-space:nowrap;}
-.m-close{width:24px;height:24px;flex:none;display:block;border-radius:4px;}
-.m-close:hover{opacity:.6;}
+.m-title{font-weight:700;font-size:16px;line-height:24px;color:var(--neutral-900);white-space:nowrap;}
+/* Figma `Actions / Close Button` 36x36 r8 — 헤더 높이 84 를 만드는 게 이 버튼이다 */
+.m-close{width:36px;height:36px;flex:none;display:flex;align-items:center;justify-content:center;
+  border-radius:8px;}
+.m-close > *{width:24px;height:24px;}
+.m-close:hover{background:var(--neutral-100);}
 
 .m-body{flex:1 0 0;min-height:1px;display:flex;align-items:flex-start;width:100%;}
 
@@ -1150,7 +1238,7 @@ input.card-name{background:var(--neutral-0);box-shadow:0 0 0 1px var(--neutral-4
 .m-form{border-top:1px solid #e3e8f2;box-shadow:inset -1px 0 0 0 #e3e8f2;height:100%;
   display:flex;flex-direction:column;align-items:flex-start;overflow:hidden;flex:none;}
 .m-form.gen{width:560px;}
-.m-form.upl{width:440px;gap:16px;padding:0 32px;}
+.m-form.upl{width:560px;gap:16px;padding:0 32px;}
 
 .m-tabs{border-bottom:1px solid #e3e8f2;display:flex;gap:16px;align-items:flex-start;width:100%;flex:none;}
 .m-form.gen .m-tabs{padding:20px 32px 0;}
@@ -1256,8 +1344,9 @@ input.card-name{background:var(--neutral-0);box-shadow:0 0 0 1px var(--neutral-4
 .m-preview-panel{width:560px;height:100%;flex:none;display:flex;flex-direction:column;gap:16px;
   align-items:flex-start;padding:0 32px;overflow:hidden;}
 /* Upload / Upload Dropzone — 496x498 empty, 496x160 once files are in */
-.dropzone{height:498px;width:100%;flex:none;background:var(--neutral-50);
-  border:1px dashed var(--neutral-300);border-radius:var(--radius-xl);
+/* Figma `Upload / Upload Dropzone` 496x486 · 점선 neutral/400 (neutral/300 아님) */
+.dropzone{height:486px;width:100%;flex:none;background:var(--neutral-50);
+  border:1px dashed var(--neutral-400);border-radius:var(--radius-xl);
   display:flex;flex-direction:column;gap:0;align-items:center;justify-content:center;padding:0;}
 .dropzone.over{border-color:#4f6de6;background:#f2f6ff;}
 .upload-btn{background:none;border:0;padding:0;display:flex;gap:8px;align-items:center;flex:none;}
@@ -1297,8 +1386,8 @@ input.card-name{background:var(--neutral-0);box-shadow:0 0 0 1px var(--neutral-4
 .ref-x:hover{background:rgba(15,23,41,1);}
 
 /* ---- footer ---- */
-.m-footer{height:74px;flex:none;border-top:1px solid #e3e8f2;background:var(--neutral-0);
-  display:flex;align-items:center;justify-content:space-between;padding:0 28px 0 32px;width:100%;}
+.m-footer{height:74px;box-sizing:border-box;flex:none;border-top:1px solid #e3e8f2;background:var(--neutral-0);
+  display:flex;align-items:center;justify-content:space-between;padding:18px 28px 18px 32px;width:100%;}
 .m-images{display:flex;gap:8px;align-items:center;flex:none;}
 .imgcount{width:36px;height:36px;border:1px solid var(--neutral-400);border-radius:var(--radius-lg);
   background:var(--neutral-0);display:flex;align-items:center;justify-content:center;flex:none;
@@ -1340,8 +1429,9 @@ input.card-name{background:var(--neutral-0);box-shadow:0 0 0 1px var(--neutral-4
 /* ---- step 2: choose your favorite ---- */
 /* the result step carries its own footer, so the body flexes instead of
    taking the whole 674px the form body used to occupy */
+/* Figma `_Modal / Body · Create character` (결과 5종 공통) — pad 28 40, gap 20 */
 .m-results{flex:1 0 0;min-height:1px;width:100%;display:flex;flex-direction:column;gap:20px;
-  align-items:center;justify-content:flex-start;padding:20px 40px;overflow:hidden;}
+  align-items:center;justify-content:flex-start;padding:28px 40px;overflow:hidden;}
 .res-head{display:flex;flex-direction:column;gap:6px;align-items:center;text-align:center;flex:none;
   padding-top:13px;}
 .res-head h2{font-weight:600;font-size:22px;line-height:24px;color:var(--neutral-900);white-space:nowrap;}
@@ -1461,7 +1551,7 @@ input.card-name{background:var(--neutral-0);box-shadow:0 0 0 1px var(--neutral-4
       <div class="nav-section"><div class="nav-sec-head"><p>Create</p></div><button type="button" class="nav-item" onclick="window.location.href='../new-content-generation/v4/new-content-to-generate.html'"><span class="nav-item-inner"><div class="ic" style="width:20px;height:20px;"><img src="../../../components/ai-social-media/icons/ai-sparkle-outline-grey.svg" alt=""></div><span class="nav-label">New Content</span></span><span class="nav-fill"></span></button></div>
 
       <div class="nav-section"><div class="nav-sec-head"><p>Content</p></div><button type="button" class="nav-item" onclick="window.location.href='brand-setup-kit-character-library.html#view=library'"><span class="nav-item-inner"><div class="ic" style="width:20px;height:20px;"><img src="../../../components/ai-social-media/icons/nav-library.svg" alt=""></div><span class="nav-label">Library</span></span><span class="nav-fill"></span></button><button type="button" class="nav-item" onclick="window.location.href='../schedule/schedule.html'"><span class="nav-item-inner"><div class="ic" style="width:20px;height:20px;"><img src="../../../components/ai-social-media/icons/nav-schedule.svg" alt=""></div><span class="nav-label">Schedule</span></span><span class="nav-fill"></span></button><button type="button" class="nav-item"><span class="nav-item-inner"><div class="ic" style="width:20px;height:20px;"><img src="../../../components/ai-social-media/icons/data-trending-up.svg" alt=""></div><span class="nav-label">Trends</span></span><span class="nav-fill"></span></button><button type="button" class="nav-item"><span class="nav-item-inner"><div class="ic" style="width:20px;height:20px;"><img src="../../../components/ai-social-media/icons/nav-analytics.svg" alt=""></div><span class="nav-label">Analytics</span></span><span class="nav-fill"></span></button></div>
-      <div class="nav-section"><div class="nav-sec-head"><p>Asset</p></div><button type="button" class="nav-item" id="navBrandSetup"><span class="nav-item-inner"><div class="ic" style="width:20px;height:20px;"><img src="../../../components/ai-social-media/icons/nav-workspace-03.svg" alt=""></div><span class="nav-label">Brand Setup</span></span><span class="nav-fill"></span></button><button type="button" class="nav-item" id="navCharacters" onclick="window.location.href='brand-setup-kit-character-library.html'"><span class="nav-item-inner"><div class="ic" style="width:20px;height:20px;"><img src="../../../components/ai-social-media/icons/nav-characters.svg" alt=""></div><span class="nav-label">Characters</span></span><span class="nav-fill"></span></button><button type="button" class="nav-item" onclick="window.location.href='../voice-library/voice-library.html'"><span class="nav-item-inner"><div class="ic" style="width:20px;height:20px;"><img src="../../../components/ai-social-media/icons/nav-voices.svg" alt=""></div><span class="nav-label">Voices</span></span><span class="nav-fill"></span></button><button type="button" class="nav-item" onclick="window.location.href='../voice-library/voice-library.html#view=music'"><span class="nav-item-inner"><div class="ic" style="width:20px;height:20px;"><img src="../../../components/ai-social-media/icons/nav-audio.svg" alt=""></div><span class="nav-label">Music</span></span><span class="nav-fill"></span></button></div>
+      <div class="nav-section"><div class="nav-sec-head"><p>Asset</p></div><button type="button" class="nav-item" id="navBrandSetup"><span class="nav-item-inner"><div class="ic" style="width:20px;height:20px;"><img src="../../../components/ai-social-media/icons/nav-workspace-03.svg" alt=""></div><span class="nav-label">Brands</span></span><span class="nav-fill"></span></button><button type="button" class="nav-item" id="navCharacters" onclick="window.location.href='brand-setup-kit-character-library.html'"><span class="nav-item-inner"><div class="ic" style="width:20px;height:20px;"><img src="../../../components/ai-social-media/icons/nav-characters.svg" alt=""></div><span class="nav-label">Characters</span></span><span class="nav-fill"></span></button><button type="button" class="nav-item" onclick="window.location.href='../voice-library/voice-library.html'"><span class="nav-item-inner"><div class="ic" style="width:20px;height:20px;"><img src="../../../components/ai-social-media/icons/nav-voices.svg" alt=""></div><span class="nav-label">Voices</span></span><span class="nav-fill"></span></button><button type="button" class="nav-item" onclick="window.location.href='../voice-library/voice-library.html#view=music'"><span class="nav-item-inner"><div class="ic" style="width:20px;height:20px;"><img src="../../../components/ai-social-media/icons/nav-audio.svg" alt=""></div><span class="nav-label">Music</span></span><span class="nav-fill"></span></button></div>
     </nav>
   </div>
 <div class="side-user" id="sideUser"><button type="button" class="su-btn" onclick="suMenu(event)"><span class="su-ava">DV</span><span class="su-info"><span class="su-nm">Admin Admin</span><span class="su-em">admin@formee.edu</span></span><span class="su-caret">&#8942;</span></button><div class="su-pop" id="suPop" hidden><div class="su-acc"><span class="su-ava" style="width:40px;height:40px;font-size:13px">DV</span><div style="min-width:0"><div class="su-nm">Admin Admin</div><div class="su-em">admin@formee.edu</div></div></div><button type="button" class="su-team" onclick="suClose()"><span class="su-ava sq">FE</span><div style="min-width:0;text-align:left"><div class="su-nm">Formee Education</div><div class="su-em">Workspace &middot; 5 members</div></div></button><div class="su-div"></div><button type="button" class="su-mi" onclick="openSettings('profile');suClose()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></svg>My account</button><button type="button" class="su-mi" onclick="openSettings();suClose()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings</button><button type="button" class="su-mi" data-super onclick="openSettings('billing');suClose()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg>Billing &amp; credits</button><div class="su-div"></div><button type="button" class="su-mi danger" onclick="suClose();authOpen('login')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 12H3M11 8l4 4-4 4M9 4h6a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H9"/></svg>Log out</button></div></div></aside>
@@ -1501,6 +1591,7 @@ input.card-name{background:var(--neutral-0);box-shadow:0 0 0 1px var(--neutral-4
     <input id="searchInput" type="text" placeholder="Search characters…" autocomplete="off">
   </div>
 
+  <div class="char-scroll" id="charScroll">
   <div class="filter-row">
     <div class="filters">
       <button type="button" class="chip chip-active" id="chipFav" aria-pressed="true">
@@ -1524,8 +1615,8 @@ input.card-name{background:var(--neutral-0);box-shadow:0 0 0 1px var(--neutral-4
         </button>
         <div class="ctx-menu dropdown" id="genderMenu" hidden></div>
       </div>
+      <p class="roster-count" id="rosterCount" hidden></p>
     </div>
-    <p class="roster-count" id="rosterCount" hidden></p>
     <div class="group-by">
       <p class="group-by-label">Group by</p>
       <div class="segmented" role="group" aria-label="Group by">
@@ -1537,6 +1628,7 @@ input.card-name{background:var(--neutral-0);box-shadow:0 0 0 1px var(--neutral-4
   </div>
 
   <div class="groups" id="groups"></div>
+  </div>
 </div>
 
 <div class="main" id="charDetailMain" hidden>
@@ -17588,13 +17680,14 @@ input.card-name{background:var(--neutral-0);box-shadow:0 0 0 1px var(--neutral-4
 </div>
   </div>
   <div class="breadcrumb" id="crumb">
-    <a class="bc-parent" href="#">Assets</a>
-    <p class="bc-sep">›</p>
     <p class="bc-current">Characters</p>
   </div>
 </div>
 <script>
 const ICONS = {"starOutline": "<div class=\"ic clip\" style=\"width:16px;height:16px;\"><div class=\"f\" style=\"inset:8.33% 8.33% 12.2% 8.33%\"><div class=\"f\" style=\"inset:-4.72% -4.5%\"><img src=\"assets/imgVector1.svg\" alt=\"\"></div></div></div>", "starFill": "<div class=\"ic clip\" style=\"width:16px;height:16px;\"><div class=\"f\" style=\"inset:8.33% 8.33% 12.2% 8.33%\"><div class=\"f\" style=\"inset:-4.72% -4.5%\"><img src=\"assets/imgVector42.svg\" alt=\"\"></div></div></div>", "ellipsis": "<div class=\"ic clip\" style=\"width:16px;height:16px;\"><div class=\"f\" style=\"inset:45.83%\"><div class=\"f\" style=\"inset:-60%\"><img src=\"assets/imgVector.svg\" alt=\"\"></div></div><div class=\"f\" style=\"inset:45.83% 16.67% 45.83% 75%\"><div class=\"f\" style=\"inset:-60%\"><img src=\"assets/imgVector.svg\" alt=\"\"></div></div><div class=\"f\" style=\"inset:45.83% 75% 45.83% 16.67%\"><div class=\"f\" style=\"inset:-60%\"><img src=\"assets/imgVector.svg\" alt=\"\"></div></div></div>", "ellipsisActive": "<div class=\"ic clip\" style=\"width:16px;height:16px;\"><div class=\"f\" style=\"inset:45.83%\"><div class=\"f\" style=\"inset:-60%\"><img src=\"assets/imgVector43.svg\" alt=\"\"></div></div><div class=\"f\" style=\"inset:45.83% 16.67% 45.83% 75%\"><div class=\"f\" style=\"inset:-60%\"><img src=\"assets/imgVector43.svg\" alt=\"\"></div></div><div class=\"f\" style=\"inset:45.83% 75% 45.83% 16.67%\"><div class=\"f\" style=\"inset:-60%\"><img src=\"assets/imgVector43.svg\" alt=\"\"></div></div></div>", "check": "<div class=\"ic \" style=\"width:16px;height:16px;\"><div class=\"f\" style=\"inset:27.06% 16.65% 27.1% 16.69%\"><div class=\"f\" style=\"inset:-10.91% -7.5%\"><img src=\"assets/imgVector3.svg\" alt=\"\"></div></div></div>", "searchSm": "<div class=\"ic clip\" style=\"width:16px;height:16px;\"><div class=\"f\" style=\"inset:67.86% 10.49% 14.06% 71.43%\"><div class=\"f\" style=\"inset:-27.65%\"><img src=\"assets/imgVector39.svg\" alt=\"\"></div></div><div class=\"f\" style=\"inset:10.71% 19.05% 22.62% 14.29%\"><div class=\"f\" style=\"inset:-7.5%\"><img src=\"assets/imgVector40.svg\" alt=\"\"></div></div></div>", "plus24": "<div class=\"ic clip\" style=\"width:24px;height:24px;\"><div class=\"f\" style=\"inset:50% 20.83% 50% 20.83%\"><div class=\"f\" style=\"inset:-0.8px -5.71%\"><img src=\"assets/imgPlus1.svg\" alt=\"\"></div></div><div class=\"f\" style=\"inset:20.83% 50% 20.83% 50%\"><div class=\"f\" style=\"inset:-5.71% -0.8px\"><img src=\"assets/imgPlus2.svg\" alt=\"\"></div></div></div>", "chevron": "<div class=\"ic clip\" style=\"width:20px;height:20px;\"><div class=\"f\" style=\"inset:25% 37.5% 25% 37.5%\"><div class=\"f\" style=\"inset:-8% -16%\"><img src=\"assets/imgVector2.svg\" alt=\"\"></div></div></div>", "chipStarFill": "<div class=\"ic clip\" style=\"width:12px;height:12px;\"><div class=\"f\" style=\"inset:8.33% 8.33% 12.2% 8.33%\"><div class=\"f\" style=\"inset:-6.29% -6%\"><img src=\"assets/imgVector41.svg\" alt=\"\"></div></div></div>", "chipStarOutline": "<div class=\"ic clip\" style=\"width:12px;height:12px;\"><div class=\"f\" style=\"inset:8.33% 8.33% 12.2% 8.33%\"><div class=\"f\" style=\"inset:-6.29% -6%\"><img src=\"assets/imgVector1.svg\" alt=\"\"></div></div></div>", "mClose": "<div class=\"ic \" style=\"width:24px;height:24px\"><img src=\"assets/m_close.svg\" alt=\"\" style=\"position:absolute;inset:0\"></div>", "mUploadOn": "<div class=\"ic \" style=\"width:20px;height:20px\"><img src=\"assets/m_uploadGlyphOn.svg\" alt=\"\" style=\"position:absolute;inset:0\"></div>", "mUploadOff": "<div class=\"ic \" style=\"width:20px;height:20px\"><img src=\"assets/m_uploadGlyphOff.svg\" alt=\"\" style=\"position:absolute;inset:0\"></div>", "mUploadDark": "<div class=\"ic \" style=\"width:20px;height:20px\"><img src=\"assets/m_uploadGlyphDark.svg\" alt=\"\" style=\"position:absolute;inset:0\"></div>", "mSparkleOn": "<div class=\"ic clip\" style=\"width:20px;height:20px;\"><div class=\"f\" style=\"inset:30% 20% -5% 5%\"><img src=\"assets/m_sparkleOn1.svg\" alt=\"\"></div><div class=\"f\" style=\"inset:5% -5% 55% 65%\"><img src=\"assets/m_sparkleOn2.svg\" alt=\"\"></div></div>", "mSparkleOff": "<div class=\"ic clip\" style=\"width:20px;height:20px;\"><div class=\"f\" style=\"inset:30% 20% -5% 5%\"><img src=\"assets/m_sparkleOff1.svg\" alt=\"\"></div><div class=\"f\" style=\"inset:5% -5% 55% 65%\"><img src=\"assets/m_sparkleOff2.svg\" alt=\"\"></div></div>", "mAiImprove": "<div class=\"ic clip\" style=\"width:16px;height:16px;\"><div class=\"f\" style=\"inset:30% 20% -5% 5%\"><img src=\"assets/m_aiimp1.svg\" alt=\"\"></div><div class=\"f\" style=\"inset:5% -5% 55% 65%\"><img src=\"assets/m_aiimp2.svg\" alt=\"\"></div></div>", "mAiSparkle16": "<div class=\"ic \" style=\"width:16px;height:16px\"><img src=\"assets/m_aisparkle16.svg\" alt=\"\" style=\"position:absolute;inset:0\"></div>", "mSelDown": "<div class=\"ic clip\" style=\"width:24px;height:24px;\"><div class=\"f\" style=\"inset:37.5% 25% 37.5% 25%\"><div class=\"f\" style=\"inset:-13.33% -6.67%\"><img src=\"assets/m_selDown.svg\" alt=\"\"></div></div></div>", "mUndo": "<div class=\"ic clip\" style=\"width:16px;height:16px;\"><div class=\"f\" style=\"inset:16.67% 62.5% 41.67% 16.67%\"><div class=\"f\" style=\"inset:-12% -24%\"><img src=\"assets/m_undo1.svg\" alt=\"\"></div></div><div class=\"f\" style=\"inset:37.5% 16.67% 16.67% 16.67%\"><div class=\"f\" style=\"inset:-10.91% -7.5%\"><img src=\"assets/m_undo2.svg\" alt=\"\"></div></div></div>", "mApplied": "<div class=\"ic \" style=\"width:16px;height:16px\"><img src=\"assets/m_check16.svg\" alt=\"\" style=\"position:absolute;inset:0\"></div>", "mCaret": "<div class=\"ic clip\" style=\"width:16px;height:16px;\"><div class=\"f\" style=\"inset:41.67% 29.17% 33.33% 29.17%\"><img src=\"assets/imgVector4.svg\" alt=\"\"></div></div>", "mRefine": "<div class=\"ic clip\" style=\"width:16px;height:16px;\"><div class=\"f\" style=\"inset:8.34% 8.32% 8.32% 8.34%\"><div class=\"f\" style=\"inset:-4.5%\"><img src=\"assets/m_refine1.svg\" alt=\"\"></div></div><div class=\"f\" style=\"inset:29.17% 29.17% 58.33% 58.33%\"><div class=\"f\" style=\"inset:-30%\"><img src=\"assets/m_refine2.svg\" alt=\"\"></div></div><div class=\"f\" style=\"inset:25% 79.17% 58.33% 20.83%\"><div class=\"f\" style=\"inset:-22.5% -0.6px\"><img src=\"assets/m_refine3.svg\" alt=\"\"></div></div><div class=\"f\" style=\"inset:58.33% 20.83% 25% 79.17%\"><div class=\"f\" style=\"inset:-22.5% -0.6px\"><img src=\"assets/m_refine3.svg\" alt=\"\"></div></div><div class=\"f\" style=\"inset:8.33% 58.33% 83.33% 41.67%\"><div class=\"f\" style=\"inset:-45% -0.6px\"><img src=\"assets/m_refine4.svg\" alt=\"\"></div></div><div class=\"f\" style=\"inset:33.33% 70.83% 66.67% 12.5%\"><div class=\"f\" style=\"inset:-0.6px -22.5%\"><img src=\"assets/m_refine5.svg\" alt=\"\"></div></div><div class=\"f\" style=\"inset:66.67% 12.5% 33.33% 70.83%\"><div class=\"f\" style=\"inset:-0.6px -22.5%\"><img src=\"assets/m_refine5.svg\" alt=\"\"></div></div><div class=\"f\" style=\"inset:12.5% 54.17% 87.5% 37.5%\"><div class=\"f\" style=\"inset:-0.6px -45%\"><img src=\"assets/m_refine6.svg\" alt=\"\"></div></div></div>", "mDuplicate": "<div class=\"ic clip\" style=\"width:16px;height:16px;\"><div class=\"f\" style=\"inset:33.33% 16.67% 16.67% 33.33%\"><div class=\"f\" style=\"inset:-10%\"><img src=\"assets/m_dup1.svg\" alt=\"\"></div></div><div class=\"f\" style=\"inset:16.67% 33.33% 33.33% 16.67%\"><div class=\"f\" style=\"inset:-10%\"><img src=\"assets/m_dup2.svg\" alt=\"\"></div></div></div>", "mRefresh": "<div class=\"ic \" style=\"width:16px;height:16px\"><img src=\"assets/m_refresh.svg\" alt=\"\" style=\"position:absolute;inset:0\"></div>", "mViewGrid": "<div class=\"ic \" style=\"width:20px;height:20px\"><img src=\"assets/m_viewgrid.svg\" alt=\"\" style=\"position:absolute;inset:0\"></div>", "mViewList": "<div class=\"ic \" style=\"width:20px;height:20px\"><img src=\"assets/m_viewlist.svg\" alt=\"\" style=\"position:absolute;inset:0\"></div>", "imgPlaceholder": "<svg viewBox=\"0 0 64 64\" width=\"64\" height=\"64\" fill=\"none\" stroke=\"#c8d1e1\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"6\" y=\"12\" width=\"52\" height=\"40\" rx=\"6\"/><circle cx=\"21\" cy=\"26\" r=\"4.5\"/><path d=\"M9 45l14-13 10 9 8-7 14 12\"/></svg>"};
+/* Figma `Characters - empty` 의 버튼 아이콘은 16 이다 — 카드 타일의 24 와 다르다.
+   inset 이 % 라 바깥 크기만 줄이면 그대로 축소된다.                    2026-09-17 */
+ICONS.plus16 = ICONS.plus24.replace('width:24px;height:24px', 'width:16px;height:16px');
 const DATA = [{"id": "elena", "lastUsed": 1, "voice": "Mina — calm", "name": "Elena", "type": "Human", "brand": "Formee Express", "posts": 6, "thumb": "imgThumbElena", "fav": false, "defaultFor": ["Formee Express"], "createdBy": "Team", "age": "18–24", "gender": "Female", "styles": 8}, {"id": "milo", "lastUsed": 4, "voice": "Noah — bright", "name": "Milo", "type": "Anime", "brand": "Formee Express", "posts": 4, "thumb": "imgThumbMilo", "fav": true, "defaultFor": [], "createdBy": "Me", "age": "18–24", "gender": "Male", "styles": 3}, {"id": "maya", "lastUsed": 2, "voice": "Mina — calm", "name": "Maya", "type": "Human", "brand": "Formee Express", "posts": 12, "thumb": "imgThumbMaya", "fav": false, "defaultFor": [], "createdBy": "Me", "age": "25–34", "gender": "Female", "styles": 6}, {"id": "priya", "lastUsed": 7, "voice": "Sena — friendly", "name": "Priya", "type": "Human", "brand": "Formee Express", "posts": 9, "thumb": "imgThumbPriya", "fav": false, "defaultFor": [], "createdBy": "Norimi", "age": "25–34", "gender": "Female", "styles": 5}, {"id": "esther", "lastUsed": 9, "voice": "Aria — warm and friendly", "name": "Esther", "type": "Human", "brand": "Formee Express", "posts": 3, "thumb": "imgThumbEsther", "fav": false, "defaultFor": [], "createdBy": "Team", "age": "45–54", "gender": "Female", "styles": 2}, {"id": "pip", "lastUsed": 11, "voice": "Noah — bright", "name": "Pip", "type": "Anime", "brand": "Formee Express", "posts": 7, "thumb": "imgThumbPip", "fav": false, "defaultFor": [], "createdBy": "Me", "age": "18–24", "gender": "Non-binary", "styles": 4}, {"id": "daniel", "lastUsed": 5, "voice": "Theo — steady", "name": "Daniel", "type": "Human", "brand": "Formee Express", "posts": 15, "thumb": "imgThumbDaniel", "fav": false, "defaultFor": [], "createdBy": "Yejin", "age": "25–34", "gender": "Male", "styles": 7}, {"id": "sofia", "lastUsed": 3, "voice": "Sena — friendly", "name": "Sofia", "type": "Human", "brand": "SCEI", "posts": 11, "thumb": "imgThumbSofia", "fav": false, "defaultFor": ["SCEI"], "createdBy": "Me", "age": "25–34", "gender": "Female", "styles": 6}, {"id": "luca", "lastUsed": 6, "voice": "Theo — steady", "name": "Luca", "type": "Human", "brand": "SCEI", "posts": 2, "thumb": "imgThumbLuca", "fav": false, "defaultFor": [], "createdBy": "Abeer", "age": "25–34", "gender": "Male", "styles": 1}, {"id": "amara", "lastUsed": 8, "voice": "Aria — warm and friendly", "name": "Amara", "type": "Human", "brand": "SCEI", "posts": 8, "thumb": "imgThumbAmara", "fav": false, "defaultFor": [], "createdBy": "Team", "age": "25–34", "gender": "Female", "styles": 5}, {"id": "omar", "lastUsed": 10, "voice": "Theo — steady", "name": "Omar", "type": "Human", "brand": "SCEI", "posts": 5, "thumb": "imgThumbOmar", "fav": false, "defaultFor": [], "createdBy": "Yejin", "age": "25–34", "gender": "Male", "styles": 3}];
 
 const BRANDS = ['Formee Express', 'SCEI'];
@@ -17637,6 +17730,7 @@ const state = {
   expanded: {},           // groupKey -> true after "See all"
   preview: true,          // reproduces the frame's hovered "Rename" row until the pointer moves
   scroll: {},             // groupKey -> scrollLeft, preserved across re-renders
+  shown: 12,              // ungrouped 목록에서 지금까지 펼친 장수 (Show N more)
 };
 
 const $  = (s, r = document) => r.querySelector(s);
@@ -17752,25 +17846,29 @@ const newCardHTML = () => `<div class="card card-new">
     ${ICONS.plus24}<span>New character</span>
   </button></div>`;
 
-/* A group is 12 slots — 6 columns x 2 rows — and the Create New tile is one of
-   them. Within 12 the slots simply wrap onto the two rows: nothing is hidden, so
-   the group carries no arrow, no fade and no See all. Past 12 the group keeps its
-   two rows and scrolls sideways instead of growing down. Slots are paired into
-   vertical columns, which is what stops the second row from thinning out as the
-   count grows — a plain nowrap row would leave it empty. */
+/* A group is one row of 6 slots, the Create New tile counted as one. Within 6
+   nothing is hidden, so the group carries no arrow, no fade and no See all.
+   Past 6 the row stays a single row and scrolls sideways instead of growing down.
+   (Figma `group` 1602x382 · grid NO_WRAP · clipsContent — 7867:208010.)  2026-09-17 */
 const PER_ROW = 6;
-const SLOTS   = PER_ROW * 2;
+const SLOTS   = PER_ROW;          /* Figma 는 한 줄 — 6칸을 넘으면 옆으로 넘긴다 */
 
-/* fill order inside a column: top, bottom, then move right */
-const columnsHTML = tiles => {
-  let out = '';
-  for (let i = 0; i < tiles.length; i += 2)
-    out += `<div class="col">${tiles[i]}${tiles[i + 1] || ''}</div>`;
-  return out;
+/* Figma `load more` (List - all 7867:208067) — 1604x70, pad 8 0 24, 가운데 정렬.
+   버튼 114x38 r8 흰 배경 + neutral/400 테두리, SemiBold 13/20 neutral/700. */
+const LOAD_STEP = 12;
+const loadMoreHTML = total => {
+  const rest = total - state.shown;
+  if (rest <= 0) return '';
+  return `<div class="load-more"><button type="button" class="load-more-btn" data-act="loadmore">`
+       + `Show ${Math.min(LOAD_STEP, rest)} more</button></div>`;
 };
 
 function groupHTML(g, expanded){
-  const tiles    = [newCardHTML()].concat(g.cards.map(cardHTML));
+  /* 묶지 않은 목록에는 생성 타일이 없다 — 어느 브랜드에 만들지가 정해지지 않아서다.
+     헤더의 `+ New character` 가 그 자리를 대신한다. Figma 7867:208067 확인. 2026-09-17 */
+  const flat     = g.title === null;
+  const shownCds = flat ? g.cards.slice(0, state.shown) : g.cards;
+  const tiles    = (flat ? [] : [newCardHTML()]).concat(shownCds.map(cardHTML));
   const carousel = !expanded && tiles.length > SLOTS;
 
   const head = g.title === null ? '' :
@@ -17785,11 +17883,12 @@ function groupHTML(g, expanded){
     return `<div class="group" data-key="${esc(g.key)}">
     ${head}
     <div class="grid" data-key="${esc(g.key)}">${tiles.join('')}</div>
+    ${flat ? loadMoreHTML(g.cards.length) : ''}
   </div>`;
 
   return `<div class="group has-carousel" data-key="${esc(g.key)}">
     ${head}
-    <div class="grid carousel no-sb" data-key="${esc(g.key)}">${columnsHTML(tiles)}</div>
+    <div class="grid carousel no-sb" data-key="${esc(g.key)}">${tiles.join('')}</div>
     <div class="cfade" hidden></div>
     <button type="button" class="carousel-arrow arrow-l" data-act="scroll" data-dir="-1" aria-label="Scroll left" hidden>${ICONS.chevron}</button>
     <button type="button" class="carousel-arrow arrow-r" data-act="scroll" data-dir="1" aria-label="Scroll right" hidden>${ICONS.chevron}</button>
@@ -17815,6 +17914,13 @@ function render(){
   const host  = $('#groups');
   const cards = visibleCards();
   paintRosterCount(cards);
+  /* 묶지 않은 목록에서만 필터 줄이 스티키다 (Figma 두 프레임의 구조가 다르다) */
+  $('#mainCharacters').classList.toggle('is-flat', state.groupBy === 'none' && !state.focus);
+  /* 빈 화면에서는 헤더의 `+ New character` 를 감춘다 — 가운데 블록이 같은 일을
+     하는 버튼을 이미 들고 있어서 둘이 나란히 서면 어느 걸 눌러야 하는지 갈린다.
+     Figma `Characters - empty` 8479:141279 의 header 는 자식이 title 하나뿐이다. */
+  $('#mainCharacters').classList.toggle('is-empty',
+    !DATA.length || (!cards.length && !isFiltered()));
 
   /* An account with no characters at all is not a failed search, and the two look
      nothing alike: this is the centred block from Figma `Characters · empty`
@@ -17826,7 +17932,7 @@ function render(){
          <p class="empty-title">No characters yet</p>
          <p class="empty-sub">Create your first character to see it here.</p>
          <button type="button" class="btn-primary" data-act="new">
-           ${ICONS.plus24}<span>New character</span><span class="btn-inset"></span>
+           ${ICONS.plus16}<span>New character</span><span class="btn-inset"></span>
          </button>
        </div>`;
     return;
@@ -17896,8 +18002,15 @@ function askDelete(c){
   state.confirm = { id: c.id };
   const layer = $('#confirmLayer');
   $('.confirm', layer).innerHTML =
-    `<p class="confirm-title" id="confirmTitle">Delete ${esc(c.name)}?</p>
-     <p class="confirm-body">${esc(c.name)} and ${styleCount(c)} ${styleCount(c) === 1 ? 'style' : 'styles'} will be deleted. Posts already published stay unchanged. This cannot be undone.</p>
+    `<div class="confirm-head">
+       <p class="confirm-title" id="confirmTitle">Delete ${esc(c.name)}?</p>
+       <button type="button" class="confirm-close" data-confirm="cancel" aria-label="Close">
+         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" stroke="#475069" stroke-width="1.6" stroke-linecap="round"/></svg>
+       </button>
+     </div>
+     <div class="confirm-bodywrap">
+       <p class="confirm-body">${esc(c.name)} and ${styleCount(c)} ${styleCount(c) === 1 ? 'style' : 'styles'} will be deleted. Posts already published stay unchanged. This cannot be undone.</p>
+     </div>
      <div class="confirm-actions">
        <button type="button" class="btn-sec" data-confirm="cancel">Cancel</button>
        <button type="button" class="btn-danger" data-confirm="ok">Delete character</button>
@@ -18647,6 +18760,13 @@ $('#groups').addEventListener('click', e => {
     if (state.menuFor){ state.menuFor = null; render(); }
     const grid = $(`.group[data-key="${key}"] .grid`);   // re-query: render() may have replaced it
     animateScroll(grid, grid.scrollLeft + 270 * dir);    // one card + gap
+    return;
+  }
+  const more = e.target.closest('[data-act="loadmore"]');
+  if (more){
+    e.stopPropagation();
+    state.shown += LOAD_STEP;
+    render();
     return;
   }
   const seeAll = e.target.closest('[data-act="seeall"]');
@@ -26035,14 +26155,20 @@ function showView(which){
   if (brand){ closeMenus(); renderBrand(); return; }
   if (cd && detail){
     const c = DATA.find(x => x.id === detail.id);
+    /* Figma `Nav / App TopBar` 의 `Show back` 을 켠 모습 (Detail - favorites 6317:96044).
+       상세에서는 뒤로가기가 **상단 바**에 있고 본문 헤더에는 없다. 크럼은 `Characters › 이름`
+       — 앞에 `Assets` 를 붙이지 않는다.                                  2026-09-17 */
     $('#crumb').innerHTML =
-      '<a class="bc-parent" href="#">Assets</a><p class="bc-sep">›</p>' +
+      '<button type="button" class="bc-back" data-crumb="characters">' +
+        '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true">' +
+        '<path d="M8 12.67 3.33 8 8 3.34"/><path d="M12.67 8H3.33"/></svg> Back to Characters</button>' +
+      '<span class="bc-back-rule"></span>' +
       '<a class="bc-parent" href="#" data-crumb="characters">Characters</a>' +
       '<p class="bc-sep">›</p><p class="bc-current">' + esc(c ? c.name : '') + '</p>';
     return;
   }
-  $('#crumb').innerHTML =
-    '<a class="bc-parent" href="#">Assets</a><p class="bc-sep">›</p><p class="bc-current">Characters</p>';
+  /* 목록은 시작 지점이라 뒤로 갈 데가 없다 — Figma 도 `Show back = false` 에 크럼은 `Characters` 하나뿐 */
+  $('#crumb').innerHTML = '<p class="bc-current">Characters</p>';
 }
 
 $('#navBrandSetup').addEventListener('click', () => {
@@ -35463,25 +35589,49 @@ body.bk2-clean #roleSwitch { display:none !important; }
    (new-content-generation/v3, editing/image-editing.html). Panels inside the app
    keep their own overflow-y:auto, so nothing is clipped; only the frame's overall
    size changes. */
-html{display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;
-     background:#e5e5e5;overflow:hidden;}
-body{margin:0;padding:0;background:#e5e5e5;overflow:hidden;}
+/* 창이 좁아 배율이 안 맞는 순간엔 잘리는 대신 **스크롤로 닿을 수 있어야** 한다.
+   `overflow:hidden` + flex 가운데정렬이면 넘친 쪽이 스크롤바 없이 그냥 사라진다
+   (Brands 화면 오른쪽이 잘려 보인 건 이것). 가운데정렬은 body 의 margin:auto 로
+   옮긴다 — align-items:center 는 넘칠 때 위쪽을 잘라먹는 고전적인 함정이다.
+                                                                    2026-09-15 */
+html{display:flex;min-height:100vh;margin:0;background:#e5e5e5;overflow:auto;}
+body{margin:auto;padding:0;background:#e5e5e5;}
 .frame{transform-origin:top left;}
 </style>
 <script id="fit-js">
 (function(){
-  var W = 1920, H = 1162, MARGIN = 40;
+  var MARGIN = 40, busy = false;
+  /* 크기를 1920×1162 로 박아두면 프레임이 그보다 커지는 순간(예: body.nc-full 은
+     height:1668) 배율이 과하게 계산돼 오른쪽·아래가 잘린다. 매번 실제 크기를 읽는다. */
   function fit(){
+    if (busy) return;                               // ResizeObserver 재진입 방지
+    busy = true;
+    try { measure(); } finally { busy = false; }
+  }
+  function measure(){
     var el = document.querySelector('.frame');
     if (!el) return;
+    el.style.transform = 'none';                    // 실제 크기를 먼저 잰다
+    var W = el.offsetWidth, H = el.offsetHeight;
+    if (!W || !H) return;
     var scale = Math.min((window.innerWidth  - MARGIN * 2) / W,
                          (window.innerHeight - MARGIN * 2) / H);
     if (!(scale > 0)) scale = 1;
     el.style.transform = 'scale(' + scale + ')';
-    document.body.style.width  = (W * scale) + 'px';
-    document.body.style.height = (H * scale) + 'px';
+    document.body.style.width  = Math.ceil(W * scale) + 'px';
+    document.body.style.height = Math.ceil(H * scale) + 'px';
   }
   window.addEventListener('resize', fit);
+  window.addEventListener('orientationchange', fit);
+  /* 폰트가 늦게 붙으면 첫 측정이 어긋난다 */
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+  /* 프레임 높이가 바뀌는 화면(nc-full 등)에서 다시 맞춘다 */
+  if (window.ResizeObserver){
+    var ro = new ResizeObserver(function(){ fit(); });
+    var start = function(){ var el = document.querySelector('.frame'); if (el) ro.observe(el); };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+    else start();
+  }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fit);
   else fit();
 })();
