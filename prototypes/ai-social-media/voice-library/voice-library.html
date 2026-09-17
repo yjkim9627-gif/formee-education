@@ -266,10 +266,11 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
    "change your default voice?" confirm modal instead of toggling immediately. Muted so
    it doesn't compete visually with the one card that IS the current default. */
 .voice-card-icon-btn.setdefault.muted{opacity:.45;}
+/* "more" (kebab) button -- My Voices tab only (see .voice-card-actions markup). Same
+   selected-state convention as fav/setdefault above, applied while its menu is open. */
+.voice-card-icon-btn.more.active{background:var(--color-neutral-150); border-color:var(--color-neutral-500);}
 
-/* kebab dropdown -- functional parity with character-card's roster menu (Set as default
-   [multi-brand submenu] / Rename / Delete), adapted to this file's own token-only CSS
-   instead of porting brand-setup-kit-character-library.html's bespoke --neutral-* aliases. */
+/* kebab dropdown -- Edit voice / Remix voice / Voice details / Delete voice. */
 .vl-kebab-menu{
   position:absolute; top:calc(100% + 4px); right:0; z-index:20; min-width:180px;
   background:var(--color-neutral-0); border:1px solid var(--color-neutral-300); border-radius:var(--radius-lg);
@@ -282,19 +283,6 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
 .vl-menu-row:hover, .vl-menu-row.active{background:var(--color-neutral-75);}
 .vl-menu-row.danger{color:var(--color-badge-red-text);}
 .vl-menu-caret{width:14px; height:14px; flex-shrink:0; opacity:.6;}
-
-/* "Default for <brand>" flyout -- opens to the LEFT of the kebab menu (not the right, as
-   the source screen does) so it never clips past the frame's right edge for right-column
-   cards in this 2-up grid. */
-.vl-brandpop{
-  position:absolute; top:0; right:calc(100% + 4px); width:200px; box-sizing:border-box;
-  background:var(--color-neutral-0); border:1px solid var(--color-neutral-300); border-radius:var(--radius-lg);
-  box-shadow:var(--shadow-popover); padding:6px;
-}
-.vl-brandpop-cap{margin:0; padding:6px 10px 4px; font-family:var(--font-family-text); font-size:11px; font-weight:600; line-height:16px; letter-spacing:.5px; text-transform:uppercase; color:var(--color-neutral-500);}
-.vl-brandpop-row{display:flex; align-items:center; justify-content:space-between; gap:var(--spacing-sm); padding:8px 10px; border-radius:var(--radius-md); cursor:pointer;}
-.vl-brandpop-row:hover{background:var(--color-neutral-75);}
-.vl-brandpop-row span:first-child{font-family:var(--font-family-text); font-size:13px; font-weight:500; color:var(--color-neutral-900);}
 
 /* ---------- Music card grid ----------
    Figma "audio" component, 9750:258156/9750:258157 ("type=default, state=normal"),
@@ -374,6 +362,27 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
 
 .vl-empty{padding:var(--spacing-4xl) 0; text-align:center; font-family:var(--font-family-text); font-size:13px; color:var(--color-neutral-500);}
 
+/* Rich "no custom voices yet" empty state (Figma 10093:163448) -- only for the genuine
+   zero-voices case on My Voices (addedVoices.size === 0). If My Voices already has voices
+   but the current search/filters hide all of them, .vl-empty's plain text is used instead --
+   a "create one" CTA would be wrong there since voices already exist, just filtered out. */
+.vl-empty-state{
+  display:flex; flex-direction:column; align-items:center; gap:var(--spacing-md);
+  width:480px; margin:0 auto; padding:var(--spacing-4xl) 0; text-align:center;
+}
+/* Same [hidden]-vs-class-specificity gotcha this file has hit before (.modal-overlay[hidden],
+   .cvm-footer[hidden], .vc-tips[hidden]) -- .vl-empty-state{display:flex} ties with the
+   browser's [hidden]{display:none} UA rule and wins by source order without this override. */
+.vl-empty-state[hidden]{display:none;}
+.vl-empty-state-glyph{
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  width:80px; height:80px; border-radius:var(--radius-full); background:var(--color-neutral-100);
+}
+.vl-empty-state-glyph img{width:48px; height:48px; display:block;}
+.vl-empty-state-copy{display:flex; flex-direction:column; align-items:center; gap:3px;}
+.vl-empty-state-title{margin:0; font-family:var(--font-family-text); font-size:20px; font-weight:700; line-height:28px; color:var(--color-neutral-900);}
+.vl-empty-state-sub{margin:0; font-family:var(--font-family-text); font-size:14px; font-weight:400; line-height:22px; color:var(--color-neutral-500);}
+
 /* ---------- Apply-to-content modal (video picker) ----------
    Reuses .mylib-modal/.ref-scene-tile as-is (Figma 9329:145797, "My Library" picker) --
    video-only for now per this feature's first pass, so no format tabs are shown.
@@ -395,6 +404,54 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
   font-family:var(--font-family-text); font-size:12px; font-weight:500; color:var(--color-neutral-0);
   overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
 }
+
+/* ---------- Voice details modal ----------
+   Not in Figma yet -- this file's own addition. Was a right-side sheet at first, but
+   changed to a centered modal to match Edit/Delete voice's shell instead of introducing a
+   different UI pattern for just this one feature. */
+.modal--voice-details{ width:460px; max-width:100%; }
+.vh-modal-sub{margin:2px 0 0; font-family:var(--font-family-text); font-size:12px; font-weight:400; color:var(--color-neutral-500);}
+/* Edge-to-edge tab divider, same negative-margin trick as .modal__footer--divider. */
+.vh-tabs{
+  display:flex; gap:var(--spacing-lg); flex-shrink:0;
+  margin:0 calc(-1 * var(--spacing-4xl)); padding:0 var(--spacing-4xl);
+  border-bottom:1px solid var(--color-neutral-200);
+}
+.vh-tab{
+  padding:0 2px var(--spacing-sm); margin-bottom:-1px; border:none; background:none; cursor:pointer;
+  font-family:var(--font-family-text); font-size:13px; font-weight:600; color:var(--color-neutral-500);
+  border-bottom:2px solid transparent;
+}
+.vh-tab.active{color:var(--color-neutral-900); border-bottom-color:var(--color-neutral-900);}
+.vh-body{max-height:360px; overflow-y:auto;}
+.vh-usage-row{
+  display:flex; align-items:center; gap:var(--spacing-md); padding:var(--spacing-md); box-sizing:border-box;
+  border:1px solid var(--color-neutral-400); border-radius:var(--radius-lg); margin-bottom:var(--spacing-sm);
+}
+/* Thumbnail treatment matches Figma "Schedule Event Pill" (9087:133843)'s own thumb: a
+   portrait 24x32 (3:4) image, 1px neutral-200 border, radius-sm -- scaled up slightly
+   (36x48) since this row carries more text than that pill does. */
+.vh-usage-row img{
+  width:36px; height:48px; box-sizing:border-box; flex-shrink:0; object-fit:cover;
+  border:1px solid var(--color-neutral-200); border-radius:var(--radius-sm); background:var(--color-neutral-100);
+}
+.vh-usage-info{flex:1 1 0; min-width:0;}
+.vh-usage-name{margin:0; font-family:var(--font-family-text); font-size:13px; font-weight:600; color:var(--color-neutral-900); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.vh-usage-meta{margin:2px 0 0; font-family:var(--font-family-text); font-size:12px; font-weight:400; color:var(--color-neutral-500);}
+.vh-settings-row{padding:var(--spacing-md) 0; border-bottom:1px solid var(--color-neutral-100);}
+.vh-settings-row:last-child{border-bottom:none;}
+.vh-settings-label{margin:0 0 2px; font-family:var(--font-family-text); font-size:11px; font-weight:600; letter-spacing:.5px; text-transform:uppercase; color:var(--color-neutral-500);}
+.vh-settings-value{margin:0; font-family:var(--font-family-text); font-size:13px; font-weight:400; color:var(--color-neutral-900); line-height:20px;}
+.vh-prompt-row-head{display:flex; align-items:center; justify-content:space-between; gap:var(--spacing-sm); margin-bottom:2px;}
+.vh-prompt-row-head .vh-settings-label{margin:0;}
+.vh-prompt-text{white-space:pre-wrap;}
+.vh-copy-btn{
+  flex-shrink:0; padding:2px 8px; box-sizing:border-box; cursor:pointer;
+  background:var(--color-neutral-0); border:1px solid var(--color-neutral-400); border-radius:var(--radius-md);
+  font-family:var(--font-family-text); font-size:11px; font-weight:600; color:var(--color-neutral-700);
+}
+.vh-copy-btn:hover{background:var(--color-neutral-50);}
+.vh-empty{padding:var(--spacing-3xl) 0; text-align:center; font-family:var(--font-family-text); font-size:13px; color:var(--color-neutral-500);}
 </style>
 </head>
 <body>
@@ -518,6 +575,17 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
 
         <div class="vl-grid" id="voiceGrid"></div>
         <p class="vl-empty" id="voiceEmpty" hidden>No voices match these filters yet.</p>
+        <div class="vl-empty-state" id="voiceEmptyState" hidden>
+          <span class="vl-empty-state-glyph"><img src="../../../components/ai-social-media/icons/nav-library.svg" alt=""></span>
+          <div class="vl-empty-state-copy">
+            <p class="vl-empty-state-title">No custom voices yet</p>
+            <p class="vl-empty-state-sub">Use New Voice above to design, clone, or remix one.</p>
+          </div>
+          <button type="button" class="actions-btn actions-btn--primary" onclick="openCreateVoiceModal()">
+            <span class="actions-btn-ai-icon"><span><img src="../../../components/ai-social-media/icons/actions/btn-ai-icon-white-a.svg" alt=""></span><span><img src="../../../components/ai-social-media/icons/actions/btn-ai-icon-white-b.svg" alt=""></span></span>
+            <span>New voice</span>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -615,7 +683,7 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
          footer "Back" button is the sole way back now (vdGoBack() below still drives it). -->
     <div class="cvm-modal cvm-modal--design" id="cvDesignModal" hidden>
       <div class="vd-header">
-        <h2 class="vd-title">Design a new voice</h2>
+        <h2 class="vd-title" id="vdDesignTitle">Design a new voice</h2>
         <button type="button" class="cvm-close" onclick="closeCreateVoiceModal()"><img src="../../../components/ai-social-media/icons/controls/chip-close-x.svg" alt="Close"></button>
       </div>
 
@@ -914,6 +982,64 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
   </div>
 </div>
 
+<!-- My Voices kebab menu: Edit voice -->
+<div class="modal-overlay" id="editVoiceOverlay" hidden onclick="if(event.target===this) closeEditVoiceModal()">
+  <div class="modal modal--form">
+    <div class="modal__header-row">
+      <h3 class="modal__title">Edit voice</h3>
+      <button type="button" class="modal__close" onclick="closeEditVoiceModal()"><img src="../../../components/ai-social-media/icons/button-x-dark.svg" alt="Close"></button>
+    </div>
+    <div class="vd-field-group">
+      <p class="vd-field-label">Name</p>
+      <input type="text" class="vd-input" id="editVoiceNameInput" placeholder="e.g. Hype Reel">
+    </div>
+    <div class="vd-field-group">
+      <p class="vd-field-label">Description</p>
+      <textarea class="vd-input" id="editVoiceDescInput" placeholder="What is this voice good for?"></textarea>
+    </div>
+    <div class="modal__footer">
+      <button type="button" class="actions-btn actions-btn--secondary" onclick="closeEditVoiceModal()">Cancel</button>
+      <button type="button" class="actions-btn actions-btn--primary" onclick="saveEditVoice()">Save changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- My Voices kebab menu: Delete voice (Figma "Modal · Confirm" 9835:171997) -->
+<div class="modal-overlay" id="deleteVoiceOverlay" hidden onclick="if(event.target===this) closeDeleteVoiceModal()">
+  <div class="modal modal--confirm">
+    <div class="modal__header-row">
+      <h3 class="modal__title" id="deleteVoiceTitle">Delete voice?</h3>
+      <button type="button" class="modal__close" onclick="closeDeleteVoiceModal()"><img src="../../../components/ai-social-media/icons/button-x-dark.svg" alt="Close"></button>
+    </div>
+    <p class="modal__body" id="deleteVoiceBody"></p>
+    <div class="modal__footer modal__footer--divider">
+      <button type="button" class="actions-btn actions-btn--secondary" onclick="closeDeleteVoiceModal()">Cancel</button>
+      <button type="button" class="actions-btn actions-btn--danger" onclick="confirmDeleteVoiceModal()">Delete voice</button>
+    </div>
+  </div>
+</div>
+
+<!-- My Voices kebab menu: Voice details modal (this file's own addition, not in Figma yet)
+     -- "Used in" (content that used this voice) + "Creation settings" (the prompt/settings
+     it was designed with), see openVoiceDetails()/vhRenderTabs(). Same modal-overlay shell
+     as Edit/Delete voice rather than a one-off side sheet. -->
+<div class="modal-overlay" id="voiceDetailsSheet" hidden onclick="if(event.target===this) closeVoiceDetails()">
+  <div class="modal modal--voice-details">
+    <div class="modal__header-row">
+      <div>
+        <h3 class="modal__title">Voice details</h3>
+        <p class="vh-modal-sub" id="vhSheetName"></p>
+      </div>
+      <button type="button" class="modal__close" onclick="closeVoiceDetails()"><img src="../../../components/ai-social-media/icons/button-x-dark.svg" alt="Close"></button>
+    </div>
+    <div class="vh-tabs">
+      <button type="button" class="vh-tab active" data-tab="usage" onclick="switchVoiceDetailsTab('usage')">Used in</button>
+      <button type="button" class="vh-tab" data-tab="settings" onclick="switchVoiceDetailsTab('settings')">Creation settings</button>
+    </div>
+    <div class="vh-body" id="vhSheetBody"></div>
+  </div>
+</div>
+
 <a class="home-fab" href="../../../index.html" title="Back to all screens">
   <svg viewBox="0 0 16 16" fill="none"><path d="M2 7.2 8 2l6 5.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.3 6.2V13a.8.8 0 0 0 .8.8h3V10h1.8v3.8h3a.8.8 0 0 0 .8-.8V6.2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
   <span>Home</span>
@@ -932,14 +1058,14 @@ const BRANDS = ['Formee Express', 'SCEI'];
 // setdefault button always acts against this one, same as the rest of this draft.
 const ACTIVE_BRAND = 'Formee Express';
 const voices = [
-  { id:'v1', name:'Maya', desc:'Warm, conversational female voice — great for lifestyle and wellness content.', cats:['Conversational','Social Media'], langs:['English (US)','English (UK)','Korean'], mine:true, fav:false, defaultFor:['Formee Express'] },
+  { id:'v1', name:'Maya', desc:'Warm, conversational female voice — great for lifestyle and wellness content.', cats:['Conversational','Social Media'], langs:['English (US)','English (UK)','Korean'], mine:true, fav:false, defaultFor:['Formee Express'], createdFrom:{ type:'design', gender:'Female', age:'Young', prompt:'Warm, conversational young adult female voice speaking English (US) with a friendly, approachable tone. Natural and relatable — perfect for lifestyle and wellness content.' } },
   { id:'v2', name:'Jordan', desc:'High-energy male voice with a confident edge — built for hype and promo reels.', cats:['Advertisement','Social Media'], langs:['English (US)'], mine:false, fav:false, defaultFor:[] },
-  { id:'v3', name:'Ava', desc:'Calm, soothing female narration — ideal for tutorials and explainer scripts.', cats:['Informative Educational'], langs:['English (US)','Spanish'], mine:true, fav:true, defaultFor:[] },
+  { id:'v3', name:'Ava', desc:'Calm, soothing female narration — ideal for tutorials and explainer scripts.', cats:['Informative Educational'], langs:['English (US)','Spanish'], mine:true, fav:true, defaultFor:[], createdFrom:{ type:'design', gender:'Female', age:'Middle-aged', prompt:'Calm, soothing middle-aged female voice speaking English (US) with a gentle, reassuring tone. Clear and measured — perfect for tutorials and explainer scripts.' } },
   { id:'v4', name:'Elliot', desc:'Polished, professional male voice — a natural fit for corporate announcements.', cats:['Advertisement'], langs:['English (UK)','French','German'], mine:false, fav:false, defaultFor:[] },
   { id:'v5', name:'Sora', desc:'Bright, youthful female voice with a playful lilt — great for Gen-Z social clips.', cats:['Social Media'], langs:['Korean','English (US)'], mine:false, fav:false, defaultFor:[] },
   { id:'v6', name:'Marcus', desc:'Deep, resonant male voice — cinematic weight for trailers and brand films.', cats:['Entertainment TV','Advertisement'], langs:['English (US)'], mine:false, fav:false, defaultFor:[] },
   { id:'v7', name:'Nina', desc:'Warm and reassuring — a steady narrator voice for long-form storytelling.', cats:['Narrative Story'], langs:['English (US)','Portuguese'], mine:false, fav:false, defaultFor:[] },
-  { id:'v8', name:'Theo', desc:'Crisp, professional delivery with quick pacing — suited to news-style reels.', cats:['Informative Educational','Social Media'], langs:['English (UK)'], mine:true, fav:false, defaultFor:['SCEI'] },
+  { id:'v8', name:'Theo', desc:'Crisp, professional delivery with quick pacing — suited to news-style reels.', cats:['Informative Educational','Social Media'], langs:['English (UK)'], mine:true, fav:false, defaultFor:['SCEI'], createdFrom:{ type:'clone', fileName:'interview_clip.mp4' } },
   { id:'v9', name:'Luna', desc:'Bright and energetic — upbeat pacing that fits fast-cut product demos.', cats:['Advertisement'], langs:['English (US)','Japanese','Korean'], mine:false, fav:false, defaultFor:[] },
   { id:'v10', name:'Owen', desc:'Deep, calm delivery with a documentary feel — great for voice-over narration.', cats:['Narrative Story'], langs:['English (US)'], mine:false, fav:false, defaultFor:[] },
   // v11+ -- bulk sample set standing in for the real library's much larger (infinite-scroll)
@@ -949,7 +1075,7 @@ const voices = [
   { id:'v13', name:'William', desc:'Flamboyant, bold and sassy — larger-than-life delivery for character-driven content.', cats:['Characters Animations'], langs:['English (US)'], mine:false, fav:false, defaultFor:[] },
   { id:'v14', name:'Bella', desc:'Professional, bright and warm — clear and engaging, ideal for educational explainers.', cats:['Informative Educational'], langs:['English (US)'], mine:false, fav:true, defaultFor:[] },
   { id:'v15', name:'Roger', desc:'Laid-back, casual and resonant — easy-going pacing that suits relaxed conversational clips.', cats:['Conversational'], langs:['English (US)'], mine:false, fav:false, defaultFor:[] },
-  { id:'v16', name:'Sarah', desc:'Mature, reassuring and confident — a young adult woman with a confident, grounded tone.', cats:['Conversational','Advertisement'], langs:['English (US)'], mine:true, fav:false, defaultFor:[] },
+  { id:'v16', name:'Sarah', desc:'Mature, reassuring and confident — a young adult woman with a confident, grounded tone.', cats:['Conversational','Advertisement'], langs:['English (US)'], mine:true, fav:false, defaultFor:[], createdFrom:{ type:'clone', fileName:'voice_sample.wav' } },
   { id:'v17', name:'Laura', desc:'Enthusiast with a quirky attitude — playful young adult female voice for social content.', cats:['Social Media'], langs:['English (US)'], mine:false, fav:false, defaultFor:[] },
   { id:'v18', name:'Charlie', desc:'Deep, confident and energetic — a young Australian male with a warm, assured delivery.', cats:['Conversational'], langs:['English (Australian)'], mine:false, fav:false, defaultFor:[] },
   { id:'v19', name:'George', desc:'Warm, captivating storyteller — resonant British narration that draws listeners in instantly.', cats:['Narrative Story'], langs:['English (UK)'], mine:false, fav:false, defaultFor:[] },
@@ -1104,13 +1230,10 @@ document.addEventListener('click', (e) => {
   if (!e.target.closest('.vl-fselect-wrap') && (voiceGenderMenuOpen || voiceLangMenuOpen)) closeVoiceFselectMenus();
 });
 
-/* kebab-menu state: which card's "more" menu (and its "Default for" flyout) is open,
-   and which card is mid-rename. Tracked in JS (not just DOM hidden toggles) because
-   renderVoices() fully re-renders the grid on every interaction, same pattern the rest
-   of this file already uses for add/favorite toggles. */
+/* kebab-menu state: which My Voices card's "more" menu is open. Tracked in JS (not just
+   DOM hidden toggles) because renderVoices() fully re-renders the grid on every
+   interaction, same pattern the rest of this file already uses for add/favorite toggles. */
 let openMenuFor = null;
-let brandPopFor = null;
-let renamingVoiceId = null;
 
 function escHtml(s){ return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
 
@@ -1119,7 +1242,7 @@ function setVoiceTab(tab){
   document.querySelectorAll('#voiceSegment .controls-segment-chip').forEach(btn => {
     btn.classList.toggle('controls-segment-chip--selected', btn.dataset.tab === tab);
   });
-  openMenuFor = null; brandPopFor = null; renamingVoiceId = null;
+  openMenuFor = null;
   renderVoices();
 }
 
@@ -1138,28 +1261,13 @@ function toggleVoiceFavOnly(){
   renderVoices();
 }
 
-function brandPopHTML(v){
-  const defaultFor = v.defaultFor || [];
-  return `<div class="vl-brandpop" onclick="event.stopPropagation()">
-    <p class="vl-brandpop-cap">Default for</p>
-    ${BRANDS.map(b => `
-      <div class="vl-brandpop-row" onclick="toggleDefaultBrand('${v.id}', '${b.replace(/'/g, "\\'")}')">
-        <span>${escHtml(b)}</span>
-        <span class="field-switch${defaultFor.includes(b) ? ' on' : ''}"><span class="knob"></span></span>
-      </div>`).join('')}
-  </div>`;
-}
-
 function voiceMenuHTML(v){
   if (openMenuFor !== v.id) return '';
-  const popOpen = brandPopFor === v.id;
   return `<div class="vl-kebab-menu" onclick="event.stopPropagation()">
-    <div class="vl-menu-row${popOpen ? ' active' : ''}" onclick="toggleBrandPop('${v.id}')">
-      <span>Set as default</span><img class="vl-menu-caret" src="${ICON}chevron-right.svg" alt="">
-    </div>
-    <div class="vl-menu-row" onclick="startRenameVoice('${v.id}')"><span>Rename</span></div>
-    <div class="vl-menu-row danger" onclick="confirmDeleteVoice('${v.id}')"><span>Delete</span></div>
-    ${popOpen ? brandPopHTML(v) : ''}
+    <div class="vl-menu-row" onclick="openEditVoiceModal('${v.id}')"><span>Edit voice</span></div>
+    <div class="vl-menu-row" onclick="openRemixVoice('${v.id}')"><span>Remix voice</span></div>
+    <div class="vl-menu-row" onclick="openVoiceDetails('${v.id}')"><span>Voice details</span></div>
+    <div class="vl-menu-row danger" onclick="requestDeleteVoice('${v.id}')"><span>Delete voice</span></div>
   </div>`;
 }
 
@@ -1181,7 +1289,14 @@ function renderVoices(){
   if (q) list = list.filter(v => v.name.toLowerCase().includes(q) || v.desc.toLowerCase().includes(q));
 
   document.getElementById('voiceCount').textContent = list.length + (list.length === 1 ? ' voice' : ' voices');
-  document.getElementById('voiceEmpty').hidden = list.length !== 0;
+  // My Voices has two distinct empty cases: genuinely zero voices ever added (rich empty
+  // state with a "New voice" CTA, Figma 10093:163448) vs. voices exist but the current
+  // search/filters hide all of them (plain "no match" text -- a create-one CTA would be
+  // wrong here since voices already exist). Library-added-but-no-custom-created voices
+  // (addedVoices.size > 0) are NOT empty at all -- the grid just shows those cards normally.
+  const showRichEmpty = voiceTab === 'mine' && list.length === 0 && addedVoices.size === 0;
+  document.getElementById('voiceEmptyState').hidden = !showRichEmpty;
+  document.getElementById('voiceEmpty').hidden = !(list.length === 0 && !showRichEmpty);
 
   // Only one voice can be "Default" for the active brand at a time -- every other
   // card's setdefault button gets visually muted (not truly disabled: clicking it still
@@ -1196,16 +1311,13 @@ function renderVoices(){
     const defaultFor = v.defaultFor || [];
     const isDefault = defaultFor.includes(ACTIVE_BRAND);
     const defaultLocked = !isDefault && !!currentDefaultVoice;
-    const nameEl = renamingVoiceId === v.id
-      ? `<input type="text" class="voice-card-name-input" id="voiceRenameInput" value="${escHtml(v.name)}" onclick="event.stopPropagation()" onkeydown="onVoiceRenameKey(event,'${v.id}')" onblur="commitVoiceRename('${v.id}', this.value)">`
-      : `<p class="voice-card-name">${escHtml(v.name)}</p>`;
     return `
     <div class="voice-card" data-id="${v.id}">
       <div class="voice-card-content">
         <span class="voice-section-sample-play" onclick="toggleVoicePlay(this)"><img src="${ICON}audio-row-play-triangle.svg" alt=""></span>
         <div class="voice-card-info">
           <div class="voice-card-name-row">
-            ${nameEl}
+            <p class="voice-card-name">${escHtml(v.name)}</p>
             ${defaultFor.length ? `<span class="voice-card-badge"><span>${defaultFor.length === 1 ? 'Default' : 'Default · ' + defaultFor.length + ' brands'}</span></span>` : ''}
           </div>
           <p class="voice-card-desc">${escHtml(v.desc)}</p>
@@ -1226,14 +1338,14 @@ function renderVoices(){
         <button type="button" class="voice-card-icon-btn setdefault${isDefault ? ' on' : ''}${defaultLocked ? ' muted' : ''}" onclick="requestSetDefault('${v.id}', ACTIVE_BRAND)" aria-pressed="${isDefault}" aria-label="${isDefault ? 'Remove as default' : 'Set as default'} for ${escHtml(v.name)}">
           <img src="${ICON}circle-check-glyph.svg" alt="">
         </button>
+        ${voiceTab === 'mine' ? `
+        <button type="button" class="voice-card-icon-btn more${openMenuFor === v.id ? ' active' : ''}" onclick="event.stopPropagation(); toggleVoiceMenu('${v.id}')" aria-haspopup="true" aria-expanded="${openMenuFor === v.id}" aria-label="More actions for ${escHtml(v.name)}">
+          <img src="${ICON}ui-ellipsis.svg" alt="">
+        </button>
+        ${voiceMenuHTML(v)}` : ''}
       </div>
     </div>`;
   }).join('');
-
-  if (renamingVoiceId){
-    const inp = document.getElementById('voiceRenameInput');
-    if (inp){ inp.focus(); inp.select(); }
-  }
 }
 
 function toggleVoicePlay(el){
@@ -1256,11 +1368,6 @@ function toggleFavVoice(id){
 }
 function toggleVoiceMenu(id){
   openMenuFor = (openMenuFor === id) ? null : id;
-  brandPopFor = null;
-  renderVoices();
-}
-function toggleBrandPop(id){
-  brandPopFor = (brandPopFor === id) ? null : id;
   renderVoices();
 }
 function toggleDefaultBrand(id, brand){
@@ -1305,38 +1412,203 @@ function confirmSetDefault(){
   toggleDefaultBrand(id, brand);
 }
 
-function startRenameVoice(id){
-  renamingVoiceId = id;
-  openMenuFor = null; brandPopFor = null;
-  renderVoices();
-}
-function commitVoiceRename(id, value){
-  if (renamingVoiceId !== id) return; // already committed via Enter/Escape before this blur fired
-  const v = voices.find(x => x.id === id);
-  const trimmed = (value || '').trim();
-  if (v && trimmed) v.name = trimmed;
-  renamingVoiceId = null;
-  renderVoices();
-}
-function onVoiceRenameKey(e, id){
-  if (e.key === 'Enter'){ e.preventDefault(); commitVoiceRename(id, e.target.value); }
-  if (e.key === 'Escape'){ e.preventDefault(); renamingVoiceId = null; renderVoices(); }
-}
-function confirmDeleteVoice(id){
-  const v = voices.find(x => x.id === id);
-  openMenuFor = null; brandPopFor = null;
-  if (!v) { renderVoices(); return; }
-  if (confirm(`Delete ${v.name}?`)){
-    voices.splice(voices.indexOf(v), 1);
-    addedVoices.delete(id);
-  }
-  renderVoices();
-}
 document.addEventListener('click', (e) => {
   if (!e.target.closest('.voice-card-icon-btn.more') && !e.target.closest('.vl-kebab-menu')){
-    if (openMenuFor || brandPopFor){ openMenuFor = null; brandPopFor = null; renderVoices(); }
+    if (openMenuFor){ openMenuFor = null; renderVoices(); }
   }
 });
+
+/* ---------------- Edit voice modal (Name + Description) ---------------- */
+let editingVoiceId = null;
+function openEditVoiceModal(id){
+  const v = voices.find(x => x.id === id);
+  if (!v) return;
+  openMenuFor = null;
+  editingVoiceId = id;
+  document.getElementById('editVoiceNameInput').value = v.name;
+  document.getElementById('editVoiceDescInput').value = v.desc;
+  document.getElementById('editVoiceOverlay').hidden = false;
+  renderVoices();
+}
+function closeEditVoiceModal(){
+  editingVoiceId = null;
+  document.getElementById('editVoiceOverlay').hidden = true;
+}
+function saveEditVoice(){
+  const v = voices.find(x => x.id === editingVoiceId);
+  if (!v) { closeEditVoiceModal(); return; }
+  const name = (document.getElementById('editVoiceNameInput').value || '').trim();
+  const desc = (document.getElementById('editVoiceDescInput').value || '').trim();
+  if (name) v.name = name;
+  v.desc = desc;
+  closeEditVoiceModal();
+  renderVoices();
+}
+
+/* ---------------- Remix voice ----------------
+   Reopens the Voice Design flow at the form step, pre-filled from the source voice's
+   stored creation settings (vdSaveVoice records these as .createdFrom). Seed/My Voice
+   entries that were never generated through that flow have no .createdFrom -- fall back
+   to inferring gender/language from the voice's own fields instead of leaving the form
+   on its hardcoded defaults, so a remix at least starts close to the original. */
+function openRemixVoice(id){
+  const v = voices.find(x => x.id === id);
+  if (!v) return;
+  openMenuFor = null;
+  renderVoices();
+  const src = v.createdFrom;
+  vd.gender = (src && src.gender) || v.gender || 'Female';
+  vd.age = (src && src.age) || 'Young';
+  vd.language = (src && src.language) || (v.langs && v.langs[0]) || 'English (US)';
+  vd.usecase = (src && src.usecase) || 'Social media';
+  vd.activePreset = null;
+  vd.remixOfId = id;
+  vd.remixOfName = v.name;
+  document.getElementById('cvOverlay').hidden = false;
+  openVoiceDesignForm();
+  vdShowStep('form');
+  document.getElementById('vdDesignTitle').textContent = `Remix "${v.name}"`;
+  if (src && src.prompt) document.getElementById('vdPromptText').value = src.prompt;
+}
+
+/* ---------------- Voice details side sheet ----------------
+   Two sections: "Used in" (content this voice has been used on -- mocked, this app has
+   no real content/voice-usage link yet) and "Creation settings" (the prompt/settings a
+   Voice Design voice was generated with, recorded on .createdFrom at save time). */
+let voiceDetailsId = null;
+let voiceDetailsTab = 'usage';
+// Reuses the same real content thumbnails MUSIC_APPLY_VIDEOS already references (this app
+// has no real content/voice-usage link yet, so this is mock data -- but the thumbnails are
+// the actual Library assets rather than another placeholder).
+const VOICE_USAGE_SAMPLE = [
+  { title:'Summer Sale Reel', type:'Reel', date:'Sep 12', thumb:'../brand-characters/assets/imgLibLipTint.png' },
+  { title:'Product Launch Teaser', type:'Ad', date:'Sep 8', thumb:'../brand-characters/assets/imgLibJanIntake.png' },
+  { title:'Weekly Tips #14', type:'Carousel', date:'Aug 29', thumb:'../brand-characters/assets/imgLibStudyUK.png' },
+  { title:'Behind the Scenes', type:'Story', date:'Aug 21', thumb:'../brand-characters/assets/imgLibLipTint.png' },
+];
+// Deterministic (no Math.random) so the same voice always shows the same mock usage --
+// a simple char-code hash of the id picks how many/which sample rows it "used".
+function vhUsageFor(id){
+  let h = 0;
+  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
+  const count = h % (VOICE_USAGE_SAMPLE.length + 1);
+  return Array.from({ length: count }, (_, i) => VOICE_USAGE_SAMPLE[(h + i) % VOICE_USAGE_SAMPLE.length]);
+}
+function openVoiceDetails(id){
+  const v = voices.find(x => x.id === id);
+  if (!v) return;
+  openMenuFor = null;
+  voiceDetailsId = id;
+  voiceDetailsTab = 'usage';
+  renderVoices();
+  document.getElementById('vhSheetName').textContent = v.name;
+  vhRenderTabs();
+  document.getElementById('voiceDetailsSheet').hidden = false;
+}
+function closeVoiceDetails(){
+  document.getElementById('voiceDetailsSheet').hidden = true;
+  voiceDetailsId = null;
+}
+function switchVoiceDetailsTab(tab){
+  voiceDetailsTab = tab;
+  vhRenderTabs();
+}
+function vhRenderTabs(){
+  document.querySelectorAll('.vh-tab').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === voiceDetailsTab));
+  const v = voices.find(x => x.id === voiceDetailsId);
+  const body = document.getElementById('vhSheetBody');
+  if (!v) { body.innerHTML = ''; return; }
+  if (voiceDetailsTab === 'usage'){
+    const rows = vhUsageFor(v.id);
+    body.innerHTML = rows.length ? rows.map(r => `
+      <div class="vh-usage-row">
+        <img src="${r.thumb}" alt="">
+        <div class="vh-usage-info">
+          <p class="vh-usage-name">${escHtml(r.title)}</p>
+          <p class="vh-usage-meta">${escHtml(r.type)} · ${escHtml(r.date)}</p>
+        </div>
+      </div>`).join('') : `<div class="vh-empty">This voice hasn't been used in any content yet.</div>`;
+  } else {
+    const src = v.createdFrom;
+    if (!src){
+      body.innerHTML = `<div class="vh-empty">No creation details recorded for this voice.</div>`;
+      return;
+    }
+    const isClone = src.type === 'clone';
+    const liveLang = (v.langs && v.langs.length) ? v.langs.join(', ') : '—';
+    const liveCats = (v.cats && v.cats.length) ? v.cats.join(', ') : '—';
+    // Gender/Age/prompt are frozen at creation time (Voice Design has no later editor for
+    // them); Language/Use case -- and, for a clone, Gender too -- are read live off the
+    // voice itself since those are just its current tags, not a one-time prompt choice.
+    const rows = [
+      ...(src.remixOf ? [['Remixed from', src.remixOf]] : []),
+      ['Type', isClone ? 'Instant Voice Clone' : 'Voice Design'],
+      ...(isClone ? [
+        ['Source file', src.fileName || '—'],
+        ['Description', v.desc || '—'],
+        ['Language', liveLang],
+        ['Gender', v.gender || '—'],
+        ['Use case', liveCats],
+      ] : [
+        ['Gender', src.gender || '—'],
+        ['Age', src.age || '—'],
+        ['Language', liveLang],
+        ['Use case', liveCats],
+      ]),
+    ];
+    const promptRow = (!isClone) ? `
+      <div class="vh-settings-row">
+        <div class="vh-prompt-row-head">
+          <p class="vh-settings-label">Prompt used</p>
+          <button type="button" class="vh-copy-btn" onclick="vhCopyPrompt(this)" data-prompt="${escHtml(src.prompt || '')}">Copy</button>
+        </div>
+        <p class="vh-settings-value vh-prompt-text">${escHtml(src.prompt || '—')}</p>
+      </div>` : '';
+    body.innerHTML = rows.map(([label, value]) => `
+      <div class="vh-settings-row">
+        <p class="vh-settings-label">${escHtml(label)}</p>
+        <p class="vh-settings-value">${escHtml(value || '—')}</p>
+      </div>`).join('') + promptRow;
+  }
+}
+function vhCopyPrompt(btn){
+  const text = btn.dataset.prompt || '';
+  const showCopied = () => {
+    const original = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = original; }, 1200);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(showCopied).catch(showCopied);
+  } else {
+    showCopied();
+  }
+}
+
+/* ---------------- Delete voice confirm modal (Figma 9835:171997, "Modal · Confirm") ---------------- */
+let pendingDeleteVoiceId = null;
+function requestDeleteVoice(id){
+  const v = voices.find(x => x.id === id);
+  if (!v) return;
+  openMenuFor = null;
+  renderVoices();
+  pendingDeleteVoiceId = id;
+  document.getElementById('deleteVoiceTitle').textContent = `Delete ${v.name}?`;
+  document.getElementById('deleteVoiceBody').textContent =
+    `This voice will be permanently deleted. Content that already used it keeps its existing audio, but you won't be able to generate new lines with it. This cannot be undone.`;
+  document.getElementById('deleteVoiceOverlay').hidden = false;
+}
+function closeDeleteVoiceModal(){
+  pendingDeleteVoiceId = null;
+  document.getElementById('deleteVoiceOverlay').hidden = true;
+}
+function confirmDeleteVoiceModal(){
+  if (!pendingDeleteVoiceId) return;
+  const v = voices.find(x => x.id === pendingDeleteVoiceId);
+  if (v){ voices.splice(voices.indexOf(v), 1); addedVoices.delete(v.id); }
+  closeDeleteVoiceModal();
+  renderVoices();
+}
 
 /* ---------------- Music ----------------
    No more Explore/My Music split -- Music is one library, filtered by Favorites + genre,
@@ -1550,14 +1822,18 @@ const vd = {
   activePreset:'Hype Reel', previewIndex:0, previewOn:false, previewExpanded:false,
   selectedVoiceIdx:0, playingVoiceIdx:-1, playTimer:null, step:'choose', voiceCount:3,
   tagGender:null, tagLanguage:null, tagUsecase:null, tagMenuOpen:null, customTags:[], addingCustomTag:false,
+  remixOfId:null, remixOfName:null,
 };
 
 function openCreateVoiceModal(){
+  vd.remixOfId = null; vd.remixOfName = null;
+  document.getElementById('vdDesignTitle').textContent = 'Design a new voice';
   document.getElementById('cvOverlay').hidden = false;
   vdShowStep('choose');
 }
 function closeCreateVoiceModal(){
   document.getElementById('cvOverlay').hidden = true;
+  vd.remixOfId = null; vd.remixOfName = null;
   vdStopPlayback();
   vcStopAll();
   renderVoices();
@@ -1816,8 +2092,20 @@ function vcBackToMain(){
 function vcCreateVoice(){
   if (document.getElementById('vcCreateBtn').disabled) return;
   const name = vc.name.trim();
+  const desc = vc.desc.trim();
   document.getElementById('vcSuccessName').textContent = name;
-  document.getElementById('vcSuccessSub').textContent = vc.desc.trim() || `${vc.clips.length} clip${vc.clips.length === 1 ? '' : 's'} combined`;
+  document.getElementById('vcSuccessSub').textContent = desc || `${vc.clips.length} clip${vc.clips.length === 1 ? '' : 's'} combined`;
+  // This used to just show the success screen without ever actually saving the voice --
+  // neither success-step button ("Back to library" / "Use this voice") did anything but
+  // close the modal, so a cloned voice never reached My Voices. Commit it here instead,
+  // same point in the flow vdSaveVoice commits a Voice Design voice.
+  const id = 'v_' + Date.now();
+  const fileNames = vc.clips.map(c => c.name).join(', ');
+  voices.unshift({
+    id, name, desc, gender:'Any', cats:[], langs:[], mine:true, fav:false, defaultFor:[],
+    createdFrom:{ type:'clone', fileName: fileNames || '—' },
+  });
+  addedVoices.add(id);
   vcShowStep('success');
 }
 
@@ -2101,7 +2389,17 @@ function vdSaveVoice(){
   // happen to overlap in meaning but not casing -- normalize through the same lookup
   // vdAddCustomTag uses so this doesn't silently mint a near-duplicate filter chip.
   const cats = [vd.tagUsecase ? vdEnsureCatTag(vd.tagUsecase) : null, ...vd.customTags].filter(Boolean);
-  voices.unshift({ id, name, desc, gender, cats, langs, mine:true, fav:false, defaultFor:[] });
+  // Recorded so the "Voice details" modal's Creation settings tab can show exactly what
+  // this voice was generated from. Gender/age/prompt are frozen at this moment (there's no
+  // later editor for them); language/use case are read live off the voice itself instead
+  // of duplicated here, since those are just its current tags. The prompt textarea still
+  // holds the last composed/edited prompt at this point in the flow, remix or not.
+  const createdFrom = {
+    type: 'design',
+    prompt: (document.getElementById('vdPromptText') || {}).value || '',
+    gender: vd.gender, age: vd.age, remixOf: vd.remixOfName || null,
+  };
+  voices.unshift({ id, name, desc, gender, cats, langs, mine:true, fav:false, defaultFor:[], createdFrom });
   addedVoices.add(id);
   closeCreateVoiceModal();
   setVoiceTab('mine');

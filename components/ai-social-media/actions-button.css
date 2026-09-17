@@ -42,6 +42,15 @@
   color:var(--color-neutral-450);
   cursor:default;
 }
+/* Destructive confirm actions (Figma "Modal · Confirm" 9835:171997's "Delete brand" button) --
+   the only place in this system a solid red fill is used, so it isn't one of the Figma
+   variants above; bound to --color-error-text since that's the exact fill Figma uses here
+   (same value as --color-badge-red-text, but this is the semantic slot for it). */
+.actions-btn--danger{
+  background:var(--color-error-text);
+  color:var(--color-neutral-0);
+}
+.actions-btn--danger:hover{ filter:brightness(0.92); }
 .actions-btn--loading img{ animation:actions-btn-spin 0.9s linear infinite; }
 @keyframes actions-btn-spin{ to{ transform:rotate(360deg); } }
 

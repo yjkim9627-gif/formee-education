@@ -46,6 +46,22 @@
   max-width: 520px;
 }
 
+/* ---------- Header row (title + close, side by side) ----------
+   Figma "Modal · Confirm" (9835:171997) puts the close X inline in a title row rather than
+   floating it absolutely over the content -- use this when a modal needs that exact layout
+   instead of .modal__close's default floating position. */
+.modal__header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+}
+
+.modal__header-row .modal__close {
+  position: static;
+  flex-shrink: 0;
+}
+
 /* ---------- Close ---------- */
 .modal__close {
   position: absolute;
@@ -136,6 +152,16 @@
 .modal__footer--stack {
   flex-direction: column;
   gap: var(--spacing-lg);
+}
+
+/* Edge-to-edge divider above the footer (Figma 9835:171997's footer has its own border-top +
+   background band, full-bleed across the modal). .modal has padding on every side, so this
+   pulls the footer back out to the modal's own edges with a negative margin, then re-applies
+   the same padding on top of the divider. */
+.modal__footer--divider {
+  margin: 0 calc(-1 * var(--spacing-4xl)) calc(-1 * var(--spacing-4xl));
+  padding: var(--spacing-lg) var(--spacing-4xl) var(--spacing-4xl);
+  border-top: 1px solid var(--color-neutral-200);
 }
 
 /* ---------- Preview frame (문서화용, 실제 배포 시 불필요) ---------- */
