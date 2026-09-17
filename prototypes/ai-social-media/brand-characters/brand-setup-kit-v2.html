@@ -27135,6 +27135,10 @@ if (_libSearch) _libSearch.addEventListener('input', libFilter);
 document.querySelectorAll('#libMain .lib-plat').forEach(el => {
   el.innerHTML = PLAT_ICON[el.dataset.p] || '';
 });
+const _libScroll = $('#libScroll');
+if (_libScroll) _libScroll.addEventListener('scroll', () => {
+  _libScroll.classList.toggle('scrolled', _libScroll.scrollTop > 0);
+});
 const _libMoreBtn = $('#libMoreBtn');
 if (_libMoreBtn) _libMoreBtn.addEventListener('click', () => { LIB_PAGE = 2; libFilter(); });
 
@@ -36093,9 +36097,13 @@ body.bk2-clean #roleSwitch { display:none !important; }
 .lib-scroll::-webkit-scrollbar{width:6px;}
 .lib-scroll::-webkit-scrollbar-track{background:transparent;}
 .lib-scroll::-webkit-scrollbar-thumb{background:var(--neutral-400);border-radius:3px;}
-/* 스티키 바 64 = 세그먼트 46 을 위아래 9 로 감싼 값 (캐릭터 flat list 와 같은 규칙) */
+/* 스티키 바 64 = 세그먼트 46 을 위아래 9 로 감싼 값 (캐릭터 flat list 와 같은 규칙).
+   바탕과 그림자는 **스크롤을 내렸을 때만** 켠다 — 바 뒤에 카드가 깔릴 때만 바가 나타난다.
+   Figma 도 `sticky · filter bar` 의 fill 을 top 프레임에서 꺼 두고 scrolled 에서 켠다. */
 .lib-stickybar{position:sticky;top:0;z-index:3;display:flex;align-items:center;gap:8px;
-  padding:9px 0;background:var(--neutral-50);flex:none;}
+  padding:9px 0;background:none;flex:none;}
+.lib-scroll.scrolled .lib-stickybar{background:var(--neutral-50);
+  box-shadow:0 4px 10px rgba(0,0,0,.06);}
 .lib-search{display:flex;align-items:center;gap:8px;width:100%;height:36px;padding:8px 12px;
   background:var(--neutral-0);border:1px solid var(--neutral-400);border-radius:8px;}
 .lib-search svg{width:16px;height:16px;flex:none;}
