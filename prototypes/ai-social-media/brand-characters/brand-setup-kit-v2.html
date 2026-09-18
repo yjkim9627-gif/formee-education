@@ -257,7 +257,7 @@ input:focus-visible{outline:none;}   /* the wrapping field already shows focus v
 
 /* --------------------------------------------------------------- groups */
 .groups{display:flex;flex-direction:column;gap:28px;align-items:flex-start;width:100%;flex:none;}
-.group{position:relative;display:flex;flex-direction:column;gap:14px;align-items:flex-start;width:100%;flex:none;overflow:hidden;}
+.group{position:relative;display:flex;flex-direction:column;gap:14px;align-items:flex-start;width:100%;flex:none;overflow:visible;}
 .group-head{display:flex;gap:8px;align-items:center;width:100%;flex:none;overflow:hidden;}
 .group-title{font-weight:600;font-size:16px;line-height:24px;color:var(--neutral-900);white-space:nowrap;}
 .group-rule{flex:1 0 0;height:1px;min-width:1px;}
@@ -284,20 +284,33 @@ input:focus-visible{outline:none;}   /* the wrapping field already shows focus v
    second row aligned; without it the shorter cards float and the row breaks up. */
 /* Figma 는 한 줄이다 — `grid` 1602x382 · NO_WRAP · clipsContent (7867:208010).
    예전엔 6열 x 2행(12칸)으로 깔고 그 뒤에 가로 스크롤했다.            2026-09-17 */
-.grid.carousel{flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;}
+/* 세로를 잘라야 가로 스크롤이 되는데 그러면 떠오른 카드의 위와 그림자가 잘린다.
+   패딩으로 잘리는 상자를 넓히고 같은 만큼 마진으로 당겨 자리는 그대로 둔다. */
+.grid.carousel{flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;
+  padding:10px 0 34px;margin:-10px 0 -34px;}
 .grid.carousel .card{height:382px;}
 .grid.carousel .card-new .thumb-new{height:382px;}
 
 /* 화살표는 썸네일(295)의 세로 중앙에 온다 — 카드 전체가 아니라.
    그룹 기준 top 167 = 헤더 24 + gap 14 + (295/2 - 16), right 18. */
-.carousel-arrow{position:absolute;top:167px;width:32px;height:32px;
+/* `display:block` 이라 20 짜리 셰브런이 가로로는 왼쪽에 붙어 있었다(좌 0.7 / 우 11.3).
+   Figma `Controls / Carousel Arrow` 는 32 안에 20 을 x6 y6 으로 둔다 — 가운데다.  2026-09-18 */
+.carousel-arrow{position:absolute;top:167px;width:32px;height:32px;box-sizing:border-box;
   background:var(--neutral-0);border:1px solid var(--neutral-400);border-radius:9999px;
-  overflow:hidden;display:block;z-index:2;}
+  overflow:hidden;display:flex;align-items:center;justify-content:center;z-index:2;}
 .arrow-r{right:18px;}
 .arrow-l{left:12px;}
-/* the fade says the row continues past the clip — it goes once you reach the end */
-.cfade{position:absolute;top:38px;right:18px;width:120px;height:382px;pointer-events:none;
-  background:linear-gradient(90deg,rgba(248,250,255,0) 0%,var(--neutral-50) 100%);}
+/* the fade says the row continues past the clip — it goes once you reach the end.
+   오른쪽 인셋은 **6** 이다(화살표의 18 이 아니라). Figma `fade` 는 x1476~1596 으로
+   마지막 카드의 오른쪽 끝(1596)에서 끝난다. 18 로 두면 1584 에서 불투명해진 뒤
+   1584~1596 의 12px 이 원본 그대로 되살아나 잘린 면이 띠처럼 남았다.  2026-09-18 */
+/* 그라디언트가 끝나는 자리(1596)는 마지막 카드가 끝나는 자리와 같다. 거기서 fade 를
+   같이 끊으면 두 모서리의 안티에일리어싱이 어긋나 원본이 1px 새어 나온다
+   (프레임이 0.9225 로 축소돼 있어 둘이 같은 기기 픽셀에 안 떨어진다).
+   그래서 **면은 잘리는 끝(1602)까지 깔고**, 색이 다 차오르는 지점만 1596 에 맞춘다
+   — 120/126 = 95.24%. 보이는 그라데이션은 그대로다.                   2026-09-18 */
+.cfade{position:absolute;top:38px;right:0;width:126px;height:382px;pointer-events:none;
+  background:linear-gradient(90deg,rgba(248,250,255,0) 0%,var(--neutral-50) 95.24%);}
 .arrow-l .ic{transform:scaleX(-1);}   /* mirrored instance of the same chevron asset */
 .carousel-arrow:hover{background:var(--neutral-50);}
 
@@ -367,6 +380,38 @@ input.card-name::selection{background:var(--brand-primary-mid);}
   border-radius:var(--radius-xl);display:flex;flex-direction:column;gap:8px;
   align-items:center;justify-content:center;overflow:hidden;}
 .thumb-new:hover{border-color:var(--neutral-450);background:rgba(255,255,255,.6);}
+
+/* ── 카드 호버 ──────────────────────────────────────────────────────────────
+   Figma 컴포넌트에는 아직 호버 변형이 없다(Character Card / New character 뿐).
+   카드가 **떠오르고**, 사진이 한 박자 늦게 밀려 들어오고, 그림자가 깔린다.
+   세 가지가 같은 시간에 끝나면 밋밋해서, 사진만 320ms 로 더 길게 간다 —
+   카드가 먼저 서고 그림 안이 나중에 자리를 잡는 느낌이 목적이다.
+   그림자는 −6 스프레드로 발밑에 모아 카드가 바닥에서 떨어진 것처럼 보이게 한다.
+   떠오를 자리는 `.group` 의 overflow 를 풀고 캐러셀 줄에 패딩을 줘서 마련했다.
+                                                                    2026-09-18 */
+#groups .card:not(.card-new){
+  transition:transform .2s cubic-bezier(.2,.7,.3,1);will-change:transform;}
+#groups .card:not(.card-new) .thumb{
+  transition:box-shadow .2s cubic-bezier(.2,.7,.3,1);}
+#groups .card:not(.card-new) .thumb-img{
+  transition:transform .32s cubic-bezier(.2,.7,.3,1);}
+#groups .card:not(.card-new):hover{transform:translateY(-4px);}
+#groups .card:not(.card-new):hover .thumb{
+  box-shadow:inset 0 0 0 1px var(--neutral-500),
+             0 12px 24px -6px rgba(15,23,41,.22);}
+#groups .card:not(.card-new):hover .thumb-img{transform:scale(1.045);}
+#groups .card:not(.card-new):active{transform:translateY(-1px);}
+#groups .card:not(.card-new):focus-visible .thumb{
+  box-shadow:inset 0 0 0 1px var(--neutral-500), 0 0 0 3px rgba(79,109,230,.35);}
+/* 캐러셀은 가로로 스크롤되는 줄이라 떠오른 카드가 앞줄로 올라와야 한다 */
+#groups .grid.carousel .card:not(.card-new):hover{position:relative;z-index:1;}
+@media (prefers-reduced-motion:reduce){
+  #groups .card:not(.card-new),
+  #groups .card:not(.card-new) .thumb-img{transition:none;}
+  #groups .card:not(.card-new):hover{transform:none;}
+  #groups .card:not(.card-new):hover .thumb-img{transform:none;}
+}
+}
 .thumb-new span{font-weight:700;font-size:13px;line-height:20px;color:var(--neutral-700);
   text-align:center;white-space:nowrap;}
 
@@ -1594,8 +1639,8 @@ input.card-name::selection{background:var(--brand-primary-mid);}
   <div class="char-scroll" id="charScroll">
   <div class="filter-row">
     <div class="filters">
-      <button type="button" class="chip chip-active" id="chipFav" aria-pressed="true">
-        <span class="chip-label">Favorites</span><span class="chip-star"><div class="ic clip" style="width:12px;height:12px;"><div class="f" style="inset:8.33% 8.33% 12.2% 8.33%"><div class="f" style="inset:-6.29% -6%"><img src="assets/imgVector41.svg" alt=""></div></div></div></span>
+      <button type="button" class="chip" id="chipFav" aria-pressed="false">
+        <span class="chip-label">Favorites</span><span class="chip-star"><div class="ic clip" style="width:12px;height:12px;"><div class="f" style="inset:8.33% 8.33% 12.2% 8.33%"><div class="f" style="inset:-6.29% -6%"><img src="assets/imgVector1.svg" alt=""></div></div></div></span>
       </button>
       <div class="chip-wrap">
         <button type="button" class="sel-chip" id="chipCreated" data-sel="created" aria-expanded="false">
@@ -1620,9 +1665,9 @@ input.card-name::selection{background:var(--brand-primary-mid);}
     <div class="group-by">
       <p class="group-by-label">Group by</p>
       <div class="segmented" role="group" aria-label="Group by">
-        <button type="button" class="seg" data-group="none"><span>None</span></button>
+        <button type="button" class="seg seg-on" data-group="none"><span>None</span></button>
         <button type="button" class="seg" data-group="type"><span>Type</span></button>
-        <button type="button" class="seg seg-on" data-group="brand"><span>Brand</span></button>
+        <button type="button" class="seg" data-group="brand"><span>Brand</span></button>
       </div>
     </div>
   </div>
@@ -18375,7 +18420,8 @@ const ROLES = {
   super:  { scope:'Super admin (All)',
             sub:'AI presenters across all brands in this account.',
             brands:null, filters:['created','age','gender'], groupBy:['none','type','brand'],
-            defaultGroupBy:'brand', brandTag:true,  locked:false },
+            /* 처음 들어오면 묶지 않은 목록으로 연다 — 2026-09-18 */
+            defaultGroupBy:'none',  brandTag:true,  locked:false },
   multi:  { scope:'My brands (All)',
             sub:'Your AI presenters across your brands.',
             brands:null, filters:['age','gender'],            groupBy:['none','type','brand'],
@@ -18393,9 +18439,13 @@ const styleCount = c => (c.styles !== undefined ? c.styles : 0);
 
 const state = {
   role: 'super',
-  groupBy: 'brand',
-  favOnly: false,         // the Favorites chip is styled "on" in the frame but no card is filtered out there
-  createdBy: 'Anyone',    // ditto for the "Created by · Me" pill — the frame still shows all 11 cards
+  groupBy: 'none',
+  /* Figma 는 Favorites 토글과 `Created by · Me` 를 눌린 모습으로 그려 두었지만 정작
+     9장을 다 보여준다 — 걸린 필터가 아니라 칩의 두 얼굴을 보여주려고 그린 것이다.
+     화면을 그 모습 그대로 열면 "켜져 있는데 아무것도 안 걸러지는" 상태가 되므로
+     둘 다 꺼진 채로 연다. 눌러 보면 실제로 걸린다.                     2026-09-18 */
+  favOnly: false,
+  createdBy: 'Anyone',
   age: 'Any',
   gender: 'Any',
   focus: null,           // {key,title} while one group is expanded to a full grid
@@ -18572,8 +18622,12 @@ function groupHTML(g, expanded){
   </div>`;
 }
 
-/* the filter row carries a roster count only in the ungrouped view — once the
-   cards are grouped the group heads carry the counting instead */
+/* 즐겨찾기는 Figma 에서 `Favorite` 컴포넌트 속성이 아니라 **별 벡터의 fill** 로
+   구분한다 — 속성은 전 카드가 기본값 true 라 아무 뜻이 없다. 채워진 건 밀로
+   하나(`Vector` fill `#0f1729`)이고 나머지는 fill 이 꺼져 있다.        2026-09-18 */
+/* 개수는 묶든 안 묶든 필터 줄이 들고 있다 — Figma `List - grouped` 7867:208010 의
+   `9 characters`(Gender 칩 오른쪽, 12/16 Medium #8a93a8). 그룹 머리에는 개수가
+   없어서 여기서 빼면 어디에도 안 나온다.                                2026-09-18 */
 function isFiltered(){
   return !!(state.query.trim() || state.favOnly ||
             state.createdBy !== 'Anyone' || state.age !== 'Any' || state.gender !== 'Any');
@@ -18582,7 +18636,7 @@ function isFiltered(){
 function paintRosterCount(cards){
   const el = $('#rosterCount');
   if (!el) return;
-  const show = state.groupBy === 'none' && !state.focus && cards.length > 0;
+  const show = !state.focus && cards.length > 0;
   el.hidden = !show;
   if (show) el.textContent = cards.length + (cards.length === 1 ? ' character' : ' characters');
 }
