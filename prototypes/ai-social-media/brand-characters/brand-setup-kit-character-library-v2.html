@@ -19234,6 +19234,40 @@ function stylePromptFor(name){
   return r[0] + ', ' + r[1].toLowerCase() + ' at ' + r[3].toLowerCase() + ', ' + r[2].toLowerCase() + ' framing';
 }
 
+/* `Use in new content` / `Create new content` 는 이 앱에서 끝나지 않는다. New Content 는
+   예진님 v4 에 있어서 새 탭으로 넘긴다 — 교차 출처라 값은 URL 로만 전달된다.
+   파라미터는 v4 가 실제로 읽는 것만 쓴다: #ref & thumb & ratio & stage & from & back.
+   style 이 곧 "참고할 그림"이라 ref 로 보낸다 — v4 가 "Based on" 배너를 띄운다. */
+const NC_V4_URL = 'https://yjkim9627-gif.github.io/formee-education/' +
+  'prototypes/ai-social-media/new-content-generation/v4/new-content-to-generate.html';
+
+/* 받는 쪽은 다른 폴더라 `assets/…` 상대경로가 안 맞는다. 저장소 루트 기준으로 넘긴다. */
+function charAssetUrl(src){
+  if (!src) return '';
+  if (/^(https?:|\/)/.test(src)) return src;
+  return '/formee-education/prototypes/ai-social-media/brand-characters/' + src;
+}
+
+function useInNewContent(){
+  const c = DATA.find(x => x.id === detail.id);
+  if (!c) return;
+  /* 스타일 패널이 열려 있으면 그 스타일을, 아니면 캐릭터 대표 이미지를 보낸다 */
+  const name = detail.preview || detail.selected || '';
+  const st   = name ? stylesFor(detail.id).find(x => x.name === name) : null;
+  const art  = st ? (st.src || styleArt(st.name)) : '';
+  const thumb = art || c.src || ('assets/' + c.thumb + '.jpg');
+  const url = NC_V4_URL
+    + '#ref=' + encodeURIComponent(name ? c.name + ' — ' + name : c.name)
+    + '&thumb=' + encodeURIComponent(charAssetUrl(thumb))
+    + '&ratio=4:5'
+    + '&stage=brief'
+    /* v4 상단에 돌아올 링크를 띄워 준다. back 은 해시 조각만 받는다. */
+    + '&from=library';
+  if (typeof libToast === 'function')
+    libToast('Opening New Content with ' + (name || c.name) + '…');
+  window.open(url, '_blank', 'noopener');
+}
+
 function renderStylePreview(){
   const old = $('#stylePreview');
   if (old) old.remove();
@@ -19362,7 +19396,7 @@ onDetail('click', e => {
     case 'regen': makeStyle(); break;
     case 'savestyle': saveStyle(); break;
     case 'more': break;
-    case 'content': break;
+    case 'content': useInNewContent(); break;
     case 'closepreview': detail.preview = null; renderCharDetail(); break;
     case 'copyprompt':
       if (detail.preview && navigator.clipboard)
