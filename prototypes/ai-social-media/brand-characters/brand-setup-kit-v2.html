@@ -1351,8 +1351,10 @@ input.card-name::selection{background:var(--brand-primary-mid);}
 .m-right{flex:1 0 0;min-width:1px;height:100%;display:flex;flex-direction:column;gap:8px;
   align-items:flex-start;padding:0 20px 20px;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;}
 .m-right::-webkit-scrollbar{width:0;display:none;}
-.ai-card{width:400px;background:var(--neutral-0);border-radius:var(--radius-xl);padding:12px 16px;
-  display:flex;flex-direction:column;gap:8px;align-items:flex-start;flex:none;}
+/* 오른쪽 열(`r-scroll` 560 · pad 20)을 다 쓴다 — 400 으로 두면 오른쪽에 120 이
+   그냥 비어서 모달 내용이 왼쪽으로 쏠려 보인다.                      2026-09-18 */
+.ai-card{width:100%;background:var(--neutral-0);border-radius:var(--radius-xl);padding:12px 16px;
+  display:flex;flex-direction:column;gap:8px;align-items:flex-start;flex:none;box-sizing:border-box;}
 /* AI / Generation Prompt (6796:106172) — label 22 / box 63 / refine label 20 / input 56 */
 .ai-card.flush .ai-label:first-child{margin-bottom:1px;}
 .ai-card.flush .ai-box:not(.refine){min-height:64px;}
