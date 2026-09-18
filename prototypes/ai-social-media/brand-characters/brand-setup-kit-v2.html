@@ -19100,7 +19100,6 @@ function renderCharDetail(){
   const match = all.map((st, i) => ({ st, i }))
                    .filter(({ st }) => !q || st.name.toLowerCase().includes(q));
   const favs  = match.filter(({ st }) => st.fav);
-  const rest  = detail.favOnly ? [] : match;
 
   $('#cdName').textContent = c.name;
   $('#cdStar').innerHTML   = c.fav ? ICONS.starFill : ICONS.starOutline;
@@ -19121,17 +19120,16 @@ function renderCharDetail(){
        <div class="d-new-rest">${ICONS.plus24}<span>New Style</span></div>
      </button>`;
 
-  /* the New Style tile opens whichever section comes first */
   const secHead = t => `<div class="cd-sec-head"><p class="cd-sec-t">${t}</p><div class="group-rule"></div></div>`;
 
-  const favSec = favs.length ? `<div class="cd-sec">
-      ${secHead('Favorites &middot; ' + favs.length)}
-      <div class="d-grid">${newTile}${favs.map(({ st, i }) => styleCardHTML(c, st, i)).join('')}</div>
-    </div>` : '';
-
-  const allSec = detail.favOnly ? '' : `<div class="cd-sec">
-      ${secHead('All styles &middot; ' + rest.length)}
-      <div class="d-grid">${favs.length ? '' : newTile}${rest.map(({ st, i }) => styleCardHTML(c, st, i)).join('')}</div>
+  /* 즐겨찾기를 위에 한 줄 더 깔지 않는다 — 아래 `All styles` 가 그걸 다시 담고 있어서
+     같은 스타일이 한 화면에 두 번 나왔고, 머리 줄의 Favorites 칩이 이미 같은 일을
+     한다. 목록은 한 벌만 두고, 머리글이 지금 무엇을 보여주는지 말한다.
+     (캐릭터 목록에서 Favorites 칩 하나로 거르는 것과 같은 규칙)          2026-09-18 */
+  const shown = detail.favOnly ? favs : match;
+  const gallery = `<div class="cd-sec">
+      ${secHead((detail.favOnly ? 'Favorites' : 'All styles') + ' &middot; ' + shown.length)}
+      <div class="d-grid">${newTile}${shown.map(({ st, i }) => styleCardHTML(c, st, i)).join('')}</div>
     </div>`;
 
   $('#cdRight').innerHTML = `
@@ -19142,7 +19140,7 @@ function renderCharDetail(){
       <span class="chip-star">${detail.favOnly ? ICONS.chipStarFill : ICONS.chipStarOutline}</span>
       <span class="chip-label">Favorites</span>
     </button>
-    ${favSec}${allSec}
+    ${gallery}
     ${match.length ? '' : '<p class="d-empty">No styles match this search.</p>'}`;
 
   renderStylePreview();
