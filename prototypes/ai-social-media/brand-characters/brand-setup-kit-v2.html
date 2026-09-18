@@ -18594,11 +18594,15 @@ const loadMoreHTML = total => {
 };
 
 function groupHTML(g, expanded){
-  /* 묶지 않은 목록에는 생성 타일이 없다 — 어느 브랜드에 만들지가 정해지지 않아서다.
-     헤더의 `+ New character` 가 그 자리를 대신한다. Figma 7867:208067 확인. 2026-09-17 */
+  /* 생성 타일은 줄의 첫 칸을 늘 차지한다 — 한 줄에 6칸이니 브랜드마다 캐릭터를
+     하나씩 덜 보여주는 셈이고, 정확히 6명인 브랜드는 그 한 칸 때문에 7칸이 되어
+     가로 스크롤까지 생긴다. 만들기는 헤더의 `+ New character` 가 이미 맡고 있고
+     브랜드는 어차피 모달에서 고른다. 그래서 **비어 있는 그룹에만** 남긴다.
+     (묶지 않은 목록은 원래부터 없었다 — Figma 7867:208067)          2026-09-18 */
   const flat     = g.title === null;
   const shownCds = flat ? g.cards.slice(0, state.shown) : g.cards;
-  const tiles    = (flat ? [] : [newCardHTML()]).concat(shownCds.map(cardHTML));
+  const lead     = (!flat && g.cards.length === 0) ? [newCardHTML()] : [];
+  const tiles    = lead.concat(shownCds.map(cardHTML));
   const carousel = !expanded && tiles.length > SLOTS;
 
   const head = g.title === null ? '' :
