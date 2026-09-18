@@ -1387,7 +1387,7 @@ function renderVoices(){
           <span class="vl-icon-tooltip">${added ? 'Remove from My Voices' : 'Add to My Voices'}</span>
         </button>` : ''}
         <button type="button" class="voice-card-icon-btn fav${v.fav ? ' active' : ''}" onclick="toggleFavVoice('${v.id}')" aria-pressed="${v.fav}" aria-label="Favorite ${escHtml(v.name)}">
-          <img src="${ICON}shape-star${v.fav ? '-filled' : ''}.svg" alt="">
+          <img src="${ICON}${v.fav ? 'shape-star-filled' : 'favorite-star-16'}.svg" alt="">
           <span class="vl-icon-tooltip">${v.fav ? 'Remove from Favorites' : 'Add to Favorites'}</span>
         </button>
         <button type="button" class="voice-card-icon-btn more${openMenuFor === v.id ? ' active' : ''}" onclick="event.stopPropagation(); toggleVoiceMenu('${v.id}')" aria-haspopup="true" aria-expanded="${openMenuFor === v.id}" aria-label="More actions for ${escHtml(v.name)}">
@@ -1663,7 +1663,7 @@ function renderMusic(){
           <img src="${ICON}content-reel.svg" alt="">
         </button>
         <button type="button" class="voice-card-icon-btn fav${t.fav ? ' active' : ''}" onclick="toggleFav('${t.id}')" aria-pressed="${t.fav}" aria-label="Favorite ${escHtml(t.title)}">
-          <img src="${ICON}shape-star${t.fav ? '-filled' : ''}.svg" alt="">
+          <img src="${ICON}${t.fav ? 'shape-star-filled' : 'favorite-star-16'}.svg" alt="">
         </button>
       </div>
     </div>`).join('');
