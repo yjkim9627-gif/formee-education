@@ -25,6 +25,7 @@
 <link rel="stylesheet" href="../../../components/ai-social-media/scene-tile.css">
 <link rel="stylesheet" href="../../../components/ai-social-media/reference-scene-tile.css">
 <link rel="stylesheet" href="../../../components/ai-social-media/controls-filter-select.css">
+<link rel="stylesheet" href="../../../components/ai-social-media/character-card.css">
 <style>
 /* ============================================================================
    Draft shell — function-first sketch for the Voice Library redesign (Figma
@@ -1019,6 +1020,39 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
   </div>
 </div>
 
+<!-- ============================================================ VOICE: SET AS CHARACTER VOICE MODAL ============================================================
+     "Set as character voice" on a voice's kebab menu -> pick which character(s) should use
+     this voice as their default. Replaces the old one-default-per-brand "Set as default"
+     button (Figma dropped that control from the Voice Library Card entirely) with a
+     per-character default, since a voice can reasonably be the default for several
+     characters at once. Reuses the "Characters" modal shell (Figma 9619:191736) via the
+     same .mylib-modal/.char-select-grid/.char-select-card components the character-library
+     "see all" picker already uses, so this stays visually consistent with that screen
+     instead of inventing a new card style. -->
+<div class="modal-overlay" id="charAssignOverlay" hidden onclick="if(event.target===this) closeCharAssignModal()">
+  <div class="modal mylib-modal mylib-modal--wide">
+    <div class="mylib-header-top">
+      <h2 class="modal__title">Set as character voice</h2>
+      <button type="button" class="modal__close" onclick="closeCharAssignModal()"><img src="../../../components/ai-social-media/icons/button-x-dark.svg" alt="Close"></button>
+    </div>
+
+    <div class="music-apply-track-recap">
+      <span class="voice-section-sample-play"><img src="../../../components/ai-social-media/icons/audio-row-play-triangle.svg" alt=""></span>
+      <div>
+        <p class="music-apply-track-name" id="charAssignVoiceName"></p>
+        <p class="music-apply-track-meta" id="charAssignVoiceMeta">Select every character that should use this voice by default.</p>
+      </div>
+    </div>
+
+    <div class="mylib-content char-select-grid" id="charAssignGrid"></div>
+
+    <div class="mylib-footer">
+      <button type="button" class="actions-btn actions-btn--secondary" onclick="closeCharAssignModal()">Cancel</button>
+      <button type="button" class="actions-btn actions-btn--primary" onclick="confirmCharAssign()">Save</button>
+    </div>
+  </div>
+</div>
+
 <!-- My Voices kebab menu: Edit voice -->
 <div class="modal-overlay" id="editVoiceOverlay" hidden onclick="if(event.target===this) closeEditVoiceModal()">
   <div class="modal modal--form">
@@ -1091,38 +1125,52 @@ const ICON = '../../../components/ai-social-media/icons/';
 // these use-case categories based on what its desc already says the voice is good for.
 const VOICE_CATS = ['Social Media','Advertisement','Characters Animations','Conversational','Entertainment TV','Informative Educational','Narrative Story'];
 const BRANDS = ['Formee Express', 'SCEI'];
-// No real per-tenant brand switcher yet (see the comment near the top nav) -- the
-// setdefault button always acts against this one, same as the rest of this draft.
-const ACTIVE_BRAND = 'Formee Express';
+// Characters this account has set up (Asset > Characters in the nav) -- a bare-bones stand-in
+// for that screen's own data, just enough to power the "Set as character voice" picker below.
+// Default status now lives here (character.voiceId), not on the voice: a voice can be the
+// default for several characters at once, which a single brand-wide default couldn't model.
+const CHARACTERS = [
+  { id:'ch1', name:'Elena', type:'Human', brand:'Formee Express', voiceId:'v1' },
+  { id:'ch2', name:'Milo', type:'Anime', brand:'Formee Express', voiceId:'v8' },
+  { id:'ch3', name:'Maya', type:'Human', brand:'Formee Express', voiceId:null },
+  { id:'ch4', name:'Priya', type:'Human', brand:'Formee Express', voiceId:null },
+  { id:'ch5', name:'Esther', type:'Human', brand:'Formee Express', voiceId:null },
+  { id:'ch6', name:'Sofia', type:'Human', brand:'Formee Express', voiceId:null },
+  { id:'ch7', name:'Monster', type:'Character', brand:'Formee Express', voiceId:null },
+];
+// Cosmetic-only cycling palette for characters' placeholder thumbs (no real portraits in
+// this draft's reach) -- purely a visual stand-in, not a design token.
+const CHAR_PLACEHOLDER_COLORS = ['#c8d1e1','#a8cbff','#dce7fb','#e9edf6','#c8d1e1','#a8cbff','#dce7fb'];
+
 const voices = [
-  { id:'v1', name:'Maya', desc:'Warm, conversational female voice — great for lifestyle and wellness content.', cats:['Conversational','Social Media'], langs:['English (US)','English (UK)','Korean'], mine:true, fav:false, defaultFor:['Formee Express'], createdFrom:{ type:'design', gender:'Female', age:'Young', prompt:'Warm, conversational young adult female voice speaking English (US) with a friendly, approachable tone. Natural and relatable — perfect for lifestyle and wellness content.' } },
-  { id:'v2', name:'Jordan', desc:'High-energy male voice with a confident edge — built for hype and promo reels.', cats:['Advertisement','Social Media'], langs:['English (US)'], mine:false, fav:false, defaultFor:[] },
-  { id:'v3', name:'Ava', desc:'Calm, soothing female narration — ideal for tutorials and explainer scripts.', cats:['Informative Educational'], langs:['English (US)','Spanish'], mine:true, fav:true, defaultFor:[], createdFrom:{ type:'design', gender:'Female', age:'Middle-aged', prompt:'Calm, soothing middle-aged female voice speaking English (US) with a gentle, reassuring tone. Clear and measured — perfect for tutorials and explainer scripts.' } },
-  { id:'v4', name:'Elliot', desc:'Polished, professional male voice — a natural fit for corporate announcements.', cats:['Advertisement'], langs:['English (UK)','French','German'], mine:false, fav:false, defaultFor:[] },
-  { id:'v5', name:'Sora', desc:'Bright, youthful female voice with a playful lilt — great for Gen-Z social clips.', cats:['Social Media'], langs:['Korean','English (US)'], mine:false, fav:false, defaultFor:[] },
-  { id:'v6', name:'Marcus', desc:'Deep, resonant male voice — cinematic weight for trailers and brand films.', cats:['Entertainment TV','Advertisement'], langs:['English (US)'], mine:false, fav:false, defaultFor:[] },
-  { id:'v7', name:'Nina', desc:'Warm and reassuring — a steady narrator voice for long-form storytelling.', cats:['Narrative Story'], langs:['English (US)','Portuguese'], mine:false, fav:false, defaultFor:[] },
-  { id:'v8', name:'Theo', desc:'Crisp, professional delivery with quick pacing — suited to news-style reels.', cats:['Informative Educational','Social Media'], langs:['English (UK)'], mine:true, fav:false, defaultFor:['SCEI'], createdFrom:{ type:'clone', fileName:'interview_clip.mp4' } },
-  { id:'v9', name:'Luna', desc:'Bright and energetic — upbeat pacing that fits fast-cut product demos.', cats:['Advertisement'], langs:['English (US)','Japanese','Korean'], mine:false, fav:false, defaultFor:[] },
-  { id:'v10', name:'Owen', desc:'Deep, calm delivery with a documentary feel — great for voice-over narration.', cats:['Narrative Story'], langs:['English (US)'], mine:false, fav:false, defaultFor:[] },
+  { id:'v1', name:'Maya', desc:'Warm, conversational female voice — great for lifestyle and wellness content.', cats:['Conversational','Social Media'], langs:['English (US)','English (UK)','Korean'], mine:true, fav:false, createdFrom:{ type:'design', gender:'Female', age:'Young', prompt:'Warm, conversational young adult female voice speaking English (US) with a friendly, approachable tone. Natural and relatable — perfect for lifestyle and wellness content.' } },
+  { id:'v2', name:'Jordan', desc:'High-energy male voice with a confident edge — built for hype and promo reels.', cats:['Advertisement','Social Media'], langs:['English (US)'], mine:false, fav:false },
+  { id:'v3', name:'Ava', desc:'Calm, soothing female narration — ideal for tutorials and explainer scripts.', cats:['Informative Educational'], langs:['English (US)','Spanish'], mine:true, fav:true, createdFrom:{ type:'design', gender:'Female', age:'Middle-aged', prompt:'Calm, soothing middle-aged female voice speaking English (US) with a gentle, reassuring tone. Clear and measured — perfect for tutorials and explainer scripts.' } },
+  { id:'v4', name:'Elliot', desc:'Polished, professional male voice — a natural fit for corporate announcements.', cats:['Advertisement'], langs:['English (UK)','French','German'], mine:false, fav:false },
+  { id:'v5', name:'Sora', desc:'Bright, youthful female voice with a playful lilt — great for Gen-Z social clips.', cats:['Social Media'], langs:['Korean','English (US)'], mine:false, fav:false },
+  { id:'v6', name:'Marcus', desc:'Deep, resonant male voice — cinematic weight for trailers and brand films.', cats:['Entertainment TV','Advertisement'], langs:['English (US)'], mine:false, fav:false },
+  { id:'v7', name:'Nina', desc:'Warm and reassuring — a steady narrator voice for long-form storytelling.', cats:['Narrative Story'], langs:['English (US)','Portuguese'], mine:false, fav:false },
+  { id:'v8', name:'Theo', desc:'Crisp, professional delivery with quick pacing — suited to news-style reels.', cats:['Informative Educational','Social Media'], langs:['English (UK)'], mine:true, fav:false, createdFrom:{ type:'clone', fileName:'interview_clip.mp4' } },
+  { id:'v9', name:'Luna', desc:'Bright and energetic — upbeat pacing that fits fast-cut product demos.', cats:['Advertisement'], langs:['English (US)','Japanese','Korean'], mine:false, fav:false },
+  { id:'v10', name:'Owen', desc:'Deep, calm delivery with a documentary feel — great for voice-over narration.', cats:['Narrative Story'], langs:['English (US)'], mine:false, fav:false },
   // v11+ -- bulk sample set standing in for the real library's much larger (infinite-scroll)
   // catalog; names/descriptions loosely modeled on a reference ElevenLabs Voice Library screen.
-  { id:'v11', name:'Viraj', desc:'Warm, energetic and lively — a friendly, upbeat voice designed to draw listeners in.', cats:['Social Media','Conversational'], langs:['Hindi'], mine:false, fav:false, defaultFor:[] },
-  { id:'v12', name:'Adam', desc:'American, dark and tough — a rugged hero\'s voice, weathered by years on the road.', cats:['Characters Animations','Entertainment TV'], langs:['English (US)'], mine:false, fav:false, defaultFor:[] },
-  { id:'v13', name:'William', desc:'Flamboyant, bold and sassy — larger-than-life delivery for character-driven content.', cats:['Characters Animations'], langs:['English (US)'], mine:false, fav:false, defaultFor:[] },
-  { id:'v14', name:'Bella', desc:'Professional, bright and warm — clear and engaging, ideal for educational explainers.', cats:['Informative Educational'], langs:['English (US)'], mine:false, fav:true, defaultFor:[] },
-  { id:'v15', name:'Roger', desc:'Laid-back, casual and resonant — easy-going pacing that suits relaxed conversational clips.', cats:['Conversational'], langs:['English (US)'], mine:false, fav:false, defaultFor:[] },
-  { id:'v16', name:'Sarah', desc:'Mature, reassuring and confident — a young adult woman with a confident, grounded tone.', cats:['Conversational','Advertisement'], langs:['English (US)'], mine:true, fav:false, defaultFor:[], createdFrom:{ type:'clone', fileName:'voice_sample.wav' } },
-  { id:'v17', name:'Laura', desc:'Enthusiast with a quirky attitude — playful young adult female voice for social content.', cats:['Social Media'], langs:['English (US)'], mine:false, fav:false, defaultFor:[] },
-  { id:'v18', name:'Charlie', desc:'Deep, confident and energetic — a young Australian male with a warm, assured delivery.', cats:['Conversational'], langs:['English (Australian)'], mine:false, fav:false, defaultFor:[] },
-  { id:'v19', name:'George', desc:'Warm, captivating storyteller — resonant British narration that draws listeners in instantly.', cats:['Narrative Story'], langs:['English (UK)'], mine:false, fav:false, defaultFor:[] },
-  { id:'v20', name:'Callum', desc:'Husky trickster — deceptively gravelly, yet unsettling, great for mischievous characters.', cats:['Characters Animations'], langs:['English (US)'], mine:false, fav:false, defaultFor:[] },
-  { id:'v21', name:'River', desc:'Relaxed, neutral and informative — a versatile voice ready for narration and explainers.', cats:['Informative Educational','Narrative Story'], langs:['English (US)'], mine:false, fav:false, defaultFor:[] },
-  { id:'v22', name:'Harry', desc:'Fierce warrior — an animated, battle-ready voice for game and character content.', cats:['Characters Animations','Entertainment TV'], langs:['English (US)'], mine:false, fav:false, defaultFor:[] },
-  { id:'v23', name:'Liam', desc:'Energetic social media creator — a young adult voice full of energy and enthusiasm.', cats:['Social Media'], langs:['English (US)'], mine:false, fav:false, defaultFor:[] },
-  { id:'v24', name:'Alice', desc:'Clear, engaging educator — friendly woman\'s voice built for tutorials and explainers.', cats:['Informative Educational'], langs:['English (UK)'], mine:false, fav:false, defaultFor:[] },
-  { id:'v25', name:'Matilda', desc:'Knowledgeable and professional — a composed woman\'s voice with a pleasing, steady tone.', cats:['Informative Educational','Advertisement'], langs:['English (US)'], mine:false, fav:false, defaultFor:[] },
-  { id:'v26', name:'Will', desc:'Relaxed optimist — conversational and laid back, great for casual voiceovers.', cats:['Conversational'], langs:['English (US)'], mine:false, fav:false, defaultFor:[] },
+  { id:'v11', name:'Viraj', desc:'Warm, energetic and lively — a friendly, upbeat voice designed to draw listeners in.', cats:['Social Media','Conversational'], langs:['Hindi'], mine:false, fav:false },
+  { id:'v12', name:'Adam', desc:'American, dark and tough — a rugged hero\'s voice, weathered by years on the road.', cats:['Characters Animations','Entertainment TV'], langs:['English (US)'], mine:false, fav:false },
+  { id:'v13', name:'William', desc:'Flamboyant, bold and sassy — larger-than-life delivery for character-driven content.', cats:['Characters Animations'], langs:['English (US)'], mine:false, fav:false },
+  { id:'v14', name:'Bella', desc:'Professional, bright and warm — clear and engaging, ideal for educational explainers.', cats:['Informative Educational'], langs:['English (US)'], mine:false, fav:true },
+  { id:'v15', name:'Roger', desc:'Laid-back, casual and resonant — easy-going pacing that suits relaxed conversational clips.', cats:['Conversational'], langs:['English (US)'], mine:false, fav:false },
+  { id:'v16', name:'Sarah', desc:'Mature, reassuring and confident — a young adult woman with a confident, grounded tone.', cats:['Conversational','Advertisement'], langs:['English (US)'], mine:true, fav:false, createdFrom:{ type:'clone', fileName:'voice_sample.wav' } },
+  { id:'v17', name:'Laura', desc:'Enthusiast with a quirky attitude — playful young adult female voice for social content.', cats:['Social Media'], langs:['English (US)'], mine:false, fav:false },
+  { id:'v18', name:'Charlie', desc:'Deep, confident and energetic — a young Australian male with a warm, assured delivery.', cats:['Conversational'], langs:['English (Australian)'], mine:false, fav:false },
+  { id:'v19', name:'George', desc:'Warm, captivating storyteller — resonant British narration that draws listeners in instantly.', cats:['Narrative Story'], langs:['English (UK)'], mine:false, fav:false },
+  { id:'v20', name:'Callum', desc:'Husky trickster — deceptively gravelly, yet unsettling, great for mischievous characters.', cats:['Characters Animations'], langs:['English (US)'], mine:false, fav:false },
+  { id:'v21', name:'River', desc:'Relaxed, neutral and informative — a versatile voice ready for narration and explainers.', cats:['Informative Educational','Narrative Story'], langs:['English (US)'], mine:false, fav:false },
+  { id:'v22', name:'Harry', desc:'Fierce warrior — an animated, battle-ready voice for game and character content.', cats:['Characters Animations','Entertainment TV'], langs:['English (US)'], mine:false, fav:false },
+  { id:'v23', name:'Liam', desc:'Energetic social media creator — a young adult voice full of energy and enthusiasm.', cats:['Social Media'], langs:['English (US)'], mine:false, fav:false },
+  { id:'v24', name:'Alice', desc:'Clear, engaging educator — friendly woman\'s voice built for tutorials and explainers.', cats:['Informative Educational'], langs:['English (UK)'], mine:false, fav:false },
+  { id:'v25', name:'Matilda', desc:'Knowledgeable and professional — a composed woman\'s voice with a pleasing, steady tone.', cats:['Informative Educational','Advertisement'], langs:['English (US)'], mine:false, fav:false },
+  { id:'v26', name:'Will', desc:'Relaxed optimist — conversational and laid back, great for casual voiceovers.', cats:['Conversational'], langs:['English (US)'], mine:false, fav:false },
 ];
 
 const MUSIC_CATS = ['Funny','Uplifting','Hype','Energetic','Mellow','Calm','Dramatic'];
@@ -1319,12 +1367,14 @@ function voiceMenuHTML(v){
   // for a voice with no createdFrom.
   if (!v.mine){
     return `<div class="vl-kebab-menu" onclick="event.stopPropagation()">
+      <div class="vl-menu-row" onclick="openCharAssignModal('${v.id}')"><span>Set as character voice</span></div>
       <div class="vl-menu-row" onclick="openRemixVoice('${v.id}')"><span>Remix voice</span></div>
       <div class="vl-menu-row" onclick="openVoiceDetails('${v.id}')"><span>Voice details</span></div>
     </div>`;
   }
   return `<div class="vl-kebab-menu" onclick="event.stopPropagation()">
     <div class="vl-menu-row" onclick="openEditVoiceModal('${v.id}')"><span>Edit voice</span></div>
+    <div class="vl-menu-row" onclick="openCharAssignModal('${v.id}')"><span>Set as character voice</span></div>
     <div class="vl-menu-row" onclick="openRemixVoice('${v.id}')"><span>Remix voice</span></div>
     <div class="vl-menu-row" onclick="openVoiceDetails('${v.id}')"><span>Voice details</span></div>
     <div class="vl-menu-row danger" onclick="requestDeleteVoice('${v.id}')"><span>Delete voice</span></div>
@@ -1360,7 +1410,10 @@ function renderVoices(){
 
   document.getElementById('voiceGrid').innerHTML = list.map(v => {
     const added = addedVoices.has(v.id);
-    const defaultFor = v.defaultFor || [];
+    // Default status is per-character now (see CHARACTERS above), not a single brand-wide
+    // flag on the voice itself -- so this reads back off which characters point at v.id
+    // instead of a defaultFor array stored on the voice.
+    const defaultChars = CHARACTERS.filter(c => c.voiceId === v.id);
     const lang = voiceLanguageTag(v);
     const useCase = (v.cats && v.cats[0]) || '—';
     return `
@@ -1370,7 +1423,7 @@ function renderVoices(){
         <div class="voice-card-info">
           <div class="voice-card-name-row">
             <p class="voice-card-name">${escHtml(v.name)}</p>
-            ${defaultFor.length ? `<span class="voice-card-badge"><span>${defaultFor.length === 1 ? 'Default' : 'Default · ' + defaultFor.length + ' brands'}</span></span>` : ''}
+            ${defaultChars.length ? `<span class="voice-card-badge"><span>${defaultChars.length === 1 ? 'Default · ' + escHtml(defaultChars[0].name) : 'Default · ' + defaultChars.length + ' characters'}</span></span>` : ''}
           </div>
           <p class="voice-card-desc">${escHtml(v.desc)}</p>
         </div>
@@ -1850,6 +1903,79 @@ function confirmMusicApply(){
   alert(`${t.title} added as background music to ${n} video${n === 1 ? '' : 's'}.`);
 }
 
+/* ---------------- Set as character voice modal ----------------
+   charAssignSelected starts pre-populated with whichever characters already point at this
+   voice, so opening the modal reads as "here's who's currently using it," not a blank slate
+   -- and Save both assigns newly-checked characters and clears any that got unchecked,
+   in one pass, since a character can only have one default voice at a time. */
+let charAssignVoiceId = null;
+let charAssignSelected = new Set();
+
+function openCharAssignModal(voiceId){
+  const v = voices.find(x => x.id === voiceId);
+  if (!v) return;
+  openMenuFor = null;
+  charAssignVoiceId = voiceId;
+  charAssignSelected = new Set(CHARACTERS.filter(c => c.voiceId === voiceId).map(c => c.id));
+  document.getElementById('charAssignVoiceName').textContent = v.name;
+  // Explore-tab voices reach this modal without ever having been added to My Voices --
+  // flagging that up front here, not just after Save, since it's a side effect the user
+  // should know about before confirming, not discover afterward.
+  document.getElementById('charAssignVoiceMeta').textContent = addedVoices.has(voiceId)
+    ? 'Select every character that should use this voice by default.'
+    : "Select every character that should use this voice by default. This will also add it to My Voices.";
+  renderCharAssignGrid();
+  document.getElementById('charAssignOverlay').hidden = false;
+  renderVoices();
+}
+function closeCharAssignModal(){
+  document.getElementById('charAssignOverlay').hidden = true;
+  charAssignVoiceId = null;
+}
+function renderCharAssignGrid(){
+  document.getElementById('charAssignGrid').innerHTML = CHARACTERS.map((c, i) => {
+    const selected = charAssignSelected.has(c.id);
+    const currentVoice = c.voiceId ? voices.find(x => x.id === c.voiceId) : null;
+    const isThisVoice = currentVoice && currentVoice.id === charAssignVoiceId;
+    const voiceLabel = currentVoice ? (isThisVoice ? 'Currently this voice' : `Voice: ${escHtml(currentVoice.name)}`) : 'No voice set';
+    return `
+    <div class="char-select-card${selected ? ' selected' : ''}" role="button" tabindex="0" onclick="toggleCharAssign('${c.id}')">
+      <div class="thumb" style="background:${CHAR_PLACEHOLDER_COLORS[i % CHAR_PLACEHOLDER_COLORS.length]}; display:flex; align-items:center; justify-content:center;">
+        <span class="char-select-card-initial">${escHtml(c.name[0])}</span>
+        <div class="select-check"><img src="${ICON}check.svg" alt=""></div>
+      </div>
+      <div class="meta">
+        <p class="name">${escHtml(c.name)}</p>
+        <div class="type-row"><span>${escHtml(c.type)}</span><span>·</span><span>${escHtml(c.brand)}</span></div>
+        <p class="char-select-card-voice${isThisVoice ? ' is-current' : ''}">${voiceLabel}</p>
+      </div>
+    </div>`;
+  }).join('');
+}
+function toggleCharAssign(id){
+  if (charAssignSelected.has(id)) charAssignSelected.delete(id); else charAssignSelected.add(id);
+  renderCharAssignGrid();
+}
+function confirmCharAssign(){
+  const v = voices.find(x => x.id === charAssignVoiceId);
+  if (!v) return;
+  // A library voice you haven't added yet can still be picked here (the kebab menu offers
+  // this action on Explore-tab cards too) -- but a character's default has to actually be
+  // usable, so assigning it here implicitly adds it to My Voices the same way the row's own
+  // add/check button would, rather than leaving a "default" that doesn't appear there.
+  const wasAdded = addedVoices.has(charAssignVoiceId);
+  if (charAssignSelected.size && !wasAdded) addedVoices.add(charAssignVoiceId);
+  CHARACTERS.forEach(c => {
+    if (charAssignSelected.has(c.id)) c.voiceId = charAssignVoiceId;
+    else if (c.voiceId === charAssignVoiceId) c.voiceId = null;
+  });
+  const names = CHARACTERS.filter(c => c.voiceId === charAssignVoiceId).map(c => c.name);
+  closeCharAssignModal();
+  renderVoices();
+  const addedNote = (!wasAdded && names.length) ? ` It's also been added to My Voices.` : '';
+  alert((names.length ? `${v.name} is now the default voice for ${names.join(', ')}.` : `${v.name} is no longer any character's default voice.`) + addedNote);
+}
+
 renderVoices();
 renderMusic();
 
@@ -2221,7 +2347,7 @@ function vcCreateVoice(){
   const id = 'v_' + Date.now();
   const fileNames = vc.clips.map(c => c.name).join(', ');
   voices.unshift({
-    id, name, desc, gender:'Any', cats:[], langs:[], mine:true, fav:false, defaultFor:[],
+    id, name, desc, gender:'Any', cats:[], langs:[], mine:true, fav:false,
     createdFrom:{ type:'clone', fileName: fileNames || '—' },
   });
   addedVoices.add(id);
@@ -2518,7 +2644,7 @@ function vdSaveVoice(){
     prompt: (document.getElementById('vdPromptText') || {}).value || '',
     gender: vd.gender, age: vd.age, remixOf: vd.remixOfName || null,
   };
-  voices.unshift({ id, name, desc, gender, cats, langs, mine:true, fav:false, defaultFor:[], createdFrom });
+  voices.unshift({ id, name, desc, gender, cats, langs, mine:true, fav:false, createdFrom });
   addedVoices.add(id);
   closeCreateVoiceModal();
   setVoiceTab('mine');

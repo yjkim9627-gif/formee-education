@@ -1009,6 +1009,11 @@
   /* ---- Voice picker (Character section) — "My voices" card row + Browse ElevenLabs library ---- */
   .voice-section-label-row{display:flex; align-items:center; justify-content:space-between; margin-top:0; margin-bottom:12px;}
   .my-voices-label{font-size:13px; font-weight:700; color:var(--color-neutral-900);}
+  /* Shown next to "My voices" only while the picked character's own default voice is what's
+     currently selected -- explains WHY that row got highlighted on its own (picking a
+     character auto-selects their default, see reelSelectChar()) instead of it reading as a
+     silent/unexplained jump. Disappears the moment the user manually picks a different voice. */
+  .default-voice-hint{margin-left:6px; font-size:12px; font-weight:500; color:var(--color-neutral-500);}
   .voice-item{display:flex; align-items:center; gap:10px; padding:7px 8px; border-radius:8px; cursor:pointer;}
   .voice-item:hover{background:var(--color-neutral-100);}
   .voice-item.selected{background:var(--color-brand-primary-light);}
@@ -1817,7 +1822,7 @@
             </div>
             <div id="voiceLibrarySection">
               <div class="voice-section-label-row">
-                <span class="my-voices-label">My voices</span>
+                <span class="my-voices-label">My voices<span class="default-voice-hint" id="defaultVoiceHint" style="display:none;"></span></span>
                 <div class="see-all-link" onclick="openVoiceSelectModal('briefStyle')">See all <img src="../../../../components/ai-social-media/icons/back.svg" class="icon-inline icon-flip" alt="" style="margin-left:2px;"></div>
               </div>
               <div class="voice-card-row" id="myVoicesCardRow"></div>
@@ -6422,6 +6427,14 @@ function reelSelectChar(el, charId){
     document.getElementById('charStylesLabelReel').textContent = styles.label;
     document.querySelector('#charStylesAvatarReel img').src = styles.avatar;
   }
+  // Picking a character with a default voice set (see CHARACTER_DEFAULT_VOICE) jumps the
+  // voice section straight to it, instead of leaving whatever voice happened to be selected
+  // before -- deselecting the character just clears the tracked charId, it doesn't touch
+  // whatever voice is currently picked.
+  window.__selectedCharId = nowSelected ? charId : null;
+  const defaultId = nowSelected ? CHARACTER_DEFAULT_VOICE[charId] : null;
+  if(defaultId) selectVoiceById(defaultId);
+  else updateDefaultVoiceHint();
 }
 function reelSelectCharStyle(el){
   toggleCharCardSelect(el, '#charStylesGridReel');
@@ -7427,6 +7440,13 @@ const YOUR_VOICES_DATA = [
   {id:'chris', name:'Chris — Casual Narrator', tag:'Male · Standard', source:'cloned'}
 ];
 let selectedVoiceId = 'mina';
+// Which voice (if any) each character on this screen defaults to -- the same per-character
+// default concept voice-library.html's "Set as character voice" flow writes, mirrored here as
+// a plain id map since this page has its own separate voice list/state, not a shared backend.
+// Only 'elena' has one seeded (matching mina's pre-existing "Elena's default" tag above) --
+// the rest are genuinely unset until someone sets a default for them.
+const CHARACTER_DEFAULT_VOICE = { elena:'mina', milo:null, priya:null, monster:null, maya:null, sofia:null, esther:null };
+window.__selectedCharId = null;
 
 function renderMyVoicesCardRow(){
   const el = document.getElementById('myVoicesCardRow');
@@ -7439,9 +7459,27 @@ function renderMyVoicesCardRow(){
       <span class="voice-check">✓</span>
     </div>`).join('');
 }
+// Whichever character is currently picked, plus whether the voice they'd default to is the
+// one actually selected right now -- both can go stale independently (switching character,
+// or manually picking a different voice for the same character), so this re-checks both
+// every time instead of being set once at selection time.
+function updateDefaultVoiceHint(){
+  const hint = document.getElementById('defaultVoiceHint');
+  if(!hint) return;
+  const charId = window.__selectedCharId;
+  const defaultId = charId ? CHARACTER_DEFAULT_VOICE[charId] : null;
+  if(defaultId && defaultId === selectedVoiceId){
+    const charName = charId.charAt(0).toUpperCase() + charId.slice(1);
+    hint.textContent = `· Default for ${charName}`;
+    hint.style.display = '';
+  } else {
+    hint.style.display = 'none';
+  }
+}
 function selectVoiceById(id){
   selectedVoiceId = id;
   renderMyVoicesCardRow();
+  updateDefaultVoiceHint();
 }
 
 // ---- "Change voice" modal (Figma 8727:223765 "My voices" + 8727:223551 "ElevenLabs voice
