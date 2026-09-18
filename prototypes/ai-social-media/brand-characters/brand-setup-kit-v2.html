@@ -1665,9 +1665,9 @@ input.card-name::selection{background:var(--brand-primary-mid);}
     <div class="group-by">
       <p class="group-by-label">Group by</p>
       <div class="segmented" role="group" aria-label="Group by">
-        <button type="button" class="seg" data-group="none"><span>None</span></button>
+        <button type="button" class="seg seg-on" data-group="none"><span>None</span></button>
         <button type="button" class="seg" data-group="type"><span>Type</span></button>
-        <button type="button" class="seg seg-on" data-group="brand"><span>Brand</span></button>
+        <button type="button" class="seg" data-group="brand"><span>Brand</span></button>
       </div>
     </div>
   </div>
@@ -18420,7 +18420,8 @@ const ROLES = {
   super:  { scope:'Super admin (All)',
             sub:'AI presenters across all brands in this account.',
             brands:null, filters:['created','age','gender'], groupBy:['none','type','brand'],
-            defaultGroupBy:'brand', brandTag:true,  locked:false },
+            /* 처음 들어오면 묶지 않은 목록으로 연다 — 2026-09-18 */
+            defaultGroupBy:'none',  brandTag:true,  locked:false },
   multi:  { scope:'My brands (All)',
             sub:'Your AI presenters across your brands.',
             brands:null, filters:['age','gender'],            groupBy:['none','type','brand'],
@@ -18438,7 +18439,7 @@ const styleCount = c => (c.styles !== undefined ? c.styles : 0);
 
 const state = {
   role: 'super',
-  groupBy: 'brand',
+  groupBy: 'none',
   /* Figma 는 Favorites 토글과 `Created by · Me` 를 눌린 모습으로 그려 두었지만 정작
      9장을 다 보여준다 — 걸린 필터가 아니라 칩의 두 얼굴을 보여주려고 그린 것이다.
      화면을 그 모습 그대로 열면 "켜져 있는데 아무것도 안 걸러지는" 상태가 되므로
