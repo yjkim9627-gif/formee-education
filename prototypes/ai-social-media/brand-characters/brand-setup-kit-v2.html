@@ -257,7 +257,7 @@ input:focus-visible{outline:none;}   /* the wrapping field already shows focus v
 
 /* --------------------------------------------------------------- groups */
 .groups{display:flex;flex-direction:column;gap:28px;align-items:flex-start;width:100%;flex:none;}
-.group{position:relative;display:flex;flex-direction:column;gap:14px;align-items:flex-start;width:100%;flex:none;overflow:hidden;}
+.group{position:relative;display:flex;flex-direction:column;gap:14px;align-items:flex-start;width:100%;flex:none;overflow:visible;}
 .group-head{display:flex;gap:8px;align-items:center;width:100%;flex:none;overflow:hidden;}
 .group-title{font-weight:600;font-size:16px;line-height:24px;color:var(--neutral-900);white-space:nowrap;}
 .group-rule{flex:1 0 0;height:1px;min-width:1px;}
@@ -284,7 +284,10 @@ input:focus-visible{outline:none;}   /* the wrapping field already shows focus v
    second row aligned; without it the shorter cards float and the row breaks up. */
 /* Figma 는 한 줄이다 — `grid` 1602x382 · NO_WRAP · clipsContent (7867:208010).
    예전엔 6열 x 2행(12칸)으로 깔고 그 뒤에 가로 스크롤했다.            2026-09-17 */
-.grid.carousel{flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;}
+/* 세로를 잘라야 가로 스크롤이 되는데 그러면 떠오른 카드의 위와 그림자가 잘린다.
+   패딩으로 잘리는 상자를 넓히고 같은 만큼 마진으로 당겨 자리는 그대로 둔다. */
+.grid.carousel{flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;
+  padding:10px 0 34px;margin:-10px 0 -34px;}
 .grid.carousel .card{height:382px;}
 .grid.carousel .card-new .thumb-new{height:382px;}
 
@@ -379,26 +382,35 @@ input.card-name::selection{background:var(--brand-primary-mid);}
 .thumb-new:hover{border-color:var(--neutral-450);background:rgba(255,255,255,.6);}
 
 /* ── 카드 호버 ──────────────────────────────────────────────────────────────
-   Figma 컴포넌트에는 호버 변형이 없다(변형은 Character Card / New character 뿐).
-   카드를 누르면 상세가 열리는데 알려주는 게 커서뿐이라 반응을 하나 준다.
-   **카드는 움직이지 않는다** — 세 가지 이유로 위치를 건드리면 안 된다.
-     · 캐러셀 줄은 `overflow-y:hidden` 이라 살짝 떠오르면 위가 잘린다
-     · 썸네일 위의 별·⋯·뱃지는 absolute 라 카드가 밀리면 같이 흔들린다
-     · 카드를 scale 하면 1px inside 스트로크와 10px 뱃지 글자가 리샘플돼 흐려진다
-   그래서 자리는 그대로 두고 **사진만 1.02 로 숨쉬고, 테두리가 한 단계 진해진다**.
-   사진은 `overflow:hidden` 안에서만 커지므로 레이아웃이 전혀 안 움직인다.  2026-09-18 */
+   Figma 컴포넌트에는 아직 호버 변형이 없다(Character Card / New character 뿐).
+   카드가 **떠오르고**, 사진이 한 박자 늦게 밀려 들어오고, 그림자가 깔린다.
+   세 가지가 같은 시간에 끝나면 밋밋해서, 사진만 320ms 로 더 길게 간다 —
+   카드가 먼저 서고 그림 안이 나중에 자리를 잡는 느낌이 목적이다.
+   그림자는 −6 스프레드로 발밑에 모아 카드가 바닥에서 떨어진 것처럼 보이게 한다.
+   떠오를 자리는 `.group` 의 overflow 를 풀고 캐러셀 줄에 패딩을 줘서 마련했다.
+                                                                    2026-09-18 */
+#groups .card:not(.card-new){
+  transition:transform .2s cubic-bezier(.2,.7,.3,1);will-change:transform;}
 #groups .card:not(.card-new) .thumb{
-  transition:box-shadow .16s ease;}
+  transition:box-shadow .2s cubic-bezier(.2,.7,.3,1);}
 #groups .card:not(.card-new) .thumb-img{
-  transition:transform .22s cubic-bezier(.2,.6,.2,1);}
+  transition:transform .32s cubic-bezier(.2,.7,.3,1);}
+#groups .card:not(.card-new):hover{transform:translateY(-4px);}
 #groups .card:not(.card-new):hover .thumb{
-  box-shadow:inset 0 0 0 1px var(--neutral-500), 0 6px 16px rgba(15,23,41,.10);}
-#groups .card:not(.card-new):hover .thumb-img{transform:scale(1.02);}
+  box-shadow:inset 0 0 0 1px var(--neutral-500),
+             0 12px 24px -6px rgba(15,23,41,.22);}
+#groups .card:not(.card-new):hover .thumb-img{transform:scale(1.045);}
+#groups .card:not(.card-new):active{transform:translateY(-1px);}
 #groups .card:not(.card-new):focus-visible .thumb{
   box-shadow:inset 0 0 0 1px var(--neutral-500), 0 0 0 3px rgba(79,109,230,.35);}
+/* 캐러셀은 가로로 스크롤되는 줄이라 떠오른 카드가 앞줄로 올라와야 한다 */
+#groups .grid.carousel .card:not(.card-new):hover{position:relative;z-index:1;}
 @media (prefers-reduced-motion:reduce){
+  #groups .card:not(.card-new),
   #groups .card:not(.card-new) .thumb-img{transition:none;}
+  #groups .card:not(.card-new):hover{transform:none;}
   #groups .card:not(.card-new):hover .thumb-img{transform:none;}
+}
 }
 .thumb-new span{font-weight:700;font-size:13px;line-height:20px;color:var(--neutral-700);
   text-align:center;white-space:nowrap;}
