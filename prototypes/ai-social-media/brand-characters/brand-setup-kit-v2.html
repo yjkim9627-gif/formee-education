@@ -434,7 +434,10 @@ input.card-name::selection{background:var(--brand-primary-mid);}
 .empty-state .btn-primary{height:38px;box-sizing:border-box;}
 
 /* ------------------------------------------------------------ context menu */
-.ctx-menu{position:absolute;left:36px;top:54px;width:200px;height:124px;background:#fff;
+/* 카드 오버플로 메뉴는 ⋯ 버튼 기준 bottom-end + 8 이다(카드 모서리 기준이 아니다).
+   버튼이 left 198 · top 14 · 36 각형이므로 오른쪽 끝 234 − 폭 200 = 34,
+   아래끝 50 + 8 = 58.                                                 2026-09-18 */
+.ctx-menu{position:absolute;left:34px;top:58px;width:200px;height:124px;background:#fff;
   border:1px solid var(--neutral-400);border-radius:10px;padding:5px;overflow:hidden;
   display:flex;flex-direction:column;gap:2px;align-items:flex-start;z-index:20;
   box-shadow:0px 4px 10px 0px rgba(0,0,0,0.1);}
