@@ -232,20 +232,27 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
   overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
 }
 /* sibling of .voice-card-info (not nested inside it) -- Figma's "tags" frame sits to the
-   right of the text block, in its own column, not stacked under the description. */
-.voice-card-tags{display:flex; align-items:center; gap:6px; flex-shrink:0;}
-.voice-card-tag{
-  padding:3px 10px; border-radius:999px; background:var(--color-neutral-100);
-  font-family:var(--font-family-text); font-size:11px; font-weight:500; color:var(--color-neutral-700); white-space:nowrap;
+   right of the text block, in its own column, not stacked under the description.
+   Re-fetched against the updated Voice Library Card component (9965:292091): tags are no
+   longer filled pill chips -- just a flag + language label, plus an optional plain-text
+   accent label (e.g. "American") when the language carries one. Multi-language "+N more"
+   overflow is gone too -- the card only ever surfaces the voice's primary language now. */
+.voice-card-tags{display:flex; align-items:center; gap:8px; flex-shrink:0; width:196px;}
+.voice-card-tag-lang{display:inline-flex; align-items:center; gap:8px; font-family:var(--font-family-text); font-size:12px; font-weight:500; line-height:18px; color:var(--color-neutral-700); white-space:nowrap;}
+.voice-card-tag-lang .voice-card-flag{font-size:14px; line-height:1; flex-shrink:0;}
+.voice-card-tag-accent{font-family:var(--font-family-text); font-size:12px; font-weight:500; line-height:18px; color:var(--color-neutral-500); white-space:nowrap;}
+/* "Use case" -- own field now, sibling of .voice-card-tags rather than folded into it
+   (Figma's Content cluster lists play+text, tags, and Use case as three separate children). */
+.voice-card-usecase{
+  flex-shrink:0; width:79px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  font-family:var(--font-family-text); font-size:12px; font-weight:500; line-height:18px; color:var(--color-neutral-700);
 }
-.voice-card-tag-more{font-family:var(--font-family-text); font-size:11px; font-weight:500; color:var(--color-neutral-500); white-space:nowrap;}
 
 .voice-card-actions{display:flex; align-items:center; gap:var(--spacing-sm); flex-shrink:0;}
-/* Actions / Icon Button, Actions / Favorite Button -- Figma 9965:292091's final 2-3 button
-   set (add is Library-only; fav + setdefault are on every variant). The old third "more"
-   kebab (rename/delete/per-brand default submenu) is gone from the Figma component, so it's
-   gone here too -- setdefault now does the single most common thing that menu did (toggle
-   default-for-the-active-brand) directly, matching Figma's Idle/Set circle-check button. */
+/* Actions / Icon Button, Actions / Favorite Button, Actions / More Button -- Figma
+   9965:292091's final button set. The old setdefault (circle-check) button is gone from the
+   Figma component entirely -- default status is communicated purely via the green "Default"
+   badge next to the name now, with no per-row toggle control -- so it's gone here too. */
 .voice-card-icon-btn{
   width:36px; height:36px; flex-shrink:0; box-sizing:border-box; padding:0; cursor:pointer;
   border:1px solid var(--color-neutral-400); background:var(--color-neutral-0); border-radius:var(--radius-lg);
@@ -256,18 +263,15 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
 /* Selected-state colors -- re-verified against get_design_context (which resolves the
    real nested-instance render), not the earlier plugin-API paint read that missed a
    nesting level and reported the wrong node as empty. Both the card's live "Favorited=On"
-   instance (9965:9 -> Favorite Button child I9965:24;3356:1608) and the setdefault
-   button's "State=Focused" render to the exact same chrome: fill neutral-150, border
-   neutral-500. Never a dark-900 fill, and never fully transparent/borderless either --
+   instance (9965:9 -> Favorite Button child I9965:24;3356:1608) and the Elevenlabs "Added"
+   variant's icon button (10074:261381) render to the exact same chrome: fill neutral-150,
+   border neutral-500. Never a dark-900 fill, and never fully transparent/borderless either --
    those were both this file's own earlier mistakes. */
-.voice-card-icon-btn.setdefault.on,
+.voice-card-icon-btn.add.on,
 .voice-card-icon-btn.fav.active{background:var(--color-neutral-150); border-color:var(--color-neutral-500);}
-/* Not a real disabled state -- clicking it still works, it just routes through the
-   "change your default voice?" confirm modal instead of toggling immediately. Muted so
-   it doesn't compete visually with the one card that IS the current default. */
-.voice-card-icon-btn.setdefault.muted{opacity:.45;}
-/* "more" (kebab) button -- My Voices tab only (see .voice-card-actions markup). Same
-   selected-state convention as fav/setdefault above, applied while its menu is open. */
+/* "more" (kebab) button -- present on every card now (both tabs), matching the Figma
+   component's universal Actions/More Button. Same selected-state convention as fav/add
+   above, applied while its menu is open. */
 .voice-card-icon-btn.more.active{background:var(--color-neutral-150); border-color:var(--color-neutral-500);}
 
 /* Icon-button tooltip -- "Editor / Panel Action Row/Tooltip" (Figma 4554:89321) for the
@@ -1015,19 +1019,6 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
   </div>
 </div>
 
-<div class="modal-overlay" id="vlSetDefaultOverlay" hidden onclick="if(event.target===this) closeSetDefaultConfirm()">
-  <div class="modal modal--confirm">
-    <div class="modal__content">
-      <h3 class="modal__title">Change your default voice?</h3>
-      <p class="modal__body" id="vlSetDefaultBody"></p>
-    </div>
-    <div class="modal__footer">
-      <button type="button" class="actions-btn actions-btn--secondary" onclick="closeSetDefaultConfirm()">Cancel</button>
-      <button type="button" class="actions-btn actions-btn--primary" onclick="confirmSetDefault()">Confirm</button>
-    </div>
-  </div>
-</div>
-
 <!-- My Voices kebab menu: Edit voice -->
 <div class="modal-overlay" id="editVoiceOverlay" hidden onclick="if(event.target===this) closeEditVoiceModal()">
   <div class="modal modal--form">
@@ -1192,6 +1183,18 @@ const VOICE_LANGUAGES = [
 let voiceLangFilter = new Set();
 let voiceLangMenuOpen = false;
 
+// Voice Library Card (9965:292091) shows one language + an optional accent label (e.g.
+// "English" + "American"), not the full langs[] list -- English is the only language this
+// data models a real regional accent for, so it's the only one that ever produces a second
+// tag; every other language just shows its flag + name with no accent.
+const LANGUAGE_ACCENTS = { 'English (US)':'American', 'English (UK)':'British', 'English (Australian)':'Australian' };
+function voiceLanguageTag(v){
+  const raw = (v.langs && v.langs[0]) || '';
+  const base = raw.replace(/\s*\([^)]*\)\s*$/, '') || raw;
+  const flag = (VOICE_LANGUAGES.find(l => l.name === base) || {}).flag || '';
+  return { base, flag, accent: LANGUAGE_ACCENTS[raw] || '' };
+}
+
 function closeVoiceFselectMenus(){
   voiceGenderMenuOpen = false; voiceLangMenuOpen = false;
   document.getElementById('voiceGenderMenu').hidden = true;
@@ -1309,6 +1312,17 @@ function toggleVoiceFavOnly(){
 
 function voiceMenuHTML(v){
   if (openMenuFor !== v.id) return '';
+  // Elevenlabs library voices aren't owned (v.mine is only true for voices this account
+  // actually created via Design/Clone/Remix) -- Edit/Delete would imply renaming or
+  // deleting someone else's library voice, so those two drop out even if the voice has
+  // been added to My Voices; Remix and Voice details both already have sensible fallbacks
+  // for a voice with no createdFrom.
+  if (!v.mine){
+    return `<div class="vl-kebab-menu" onclick="event.stopPropagation()">
+      <div class="vl-menu-row" onclick="openRemixVoice('${v.id}')"><span>Remix voice</span></div>
+      <div class="vl-menu-row" onclick="openVoiceDetails('${v.id}')"><span>Voice details</span></div>
+    </div>`;
+  }
   return `<div class="vl-kebab-menu" onclick="event.stopPropagation()">
     <div class="vl-menu-row" onclick="openEditVoiceModal('${v.id}')"><span>Edit voice</span></div>
     <div class="vl-menu-row" onclick="openRemixVoice('${v.id}')"><span>Remix voice</span></div>
@@ -1344,19 +1358,11 @@ function renderVoices(){
   document.getElementById('voiceEmptyState').hidden = !showRichEmpty;
   document.getElementById('voiceEmpty').hidden = !(list.length === 0 && !showRichEmpty);
 
-  // Only one voice can be "Default" for the active brand at a time -- every other
-  // card's setdefault button gets visually muted (not truly disabled: clicking it still
-  // works, it just routes through requestSetDefault()'s confirm modal instead of toggling
-  // straight away, same idea as a disabled-but-explainable control).
-  const currentDefaultVoice = voices.find(o => (o.defaultFor || []).includes(ACTIVE_BRAND));
-
   document.getElementById('voiceGrid').innerHTML = list.map(v => {
-    const langsShown = v.langs.slice(0, 3);
-    const more = v.langs.length - langsShown.length;
     const added = addedVoices.has(v.id);
     const defaultFor = v.defaultFor || [];
-    const isDefault = defaultFor.includes(ACTIVE_BRAND);
-    const defaultLocked = !isDefault && !!currentDefaultVoice;
+    const lang = voiceLanguageTag(v);
+    const useCase = (v.cats && v.cats[0]) || '—';
     return `
     <div class="voice-card" data-id="${v.id}">
       <div class="voice-card-content">
@@ -1369,29 +1375,25 @@ function renderVoices(){
           <p class="voice-card-desc">${escHtml(v.desc)}</p>
         </div>
         <div class="voice-card-tags">
-          ${langsShown.map(l => `<span class="voice-card-tag">${escHtml(l)}</span>`).join('')}
-          ${more > 0 ? `<span class="voice-card-tag-more">+${more} more</span>` : ''}
+          <span class="voice-card-tag-lang">${lang.flag ? `<span class="voice-card-flag">${lang.flag}</span>` : ''}<span>${escHtml(lang.base)}</span></span>
+          ${lang.accent ? `<span class="voice-card-tag-accent">${escHtml(lang.accent)}</span>` : ''}
         </div>
+        <p class="voice-card-usecase">${escHtml(useCase)}</p>
       </div>
       <div class="voice-card-actions">
-        ${voiceTab === 'explore' ? `
-        <button type="button" class="voice-card-icon-btn add" onclick="toggleAddVoice('${v.id}', this)" aria-pressed="${added}" aria-label="${added ? 'Remove' : 'Add'} ${escHtml(v.name)}">
-          <img src="${ICON}pagebar-plus.svg" alt="">
+        ${!v.mine ? `
+        <button type="button" class="voice-card-icon-btn add${added ? ' on' : ''}" onclick="toggleAddVoice('${v.id}', this)" aria-pressed="${added}" aria-label="${added ? 'Remove' : 'Add'} ${escHtml(v.name)}">
+          <img src="${ICON}${added ? 'check' : 'pagebar-plus'}.svg" alt="">
           <span class="vl-icon-tooltip">${added ? 'Remove from My Voices' : 'Add to My Voices'}</span>
         </button>` : ''}
         <button type="button" class="voice-card-icon-btn fav${v.fav ? ' active' : ''}" onclick="toggleFavVoice('${v.id}')" aria-pressed="${v.fav}" aria-label="Favorite ${escHtml(v.name)}">
           <img src="${ICON}shape-star${v.fav ? '-filled' : ''}.svg" alt="">
           <span class="vl-icon-tooltip">${v.fav ? 'Remove from Favorites' : 'Add to Favorites'}</span>
         </button>
-        <button type="button" class="voice-card-icon-btn setdefault${isDefault ? ' on' : ''}${defaultLocked ? ' muted' : ''}" onclick="requestSetDefault('${v.id}', ACTIVE_BRAND)" aria-pressed="${isDefault}" aria-label="${isDefault ? 'Remove as default' : 'Set as default'} for ${escHtml(v.name)}">
-          <img src="${ICON}circle-check-glyph.svg" alt="">
-          <span class="vl-icon-tooltip">${isDefault ? 'Remove as default voice' : 'Set as default voice'}</span>
-        </button>
-        ${voiceTab === 'mine' ? `
         <button type="button" class="voice-card-icon-btn more${openMenuFor === v.id ? ' active' : ''}" onclick="event.stopPropagation(); toggleVoiceMenu('${v.id}')" aria-haspopup="true" aria-expanded="${openMenuFor === v.id}" aria-label="More actions for ${escHtml(v.name)}">
           <img src="${ICON}ui-ellipsis.svg" alt="">
         </button>
-        ${voiceMenuHTML(v)}` : ''}
+        ${voiceMenuHTML(v)}
       </div>
     </div>`;
   }).join('');
@@ -1419,48 +1421,6 @@ function toggleVoiceMenu(id){
   openMenuFor = (openMenuFor === id) ? null : id;
   renderVoices();
 }
-function toggleDefaultBrand(id, brand){
-  const v = voices.find(x => x.id === id);
-  if (!v) return;
-  v.defaultFor = v.defaultFor || [];
-  if (v.defaultFor.includes(brand)){
-    v.defaultFor = v.defaultFor.filter(b => b !== brand);
-  } else {
-    // only one voice can be the default for a given brand at a time
-    voices.forEach(o => { if (o.id !== id) o.defaultFor = (o.defaultFor || []).filter(b => b !== brand); });
-    v.defaultFor.push(brand);
-  }
-  renderVoices();
-}
-
-let pendingDefaultChange = null;
-// Card-level entry point for the setdefault button. Unsetting your own current default,
-// or picking a default when none exists yet, both just happen -- there's nothing to lose.
-// Taking the default away from ANOTHER voice is the one destructive-ish action here, so
-// that path stops at a confirm modal instead of swapping silently.
-function requestSetDefault(id, brand){
-  const v = voices.find(x => x.id === id);
-  if (!v) return;
-  const isCurrentlyDefault = (v.defaultFor || []).includes(brand);
-  if (isCurrentlyDefault){ toggleDefaultBrand(id, brand); return; }
-  const currentDefault = voices.find(o => (o.defaultFor || []).includes(brand));
-  if (!currentDefault){ toggleDefaultBrand(id, brand); return; }
-  pendingDefaultChange = { id, brand, oldName: currentDefault.name, newName: v.name };
-  document.getElementById('vlSetDefaultBody').textContent =
-    `${currentDefault.name} will no longer be your default voice. ${v.name} will be set as the new default instead.`;
-  document.getElementById('vlSetDefaultOverlay').hidden = false;
-}
-function closeSetDefaultConfirm(){
-  pendingDefaultChange = null;
-  document.getElementById('vlSetDefaultOverlay').hidden = true;
-}
-function confirmSetDefault(){
-  if (!pendingDefaultChange) return;
-  const { id, brand } = pendingDefaultChange;
-  closeSetDefaultConfirm();
-  toggleDefaultBrand(id, brand);
-}
-
 document.addEventListener('click', (e) => {
   if (!e.target.closest('.voice-card-icon-btn.more') && !e.target.closest('.vl-kebab-menu')){
     if (openMenuFor){ openMenuFor = null; renderVoices(); }
