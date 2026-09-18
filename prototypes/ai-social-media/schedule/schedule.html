@@ -144,7 +144,7 @@ body{
   font-weight:var(--font-weight-medium);color:var(--color-neutral-700);}
 .filters{flex:none;display:flex;align-items:center;gap:var(--spacing-md);margin-left:var(--spacing-sm);}
 .fchip:hover{border-color:var(--color-neutral-500);}
-.fchip svg{width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:1.8;
+.fchip svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;
   stroke-linecap:round;stroke-linejoin:round;}
 .count{flex:none;font-size:var(--font-size-text-2xs);line-height:16px;color:var(--color-neutral-500);
   font-variant-numeric:tabular-nums;}
@@ -169,7 +169,9 @@ body{
 .fmenu .cb svg{width:12px;height:12px;stroke:#fff;fill:none;stroke-width:2;
   stroke-linecap:round;stroke-linejoin:round;display:none;}
 .fmenu button[aria-checked="true"] .cb svg{display:block;}
-/* 단일 선택(Date range)은 선택 행 자체가 강조되고 우측에 체크 */
+/* 단일 선택(Date range)은 선택 행 자체가 강조되고 우측에 체크.
+   글자는 Medium — 고른 줄이라고 더 굵어지지는 않는다(체크박스 메뉴만 Regular). */
+.fmenu button.single{font-weight:var(--font-weight-medium);}
 .fmenu button.single[aria-checked="true"]{background:var(--color-neutral-100);}
 .fmenu button.single .tick{margin-left:auto;width:16px;height:16px;flex:none;
   stroke:var(--color-neutral-900);fill:none;stroke-width:2;stroke-linecap:round;
@@ -177,12 +179,16 @@ body{
 .fmenu button.single[aria-checked="true"] .tick{display:block;}
 
 /* ══ split: view + side peek ════════════════════════════════════════════ */
-/* split · calendar + peek — 1602 = calendar 1266 + peek 336, gap 0.
-   calendar 의 우측 패딩 24 가 시각적 간격이 된다. */
+/* split · calendar + peek — 고른 글이 없으면 캘린더가 1602 를 다 쓰고, peek 이
+   열리면 1242 + 24 + 336 으로 나뉜다. 우측 24 는 peek 이 있을 때만 생긴다.
+   (2026-09-17 새 프레임 10184:270071 에서 확인)                               */
 .split{flex:1 1 auto;min-height:0;display:flex;}
-/* calendar — 1266x912, padding 20/24/24/0, gap 16 */
+/* calendar — 1602x912(단독) / 1242x912(peek 열림), padding 20/0/24/0, gap 16 */
 .viewport{flex:1 1 auto;min-width:0;min-height:0;display:flex;flex-direction:column;
-  gap:var(--spacing-lg);padding:var(--spacing-xl) var(--spacing-2xl) var(--spacing-2xl) 0;}
+  gap:var(--spacing-lg);padding:var(--spacing-xl) 0 var(--spacing-2xl) 0;}
+/* 리스트 뷰는 24 를 두지 않는다 — Figma 는 list 1266 + peek 336 으로 딱 맞춘다.
+   가운데 간격이 생기는 건 캘린더뿐이다(1242 + 24 + 336). */
+.split:has(.peek:not([hidden])) .viewport:not(.list-view){padding-right:var(--spacing-2xl);}
 .viewport.list-view{padding:0;}
 
 /* ── calendar toolbar (카드 밖, 페이지 배경 위) ── */
@@ -385,35 +391,41 @@ body{
 
 /* ══ overlays ═══════════════════════════════════════════════════════════ */
 .scrim{position:absolute;inset:0;z-index:40;background:rgba(15,23,41,.42);}
-.menu{position:absolute;z-index:50;width:264px;padding:6px;background:var(--color-neutral-0);
-  border:1px solid var(--color-neutral-200);border-radius:var(--radius-lg);box-shadow:var(--shadow-popover);}
-.menu button{display:block;width:100%;padding:8px 10px;border-radius:var(--radius-md);text-align:left;}
+.menu{position:absolute;z-index:50;width:260px;box-sizing:border-box;padding:6px;
+  display:flex;flex-direction:column;gap:2px;background:var(--color-neutral-0);
+  border:1px solid var(--color-neutral-200);border-radius:var(--radius-xl);box-shadow:var(--shadow-popover);}
+.menu button{display:block;width:100%;height:56px;box-sizing:border-box;padding:8px 10px;
+  border-radius:var(--radius-md);text-align:left;}
 .menu button:hover{background:var(--color-neutral-100);}
-.menu b{display:block;font-size:var(--font-size-text-xs);line-height:18px;
+.menu b{display:block;font-size:var(--font-size-text-xs);line-height:20px;
   font-weight:var(--font-weight-semibold);color:var(--color-neutral-900);}
-.menu span{display:block;font-size:var(--font-size-text-2xs);line-height:16px;color:var(--color-neutral-500);}
+.menu span{display:block;margin-top:2px;font-size:var(--font-size-text-2xs);line-height:18px;
+  color:var(--color-neutral-500);}
 
-/* Modal · Pick from Library — 1330x817, radius 16, stroke neutral/200 (8861:151032) */
+/* Modal · Pick from Library — 2026-09-17 기준 1360x842 (9329:143288).
+   다른 모달과 같은 세 칸이다: title row 84 `28 28 20 32` / body `0 32 24 32` /
+   footer 74 `18 28 18 32`. 머리에 아이콘도 구분선도 없고, 구분선은 본문 맨 아래에 있다. */
 .modal{position:absolute;z-index:50;left:50%;top:50%;transform:translate(-50%,-50%);
   display:flex;flex-direction:column;background:var(--color-neutral-0);
   border:1px solid var(--color-neutral-200);border-radius:var(--radius-2xl);
   box-shadow:var(--shadow-modal);overflow:hidden;}
-/* header 1330x62, padding 20/24, gap 10 + 1px divider */
-.modal-head{flex:none;height:62px;display:flex;align-items:center;gap:10px;
-  padding:var(--spacing-xl) var(--spacing-2xl);border-bottom:1px solid var(--color-neutral-200);}
-.modal-head b{flex:1 1 auto;font-size:var(--font-size-text-md);line-height:var(--line-height-text-md);
-  font-weight:var(--font-weight-semibold);}
-.modal-head > svg{width:20px;height:20px;flex:none;stroke:var(--color-neutral-500);fill:none;
-  stroke-width:var(--icon-stroke-width,1.6);stroke-linecap:round;stroke-linejoin:round;}
-.modal-x{width:18px;height:18px;flex:none;display:flex;align-items:center;justify-content:center;
-  color:var(--color-neutral-500);}
-.modal-x svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;}
-/* body 1330x696, padding 20/24, gap 16 */
+/* title row 1360x84, padding 28/28/20/32, gap 12 — 구분선 없음 */
+.modal-head{flex:none;height:84px;box-sizing:border-box;display:flex;align-items:center;gap:12px;
+  padding:28px 28px 20px 32px;}
+.modal-head b{flex:1 1 auto;font-size:16px;line-height:24px;font-weight:var(--font-weight-bold);}
+.modal-x{width:36px;height:36px;flex:none;display:flex;align-items:center;justify-content:center;
+  border-radius:var(--radius-lg);color:var(--color-neutral-700);}
+.modal-x:hover{background:var(--color-neutral-100);}
+.modal-x svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;}
+/* body 1360x684, padding 0/32/24/32 — 안쪽이 8 만큼 더 내려앉는다 */
 .modal-body{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:var(--spacing-lg);
-  padding:var(--spacing-xl) var(--spacing-2xl);}
-/* footer 1330x58, padding 0/24/20/24, gap 8 */
-.modal-foot{flex:none;height:58px;display:flex;align-items:flex-start;justify-content:flex-end;
-  gap:var(--spacing-sm);padding:0 var(--spacing-2xl) var(--spacing-xl);}
+  padding:8px 32px 24px 32px;}
+/* 스크롤 끝을 알리는 선은 본문 맨 아래 — 푸터의 테두리와 별개다 */
+.modal-divider{flex:none;height:1px;background:var(--color-neutral-300);}
+/* footer 1360x74, padding 18/28/18/32, gap 12 + 상단 구분선 */
+.modal-foot{flex:none;height:74px;box-sizing:border-box;display:flex;align-items:center;
+  justify-content:flex-end;gap:var(--spacing-md);padding:18px 28px 18px 32px;
+  border-top:1px solid var(--color-neutral-200);}
 
 /* subtitle-row — Draft chip 44x18 + 안내문 13/20 */
 .pick-note{flex:none;height:20px;display:flex;align-items:center;gap:var(--spacing-sm);
@@ -434,25 +446,32 @@ body{
 .pick-grid{display:grid;grid-template-columns:repeat(4,304px);gap:var(--spacing-lg);
   align-items:start;width:1264px;}
 .pick{display:flex;flex-direction:column;gap:var(--spacing-sm);text-align:left;}
-/* Scene Tile 304x380, radius 12, stroke neutral/400 — 선택 시 brand/primary */
+/* Scene Tile 304x380, radius 12, stroke neutral/400 — 고르면 brand/primary-mid 4px */
 .pick .shot{position:relative;height:380px;border-radius:var(--radius-xl);overflow:hidden;
   background:var(--color-neutral-150);box-shadow:inset 0 0 0 1px var(--color-neutral-400);}
-.pick[aria-selected="true"] .shot{box-shadow:inset 0 0 0 1.5px var(--color-brand-primary);}
+.pick[aria-selected="true"] .shot{box-shadow:inset 0 0 0 4px var(--color-brand-primary-mid,#a8cbff);}
 .pick .shot img{width:100%;height:100%;object-fit:cover;display:block;}
-/* format-badge 69x36, radius 8, fill neutral/950 */
-.pick .ratio{position:absolute;left:16px;top:16px;height:36px;display:flex;align-items:center;
-  gap:5px;padding:0 12px 0 10px;border-radius:var(--radius-lg);
-  background:var(--color-neutral-900);border:1px solid var(--color-neutral-400);color:#fff;
-  font-size:var(--font-size-text-sm);line-height:20px;font-weight:var(--font-weight-medium);}
-.pick .ratio svg{width:14px;height:17px;stroke:currentColor;fill:none;stroke-width:1.5;}
-/* selected 24x24, fill neutral/950, 우상단 8 inset */
-.pick .tick{position:absolute;right:8px;top:8px;width:24px;height:24px;border-radius:var(--radius-full);
+/* format-badge 69x36, radius 8 — 라이브러리 카드와 같은 유리(state=glass) */
+.pick .ratio{position:absolute;left:16px;top:16px;height:36px;box-sizing:border-box;display:flex;
+  align-items:center;gap:5px;padding:7px 12px 7px 10px;border-radius:var(--radius-lg);
+  background:linear-gradient(180deg,rgba(255,255,255,.68) 0%,rgba(255,255,255,.46) 100%);
+  border:1px solid rgba(255,255,255,.55);
+  -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55), 0 2px 8px rgba(15,23,41,.18);
+  color:var(--color-neutral-700);
+  font-size:var(--font-size-text-md);line-height:22px;font-weight:var(--font-weight-medium);}
+.pick .ratio svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.5;}
+/* selected 28x28, fill neutral/950, 우상단 8 inset */
+.pick .tick{position:absolute;right:8px;top:8px;width:28px;height:28px;border-radius:var(--radius-full);
   background:var(--color-neutral-900);display:none;align-items:center;justify-content:center;}
 .pick[aria-selected="true"] .tick{display:flex;}
 .pick .tick svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 /* Video / Play button 48, 그리고 하단 스크러버 — 영상(9:16 Reel)에만 */
 .pick .play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:48px;height:48px;
-  border-radius:var(--radius-full);background:var(--color-neutral-0);
+  border-radius:var(--radius-full);
+  background:linear-gradient(180deg,rgba(255,255,255,.68) 0%,rgba(255,255,255,.46) 100%);
+  -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+  box-shadow:0 2px 8px rgba(15,23,41,.18);
   display:flex;align-items:center;justify-content:center;}
 .pick .play svg{width:16px;height:18px;fill:var(--color-neutral-700);}
 .pick .scrub{position:absolute;left:16px;right:16px;bottom:16px;display:flex;flex-direction:column;gap:12px;}
@@ -661,10 +680,8 @@ body{
   <div class="scrim" id="scrim" hidden></div>
 
   <!-- A2 · Pick from Library — drafts only (8861:151032) -->
-  <div class="modal" id="modalLibrary" style="width:1330px;height:817px" hidden>
+  <div class="modal" id="modalLibrary" style="width:1360px;height:842px" hidden>
     <div class="modal-head">
-      <!-- icon / content / reel -->
-      <svg viewBox="0 0 20 20"><rect x="2.5" y="2.5" width="15" height="15" rx="2.5"/><path d="M6 2.5v15M14 2.5v15M2.5 6h3.5M2.5 10h15M2.5 14h3.5M14 6h3.5M14 14h3.5"/></svg>
       <b>Pick from Library</b>
       <button type="button" class="modal-x" data-go="#s=calendar" aria-label="Close"><svg viewBox="0 0 16 16"><path d="m4 4 8 8M12 4l-8 8"/></svg></button>
     </div>
@@ -675,6 +692,7 @@ body{
         <div class="pick-scroll" id="pickScroll"><div class="pick-grid" id="pickGrid"></div></div>
         <span class="pick-bar" id="pickBar"></span>
       </div>
+      <span class="modal-divider"></span>
     </div>
     <div class="modal-foot">
       <button type="button" class="btn" data-go="#s=calendar">Cancel</button>
