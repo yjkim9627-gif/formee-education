@@ -1292,6 +1292,8 @@ input.card-name::selection{background:var(--brand-primary-mid);}
 .m-form.gen .m-tabs{padding:20px 32px 0;}
 .m-form.upl .m-tabs{padding-top:8px;}
 /* Figma `tabs` 는 496x38 에 pad-top 8 — 안쪽 탭이 30 이다(36 이 아니라) */
+/* Figma `tab` 은 30 (글자 22 + 아래 8)이고 밑줄은 stroke 라 높이에 안 더해진다.
+   CSS 는 border 가 더해지므로 padding 6 + border 2 = 8 로 맞춘다.      2026-09-18 */
 .m-tab{display:flex;gap:6px;align-items:center;padding-bottom:6px;flex:none;
   border-bottom:2px solid transparent;margin-bottom:-1px;}
 .m-tab span{font-weight:600;font-size:14px;line-height:22px;color:var(--neutral-500);white-space:nowrap;}
@@ -1312,14 +1314,15 @@ input.card-name::selection{background:var(--brand-primary-mid);}
 /* the footer count label is the one label still drawn as a grey all-caps eyebrow */
 .m-images .m-lbl{font-size:12px;line-height:18px;letter-spacing:0.6px;text-transform:uppercase;
   color:var(--neutral-500);}
-.m-input{background:var(--neutral-0);border:1px solid var(--neutral-400);border-radius:var(--radius-md);
+.m-input{background:var(--neutral-0);border:1px solid var(--neutral-400);border-radius:var(--radius-lg);
+  height:36px;box-sizing:border-box;
   padding:6px 11px;width:100%;display:flex;align-items:center;}   /* stroke inside-drawn → Figma height 36 */
 .m-input:focus-within{border-color:var(--neutral-500);}
 .m-input input{font-weight:400;font-size:14px;line-height:22px;color:var(--neutral-900);width:100%;}
 .m-input input::placeholder{color:var(--neutral-500);opacity:1;}
 .m-row2{display:flex;gap:16px;align-items:flex-start;width:100%;flex:none;}
 .m-col{flex:1 0 0;min-width:1px;display:flex;flex-direction:column;gap:8px;align-items:flex-start;}
-.m-select{background:var(--neutral-0);border:1px solid var(--neutral-400);border-radius:var(--radius-md);
+.m-select{background:var(--neutral-0);border:1px solid var(--neutral-400);border-radius:var(--radius-lg);
   height:35px;padding:0 11px;width:100%;display:flex;align-items:center;position:relative;}
 /* the New Style scene selects are 40 tall (6796:106176), not the 35 the
    Create character form uses */
@@ -1351,8 +1354,10 @@ input.card-name::selection{background:var(--brand-primary-mid);}
 .m-right{flex:1 0 0;min-width:1px;height:100%;display:flex;flex-direction:column;gap:8px;
   align-items:flex-start;padding:0 20px 20px;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;}
 .m-right::-webkit-scrollbar{width:0;display:none;}
-.ai-card{width:400px;background:var(--neutral-0);border-radius:var(--radius-xl);padding:12px 16px;
-  display:flex;flex-direction:column;gap:8px;align-items:flex-start;flex:none;}
+/* 오른쪽 열(`r-scroll` 560 · pad 20)을 다 쓴다 — 400 으로 두면 오른쪽에 120 이
+   그냥 비어서 모달 내용이 왼쪽으로 쏠려 보인다.                      2026-09-18 */
+.ai-card{width:100%;background:var(--neutral-0);border-radius:var(--radius-xl);padding:12px 16px;
+  display:flex;flex-direction:column;gap:8px;align-items:flex-start;flex:none;box-sizing:border-box;}
 /* AI / Generation Prompt (6796:106172) — label 22 / box 63 / refine label 20 / input 56 */
 .ai-card.flush .ai-label:first-child{margin-bottom:1px;}
 .ai-card.flush .ai-box:not(.refine){min-height:64px;}
