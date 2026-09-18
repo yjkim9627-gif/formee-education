@@ -677,10 +677,7 @@ input.card-name::selection{background:var(--brand-primary-mid);}
 /* ---- style preview · a right-hand drawer over the detail page ---- */
 /* panel · style preview (6326:95930) — 440x1106 at x=1480, 24 side padding,
    head 50 / preview 490 / prompt 94 / recipe rows 20 every 32 / actions 38x3 */
-/* 서랍은 갤러리 위로만 온다 — 56 은 앱 바 아래일 뿐이라 페이지 헤더까지 덮어서
-   서랍을 연 동안 `New style` 버튼이 사라졌다. 158 = 56(앱 바) + 28(패딩) +
-   54(헤더) + 20(간격) 으로 detail-row 윗선에 맞춘다.                 2026-09-18 */
-.sp-drawer{position:absolute;top:158px;right:0;bottom:0;width:440px;z-index:60;background:var(--neutral-0);
+.sp-drawer{position:absolute;top:56px;right:0;bottom:0;width:440px;z-index:60;background:var(--neutral-0);
   box-shadow:-8px 0 24px rgba(13,13,13,.08);border-left:1px solid #e3e8f2;
   display:flex;flex-direction:column;gap:0;padding:20px 24px 24px;overflow-y:auto;
   scrollbar-width:thin;scrollbar-color:var(--neutral-400) transparent;}
@@ -19129,14 +19126,14 @@ function renderCharDetail(){
      같은 스타일이 한 화면에 두 번 나왔고, 머리 줄의 Favorites 칩이 이미 같은 일을
      한다. 목록은 한 벌만 두고, 머리글이 지금 무엇을 보여주는지 말한다.
      (캐릭터 목록에서 Favorites 칩 하나로 거르는 것과 같은 규칙)          2026-09-18 */
-  /* 생성 타일은 **스타일이 하나도 없을 때만** 남긴다 — 헤더의 `New style` 버튼이
-     같은 일을 하고, 12칸 갤러리에서 한 칸을 계속 잡아먹는다. 검색이 빈손인 건
-     빈 화면이 아니라서 아래 한 줄로만 말한다. 캐릭터 그룹과 같은 규칙. */
+  /* 생성 타일은 갤러리에 그대로 둔다 — 캐릭터 목록과 달리 여기서는 스타일 프리뷰
+     서랍이 헤더 오른쪽(`New style` 버튼)을 덮기 때문에, 서랍이 열려 있는 동안
+     스타일을 추가할 데가 이 타일뿐이다.                               2026-09-18 */
   const shown  = detail.favOnly ? favs : match;
   const bare   = all.length === 0;
   const gallery = (bare || shown.length) ? `<div class="cd-sec">
       ${secHead((detail.favOnly ? 'Favorites' : 'All styles') + ' &middot; ' + shown.length)}
-      <div class="d-grid">${bare ? newTile : ''}${shown.map(({ st, i }) => styleCardHTML(c, st, i)).join('')}</div>
+      <div class="d-grid">${newTile}${shown.map(({ st, i }) => styleCardHTML(c, st, i)).join('')}</div>
     </div>` : '';
 
   $('#cdRight').innerHTML = `
