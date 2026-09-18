@@ -1604,8 +1604,8 @@ input.card-name::selection{background:var(--brand-primary-mid);}
   <div class="char-scroll" id="charScroll">
   <div class="filter-row">
     <div class="filters">
-      <button type="button" class="chip chip-active" id="chipFav" aria-pressed="true">
-        <span class="chip-label">Favorites</span><span class="chip-star"><div class="ic clip" style="width:12px;height:12px;"><div class="f" style="inset:8.33% 8.33% 12.2% 8.33%"><div class="f" style="inset:-6.29% -6%"><img src="assets/imgVector41.svg" alt=""></div></div></div></span>
+      <button type="button" class="chip" id="chipFav" aria-pressed="false">
+        <span class="chip-label">Favorites</span><span class="chip-star"><div class="ic clip" style="width:12px;height:12px;"><div class="f" style="inset:8.33% 8.33% 12.2% 8.33%"><div class="f" style="inset:-6.29% -6%"><img src="assets/imgVector1.svg" alt=""></div></div></div></span>
       </button>
       <div class="chip-wrap">
         <button type="button" class="sel-chip" id="chipCreated" data-sel="created" aria-expanded="false">
@@ -18404,8 +18404,12 @@ const styleCount = c => (c.styles !== undefined ? c.styles : 0);
 const state = {
   role: 'super',
   groupBy: 'brand',
-  favOnly: false,         // the Favorites chip is styled "on" in the frame but no card is filtered out there
-  createdBy: 'Anyone',    // ditto for the "Created by · Me" pill — the frame still shows all 11 cards
+  /* Figma 는 Favorites 토글과 `Created by · Me` 를 눌린 모습으로 그려 두었지만 정작
+     9장을 다 보여준다 — 걸린 필터가 아니라 칩의 두 얼굴을 보여주려고 그린 것이다.
+     화면을 그 모습 그대로 열면 "켜져 있는데 아무것도 안 걸러지는" 상태가 되므로
+     둘 다 꺼진 채로 연다. 눌러 보면 실제로 걸린다.                     2026-09-18 */
+  favOnly: false,
+  createdBy: 'Anyone',
   age: 'Any',
   gender: 'Any',
   focus: null,           // {key,title} while one group is expanded to a full grid
