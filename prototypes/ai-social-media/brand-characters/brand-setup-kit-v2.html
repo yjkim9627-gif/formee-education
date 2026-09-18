@@ -301,8 +301,13 @@ input:focus-visible{outline:none;}   /* the wrapping field already shows focus v
    오른쪽 인셋은 **6** 이다(화살표의 18 이 아니라). Figma `fade` 는 x1476~1596 으로
    마지막 카드의 오른쪽 끝(1596)에서 끝난다. 18 로 두면 1584 에서 불투명해진 뒤
    1584~1596 의 12px 이 원본 그대로 되살아나 잘린 면이 띠처럼 남았다.  2026-09-18 */
-.cfade{position:absolute;top:38px;right:6px;width:120px;height:382px;pointer-events:none;
-  background:linear-gradient(90deg,rgba(248,250,255,0) 0%,var(--neutral-50) 100%);}
+/* 그라디언트가 끝나는 자리(1596)는 마지막 카드가 끝나는 자리와 같다. 거기서 fade 를
+   같이 끊으면 두 모서리의 안티에일리어싱이 어긋나 원본이 1px 새어 나온다
+   (프레임이 0.9225 로 축소돼 있어 둘이 같은 기기 픽셀에 안 떨어진다).
+   그래서 **면은 잘리는 끝(1602)까지 깔고**, 색이 다 차오르는 지점만 1596 에 맞춘다
+   — 120/126 = 95.24%. 보이는 그라데이션은 그대로다.                   2026-09-18 */
+.cfade{position:absolute;top:38px;right:0;width:126px;height:382px;pointer-events:none;
+  background:linear-gradient(90deg,rgba(248,250,255,0) 0%,var(--neutral-50) 95.24%);}
 .arrow-l .ic{transform:scaleX(-1);}   /* mirrored instance of the same chevron asset */
 .carousel-arrow:hover{background:var(--neutral-50);}
 
