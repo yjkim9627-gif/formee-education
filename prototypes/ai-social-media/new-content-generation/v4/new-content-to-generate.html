@@ -11310,7 +11310,9 @@ fitScreenToViewport();
   var from = q.get('from'), back = q.get('back') || '';
   var HOMES = {
     schedule: {href:'../../schedule/schedule.html', label:'Schedule'},
-    library:  {href:'../../brand-characters/brand-setup-kit-character-library-v2.html', label:'Library'}
+    library:  {href:'../../brand-characters/brand-setup-kit-character-library-v2.html', label:'Library'},
+    /* 캐릭터 스타일에서 넘어오는 경우 — 같은 파일이지만 돌아갈 화면이 다르다 */
+    characters: {href:'../../brand-characters/brand-setup-kit-character-library-v2.html', label:'Characters'}
   };
   if (!ref && !stage && !editTitle && !from) return;
 

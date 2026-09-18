@@ -19261,8 +19261,8 @@ function useInNewContent(){
     + '&thumb=' + encodeURIComponent(charAssetUrl(thumb))
     + '&ratio=4:5'
     + '&stage=brief'
-    /* v4 상단에 돌아올 링크를 띄워 준다. back 은 해시 조각만 받는다. */
-    + '&from=library';
+    /* v4 상단에 `Back to Characters` 링크를 띄워 준다 */
+    + '&from=characters';
   if (typeof libToast === 'function')
     libToast('Opening New Content with ' + (name || c.name) + '…');
   window.open(url, '_blank', 'noopener');
