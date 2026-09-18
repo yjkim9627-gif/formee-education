@@ -720,7 +720,7 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
           <p class="cv-option-desc">Clone a voice from a short recording or uploaded audio sample.</p>
           <span class="cv-option-time">~1 minute</span>
         </button>
-        <button type="button" class="cv-option-card" onclick="alert('Voice Remixing — not part of this draft yet')">
+        <button type="button" class="cv-option-card" onclick="closeCreateVoiceModal(); openVoiceRemixModal(null);">
           <p class="cv-option-title">Voice Remixing</p>
           <p class="cv-option-desc">Transform one of your existing voices with a text prompt.</p>
           <span class="cv-option-time">~30 seconds</span>
@@ -1071,6 +1071,43 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
     <div class="modal__footer">
       <button type="button" class="actions-btn actions-btn--secondary" onclick="closeEditVoiceModal()">Cancel</button>
       <button type="button" class="actions-btn actions-btn--primary" onclick="saveEditVoice()">Save changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ VOICE REMIXING MODAL ============================================================
+     "Remix voice" on a voice's kebab menu, or the "Voice Remixing" card in the Create Voice
+     chooser -> a dedicated compact modal (Figma "Modal · Voice Remixing", 10093:249460)
+     instead of hijacking the full Voice Design form the way openRemixVoice() used to -- this
+     is meant to feel like a quick text tweak on a voice you already have, not a from-scratch
+     design session. Quick chips insert a short phrase into the prompt without wiping what's
+     already typed; "Tone attributes" drills into named categories (Accent/Age/Timbre/Emotion/
+     Pitch/Pacing/Audio Quality) each with a few concrete suggestions -- same drill-in/Back
+     rendering pattern this file already uses for the Gender/Language filter dropdowns, reused
+     rather than reinvented. Reuses Voice Design's own .vd-field-group/.vd-select/.vd-input/
+     .vd-chip-row/.vd-chip (create-voice-modal.css) instead of new one-off classes, since this
+     modal is just a lighter sibling of that same flow. -->
+<div class="modal-overlay" id="voiceRemixOverlay" hidden onclick="if(event.target===this) closeVoiceRemixModal()">
+  <div class="modal modal--form">
+    <div class="modal__header-row">
+      <h3 class="modal__title">Voice Remixing</h3>
+      <button type="button" class="modal__close" onclick="closeVoiceRemixModal()"><img src="../../../components/ai-social-media/icons/button-x-dark.svg" alt="Close"></button>
+    </div>
+    <div class="vd-field-group">
+      <p class="vd-field-label">Voice to remix</p>
+      <div class="vd-select">
+        <select id="vrmVoiceSelect" onchange="vrmChangeVoice(this.value)"></select>
+        <img src="../../../components/ai-social-media/icons/chevron-down.svg" alt="">
+      </div>
+    </div>
+    <div class="vd-field-group">
+      <p class="vd-field-label">Describe the change</p>
+      <textarea class="vd-input" id="vrmPromptText" placeholder="e.g. Warm, upbeat tone for social ads"></textarea>
+      <div class="vd-chip-row" id="vrmChipRow"></div>
+    </div>
+    <div class="modal__footer">
+      <button type="button" class="actions-btn actions-btn--secondary" onclick="closeVoiceRemixModal()">Cancel</button>
+      <button type="button" class="actions-btn actions-btn--primary" onclick="confirmVoiceRemix()">Generate previews</button>
     </div>
   </div>
 </div>
@@ -1508,29 +1545,117 @@ function saveEditVoice(){
 }
 
 /* ---------------- Remix voice ----------------
-   Reopens the Voice Design flow at the form step, pre-filled from the source voice's
-   stored creation settings (vdSaveVoice records these as .createdFrom). Seed/My Voice
-   entries that were never generated through that flow have no .createdFrom -- fall back
-   to inferring gender/language from the voice's own fields instead of leaving the form
-   on its hardcoded defaults, so a remix at least starts close to the original. */
+   Used to reopen the full Voice Design form pre-filled from the source voice -- replaced
+   with the dedicated, lighter "Voice Remixing" modal below (Figma 10093:249460) since a
+   tone tweak on a voice you already have shouldn't require the whole from-scratch design
+   flow (gender/age/language/usecase chips, preset row, etc.). openRemixVoice() is now just
+   this modal's entry point from the kebab menu. */
 function openRemixVoice(id){
   const v = voices.find(x => x.id === id);
   if (!v) return;
   openMenuFor = null;
   renderVoices();
-  const src = v.createdFrom;
-  vd.gender = (src && src.gender) || v.gender || 'Female';
-  vd.age = (src && src.age) || 'Young';
-  vd.language = (src && src.language) || (v.langs && v.langs[0]) || 'English (US)';
-  vd.usecase = (src && src.usecase) || 'Social media';
-  vd.activePreset = null;
-  vd.remixOfId = id;
-  vd.remixOfName = v.name;
-  document.getElementById('cvOverlay').hidden = false;
-  openVoiceDesignForm();
-  vdShowStep('form');
-  document.getElementById('vdDesignTitle').textContent = `Remix "${v.name}"`;
-  if (src && src.prompt) document.getElementById('vdPromptText').value = src.prompt;
+  openVoiceRemixModal(id);
+}
+
+/* ---------------- Voice Remixing modal ----------------
+   Quick chips insert a short phrase into "Describe the change" without wiping whatever's
+   already typed (appended, comma-joined) -- unlike Voice Design's prompt, which is fully
+   recomposed from its own gender/age/usecase state and would be the wrong model to copy
+   here. Tone attribute categories (Accent/Age/Timbre/Emotion/Pitch/Pacing/Audio Quality)
+   are dropdown-chip triggers -- same .vl-fselect/.vl-fselect-menu/.vl-fselect-row component
+   the toolbar's own Gender/Language filters already use -- rather than a Back-navigated
+   row swap, so all seven categories stay visible and reachable at once instead of being
+   buried a level down. Only one category's menu is ever open at a time (vrmOpenCategory). */
+let vrmVoiceId = null;
+let vrmOpenCategory = null;
+let vrmAdded = new Set();
+const VRM_QUICK_CHIPS = ['Make it shorter', 'Make it more hooking', 'Make it warmer', 'Make it more energetic'];
+const VRM_CATEGORIES = ['Accent', 'Age', 'Timbre', 'Emotion', 'Pitch', 'Pacing', 'Audio Quality'];
+const VRM_CATEGORY_CHIPS = {
+  'Accent': ['Regional Australian accent', 'Thick French accent', 'Slight Southern drawl', 'British RP accent'],
+  'Age': ['Sound younger and more energetic', 'Sound older and more mature', 'Elderly and frail'],
+  'Timbre': ['Deep, resonant tone', 'Warm, rounded tone', 'Gravelly, textured tone', 'Smooth, polished tone', 'Buttery, velvety tone', 'Raspy, breathy tone'],
+  'Emotion': ['More excited and upbeat', 'Calmer and more relaxed', 'More serious and grounded', 'Playful and cheeky'],
+  'Pitch': ['Lower pitch', 'Higher pitch', 'Natural, neutral pitch'],
+  'Pacing': ['Faster pacing', 'Slower, more deliberate pacing', 'Natural, everyday cadence'],
+  'Audio Quality': ['Pristine, studio-quality audio', 'Solid, everyday audio quality', 'Lo-fi, lower-fidelity audio'],
+};
+function openVoiceRemixModal(voiceId){
+  vrmVoiceId = voiceId || (voices.find(v => addedVoices.has(v.id)) || {}).id || null;
+  vrmOpenCategory = null;
+  vrmAdded = new Set();
+  document.getElementById('vrmPromptText').value = '';
+  renderVrmVoiceSelect();
+  renderVrmChipRow();
+  document.getElementById('voiceRemixOverlay').hidden = false;
+}
+function closeVoiceRemixModal(){
+  document.getElementById('voiceRemixOverlay').hidden = true;
+  vrmOpenCategory = null;
+}
+function renderVrmVoiceSelect(){
+  const owned = voices.filter(v => addedVoices.has(v.id));
+  document.getElementById('vrmVoiceSelect').innerHTML = owned.map(v =>
+    `<option value="${v.id}"${v.id === vrmVoiceId ? ' selected' : ''}>${escHtml(v.name)}</option>`
+  ).join('');
+}
+function vrmChangeVoice(id){ vrmVoiceId = id; }
+function renderVrmChipRow(){
+  document.getElementById('vrmChipRow').innerHTML = VRM_QUICK_CHIPS.map(t =>
+    `<button type="button" class="vd-chip" onclick="vrmAppendPrompt('${t.replace(/'/g, "\\'")}')">${t}</button>`
+  ).join('') + VRM_CATEGORIES.map(c => `
+    <div class="vl-fselect-wrap">
+      <button type="button" class="vl-fselect" onclick="event.stopPropagation(); vrmToggleCategory('${c}')">
+        <span class="vl-fselect-label">${c}</span>
+        <img class="vl-fselect-caret" src="${ICON}chevron-down.svg" alt="">
+      </button>
+      ${vrmOpenCategory === c ? vrmCategoryMenuHTML(c) : ''}
+    </div>`).join('');
+}
+function vrmCategoryMenuHTML(category){
+  const chips = VRM_CATEGORY_CHIPS[category] || [];
+  return `<div class="vl-fselect-menu" onclick="event.stopPropagation()">
+    ${chips.map(t => `<div class="vl-fselect-row${vrmAdded.has(t) ? ' selected' : ''}" onclick="vrmAppendPrompt('${t.replace(/'/g, "\\'")}')">${vrmAdded.has(t) ? '✓ ' : ''}${t}</div>`).join('')}
+  </div>`;
+}
+function vrmToggleCategory(category){
+  vrmOpenCategory = (vrmOpenCategory === category) ? null : category;
+  renderVrmChipRow();
+}
+function vrmAppendPrompt(text){
+  const ta = document.getElementById('vrmPromptText');
+  const cur = ta.value.trim();
+  const phrase = text.charAt(0).toLowerCase() + text.slice(1);
+  ta.value = cur ? `${cur}, ${phrase}` : text;
+  vrmAdded.add(text);
+  vrmOpenCategory = null; // close after picking, like any other dropdown selection
+  renderVrmChipRow();
+}
+document.addEventListener('click', (e) => {
+  if (vrmOpenCategory && !e.target.closest('.vl-fselect-wrap')){
+    vrmOpenCategory = null;
+    renderVrmChipRow();
+  }
+});
+// Actually saves a new voice (mirrors vdSaveVoice's shape) rather than just alerting a stub
+// -- this is a real remix, not a preview-only draft, so the provenance (createdFrom.remixOf)
+// has to land somewhere Voice Details can read it back, same as a Voice Design remix used to.
+function confirmVoiceRemix(){
+  const v = voices.find(x => x.id === vrmVoiceId);
+  if (!v){ closeVoiceRemixModal(); return; }
+  const prompt = (document.getElementById('vrmPromptText').value || '').trim();
+  const id = 'v_' + Date.now();
+  const name = `${v.name} (Remix)`;
+  const desc = prompt ? `Remix of ${v.name} — ${prompt}` : `Remix of ${v.name}.`;
+  voices.unshift({
+    id, name, desc, gender: v.gender, cats: [...(v.cats || [])], langs: [...(v.langs || [])], mine: true, fav: false,
+    createdFrom: { type: 'design', prompt, gender: v.gender, remixOf: v.name },
+  });
+  addedVoices.add(id);
+  closeVoiceRemixModal();
+  setVoiceTab('mine');
+  alert(`"${name}" created from "${v.name}".`);
 }
 
 /* ---------------- Voice details side sheet ----------------
