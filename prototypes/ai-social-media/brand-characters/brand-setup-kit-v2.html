@@ -18684,6 +18684,9 @@ function render(){
     const g = buildGroups(cards).find(x => x.key === state.focus);
     if (!g){ state.focus = null; }
     else {
+      /* 펼친 뷰에도 생성 타일을 두지 않는다 — 그룹 뷰와 같은 이유다. 타일이
+         브랜드도 타입도 넘기지 않고, 헤더의 "+ New character" 가 같은 화면에
+         이미 있다. (템플릿 리터럴 안에 백틱을 쓰면 깨진다)         2026-09-18 */
       host.innerHTML =
         `<div class="group focused" data-key="${esc(g.key)}">
            <div class="group-head">
@@ -18692,7 +18695,7 @@ function render(){
              <div class="group-rule"></div>
            </div>
            <div class="grid" data-key="${esc(g.key)}">
-             ${newCardHTML()}${g.cards.map(cardHTML).join('')}
+             ${g.cards.map(cardHTML).join('')}
            </div>
          </div>`;
       const inp0 = $('#renameInput');
