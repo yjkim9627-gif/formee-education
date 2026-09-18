@@ -751,7 +751,7 @@ input.card-name::selection{background:var(--brand-primary-mid);}
 .d-blank em{font-style:normal;font-weight:400;font-size:13px;line-height:20px;color:var(--neutral-500);}
 .d-actions{width:100%;justify-content:flex-end;margin-top:0;padding-top:0;}
 /* Figma 의 비활성 primary 는 neutral/300 (#d6ddeb) 이다 */
-.btn-dark.is-off{background:var(--neutral-300);pointer-events:none;filter:none;}
+.btn-dark.is-off{background:var(--neutral-300);color:var(--neutral-450);pointer-events:none;filter:none;}
 .btn-dark.is-busy{pointer-events:none;filter:none;}
 .btn-dark.is-busy .gen-spin{filter:brightness(0) invert(1);}
 
@@ -1286,12 +1286,13 @@ input.card-name::selection{background:var(--brand-primary-mid);}
 .m-form{border-top:1px solid #e3e8f2;box-shadow:inset -1px 0 0 0 #e3e8f2;height:100%;
   display:flex;flex-direction:column;align-items:flex-start;overflow:hidden;flex:none;}
 .m-form.gen{width:560px;}
-.m-form.upl{width:560px;gap:16px;padding:0 32px;}
+.m-form.upl{width:560px;gap:16px;padding:0 32px 24px;}
 
 .m-tabs{border-bottom:1px solid #e3e8f2;display:flex;gap:16px;align-items:flex-start;width:100%;flex:none;}
 .m-form.gen .m-tabs{padding:20px 32px 0;}
 .m-form.upl .m-tabs{padding-top:8px;}
-.m-tab{display:flex;gap:6px;align-items:center;padding-bottom:12px;flex:none;
+/* Figma `tabs` 는 496x38 에 pad-top 8 — 안쪽 탭이 30 이다(36 이 아니라) */
+.m-tab{display:flex;gap:6px;align-items:center;padding-bottom:6px;flex:none;
   border-bottom:2px solid transparent;margin-bottom:-1px;}
 .m-tab span{font-weight:600;font-size:14px;line-height:22px;color:var(--neutral-500);white-space:nowrap;}
 .m-tab .tab-upload{width:111px;}   /* fixed label width, as in the Figma tab component */
@@ -1390,11 +1391,12 @@ input.card-name::selection{background:var(--brand-primary-mid);}
 
 /* ---- right column: reference images (Upload tab) ---- */
 .m-preview-panel{width:560px;height:100%;flex:none;display:flex;flex-direction:column;gap:16px;
-  align-items:flex-start;padding:0 32px;overflow:hidden;}
+  align-items:flex-start;padding:0 32px 32px;overflow:hidden;}
 /* Upload / Upload Dropzone — 496x498 empty, 496x160 once files are in */
 /* Figma `Upload / Upload Dropzone` 496x486 · 점선 neutral/400 (neutral/300 아님) */
-.dropzone{height:486px;width:100%;flex:none;background:var(--neutral-50);
-  border:1px dashed var(--neutral-400);border-radius:var(--radius-xl);
+/* Figma `Upload / Upload Dropzone` — 점선이 아니라 **실선** 1px #c8d1e1, 바탕 #f7faff */
+.dropzone{height:486px;width:100%;flex:none;background:#f7faff;
+  border:1px solid var(--neutral-400);border-radius:var(--radius-xl);
   display:flex;flex-direction:column;gap:0;align-items:center;justify-content:center;padding:0;}
 .dropzone.over{border-color:#4f6de6;background:#f2f6ff;}
 .upload-btn{background:none;border:0;padding:0;display:flex;gap:8px;align-items:center;flex:none;}
@@ -19528,7 +19530,7 @@ $('#groups').addEventListener('click', e => {
   if (e.target.closest('[data-act="unfocus"]')){
     state.focus = null; state.menuFor = null; render(); return;
   }
-  if (e.target.closest('[data-act="new"]')){ openModal(); return; }
+  if (e.target.closest('[data-act="new"]')){ openModal(contextBrand()); return; }
 
   const menuAct = e.target.closest('[data-menuact]');
   if (menuAct){
@@ -19815,7 +19817,7 @@ document.addEventListener('keydown', e => {
 });
 
 
-$('#btnNewCharacter').addEventListener('click', () => openModal());
+$('#btnNewCharacter').addEventListener('click', () => openModal(contextBrand()));
 
 /* ======================= modal · Create character ========================= */
 /* Screens: 2229:57101 (Upload tab) · 3023:30845 (Generate tab) · 2229:57323 (Step 2) */
@@ -20051,11 +20053,18 @@ const panelCardHTML = (title, detail, width) =>
 
 let modal = null;
 
-function openModal(){
+/* 브랜드 안에서 만들기를 누르면 그 브랜드가 미리 골라져 있어야 한다.
+   단 묶음 기준이 brand 이고 그 브랜드를 펼쳐 본 상태일 때만이다 —
+   Type 으로 묶어 `Human` 을 펼친 상태의 focus 는 브랜드가 아니다.  2026-09-18 */
+function contextBrand(){
+  return (state.focus && state.groupBy === 'brand' && BRANDS.includes(state.focus))
+    ? state.focus : '';
+}
+function openModal(brand){
   closeMenus();
   modal = {
     step: 'form', tab: 'upload',
-    name: '', brand: role().brands ? role().brands[0] : '', voice: '', desc: '', ethnicity: '',
+    name: '', brand: brand || (role().brands ? role().brands[0] : ''), voice: '', desc: '', ethnicity: '',
     type: 'Human', gender: 'Female', age: '55+',
     wardrobe: '', background: '', framing: '',          // shown on the form
     expression: '', lighting: '', hair: '', glasses: '', // under Advanced options
