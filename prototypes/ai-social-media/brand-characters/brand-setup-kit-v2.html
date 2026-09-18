@@ -191,12 +191,13 @@ input:focus-visible{outline:none;}   /* the wrapping field already shows focus v
    에는 뷰포트도 스티키도 없어서 그 프레임 그대로 뒀다.                2026-09-17 */
 .char-scroll{width:100%;flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;
   display:flex;flex-direction:column;gap:20px;align-items:flex-start;}
-/* 스크롤바도 `List - all` 에만 보인다. 묶은 목록에서 띄우면 6px 을 먹어
-   콘텐츠 폭이 1602 → 1596 으로 줄고 프레임 1 과 어긋난다. */
-.char-scroll::-webkit-scrollbar{width:0;}
-.is-flat .char-scroll::-webkit-scrollbar{width:6px;}
-.is-flat .char-scroll::-webkit-scrollbar-track{background:transparent;}
-.is-flat .char-scroll::-webkit-scrollbar-thumb{background:var(--neutral-400);border-radius:3px;}
+/* 스크롤바는 6px 자리를 먹는다 — 넘치는 화면(묶은 목록)은 내용 폭이 1602 → 1596
+   이 되고, 그래서 `See all` 도 fade 도 1596 에서 끝나 바와 겹치지 않는다.
+   안 넘치는 평면 목록에는 바가 안 생기니 1602 그대로다. 한 줄 6칸(1596)은
+   두 경우 다 들어간다. 피그마 `Controls / Scrollbar` x1596 w6 와 같은 규칙.  2026-09-18 */
+.char-scroll::-webkit-scrollbar{width:6px;}
+.char-scroll::-webkit-scrollbar-track{background:transparent;}
+.char-scroll::-webkit-scrollbar-thumb{background:var(--neutral-400);border-radius:3px;}
 /* 스티키 줄은 46 이 아니라 64 다 — 위아래 9 를 더해 뒤로 지나가는 카드를 가린다 */
 .is-flat .char-scroll .filter-row{position:sticky;top:0;z-index:3;
   padding:9px 0;background:var(--neutral-50);}
