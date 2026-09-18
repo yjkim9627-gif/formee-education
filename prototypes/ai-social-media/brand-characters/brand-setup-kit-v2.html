@@ -377,6 +377,29 @@ input.card-name::selection{background:var(--brand-primary-mid);}
   border-radius:var(--radius-xl);display:flex;flex-direction:column;gap:8px;
   align-items:center;justify-content:center;overflow:hidden;}
 .thumb-new:hover{border-color:var(--neutral-450);background:rgba(255,255,255,.6);}
+
+/* ── 카드 호버 ──────────────────────────────────────────────────────────────
+   Figma 컴포넌트에는 호버 변형이 없다(변형은 Character Card / New character 뿐).
+   카드를 누르면 상세가 열리는데 알려주는 게 커서뿐이라 반응을 하나 준다.
+   **카드는 움직이지 않는다** — 세 가지 이유로 위치를 건드리면 안 된다.
+     · 캐러셀 줄은 `overflow-y:hidden` 이라 살짝 떠오르면 위가 잘린다
+     · 썸네일 위의 별·⋯·뱃지는 absolute 라 카드가 밀리면 같이 흔들린다
+     · 카드를 scale 하면 1px inside 스트로크와 10px 뱃지 글자가 리샘플돼 흐려진다
+   그래서 자리는 그대로 두고 **사진만 1.02 로 숨쉬고, 테두리가 한 단계 진해진다**.
+   사진은 `overflow:hidden` 안에서만 커지므로 레이아웃이 전혀 안 움직인다.  2026-09-18 */
+#groups .card:not(.card-new) .thumb{
+  transition:box-shadow .16s ease;}
+#groups .card:not(.card-new) .thumb-img{
+  transition:transform .22s cubic-bezier(.2,.6,.2,1);}
+#groups .card:not(.card-new):hover .thumb{
+  box-shadow:inset 0 0 0 1px var(--neutral-500), 0 6px 16px rgba(15,23,41,.10);}
+#groups .card:not(.card-new):hover .thumb-img{transform:scale(1.02);}
+#groups .card:not(.card-new):focus-visible .thumb{
+  box-shadow:inset 0 0 0 1px var(--neutral-500), 0 0 0 3px rgba(79,109,230,.35);}
+@media (prefers-reduced-motion:reduce){
+  #groups .card:not(.card-new) .thumb-img{transition:none;}
+  #groups .card:not(.card-new):hover .thumb-img{transform:none;}
+}
 .thumb-new span{font-weight:700;font-size:13px;line-height:20px;color:var(--neutral-700);
   text-align:center;white-space:nowrap;}
 
