@@ -290,9 +290,11 @@ input:focus-visible{outline:none;}   /* the wrapping field already shows focus v
 
 /* 화살표는 썸네일(295)의 세로 중앙에 온다 — 카드 전체가 아니라.
    그룹 기준 top 167 = 헤더 24 + gap 14 + (295/2 - 16), right 18. */
-.carousel-arrow{position:absolute;top:167px;width:32px;height:32px;
+/* `display:block` 이라 20 짜리 셰브런이 가로로는 왼쪽에 붙어 있었다(좌 0.7 / 우 11.3).
+   Figma `Controls / Carousel Arrow` 는 32 안에 20 을 x6 y6 으로 둔다 — 가운데다.  2026-09-18 */
+.carousel-arrow{position:absolute;top:167px;width:32px;height:32px;box-sizing:border-box;
   background:var(--neutral-0);border:1px solid var(--neutral-400);border-radius:9999px;
-  overflow:hidden;display:block;z-index:2;}
+  overflow:hidden;display:flex;align-items:center;justify-content:center;z-index:2;}
 .arrow-r{right:18px;}
 .arrow-l{left:12px;}
 /* the fade says the row continues past the clip — it goes once you reach the end.
