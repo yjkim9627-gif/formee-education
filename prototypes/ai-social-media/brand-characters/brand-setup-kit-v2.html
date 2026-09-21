@@ -638,6 +638,8 @@ input.card-name::selection{background:var(--brand-primary-mid);}
 .vp-name p{font-weight:600;font-size:14px;line-height:22px;color:var(--neutral-900);}
 .vp-desc{font-weight:400;font-size:13px;line-height:20px;color:var(--neutral-500);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.vp-flag{width:20px;height:20px;border-radius:9999px;overflow:hidden;flex:none;display:block;}
+.vp-flag svg{width:100%;height:100%;display:block;}
 .vp-lang{display:flex;gap:8px;align-items:center;flex:none;width:150px;}
 .vp-lang em{font-style:normal;font-weight:400;font-size:13px;line-height:20px;color:var(--neutral-900);}
 .vp-lang i{font-style:normal;font-weight:400;font-size:13px;line-height:20px;color:var(--neutral-500);}
@@ -19207,6 +19209,7 @@ function renderCharDetail(){
           <button type="button" class="d-voice-play" data-detail="playvoice"
             aria-label="Play ${esc(cv.name)}">${VP_IC.play}</button>
           <p>${esc(voiceLabel(cv))}</p>
+          ${flagHTML(cv)}
           <button type="button" class="d-voice-change" data-detail="setvoice">Change</button>
         </div>`
         : `<button type="button" class="d-voice-empty" data-detail="setvoice">
@@ -19313,7 +19316,7 @@ function renderVoicePicker(){
               cur && cur.id === v.id ? '<span class="badge badge-green"><p>Default</p></span>' : ''}</div>
             <p class="vp-desc">${esc(v.desc)}</p>
           </div>
-          <div class="vp-lang"><em>${esc(v.lang)}</em>${v.accent ? `<i>${esc(v.accent)}</i>` : ''}</div>
+          <div class="vp-lang">${flagHTML(v)}<em>${esc(v.lang)}</em>${v.accent ? `<i>${esc(v.accent)}</i>` : ''}</div>
           <p class="vp-use">${esc(v.use)}</p>
           <span class="vp-pick">${on ? VP_IC.check : ''}</span>
         </div>`; }).join('')
@@ -20076,6 +20079,25 @@ const voiceOf = c => (c.voiceId && VOICE_LIB.find(v => v.id === c.voiceId))
   || (c.voice ? VOICE_LIB.find(v => c.voice.indexOf(v.name) === 0) : null)
   || null;
 const voiceLabel = v => v ? (v.name + ' — ' + v.short) : '';
+/* 국기는 보이스의 **언어** 표시다 — 저장소에 애셋이 없어 20 원형으로 자른
+   인라인 SVG 로 둔다. 이모지는 윈도우에서 글자로 떨어진다.        2026-09-21 */
+const FLAGS = {
+  'English':`<svg viewBox="0 0 20 20" aria-hidden="true"><rect width="20" height="20" fill="#fff"/>`
+    + [0,2,4,6,8,10,12].map(y=>`<rect y="${y*1.54}" width="20" height="1.54" fill="#d62b3a"/>`).join('')
+    + `<rect width="9" height="7.7" fill="#2a3560"/></svg>`,
+  'English·British':`<svg viewBox="0 0 20 20" aria-hidden="true"><rect width="20" height="20" fill="#2a3560"/>`
+    + `<path d="M0 0l20 20M20 0L0 20" stroke="#fff" stroke-width="4"/>`
+    + `<path d="M10 0v20M0 10h20" stroke="#fff" stroke-width="6"/>`
+    + `<path d="M10 0v20M0 10h20" stroke="#d62b3a" stroke-width="3.2"/></svg>`,
+  'Korean':`<svg viewBox="0 0 20 20" aria-hidden="true"><rect width="20" height="20" fill="#fff"/>`
+    + `<path d="M4 10a6 6 0 0112 0z" fill="#cd2e3a"/><path d="M16 10a6 6 0 01-12 0z" fill="#0047a0"/></svg>`,
+  'Hindi':`<svg viewBox="0 0 20 20" aria-hidden="true"><rect width="20" height="6.67" fill="#ff9933"/>`
+    + `<rect y="6.67" width="20" height="6.67" fill="#fff"/><rect y="13.34" width="20" height="6.66" fill="#138808"/>`
+    + `<circle cx="10" cy="10" r="2" fill="none" stroke="#2a3560" stroke-width="1"/></svg>`,
+};
+const flagFor = v => FLAGS[v.lang + (v.accent === 'British' ? '\u00b7British' : '')] || FLAGS[v.lang] || '';
+const flagHTML = v => { const f = flagFor(v); return f ? `<span class="vp-flag">${f}</span>` : ''; };
+
 const VP_IC = {
   play:  '<svg viewBox="0 0 12 12" width="12" height="12" fill="currentColor" aria-hidden="true"><path d="M3.2 1.7v8.6L10.2 6z"/></svg>',
   plus:  '<svg viewBox="0 0 16 16" width="16" height="16" fill="none" aria-hidden="true"><path d="M8 3.4v9.2M3.4 8h9.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
