@@ -96,17 +96,26 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
 .vl-sort-btn{width:36px; height:36px; padding:0; gap:0; justify-content:center;}
 .vl-sort-btn img{width:20px; height:20px;}
 
-/* ---------- sticky · filter bar (9585:184248): Segmented Control + filter chips ---------- */
+/* ---------- sticky · filter bar (9585:184248): Segmented Control above filter chips ----------
+   Figma (9732:257434) stacks these -- Segmented Control on its own row, filter-chips below it --
+   not side by side. Was a single flex row here, which also had a second bug: the language/
+   gender/accent dropdowns lived *inside* the horizontally-scrolling chip row, so
+   .vl-chip-row's overflow-x:auto (which forces overflow-y:auto too, per the CSS spec's
+   overflow-x/y coupling) clipped their popovers instead of letting them float on top. */
 .vl-sticky-bar{
   position:sticky; top:0; z-index:5; background:var(--color-neutral-50);
-  display:flex; align-items:center; gap:var(--spacing-sm);
-  height:64px; margin-top:var(--spacing-xl);
+  display:flex; flex-direction:column; align-items:stretch; gap:var(--spacing-sm);
+  margin-top:var(--spacing-xl); padding-bottom:var(--spacing-sm);
 }
+/* Non-scrolling: Favorites + the Language/Accent/Gender dropdowns -- few, fixed-count, and
+   need their popovers to escape any ancestor's overflow clipping. */
+.vl-filter-line{display:flex; align-items:center; gap:var(--spacing-sm);}
 /* Figma's own "sticky · filter bar" frame (9732:257434 / Music's 9750:259324) never wraps
    this row to a second line -- its filter-chips content is sized to fit the sticky bar's
    fixed height. Matching that here: nowrap + horizontal scroll instead of wrap, same
    treatment as the Voice Design prompt's preset-chip-row, so an extra/longer filter never
-   grows the sticky bar's height. */
+   grows the sticky bar's height. Only the category chips live in here now (see
+   .vl-filter-line above) -- this is the one part of the row that's actually meant to scroll. */
 .vl-chip-row{display:flex; align-items:center; gap:var(--spacing-sm); flex-wrap:nowrap; overflow-x:auto; flex:1; min-width:0;}
 .vl-chip-row::-webkit-scrollbar{height:0;}
 /* chip · Genre default state (Text/xs Medium, 12/18/500) */
@@ -590,7 +599,7 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
             <button type="button" class="controls-segment-chip controls-segment-chip--selected" data-tab="explore" onclick="setVoiceTab('explore')">ElevenLabs Library</button>
             <button type="button" class="controls-segment-chip" data-tab="mine" onclick="setVoiceTab('mine')">My Voices</button>
           </div>
-          <div class="vl-chip-row" id="voiceChipRow">
+          <div class="vl-filter-line">
             <button type="button" class="vl-fchip vl-fchip-favorites" id="voiceFavChip" onclick="toggleVoiceFavOnly()">Favorites<img src="../../../components/ai-social-media/icons/controls/star-fill-default.svg" alt=""></button>
             <div class="vl-fselect-wrap">
               <button type="button" class="vl-fselect" id="voiceLangTrigger" onclick="event.stopPropagation(); toggleVoiceLangMenu()">
@@ -623,7 +632,9 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
               <div class="vl-fselect-menu" id="voiceGenderMenu" onclick="event.stopPropagation()" hidden></div>
             </div>
             <span class="vl-fchip-divider"></span>
-            <span id="voiceCatChips" style="display:contents;"></span>
+            <div class="vl-chip-row" id="voiceChipRow">
+              <span id="voiceCatChips" style="display:contents;"></span>
+            </div>
           </div>
           <p class="vl-count" id="voiceCount"></p>
         </div>
