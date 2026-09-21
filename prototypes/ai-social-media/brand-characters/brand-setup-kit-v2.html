@@ -18536,7 +18536,7 @@ const role = () => ROLES[state.role];
 /* a character is the default presenter for zero or more brands */
 const isDefault = c => c.defaultFor.length > 0;
 /* the card badge counts the styles generated from this character */
-const styleCount = c => (c.styles !== undefined ? c.styles : 0);
+const styleCount = c => stylesFor(c.id).length;   /* 카드 뱃지도 같은 목록을 센다 */
 
 const state = {
   role: 'super',
@@ -18922,9 +18922,16 @@ const styleLook = i => `filter:saturate(${94 + (i * 7) % 16}%) brightness(${95 +
    object-position:${18 + (i * 13) % 64}% ${20 + (i * 11) % 50}%;`;
 
 const styleStore = {};                       // char id -> [{name, fav}]
+/* 스타일 개수는 캐릭터가 들고 있다 — 카드 뱃지(`8 styles`)와 상세(`12 styles`)가
+   서로 다른 데이터를 보고 있어서 같은 캐릭터가 두 숫자를 말했다. 프리셋은 이름
+   목록일 뿐이고, 몇 개를 가졌는지는 `DATA[].styles` 가 정본이다.      2026-09-21 */
 function stylesFor(id){
   if (!styleStore[id]){
-    styleStore[id] = STYLE_PRESETS.map((name, i) => ({ name, fav: i < 3 }));
+    const c = DATA.find(x => x.id === id);
+    const n = (c && c.styles !== undefined)
+      ? Math.max(1, Math.min(c.styles, STYLE_PRESETS.length))
+      : STYLE_PRESETS.length;
+    styleStore[id] = STYLE_PRESETS.slice(0, n).map((name, i) => ({ name, fav: i < 3 }));
   }
   return styleStore[id];
 }
