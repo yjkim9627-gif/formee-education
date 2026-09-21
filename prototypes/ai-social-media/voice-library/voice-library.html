@@ -604,6 +604,18 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
                 <div class="vl-fselect-list" id="voiceLangList"></div>
               </div>
             </div>
+            <div class="vl-fselect-wrap" id="voiceAccentWrap" hidden>
+              <button type="button" class="vl-fselect" id="voiceAccentTrigger" onclick="event.stopPropagation(); toggleVoiceAccentMenu()">
+                <span class="vl-fselect-label">Select Accent</span><img class="vl-fselect-caret" src="../../../components/ai-social-media/icons/caret-down-filled.svg" alt="">
+              </button>
+              <div class="vl-fselect-menu vl-fselect-menu--lang" id="voiceAccentMenu" onclick="event.stopPropagation()" hidden>
+                <div class="vl-fselect-search">
+                  <img src="../../../components/ai-social-media/icons/ui-search.svg" alt="">
+                  <input type="text" id="voiceAccentSearchInput" placeholder="Search accents" oninput="renderVoiceAccentOptions()">
+                </div>
+                <div class="vl-fselect-list" id="voiceAccentList"></div>
+              </div>
+            </div>
             <div class="vl-fselect-wrap">
               <button type="button" class="vl-fselect" id="voiceGenderTrigger" onclick="event.stopPropagation(); toggleVoiceGenderMenu()">
                 <span class="vl-fselect-label">Gender</span><img class="vl-fselect-caret" src="../../../components/ai-social-media/icons/caret-down-filled.svg" alt="">
@@ -1268,6 +1280,14 @@ const VOICE_LANGUAGES = [
 let voiceLangFilter = new Set();
 let voiceLangMenuOpen = false;
 
+// English is the only language with regional accent variants in the seed data (see
+// LANGUAGE_ACCENTS below) -- the accent chip only appears once "English" is one of the
+// selected languages, matching ElevenLabs' own language->accent drill-down pattern.
+const VOICE_ACCENTS = ['American','Australian','British','Canadian','Indian','Irish','Jamaican','New Zealand','Nigerian','Scottish','South African','Welsh'];
+const VOICE_ACCENT_REGION = { American:'US', British:'UK', Australian:'Australian', Canadian:'Canadian', Indian:'Indian', Irish:'Irish', Jamaican:'Jamaican', 'New Zealand':'New Zealand', Nigerian:'Nigerian', Scottish:'Scottish', 'South African':'South African', Welsh:'Welsh' };
+let voiceAccentFilter = null;
+let voiceAccentMenuOpen = false;
+
 // Voice Library Card (9965:292091) shows one language + an optional accent label (e.g.
 // "English" + "American"), not the full langs[] list -- English is the only language this
 // data models a real regional accent for, so it's the only one that ever produces a second
@@ -1281,9 +1301,10 @@ function voiceLanguageTag(v){
 }
 
 function closeVoiceFselectMenus(){
-  voiceGenderMenuOpen = false; voiceLangMenuOpen = false;
+  voiceGenderMenuOpen = false; voiceLangMenuOpen = false; voiceAccentMenuOpen = false;
   document.getElementById('voiceGenderMenu').hidden = true;
   document.getElementById('voiceLangMenu').hidden = true;
+  document.getElementById('voiceAccentMenu').hidden = true;
 }
 function toggleVoiceGenderMenu(){
   const opening = !voiceGenderMenuOpen;
@@ -1340,11 +1361,13 @@ function renderVoiceLangOptions(){
 function toggleVoiceLangOption(name){
   if (voiceLangFilter.has(name)) voiceLangFilter.delete(name); else voiceLangFilter.add(name);
   renderVoiceLangTrigger();
+  updateVoiceAccentVisibility();
   renderVoices();
 }
 function clearVoiceLangFilter(){
   voiceLangFilter.clear();
   renderVoiceLangTrigger();
+  updateVoiceAccentVisibility();
   renderVoices();
 }
 function renderVoiceLangTrigger(){
@@ -1360,8 +1383,58 @@ function renderVoiceLangTrigger(){
     trigger.innerHTML = `<span class="vl-fselect-label">Any language</span><img class="vl-fselect-caret" src="${ICON}caret-down-filled.svg" alt="">`;
   }
 }
+// Accent is a second, dependent filter chip -- only ever visible while "English" is
+// selected in the Language filter above, and cleared automatically if English gets
+// deselected so a stale accent can't silently keep filtering the grid.
+function updateVoiceAccentVisibility(){
+  const show = Array.from(voiceLangFilter).some(l => l.toLowerCase() === 'english');
+  document.getElementById('voiceAccentWrap').hidden = !show;
+  if (!show && voiceAccentFilter){
+    voiceAccentFilter = null;
+    renderVoiceAccentTrigger();
+  }
+}
+function toggleVoiceAccentMenu(){
+  const opening = !voiceAccentMenuOpen;
+  closeVoiceFselectMenus();
+  voiceAccentMenuOpen = opening;
+  document.getElementById('voiceAccentMenu').hidden = !opening;
+  if (opening){
+    document.getElementById('voiceAccentSearchInput').value = '';
+    renderVoiceAccentOptions();
+    document.getElementById('voiceAccentSearchInput').focus();
+  }
+}
+function renderVoiceAccentOptions(){
+  const q = (document.getElementById('voiceAccentSearchInput').value || '').toLowerCase().trim();
+  const list = VOICE_ACCENTS.filter(a => a.toLowerCase().includes(q));
+  document.getElementById('voiceAccentList').innerHTML = list.length ? list.map(a =>
+    `<div class="vl-fselect-row${a === voiceAccentFilter ? ' selected' : ''}" onclick="selectVoiceAccent('${a}')">${a}</div>`
+  ).join('') : `<p class="vl-fselect-empty">No accents found</p>`;
+}
+function selectVoiceAccent(a){
+  voiceAccentFilter = a;
+  renderVoiceAccentTrigger();
+  closeVoiceFselectMenus();
+  renderVoices();
+}
+function clearVoiceAccentFilter(){
+  voiceAccentFilter = null;
+  renderVoiceAccentTrigger();
+  renderVoices();
+}
+function renderVoiceAccentTrigger(){
+  const trigger = document.getElementById('voiceAccentTrigger');
+  if (voiceAccentFilter){
+    trigger.className = 'vl-fselect vl-fselect--filled';
+    trigger.innerHTML = `<img class="vl-fselect-x" src="${ICON}close-x.svg" alt="" onclick="event.stopPropagation(); clearVoiceAccentFilter();"><span class="vl-fselect-label">Accent</span><span class="vl-fselect-divider"></span><span class="vl-fselect-value">${voiceAccentFilter}</span>`;
+  } else {
+    trigger.className = 'vl-fselect';
+    trigger.innerHTML = `<span class="vl-fselect-label">Select Accent</span><img class="vl-fselect-caret" src="${ICON}caret-down-filled.svg" alt="">`;
+  }
+}
 document.addEventListener('click', (e) => {
-  if (!e.target.closest('.vl-fselect-wrap') && (voiceGenderMenuOpen || voiceLangMenuOpen)) closeVoiceFselectMenus();
+  if (!e.target.closest('.vl-fselect-wrap') && (voiceGenderMenuOpen || voiceLangMenuOpen || voiceAccentMenuOpen)) closeVoiceFselectMenus();
 });
 
 /* kebab-menu state: which My Voices card's "more" menu is open. Tracked in JS (not just
@@ -1432,6 +1505,14 @@ function renderVoices(){
     // variants ("English (US)", "English (UK)") already stored on each voice.
     const selected = Array.from(voiceLangFilter).map(s => s.toLowerCase());
     list = list.filter(v => v.langs.some(l => selected.some(sel => l.toLowerCase().startsWith(sel))));
+  }
+  if (voiceAccentFilter){
+    // Region code, not the accent's display name -- data stores "English (US)", not
+    // "English (American)", so American/British/Australian need the US/UK/Australian
+    // mapping in VOICE_ACCENT_REGION. Accents beyond those three have no seed voice yet
+    // and will just show the empty state, same as any other filter with no matches.
+    const region = (VOICE_ACCENT_REGION[voiceAccentFilter] || voiceAccentFilter).toLowerCase();
+    list = list.filter(v => v.langs.some(l => l.toLowerCase() === `english (${region})`));
   }
   if (q) list = list.filter(v => v.name.toLowerCase().includes(q) || v.desc.toLowerCase().includes(q));
 
