@@ -603,7 +603,14 @@ input.card-name::selection{background:var(--brand-primary-mid);}
 .d-search input::placeholder{color:var(--neutral-500);opacity:1;}
 
 .d-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;width:100%;flex:none;}
-.cd-right .d-grid{grid-template-columns:repeat(auto-fill,244px);gap:24px;justify-content:start;}
+/* 카드는 남는 폭을 나눠 갖는다 — 244 고정이면 패널이 닫힌 1210 폭에서 4열(1048)
+   까지만 차고 오른쪽 162 가 죽는다. 닫힘 4열(285) · 열림 3열(244) 로 양쪽 다
+   오른쪽이 0 으로 떨어지고, 패널이 자리를 가져가면 카드가 작아지는 방향이라
+   움직임도 납득된다.
+   열 수는 `auto-fill` 로 재지 않고 못박는다 — 카드에 aspect-ratio 가 걸려 있어서
+   `auto-fill minmax()` 로 두면 폭↔높이가 서로를 기다리며 레이아웃이 멈춘다. */
+.cd-right .d-grid{grid-template-columns:repeat(4,1fr);gap:24px;justify-content:start;}
+#charDetailMain.sp-open .cd-right .d-grid{grid-template-columns:repeat(3,1fr);}
 .cd-right .d-style,.cd-right .d-new{aspect-ratio:244/292;}
 .d-style{position:relative;aspect-ratio:4/5;border-radius:12px;overflow:hidden;background:var(--neutral-100);
   display:block;width:100%;}
@@ -612,7 +619,8 @@ input.card-name::selection{background:var(--brand-primary-mid);}
   background:linear-gradient(to top,rgba(11,20,40,.72),rgba(11,20,40,0));}
 .d-style p{position:absolute;left:10px;right:10px;bottom:9px;font-weight:600;font-size:13px;line-height:20px;
   color:#fff;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.d-style .d-fav{position:absolute;left:8px;top:8px;width:36px;height:36px;border-radius:var(--radius-lg);
+/* 피그마 `Selector / Style Card` 의 `preview-top-row` 는 y14 · 좌우 패딩 12 다 */
+.d-style .d-fav{position:absolute;left:12px;top:14px;width:36px;height:36px;border-radius:var(--radius-lg);
   background:rgba(255,255,255,.92);display:flex;align-items:center;justify-content:center;
   transition:background .12s ease;}
 .d-style .d-fav:hover{background:#fff;}
@@ -667,12 +675,13 @@ input.card-name::selection{background:var(--brand-primary-mid);}
   justify-content:center;flex:none;}
 .cd-star .ic{width:20px !important;height:20px !important;}
 /* the style card carries its own overflow menu, next to the favourite badge */
-.d-style .d-more{position:absolute;right:8px;top:8px;width:36px;height:36px;border-radius:var(--radius-lg);
+.d-style .d-more{position:absolute;right:12px;top:14px;width:36px;height:36px;border-radius:var(--radius-lg);
   background:rgba(255,255,255,.92);display:flex;align-items:center;justify-content:center;
   transition:background .12s ease;}
 .d-style .d-more:hover{background:#fff;}
 .cd-menuwrap{position:relative;}
-.cd-menuwrap .ctx-menu{top:48px;right:8px;left:auto;}
+/* 메뉴는 ⋯ 버튼 오른쪽 끝에 맞추고 버튼 아래 8 — 버튼이 14+36=50 에서 끝나니 58 */
+.cd-menuwrap .ctx-menu{top:58px;right:12px;left:auto;}
 
 /* ---- style preview · a right-hand drawer over the detail page ---- */
 /* panel · style preview (6326:95930) — 440x1106 at x=1480, 24 side padding,
