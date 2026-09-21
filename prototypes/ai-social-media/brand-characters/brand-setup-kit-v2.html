@@ -576,11 +576,79 @@ input.card-name::selection{background:var(--brand-primary-mid);}
 
 .d-section{display:flex;flex-direction:column;gap:10px;align-items:flex-start;width:100%;flex:none;}
 .d-lbl{font-weight:600;font-size:14px;line-height:22px;color:var(--neutral-800);white-space:nowrap;}
-.d-voice{display:flex;gap:10px;align-items:center;width:100%;flex:none;padding:6px 0;}
-.d-voice-dot{width:28px;height:28px;border-radius:9999px;flex:none;
-  background:linear-gradient(135deg,#4f6de6,#ed7797);}
-.d-voice p{font-weight:400;font-size:14px;line-height:22px;color:var(--neutral-900);
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+/* ---- default voice · 캐릭터 상세 왼쪽 칸 ----------------------------------
+   보이스는 캐릭터 1 : 보이스 1 이고, 반대로 보이스 하나는 캐릭터 여럿이 쓴다.
+   그래서 보이스 라이브러리 쪽은 다중 선택이고 여기는 단일 선택이다.
+   비었을 때와 채워졌을 때가 **같은 자리, 같은 높이**여야 해서 점선 슬롯을 쓴다
+   (풀폭 버튼은 아래 `Create new content` 와 무게가 겹친다).      2026-09-21 */
+.d-field{display:flex;flex-direction:column;gap:10px;width:100%;flex:none;}
+.d-voice{display:flex;gap:10px;align-items:center;width:100%;flex:none;}
+.d-voice-play{width:30px;height:30px;border-radius:9999px;flex:none;box-sizing:border-box;
+  border:1.5px solid var(--neutral-900);display:flex;align-items:center;justify-content:center;
+  color:var(--neutral-900);}
+.d-voice-play svg{width:12px;height:12px;display:block;}
+.d-voice-change{font-weight:500;font-size:13px;line-height:20px;color:var(--neutral-700);flex:none;}
+.d-voice-change:hover{color:var(--neutral-900);text-decoration:underline;}
+.d-voice-empty{box-sizing:border-box;width:100%;padding:9px 12px;border-radius:10px;
+  border:1px dashed var(--neutral-400);display:flex;gap:8px;align-items:center;justify-content:center;
+  font-weight:500;font-size:14px;line-height:22px;color:var(--neutral-700);}
+.d-voice-empty:hover{border-color:var(--neutral-500);background:var(--neutral-50);}
+
+/* ---- voice picker · Set voice for <name> --------------------------------
+   새 화면을 만들지 않는다 — 보이스 라이브러리(10055:257868)의 툴바·탭·필터 줄·
+   카드를 그대로 쓰고 위에 "누구의 보이스인지" 한 줄과 아래 Save 만 얹는다.
+   실제 라이브러리는 수천 개라 기본 탭은 `My Voices` 다.             2026-09-21 */
+.vp-modal{position:absolute;left:448px;top:206px;width:1024px;
+  background:var(--neutral-0);border-radius:16px;overflow:hidden;
+  box-shadow:0px 16px 48px 0px rgba(13,13,13,0.16);display:flex;flex-direction:column;}
+.vp-head{flex:none;display:flex;align-items:center;justify-content:space-between;
+  padding:28px 32px 20px;}
+.vp-title{font-weight:700;font-size:20px;line-height:28px;color:var(--neutral-900);white-space:nowrap;}
+/* 모달 높이는 내용이 정한다 — `flex:1 0 0` 로 두면 높이 없는 부모 안에서 0 이 된다 */
+.vp-body{flex:0 1 auto;display:flex;flex-direction:column;gap:16px;
+  padding:0 32px 24px;max-height:720px;overflow-y:auto;}
+.vp-ctx{display:flex;gap:12px;align-items:center;padding:12px 16px;border-radius:12px;
+  background:var(--neutral-50);flex:none;}
+.vp-ctx img{width:40px;height:40px;border-radius:8px;object-fit:cover;flex:none;display:block;}
+.vp-ctx b{font-weight:600;font-size:14px;line-height:22px;color:var(--neutral-900);}
+.vp-ctx span{font-weight:400;font-size:13px;line-height:20px;color:var(--neutral-500);}
+.vp-tabs{display:flex;gap:0;padding:4px;border-radius:10px;background:var(--neutral-100);
+  align-self:flex-start;flex:none;}
+.vp-tab{padding:7px 14px;border-radius:8px;font-weight:600;font-size:13px;line-height:20px;
+  color:var(--neutral-700);white-space:nowrap;}
+.vp-tab.on{background:var(--neutral-0);color:var(--neutral-900);
+  box-shadow:0px 1px 2px 0px rgba(13,13,13,0.06);}
+.vp-chips{display:flex;gap:8px;align-items:center;flex:none;overflow:hidden;}
+.vp-count{font-weight:500;font-size:12px;line-height:18px;color:var(--neutral-500);flex:none;}
+.vp-list{display:flex;flex-direction:column;gap:12px;width:100%;flex:none;}
+.vp-row{box-sizing:border-box;display:flex;gap:24px;align-items:center;width:100%;
+  padding:12px 16px;border-radius:12px;background:var(--neutral-0);
+  border:1px solid var(--neutral-300,#e3e8f2);cursor:pointer;}
+.vp-row:hover{border-color:var(--neutral-400);}
+.vp-row.on{border-color:var(--neutral-900);box-shadow:inset 0 0 0 1px var(--neutral-900);}
+.vp-play{width:30px;height:30px;border-radius:9999px;flex:none;box-sizing:border-box;
+  border:1.5px solid var(--neutral-900);display:flex;align-items:center;justify-content:center;
+  color:var(--neutral-900);}
+.vp-play svg{width:12px;height:12px;display:block;}
+.vp-text{flex:1 0 0;min-width:1px;display:flex;flex-direction:column;gap:2px;}
+.vp-name{display:flex;gap:8px;align-items:center;}
+.vp-name p{font-weight:600;font-size:14px;line-height:22px;color:var(--neutral-900);}
+.vp-desc{font-weight:400;font-size:13px;line-height:20px;color:var(--neutral-500);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.vp-lang{display:flex;gap:8px;align-items:center;flex:none;width:150px;}
+.vp-lang em{font-style:normal;font-weight:400;font-size:13px;line-height:20px;color:var(--neutral-900);}
+.vp-lang i{font-style:normal;font-weight:400;font-size:13px;line-height:20px;color:var(--neutral-500);}
+.vp-use{flex:none;width:150px;font-weight:400;font-size:13px;line-height:20px;color:var(--neutral-900);}
+.vp-pick{width:24px;height:24px;flex:none;border-radius:9999px;box-sizing:border-box;
+  border:1.5px solid var(--neutral-400);display:flex;align-items:center;justify-content:center;}
+.vp-row.on .vp-pick{border-color:var(--neutral-900);background:var(--neutral-900);color:var(--neutral-0);}
+.vp-pick svg{width:14px;height:14px;display:block;}
+.vp-foot{flex:none;height:74px;box-sizing:border-box;display:flex;gap:12px;
+  align-items:center;justify-content:flex-end;padding:18px 32px;
+  border-top:1px solid #e3e8f2;background:var(--neutral-0);}
+.vp-empty{font-weight:400;font-size:13px;line-height:20px;color:var(--neutral-500);padding:24px 0;}
+.d-voice p{flex:1 0 0;min-width:1px;font-weight:400;font-size:14px;line-height:22px;
+  color:var(--neutral-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 
 .d-sources{display:grid;grid-template-columns:repeat(3,85px);gap:8px;width:100%;flex:none;
   justify-content:start;}
@@ -18423,6 +18491,11 @@ input.card-name::selection{background:var(--brand-primary-mid);}
   <div class="scrim" id="scrim"></div>
   <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Create character"></div>
 </div>
+
+<div class="modal-layer" id="voiceLayer" hidden>
+  <div class="scrim" data-voice="close"></div>
+  <div class="vp-modal" id="voiceModal" role="dialog" aria-modal="true" aria-label="Set voice"></div>
+</div>
   </div>
   <div class="breadcrumb" id="crumb">
     <p class="bc-current">Characters</p>
@@ -18544,6 +18617,7 @@ function menuHTML(c){
   const rows = [
     multi ? { label:'Set as default', act:'brandpop', sub:true }
           : { label: c.defaultFor.includes(own) ? 'Remove default' : 'Set as default', act:'default' },
+    { label: 'Set voice', act:'setvoice' },
     { label: 'Rename', act:'rename', preview:true },
     { label: 'Delete', act:'delete', danger:true },
   ];
@@ -19117,10 +19191,24 @@ function renderCharDetail(){
     [c.type, c.gender, c.age, c.brand, all.length + (all.length === 1 ? ' style' : ' styles')]
       .filter(Boolean).join(' · ');
 
+  const cv = voiceOf(c);
   $('#cdLeft').innerHTML = `
-    <p class="d-lbl">Source Images</p>
-    <div class="d-sources">${SOURCE_IMAGES.map(r =>
-      `<div><img src="assets/${r}.jpg" alt=""></div>`).join('')}</div>
+    <div class="d-field">
+      <p class="d-lbl">Source Images</p>
+      <div class="d-sources">${SOURCE_IMAGES.map(r =>
+        `<div><img src="assets/${r}.jpg" alt=""></div>`).join('')}</div>
+    </div>
+    <div class="d-field">
+      <p class="d-lbl">Default Voice</p>
+      ${cv ? `<div class="d-voice">
+          <button type="button" class="d-voice-play" data-detail="playvoice"
+            aria-label="Play ${esc(cv.name)}">${VP_IC.play}</button>
+          <p>${esc(voiceLabel(cv))}</p>
+          <button type="button" class="d-voice-change" data-detail="setvoice">Change</button>
+        </div>`
+        : `<button type="button" class="d-voice-empty" data-detail="setvoice">
+             ${VP_IC.plus}<span>Set voice</span></button>`}
+    </div>
     <div class="d-foot">
       <button type="button" class="btn-dark" data-detail="content"><span>Create new content</span></button>
     </div>`;
@@ -19158,6 +19246,109 @@ function renderCharDetail(){
 
   renderStylePreview();
 }
+
+/* ------------------------------------------------------------- voice picker
+   보이스 라이브러리를 캐릭터 맥락으로 연 것이다 — 툴바·탭·필터 줄·행은 그쪽 화면
+   그대로고, 위에 "누구의 보이스인지" 한 줄과 아래 Save 만 얹었다.
+   관계가 비대칭이라(캐릭터 1 : 보이스 1, 보이스 1 : 캐릭터 N) 여기는 단일 선택,
+   보이스 쪽 `Set as character voice` 는 다중 선택이다.                2026-09-21 */
+let vpick = null;             /* { id, tab:'mine'|'all', query, sel } */
+
+function openVoicePicker(charId){
+  const c = DATA.find(x => x.id === charId);
+  if (!c) return;
+  const cur = voiceOf(c);
+  vpick = { id: charId, tab: 'mine', query: '', sel: cur ? cur.id : null };
+  $('#voiceLayer').hidden = false;
+  renderVoicePicker();
+}
+function closeVoicePicker(){ vpick = null; $('#voiceLayer').hidden = true; }
+
+function vpMatches(){
+  const q = vpick.query.trim().toLowerCase();
+  return VOICE_LIB.filter(v =>
+    (vpick.tab === 'mine' ? v.mine : true) &&
+    (!q || [v.name, v.desc, v.lang, v.use].join(' ').toLowerCase().includes(q)));
+}
+
+/* 칩은 라이브러리 화면의 줄을 그대로 보여주는 것이라 아직 거르지 않는다 */
+const VP_CHIPS = ['Favorites', 'Language', 'Gender', 'Social media',
+                  'Advertisement', 'Narrative story'];
+
+function renderVoicePicker(){
+  if (!vpick) return;
+  const c = DATA.find(x => x.id === vpick.id);
+  if (!c) return closeVoicePicker();
+  const cur  = voiceOf(c);
+  const list = vpMatches();
+  $('#voiceModal').innerHTML = `
+    <div class="vp-head">
+      <p class="vp-title">Set voice for ${esc(c.name)}</p>
+      <button type="button" class="m-close" data-voice="close" aria-label="Close">${ICONS.mClose}</button>
+    </div>
+    <div class="vp-body">
+      <div class="vp-ctx">
+        <img src="${c.src || ('assets/' + c.thumb + '.jpg')}" alt="">
+        <div><b>${esc(c.name)}</b>
+          <span style="display:block">This voice is used by default when ${esc(c.name)} speaks.</span></div>
+      </div>
+      <div class="search-field">${ICONS.searchSm}
+        <input id="vpSearch" type="text" placeholder="Search library voices&hellip;"
+               value="${esc(vpick.query)}" autocomplete="off"></div>
+      <div class="vp-tabs">
+        <button type="button" class="vp-tab${vpick.tab === 'all'  ? ' on' : ''}" data-vptab="all">ElevenLabs Library</button>
+        <button type="button" class="vp-tab${vpick.tab === 'mine' ? ' on' : ''}" data-vptab="mine">My Voices</button>
+      </div>
+      <div class="vp-chips">${VP_CHIPS.map(x => `<span class="chip">${x}</span>`).join('')}</div>
+      <p class="vp-count">${list.length} ${list.length === 1 ? 'voice' : 'voices'}</p>
+      <div class="vp-list">${list.length ? list.map(v => {
+        const on = vpick.sel === v.id;
+        return `<div class="vp-row${on ? ' on' : ''}" data-vpick="${v.id}" role="radio" aria-checked="${on}">
+          <span class="vp-play">${VP_IC.play}</span>
+          <div class="vp-text">
+            <div class="vp-name"><p>${esc(v.name)}</p>${
+              cur && cur.id === v.id ? '<span class="badge badge-green"><p>Default</p></span>' : ''}</div>
+            <p class="vp-desc">${esc(v.desc)}</p>
+          </div>
+          <div class="vp-lang"><em>${esc(v.lang)}</em>${v.accent ? `<i>${esc(v.accent)}</i>` : ''}</div>
+          <p class="vp-use">${esc(v.use)}</p>
+          <span class="vp-pick">${on ? VP_IC.check : ''}</span>
+        </div>`; }).join('')
+        : '<p class="vp-empty">No voices match this search.</p>'}</div>
+    </div>
+    <div class="vp-foot">
+      <button type="button" class="btn-sec" data-voice="close">Cancel</button>
+      <button type="button" class="btn-dark" data-voice="save"><span>Save</span></button>
+    </div>`;
+}
+
+$('#voiceLayer').addEventListener('click', e => {
+  if (!vpick) return;
+  if (e.target.closest('[data-voice="close"]')) return closeVoicePicker();
+  const tab = e.target.closest('[data-vptab]');
+  if (tab){ vpick.tab = tab.dataset.vptab; renderVoicePicker(); return; }
+  const row = e.target.closest('[data-vpick]');
+  if (row){ vpick.sel = row.dataset.vpick; renderVoicePicker(); return; }
+  if (e.target.closest('[data-voice="save"]')){
+    const c = DATA.find(x => x.id === vpick.id);
+    const v = VOICE_LIB.find(x => x.id === vpick.sel);
+    if (c && v){ c.voiceId = v.id; c.voice = voiceLabel(v); }
+    closeVoicePicker();
+    render();
+    if (detail) renderCharDetail();
+    return;
+  }
+});
+$('#voiceLayer').addEventListener('input', e => {
+  if (e.target.id !== 'vpSearch' || !vpick) return;
+  vpick.query = e.target.value;
+  renderVoicePicker();
+  const i = $('#vpSearch');
+  if (i){ i.focus(); i.setSelectionRange(i.value.length, i.value.length); }
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && vpick) closeVoicePicker();
+});
 
 /* ---- style preview · the drawer that slides in over the gallery ---- */
 const STYLE_RECIPE = {
@@ -19329,6 +19520,8 @@ onDetail('click', e => {
   if (!hit) return;
   switch (hit.dataset.detail){
     case 'close': closeDetail(); break;
+    case 'setvoice': openVoicePicker(c.id); break;
+    case 'playvoice': break;            /* 프로토타입엔 오디오가 없다 */
     case 'fav':   c.fav = !c.fav; render(); renderDetail(); break;
     case 'backtolist': closeDetail(); break;
     case 'stylefavonly': detail.favOnly = !detail.favOnly; renderDetail(); break;
@@ -19567,6 +19760,7 @@ $('#groups').addEventListener('click', e => {
     }
     if (act === 'delete') { askDelete(c); state.menuFor = null; state.brandPopFor = null; }
     if (act === 'rename') { state.renaming = c.id; state.menuFor = null; state.brandPopFor = null; }
+    if (act === 'setvoice'){ state.menuFor = null; state.brandPopFor = null; openVoicePicker(c.id); }
     render();
     return;
   }
@@ -19844,6 +20038,46 @@ $('#btnNewCharacter').addEventListener('click', () => openModal(contextBrand()))
 
 const VOICES = ['Aria — warm and friendly', 'Noah — bright', 'Mina — calm',
                 'Theo — steady', 'Sena — friendly'];
+/* 실제 라이브러리는 수천 개다 — 그래서 캐릭터에 붙일 때는 `My Voices`(브랜드가
+   이미 쓰는 것들)를 먼저 보여주고, 없으면 전체 카탈로그 탭으로 넘어간다.
+   `mine:false` 가 카탈로그 쪽이다.                                 2026-09-21 */
+const VOICE_LIB = [
+  { id:'mina', name:'Mina', short:'calm',              mine:true,
+    desc:'Calm, even female narration — good for explainers.',
+    lang:'English', accent:'American', use:'Narrative story' },
+  { id:'aria', name:'Aria', short:'warm and friendly', mine:true,
+    desc:'Warm and friendly — natural for lifestyle content.',
+    lang:'English', accent:'American', use:'Social media' },
+  { id:'noah', name:'Noah', short:'bright',            mine:true,
+    desc:'Bright young male voice with an easy pace.',
+    lang:'English', accent:'American', use:'Advertisement' },
+  { id:'theo', name:'Theo', short:'steady',            mine:true,
+    desc:'Steady, low male voice — documentary feel.',
+    lang:'English', accent:'British',  use:'Informative educational' },
+  { id:'sena', name:'Sena', short:'friendly',          mine:true,
+    desc:'Friendly female voice with a light lift.',
+    lang:'Korean',  accent:'',         use:'Social media' },
+  { id:'luna', name:'Luna', short:'upbeat',            mine:false,
+    desc:'Bright and energetic — upbeat pacing for product demos.',
+    lang:'English', accent:'American', use:'Advertisement' },
+  { id:'marcus', name:'Marcus', short:'resonant',      mine:false,
+    desc:'Deep, resonant male voice — cinematic weight for trailers.',
+    lang:'English', accent:'American', use:'Entertainment TV' },
+  { id:'viraj', name:'Viraj', short:'lively',          mine:false,
+    desc:'Warm, energetic and lively — designed to draw listeners in.',
+    lang:'Hindi',   accent:'',         use:'Social media' },
+];
+/* DATA 는 `"Mina — calm"` 처럼 표시 문자열을 들고 있다 — 이름으로 맞춘다.
+   피커에서 고르면 `voiceId` 가 박히고 그쪽이 우선이다. */
+const voiceOf = c => (c.voiceId && VOICE_LIB.find(v => v.id === c.voiceId))
+  || (c.voice ? VOICE_LIB.find(v => c.voice.indexOf(v.name) === 0) : null)
+  || null;
+const voiceLabel = v => v ? (v.name + ' — ' + v.short) : '';
+const VP_IC = {
+  play:  '<svg viewBox="0 0 12 12" width="12" height="12" fill="currentColor" aria-hidden="true"><path d="M3.2 1.7v8.6L10.2 6z"/></svg>',
+  plus:  '<svg viewBox="0 0 16 16" width="16" height="16" fill="none" aria-hidden="true"><path d="M8 3.4v9.2M3.4 8h9.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+  check: '<svg viewBox="0 0 16 16" width="16" height="16" fill="none" aria-hidden="true"><path d="M13 4.6L6.5 11.4 3 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+};
 const ETHNICITIES = ['Asian', 'Black', 'Latino/a', 'Middle Eastern', 'White', 'Mixed'];
 const AGES = ['18–24', '25–34', '35–44', '45–54', '55+'];
 const WARDROBE    = ['Business', 'Smart casual', 'Casual', 'Branded'];
@@ -20594,7 +20828,9 @@ function createCharacter(){
     id, name: m.name.trim() || 'Untitled',
     type: m.type,
     brand, posts: 0, styles: 1, thumb: null, src, fav: false, defaultFor: [], createdBy: 'Me',
-    voice: m.voice || VOICES[0], lastUsed: 0,
+    /* 자동 배정하지 않는다 — 카탈로그가 수천 개라 첫 번째를 집는 건 뜻이 없고,
+       사용자가 모르는 목소리가 박힌다. 상세에서 직접 고르게 둔다.  2026-09-21 */
+    voice: '', voiceId: null, lastUsed: 0,
     age: m.age || '25\u201334', gender: m.gender || 'Female',
   });
   /* a brand-new character arrives with the one headshot it was trained into —
