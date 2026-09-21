@@ -1552,7 +1552,7 @@
       </div>
       <div class="nav-group">
         <div class="nav-label">Content</div>
-        <div class="nav-item" onclick="window.location.href='../../brand-characters/brand-setup-kit-character-library.html#view=library'" style="cursor:pointer;"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-library.svg" alt=""></span><span class="label">Library</span></div>
+        <div class="nav-item" onclick="window.location.href='../../brand-characters/brand-setup-kit-character-library-v2.html#view=library'" style="cursor:pointer;"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-library.svg" alt=""></span><span class="label">Library</span></div>
         <div class="nav-item" onclick="window.location.href='../../schedule/schedule.html'" style="cursor:pointer;"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-schedule.svg" alt=""></span><span class="label">Schedule</span></div>
         <div class="nav-item"><span class="ic"><img src="../../../../components/ai-social-media/icons/data-trending-up.svg" alt=""></span><span class="label">Trends</span></div>
         <div class="nav-item"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-analytics.svg" alt=""></span><span class="label">Analytics</span></div>
@@ -1560,7 +1560,7 @@
       <div class="nav-group">
         <div class="nav-label">Asset</div>
         <div class="nav-item" id="navBrandSetup" onclick="goToBrandSetupPage()" style="cursor:pointer;"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-workspace-03.svg" alt=""></span><span class="label">Brand Setup</span></div>
-        <div class="nav-item" onclick="window.location.href='../../brand-characters/brand-setup-kit-character-library.html'" style="cursor:pointer;"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-characters.svg" alt=""></span><span class="label">Characters</span></div>
+        <div class="nav-item" onclick="window.location.href='../../brand-characters/brand-setup-kit-character-library-v2.html'" style="cursor:pointer;"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-characters.svg" alt=""></span><span class="label">Characters</span></div>
         <div class="nav-item" onclick="window.location.href='../../voice-library/voice-library.html'" style="cursor:pointer;"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-voices.svg" alt=""></span><span class="label">Voices</span></div>
         <div class="nav-item" onclick="window.location.href='../../voice-library/voice-library.html#view=music'" style="cursor:pointer;"><span class="ic"><img src="../../../../components/ai-social-media/icons/nav-audio.svg" alt=""></span><span class="label">Music</span></div>
       </div>
@@ -3636,7 +3636,7 @@ function fmeBrandKitUrl(tab){
        + '#view=brandkit&brand=formee-express&tab=' + (tab || 'overview');
   /* 배포본에는 그 앱이 없다 — goToBrandSetup 과 같은 저장소 안 Brand Setup 화면으로.
      여기서 null 을 돌려주면 Edit in Brand Kit 이 alert 만 띄우고 아무 데도 안 간다. */
-  return '../../brand-characters/brand-setup-kit-character-library.html'
+  return '../../brand-characters/brand-setup-kit-character-library-v2.html'
        + '#view=brandsetup&brand=formee-express';
 }
 /* 진짜 <a href target> 으로 연다 — window.open 은 팝업 차단에 걸린다.
@@ -11310,7 +11310,9 @@ fitScreenToViewport();
   var from = q.get('from'), back = q.get('back') || '';
   var HOMES = {
     schedule: {href:'../../schedule/schedule.html', label:'Schedule'},
-    library:  {href:'../../brand-characters/brand-setup-kit-character-library.html', label:'Library'}
+    library:  {href:'../../brand-characters/brand-setup-kit-character-library-v2.html', label:'Library'},
+    /* 캐릭터 스타일에서 넘어오는 경우 — 같은 파일이지만 돌아갈 화면이 다르다 */
+    characters: {href:'../../brand-characters/brand-setup-kit-character-library-v2.html', label:'Characters'}
   };
   if (!ref && !stage && !editTitle && !from) return;
 
