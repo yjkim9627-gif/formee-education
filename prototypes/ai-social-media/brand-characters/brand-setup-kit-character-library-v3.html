@@ -1755,10 +1755,8 @@ input.card-name::selection{background:var(--brand-primary-mid);}
       </div>
       <div class="account-input" id="accountInput">
         <span class="scope-lock" id="scopeLock" hidden><i class="lock-glyph" aria-hidden="true"></i><span id="scopeLockText">Formee Express</span></span>
-        <select id="accountScope" aria-label="Account scope"><option>Select</option>
-          <option>Super admin (All)</option>
+        <select id="accountScope" aria-label="Account scope">
           <option>Formee Express</option>
-          <option>SCEI</option>
         </select>
       </div>
     </div>
@@ -1798,7 +1796,7 @@ input.card-name::selection{background:var(--brand-primary-mid);}
   <div class="page-header">
     <div class="title-block">
       <p class="page-title">Characters</p>
-      <p class="page-sub">AI presenters across all brands in this account.</p>
+      <p class="page-sub">AI presenters in this brand.</p>
     </div>
     <button type="button" class="btn-primary" id="btnNewCharacter">
       <div class="ic clip" style="width:16px;height:16px;"><div class="f" style="inset:50% 20.83% 50% 20.83%"><div class="f" style="inset:-0.8px -8.57%"><img src="assets/imgVector37.svg" alt=""></div></div><div class="f" style="inset:20.83% 50% 20.83% 50%"><div class="f" style="inset:-8.57% -0.8px"><img src="assets/imgVector38.svg" alt=""></div></div></div>
@@ -1819,16 +1817,16 @@ input.card-name::selection{background:var(--brand-primary-mid);}
         <span class="chip-label">Favorites</span><span class="chip-star"><div class="ic clip" style="width:12px;height:12px;"><div class="f" style="inset:8.33% 8.33% 12.2% 8.33%"><div class="f" style="inset:-6.29% -6%"><img src="assets/imgVector1.svg" alt=""></div></div></div></span>
       </button>
       <div class="chip-wrap">
-        <button type="button" class="sel-chip" id="chipCreated" data-sel="created" aria-expanded="false">
-          <span class="sel-name">Created by</span><div class="ic clip" style="width:16px;height:16px;"><div class="f" style="inset:41.67% 29.17% 33.33% 29.17%"><img src="assets/imgVector4.svg" alt=""></div></div>
-        </button>
-        <div class="ctx-menu dropdown" id="createdMenu" hidden></div>
-      </div>
-      <div class="chip-wrap">
         <button type="button" class="sel-chip" id="chipAge" data-sel="age" aria-expanded="false">
           <span class="sel-name">Age</span><div class="ic clip" style="width:16px;height:16px;"><div class="f" style="inset:41.67% 29.17% 33.33% 29.17%"><img src="assets/imgVector4.svg" alt=""></div></div>
         </button>
         <div class="ctx-menu dropdown" id="ageMenu" hidden></div>
+      </div>
+      <div class="chip-wrap">
+        <button type="button" class="sel-chip" id="chipType" data-sel="type" aria-expanded="false">
+          <span class="sel-name">Type</span><div class="ic clip" style="width:16px;height:16px;"><div class="f" style="inset:41.67% 29.17% 33.33% 29.17%"><img src="assets/imgVector4.svg" alt=""></div></div>
+        </button>
+        <div class="ctx-menu dropdown" id="typeMenu" hidden></div>
       </div>
       <div class="chip-wrap">
         <button type="button" class="sel-chip" id="chipGender" data-sel="gender" aria-expanded="false">
@@ -1837,14 +1835,6 @@ input.card-name::selection{background:var(--brand-primary-mid);}
         <div class="ctx-menu dropdown" id="genderMenu" hidden></div>
       </div>
       <p class="roster-count" id="rosterCount" hidden></p>
-    </div>
-    <div class="group-by">
-      <p class="group-by-label">Group by</p>
-      <div class="segmented" role="group" aria-label="Group by">
-        <button type="button" class="seg seg-on" data-group="none"><span>None</span></button>
-        <button type="button" class="seg" data-group="type"><span>Type</span></button>
-        <button type="button" class="seg" data-group="brand"><span>Brand</span></button>
-      </div>
     </div>
   </div>
 
@@ -18596,25 +18586,25 @@ const ICONS = {"starOutline": "<div class=\"ic clip\" style=\"width:16px;height:
 /* Figma `Characters - empty` 의 버튼 아이콘은 16 이다 — 카드 타일의 24 와 다르다.
    inset 이 % 라 바깥 크기만 줄이면 그대로 축소된다.                    2026-09-17 */
 ICONS.plus16 = ICONS.plus24.replace('width:24px;height:24px', 'width:16px;height:16px');
-const DATA = [{"id": "elena", "lastUsed": 1, "voice": "Mina — calm", "name": "Elena", "type": "Human", "brand": "Formee Express", "posts": 6, "thumb": "imgThumbElena", "fav": false, "defaultFor": ["Formee Express"], "createdBy": "Team", "age": "18–24", "gender": "Female", "styles": 8}, {"id": "milo", "lastUsed": 4, "voice": "Noah — bright", "name": "Milo", "type": "Anime", "brand": "Formee Express", "posts": 4, "thumb": "imgThumbMilo", "fav": true, "defaultFor": [], "createdBy": "Me", "age": "18–24", "gender": "Male", "styles": 3}, {"id": "maya", "lastUsed": 2, "voice": "Mina — calm", "name": "Maya", "type": "Human", "brand": "Formee Express", "posts": 12, "thumb": "imgThumbMaya", "fav": false, "defaultFor": [], "createdBy": "Me", "age": "25–34", "gender": "Female", "styles": 6}, {"id": "priya", "lastUsed": 7, "voice": "Sena — friendly", "name": "Priya", "type": "Human", "brand": "Formee Express", "posts": 9, "thumb": "imgThumbPriya", "fav": false, "defaultFor": [], "createdBy": "Norimi", "age": "25–34", "gender": "Female", "styles": 5}, {"id": "esther", "lastUsed": 9, "voice": "Aria — warm and friendly", "name": "Esther", "type": "Human", "brand": "Formee Express", "posts": 3, "thumb": "imgThumbEsther", "fav": false, "defaultFor": [], "createdBy": "Team", "age": "45–54", "gender": "Female", "styles": 2}, {"id": "pip", "lastUsed": 11, "voice": "Noah — bright", "name": "Pip", "type": "Anime", "brand": "Formee Express", "posts": 7, "thumb": "imgThumbPip", "fav": false, "defaultFor": [], "createdBy": "Me", "age": "18–24", "gender": "Non-binary", "styles": 4}, {"id": "daniel", "lastUsed": 5, "voice": "Theo — steady", "name": "Daniel", "type": "Human", "brand": "Formee Express", "posts": 15, "thumb": "imgThumbDaniel", "fav": false, "defaultFor": [], "createdBy": "Yejin", "age": "25–34", "gender": "Male", "styles": 7}, {"id": "sofia", "lastUsed": 3, "voice": "Sena — friendly", "name": "Sofia", "type": "Human", "brand": "SCEI", "posts": 11, "thumb": "imgThumbSofia", "fav": false, "defaultFor": ["SCEI"], "createdBy": "Me", "age": "25–34", "gender": "Female", "styles": 6}, {"id": "luca", "lastUsed": 6, "voice": "Theo — steady", "name": "Luca", "type": "Human", "brand": "SCEI", "posts": 2, "thumb": "imgThumbLuca", "fav": false, "defaultFor": [], "createdBy": "Abeer", "age": "25–34", "gender": "Male", "styles": 1}, {"id": "amara", "lastUsed": 8, "voice": "Aria — warm and friendly", "name": "Amara", "type": "Human", "brand": "SCEI", "posts": 8, "thumb": "imgThumbAmara", "fav": false, "defaultFor": [], "createdBy": "Team", "age": "25–34", "gender": "Female", "styles": 5}, {"id": "omar", "lastUsed": 10, "voice": "Theo — steady", "name": "Omar", "type": "Human", "brand": "SCEI", "posts": 5, "thumb": "imgThumbOmar", "fav": false, "defaultFor": [], "createdBy": "Yejin", "age": "25–34", "gender": "Male", "styles": 3}];
+const DATA = [{"id": "elena", "lastUsed": 1, "voice": "Mina — calm", "name": "Elena", "type": "Human", "brand": "Formee Express", "posts": 6, "thumb": "imgThumbElena", "fav": false, "defaultFor": ["Formee Express"], "createdBy": "Team", "age": "18–24", "gender": "Female", "styles": 8}, {"id": "milo", "lastUsed": 4, "voice": "Noah — bright", "name": "Milo", "type": "Anime", "brand": "Formee Express", "posts": 4, "thumb": "imgThumbMilo", "fav": true, "defaultFor": [], "createdBy": "Me", "age": "18–24", "gender": "Male", "styles": 3}, {"id": "maya", "lastUsed": 2, "voice": "Mina — calm", "name": "Maya", "type": "Human", "brand": "Formee Express", "posts": 12, "thumb": "imgThumbMaya", "fav": false, "defaultFor": [], "createdBy": "Me", "age": "25–34", "gender": "Female", "styles": 6}, {"id": "priya", "lastUsed": 7, "voice": "Sena — friendly", "name": "Priya", "type": "Human", "brand": "Formee Express", "posts": 9, "thumb": "imgThumbPriya", "fav": false, "defaultFor": [], "createdBy": "Norimi", "age": "25–34", "gender": "Female", "styles": 5}, {"id": "esther", "lastUsed": 9, "voice": "Aria — warm and friendly", "name": "Esther", "type": "Human", "brand": "Formee Express", "posts": 3, "thumb": "imgThumbEsther", "fav": false, "defaultFor": [], "createdBy": "Team", "age": "45–54", "gender": "Female", "styles": 2}, {"id": "pip", "lastUsed": 11, "voice": "Noah — bright", "name": "Pip", "type": "Anime", "brand": "Formee Express", "posts": 7, "thumb": "imgThumbPip", "fav": false, "defaultFor": [], "createdBy": "Me", "age": "18–24", "gender": "Non-binary", "styles": 4}, {"id": "daniel", "lastUsed": 5, "voice": "Theo — steady", "name": "Daniel", "type": "Human", "brand": "Formee Express", "posts": 15, "thumb": "imgThumbDaniel", "fav": false, "defaultFor": [], "createdBy": "Yejin", "age": "25–34", "gender": "Male", "styles": 7}, {"id": "sofia", "lastUsed": 3, "voice": "Sena — friendly", "name": "Sofia", "type": "Human", "brand": "Formee Express", "posts": 11, "thumb": "imgThumbSofia", "fav": false, "defaultFor": ["Formee Express"], "createdBy": "Me", "age": "25–34", "gender": "Female", "styles": 6}, {"id": "luca", "lastUsed": 6, "voice": "Theo — steady", "name": "Luca", "type": "Human", "brand": "Formee Express", "posts": 2, "thumb": "imgThumbLuca", "fav": false, "defaultFor": [], "createdBy": "Abeer", "age": "25–34", "gender": "Male", "styles": 1}, {"id": "amara", "lastUsed": 8, "voice": "Aria — warm and friendly", "name": "Amara", "type": "Human", "brand": "Formee Express", "posts": 8, "thumb": "imgThumbAmara", "fav": false, "defaultFor": [], "createdBy": "Team", "age": "25–34", "gender": "Female", "styles": 5}, {"id": "omar", "lastUsed": 10, "voice": "Theo — steady", "name": "Omar", "type": "Human", "brand": "Formee Express", "posts": 5, "thumb": "imgThumbOmar", "fav": false, "defaultFor": [], "createdBy": "Yejin", "age": "25–34", "gender": "Male", "styles": 3}];
 
 const BRANDS = ['Formee Express', 'SCEI'];
 
 /* Three signed-in roles, one prototype. Every difference the Figma frames show
    between the super-admin / multi-brand / single-brand libraries lives here. */
 const ROLES = {
-  super:  { scope:'Super admin (All)',
-            sub:'AI presenters across all brands in this account.',
-            brands:null, filters:['created','age','gender'], groupBy:['none','type','brand'],
+  super:  { scope:'Formee Express',
+            sub:'AI presenters in this brand.',
+            brands:null, filters:['age','type','gender'], groupBy:['none','type','brand'],
             /* 처음 들어오면 묶지 않은 목록으로 연다 — 2026-09-18 */
             defaultGroupBy:'none',  brandTag:true,  locked:false },
   multi:  { scope:'My brands (All)',
-            sub:'Your AI presenters across your brands.',
-            brands:null, filters:['age','gender'],            groupBy:['none','type','brand'],
-            defaultGroupBy:'brand', brandTag:true,  locked:false },
+            sub:'AI presenters in this brand.',
+            brands:null, filters:['age','type','gender'],            groupBy:['none','type','brand'],
+            defaultGroupBy:'none' , brandTag:true,  locked:false },
   single: { scope:'Formee Express',
-            sub:'Your AI presenters for Formee Express.',
-            brands:['Formee Express'], filters:['age','gender'], groupBy:['none','type'],
+            sub:'AI presenters in this brand.',
+            brands:['Formee Express'], filters:['age','type','gender'], groupBy:['none','type'],
             defaultGroupBy:'none',  brandTag:false, locked:true },
 };
 const role = () => ROLES[state.role];
@@ -18631,7 +18621,7 @@ const state = {
      화면을 그 모습 그대로 열면 "켜져 있는데 아무것도 안 걸러지는" 상태가 되므로
      둘 다 꺼진 채로 연다. 눌러 보면 실제로 걸린다.                     2026-09-18 */
   favOnly: false,
-  createdBy: 'Anyone',
+  type: 'Any',
   age: 'Any',
   gender: 'Any',
   focus: null,           // {key,title} while one group is expanded to a full grid
@@ -18662,7 +18652,7 @@ function visibleCards(){
   return DATA.filter(c =>
     (!scope || scope.includes(c.brand)) &&
     (!state.favOnly || c.fav) &&
-    (state.createdBy === 'Anyone' || c.createdBy === state.createdBy) &&
+    (state.type === 'Any' || c.type === state.type) &&
     (state.age    === 'Any' || c.age    === state.age) &&
     (state.gender === 'Any' || c.gender === state.gender) &&
     (!q || c.name.toLowerCase().includes(q) ||
@@ -18821,7 +18811,7 @@ function groupHTML(g, expanded){
    없어서 여기서 빼면 어디에도 안 나온다.                                2026-09-18 */
 function isFiltered(){
   return !!(state.query.trim() || state.favOnly ||
-            state.createdBy !== 'Anyone' || state.age !== 'Any' || state.gender !== 'Any');
+            state.type !== 'Any' || state.age !== 'Any' || state.gender !== 'Any');
 }
 
 function paintRosterCount(cards){
@@ -19985,11 +19975,11 @@ function toggleDefaultFor(c, brand){
 function closeMenus(){
   state.menuFor = null;
   state.brandPopFor = null;
-  ['#createdMenu','#ageMenu','#genderMenu'].forEach(m => { $(m).hidden = true; });
-  ['#chipCreated','#chipAge','#chipGender'].forEach(c => $(c).setAttribute('aria-expanded','false'));
+  ['#ageMenu','#typeMenu','#genderMenu'].forEach(m => { $(m).hidden = true; });
+  ['#chipAge','#chipType','#chipGender'].forEach(c => $(c).setAttribute('aria-expanded','false'));
 }
 const anySelectOpen = () =>
-  ['#createdMenu','#ageMenu','#genderMenu'].some(m => !$(m).hidden);
+  ['#ageMenu','#typeMenu','#genderMenu'].some(m => !$(m).hidden);
 
 function commitRename(save){
   const input = $('#renameInput');
@@ -20044,7 +20034,7 @@ $('#groups').addEventListener('click', e => {
   /* the way out of a failed search — clears the query and every filter chip */
   if (e.target.closest('[data-act="clearfilters"]')){
     state.query = ''; state.favOnly = false;
-    state.createdBy = 'Anyone'; state.age = 'Any'; state.gender = 'Any';
+    state.type = 'Any'; state.age = 'Any'; state.gender = 'Any';
     const box = $('#searchInput'); if (box) box.value = '';
     const chip = $('#chipFav');
     if (chip){
@@ -20161,8 +20151,10 @@ $('#chipFav').addEventListener('click', () => {
    Each is the same two-state pill: outline + caret when nothing is picked,
    solid dark "✕ Label | Value" once a value is chosen.                       */
 const SELECTS = {
-  created: { key: 'createdBy', label: 'Created by',
-             options: ['Me','Norimi','Yejin','Abeer','Team'], chip: '#chipCreated', menu: '#createdMenu' },
+  /* Created by 는 폐기됐다. 그 자리를 Type(Human/Anime)이 쓴다 — 업로드한
+     이미지로는 AI 가 사람인지 애니메인지 못 가려서 값을 따로 들고 있다. */
+  type:    { key: 'type',   label: 'Type',
+             options: ['Human','Anime'],                     chip: '#chipType',   menu: '#typeMenu' },
   age:     { key: 'age',    label: 'Age',
              options: ['18–24','25–34','35–44','45–54','55+'], chip: '#chipAge',    menu: '#ageMenu' },
   gender:  { key: 'gender', label: 'Gender',
@@ -20233,10 +20225,9 @@ for (const kind of Object.keys(SELECTS)){
   });
 }
 
-/* the frame ships with the Created-by list open on "Me" — like the Favorites
-   toggle, the pill is drawn "on" while all 11 cards are still shown, so the
-   highlight is painted once here and only becomes state-driven after a click */
-paintSelectMenu('created', 'Me');
+/* 메뉴는 한 번 미리 그려 둔다 — 칩을 누르기 전에도 목록이 비어 있지 않도록.
+   실제 선택 상태는 누른 뒤부터 state 가 끌고 간다.                2026-09-23 */
+paintSelectMenu('type', 'Human');
 
 /* ------------------------------------------------------------ role switcher */
 function applyRole(){
@@ -20244,7 +20235,9 @@ function applyRole(){
   $('.page-sub').textContent = r.sub;
   /* the scope picker itself is role-dependent: an "(All)" row plus the brands
      the signed-in account can actually reach */
-  const scopeOpts = r.brands ? r.brands : [r.scope, ...BRANDS];
+  /* 브랜드는 이 드롭다운에서 고른다 — 슈퍼어드민 스코프 행은 없어졌고,
+     같은 이름이 두 번 뜨지 않게 한 번 걸러 준다.                2026-09-23 */
+  const scopeOpts = [...new Set(r.brands ? r.brands : [r.scope, ...BRANDS])];
   const sel = $('#accountScope');
   sel.innerHTML = scopeOpts.map(o => `<option>${esc(o)}</option>`).join('');
   sel.value = r.brands ? r.brands[0] : r.scope;
@@ -20252,8 +20245,8 @@ function applyRole(){
   $('#scopeLock').hidden = !r.locked;
   $('#accountScope').disabled = !!r.locked;
 
-  /* Age and Gender are for everyone; "Created by" only means something to an
-     admin who can see other people's characters */
+  /* 세 칩(Age · Type · Gender)은 모든 역할이 같이 쓴다 — 브랜드가 하나로
+     정리되면서 역할에 따라 갈리는 필터가 없어졌다.              2026-09-23 */
   for (const kind of Object.keys(SELECTS)){
     const cfg = SELECTS[kind];
     if (cfg.always) continue;                  // Sort is not a role-gated filter
@@ -20300,7 +20293,7 @@ $$('.role-btn').forEach(b => b.addEventListener('click', () => {
    in every frame — without disturbing the state the frame ships with */
 function paintScope(){
   const r = role();
-  const opts = r.brands ? r.brands : [r.scope, ...BRANDS];
+  const opts = [...new Set(r.brands ? r.brands : [r.scope, ...BRANDS])];
   const sel = $('#accountScope');
   sel.innerHTML = opts.map(o => `<option>${esc(o)}</option>`).join('');
   sel.value = r.brands ? r.brands[0] : r.scope;
@@ -20322,15 +20315,7 @@ paintScope();
   }
 })();
 
-/* Group by */
-$$('.seg').forEach(seg => seg.addEventListener('click', () => {
-  $$('.seg').forEach(s => s.classList.remove('seg-on'));
-  seg.classList.add('seg-on');
-  state.groupBy = seg.dataset.group;
-  state.menuFor = null; state.focus = null;
-  state.scroll = {}; state.focus = null;
-  render();
-}));
+/* Group by 세그먼트는 폐기됐다 — 목록은 항상 묶지 않은 한 벌이다. 2026-09-23 */
 
 /* top bar search — the clear button only exists once there is something to clear */
 $('#topSearchClear').addEventListener('click', () => {
@@ -21200,7 +21185,7 @@ function createCharacter(){
   // make sure the new card is actually visible under the current filters
   state.query = ''; $('#searchInput').value = '';
   if (state.favOnly) $('#chipFav').click();
-  state.createdBy = 'Anyone'; state.age = 'Any'; state.gender = 'Any';
+  state.type = 'Any'; state.age = 'Any'; state.gender = 'Any';
   ['created','age','gender'].forEach(paintSelect);
   closeModal();
   render();
