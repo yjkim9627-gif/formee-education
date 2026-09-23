@@ -397,6 +397,66 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
 .music-ai-refine-btn:disabled:hover{background:var(--color-neutral-0);}
 .music-ai-refine-btn img{width:16px; height:16px; display:block;}
 
+/* ---------- Music mode tabs (Music / Video / Refine) + template & refine chip rows ----------
+   Text-to-Music spec update: a genre-template row sits above the prompt (fills the prompt
+   verbatim on click, unchanged behaviour), then swaps into that genre's own "+ chip"
+   progressive-refinement pickers once a template's active. Reuses .vd-preset-row/
+   .vd-preset-chip (Voice Design's own preset row, create-voice-modal.css) as-is for both --
+   same component, just different content, so no new chip visuals were needed. */
+.music-mode-tabs{margin-bottom:var(--spacing-md);}
+.music-refine-reset-btn{
+  display:inline-flex; align-items:center; justify-content:center; flex-shrink:0;
+  width:28px; height:28px; padding:0; box-sizing:border-box; cursor:pointer;
+  border:1px solid var(--color-neutral-400); border-radius:var(--radius-full); background:var(--color-neutral-0);
+}
+.music-refine-reset-btn:hover{background:var(--color-neutral-50);}
+.music-refine-reset-btn img{width:14px; height:14px; display:block;}
+.music-refine-chip{white-space:nowrap;}
+/* Refine-chip row uses wrap instead of .vd-preset-row's overflow-x:auto -- each chip here is
+   itself a dropdown trigger (.vl-fselect-wrap), and an overflow:auto ancestor clips an
+   absolutely-positioned popover instead of letting it float on top (the exact bug this app's
+   own filter-chip row hit before and had to split out of its scrolling row for). Wrapping to
+   a second line is the simpler fix here since there are only ever 4-5 refine chips. */
+.music-refine-row{display:flex; align-items:center; flex-wrap:wrap; gap:var(--spacing-xs); padding:var(--spacing-xs); background:var(--color-neutral-150); border-radius:var(--radius-md);}
+
+/* Duration "Custom" seconds field -- appended as one more row inside the same dropdown menu
+   instead of a separate popover, since it's still just that one picker. */
+.music-duration-custom-row{
+  display:flex; align-items:center; gap:var(--spacing-xs); margin-top:4px; padding:8px 10px;
+  border-top:1px solid var(--color-neutral-100);
+}
+.music-duration-custom-row input{
+  width:56px; box-sizing:border-box; padding:4px 6px; border:1px solid var(--color-neutral-400); border-radius:var(--radius-md);
+  font-family:var(--font-family-text); font-size:13px; color:var(--color-neutral-900);
+}
+.music-duration-custom-row span{font-family:var(--font-family-text); font-size:12px; color:var(--color-neutral-500);}
+
+/* Live credit-cost readout -- recalculated from duration x version any time either changes
+   (musicCreditCost()); sits right of the two pills, before Generate. */
+.music-credit-badge{font-family:var(--font-family-text); font-size:13px; font-weight:500; color:var(--color-neutral-500); white-space:nowrap;}
+
+/* ---------- Video-reference recap card ----------
+   Shown in the Video tab once a library video's been picked -- thumbnail + the video's own
+   original generation context (not the music prompt) so the user can see *why* the
+   auto-written music prompt below reads the way it does, plus a way back into the picker. */
+.music-video-recap{
+  display:flex; align-items:center; gap:var(--spacing-md); width:100%; box-sizing:border-box;
+  padding:var(--spacing-md); border:1px solid var(--color-neutral-300); border-radius:var(--radius-lg); background:var(--color-neutral-50);
+  margin-bottom:var(--spacing-md);
+}
+/* Same [hidden]-vs-class-specificity gotcha this file has hit before (.vl-empty-state,
+   .modal-overlay, etc.) -- .music-video-recap{display:flex} ties with the browser's
+   [hidden]{display:none} UA rule and wins by equal specificity without this override. */
+.music-video-recap[hidden]{display:none;}
+.music-video-recap img{width:56px; height:56px; object-fit:cover; border-radius:var(--radius-md); flex-shrink:0;}
+.music-video-recap-info{flex:1 1 0; min-width:0;}
+.music-video-recap-title{margin:0; font-family:var(--font-family-text); font-size:13px; font-weight:600; color:var(--color-neutral-900); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.music-video-recap-context{margin:2px 0 0; font-family:var(--font-family-text); font-size:12px; font-weight:400; color:var(--color-neutral-500); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.music-video-empty{display:flex; flex-direction:column; align-items:center; gap:var(--spacing-sm); padding:var(--spacing-xl) 0; text-align:center; margin-bottom:var(--spacing-md);}
+.music-video-empty[hidden]{display:none;}
+.music-video-empty p{margin:0; font-family:var(--font-family-text); font-size:13px; color:var(--color-neutral-500);}
+.music-refine-placeholder{padding:var(--spacing-xl) 0; text-align:center; font-family:var(--font-family-text); font-size:13px; color:var(--color-neutral-500);}
+
 /* "Composing your track…" placeholder card -- Case 1 (최초 생성) of the AI chat-panel rules:
    a brand-new item never gets an Undo/Redo, it just narrates a concrete working message and
    then the real card lands in the list the instant it's ready. This page has no chat log to
@@ -670,6 +730,36 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
         </div>
 
         <div class="music-ai-box">
+          <div class="controls-segmented-control music-mode-tabs" id="musicModeSegment">
+            <button type="button" class="controls-segment-chip controls-segment-chip--selected" data-mode="music" onclick="setMusicMode('music')">Music</button>
+            <button type="button" class="controls-segment-chip" data-mode="video" onclick="setMusicMode('video')">Video</button>
+            <button type="button" class="controls-segment-chip" data-mode="refine" onclick="setMusicMode('refine')">Refine</button>
+          </div>
+
+          <!-- Video tab: pick a video from the Content Library instead of typing a prompt --
+               replaces the old file-upload flow (Figma never modeled reference/upload for this
+               frame at all, so this whole tab is new per the updated spec). Picking a video
+               pulls its own generation context to auto-write a fitting music prompt below. -->
+          <div id="musicModeVideoPanel" hidden>
+            <div class="music-video-recap" id="musicVideoRecap" hidden></div>
+            <div class="music-video-empty" id="musicVideoRecapEmpty">
+              <p>Pick a video from your Content Library and we'll write a matching music prompt for you.</p>
+              <button type="button" class="actions-btn actions-btn--secondary" onclick="openMusicReferenceModal()">Choose from Content Library</button>
+            </div>
+          </div>
+
+          <!-- Refine tab: spec only asks for this as a 3rd toggle option alongside Music/Video,
+               its own behaviour isn't specced yet -- "Use as reference" on a track's ⋯ menu
+               already covers the "remix an existing track" case in the meantime. -->
+          <div id="musicModeRefinePanel" hidden>
+            <p class="music-refine-placeholder">Pick one of your generated tracks and use "Use as reference" from its ⋯ menu to remix it here.</p>
+          </div>
+
+          <!-- Music tab: genre template chips -> per-genre refine chips (renderMusicPresetRow) -->
+          <div id="musicModeMusicPanel">
+            <div class="vd-preset-row" id="musicPresetRow"></div>
+          </div>
+
           <div class="music-ai-top">
             <textarea class="music-ai-prompt-input" id="musicPromptInput" rows="1" placeholder="Upbeat lo-fi hip-hop with a mellow piano melody, soft drums, and a relaxed tempo — good for study or vlog background." oninput="musicOnPromptInput(this)"></textarea>
           </div>
@@ -678,18 +768,20 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
               <div class="vl-fselect-wrap">
                 <button type="button" class="music-ai-spec-pill music-ai-fselect" id="musicDurationTrigger" onclick="event.stopPropagation(); musicToggleDurationMenu()">
                   <img src="../../../components/ai-social-media/icons/spec-duration.svg" alt="">
-                  <span id="musicDurationLabel">16s</span>
+                  <span id="musicDurationLabel">30s</span>
                   <img class="music-ai-fselect-caret" src="../../../components/ai-social-media/icons/caret-down-filled.svg" alt="">
                 </button>
                 <div class="vl-fselect-menu" id="musicDurationMenu" onclick="event.stopPropagation()" hidden></div>
               </div>
               <div class="vl-fselect-wrap">
-                <button type="button" class="music-ai-spec-pill music-ai-fselect" id="musicVocalsTrigger" onclick="event.stopPropagation(); musicToggleVocalsMenu()">
-                  <span id="musicVocalsLabel">Instrumental</span>
+                <button type="button" class="music-ai-spec-pill music-ai-fselect" id="musicVersionTrigger" onclick="event.stopPropagation(); musicToggleVersionMenu()">
+                  <img src="../../../components/ai-social-media/icons/context-layer.svg" alt="">
+                  <span id="musicVersionLabel">1</span>
                   <img class="music-ai-fselect-caret" src="../../../components/ai-social-media/icons/caret-down-filled.svg" alt="">
                 </button>
-                <div class="vl-fselect-menu" id="musicVocalsMenu" onclick="event.stopPropagation()" hidden></div>
+                <div class="vl-fselect-menu" id="musicVersionMenu" onclick="event.stopPropagation()" hidden></div>
               </div>
+              <span class="music-credit-badge" id="musicCreditBadge"></span>
             </div>
             <button type="button" class="music-ai-refine-btn" id="musicGenerateBtn" aria-label="Generate" disabled onclick="musicGenerateTrack()"><img src="../../../components/ai-social-media/icons/arrow-up.svg" alt=""></button>
           </div>
@@ -1043,6 +1135,63 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
   </div>
 </div>
 
+<!-- ============================================================ MUSIC: REFERENCE VIDEO PICKER MODAL ============================================================
+     "Choose from Content Library" on the Video tab -> single-select "My Library" picker,
+     same .mylib-modal/.ref-scene-tile shell as the Apply-to-content modal above (Figma
+     9329:145797) just pointed the other direction: picking a video pulls its own generation
+     context to auto-write a fitting music prompt (see confirmMusicReference()) instead of
+     picking which videos this track gets applied to. -->
+<div class="modal-overlay" id="musicRefOverlay" hidden onclick="if(event.target===this) closeMusicReferenceModal()">
+  <div class="modal mylib-modal">
+    <div class="mylib-header-top">
+      <h2 class="modal__title">My Library</h2>
+      <button type="button" class="modal__close" onclick="closeMusicReferenceModal()"><img src="../../../components/ai-social-media/icons/button-x-dark.svg" alt="Close"></button>
+    </div>
+
+    <div class="mylib-filter-bar">
+      <div class="mylib-filter-left">
+        <span class="controls-segment-chip controls-segment-chip--selected" style="cursor:default;">Videos</span>
+        <div class="mylib-filter-row">
+          <div class="filter-select"><span class="filter-select__label">Status</span><img class="filter-select__caret" src="../../../components/ai-social-media/icons/caret-down-filled.svg" alt=""></div>
+          <div class="filter-select"><span class="filter-select__label">Created by</span><img class="filter-select__caret" src="../../../components/ai-social-media/icons/caret-down-filled.svg" alt=""></div>
+          <div class="filter-select"><span class="filter-select__label">Date range</span><img class="filter-select__caret" src="../../../components/ai-social-media/icons/caret-down-filled.svg" alt=""></div>
+          <span class="mylib-item-count" id="musicRefCount"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mylib-content" id="musicRefGrid"></div>
+
+    <div class="mylib-footer">
+      <button type="button" class="actions-btn actions-btn--secondary" onclick="closeMusicReferenceModal()">Cancel</button>
+      <button type="button" class="actions-btn actions-btn--inactive" id="musicRefApplyBtn" disabled onclick="confirmMusicReference()">Apply</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ MUSIC: TRACK DETAILS MODAL ============================================================
+     "Name & description" on a track's ⋯ menu -- same shell as Edit voice, just for a track. -->
+<div class="modal-overlay" id="musicDetailsOverlay" hidden onclick="if(event.target===this) closeMusicDetailsModal()">
+  <div class="modal modal--form">
+    <div class="modal__header-row">
+      <h3 class="modal__title">Track details</h3>
+      <button type="button" class="modal__close" onclick="closeMusicDetailsModal()"><img src="../../../components/ai-social-media/icons/button-x-dark.svg" alt="Close"></button>
+    </div>
+    <div class="vd-field-group">
+      <p class="vd-field-label">Name</p>
+      <input type="text" class="vd-input" id="musicDetailsNameInput" placeholder="e.g. Study Session Lo-fi">
+    </div>
+    <div class="vd-field-group">
+      <p class="vd-field-label">Description</p>
+      <textarea class="vd-input" id="musicDetailsDescInput" placeholder="What is this track good for?"></textarea>
+    </div>
+    <div class="modal__footer">
+      <button type="button" class="actions-btn actions-btn--secondary" onclick="closeMusicDetailsModal()">Cancel</button>
+      <button type="button" class="actions-btn actions-btn--primary" onclick="saveMusicDetails()">Save changes</button>
+    </div>
+  </div>
+</div>
+
 <!-- ============================================================ VOICE: SET AS CHARACTER VOICE MODAL ============================================================
      "Set as character voice" on a voice's kebab menu -> pick which character(s) should use
      this voice as their default. Replaces the old one-default-per-brand "Set as default"
@@ -1235,14 +1384,14 @@ const voices = [
 
 const MUSIC_CATS = ['Funny','Uplifting','Hype','Energetic','Mellow','Calm','Dramatic'];
 const tracks = [
-  { id:'m1', title:'Funky Chunk', attribution:'Kevin MacLeod (incompetech.com)', duration:'03:59', mood:'Energetic', bpm:115, cats:['Energetic'], fav:false },
-  { id:'m2', title:'Slow Bloom', attribution:'Bensound.com', duration:'02:41', mood:'Calm', bpm:88, cats:['Calm'], fav:true },
-  { id:'m3', title:'Skyline Drift', attribution:'Artlist.io', duration:'03:12', mood:'Dramatic', bpm:96, cats:['Dramatic'], fav:false },
-  { id:'m4', title:'Quiet Boardroom', attribution:'Kevin MacLeod (incompetech.com)', duration:'02:58', mood:'Mellow', bpm:100, cats:['Mellow'], fav:false },
-  { id:'m5', title:'Soft Static', attribution:'Bensound.com', duration:'04:05', mood:'Calm', bpm:70, cats:['Calm'], fav:false },
-  { id:'m6', title:'Bounce House', attribution:'Kevin MacLeod (incompetech.com)', duration:'02:12', mood:'Funny', bpm:124, cats:['Funny'], fav:false },
-  { id:'m7', title:'Neon Rush', attribution:'Artlist.io', duration:'03:05', mood:'Hype', bpm:128, cats:['Hype'], fav:false },
-  { id:'m8', title:'Porch Light', attribution:'Bensound.com', duration:'02:20', mood:'Uplifting', bpm:92, cats:['Uplifting'], fav:false },
+  { id:'m1', title:'Funky Chunk', attribution:'Kevin MacLeod (incompetech.com)', duration:'03:59', mood:'Energetic', bpm:115, cats:['Energetic'], fav:false, prompt:'An upbeat, funky track with a groovy bassline and playful energy.', description:'' },
+  { id:'m2', title:'Slow Bloom', attribution:'Bensound.com', duration:'02:41', mood:'Calm', bpm:88, cats:['Calm'], fav:true, prompt:'A slow, calming ambient track with soft pads and a gentle, unfolding melody.', description:'' },
+  { id:'m3', title:'Skyline Drift', attribution:'Artlist.io', duration:'03:12', mood:'Dramatic', bpm:96, cats:['Dramatic'], fav:false, prompt:'A dramatic, cinematic track with sweeping strings and a building sense of tension.', description:'' },
+  { id:'m4', title:'Quiet Boardroom', attribution:'Kevin MacLeod (incompetech.com)', duration:'02:58', mood:'Mellow', bpm:100, cats:['Mellow'], fav:false, prompt:'A mellow, understated track with soft keys, fitting a calm professional setting.', description:'' },
+  { id:'m5', title:'Soft Static', attribution:'Bensound.com', duration:'04:05', mood:'Calm', bpm:70, cats:['Calm'], fav:false, prompt:'A soft, textured ambient track with gentle static warmth and a slow pulse.', description:'' },
+  { id:'m6', title:'Bounce House', attribution:'Kevin MacLeod (incompetech.com)', duration:'02:12', mood:'Funny', bpm:124, cats:['Funny'], fav:false, prompt:'A bouncy, playful track with a comedic, cartoonish energy.', description:'' },
+  { id:'m7', title:'Neon Rush', attribution:'Artlist.io', duration:'03:05', mood:'Hype', bpm:128, cats:['Hype'], fav:false, prompt:'A high-energy synthwave track with a driving beat and neon-lit intensity.', description:'' },
+  { id:'m8', title:'Porch Light', attribution:'Bensound.com', duration:'02:20', mood:'Uplifting', bpm:92, cats:['Uplifting'], fav:false, prompt:'An uplifting acoustic track with warm guitar tones and a hopeful feel.', description:'' },
 ];
 
 /* ---------------- nav switching ---------------- */
@@ -1935,6 +2084,10 @@ function renderMusic(){
         <button type="button" class="voice-card-icon-btn fav${t.fav ? ' active' : ''}" onclick="toggleFav('${t.id}')" aria-pressed="${t.fav}" aria-label="Favorite ${escHtml(t.title)}">
           <img src="${ICON}${t.fav ? 'shape-star-filled' : 'favorite-star-16'}.svg" alt="">
         </button>
+        <button type="button" class="voice-card-icon-btn more${musicOpenMenuFor === t.id ? ' active' : ''}" onclick="event.stopPropagation(); toggleMusicMenu('${t.id}')" aria-label="More actions for ${escHtml(t.title)}">
+          <img src="${ICON}ui-ellipsis.svg" alt="">
+          ${musicMenuHTML(t)}
+        </button>
       </div>
     </div>`).join('');
 }
@@ -1944,30 +2097,312 @@ function toggleFav(id){
   renderMusic();
 }
 
+/* ---------------- Music track ⋯ menu (Download / Use as reference / Name & description) ----------------
+   Reuses .vl-kebab-menu/.vl-menu-row as-is (the same voice-card kebab shell) -- Play/Favorite/
+   Apply-to-content stay as the frequent, always-visible icon actions; these four less-frequent
+   ones move into the menu, same reasoning the voice card already applied to its own actions. */
+let musicOpenMenuFor = null;
+function toggleMusicMenu(id){
+  musicOpenMenuFor = (musicOpenMenuFor === id) ? null : id;
+  renderMusic();
+}
+function musicMenuHTML(t){
+  if (musicOpenMenuFor !== t.id) return '';
+  return `<div class="vl-kebab-menu" onclick="event.stopPropagation()">
+    <div class="vl-menu-row" onclick="musicDownloadTrack('${t.id}')"><span>Download</span></div>
+    <div class="vl-menu-row" onclick="musicUseAsReference('${t.id}')"><span>Use as reference</span></div>
+    <div class="vl-menu-row" onclick="openMusicDetailsModal('${t.id}')"><span>Name &amp; description</span></div>
+  </div>`;
+}
+function musicDownloadTrack(id){
+  musicOpenMenuFor = null;
+  const t = tracks.find(x => x.id === id);
+  renderMusic();
+  alert(`Downloading "${t.title}"… (not wired to a real file in this prototype)`);
+}
+// "Use as reference" -- pulls this track's own generation prompt back into the Music tab's
+// prompt box so the user can tweak it and generate a variation, same "seed the next
+// generation from what you already have" idea as Voice Design's preset-pill recap.
+function musicUseAsReference(id){
+  musicOpenMenuFor = null;
+  const t = tracks.find(x => x.id === id);
+  setMusicMode('music');
+  musicActiveTemplate = null;
+  const promptEl = document.getElementById('musicPromptInput');
+  promptEl.value = t.prompt || `A track in the style of "${t.title}".`;
+  musicOnPromptInput(promptEl);
+  renderMusicPresetRow();
+  renderMusic();
+  document.querySelector('.music-ai-box').scrollIntoView({ behavior:'smooth', block:'center' });
+}
+let musicDetailsTrackId = null;
+function openMusicDetailsModal(id){
+  musicOpenMenuFor = null;
+  musicDetailsTrackId = id;
+  const t = tracks.find(x => x.id === id);
+  document.getElementById('musicDetailsNameInput').value = t.title;
+  document.getElementById('musicDetailsDescInput').value = t.description || '';
+  document.getElementById('musicDetailsOverlay').hidden = false;
+  renderMusic();
+}
+function closeMusicDetailsModal(){
+  document.getElementById('musicDetailsOverlay').hidden = true;
+  musicDetailsTrackId = null;
+}
+function saveMusicDetails(){
+  const t = tracks.find(x => x.id === musicDetailsTrackId);
+  if (!t) return;
+  t.title = document.getElementById('musicDetailsNameInput').value.trim() || t.title;
+  t.description = document.getElementById('musicDetailsDescInput').value.trim();
+  closeMusicDetailsModal();
+  renderMusic();
+}
+document.addEventListener('click', (e) => {
+  if (musicOpenMenuFor && !e.target.closest('.vl-kebab-menu') && !e.target.closest('.voice-card-icon-btn.more')){
+    musicOpenMenuFor = null; renderMusic();
+  }
+});
+
 /* ---------------- Music → Text to Music (ElevenLabs Music API, v1 scope) ----------------
-   Only prompt + duration + force_instrumental are surfaced, per this feature's own request
-   to keep the first pass minimal. Model is hardcoded to music_v2_5 and output to mp3 --
-   neither is ever shown in the UI, so there's no state for them here at all. Composition
-   Plan, Audio Reference, Inpainting, Music Finetunes and a model picker are all out of scope
-   for this pass (see the CSS comment above .music-ai-box for the Figma node this was built
-   against and the deviations from its static frame). */
-const MUSIC_DURATION_OPTIONS = [5, 8, 10, 12, 16, 20, 24]; // seconds — the API itself allows
-  // 3s–5min, but the UI only exposes up to this platform's own 24s max content length.
-let musicDuration = 16;
-let musicVocals = 'instrumental'; // 'instrumental' | 'with_vocals' -> force_instrumental bool
+   Model is hardcoded to music_v2_5 and output to mp3 -- neither is ever shown in the UI, so
+   there's no state for them here at all. Composition Plan, Audio Reference, Inpainting and
+   Music Finetunes are still out of scope. Duration/Version replace the old duration/vocals
+   pair per the updated spec -- "vocal style" now lives inside the EDM refine-chip set
+   instead of a standalone Instrumental/With-vocals toggle. */
+
+/* ---------------- Genre template chips -> progressive refinement chips ----------------
+   Clicking a template fills the prompt (unchanged behaviour) and swaps this row from the 3
+   starter templates to that genre's own refine chips -- each one its own small dropdown
+   (reuses .vl-fselect-menu/.vl-fselect-row) whose picked value APPENDS to the prompt via the
+   same lowercase-and-comma-join convention as vrmAppendPrompt() above, it never overwrites
+   what's already there. The ⟲ button resets back to the 3 templates and clears the prompt --
+   Notes call this "starting over with a different template". Synthwave/Folk chip sets are a
+   first draft; a real per-genre content pass is still open (see the spec's own open question). */
+const MUSIC_TEMPLATES = [
+  { key:'synthwave', label:'Upbeat Synthwave', prompt:'A punchy 80s-style synthwave loop with a pulsing bassline and shimmering arpeggios — great as an energetic background bed for fast-cut Reels or transition-heavy edits.' },
+  { key:'folk', label:'Acoustic Folk Ballad', prompt:'A gentle acoustic folk track with fingerpicked guitar and a warm, intimate feel — fits slower storytelling content, testimonials, or before/after reveals.' },
+  { key:'edm', label:'Energetic Electronic Dance', prompt:'An uplifting EDM track with a four-on-the-floor beat and a euphoric build-up — ideal for product launches, hype countdowns, or high-energy promo clips.' },
+];
+const MUSIC_REFINE_CHIPS = {
+  edm: [
+    { label:'Specific EDM Subgenre', options:['Progressive house', 'Future bass', 'Tech house', 'Dubstep-lite'] },
+    { label:'Melody Character', options:['Bright and anthemic', 'Dark and driving', 'Playful and bouncy'] },
+    { label:'Energy Level', options:['Building slowly', 'High energy throughout', 'Peaks and drops'] },
+    { label:'Vocal Style', options:['Instrumental only', 'Vocal chops', 'Full lead vocal'] },
+  ],
+  synthwave: [
+    { label:'Era Character', options:['Early 80s retro', 'Late 80s power synth', 'Modern retrowave'] },
+    { label:'Bass Style', options:['Deep sustained bass', 'Punchy sequenced bass'] },
+    { label:'Atmosphere', options:['Nostalgic and warm', 'Dark and cinematic', 'Neon and upbeat'] },
+  ],
+  folk: [
+    { label:'Instrumentation', options:['Solo acoustic guitar', 'Guitar and strings', 'Guitar and soft piano'] },
+    { label:'Mood', options:['Hopeful', 'Bittersweet', 'Reflective'] },
+    { label:'Vocal Style', options:['Instrumental only', 'Soft hummed vocals', 'Full lead vocal'] },
+  ],
+};
+let musicActiveTemplate = null;
+let musicRefineMenuFor = null;
+
+function renderMusicPresetRow(){
+  const row = document.getElementById('musicPresetRow');
+  if (!musicActiveTemplate){
+    row.className = 'vd-preset-row';
+    row.innerHTML = MUSIC_TEMPLATES.map(t =>
+      `<button type="button" class="vd-preset-chip" onclick="selectMusicTemplate('${t.key}')">${escHtml(t.label)}</button>`
+    ).join('');
+    return;
+  }
+  row.className = 'music-refine-row';
+  const chips = MUSIC_REFINE_CHIPS[musicActiveTemplate] || [];
+  row.innerHTML = `
+    <button type="button" class="music-refine-reset-btn" onclick="resetMusicTemplate()" aria-label="Start over with a different template"><img src="${ICON}rotate-ccw.svg" alt=""></button>
+    ${chips.map((c, i) => `
+      <div class="vl-fselect-wrap">
+        <button type="button" class="vd-preset-chip music-refine-chip" onclick="event.stopPropagation(); musicToggleRefineMenu(${i})">+ ${escHtml(c.label)}</button>
+        <div class="vl-fselect-menu" id="musicRefineMenu${i}" onclick="event.stopPropagation()" hidden></div>
+      </div>`).join('')}
+  `;
+}
+function selectMusicTemplate(key){
+  const t = MUSIC_TEMPLATES.find(x => x.key === key);
+  if (!t) return;
+  musicActiveTemplate = key;
+  const promptEl = document.getElementById('musicPromptInput');
+  promptEl.value = t.prompt;
+  musicOnPromptInput(promptEl);
+  renderMusicPresetRow();
+}
+function resetMusicTemplate(){
+  musicActiveTemplate = null;
+  musicRefineMenuFor = null;
+  const promptEl = document.getElementById('musicPromptInput');
+  promptEl.value = '';
+  musicOnPromptInput(promptEl);
+  renderMusicPresetRow();
+}
+function musicToggleRefineMenu(i){
+  const opening = musicRefineMenuFor !== i;
+  closeMusicRefineMenus();
+  musicRefineMenuFor = opening ? i : null;
+  const menu = document.getElementById('musicRefineMenu' + i);
+  if (!menu) return;
+  menu.hidden = !opening;
+  if (opening){
+    const chips = MUSIC_REFINE_CHIPS[musicActiveTemplate] || [];
+    const c = chips[i];
+    menu.innerHTML = c.options.map(opt =>
+      `<div class="vl-fselect-row" onclick="musicAppendRefineOption('${opt.replace(/'/g, "\\'")}')">${escHtml(opt)}</div>`
+    ).join('');
+  }
+}
+function closeMusicRefineMenus(){
+  if (musicActiveTemplate){
+    const chips = MUSIC_REFINE_CHIPS[musicActiveTemplate] || [];
+    chips.forEach((c, i) => { const m = document.getElementById('musicRefineMenu' + i); if (m) m.hidden = true; });
+  }
+  musicRefineMenuFor = null;
+}
+function musicAppendRefineOption(opt){
+  const ta = document.getElementById('musicPromptInput');
+  const cur = ta.value.trim().replace(/[.\s]+$/, ''); // drop a trailing period so the
+    // append reads "...promo clips, progressive house" instead of "...clips., progressive"
+  const phrase = opt.charAt(0).toLowerCase() + opt.slice(1);
+  ta.value = cur ? `${cur}, ${phrase}` : opt;
+  musicOnPromptInput(ta);
+  closeMusicRefineMenus();
+}
+
+/* ---------------- Music / Video / Refine mode tabs ---------------- */
+let musicMode = 'music';
+function setMusicMode(mode){
+  musicMode = mode;
+  document.querySelectorAll('#musicModeSegment .controls-segment-chip').forEach(btn => {
+    btn.classList.toggle('controls-segment-chip--selected', btn.dataset.mode === mode);
+  });
+  document.getElementById('musicModeMusicPanel').hidden = mode !== 'music';
+  document.getElementById('musicModeVideoPanel').hidden = mode !== 'video';
+  document.getElementById('musicModeRefinePanel').hidden = mode !== 'refine';
+}
+
+/* ---------------- Video reference mode ----------------
+   Reuses the same "My Library" video-picker shell as the Apply-to-content modal
+   (MUSIC_APPLY_VIDEOS/.mylib-modal/.ref-scene-tile), just single-select and pointed the
+   other direction: pick a video you already made, pull the prompt/context it was generated
+   from, and have that seed a fitting music prompt automatically -- same "reuse the prior
+   generation step's own context" principle as this app's image-based sequential generation,
+   so there's no fresh input burden on the user. autoPrompt below stands in for a real model
+   call, same as every other "AI-generated" value in this prototype. */
+const MUSIC_REFERENCE_VIDEOS = [
+  { id:'r1', title:'This New Lip Tint Is Everything', thumb:'../brand-characters/assets/imgLibLipTint.png',
+    genContext:'Generated as a calm, minimal skincare tutorial with soft daylight and a relaxed, gentle tone.',
+    autoPrompt:'A calm, minimal ambient track with soft piano and gentle textures, fitting a relaxed skincare tutorial mood.' },
+  { id:'r2', title:'Study in the UK — Applications Open', thumb:'../brand-characters/assets/imgLibStudyUK.png',
+    genContext:'Generated as an inspiring campus tour aimed at prospective international students, warm and hopeful.',
+    autoPrompt:'An uplifting, warm acoustic-pop track with light strings, matching an inspiring campus tour for prospective students.' },
+  { id:'r3', title:'January Intake — Apply Now', thumb:'../brand-characters/assets/imgLibJanIntake.png',
+    genContext:'Generated as a fast-paced countdown promo pushing viewers to apply before the deadline.',
+    autoPrompt:'An energetic, driving electronic track with a building countdown feel, ideal for a fast-paced application-deadline promo.' },
+];
+let musicRefVideoId = null;
+function openMusicReferenceModal(){
+  renderMusicReferenceGrid();
+  document.getElementById('musicRefOverlay').hidden = false;
+}
+function closeMusicReferenceModal(){
+  document.getElementById('musicRefOverlay').hidden = true;
+}
+function renderMusicReferenceGrid(){
+  document.getElementById('musicRefCount').textContent = MUSIC_REFERENCE_VIDEOS.length + ' videos';
+  document.getElementById('musicRefGrid').innerHTML = MUSIC_REFERENCE_VIDEOS.map(v => {
+    const selected = musicRefVideoId === v.id;
+    return `
+    <div class="ref-scene-tile${selected ? ' selected' : ''}" onclick="selectMusicRefVideo('${v.id}')">
+      <img class="ref-scene-tile-thumb" src="${v.thumb}" alt="">
+      <div class="ref-scene-tile-preview">
+        <div class="ref-scene-tile-top-row">
+          <span class="ref-scene-tile-badge"><span class="ref-scene-tile-badge-icon"><span></span></span><span class="ref-scene-tile-badge-label">9:16</span></span>
+          <input type="radio" class="checkbox checkbox--lg" ${selected ? 'checked' : ''} onclick="event.stopPropagation(); selectMusicRefVideo('${v.id}');" tabindex="-1">
+        </div>
+      </div>
+      <button type="button" class="scene-tile-play-btn" onclick="event.stopPropagation();"><img class="play" src="${ICON}video-play-glyph.svg" alt=""></button>
+      <p class="ref-scene-tile-title">${escHtml(v.title)}</p>
+    </div>`;
+  }).join('');
+  const btn = document.getElementById('musicRefApplyBtn');
+  btn.disabled = !musicRefVideoId;
+  btn.classList.toggle('actions-btn--inactive', !musicRefVideoId);
+  btn.classList.toggle('actions-btn--primary', !!musicRefVideoId);
+}
+function selectMusicRefVideo(id){
+  musicRefVideoId = (musicRefVideoId === id) ? null : id;
+  renderMusicReferenceGrid();
+}
+function confirmMusicReference(){
+  const v = MUSIC_REFERENCE_VIDEOS.find(x => x.id === musicRefVideoId);
+  if (!v) return;
+  closeMusicReferenceModal();
+  const promptEl = document.getElementById('musicPromptInput');
+  promptEl.value = v.autoPrompt;
+  musicActiveTemplate = null;
+  renderMusicPresetRow();
+  musicOnPromptInput(promptEl);
+  renderMusicVideoRecap(v);
+}
+function renderMusicVideoRecap(v){
+  document.getElementById('musicVideoRecapEmpty').hidden = true;
+  const recap = document.getElementById('musicVideoRecap');
+  recap.hidden = false;
+  recap.innerHTML = `
+    <img src="${v.thumb}" alt="">
+    <div class="music-video-recap-info">
+      <p class="music-video-recap-title">${escHtml(v.title)}</p>
+      <p class="music-video-recap-context">${escHtml(v.genContext)}</p>
+    </div>
+    <button type="button" class="actions-btn actions-btn--secondary" onclick="openMusicReferenceModal()">Change video</button>`;
+}
+
+/* ---------------- Duration / Version / live credit cost ----------------
+   Duration replaces the old free-running 5–24s picker with the spec's fixed set (30s
+   default / 1min / 2min / Custom-typed-seconds); Version is how many variations to generate
+   in one request (1–3). Credit cost is duration(seconds) x MUSIC_CREDIT_RATE x versions --
+   the rate is calibrated so 30s x 1 version lands exactly on this spec's own "450 credits"
+   example, and scales up from there exactly as the spec asks (longer duration or more
+   versions both raise the cost). */
+const MUSIC_DURATION_OPTIONS = ['30s', '1min', '2min', 'custom'];
+const MUSIC_DURATION_LABELS = { '30s':'30s', '1min':'1 min', '2min':'2 min', custom:'Custom' };
+const MUSIC_CREDIT_RATE = 15;
+let musicDuration = '30s';
+let musicCustomSeconds = 45;
+let musicVersions = 1;
 let musicDurationMenuOpen = false;
-let musicVocalsMenuOpen = false;
+let musicVersionMenuOpen = false;
 let musicGenSeq = 0;
 
+function musicDurationSeconds(){
+  if (musicDuration === '30s') return 30;
+  if (musicDuration === '1min') return 60;
+  if (musicDuration === '2min') return 120;
+  return musicCustomSeconds;
+}
+function musicDurationLabel(){
+  return musicDuration === 'custom' ? musicCustomSeconds + 's' : MUSIC_DURATION_LABELS[musicDuration];
+}
+function musicCreditCost(){
+  return musicDurationSeconds() * MUSIC_CREDIT_RATE * musicVersions;
+}
+function renderMusicCreditBadge(){
+  document.getElementById('musicCreditBadge').textContent = musicCreditCost().toLocaleString() + ' credits';
+}
 function musicOnPromptInput(el){
   document.getElementById('musicGenerateBtn').disabled = el.value.trim().length === 0;
   el.style.height = 'auto';
   el.style.height = el.scrollHeight + 'px';
 }
 function closeMusicFselectMenus(){
-  musicDurationMenuOpen = false; musicVocalsMenuOpen = false;
+  musicDurationMenuOpen = false; musicVersionMenuOpen = false;
   document.getElementById('musicDurationMenu').hidden = true;
-  document.getElementById('musicVocalsMenu').hidden = true;
+  document.getElementById('musicVersionMenu').hidden = true;
 }
 function musicToggleDurationMenu(){
   const opening = !musicDurationMenuOpen;
@@ -1977,37 +2412,53 @@ function musicToggleDurationMenu(){
   if (opening) renderMusicDurationOptions();
 }
 function renderMusicDurationOptions(){
-  document.getElementById('musicDurationMenu').innerHTML = MUSIC_DURATION_OPTIONS.map(sec =>
-    `<div class="vl-fselect-row${sec === musicDuration ? ' selected' : ''}" onclick="selectMusicDuration(${sec})">${sec}s</div>`
+  document.getElementById('musicDurationMenu').innerHTML = MUSIC_DURATION_OPTIONS.map(opt =>
+    `<div class="vl-fselect-row${opt === musicDuration ? ' selected' : ''}" onclick="selectMusicDuration('${opt}')">${MUSIC_DURATION_LABELS[opt]}</div>`
+  ).join('') + `
+    <div class="music-duration-custom-row" id="musicDurationCustomRow"${musicDuration === 'custom' ? '' : ' hidden'}>
+      <input type="number" min="5" max="300" step="1" id="musicCustomSecondsInput" value="${musicCustomSeconds}" onclick="event.stopPropagation()" oninput="musicSetCustomSeconds(this.value)">
+      <span>seconds</span>
+    </div>`;
+}
+function selectMusicDuration(opt){
+  musicDuration = opt;
+  document.getElementById('musicDurationLabel').textContent = musicDurationLabel();
+  renderMusicCreditBadge();
+  if (opt === 'custom'){
+    renderMusicDurationOptions();
+    setTimeout(() => { const el = document.getElementById('musicCustomSecondsInput'); if (el) el.focus(); }, 0);
+  } else {
+    closeMusicFselectMenus();
+  }
+}
+function musicSetCustomSeconds(v){
+  musicCustomSeconds = Math.max(5, Math.min(300, parseInt(v, 10) || 30));
+  document.getElementById('musicDurationLabel').textContent = musicDurationLabel();
+  renderMusicCreditBadge();
+}
+function musicToggleVersionMenu(){
+  const opening = !musicVersionMenuOpen;
+  closeMusicFselectMenus();
+  musicVersionMenuOpen = opening;
+  document.getElementById('musicVersionMenu').hidden = !opening;
+  if (opening) renderMusicVersionOptions();
+}
+function renderMusicVersionOptions(){
+  document.getElementById('musicVersionMenu').innerHTML = [1, 2, 3].map(v =>
+    `<div class="vl-fselect-row${v === musicVersions ? ' selected' : ''}" onclick="selectMusicVersion(${v})">${v}</div>`
   ).join('');
 }
-function selectMusicDuration(sec){
-  musicDuration = sec;
-  document.getElementById('musicDurationLabel').textContent = sec + 's';
-  closeMusicFselectMenus();
-}
-function musicToggleVocalsMenu(){
-  const opening = !musicVocalsMenuOpen;
-  closeMusicFselectMenus();
-  musicVocalsMenuOpen = opening;
-  document.getElementById('musicVocalsMenu').hidden = !opening;
-  if (opening) renderMusicVocalsOptions();
-}
-function renderMusicVocalsOptions(){
-  const opts = [{ v:'instrumental', label:'Instrumental' }, { v:'with_vocals', label:'With vocals' }];
-  document.getElementById('musicVocalsMenu').innerHTML = opts.map(o =>
-    `<div class="vl-fselect-row${o.v === musicVocals ? ' selected' : ''}" onclick="selectMusicVocals('${o.v}')">${o.label}</div>`
-  ).join('');
-}
-function selectMusicVocals(v){
-  musicVocals = v;
-  document.getElementById('musicVocalsLabel').textContent = v === 'instrumental' ? 'Instrumental' : 'With vocals';
+function selectMusicVersion(v){
+  musicVersions = v;
+  document.getElementById('musicVersionLabel').textContent = String(v);
+  renderMusicCreditBadge();
   closeMusicFselectMenus();
 }
 document.addEventListener('click', (e) => {
   if (!e.target.closest('#musicDurationTrigger') && !e.target.closest('#musicDurationMenu')
-    && !e.target.closest('#musicVocalsTrigger') && !e.target.closest('#musicVocalsMenu')
-    && (musicDurationMenuOpen || musicVocalsMenuOpen)) closeMusicFselectMenus();
+    && !e.target.closest('#musicVersionTrigger') && !e.target.closest('#musicVersionMenu')
+    && (musicDurationMenuOpen || musicVersionMenuOpen)) closeMusicFselectMenus();
+  if (musicRefineMenuFor !== null && !e.target.closest('.vl-fselect-wrap')) closeMusicRefineMenus();
 });
 
 function musicTitleFromPrompt(prompt){
@@ -2019,7 +2470,9 @@ function musicTitleFromPrompt(prompt){
    then the finished card lands in the list the instant it's ready. This page has no chat
    log, so the working message rides on a temporary card sitting exactly where the real one
    will land (see .music-card--generating above). Faked with a timer since there's no real
-   ElevenLabs Music API call wired up yet. */
+   ElevenLabs Music API call wired up yet. Generates `musicVersions` cards/tracks in one go
+   per the spec's Version control, each a separate card while "composing" and a separate
+   track once done. */
 function musicGenerateTrack(){
   const promptEl = document.getElementById('musicPromptInput');
   const prompt = promptEl.value.trim();
@@ -2027,32 +2480,47 @@ function musicGenerateTrack(){
 
   const seq = ++musicGenSeq;
   const btn = document.getElementById('musicGenerateBtn');
+  const versions = musicVersions;
+  const durationSec = musicDurationSeconds();
   btn.disabled = true;
   promptEl.disabled = true;
 
-  const card = document.createElement('div');
-  card.className = 'music-card music-card--generating';
-  card.innerHTML = `
-    <span class="music-generating-spinner"></span>
-    <div class="music-card-info">
-      <p class="music-card-name">Composing your track based on your prompt…</p>
-      <span class="music-card-attribution">"${escHtml(prompt)}"</span>
-    </div>`;
-  document.getElementById('musicList').prepend(card);
+  const cards = [];
+  for (let i = 0; i < versions; i++){
+    const card = document.createElement('div');
+    card.className = 'music-card music-card--generating';
+    card.innerHTML = `
+      <span class="music-generating-spinner"></span>
+      <div class="music-card-info">
+        <p class="music-card-name">Composing your track based on your prompt…</p>
+        <span class="music-card-attribution">"${escHtml(prompt)}"</span>
+      </div>`;
+    document.getElementById('musicList').prepend(card);
+    cards.push(card);
+  }
 
   setTimeout(() => {
     if (seq !== musicGenSeq) return;
-    card.remove();
-    tracks.unshift({
-      id:'gen' + Date.now(), title:musicTitleFromPrompt(prompt), attribution:'Generated with AI',
-      duration:vcFormatTime(musicDuration), mood:'AI Generated', bpm:'', cats:[], fav:false,
-    });
+    cards.forEach(c => c.remove());
+    for (let i = versions - 1; i >= 0; i--){
+      tracks.unshift({
+        id:'gen' + Date.now() + '_' + i,
+        title: musicTitleFromPrompt(prompt) + (versions > 1 ? ` (v${i + 1})` : ''),
+        attribution:'Generated with AI', prompt, description:'',
+        duration:vcFormatTime(durationSec), mood:'AI Generated', bpm:'', cats:[], fav:false,
+      });
+    }
     renderMusic();
     promptEl.value = '';
+    musicActiveTemplate = null;
+    renderMusicPresetRow();
+    musicOnPromptInput(promptEl);
     promptEl.style.height = '';
     promptEl.disabled = false;
   }, 2200);
 }
+renderMusicPresetRow();
+renderMusicCreditBadge();
 
 /* ---------------- Music → apply-to-content modal ----------------
    Video-only for this first pass (per this feature's own scope) -- reuses the "My Library"
