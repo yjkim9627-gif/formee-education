@@ -28323,6 +28323,26 @@ if (/^#view=newcontent/.test(location.hash||'')) { showView('newcontent');
 
 render();
 
+/* 캡처·검토용 딥링크 — 캐릭터 시트의 세 상태로 바로 들어간다.
+   #sheet=ready|empty|generating  (&char=elena 로 대상 지정, 기본 elena)
+   generating 은 startSheet 를 거치지 않아 타이머가 없다 — 멈춘 채로
+   남아 있어야 그 화면을 그대로 보거나 캡처할 수 있다.          2026-09-23 */
+function applySheetHash(){
+  const h = location.hash || '';
+  const m = /[#&]sheet=(ready|empty|generating)/.exec(h);
+  if (!m) return;
+  const cm = /[#&]char=([\w-]+)/.exec(h);
+  const c  = DATA.find(x => x.id === (cm ? cm[1] : 'elena')) || DATA[0];
+  sheetStore[c.id] = m[1] === 'generating' ? 'busy'
+                   : m[1] === 'empty'      ? 'none'
+                   : 'ready';
+  openDetail(c);
+}
+applySheetHash();
+/* 이미 열려 있는 상태에서 해시만 갈아끼워도 따라간다 — 새로고침 없이
+   세 상태를 오가며 볼 수 있게 */
+window.addEventListener('hashchange', applySheetHash);
+
 </script>
 <!-- ============================================================
      AUTH + ADMIN FLOW — native rebuild in this file's design system (2026-08-06)
