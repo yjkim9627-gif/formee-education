@@ -22,6 +22,7 @@
 <link rel="stylesheet" href="../../../components/ai-social-media/create-voice-modal.css">
 <link rel="stylesheet" href="../../../components/shared/modal.css">
 <link rel="stylesheet" href="../../../components/ai-social-media/mylib-modal.css">
+<link rel="stylesheet" href="../../../components/ai-social-media/reference-chip.css">
 <link rel="stylesheet" href="../../../components/ai-social-media/scene-tile.css">
 <link rel="stylesheet" href="../../../components/ai-social-media/reference-scene-tile.css">
 <link rel="stylesheet" href="../../../components/ai-social-media/controls-filter-select.css">
@@ -397,13 +398,12 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
 .music-ai-refine-btn:disabled:hover{background:var(--color-neutral-0);}
 .music-ai-refine-btn img{width:16px; height:16px; display:block;}
 
-/* ---------- Music mode tabs (Music / Video / Refine) + template & refine chip rows ----------
-   Text-to-Music spec update: a genre-template row sits above the prompt (fills the prompt
-   verbatim on click, unchanged behaviour), then swaps into that genre's own "+ chip"
-   progressive-refinement pickers once a template's active. Reuses .vd-preset-row/
-   .vd-preset-chip (Voice Design's own preset row, create-voice-modal.css) as-is for both --
-   same component, just different content, so no new chip visuals were needed. */
-.music-mode-tabs{margin-bottom:var(--spacing-md);}
+/* ---------- Template & refine chip rows ----------
+   A genre-template row sits above the prompt (fills the prompt verbatim on click, unchanged
+   behaviour), then swaps into that genre's own "+ chip" progressive-refinement pickers once
+   a template's active. Reuses .vd-preset-row/.vd-preset-chip (Voice Design's own preset row,
+   create-voice-modal.css) as-is for both -- same component, just different content, so no
+   new chip visuals were needed. */
 .music-refine-reset-btn{
   display:inline-flex; align-items:center; justify-content:center; flex-shrink:0;
   width:28px; height:28px; padding:0; box-sizing:border-box; cursor:pointer;
@@ -435,27 +435,11 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
    (musicCreditCost()); sits right of the two pills, before Generate. */
 .music-credit-badge{font-family:var(--font-family-text); font-size:13px; font-weight:500; color:var(--color-neutral-500); white-space:nowrap;}
 
-/* ---------- Video-reference recap card ----------
-   Shown in the Video tab once a library video's been picked -- thumbnail + the video's own
-   original generation context (not the music prompt) so the user can see *why* the
-   auto-written music prompt below reads the way it does, plus a way back into the picker. */
-.music-video-recap{
-  display:flex; align-items:center; gap:var(--spacing-md); width:100%; box-sizing:border-box;
-  padding:var(--spacing-md); border:1px solid var(--color-neutral-300); border-radius:var(--radius-lg); background:var(--color-neutral-50);
-  margin-bottom:var(--spacing-md);
-}
-/* Same [hidden]-vs-class-specificity gotcha this file has hit before (.vl-empty-state,
-   .modal-overlay, etc.) -- .music-video-recap{display:flex} ties with the browser's
-   [hidden]{display:none} UA rule and wins by equal specificity without this override. */
-.music-video-recap[hidden]{display:none;}
-.music-video-recap img{width:56px; height:56px; object-fit:cover; border-radius:var(--radius-md); flex-shrink:0;}
-.music-video-recap-info{flex:1 1 0; min-width:0;}
-.music-video-recap-title{margin:0; font-family:var(--font-family-text); font-size:13px; font-weight:600; color:var(--color-neutral-900); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
-.music-video-recap-context{margin:2px 0 0; font-family:var(--font-family-text); font-size:12px; font-weight:400; color:var(--color-neutral-500); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
-.music-video-empty{display:flex; flex-direction:column; align-items:center; gap:var(--spacing-sm); padding:var(--spacing-xl) 0; text-align:center; margin-bottom:var(--spacing-md);}
-.music-video-empty[hidden]{display:none;}
-.music-video-empty p{margin:0; font-family:var(--font-family-text); font-size:13px; color:var(--color-neutral-500);}
-.music-refine-placeholder{padding:var(--spacing-xl) 0; text-align:center; font-family:var(--font-family-text); font-size:13px; color:var(--color-neutral-500);}
+/* Video-reference chip row -- a single .ref-chip (reference-chip.css, same component the New
+   Content prompt box uses for First frame/Last frame/Reference) sitting on its own line
+   instead of a whole separate "Video" tab. Its own CSS already handles empty/attached/hover
+   states; this just gives the row a little breathing room above the prompt textarea. */
+.music-ref-chip-row{display:flex; margin-bottom:var(--spacing-sm);}
 
 /* "Composing your track…" placeholder card -- Case 1 (최초 생성) of the AI chat-panel rules:
    a brand-new item never gets an Undo/Redo, it just narrates a concrete working message and
@@ -730,34 +714,19 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
         </div>
 
         <div class="music-ai-box">
-          <div class="controls-segmented-control music-mode-tabs" id="musicModeSegment">
-            <button type="button" class="controls-segment-chip controls-segment-chip--selected" data-mode="music" onclick="setMusicMode('music')">Music</button>
-            <button type="button" class="controls-segment-chip" data-mode="video" onclick="setMusicMode('video')">Video</button>
-            <button type="button" class="controls-segment-chip" data-mode="refine" onclick="setMusicMode('refine')">Refine</button>
-          </div>
+          <!-- Genre template chips -> per-genre refine chips (renderMusicPresetRow). No more
+               Music/Video/Refine segmented tabs -- a video reference is just one more chip
+               (.ref-chip, reused as-is from reference-chip.css/the New Content prompt box)
+               sitting next to these, not a whole separate mode. -->
+          <div class="vd-preset-row" id="musicPresetRow"></div>
 
-          <!-- Video tab: pick a video from the Content Library instead of typing a prompt --
-               replaces the old file-upload flow (Figma never modeled reference/upload for this
-               frame at all, so this whole tab is new per the updated spec). Picking a video
-               pulls its own generation context to auto-write a fitting music prompt below. -->
-          <div id="musicModeVideoPanel" hidden>
-            <div class="music-video-recap" id="musicVideoRecap" hidden></div>
-            <div class="music-video-empty" id="musicVideoRecapEmpty">
-              <p>Pick a video from your Content Library and we'll write a matching music prompt for you.</p>
-              <button type="button" class="actions-btn actions-btn--secondary" onclick="openMusicReferenceModal()">Choose from Content Library</button>
+          <div class="music-ref-chip-row">
+            <div class="ref-chip" id="musicRefChip" onclick="handleMusicRefChipClick()">
+              <img class="ref-chip-icon" src="../../../components/ai-social-media/icons/content-reel.svg" alt="">
+              <span class="ref-chip-label" id="musicRefChipLabel">My Library</span>
+              <button type="button" class="ref-chip-more" title="More options"><img src="../../../components/ai-social-media/icons/ui-ellipsis.svg" class="icon-inline" alt=""></button>
+              <button type="button" class="ref-chip-remove" title="Remove" onclick="event.stopPropagation(); clearMusicRefVideo();"><img src="../../../components/ai-social-media/icons/close-x.svg" alt=""></button>
             </div>
-          </div>
-
-          <!-- Refine tab: spec only asks for this as a 3rd toggle option alongside Music/Video,
-               its own behaviour isn't specced yet -- "Use as reference" on a track's ⋯ menu
-               already covers the "remix an existing track" case in the meantime. -->
-          <div id="musicModeRefinePanel" hidden>
-            <p class="music-refine-placeholder">Pick one of your generated tracks and use "Use as reference" from its ⋯ menu to remix it here.</p>
-          </div>
-
-          <!-- Music tab: genre template chips -> per-genre refine chips (renderMusicPresetRow) -->
-          <div id="musicModeMusicPanel">
-            <div class="vd-preset-row" id="musicPresetRow"></div>
           </div>
 
           <div class="music-ai-top">
@@ -799,6 +768,10 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
         </div>
 
         <div class="vl-sticky-bar">
+          <div class="controls-segmented-control" id="musicTabSegment">
+            <button type="button" class="controls-segment-chip controls-segment-chip--selected" data-tab="library" onclick="setMusicTab('library')">Library</button>
+            <button type="button" class="controls-segment-chip" data-tab="mine" onclick="setMusicTab('mine')">My Music</button>
+          </div>
           <div class="vl-chip-row" id="musicChipRow"></div>
           <p class="vl-count" id="musicCount"></p>
         </div>
@@ -1169,8 +1142,11 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
   </div>
 </div>
 
-<!-- ============================================================ MUSIC: TRACK DETAILS MODAL ============================================================
-     "Name & description" on a track's ⋯ menu -- same shell as Edit voice, just for a track. -->
+<!-- ============================================================ MUSIC: TRACK DETAILS MODAL (My Music only) ============================================================
+     "Details" on a My Music track's ⋯ menu -- editable Name/Description (same shell as Edit
+     voice) plus a read-only recap of what it was actually generated from (reuses .vh-settings-
+     label/.vh-settings-value, the same "Creation settings" pattern Voice details already
+     uses), since this is the one place a user can check "what prompt/settings made this". -->
 <div class="modal-overlay" id="musicDetailsOverlay" hidden onclick="if(event.target===this) closeMusicDetailsModal()">
   <div class="modal modal--form">
     <div class="modal__header-row">
@@ -1184,6 +1160,18 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
     <div class="vd-field-group">
       <p class="vd-field-label">Description</p>
       <textarea class="vd-input" id="musicDetailsDescInput" placeholder="What is this track good for?"></textarea>
+    </div>
+    <div class="vh-settings-row">
+      <p class="vh-settings-label">Prompt used</p>
+      <p class="vh-settings-value vh-prompt-text" id="musicDetailsPromptText"></p>
+    </div>
+    <div class="vh-settings-row">
+      <p class="vh-settings-label">Duration</p>
+      <p class="vh-settings-value" id="musicDetailsDurationText"></p>
+    </div>
+    <div class="vh-settings-row">
+      <p class="vh-settings-label">Versions generated</p>
+      <p class="vh-settings-value" id="musicDetailsVersionText"></p>
     </div>
     <div class="modal__footer">
       <button type="button" class="actions-btn actions-btn--secondary" onclick="closeMusicDetailsModal()">Cancel</button>
@@ -1384,14 +1372,20 @@ const voices = [
 
 const MUSIC_CATS = ['Funny','Uplifting','Hype','Energetic','Mellow','Calm','Dramatic'];
 const tracks = [
-  { id:'m1', title:'Funky Chunk', attribution:'Kevin MacLeod (incompetech.com)', duration:'03:59', mood:'Energetic', bpm:115, cats:['Energetic'], fav:false, prompt:'An upbeat, funky track with a groovy bassline and playful energy.', description:'' },
-  { id:'m2', title:'Slow Bloom', attribution:'Bensound.com', duration:'02:41', mood:'Calm', bpm:88, cats:['Calm'], fav:true, prompt:'A slow, calming ambient track with soft pads and a gentle, unfolding melody.', description:'' },
-  { id:'m3', title:'Skyline Drift', attribution:'Artlist.io', duration:'03:12', mood:'Dramatic', bpm:96, cats:['Dramatic'], fav:false, prompt:'A dramatic, cinematic track with sweeping strings and a building sense of tension.', description:'' },
-  { id:'m4', title:'Quiet Boardroom', attribution:'Kevin MacLeod (incompetech.com)', duration:'02:58', mood:'Mellow', bpm:100, cats:['Mellow'], fav:false, prompt:'A mellow, understated track with soft keys, fitting a calm professional setting.', description:'' },
-  { id:'m5', title:'Soft Static', attribution:'Bensound.com', duration:'04:05', mood:'Calm', bpm:70, cats:['Calm'], fav:false, prompt:'A soft, textured ambient track with gentle static warmth and a slow pulse.', description:'' },
-  { id:'m6', title:'Bounce House', attribution:'Kevin MacLeod (incompetech.com)', duration:'02:12', mood:'Funny', bpm:124, cats:['Funny'], fav:false, prompt:'A bouncy, playful track with a comedic, cartoonish energy.', description:'' },
-  { id:'m7', title:'Neon Rush', attribution:'Artlist.io', duration:'03:05', mood:'Hype', bpm:128, cats:['Hype'], fav:false, prompt:'A high-energy synthwave track with a driving beat and neon-lit intensity.', description:'' },
-  { id:'m8', title:'Porch Light', attribution:'Bensound.com', duration:'02:20', mood:'Uplifting', bpm:92, cats:['Uplifting'], fav:false, prompt:'An uplifting acoustic track with warm guitar tones and a hopeful feel.', description:'' },
+  { id:'m1', title:'Funky Chunk', attribution:'Kevin MacLeod (incompetech.com)', duration:'03:59', mood:'Energetic', bpm:115, cats:['Energetic'], fav:false, mine:false, prompt:'An upbeat, funky track with a groovy bassline and playful energy.', description:'' },
+  { id:'m2', title:'Slow Bloom', attribution:'Bensound.com', duration:'02:41', mood:'Calm', bpm:88, cats:['Calm'], fav:true, mine:false, prompt:'A slow, calming ambient track with soft pads and a gentle, unfolding melody.', description:'' },
+  { id:'m3', title:'Skyline Drift', attribution:'Artlist.io', duration:'03:12', mood:'Dramatic', bpm:96, cats:['Dramatic'], fav:false, mine:false, prompt:'A dramatic, cinematic track with sweeping strings and a building sense of tension.', description:'' },
+  { id:'m4', title:'Quiet Boardroom', attribution:'Kevin MacLeod (incompetech.com)', duration:'02:58', mood:'Mellow', bpm:100, cats:['Mellow'], fav:false, mine:false, prompt:'A mellow, understated track with soft keys, fitting a calm professional setting.', description:'' },
+  { id:'m5', title:'Soft Static', attribution:'Bensound.com', duration:'04:05', mood:'Calm', bpm:70, cats:['Calm'], fav:false, mine:false, prompt:'A soft, textured ambient track with gentle static warmth and a slow pulse.', description:'' },
+  { id:'m6', title:'Bounce House', attribution:'Kevin MacLeod (incompetech.com)', duration:'02:12', mood:'Funny', bpm:124, cats:['Funny'], fav:false, mine:false, prompt:'A bouncy, playful track with a comedic, cartoonish energy.', description:'' },
+  { id:'m7', title:'Neon Rush', attribution:'Artlist.io', duration:'03:05', mood:'Hype', bpm:128, cats:['Hype'], fav:false, mine:false, prompt:'A high-energy synthwave track with a driving beat and neon-lit intensity.', description:'' },
+  { id:'m8', title:'Porch Light', attribution:'Bensound.com', duration:'02:20', mood:'Uplifting', bpm:92, cats:['Uplifting'], fav:false, mine:false, prompt:'An uplifting acoustic track with warm guitar tones and a hopeful feel.', description:'' },
+  // A couple of seed "My Music" tracks so that tab isn't empty by default -- both carry the
+  // duration/version settings a real generation would have stored, for the Details modal.
+  { id:'m9', title:'Study Session Lo-fi', attribution:'Generated with AI', duration:'00:30', mood:'AI Generated', bpm:'', cats:['Mellow'], fav:false, mine:true, versionCount:1,
+    prompt:'Upbeat lo-fi hip-hop with a mellow piano melody, soft drums, and a relaxed tempo — good for study or vlog background.', description:'' },
+  { id:'m10', title:'Neon Pulse Reel', attribution:'Generated with AI', duration:'01:00', mood:'AI Generated', bpm:'', cats:['Hype','Energetic'], fav:false, mine:true, versionCount:2,
+    prompt:'An uplifting EDM track with a four-on-the-floor beat and a euphoric build-up — ideal for product launches, hype countdowns, or high-energy promo clips, progressive house.', description:'' },
 ];
 
 /* ---------------- nav switching ---------------- */
@@ -2045,6 +2039,17 @@ function confirmDeleteVoiceModal(){
    background music on a piece of content), via the music-apply modal below. */
 let musicCat = null;
 let musicFavOnly = false;
+// Library (curated/stock tracks, t.mine===false) vs My Music (AI-generated, t.mine===true) --
+// same tab/`.mine` convention as Voices' ElevenLabs Library / My Voices split.
+let musicTab = 'library';
+function setMusicTab(tab){
+  musicTab = tab;
+  document.querySelectorAll('#musicTabSegment .controls-segment-chip').forEach(btn => {
+    btn.classList.toggle('controls-segment-chip--selected', btn.dataset.tab === tab);
+  });
+  musicOpenMenuFor = null;
+  renderMusic();
+}
 
 function renderMusicChips(){
   const row = document.getElementById('musicChipRow');
@@ -2059,7 +2064,7 @@ function setMusicCat(cat){ musicCat = (musicCat === cat) ? null : cat; renderMus
 function renderMusic(){
   renderMusicChips();
   const q = (document.getElementById('musicSearch').value || '').toLowerCase().trim();
-  let list = tracks.slice();
+  let list = tracks.filter(t => !!t.mine === (musicTab === 'mine'));
   if (musicCat) list = list.filter(t => t.cats.includes(musicCat));
   if (musicFavOnly) list = list.filter(t => t.fav);
   if (q) list = list.filter(t => t.title.toLowerCase().includes(q));
@@ -2097,10 +2102,13 @@ function toggleFav(id){
   renderMusic();
 }
 
-/* ---------------- Music track ⋯ menu (Download / Use as reference / Name & description) ----------------
+/* ---------------- Music track ⋯ menu (Download / Use as reference [/ Details]) ----------------
    Reuses .vl-kebab-menu/.vl-menu-row as-is (the same voice-card kebab shell) -- Play/Favorite/
-   Apply-to-content stay as the frequent, always-visible icon actions; these four less-frequent
-   ones move into the menu, same reasoning the voice card already applied to its own actions. */
+   Apply-to-content stay as the frequent, always-visible icon actions; these move into the
+   menu, same reasoning the voice card already applied to its own actions. Library (stock)
+   tracks only get Download/Use as reference -- they're not owned, there's nothing of "yours"
+   to name or inspect settings for. Only My Music (t.mine) tracks get a 3rd "Details" row,
+   since only those actually have a real prompt/duration/version to show. */
 let musicOpenMenuFor = null;
 function toggleMusicMenu(id){
   musicOpenMenuFor = (musicOpenMenuFor === id) ? null : id;
@@ -2108,10 +2116,11 @@ function toggleMusicMenu(id){
 }
 function musicMenuHTML(t){
   if (musicOpenMenuFor !== t.id) return '';
+  const detailsRow = t.mine ? `<div class="vl-menu-row" onclick="openMusicDetailsModal('${t.id}')"><span>Details</span></div>` : '';
   return `<div class="vl-kebab-menu" onclick="event.stopPropagation()">
     <div class="vl-menu-row" onclick="musicDownloadTrack('${t.id}')"><span>Download</span></div>
     <div class="vl-menu-row" onclick="musicUseAsReference('${t.id}')"><span>Use as reference</span></div>
-    <div class="vl-menu-row" onclick="openMusicDetailsModal('${t.id}')"><span>Name &amp; description</span></div>
+    ${detailsRow}
   </div>`;
 }
 function musicDownloadTrack(id){
@@ -2126,7 +2135,6 @@ function musicDownloadTrack(id){
 function musicUseAsReference(id){
   musicOpenMenuFor = null;
   const t = tracks.find(x => x.id === id);
-  setMusicMode('music');
   musicActiveTemplate = null;
   const promptEl = document.getElementById('musicPromptInput');
   promptEl.value = t.prompt || `A track in the style of "${t.title}".`;
@@ -2135,6 +2143,9 @@ function musicUseAsReference(id){
   renderMusic();
   document.querySelector('.music-ai-box').scrollIntoView({ behavior:'smooth', block:'center' });
 }
+// Details (My Music only) -- shows what this track was actually generated from: its prompt
+// and the Duration/Version it was generated with, plus the same editable Name/Description
+// Library tracks never get (there's nothing to rename/describe on a stock track).
 let musicDetailsTrackId = null;
 function openMusicDetailsModal(id){
   musicOpenMenuFor = null;
@@ -2142,6 +2153,9 @@ function openMusicDetailsModal(id){
   const t = tracks.find(x => x.id === id);
   document.getElementById('musicDetailsNameInput').value = t.title;
   document.getElementById('musicDetailsDescInput').value = t.description || '';
+  document.getElementById('musicDetailsPromptText').textContent = t.prompt || '—';
+  document.getElementById('musicDetailsDurationText').textContent = t.duration || '—';
+  document.getElementById('musicDetailsVersionText').textContent = t.versionCount ? (t.versionCount + (t.versionCount === 1 ? ' version' : ' versions')) : '—';
   document.getElementById('musicDetailsOverlay').hidden = false;
   renderMusic();
 }
@@ -2273,26 +2287,31 @@ function musicAppendRefineOption(opt){
   closeMusicRefineMenus();
 }
 
-/* ---------------- Music / Video / Refine mode tabs ---------------- */
-let musicMode = 'music';
-function setMusicMode(mode){
-  musicMode = mode;
-  document.querySelectorAll('#musicModeSegment .controls-segment-chip').forEach(btn => {
-    btn.classList.toggle('controls-segment-chip--selected', btn.dataset.mode === mode);
-  });
-  document.getElementById('musicModeMusicPanel').hidden = mode !== 'music';
-  document.getElementById('musicModeVideoPanel').hidden = mode !== 'video';
-  document.getElementById('musicModeRefinePanel').hidden = mode !== 'refine';
-}
-
-/* ---------------- Video reference mode ----------------
+/* ---------------- Video reference chip (.ref-chip, reference-chip.css) ----------------
    Reuses the same "My Library" video-picker shell as the Apply-to-content modal
    (MUSIC_APPLY_VIDEOS/.mylib-modal/.ref-scene-tile), just single-select and pointed the
    other direction: pick a video you already made, pull the prompt/context it was generated
    from, and have that seed a fitting music prompt automatically -- same "reuse the prior
    generation step's own context" principle as this app's image-based sequential generation,
    so there's no fresh input burden on the user. autoPrompt below stands in for a real model
-   call, same as every other "AI-generated" value in this prototype. */
+   call, same as every other "AI-generated" value in this prototype. No more Music/Video/
+   Refine mode tabs -- the chip's own empty/attached state (reference-chip.css) carries this
+   instead of a whole separate panel. */
+function handleMusicRefChipClick(){
+  if (musicRefVideoId){ openMusicReferenceModal(); return; } // "more" tap on an attached chip -> re-open picker to change it
+  openMusicReferenceModal();
+}
+function clearMusicRefVideo(){
+  musicRefVideoId = null;
+  renderMusicRefChip();
+}
+function renderMusicRefChip(){
+  const chip = document.getElementById('musicRefChip');
+  const label = document.getElementById('musicRefChipLabel');
+  const v = MUSIC_REFERENCE_VIDEOS.find(x => x.id === musicRefVideoId);
+  chip.dataset.attached = v ? 'true' : 'false';
+  label.textContent = v ? v.title : 'My Library';
+}
 const MUSIC_REFERENCE_VIDEOS = [
   { id:'r1', title:'This New Lip Tint Is Everything', thumb:'../brand-characters/assets/imgLibLipTint.png',
     genContext:'Generated as a calm, minimal skincare tutorial with soft daylight and a relaxed, gentle tone.',
@@ -2347,19 +2366,7 @@ function confirmMusicReference(){
   musicActiveTemplate = null;
   renderMusicPresetRow();
   musicOnPromptInput(promptEl);
-  renderMusicVideoRecap(v);
-}
-function renderMusicVideoRecap(v){
-  document.getElementById('musicVideoRecapEmpty').hidden = true;
-  const recap = document.getElementById('musicVideoRecap');
-  recap.hidden = false;
-  recap.innerHTML = `
-    <img src="${v.thumb}" alt="">
-    <div class="music-video-recap-info">
-      <p class="music-video-recap-title">${escHtml(v.title)}</p>
-      <p class="music-video-recap-context">${escHtml(v.genContext)}</p>
-    </div>
-    <button type="button" class="actions-btn actions-btn--secondary" onclick="openMusicReferenceModal()">Change video</button>`;
+  renderMusicRefChip();
 }
 
 /* ---------------- Duration / Version / live credit cost ----------------
@@ -2506,11 +2513,12 @@ function musicGenerateTrack(){
       tracks.unshift({
         id:'gen' + Date.now() + '_' + i,
         title: musicTitleFromPrompt(prompt) + (versions > 1 ? ` (v${i + 1})` : ''),
-        attribution:'Generated with AI', prompt, description:'',
+        attribution:'Generated with AI', prompt, description:'', mine:true, versionCount:versions,
         duration:vcFormatTime(durationSec), mood:'AI Generated', bpm:'', cats:[], fav:false,
       });
     }
-    renderMusic();
+    setMusicTab('mine'); // generated tracks land in My Music -- switch there so they're not
+      // silently filtered out of view if the user was still on the Library tab
     promptEl.value = '';
     musicActiveTemplate = null;
     renderMusicPresetRow();
@@ -2521,6 +2529,7 @@ function musicGenerateTrack(){
 }
 renderMusicPresetRow();
 renderMusicCreditBadge();
+renderMusicRefChip();
 
 /* ---------------- Music → apply-to-content modal ----------------
    Video-only for this first pass (per this feature's own scope) -- reuses the "My Library"
