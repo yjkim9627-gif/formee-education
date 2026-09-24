@@ -363,8 +363,19 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
    is always mp3 -- neither has any UI. Composition Plan, Audio Reference, Inpainting,
    Finetunes and a model picker are all explicitly out of scope for this pass. */
 .music-ai-box{
-  width:100%; box-sizing:border-box; padding:var(--spacing-xl);
+  width:100%; box-sizing:border-box;
   background:var(--color-neutral-0); border:1.2px solid var(--color-neutral-400); border-radius:var(--radius-xl);
+  display:flex; flex-direction:column;
+}
+/* The template/refine chip strip now runs full-bleed across the top of the box (its own tint
+   reaches both edges, per the updated design) instead of sitting inside the box's own 20px
+   padding like the rest of the content -- so that padding moved down onto this wrapper,
+   which holds everything BELOW the chip strip. No overflow:hidden on .music-ai-box itself to
+   get the strip's top corners rounded (that would clip the Duration/Version/refine-chip
+   dropdown popovers, which are nested inside this same box) -- instead #musicPresetRow gets
+   matching top corners directly, see below. */
+.music-ai-box-body{
+  width:100%; box-sizing:border-box; padding:var(--spacing-xl);
   display:flex; flex-direction:column; gap:var(--spacing-3xl);
 }
 .music-ai-top{display:flex; flex-direction:column; gap:var(--spacing-xl); width:100%;}
@@ -440,6 +451,16 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
    instead of a whole separate "Video" tab. Its own CSS already handles empty/attached/hover
    states; this just gives the row a little breathing room above the prompt textarea. */
 .music-ref-chip-row{display:flex; margin-bottom:var(--spacing-sm);}
+/* Template-chip state only (not the refine-chip state, which keeps .vd-preset-row's own
+   tighter spacing-xs padding) -- updated design's top strip uses a wider 20px/10px inset
+   (960-wide row, 48 tall, chips 28 tall -> (48-28)/2=10 vertical) instead of vd-preset-row's
+   default spacing-xs, since this is now a more prominent header strip, not a tucked-in
+   scrollable row. */
+#musicPresetRow.vd-preset-row{padding:10px var(--spacing-xl);}
+/* Matches .music-ai-box's own border-radius-xl on the top two corners only, since this row
+   now runs edge-to-edge across the box's full width in both its states (template list and
+   refine-chip list) instead of sitting inset like the rest of the box's content. */
+#musicPresetRow.vd-preset-row, #musicPresetRow.music-refine-row{border-radius:var(--radius-xl) var(--radius-xl) 0 0;}
 
 /* "Composing your track…" placeholder card -- Case 1 (최초 생성) of the AI chat-panel rules:
    a brand-new item never gets an Undo/Redo, it just narrates a concrete working message and
@@ -720,39 +741,41 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
                sitting next to these, not a whole separate mode. -->
           <div class="vd-preset-row" id="musicPresetRow"></div>
 
-          <div class="music-ref-chip-row">
-            <div class="ref-chip" id="musicRefChip" onclick="handleMusicRefChipClick()">
-              <img class="ref-chip-icon" src="../../../components/ai-social-media/icons/content-reel.svg" alt="">
-              <span class="ref-chip-label" id="musicRefChipLabel">My Library</span>
-              <button type="button" class="ref-chip-more" title="More options"><img src="../../../components/ai-social-media/icons/ui-ellipsis.svg" class="icon-inline" alt=""></button>
-              <button type="button" class="ref-chip-remove" title="Remove" onclick="event.stopPropagation(); clearMusicRefVideo();"><img src="../../../components/ai-social-media/icons/close-x.svg" alt=""></button>
+          <div class="music-ai-box-body">
+            <div class="music-ref-chip-row">
+              <div class="ref-chip" id="musicRefChip" onclick="handleMusicRefChipClick()">
+                <img class="ref-chip-icon" src="../../../components/ai-social-media/icons/nav-library.svg" alt="">
+                <span class="ref-chip-label" id="musicRefChipLabel">My library</span>
+                <button type="button" class="ref-chip-more" title="More options"><img src="../../../components/ai-social-media/icons/ui-ellipsis.svg" class="icon-inline" alt=""></button>
+                <button type="button" class="ref-chip-remove" title="Remove" onclick="event.stopPropagation(); clearMusicRefVideo();"><img src="../../../components/ai-social-media/icons/close-x.svg" alt=""></button>
+              </div>
             </div>
-          </div>
 
-          <div class="music-ai-top">
-            <textarea class="music-ai-prompt-input" id="musicPromptInput" rows="1" placeholder="Upbeat lo-fi hip-hop with a mellow piano melody, soft drums, and a relaxed tempo — good for study or vlog background." oninput="musicOnPromptInput(this)"></textarea>
-          </div>
-          <div class="music-ai-bottom">
-            <div class="music-ai-specs">
-              <div class="vl-fselect-wrap">
-                <button type="button" class="music-ai-spec-pill music-ai-fselect" id="musicDurationTrigger" onclick="event.stopPropagation(); musicToggleDurationMenu()">
-                  <img src="../../../components/ai-social-media/icons/spec-duration.svg" alt="">
-                  <span id="musicDurationLabel">30s</span>
-                  <img class="music-ai-fselect-caret" src="../../../components/ai-social-media/icons/caret-down-filled.svg" alt="">
-                </button>
-                <div class="vl-fselect-menu" id="musicDurationMenu" onclick="event.stopPropagation()" hidden></div>
-              </div>
-              <div class="vl-fselect-wrap">
-                <button type="button" class="music-ai-spec-pill music-ai-fselect" id="musicVersionTrigger" onclick="event.stopPropagation(); musicToggleVersionMenu()">
-                  <img src="../../../components/ai-social-media/icons/context-layer.svg" alt="">
-                  <span id="musicVersionLabel">1</span>
-                  <img class="music-ai-fselect-caret" src="../../../components/ai-social-media/icons/caret-down-filled.svg" alt="">
-                </button>
-                <div class="vl-fselect-menu" id="musicVersionMenu" onclick="event.stopPropagation()" hidden></div>
-              </div>
-              <span class="music-credit-badge" id="musicCreditBadge"></span>
+            <div class="music-ai-top">
+              <textarea class="music-ai-prompt-input" id="musicPromptInput" rows="1" placeholder="Upbeat lo-fi hip-hop with a mellow piano melody, soft drums, and a relaxed tempo — good for study or vlog background." oninput="musicOnPromptInput(this)"></textarea>
             </div>
-            <button type="button" class="music-ai-refine-btn" id="musicGenerateBtn" aria-label="Generate" disabled onclick="musicGenerateTrack()"><img src="../../../components/ai-social-media/icons/arrow-up.svg" alt=""></button>
+            <div class="music-ai-bottom">
+              <div class="music-ai-specs">
+                <div class="vl-fselect-wrap">
+                  <button type="button" class="music-ai-spec-pill music-ai-fselect" id="musicDurationTrigger" onclick="event.stopPropagation(); musicToggleDurationMenu()">
+                    <img src="../../../components/ai-social-media/icons/spec-duration.svg" alt="">
+                    <span id="musicDurationLabel">30s</span>
+                    <img class="music-ai-fselect-caret" src="../../../components/ai-social-media/icons/caret-down-filled.svg" alt="">
+                  </button>
+                  <div class="vl-fselect-menu" id="musicDurationMenu" onclick="event.stopPropagation()" hidden></div>
+                </div>
+                <div class="vl-fselect-wrap">
+                  <button type="button" class="music-ai-spec-pill music-ai-fselect" id="musicVersionTrigger" onclick="event.stopPropagation(); musicToggleVersionMenu()">
+                    <img src="../../../components/ai-social-media/icons/context-layer.svg" alt="">
+                    <span id="musicVersionLabel">1 Version</span>
+                    <img class="music-ai-fselect-caret" src="../../../components/ai-social-media/icons/caret-down-filled.svg" alt="">
+                  </button>
+                  <div class="vl-fselect-menu" id="musicVersionMenu" onclick="event.stopPropagation()" hidden></div>
+                </div>
+                <span class="music-credit-badge" id="musicCreditBadge"></span>
+              </div>
+              <button type="button" class="music-ai-refine-btn" id="musicGenerateBtn" aria-label="Generate" disabled onclick="musicGenerateTrack()"><img src="../../../components/ai-social-media/icons/arrow-up.svg" alt=""></button>
+            </div>
           </div>
         </div>
 
@@ -2193,18 +2216,19 @@ document.addEventListener('click', (e) => {
    Notes call this "starting over with a different template". Synthwave/Folk chip sets are a
    first draft; a real per-genre content pass is still open (see the spec's own open question). */
 const MUSIC_TEMPLATES = [
-  { key:'synthwave', label:'Upbeat Synthwave', prompt:'A punchy 80s-style synthwave loop with a pulsing bassline and shimmering arpeggios — great as an energetic background bed for fast-cut Reels or transition-heavy edits.' },
-  { key:'folk', label:'Acoustic Folk Ballad', prompt:'A gentle acoustic folk track with fingerpicked guitar and a warm, intimate feel — fits slower storytelling content, testimonials, or before/after reveals.' },
-  { key:'edm', label:'Energetic Electronic Dance', prompt:'An uplifting EDM track with a four-on-the-floor beat and a euphoric build-up — ideal for product launches, hype countdowns, or high-energy promo clips.' },
+  { key:'lofi', label:'Chill Lo-fi Background', prompt:'Laid-back lo-fi with a mellow piano loop and soft, dusty drums — a calm bed for tutorials, vlogs, or slower-paced explainer content.' },
+  { key:'retro', label:'Retro Neon Drive', prompt:'A driving synth-pop track with punchy 80s drums and a glowing neon energy — perfect for a fast hook, transformation reveal, or transition montage.' },
+  { key:'folk', label:'Acoustic Folk Ballad', prompt:'A warm acoustic ballad with fingerpicked guitar and a heartfelt, unhurried feel — suits storytelling content, testimonials, or emotional before/after moments.' },
+  { key:'edm', label:'Energetic Electronic Dance', prompt:'A high-energy dance track building to a big drop — made for product launches, countdowns, or hype-style promo cuts.' },
+  { key:'cinematic', label:'Cinematic Ad Build', prompt:'A cinematic build with rising strings and a confident, polished tone — designed for brand ads, teaser trailers, or big-reveal moments.' },
 ];
 const MUSIC_REFINE_CHIPS = {
-  edm: [
-    { label:'Specific EDM Subgenre', options:['Progressive house', 'Future bass', 'Tech house', 'Dubstep-lite'] },
-    { label:'Melody Character', options:['Bright and anthemic', 'Dark and driving', 'Playful and bouncy'] },
-    { label:'Energy Level', options:['Building slowly', 'High energy throughout', 'Peaks and drops'] },
-    { label:'Vocal Style', options:['Instrumental only', 'Vocal chops', 'Full lead vocal'] },
+  lofi: [
+    { label:'Instrumentation', options:['Warm electric piano', 'Dusty vinyl piano', 'Soft Rhodes keys'] },
+    { label:'Drum Feel', options:['Dusty boom-bap', 'Laid-back and loose', 'Minimal and sparse'] },
+    { label:'Mood', options:['Relaxed', 'Nostalgic', 'Sleepy and hazy'] },
   ],
-  synthwave: [
+  retro: [
     { label:'Era Character', options:['Early 80s retro', 'Late 80s power synth', 'Modern retrowave'] },
     { label:'Bass Style', options:['Deep sustained bass', 'Punchy sequenced bass'] },
     { label:'Atmosphere', options:['Nostalgic and warm', 'Dark and cinematic', 'Neon and upbeat'] },
@@ -2214,6 +2238,17 @@ const MUSIC_REFINE_CHIPS = {
     { label:'Mood', options:['Hopeful', 'Bittersweet', 'Reflective'] },
     { label:'Vocal Style', options:['Instrumental only', 'Soft hummed vocals', 'Full lead vocal'] },
   ],
+  edm: [
+    { label:'Specific EDM Subgenre', options:['Progressive house', 'Future bass', 'Tech house', 'Dubstep-lite'] },
+    { label:'Melody Character', options:['Bright and anthemic', 'Dark and driving', 'Playful and bouncy'] },
+    { label:'Energy Level', options:['Building slowly', 'High energy throughout', 'Peaks and drops'] },
+    { label:'Vocal Style', options:['Instrumental only', 'Vocal chops', 'Full lead vocal'] },
+  ],
+  cinematic: [
+    { label:'Instrumentation', options:['Rising strings', 'Full orchestral swell', 'Piano and strings'] },
+    { label:'Energy Arc', options:['Slow build', 'Steady climb', 'Big final swell'] },
+    { label:'Tone', options:['Confident and polished', 'Emotional and epic', 'Bold and triumphant'] },
+  ],
 };
 let musicActiveTemplate = null;
 let musicRefineMenuFor = null;
@@ -2222,8 +2257,12 @@ function renderMusicPresetRow(){
   const row = document.getElementById('musicPresetRow');
   if (!musicActiveTemplate){
     row.className = 'vd-preset-row';
+    // Plain bordered pills (.vl-fchip, the same filter-chip look used elsewhere in this app)
+    // instead of vd-preset-chip's "no border until selected" look, per the updated design --
+    // none of the 5 templates are ever shown "selected" here since picking one swaps the row
+    // to that genre's refine chips entirely, so there's no persistent selected state to show.
     row.innerHTML = MUSIC_TEMPLATES.map(t =>
-      `<button type="button" class="vd-preset-chip" onclick="selectMusicTemplate('${t.key}')">${escHtml(t.label)}</button>`
+      `<button type="button" class="vl-fchip" onclick="selectMusicTemplate('${t.key}')">${escHtml(t.label)}</button>`
     ).join('');
     return;
   }
@@ -2310,7 +2349,7 @@ function renderMusicRefChip(){
   const label = document.getElementById('musicRefChipLabel');
   const v = MUSIC_REFERENCE_VIDEOS.find(x => x.id === musicRefVideoId);
   chip.dataset.attached = v ? 'true' : 'false';
-  label.textContent = v ? v.title : 'My Library';
+  label.textContent = v ? v.title : 'My library';
 }
 const MUSIC_REFERENCE_VIDEOS = [
   { id:'r1', title:'This New Lip Tint Is Everything', thumb:'../brand-characters/assets/imgLibLipTint.png',
@@ -2452,12 +2491,12 @@ function musicToggleVersionMenu(){
 }
 function renderMusicVersionOptions(){
   document.getElementById('musicVersionMenu').innerHTML = [1, 2, 3].map(v =>
-    `<div class="vl-fselect-row${v === musicVersions ? ' selected' : ''}" onclick="selectMusicVersion(${v})">${v}</div>`
+    `<div class="vl-fselect-row${v === musicVersions ? ' selected' : ''}" onclick="selectMusicVersion(${v})">${v}${v === 1 ? ' Version' : ' Versions'}</div>`
   ).join('');
 }
 function selectMusicVersion(v){
   musicVersions = v;
-  document.getElementById('musicVersionLabel').textContent = String(v);
+  document.getElementById('musicVersionLabel').textContent = v + (v === 1 ? ' Version' : ' Versions');
   renderMusicCreditBadge();
   closeMusicFselectMenus();
 }
