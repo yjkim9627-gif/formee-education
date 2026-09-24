@@ -423,6 +423,10 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
 .music-refine-reset-btn:hover{background:var(--color-neutral-50);}
 .music-refine-reset-btn img{width:14px; height:14px; display:block;}
 .music-refine-chip{white-space:nowrap;}
+/* Matches Figma "Controls / Filter / Toggle" (10974:391912) exactly -- its plus icon is
+   "icon / button / plus" at 12px/neutral-700 (#475069, same tone as the label), not the
+   generic 16px/neutral-500 plus used for other add-buttons in this app (plus-20-grey.svg). */
+.music-refine-chip-icon{width:12px; height:12px;}
 /* Refine-chip row uses wrap instead of .vd-preset-row's overflow-x:auto -- each chip here is
    itself a dropdown trigger (.vl-fselect-wrap), and an overflow:auto ancestor clips an
    absolutely-positioned popover instead of letting it float on top (the exact bug this app's
@@ -441,10 +445,6 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
   font-family:var(--font-family-text); font-size:13px; color:var(--color-neutral-900);
 }
 .music-duration-custom-row span{font-family:var(--font-family-text); font-size:12px; color:var(--color-neutral-500);}
-
-/* Live credit-cost readout -- recalculated from duration x version any time either changes
-   (musicCreditCost()); sits right of the two pills, before Generate. */
-.music-credit-badge{font-family:var(--font-family-text); font-size:13px; font-weight:500; color:var(--color-neutral-500); white-space:nowrap;}
 
 /* Video-reference chip row -- a single .ref-chip (reference-chip.css, same component the New
    Content prompt box uses for First frame/Last frame/Reference) sitting on its own line
@@ -772,7 +772,6 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
                   </button>
                   <div class="vl-fselect-menu" id="musicVersionMenu" onclick="event.stopPropagation()" hidden></div>
                 </div>
-                <span class="music-credit-badge" id="musicCreditBadge"></span>
               </div>
               <button type="button" class="music-ai-refine-btn" id="musicGenerateBtn" aria-label="Generate" disabled onclick="musicGenerateTrack()"><img src="../../../components/ai-social-media/icons/arrow-up.svg" alt=""></button>
             </div>
@@ -2272,7 +2271,7 @@ function renderMusicPresetRow(){
     <button type="button" class="music-refine-reset-btn" onclick="resetMusicTemplate()" aria-label="Start over with a different template"><img src="${ICON}rotate-ccw.svg" alt=""></button>
     ${chips.map((c, i) => `
       <div class="vl-fselect-wrap">
-        <button type="button" class="vd-preset-chip music-refine-chip" onclick="event.stopPropagation(); musicToggleRefineMenu(${i})">+ ${escHtml(c.label)}</button>
+        <button type="button" class="vl-fchip music-refine-chip" onclick="event.stopPropagation(); musicToggleRefineMenu(${i})"><img class="music-refine-chip-icon" src="${ICON}plus-12-dark.svg" alt="">${escHtml(c.label)}</button>
         <div class="vl-fselect-menu" id="musicRefineMenu${i}" onclick="event.stopPropagation()" hidden></div>
       </div>`).join('')}
   `;
@@ -2408,16 +2407,13 @@ function confirmMusicReference(){
   renderMusicRefChip();
 }
 
-/* ---------------- Duration / Version / live credit cost ----------------
+/* ---------------- Duration / Version ----------------
    Duration replaces the old free-running 5–24s picker with the spec's fixed set (30s
    default / 1min / 2min / Custom-typed-seconds); Version is how many variations to generate
-   in one request (1–3). Credit cost is duration(seconds) x MUSIC_CREDIT_RATE x versions --
-   the rate is calibrated so 30s x 1 version lands exactly on this spec's own "450 credits"
-   example, and scales up from there exactly as the spec asks (longer duration or more
-   versions both raise the cost). */
+   in one request (1–3). No credit-cost readout -- dropped intentionally, this design pass
+   doesn't show one. */
 const MUSIC_DURATION_OPTIONS = ['30s', '1min', '2min', 'custom'];
 const MUSIC_DURATION_LABELS = { '30s':'30s', '1min':'1 min', '2min':'2 min', custom:'Custom' };
-const MUSIC_CREDIT_RATE = 15;
 let musicDuration = '30s';
 let musicCustomSeconds = 45;
 let musicVersions = 1;
@@ -2433,12 +2429,6 @@ function musicDurationSeconds(){
 }
 function musicDurationLabel(){
   return musicDuration === 'custom' ? musicCustomSeconds + 's' : MUSIC_DURATION_LABELS[musicDuration];
-}
-function musicCreditCost(){
-  return musicDurationSeconds() * MUSIC_CREDIT_RATE * musicVersions;
-}
-function renderMusicCreditBadge(){
-  document.getElementById('musicCreditBadge').textContent = musicCreditCost().toLocaleString() + ' credits';
 }
 function musicOnPromptInput(el){
   document.getElementById('musicGenerateBtn').disabled = el.value.trim().length === 0;
@@ -2469,7 +2459,6 @@ function renderMusicDurationOptions(){
 function selectMusicDuration(opt){
   musicDuration = opt;
   document.getElementById('musicDurationLabel').textContent = musicDurationLabel();
-  renderMusicCreditBadge();
   if (opt === 'custom'){
     renderMusicDurationOptions();
     setTimeout(() => { const el = document.getElementById('musicCustomSecondsInput'); if (el) el.focus(); }, 0);
@@ -2480,7 +2469,6 @@ function selectMusicDuration(opt){
 function musicSetCustomSeconds(v){
   musicCustomSeconds = Math.max(5, Math.min(300, parseInt(v, 10) || 30));
   document.getElementById('musicDurationLabel').textContent = musicDurationLabel();
-  renderMusicCreditBadge();
 }
 function musicToggleVersionMenu(){
   const opening = !musicVersionMenuOpen;
@@ -2497,7 +2485,6 @@ function renderMusicVersionOptions(){
 function selectMusicVersion(v){
   musicVersions = v;
   document.getElementById('musicVersionLabel').textContent = v + (v === 1 ? ' Version' : ' Versions');
-  renderMusicCreditBadge();
   closeMusicFselectMenus();
 }
 document.addEventListener('click', (e) => {
@@ -2567,7 +2554,6 @@ function musicGenerateTrack(){
   }, 2200);
 }
 renderMusicPresetRow();
-renderMusicCreditBadge();
 renderMusicRefChip();
 
 /* ---------------- Music → apply-to-content modal ----------------
