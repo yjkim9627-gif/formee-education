@@ -173,6 +173,15 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
 }
 .vl-fselect-row:hover{background:var(--color-neutral-75);}
 .vl-fselect-row.selected{background:var(--color-neutral-75); font-weight:600; color:var(--color-neutral-900);}
+/* Trailing checkmark instead of (or alongside) the row-highlight, matching Figma's Genre/Mood
+   dropdown (11132:401095) -- a separate modifier rather than changing .vl-fselect-row itself,
+   since some other dropdowns reusing that base class (e.g. the Remix modal's multi-select
+   append list) already draw their own leading checkmark character and would double up. */
+.vl-fselect-row--check{display:flex; align-items:center; justify-content:space-between; gap:8px;}
+.vl-fselect-row--check.selected::after{
+  content:''; width:16px; height:16px; flex-shrink:0;
+  background:url('../../../components/ai-social-media/icons/check.svg') no-repeat center / contain;
+}
 
 .vl-fselect-menu--lang{width:260px;}
 .vl-fselect-search{
@@ -2241,7 +2250,7 @@ function renderMusicChips(){
          </button>`;
     const menu = menuOpen
       ? `<div class="vl-fselect-menu" onclick="event.stopPropagation()">
-           ${dim.options.map(opt => `<div class="vl-fselect-row${opt === value ? ' selected' : ''}" onclick="selectMusicFilterValue('${dim.key}','${opt.replace(/'/g, "\\'")}')">${escHtml(opt)}</div>`).join('')}
+           ${dim.options.map(opt => `<div class="vl-fselect-row vl-fselect-row--check${opt === value ? ' selected' : ''}" onclick="selectMusicFilterValue('${dim.key}','${opt.replace(/'/g, "\\'")}')">${escHtml(opt)}</div>`).join('')}
          </div>`
       : '';
     return `<div class="vl-fselect-wrap">${trigger}${menu}</div>`;
@@ -2952,7 +2961,7 @@ function musicRenderTagDropdowns(){
          </button>`;
     const menu = menuOpen
       ? `<div class="vl-fselect-menu" onclick="event.stopPropagation()">
-           ${dim.options.map(opt => `<div class="vl-fselect-row${opt === value ? ' selected' : ''}" onclick="musicSelectTagValue('${dim.key}','${opt.replace(/'/g, "\\'")}')">${escHtml(opt)}</div>`).join('')}
+           ${dim.options.map(opt => `<div class="vl-fselect-row vl-fselect-row--check${opt === value ? ' selected' : ''}" onclick="musicSelectTagValue('${dim.key}','${opt.replace(/'/g, "\\'")}')">${escHtml(opt)}</div>`).join('')}
          </div>`
       : '';
     return `<div class="vl-fselect-wrap">${trigger}${menu}</div>`;
