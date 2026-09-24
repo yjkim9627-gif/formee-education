@@ -315,12 +315,16 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
 .vl-menu-caret{width:14px; height:14px; flex-shrink:0; opacity:.6;}
 
 /* ---------- Music card grid ----------
-   Figma "audio" component, 9750:258156/9750:258157 ("type=default, state=normal"),
+   Figma "Music Library Card", 9750:258156 ("type=Library, state=Default/Added/Selected"),
    reproduced exactly: 32px play button (2px bigger than Voice Library Card's 30px one --
    a real, deliberate difference between the two components, not a rounding slip), title +
    attribution side by side (not stacked), a fixed 180px duration/mood/bpm block with each
-   value right-aligned in its own third, and 2 plain 36px bordered icon actions (apply-to-
-   content + Favorite -- no third/More action here, unlike the Voice Library Card). */
+   value right-aligned in its own third, and 3 plain 36px bordered icon actions (+/Added,
+   Favorite, ⋯ More) -- same .voice-card-icon-btn component as the Voice Library Card, so
+   the add/fav selected-state colors are already shared, not redefined here. The row's own
+   "apply to a video" action used to be a 4th standalone icon (content-reel.svg) but Figma's
+   updated card drops it from the row entirely -- it now lives inside the ⋯ menu instead
+   (see musicMenuHTML's "Add to video" row). */
 .music-card{
   position:relative; display:flex; align-items:center; gap:var(--spacing-lg); box-sizing:border-box;
   padding:13px; background:var(--color-neutral-0);
@@ -338,6 +342,13 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
 .music-card-attribution{
   flex:0 1 auto; min-width:0; font-family:var(--font-family-text); font-size:12px; font-weight:500; line-height:18px; color:var(--color-neutral-500);
   overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+/* Version-grouping badge (musicVersionBadge) -- sibling of .music-card-name, not a child of it,
+   so a long title's own ellipsis truncation never eats into this instead. */
+.music-version-badge{
+  flex:0 0 auto; font-family:var(--font-family-text); font-size:11px; font-weight:600; line-height:14px;
+  color:var(--color-neutral-600); background:var(--color-neutral-150); padding:2px 8px;
+  border-radius:var(--radius-full); white-space:nowrap;
 }
 .music-card-meta{display:flex; align-items:center; width:180px; flex-shrink:0;}
 .music-card-meta span{flex:1 0 0; text-align:right; font-family:var(--font-family-text); font-size:12px; font-weight:500; color:var(--color-neutral-500); white-space:nowrap;}
@@ -569,6 +580,15 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
 }
 .vh-copy-btn:hover{background:var(--color-neutral-50);}
 .vh-empty{padding:var(--spacing-3xl) 0; text-align:center; font-family:var(--font-family-text); font-size:13px; color:var(--color-neutral-500);}
+/* Music generate-preview modal reuses the shared .modal__footer for two toggleable footers
+   (Preview's Cancel/Continue vs Naming's Back/Save) -- same fix as .cvm-footer[hidden]
+   elsewhere in this file: .modal__footer's own display:flex (modal.css) has equal
+   specificity to the browser's [hidden] rule, and being the later-loaded stylesheet wins,
+   so both footers rendered at once without this override. Scoped to this modal only since
+   every other .modal__footer in this app is a single, never-toggled footer. */
+#musicGenOverlay .modal__footer[hidden]{display:none;}
+#musicGenList .voice-section-sample{margin-bottom:var(--spacing-xs);}
+#musicGenList .voice-section-sample:last-child{margin-bottom:0;}
 </style>
 </head>
 <body>
@@ -794,7 +814,11 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
             <button type="button" class="controls-segment-chip controls-segment-chip--selected" data-tab="library" onclick="setMusicTab('library')">Library</button>
             <button type="button" class="controls-segment-chip" data-tab="mine" onclick="setMusicTab('mine')">My Music</button>
           </div>
-          <div class="vl-chip-row" id="musicChipRow"></div>
+          <!-- .vl-filter-line, NOT .vl-chip-row -- the latter's overflow-x:auto (which forces
+               overflow-y:auto too, per the CSS spec's overflow-x/y coupling) clips the Genre/
+               Mood dropdowns' popovers instead of letting them float on top. Same fix already
+               applied to the Voice toolbar's own Language/Accent/Gender dropdowns above. -->
+          <div class="vl-filter-line" id="musicChipRow"></div>
           <p class="vl-count" id="musicCount"></p>
         </div>
 
@@ -1195,9 +1219,96 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
       <p class="vh-settings-label">Versions generated</p>
       <p class="vh-settings-value" id="musicDetailsVersionText"></p>
     </div>
+    <div class="vd-field-group">
+      <p class="vd-field-label">Labels</p>
+      <div class="vd-tag-dropdowns" id="musicDetailsTagDropdowns"></div>
+      <div class="vd-tag-custom-row" id="musicDetailsCustomTagRow"></div>
+    </div>
     <div class="modal__footer">
       <button type="button" class="actions-btn actions-btn--secondary" onclick="closeMusicDetailsModal()">Cancel</button>
       <button type="button" class="actions-btn actions-btn--primary" onclick="saveMusicDetails()">Save changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ MUSIC: PREVIEW & NAME GENERATED TRACK(S) MODAL ============================================================
+     musicGenerateTrack() used to drop the freshly "composed" card(s) straight into the list
+     with an auto-generated title and no way to actually listen first -- unlike every other
+     AI-generated asset in this app (Voice Design included), which all get a real preview and
+     a Name/Description step before landing anywhere. This modal sits between the composing
+     spinner and the track actually joining My Music: Preview (prompt recap, same .vh-settings-
+     row/.vh-prompt-text pattern Track details uses for "Prompt used", read-only -- then a
+     single-select version list, same vd-selectable/.voice-section-sample.selected pattern
+     Voice Design's own "Choose a voice" step uses, since only ONE version gets saved here too)
+     -> Name/Description (same vd-field-group shell as Track details above, both pre-filled --
+     Name from musicTitleFromPrompt(), Description by just echoing the prompt back since it
+     already reads as a natural description -- both are still freely editable, this is a
+     starting point, not a lock). Cancel at either step discards the whole batch -- nothing
+     touches `tracks` until "Save to My Music" on the naming step. The versions NOT picked
+     aren't thrown away either: they're saved as real tracks too, just starting `hidden:true`,
+     reachable from the picked version's own ⋯ menu ("Other generated versions") or the Hidden
+     filter chip -- see the sibling-versions modal and musicHiddenOnly below. -->
+<div class="modal-overlay" id="musicGenOverlay" hidden onclick="if(event.target===this) closeMusicGenModal()">
+  <div class="modal modal--form">
+    <div class="modal__header-row">
+      <h3 class="modal__title" id="musicGenTitle">Preview your track</h3>
+      <button type="button" class="modal__close" onclick="closeMusicGenModal()"><img src="../../../components/ai-social-media/icons/button-x-dark.svg" alt="Close"></button>
+    </div>
+
+    <div class="vd-step" id="musicGenPreviewStep">
+      <div class="vh-settings-row">
+        <p class="vh-settings-label">Prompt</p>
+        <p class="vh-settings-value vh-prompt-text" id="musicGenPromptRecap"></p>
+      </div>
+      <p class="vd-field-label" id="musicGenListLabel">Choose a version</p>
+      <div class="vd-voice-list" id="musicGenList"></div>
+    </div>
+
+    <div class="vd-step" id="musicGenNameStep" hidden>
+      <div class="vd-field-group">
+        <p class="vd-field-label">Name</p>
+        <input type="text" class="vd-input" id="musicGenNameInput" placeholder="e.g. Chill Study Beat">
+      </div>
+      <div class="vd-field-group">
+        <p class="vd-field-label">Description</p>
+        <textarea class="vd-input" id="musicGenDescInput" placeholder="What is this track good for?"></textarea>
+      </div>
+      <div class="vd-field-group">
+        <p class="vd-field-label">Labels</p>
+        <div class="vd-tag-dropdowns" id="musicTagDropdowns"></div>
+        <div class="vd-tag-custom-row" id="musicCustomTagRow"></div>
+      </div>
+    </div>
+
+    <div class="modal__footer" id="musicGenFooterPreview">
+      <button type="button" class="actions-btn actions-btn--secondary" onclick="closeMusicGenModal()">Cancel</button>
+      <button type="button" class="actions-btn actions-btn--primary" onclick="musicGenGoToNaming()">Continue</button>
+    </div>
+    <div class="modal__footer" id="musicGenFooterName" hidden>
+      <button type="button" class="actions-btn actions-btn--secondary" onclick="musicGenBackToPreview()">Back</button>
+      <button type="button" class="actions-btn actions-btn--primary" onclick="musicGenSaveTracks()">Save to My Music</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ MUSIC: OTHER GENERATED VERSIONS MODAL ============================================================
+     Every version from a generation batch is already a real track (see musicGenSaveTracks) --
+     the ones not picked just start `hidden:true`. This modal is a quick-access shortcut scoped
+     to one song's group (musicHiddenSiblings), not a separate data path: "Unhide" here just
+     flips the same `hidden` flag the Hidden filter chip reads, so the two always agree. Same
+     voice-section-sample row as the preview step, just with its own "+" unhide button per row
+     (.voice-card-icon-btn, the same add/check component the card grid's own +/Added button
+     uses) instead of a click-to-select radio, since every row here is independently unhideable
+     rather than mutually exclusive. -->
+<div class="modal-overlay" id="musicSiblingsOverlay" hidden onclick="if(event.target===this) closeMusicSiblingsModal()">
+  <div class="modal modal--form">
+    <div class="modal__header-row">
+      <h3 class="modal__title">Other generated versions</h3>
+      <button type="button" class="modal__close" onclick="closeMusicSiblingsModal()"><img src="../../../components/ai-social-media/icons/button-x-dark.svg" alt="Close"></button>
+    </div>
+    <div class="vd-voice-list" id="musicSiblingsList"></div>
+    <div class="modal__footer">
+      <button type="button" class="actions-btn actions-btn--secondary" onclick="closeMusicSiblingsModal()">Close</button>
     </div>
   </div>
 </div>
@@ -1392,7 +1503,14 @@ const voices = [
   { id:'v26', name:'Will', desc:'Relaxed optimist — conversational and laid back, great for casual voiceovers.', cats:['Conversational'], langs:['English (US)'], mine:false, fav:false },
 ];
 
-const MUSIC_CATS = ['Funny','Uplifting','Hype','Energetic','Mellow','Calm','Dramatic'];
+// Renamed from MUSIC_CATS -- this vocabulary (Funny/Uplifting/Hype/...) is what every seed
+// track's own `mood` field already used verbatim, so the toolbar dropdown built from it is
+// "Mood ▾", not "Genre ▾". Genre is a separate, new facet below (MUSIC_GENRES), matching the
+// 5 prompt templates -- only tracks generated through this app (or hand-tagged here) carry a
+// genre; older stock library tracks predate the concept and simply have none.
+const MUSIC_MOODS = ['Funny','Uplifting','Hype','Energetic','Mellow','Calm','Dramatic'];
+const MUSIC_GENRES = ['Lo-fi','Retro Synth','Acoustic Folk','EDM','Cinematic'];
+const MUSIC_GENRE_BY_TEMPLATE = { lofi:'Lo-fi', retro:'Retro Synth', folk:'Acoustic Folk', edm:'EDM', cinematic:'Cinematic' };
 const tracks = [
   { id:'m1', title:'Funky Chunk', attribution:'Kevin MacLeod (incompetech.com)', duration:'03:59', mood:'Energetic', bpm:115, cats:['Energetic'], fav:false, mine:false, prompt:'An upbeat, funky track with a groovy bassline and playful energy.', description:'' },
   { id:'m2', title:'Slow Bloom', attribution:'Bensound.com', duration:'02:41', mood:'Calm', bpm:88, cats:['Calm'], fav:true, mine:false, prompt:'A slow, calming ambient track with soft pads and a gentle, unfolding melody.', description:'' },
@@ -1403,12 +1521,16 @@ const tracks = [
   { id:'m7', title:'Neon Rush', attribution:'Artlist.io', duration:'03:05', mood:'Hype', bpm:128, cats:['Hype'], fav:false, mine:false, prompt:'A high-energy synthwave track with a driving beat and neon-lit intensity.', description:'' },
   { id:'m8', title:'Porch Light', attribution:'Bensound.com', duration:'02:20', mood:'Uplifting', bpm:92, cats:['Uplifting'], fav:false, mine:false, prompt:'An uplifting acoustic track with warm guitar tones and a hopeful feel.', description:'' },
   // A couple of seed "My Music" tracks so that tab isn't empty by default -- both carry the
-  // duration/version settings a real generation would have stored, for the Details modal.
-  { id:'m9', title:'Study Session Lo-fi', attribution:'Generated with AI', duration:'00:30', mood:'AI Generated', bpm:'', cats:['Mellow'], fav:false, mine:true, versionCount:1,
-    prompt:'Upbeat lo-fi hip-hop with a mellow piano melody, soft drums, and a relaxed tempo — good for study or vlog background.', description:'' },
-  { id:'m10', title:'Neon Pulse Reel', attribution:'Generated with AI', duration:'01:00', mood:'AI Generated', bpm:'', cats:['Hype','Energetic'], fav:false, mine:true, versionCount:2,
-    prompt:'An uplifting EDM track with a four-on-the-floor beat and a euphoric build-up — ideal for product launches, hype countdowns, or high-energy promo clips, progressive house.', description:'' },
+  // duration/version settings a real generation would have stored, for the Details modal, plus
+  // a genre/mood/description so the My Music card layout has real content to show.
+  { id:'m9', title:'Study Session Lo-fi', attribution:'Generated with AI', duration:'00:30', mood:'Mellow', genre:'Lo-fi', bpm:'', cats:['Mellow'], fav:false, mine:true, versionCount:1,
+    prompt:'Upbeat lo-fi hip-hop with a mellow piano melody, soft drums, and a relaxed tempo — good for study or vlog background.', description:'Calm lo-fi beat for study sessions and vlogs.', customLabels:[] },
+  { id:'m10', title:'Neon Pulse Reel', attribution:'Generated with AI', duration:'01:00', mood:'Hype', genre:'EDM', bpm:'', cats:['Hype','Energetic'], fav:false, mine:true, versionCount:2,
+    prompt:'An uplifting EDM track with a four-on-the-floor beat and a euphoric build-up — ideal for product launches, hype countdowns, or high-energy promo clips, progressive house.', description:'High-energy EDM build for product launches and hype reels.', customLabels:[] },
 ];
+// Same addedVoices convention as Voices below -- a Library (stock) track the "+" button on
+// its card has been clicked for lands in My Music too, on top of whatever's already t.mine.
+let addedTracks = new Set(tracks.filter(t => t.mine).map(t => t.id));
 
 /* ---------------- nav switching ---------------- */
 function switchView(which){
@@ -2059,8 +2181,23 @@ function confirmDeleteVoiceModal(){
    same pattern as Voices' own Favorites chip. "Add to my library" is gone too: a track's
    only action now is Favorite (browsing) and "Adapt in your project" (apply it as
    background music on a piece of content), via the music-apply modal below. */
-let musicCat = null;
+let musicMood = null;
+let musicGenreFilter = null;
 let musicFavOnly = false;
+// User-added custom labels (from the naming step's Labels section, see musicEnsureCustomLabel
+// below) -- unlike VOICE_CATS, these must NOT surface as Library filter chips, only in My
+// Music, so they live in their own list instead of joining MUSIC_MOODS/MUSIC_GENRES.
+let MUSIC_CUSTOM_LABELS = [];
+let musicCustomLabelFilter = null;
+let musicFilterMenuOpen = null; // 'genre' | 'mood' | null
+// A multi-version generation batch saves EVERY version as a real track right away (see
+// musicGenSaveTracks) instead of stashing the ones not picked in a dormant side-list -- only
+// `hidden` differs between them. That keeps this one boolean + one filter chip as the single
+// mechanism for both "only show the version I picked" and "I added it but want it out of my
+// default view" -- no second, parallel place to go looking for a track. Off by default: the
+// list only shows what's not hidden; toggling it flips to showing ONLY the hidden ones, same
+// on/off-narrows-the-list convention as the Favorites chip.
+let musicHiddenOnly = false;
 // Library (curated/stock tracks, t.mine===false) vs My Music (AI-generated, t.mine===true) --
 // same tab/`.mine` convention as Voices' ElevenLabs Library / My Voices split.
 let musicTab = 'library';
@@ -2073,41 +2210,108 @@ function setMusicTab(tab){
   renderMusic();
 }
 
+// Genre/Mood used to be one flat wall of chips (MUSIC_MOODS, filtering `t.cats`) -- Figma's
+// updated filter row (11132:400479) collapses that into two dropdown chips (reusing the same
+// .vl-fselect/.vl-fselect-menu the Voice toolbar's own Gender/Language dropdowns use) and adds
+// a flat "custom label" chip per user-added label, shown only in My Music.
+const MUSIC_FILTER_DIMS = [
+  { key:'genre', label:'Genre', options: MUSIC_GENRES, get:() => musicGenreFilter, set:v => musicGenreFilter = v },
+  { key:'mood', label:'Mood', options: MUSIC_MOODS, get:() => musicMood, set:v => musicMood = v },
+];
+function musicHiddenCount(){ return tracks.filter(t => addedTracks.has(t.id) && t.hidden).length; }
 function renderMusicChips(){
   const row = document.getElementById('musicChipRow');
+  const hiddenCount = musicHiddenCount();
+  const hiddenChipHTML = (musicTab === 'mine' && hiddenCount > 0)
+    ? `<button type="button" class="vl-fchip${musicHiddenOnly ? ' active' : ''}" onclick="toggleMusicHiddenOnly()">Hidden (${hiddenCount})</button>`
+    : '';
+  const customChipsHTML = musicTab === 'mine'
+    ? MUSIC_CUSTOM_LABELS.map(label => `<button type="button" class="vl-fchip${label === musicCustomLabelFilter ? ' active' : ''}" onclick="setMusicCustomLabelFilter('${label.replace(/'/g, "\\'")}')">${escHtml(label)}</button>`).join('')
+    : '';
+  const dimsHTML = MUSIC_FILTER_DIMS.map(dim => {
+    const value = dim.get();
+    const menuOpen = musicFilterMenuOpen === dim.key;
+    const trigger = value
+      ? `<button type="button" class="vl-fselect vl-fselect--filled" onclick="event.stopPropagation(); toggleMusicFilterMenu('${dim.key}')">
+           <img class="vl-fselect-x" src="${ICON}close-x.svg" alt="" onclick="event.stopPropagation(); clearMusicFilterValue('${dim.key}');">
+           <span class="vl-fselect-label">${dim.label}</span><span class="vl-fselect-divider"></span><span class="vl-fselect-value">${escHtml(value)}</span>
+         </button>`
+      : `<button type="button" class="vl-fselect" onclick="event.stopPropagation(); toggleMusicFilterMenu('${dim.key}')">
+           <span class="vl-fselect-label">${dim.label}</span><img class="vl-fselect-caret" src="${ICON}caret-down-filled.svg" alt="">
+         </button>`;
+    const menu = menuOpen
+      ? `<div class="vl-fselect-menu" onclick="event.stopPropagation()">
+           ${dim.options.map(opt => `<div class="vl-fselect-row${opt === value ? ' selected' : ''}" onclick="selectMusicFilterValue('${dim.key}','${opt.replace(/'/g, "\\'")}')">${escHtml(opt)}</div>`).join('')}
+         </div>`
+      : '';
+    return `<div class="vl-fselect-wrap">${trigger}${menu}</div>`;
+  }).join('');
   row.innerHTML = `
     <button type="button" class="vl-fchip vl-fchip-favorites${musicFavOnly ? ' active' : ''}" id="musicFavChip" onclick="toggleMusicFavOnly()">Favorites<img src="${ICON}controls/star-fill-${musicFavOnly ? 'selected' : 'default'}.svg" alt=""></button>
-    ${MUSIC_CATS.map(cat => `<button type="button" class="vl-fchip${cat === musicCat ? ' active' : ''}" onclick="setMusicCat('${cat}')">${cat}</button>`).join('')}
+    ${hiddenChipHTML}
+    ${customChipsHTML}
+    ${(customChipsHTML || hiddenChipHTML) ? '<span class="vl-fchip-divider"></span>' : ''}
+    ${dimsHTML}
   `;
 }
 function toggleMusicFavOnly(){ musicFavOnly = !musicFavOnly; renderMusic(); }
-function setMusicCat(cat){ musicCat = (musicCat === cat) ? null : cat; renderMusic(); }
+function toggleMusicHiddenOnly(){ musicHiddenOnly = !musicHiddenOnly; renderMusic(); }
+function setMusicCustomLabelFilter(label){ musicCustomLabelFilter = (musicCustomLabelFilter === label) ? null : label; renderMusic(); }
+function musicFilterDimValue(key){ return MUSIC_FILTER_DIMS.find(d => d.key === key).get(); }
+function toggleMusicFilterMenu(key){
+  musicFilterMenuOpen = musicFilterMenuOpen === key ? null : key;
+  renderMusicChips();
+}
+function selectMusicFilterValue(key, value){
+  MUSIC_FILTER_DIMS.find(d => d.key === key).set(value);
+  musicFilterMenuOpen = null;
+  renderMusic();
+}
+function clearMusicFilterValue(key){
+  MUSIC_FILTER_DIMS.find(d => d.key === key).set(null);
+  musicFilterMenuOpen = null;
+  renderMusic();
+}
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('#musicChipRow') && musicFilterMenuOpen){ musicFilterMenuOpen = null; renderMusicChips(); }
+});
 
 function renderMusic(){
   renderMusicChips();
   const q = (document.getElementById('musicSearch').value || '').toLowerCase().trim();
-  let list = tracks.filter(t => !!t.mine === (musicTab === 'mine'));
-  if (musicCat) list = list.filter(t => t.cats.includes(musicCat));
+  const mine = musicTab === 'mine';
+  let list = mine ? tracks.filter(t => addedTracks.has(t.id)) : tracks.filter(t => !t.mine);
+  if (mine) list = list.filter(t => musicHiddenOnly ? t.hidden : !t.hidden);
+  if (musicGenreFilter) list = list.filter(t => t.genre === musicGenreFilter);
+  if (musicMood) list = list.filter(t => t.cats.includes(musicMood));
+  if (mine && musicCustomLabelFilter) list = list.filter(t => (t.customLabels || []).includes(musicCustomLabelFilter));
   if (musicFavOnly) list = list.filter(t => t.fav);
   if (q) list = list.filter(t => t.title.toLowerCase().includes(q));
 
   document.getElementById('musicCount').textContent = list.length + (list.length === 1 ? ' track' : ' tracks');
   document.getElementById('musicEmpty').hidden = list.length !== 0;
 
+  // My Music card (Figma 11132:400410/400427) drops the "+" add button entirely (there's
+  // nothing to add -- it's already here) and shows the track's own description + Genre/Mood
+  // instead of a stock attribution + Duration/Mood/BPM. Library keeps the original layout.
   document.getElementById('musicList').innerHTML = list.map(t => `
     <div class="music-card" data-id="${t.id}">
       <span class="voice-section-sample-play" onclick="toggleVoicePlay(this)"><img src="${ICON}audio-row-play-triangle.svg" alt=""></span>
       <div class="music-card-info">
         <p class="music-card-name">${escHtml(t.title)}</p>
-        <span class="music-card-attribution">${escHtml(t.attribution)}</span>
+        ${musicVersionBadge(t)}
+        <span class="music-card-attribution">${escHtml(mine ? (t.description || t.attribution) : t.attribution)}</span>
       </div>
       <div class="music-card-meta">
-        <span>${t.duration}</span><span>${t.mood}</span><span>${t.bpm ? 'BPM ' + t.bpm : ''}</span>
+        ${mine
+          ? `<span>${t.duration}</span><span>${escHtml(t.genre || '—')}</span><span>${escHtml(t.mood || '—')}</span>`
+          : `<span>${t.duration}</span><span>${escHtml(t.mood)}</span><span>${t.bpm ? 'BPM ' + t.bpm : ''}</span>`}
       </div>
       <div class="music-card-actions">
-        <button type="button" class="voice-card-icon-btn" onclick="openMusicApplyModal('${t.id}')" aria-label="Adapt ${escHtml(t.title)} in your project">
-          <img src="${ICON}content-reel.svg" alt="">
-        </button>
+        ${mine ? '' : `<button type="button" class="voice-card-icon-btn add${addedTracks.has(t.id) ? ' on' : ''}" onclick="toggleAddTrack('${t.id}')" aria-pressed="${addedTracks.has(t.id)}" aria-label="${addedTracks.has(t.id) ? 'Remove' : 'Add'} ${escHtml(t.title)}">
+          <img src="${ICON}${addedTracks.has(t.id) ? 'check' : 'pagebar-plus'}.svg" alt="">
+          <span class="vl-icon-tooltip">${addedTracks.has(t.id) ? 'Remove from My Music' : 'Add to My Music'}</span>
+        </button>`}
         <button type="button" class="voice-card-icon-btn fav${t.fav ? ' active' : ''}" onclick="toggleFav('${t.id}')" aria-pressed="${t.fav}" aria-label="Favorite ${escHtml(t.title)}">
           <img src="${ICON}${t.fav ? 'shape-star-filled' : 'favorite-star-16'}.svg" alt="">
         </button>
@@ -2123,27 +2327,77 @@ function toggleFav(id){
   t.fav = !t.fav;
   renderMusic();
 }
+function toggleAddTrack(id){
+  if (addedTracks.has(id)) addedTracks.delete(id); else addedTracks.add(id);
+  renderMusic();
+}
+// Reflects the *group's* current visibility state, not just this one card, so it reads
+// correctly no matter which of its versions is being rendered:
+// - only 1 version currently shown (the rest hidden) -> "N more versions" on that one card
+// - 2+ versions currently shown -> each shows its own "vN" so they can be told apart
+// - a hidden version, seen only via the Hidden filter/siblings modal -> always "vN" (it IS
+//   one of the "more versions" another card is referring to, not the one doing the referring)
+function musicVersionBadge(t){
+  if (!t.groupId) return '';
+  const group = tracks.filter(x => x.groupId === t.groupId);
+  if (group.length <= 1) return '';
+  if (t.hidden) return `<span class="music-version-badge">${escHtml(t.versionLabel || '')}</span>`;
+  const visibleCount = group.filter(x => !x.hidden).length;
+  if (visibleCount <= 1){
+    const hiddenCount = group.length - visibleCount;
+    return hiddenCount > 0 ? `<span class="music-version-badge">${hiddenCount} more version${hiddenCount > 1 ? 's' : ''}</span>` : '';
+  }
+  return `<span class="music-version-badge">${escHtml(t.versionLabel || '')}</span>`;
+}
 
-/* ---------------- Music track ⋯ menu (Download / Use as reference [/ Details]) ----------------
-   Reuses .vl-kebab-menu/.vl-menu-row as-is (the same voice-card kebab shell) -- Play/Favorite/
-   Apply-to-content stay as the frequent, always-visible icon actions; these move into the
-   menu, same reasoning the voice card already applied to its own actions. Library (stock)
-   tracks only get Download/Use as reference -- they're not owned, there's nothing of "yours"
-   to name or inspect settings for. Only My Music (t.mine) tracks get a 3rd "Details" row,
-   since only those actually have a real prompt/duration/version to show. */
+/* ---------------- Music track ⋯ menu (Add to video / Download / Use as reference [/ Details]) ----------------
+   Reuses .vl-kebab-menu/.vl-menu-row as-is (the same voice-card kebab shell). "Add to video"
+   used to be its own always-visible icon button (content-reel.svg, opening the apply-to-
+   project modal directly) -- the updated Music Library Card (Figma 9750:258156) drops that
+   icon from the row entirely in favor of just +/Favorite/⋯, so it moves in here as the menu's
+   first row instead, same reasoning the voice card already applied to its own less-frequent
+   actions. Library (stock) tracks only get Add to video/Download/Use as reference -- they're
+   not owned, there's nothing of "yours" to name or inspect settings for. Only My Music
+   (t.mine) tracks get a 4th "Details" row, since only those actually have a real prompt/
+   duration/version to show. */
 let musicOpenMenuFor = null;
 function toggleMusicMenu(id){
   musicOpenMenuFor = (musicOpenMenuFor === id) ? null : id;
   renderMusic();
 }
+// Every other version in this track's batch that's currently hidden -- reachable from the
+// siblings modal below. Excludes `t` itself (a hidden card viewed via the Hidden filter chip
+// shouldn't offer to show its own siblings-of-itself).
+function musicHiddenSiblings(t){
+  if (!t.groupId) return [];
+  return tracks.filter(x => x.groupId === t.groupId && x.hidden && x.id !== t.id);
+}
 function musicMenuHTML(t){
   if (musicOpenMenuFor !== t.id) return '';
   const detailsRow = t.mine ? `<div class="vl-menu-row" onclick="openMusicDetailsModal('${t.id}')"><span>Details</span></div>` : '';
+  // Hide/Unhide is the one mechanism covering both "I only want the version I picked visible"
+  // and "I added this but want it out of my default view" -- see musicHiddenOnly above.
+  const hideRow = t.mine
+    ? `<div class="vl-menu-row" onclick="musicToggleHidden('${t.id}')"><span>${t.hidden ? 'Unhide from list' : 'Hide from list'}</span></div>`
+    : '';
+  const hiddenSiblings = musicHiddenSiblings(t);
+  const siblingsRow = hiddenSiblings.length
+    ? `<div class="vl-menu-row" onclick="openMusicSiblingsModal('${t.id}')"><span>Other generated versions (${hiddenSiblings.length})</span></div>` : '';
   return `<div class="vl-kebab-menu" onclick="event.stopPropagation()">
+    <div class="vl-menu-row" onclick="openMusicApplyModal('${t.id}')"><span>Add to video</span></div>
     <div class="vl-menu-row" onclick="musicDownloadTrack('${t.id}')"><span>Download</span></div>
     <div class="vl-menu-row" onclick="musicUseAsReference('${t.id}')"><span>Use as reference</span></div>
     ${detailsRow}
+    ${hideRow}
+    ${siblingsRow}
   </div>`;
+}
+function musicToggleHidden(id){
+  musicOpenMenuFor = null;
+  const t = tracks.find(x => x.id === id);
+  if (!t) return;
+  t.hidden = !t.hidden;
+  renderMusic();
 }
 function musicDownloadTrack(id){
   musicOpenMenuFor = null;
@@ -2169,6 +2423,7 @@ function musicUseAsReference(id){
 // and the Duration/Version it was generated with, plus the same editable Name/Description
 // Library tracks never get (there's nothing to rename/describe on a stock track).
 let musicDetailsTrackId = null;
+let musicDetailsTagState = null;
 function openMusicDetailsModal(id){
   musicOpenMenuFor = null;
   musicDetailsTrackId = id;
@@ -2178,18 +2433,30 @@ function openMusicDetailsModal(id){
   document.getElementById('musicDetailsPromptText').textContent = t.prompt || '—';
   document.getElementById('musicDetailsDurationText').textContent = t.duration || '—';
   document.getElementById('musicDetailsVersionText').textContent = t.versionCount ? (t.versionCount + (t.versionCount === 1 ? ' version' : ' versions')) : '—';
+  // Labels were previously locked in at generation time (set once in the naming step, no way
+  // back in) -- reusing the same Labels editor here (musicActiveTagEditor) means Genre/Mood/
+  // custom labels can be revisited any time from Details, not just at creation.
+  musicDetailsTagState = { tagGenre: t.genre || null, tagMood: t.mood || null, tagMenuOpen: null, customTags: [...(t.customLabels || [])], addingCustomTag: false };
+  musicActiveTagEditor = { state: musicDetailsTagState, dropdownsId:'musicDetailsTagDropdowns', customRowId:'musicDetailsCustomTagRow', inputId:'musicDetailsTagInput' };
+  musicRenderTagDropdowns();
+  musicRenderCustomTags();
   document.getElementById('musicDetailsOverlay').hidden = false;
   renderMusic();
 }
 function closeMusicDetailsModal(){
   document.getElementById('musicDetailsOverlay').hidden = true;
   musicDetailsTrackId = null;
+  musicDetailsTagState = null;
 }
 function saveMusicDetails(){
   const t = tracks.find(x => x.id === musicDetailsTrackId);
   if (!t) return;
   t.title = document.getElementById('musicDetailsNameInput').value.trim() || t.title;
   t.description = document.getElementById('musicDetailsDescInput').value.trim();
+  t.genre = musicDetailsTagState.tagGenre;
+  t.mood = musicDetailsTagState.tagMood;
+  t.cats = musicDetailsTagState.tagMood ? [musicDetailsTagState.tagMood] : [];
+  t.customLabels = [...musicDetailsTagState.customTags];
   closeMusicDetailsModal();
   renderMusic();
 }
@@ -2532,29 +2799,315 @@ function musicGenerateTrack(){
     cards.push(card);
   }
 
+  const templateAtGenTime = musicActiveTemplate;
   setTimeout(() => {
     if (seq !== musicGenSeq) return;
     cards.forEach(c => c.remove());
-    for (let i = versions - 1; i >= 0; i--){
-      tracks.unshift({
-        id:'gen' + Date.now() + '_' + i,
-        title: musicTitleFromPrompt(prompt) + (versions > 1 ? ` (v${i + 1})` : ''),
-        attribution:'Generated with AI', prompt, description:'', mine:true, versionCount:versions,
-        duration:vcFormatTime(durationSec), mood:'AI Generated', bpm:'', cats:[], fav:false,
-      });
-    }
-    setMusicTab('mine'); // generated tracks land in My Music -- switch there so they're not
-      // silently filtered out of view if the user was still on the Library tab
     promptEl.value = '';
     musicActiveTemplate = null;
     renderMusicPresetRow();
     musicOnPromptInput(promptEl);
     promptEl.style.height = '';
     promptEl.disabled = false;
+    openMusicPreviewModal(prompt, durationSec, versions, templateAtGenTime);
   }, 2200);
 }
 renderMusicPresetRow();
 renderMusicRefChip();
+
+/* ---------------- Music generate -> preview -> name flow ----------------
+   musicGenPending holds the in-flight batch (prompt/duration/version count/current pick)
+   between "composing finished" and "Save to My Music" -- nothing here is a real track yet, so
+   Cancel at any point just drops this object and touches nothing in `tracks`. On save, EVERY
+   version becomes a real track (not just the picked one) sharing one groupId, differing only
+   in `hidden` (see musicGenSaveTracks/the sibling-versions modal below) instead of being lost.
+   Playback reuses the exact same fake-timer
+   approach as Voice Design's vdTogglePlayVoice/vdStopPlayback (one at a time, elapsed/total
+   while playing, reset to idle on stop), just against this track's own real duration instead
+   of Voice Design's fixed 10s. */
+let musicGenPending = null;
+let musicGenPlayingIdx = -1;
+let musicGenPlayTimer = null;
+
+function openMusicPreviewModal(prompt, durationSec, versions, templateKey){
+  musicGenPending = { prompt, durationSec, versions, selectedIdx: 0, templateKey: templateKey || null };
+  document.getElementById('musicGenPromptRecap').textContent = prompt;
+  document.getElementById('musicGenListLabel').hidden = versions <= 1;
+  musicGenRenderList();
+  musicGenShowStep('preview');
+  document.getElementById('musicGenOverlay').hidden = false;
+}
+function closeMusicGenModal(){
+  musicGenStopPlayback();
+  document.getElementById('musicGenOverlay').hidden = true;
+  musicGenPending = null;
+}
+function musicGenShowStep(step){
+  document.getElementById('musicGenTitle').textContent = step === 'preview' ? 'Preview your track' : 'Name your track';
+  document.getElementById('musicGenPreviewStep').hidden = step !== 'preview';
+  document.getElementById('musicGenNameStep').hidden = step !== 'name';
+  document.getElementById('musicGenFooterPreview').hidden = step !== 'preview';
+  document.getElementById('musicGenFooterName').hidden = step !== 'name';
+}
+function musicGenRenderList(){
+  const { prompt, versions, durationSec, selectedIdx } = musicGenPending;
+  document.getElementById('musicGenList').innerHTML = Array.from({length: versions}, (_, i) => i).map(i => `
+    <div class="voice-section-sample vd-selectable${i === selectedIdx ? ' selected' : ''}" onclick="musicGenSelectVersion(${i})">
+      <span class="voice-section-sample-play" onclick="event.stopPropagation(); musicGenTogglePlay(${i})"><img src="${ICON}audio-row-play-triangle.svg" alt=""></span>
+      <span class="voice-section-sample-name">${versions > 1 ? 'Version ' + (i + 1) : escHtml(musicTitleFromPrompt(prompt))}</span>
+      <span class="voice-section-sample-time" id="musicGenTime${i}">${vcFormatTime(durationSec)}</span>
+    </div>`).join('');
+}
+function musicGenSelectVersion(idx){
+  musicGenPending.selectedIdx = idx;
+  document.querySelectorAll('#musicGenList .voice-section-sample').forEach((el, i) => el.classList.toggle('selected', i === idx));
+}
+function musicGenTogglePlay(idx){
+  musicGenSelectVersion(idx);
+  if (musicGenPlayingIdx === idx){ musicGenStopPlayback(); return; }
+  musicGenStopPlayback();
+  musicGenPlayingIdx = idx;
+  document.querySelectorAll('#musicGenList .voice-section-sample-play')[idx].querySelector('img').src = ICON + 'audio-pause.svg';
+  const total = musicGenPending.durationSec;
+  let sec = 0;
+  musicGenPlayTimer = setInterval(() => {
+    sec++;
+    const timeEl = document.getElementById('musicGenTime' + idx);
+    if (timeEl) timeEl.innerHTML = vcFormatTime(sec) + '<span class="sep">&nbsp;/&nbsp;</span>' + vcFormatTime(total);
+    if (sec >= total) musicGenStopPlayback();
+  }, 1000);
+}
+function musicGenStopPlayback(){
+  if (musicGenPlayTimer){ clearInterval(musicGenPlayTimer); musicGenPlayTimer = null; }
+  document.querySelectorAll('#musicGenList .voice-section-sample-play img').forEach(img => img.src = ICON + 'audio-row-play-triangle.svg');
+  if (musicGenPlayingIdx >= 0 && musicGenPending){
+    const timeEl = document.getElementById('musicGenTime' + musicGenPlayingIdx);
+    if (timeEl) timeEl.textContent = vcFormatTime(musicGenPending.durationSec);
+  }
+  musicGenPlayingIdx = -1;
+}
+// The prompt is already a natural-language description of the track (see MUSIC_TEMPLATES'
+// own prompts, e.g. "A warm acoustic ballad with fingerpicked guitar..." -- that's already
+// description-shaped copy) -- so "AI-suggesting" a description here is just handing that same
+// text back into an editable field instead of leaving it blank, no separate generation step.
+function musicSuggestDescription(prompt){
+  return prompt;
+}
+function musicGenGoToNaming(){
+  musicGenStopPlayback();
+  document.getElementById('musicGenNameInput').value = musicTitleFromPrompt(musicGenPending.prompt);
+  document.getElementById('musicGenDescInput').value = musicSuggestDescription(musicGenPending.prompt);
+  // Labels state lives on musicGenPending so Back/Continue between preview<->name doesn't lose
+  // it. If this batch came from a template chip, prefill Genre with that template's genre --
+  // still just a starting point, freely changeable/clearable like every other dropdown here.
+  musicGenPending.tagGenre = MUSIC_GENRE_BY_TEMPLATE[musicGenPending.templateKey] || null;
+  musicGenPending.tagMood = null;
+  musicGenPending.tagMenuOpen = null;
+  musicGenPending.customTags = [];
+  musicGenPending.addingCustomTag = false;
+  musicActiveTagEditor = { state: musicGenPending, dropdownsId:'musicTagDropdowns', customRowId:'musicCustomTagRow', inputId:'musicTagInput' };
+  musicRenderTagDropdowns();
+  musicRenderCustomTags();
+  musicGenShowStep('name');
+}
+function musicGenBackToPreview(){
+  musicGenShowStep('preview');
+}
+
+/* ---- Labels editor (Genre/Mood dropdowns + freeform custom labels) -- mirrors Voice Design's
+   own VD_TAG_DIMS/vdRenderTagDropdowns/vdRenderCustomTags pattern (10148:284943), just against
+   Music's own Genre/Mood vocabulary. One key difference from Voice's custom categories: a
+   custom label typed in here must NOT become a Library filter chip (the user explicitly asked
+   for these to stay My-Music-only), so it registers into MUSIC_CUSTOM_LABELS instead of
+   MUSIC_GENRES/MUSIC_MOODS, and renderMusicChips() only ever shows that list while
+   musicTab==='mine'.
+
+   This one editor is shared by two different screens -- the generation flow's naming step
+   (state: musicGenPending) and the My Music Details modal (state: musicDetailsTagState, so a
+   track's labels can be changed again later instead of being locked in at generation time).
+   musicActiveTagEditor points at whichever one is currently open, plus that screen's own DOM
+   ids, so the render/click functions below don't need their own per-screen copies. ---- */
+const MUSIC_GEN_TAG_DIMS = [
+  { key:'genre', label:'Genre', options: MUSIC_GENRES },
+  { key:'mood', label:'Mood', options: MUSIC_MOODS },
+];
+let musicActiveTagEditor = null;
+function musicTagDimValue(key){ const s = musicActiveTagEditor.state; return key === 'genre' ? s.tagGenre : s.tagMood; }
+function musicSetTagDimValue(key, value){
+  const s = musicActiveTagEditor.state;
+  if (key === 'genre') s.tagGenre = value; else s.tagMood = value;
+}
+function musicRenderTagDropdowns(){
+  const { state, dropdownsId } = musicActiveTagEditor;
+  document.getElementById(dropdownsId).innerHTML = MUSIC_GEN_TAG_DIMS.map(dim => {
+    const value = musicTagDimValue(dim.key);
+    const menuOpen = state.tagMenuOpen === dim.key;
+    const trigger = value
+      ? `<button type="button" class="vl-fselect vl-fselect--filled" onclick="event.stopPropagation(); musicToggleTagMenu('${dim.key}')">
+           <img class="vl-fselect-x" src="${ICON}close-x.svg" alt="" onclick="event.stopPropagation(); musicClearTagValue('${dim.key}');">
+           <span class="vl-fselect-label">${dim.label}</span><span class="vl-fselect-divider"></span><span class="vl-fselect-value">${escHtml(value)}</span>
+         </button>`
+      : `<button type="button" class="vl-fselect" onclick="event.stopPropagation(); musicToggleTagMenu('${dim.key}')">
+           <span class="vl-fselect-label">${dim.label}</span><img class="vl-fselect-caret" src="${ICON}caret-down-filled.svg" alt="">
+         </button>`;
+    const menu = menuOpen
+      ? `<div class="vl-fselect-menu" onclick="event.stopPropagation()">
+           ${dim.options.map(opt => `<div class="vl-fselect-row${opt === value ? ' selected' : ''}" onclick="musicSelectTagValue('${dim.key}','${opt.replace(/'/g, "\\'")}')">${escHtml(opt)}</div>`).join('')}
+         </div>`
+      : '';
+    return `<div class="vl-fselect-wrap">${trigger}${menu}</div>`;
+  }).join('');
+}
+function musicToggleTagMenu(key){
+  const s = musicActiveTagEditor.state;
+  s.tagMenuOpen = s.tagMenuOpen === key ? null : key;
+  musicRenderTagDropdowns();
+}
+function musicSelectTagValue(key, value){
+  musicSetTagDimValue(key, value);
+  musicActiveTagEditor.state.tagMenuOpen = null;
+  musicRenderTagDropdowns();
+}
+function musicClearTagValue(key){
+  musicSetTagDimValue(key, null);
+  musicActiveTagEditor.state.tagMenuOpen = null;
+  musicRenderTagDropdowns();
+}
+document.addEventListener('click', (e) => {
+  if (!musicActiveTagEditor || !musicActiveTagEditor.state.tagMenuOpen) return;
+  if (!e.target.closest('#' + musicActiveTagEditor.dropdownsId)){
+    musicActiveTagEditor.state.tagMenuOpen = null; musicRenderTagDropdowns();
+  }
+});
+function musicRenderCustomTags(){
+  const { state, customRowId, inputId } = musicActiveTagEditor;
+  const chips = state.customTags.map(tag => `
+    <span class="vd-tag-custom-chip">${escHtml(tag)}<button type="button" onclick="musicRemoveCustomTag('${tag.replace(/'/g, "\\'")}')" aria-label="Remove ${escHtml(tag)}">&times;</button></span>
+  `).join('');
+  const addUi = state.addingCustomTag
+    ? `<span class="vd-tag-add-input-wrap">
+         <input type="text" id="${inputId}" placeholder="Label name" autofocus onkeydown="if(event.key==='Enter'){event.preventDefault();musicAddCustomTag();} if(event.key==='Escape'){musicActiveTagEditor.state.addingCustomTag=false;musicRenderCustomTags();}">
+         <button type="button" onclick="musicAddCustomTag()">Add</button>
+       </span>`
+    : `<button type="button" class="vd-tag-add-trigger" onclick="musicActiveTagEditor.state.addingCustomTag=true; musicRenderCustomTags(); document.getElementById('${inputId}').focus();">+ Add label</button>`;
+  document.getElementById(customRowId).innerHTML = chips + addUi;
+  if (state.addingCustomTag) document.getElementById(inputId).focus();
+}
+// Case-insensitive de-dupe against MUSIC_CUSTOM_LABELS -- same reasoning as Voice's
+// vdEnsureCatTag, just against a My-Music-only list instead of the shared toolbar vocabulary.
+function musicEnsureCustomLabel(raw){
+  const existing = MUSIC_CUSTOM_LABELS.find(c => c.toLowerCase() === raw.toLowerCase());
+  if (existing) return existing;
+  MUSIC_CUSTOM_LABELS.push(raw);
+  return raw;
+}
+function musicAddCustomTag(){
+  const { state, inputId } = musicActiveTagEditor;
+  const input = document.getElementById(inputId);
+  const raw = (input.value || '').trim();
+  if (!raw){ state.addingCustomTag = false; musicRenderCustomTags(); return; }
+  const tag = musicEnsureCustomLabel(raw);
+  if (!state.customTags.some(t => t.toLowerCase() === tag.toLowerCase())) state.customTags.push(tag);
+  state.addingCustomTag = false;
+  musicRenderCustomTags();
+}
+function musicRemoveCustomTag(tag){
+  const state = musicActiveTagEditor.state;
+  state.customTags = state.customTags.filter(t => t !== tag);
+  musicRenderCustomTags();
+}
+
+function musicGenSaveTracks(){
+  const { prompt, durationSec, versions, selectedIdx, tagGenre, tagMood, customTags } = musicGenPending;
+  const name = (document.getElementById('musicGenNameInput').value || '').trim() || musicTitleFromPrompt(prompt);
+  const description = (document.getElementById('musicGenDescInput').value || '').trim();
+  const baseId = 'gen' + Date.now();
+  const groupId = versions > 1 ? baseId + '_grp' : null;
+  // Every version generated in this batch becomes a real track right away -- not just the one
+  // picked -- so Favorite/labels/search/filters work identically no matter which version is
+  // being looked at. Only `hidden` differs: everything but the picked version starts hidden,
+  // reachable again via the Hidden filter chip or this track's own "Other generated versions"
+  // menu row (see musicHiddenSiblings/openMusicSiblingsModal below). The picked version is
+  // listed first so it renders at the top of My Music.
+  const order = [selectedIdx, ...Array.from({length: versions}, (_, i) => i).filter(i => i !== selectedIdx)];
+  const batch = order.map(i => ({
+    id: i === selectedIdx ? baseId : baseId + '_v' + (i + 1),
+    title: i === selectedIdx ? name : `${name} (v${i + 1})`,
+    attribution:'Generated with AI', prompt, description, mine:true, versionCount:versions,
+    duration:vcFormatTime(durationSec), durationSec, mood:tagMood, genre:tagGenre, bpm:'',
+    cats: tagMood ? [tagMood] : [], customLabels:[...customTags], fav:false,
+    groupId, versionLabel:'v' + (i + 1), hidden: i !== selectedIdx,
+  }));
+  tracks.unshift(...batch);
+  batch.forEach(t => addedTracks.add(t.id));
+  closeMusicGenModal();
+  setMusicTab('mine'); // generated tracks land in My Music -- switch there so they're not
+    // silently filtered out of view if the user was still on the Library tab
+}
+
+/* ---------------- Music: other generated versions (hidden siblings of the same batch) ----------------
+   Quick-access shortcut scoped to one song's group -- built on the exact same hidden-flag data
+   as the Hidden filter chip (musicHiddenOnly), not a second parallel data path, so "unhide"
+   here and toggling the Hidden chip always agree. */
+let musicSibTrackId = null;
+let musicSibPlayingId = null;
+let musicSibPlayTimer = null;
+function openMusicSiblingsModal(trackId){
+  musicOpenMenuFor = null;
+  musicSibTrackId = trackId;
+  musicSiblingsRenderList();
+  renderMusic();
+  document.getElementById('musicSiblingsOverlay').hidden = false;
+}
+function closeMusicSiblingsModal(){
+  musicSibStopPlayback();
+  document.getElementById('musicSiblingsOverlay').hidden = true;
+  musicSibTrackId = null;
+}
+function musicSiblingsRenderList(){
+  const t = tracks.find(x => x.id === musicSibTrackId);
+  const siblings = t ? musicHiddenSiblings(t) : [];
+  if (!siblings.length){ closeMusicSiblingsModal(); return; }
+  document.getElementById('musicSiblingsList').innerHTML = siblings.map(v => `
+    <div class="voice-section-sample">
+      <span class="voice-section-sample-play" data-sib-id="${v.id}" onclick="musicSibTogglePlay('${v.id}')"><img src="${ICON}audio-row-play-triangle.svg" alt=""></span>
+      <span class="voice-section-sample-name">${escHtml(v.versionLabel)} — ${escHtml(v.title)}</span>
+      <span class="voice-section-sample-time" id="musicSibTime${v.id}">${v.duration}</span>
+      <button type="button" class="voice-card-icon-btn add" onclick="event.stopPropagation(); musicUnhideSibling('${v.id}')" aria-label="Unhide ${escHtml(v.title)}">
+        <img src="${ICON}pagebar-plus.svg" alt="">
+        <span class="vl-icon-tooltip">Unhide (show in My Music)</span>
+      </button>
+    </div>`).join('');
+}
+function musicSibTogglePlay(id){
+  if (musicSibPlayingId === id){ musicSibStopPlayback(); return; }
+  musicSibStopPlayback();
+  musicSibPlayingId = id;
+  const playEl = document.querySelector(`#musicSiblingsList .voice-section-sample-play[data-sib-id="${id}"]`);
+  if (playEl) playEl.querySelector('img').src = ICON + 'audio-pause.svg';
+  const t = tracks.find(x => x.id === id);
+  const total = (t && t.durationSec) || 0;
+  let sec = 0;
+  musicSibPlayTimer = setInterval(() => {
+    sec++;
+    const timeEl = document.getElementById('musicSibTime' + id);
+    if (timeEl) timeEl.innerHTML = vcFormatTime(sec) + '<span class="sep">&nbsp;/&nbsp;</span>' + vcFormatTime(total);
+    if (sec >= total) musicSibStopPlayback();
+  }, 1000);
+}
+function musicSibStopPlayback(){
+  if (musicSibPlayTimer){ clearInterval(musicSibPlayTimer); musicSibPlayTimer = null; }
+  document.querySelectorAll('#musicSiblingsList .voice-section-sample-play img').forEach(img => img.src = ICON + 'audio-row-play-triangle.svg');
+  musicSibPlayingId = null;
+}
+function musicUnhideSibling(id){
+  musicSibStopPlayback();
+  const t = tracks.find(x => x.id === id);
+  if (!t) return;
+  t.hidden = false;
+  musicSiblingsRenderList();
+  renderMusic();
+}
 
 /* ---------------- Music → apply-to-content modal ----------------
    Video-only for this first pass (per this feature's own scope) -- reuses the "My Library"
@@ -2573,12 +3126,14 @@ let musicApplyTrackId = null;
 let musicApplySelected = new Set();
 
 function openMusicApplyModal(trackId){
+  musicOpenMenuFor = null;
   musicApplyTrackId = trackId;
   musicApplySelected = new Set();
   const t = tracks.find(x => x.id === trackId);
   document.getElementById('musicApplyTrackName').textContent = t.title;
   document.getElementById('musicApplyTrackMeta').textContent = `${t.duration} · ${t.mood} · BPM ${t.bpm}`;
   renderMusicApplyGrid();
+  renderMusic();
   document.getElementById('musicApplyOverlay').hidden = false;
 }
 function closeMusicApplyModal(){
