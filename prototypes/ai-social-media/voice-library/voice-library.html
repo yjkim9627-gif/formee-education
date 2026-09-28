@@ -431,28 +431,45 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
 
 /* ---------- Template & refine chip rows ----------
    A genre-template row sits above the prompt (fills the prompt verbatim on click, unchanged
-   behaviour), then swaps into that genre's own "+ chip" progressive-refinement pickers once
-   a template's active. Reuses .vd-preset-row/.vd-preset-chip (Voice Design's own preset row,
-   create-voice-modal.css) as-is for both -- same component, just different content, so no
-   new chip visuals were needed. */
-.music-refine-reset-btn{
+   behaviour), then swaps into that genre's own "+ chip" category pickers once a template's
+   active (Figma "04_AI refine — Music prompt box", 11348:447808): clicking a category chip
+   replaces the row inline with that category's own option chips + a back arrow (not a
+   floating dropdown), picking an option bolds it (no plus) and appends its phrase to the
+   prompt, and the back arrow returns to the category list. Undo/redo sit pinned to the row's
+   right edge the whole time, standing in for the old single-purpose "reset to templates"
+   button -- undo naturally walks back to the plain template list, same as this app's other
+   AI-assisted panels (see the "Case 1" comment on .music-gen-loading-row below). */
+.music-refine-back-btn{
   display:inline-flex; align-items:center; justify-content:center; flex-shrink:0;
   width:28px; height:28px; padding:0; box-sizing:border-box; cursor:pointer;
   border:1px solid var(--color-neutral-400); border-radius:var(--radius-full); background:var(--color-neutral-0);
 }
-.music-refine-reset-btn:hover{background:var(--color-neutral-50);}
-.music-refine-reset-btn img{width:14px; height:14px; display:block;}
+.music-refine-back-btn:hover{background:var(--color-neutral-50);}
+.music-refine-back-btn img{width:12px; height:12px; display:block;}
 .music-refine-chip{white-space:nowrap;}
 /* Matches Figma "Controls / Filter / Toggle" (10974:391912) exactly -- its plus icon is
    "icon / button / plus" at 12px/neutral-700 (#475069, same tone as the label), not the
    generic 16px/neutral-500 plus used for other add-buttons in this app (plus-20-grey.svg). */
 .music-refine-chip-icon{width:12px; height:12px;}
-/* Refine-chip row uses wrap instead of .vd-preset-row's overflow-x:auto -- each chip here is
-   itself a dropdown trigger (.vl-fselect-wrap), and an overflow:auto ancestor clips an
-   absolutely-positioned popover instead of letting it float on top (the exact bug this app's
-   own filter-chip row hit before and had to split out of its scrolling row for). Wrapping to
-   a second line is the simpler fix here since there are only ever 4-5 refine chips. */
-.music-refine-row{display:flex; align-items:center; flex-wrap:wrap; gap:var(--spacing-xs); padding:var(--spacing-xs); background:var(--color-neutral-150); border-radius:var(--radius-md);}
+/* Selected option chip ("Controls / Filter / Toggle", state=selected (music)) -- bolder
+   label + darker border, but the SAME white background as the default chip (no neutral-150
+   fill like .vl-fchip.active elsewhere in this app), and no plus icon since it's already
+   applied. */
+.music-refine-chip.is-selected{border-color:var(--color-neutral-500); font-weight:var(--font-weight-semibold); color:var(--color-neutral-900);}
+.music-refine-chips{display:flex; align-items:center; flex-wrap:wrap; gap:var(--spacing-xs);}
+.music-refine-history-btns{display:flex; align-items:center; gap:var(--spacing-xs); flex-shrink:0;}
+.music-icon-btn{
+  display:inline-flex; align-items:center; justify-content:center; flex-shrink:0;
+  width:24px; height:24px; padding:0; box-sizing:border-box; cursor:pointer;
+  border:1px solid var(--color-neutral-400); border-radius:var(--radius-md); background:var(--color-neutral-0);
+}
+.music-icon-btn:hover:not(:disabled){background:var(--color-neutral-50);}
+.music-icon-btn:disabled{opacity:.45; cursor:default;}
+.music-icon-btn img{width:16px; height:16px; display:block;}
+/* Refine-chip row pins the undo/redo pair to the right edge (space-between) while the chips
+   themselves wrap onto a second line if a genre ever has more categories/options than fit --
+   there are only ever 3-4 refine chips, so this is rare in practice. */
+.music-refine-row{display:flex; align-items:center; justify-content:space-between; gap:var(--spacing-xs); padding:var(--spacing-xs); background:var(--color-neutral-150); border-radius:var(--radius-md);}
 
 /* Duration "Custom" seconds field -- appended as one more row inside the same dropdown menu
    instead of a separate popover, since it's still just that one picker. */
@@ -482,14 +499,22 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
    refine-chip list) instead of sitting inset like the rest of the box's content. */
 #musicPresetRow.vd-preset-row, #musicPresetRow.music-refine-row{border-radius:var(--radius-xl) var(--radius-xl) 0 0;}
 
-/* "Composing your track…" placeholder card -- Case 1 (최초 생성) of the AI chat-panel rules:
-   a brand-new item never gets an Undo/Redo, it just narrates a concrete working message and
-   then the real card lands in the list the instant it's ready. This page has no chat log to
-   post that message into, so the message rides along on a temporary card sitting exactly
-   where the finished track will appear -- same shell as .music-card, swapped for a spinner +
-   working text instead of the play button/meta/actions. */
-.music-card--generating{cursor:default;}
-.music-card--generating:hover{border-color:var(--color-neutral-400); box-shadow:none;}
+/* "Composing your track…" loading step -- Case 1 (최초 생성) of the AI chat-panel rules: a
+   brand-new item never gets an Undo/Redo, it just narrates a concrete working message and then
+   the real content lands the instant it's ready. Lives inside the Preview/Name modal itself
+   (opened immediately on Generate) rather than as a queued placeholder card in the list behind
+   it, so there's nothing else to look at while composing except this one row. */
+.music-gen-loading-row{
+  display:flex; align-items:flex-start; gap:var(--spacing-lg); box-sizing:border-box;
+  padding:13px 0;
+}
+/* .music-card-name/-attribution default to single-line ellipsis for the compact list row they
+   were built for -- here in the modal there's room (and a real need) to wrap onto multiple
+   lines instead of clipping the prompt text. */
+.music-gen-loading-row .music-card-info{flex-direction:column; align-items:flex-start; gap:2px;}
+.music-gen-loading-row .music-card-name, .music-gen-loading-row .music-card-attribution{
+  white-space:normal; overflow:visible; text-overflow:clip;
+}
 .music-generating-spinner{
   width:32px; height:32px; flex-shrink:0; box-sizing:border-box; border-radius:50%;
   border:2px solid var(--color-neutral-300); border-top-color:var(--color-neutral-600);
@@ -1264,7 +1289,17 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
       <button type="button" class="modal__close" onclick="closeMusicGenModal()"><img src="../../../components/ai-social-media/icons/button-x-dark.svg" alt="Close"></button>
     </div>
 
-    <div class="vd-step" id="musicGenPreviewStep">
+    <div class="vd-step" id="musicGenLoadingStep" hidden>
+      <div class="music-gen-loading-row">
+        <span class="music-generating-spinner"></span>
+        <div class="music-card-info">
+          <p class="music-card-name">Composing your track based on your prompt…</p>
+          <span class="music-card-attribution" id="musicGenLoadingPromptText"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="vd-step" id="musicGenPreviewStep" hidden>
       <div class="vh-settings-row">
         <p class="vh-settings-label">Prompt</p>
         <p class="vh-settings-value vh-prompt-text" id="musicGenPromptRecap"></p>
@@ -2483,13 +2518,16 @@ document.addEventListener('click', (e) => {
    instead of a standalone Instrumental/With-vocals toggle. */
 
 /* ---------------- Genre template chips -> progressive refinement chips ----------------
-   Clicking a template fills the prompt (unchanged behaviour) and swaps this row from the 3
-   starter templates to that genre's own refine chips -- each one its own small dropdown
-   (reuses .vl-fselect-menu/.vl-fselect-row) whose picked value APPENDS to the prompt via the
-   same lowercase-and-comma-join convention as vrmAppendPrompt() above, it never overwrites
-   what's already there. The ⟲ button resets back to the 3 templates and clears the prompt --
-   Notes call this "starting over with a different template". Synthwave/Folk chip sets are a
-   first draft; a real per-genre content pass is still open (see the spec's own open question). */
+   Clicking a template fills the prompt (unchanged behaviour) and swaps this row from the 5
+   starter templates to that genre's own category chips (Figma "04_AI refine — Music prompt
+   box", 11348:447808). Clicking a category chip replaces the row inline with that category's
+   own option chips + a back arrow (no floating dropdown); picking an option bolds it and
+   appends its phrase to the prompt via the same lowercase-and-comma-join convention as
+   vrmAppendPrompt() above -- it never overwrites what's already there, and re-picking a
+   different option for the same category swaps its phrase rather than piling both on, since
+   the prompt is always recomputed from musicActiveTemplate + musicSelections (see
+   musicComputePrompt()) rather than mutated in place. Undo/redo walk musicHistory/musicFuture
+   snapshots back to a blank template list or forward again. */
 const MUSIC_TEMPLATES = [
   { key:'lofi', label:'Chill Lo-fi Background', prompt:'Laid-back lo-fi with a mellow piano loop and soft, dusty drums — a calm bed for tutorials, vlogs, or slower-paced explainer content.' },
   { key:'retro', label:'Retro Neon Drive', prompt:'A driving synth-pop track with punchy 80s drums and a glowing neon energy — perfect for a fast hook, transformation reveal, or transition montage.' },
@@ -2526,7 +2564,33 @@ const MUSIC_REFINE_CHIPS = {
   ],
 };
 let musicActiveTemplate = null;
-let musicRefineMenuFor = null;
+let musicExpandedCategory = null; // index into that template's MUSIC_REFINE_CHIPS, or null (category list)
+let musicSelections = {}; // { [categoryIndex]: chosen option string } -- persists per template, cleared on reset
+let musicHistory = []; // stack of past { activeTemplate, selections } snapshots, for undo
+let musicFuture = []; // redo stack, popped back onto musicHistory
+
+function musicSnapshot(){
+  return { activeTemplate: musicActiveTemplate, selections: { ...musicSelections } };
+}
+function musicPushHistory(){
+  musicHistory.push(musicSnapshot());
+  musicFuture = [];
+}
+function musicComputePrompt(){
+  const t = MUSIC_TEMPLATES.find(x => x.key === musicActiveTemplate);
+  if (!t) return '';
+  const base = t.prompt.trim().replace(/[.\s]+$/, ''); // drop a trailing period so the
+    // append reads "...promo clips, progressive house" instead of "...clips., progressive"
+  const chips = MUSIC_REFINE_CHIPS[musicActiveTemplate] || [];
+  const parts = chips.map((c, i) => musicSelections[i]).filter(Boolean)
+    .map(opt => opt.charAt(0).toLowerCase() + opt.slice(1));
+  return parts.length ? `${base}, ${parts.join(', ')}` : t.prompt;
+}
+function musicApplyPromptFromState(){
+  const promptEl = document.getElementById('musicPromptInput');
+  promptEl.value = musicActiveTemplate ? musicComputePrompt() : '';
+  musicOnPromptInput(promptEl);
+}
 
 function renderMusicPresetRow(){
   const row = document.getElementById('musicPresetRow');
@@ -2543,62 +2607,83 @@ function renderMusicPresetRow(){
   }
   row.className = 'music-refine-row';
   const chips = MUSIC_REFINE_CHIPS[musicActiveTemplate] || [];
+  const chipBtn = (label, opt, onclick) => {
+    const selected = opt !== undefined && opt === label ? true : false;
+    return `<button type="button" class="vl-fchip music-refine-chip${selected ? ' is-selected' : ''}" onclick="${onclick}">${selected ? '' : `<img class="music-refine-chip-icon" src="${ICON}plus-12-dark.svg" alt="">`}${escHtml(label)}</button>`;
+  };
+  let chipsHtml;
+  if (musicExpandedCategory === null){
+    // Category list -- each chip shows its own picked option (bold, no plus) once one's
+    // chosen, or the bare category label (with a plus) until then.
+    chipsHtml = chips.map((c, i) => {
+      const sel = musicSelections[i];
+      return chipBtn(sel || c.label, sel, `musicOpenCategory(${i})`);
+    }).join('');
+  } else {
+    const c = chips[musicExpandedCategory];
+    const sel = musicSelections[musicExpandedCategory];
+    chipsHtml = `<button type="button" class="music-refine-back-btn" onclick="musicBackToCategories()" aria-label="Back to categories"><img src="${ICON}ui-back.svg" alt=""></button>` +
+      c.options.map(opt => chipBtn(opt, sel, `musicSelectOption(${musicExpandedCategory}, '${opt.replace(/'/g, "\\'")}')`)).join('');
+  }
   row.innerHTML = `
-    <button type="button" class="music-refine-reset-btn" onclick="resetMusicTemplate()" aria-label="Start over with a different template"><img src="${ICON}rotate-ccw.svg" alt=""></button>
-    ${chips.map((c, i) => `
-      <div class="vl-fselect-wrap">
-        <button type="button" class="vl-fchip music-refine-chip" onclick="event.stopPropagation(); musicToggleRefineMenu(${i})"><img class="music-refine-chip-icon" src="${ICON}plus-12-dark.svg" alt="">${escHtml(c.label)}</button>
-        <div class="vl-fselect-menu" id="musicRefineMenu${i}" onclick="event.stopPropagation()" hidden></div>
-      </div>`).join('')}
+    <div class="music-refine-chips">${chipsHtml}</div>
+    <div class="music-refine-history-btns">
+      <button type="button" class="music-icon-btn" onclick="musicUndo()" aria-label="Undo"${musicHistory.length ? '' : ' disabled'}><img src="${ICON}ui-undo.svg" alt=""></button>
+      <button type="button" class="music-icon-btn" onclick="musicRedo()" aria-label="Redo"${musicFuture.length ? '' : ' disabled'}><img src="${ICON}ui-redo.svg" alt=""></button>
+    </div>
   `;
 }
 function selectMusicTemplate(key){
   const t = MUSIC_TEMPLATES.find(x => x.key === key);
   if (!t) return;
+  musicPushHistory();
   musicActiveTemplate = key;
-  const promptEl = document.getElementById('musicPromptInput');
-  promptEl.value = t.prompt;
-  musicOnPromptInput(promptEl);
+  musicExpandedCategory = null;
+  musicSelections = {};
+  musicApplyPromptFromState();
   renderMusicPresetRow();
 }
 function resetMusicTemplate(){
+  musicPushHistory();
   musicActiveTemplate = null;
-  musicRefineMenuFor = null;
-  const promptEl = document.getElementById('musicPromptInput');
-  promptEl.value = '';
-  musicOnPromptInput(promptEl);
+  musicExpandedCategory = null;
+  musicSelections = {};
+  musicApplyPromptFromState();
   renderMusicPresetRow();
 }
-function musicToggleRefineMenu(i){
-  const opening = musicRefineMenuFor !== i;
-  closeMusicRefineMenus();
-  musicRefineMenuFor = opening ? i : null;
-  const menu = document.getElementById('musicRefineMenu' + i);
-  if (!menu) return;
-  menu.hidden = !opening;
-  if (opening){
-    const chips = MUSIC_REFINE_CHIPS[musicActiveTemplate] || [];
-    const c = chips[i];
-    menu.innerHTML = c.options.map(opt =>
-      `<div class="vl-fselect-row" onclick="musicAppendRefineOption('${opt.replace(/'/g, "\\'")}')">${escHtml(opt)}</div>`
-    ).join('');
-  }
+function musicOpenCategory(i){
+  musicExpandedCategory = i;
+  renderMusicPresetRow();
 }
-function closeMusicRefineMenus(){
-  if (musicActiveTemplate){
-    const chips = MUSIC_REFINE_CHIPS[musicActiveTemplate] || [];
-    chips.forEach((c, i) => { const m = document.getElementById('musicRefineMenu' + i); if (m) m.hidden = true; });
-  }
-  musicRefineMenuFor = null;
+function musicBackToCategories(){
+  musicExpandedCategory = null;
+  renderMusicPresetRow();
 }
-function musicAppendRefineOption(opt){
-  const ta = document.getElementById('musicPromptInput');
-  const cur = ta.value.trim().replace(/[.\s]+$/, ''); // drop a trailing period so the
-    // append reads "...promo clips, progressive house" instead of "...clips., progressive"
-  const phrase = opt.charAt(0).toLowerCase() + opt.slice(1);
-  ta.value = cur ? `${cur}, ${phrase}` : opt;
-  musicOnPromptInput(ta);
-  closeMusicRefineMenus();
+function musicSelectOption(i, opt){
+  musicPushHistory();
+  musicSelections[i] = opt;
+  musicApplyPromptFromState();
+  renderMusicPresetRow(); // stays on this category's expanded view so the pick reads back
+}
+function musicUndo(){
+  if (!musicHistory.length) return;
+  musicFuture.push(musicSnapshot());
+  const prev = musicHistory.pop();
+  musicActiveTemplate = prev.activeTemplate;
+  musicSelections = prev.selections;
+  musicExpandedCategory = null;
+  musicApplyPromptFromState();
+  renderMusicPresetRow();
+}
+function musicRedo(){
+  if (!musicFuture.length) return;
+  musicHistory.push(musicSnapshot());
+  const next = musicFuture.pop();
+  musicActiveTemplate = next.activeTemplate;
+  musicSelections = next.selections;
+  musicExpandedCategory = null;
+  musicApplyPromptFromState();
+  renderMusicPresetRow();
 }
 
 /* ---------------- Video reference chip (.ref-chip, reference-chip.css) ----------------
@@ -2767,7 +2852,6 @@ document.addEventListener('click', (e) => {
   if (!e.target.closest('#musicDurationTrigger') && !e.target.closest('#musicDurationMenu')
     && !e.target.closest('#musicVersionTrigger') && !e.target.closest('#musicVersionMenu')
     && (musicDurationMenuOpen || musicVersionMenuOpen)) closeMusicFselectMenus();
-  if (musicRefineMenuFor !== null && !e.target.closest('.vl-fselect-wrap')) closeMusicRefineMenus();
 });
 
 function musicTitleFromPrompt(prompt){
@@ -2788,36 +2872,19 @@ function musicGenerateTrack(){
   if (!prompt) return;
 
   const seq = ++musicGenSeq;
-  const btn = document.getElementById('musicGenerateBtn');
   const versions = musicVersions;
   const durationSec = musicDurationSeconds();
-  btn.disabled = true;
-  promptEl.disabled = true;
-
-  const cards = [];
-  for (let i = 0; i < versions; i++){
-    const card = document.createElement('div');
-    card.className = 'music-card music-card--generating';
-    card.innerHTML = `
-      <span class="music-generating-spinner"></span>
-      <div class="music-card-info">
-        <p class="music-card-name">Composing your track based on your prompt…</p>
-        <span class="music-card-attribution">"${escHtml(prompt)}"</span>
-      </div>`;
-    document.getElementById('musicList').prepend(card);
-    cards.push(card);
-  }
-
   const templateAtGenTime = musicActiveTemplate;
+
+  openMusicGenLoading(prompt);
+
   setTimeout(() => {
     if (seq !== musicGenSeq) return;
-    cards.forEach(c => c.remove());
     promptEl.value = '';
     musicActiveTemplate = null;
     renderMusicPresetRow();
     musicOnPromptInput(promptEl);
     promptEl.style.height = '';
-    promptEl.disabled = false;
     openMusicPreviewModal(prompt, durationSec, versions, templateAtGenTime);
   }, 2200);
 }
@@ -2838,6 +2905,15 @@ let musicGenPending = null;
 let musicGenPlayingIdx = -1;
 let musicGenPlayTimer = null;
 
+// Generate opens straight into this modal in a loading state (no separate queued placeholder
+// card in the list behind it) -- musicGenPending stays null until the fake composing timer in
+// musicGenerateTrack() finishes and calls openMusicPreviewModal(), so Cancel/close while still
+// loading has nothing to discard yet beyond bumping musicGenSeq to drop the in-flight result.
+function openMusicGenLoading(prompt){
+  document.getElementById('musicGenLoadingPromptText').textContent = `"${prompt}"`;
+  musicGenShowStep('loading');
+  document.getElementById('musicGenOverlay').hidden = false;
+}
 function openMusicPreviewModal(prompt, durationSec, versions, templateKey){
   musicGenPending = { prompt, durationSec, versions, selectedIdx: 0, templateKey: templateKey || null };
   document.getElementById('musicGenPromptRecap').textContent = prompt;
@@ -2847,12 +2923,14 @@ function openMusicPreviewModal(prompt, durationSec, versions, templateKey){
   document.getElementById('musicGenOverlay').hidden = false;
 }
 function closeMusicGenModal(){
+  musicGenSeq++; // drop any still-in-flight "composing" result from this closed modal
   musicGenStopPlayback();
   document.getElementById('musicGenOverlay').hidden = true;
   musicGenPending = null;
 }
 function musicGenShowStep(step){
-  document.getElementById('musicGenTitle').textContent = step === 'preview' ? 'Preview your track' : 'Name your track';
+  document.getElementById('musicGenTitle').textContent = step === 'loading' ? 'Composing your track' : step === 'preview' ? 'Preview your track' : 'Name your track';
+  document.getElementById('musicGenLoadingStep').hidden = step !== 'loading';
   document.getElementById('musicGenPreviewStep').hidden = step !== 'preview';
   document.getElementById('musicGenNameStep').hidden = step !== 'name';
   document.getElementById('musicGenFooterPreview').hidden = step !== 'preview';
