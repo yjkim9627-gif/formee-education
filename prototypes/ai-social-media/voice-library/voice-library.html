@@ -614,6 +614,26 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
 }
 .vh-copy-btn:hover{background:var(--color-neutral-50);}
 .vh-empty{padding:var(--spacing-3xl) 0; text-align:center; font-family:var(--font-family-text); font-size:13px; color:var(--color-neutral-500);}
+/* Music details' own "Details" tab row (Figma "Voice Details / Settings Row", reused inside
+   "Music - Track details (editable Labels)", 11238:442068) -- label/value side by side on one
+   44px line, unlike .vh-settings-row's stacked uppercase-label layout above (Voice's own
+   Creation settings tab keeps that one as-is; this is a separate, newer row style). */
+.music-details-row{
+  display:flex; align-items:center; justify-content:space-between; height:44px; box-sizing:border-box;
+  border-bottom:1px solid var(--color-neutral-100);
+  font-family:var(--font-family-text);
+}
+.music-details-row:last-child{border-bottom:none;}
+.music-details-row .music-details-row-label{font-size:13px; font-weight:400; color:var(--color-neutral-700);}
+.music-details-row .music-details-row-value{font-size:14px; font-weight:500; color:var(--color-neutral-900);}
+.music-details-prompt{padding:var(--spacing-md) 0;}
+.music-details-prompt-label{margin:0 0 8px; font-family:var(--font-family-text); font-size:13px; font-weight:400; color:var(--color-neutral-700);}
+.music-details-prompt-box{
+  box-sizing:border-box; max-height:112px; overflow-y:auto; padding:12px 14px;
+  border:1.2px solid var(--color-neutral-400); border-radius:var(--radius-lg); background:var(--color-neutral-0);
+  font-family:var(--font-family-text); font-size:14px; font-weight:400; line-height:22px; color:var(--color-neutral-700);
+  white-space:pre-wrap;
+}
 /* Music generate-preview modal reuses the shared .modal__footer for two toggleable footers
    (Preview's Cancel/Continue vs Naming's Back/Save) -- same fix as .cvm-footer[hidden]
    elsewhere in this file: .modal__footer's own display:flex (modal.css) has equal
@@ -1228,40 +1248,19 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
      label/.vh-settings-value, the same "Creation settings" pattern Voice details already
      uses), since this is the one place a user can check "what prompt/settings made this". -->
 <div class="modal-overlay" id="musicDetailsOverlay" hidden onclick="if(event.target===this) closeMusicDetailsModal()">
-  <div class="modal modal--form">
+  <div class="modal modal--voice-details">
     <div class="modal__header-row">
-      <h3 class="modal__title">Track details</h3>
+      <div>
+        <h3 class="modal__title">Music details</h3>
+        <p class="vh-modal-sub" id="musicDetailsName"></p>
+      </div>
       <button type="button" class="modal__close" onclick="closeMusicDetailsModal()"><img src="../../../components/ai-social-media/icons/button-x-dark.svg" alt="Close"></button>
     </div>
-    <div class="vd-field-group">
-      <p class="vd-field-label">Name</p>
-      <input type="text" class="vd-input" id="musicDetailsNameInput" placeholder="e.g. Study Session Lo-fi">
+    <div class="vh-tabs">
+      <button type="button" class="vh-tab active" data-tab="usage" onclick="switchMusicDetailsTab('usage')">Used in</button>
+      <button type="button" class="vh-tab" data-tab="details" onclick="switchMusicDetailsTab('details')">Details</button>
     </div>
-    <div class="vd-field-group">
-      <p class="vd-field-label">Description</p>
-      <textarea class="vd-input" id="musicDetailsDescInput" placeholder="What is this track good for?"></textarea>
-    </div>
-    <div class="vh-settings-row">
-      <p class="vh-settings-label">Prompt used</p>
-      <p class="vh-settings-value vh-prompt-text" id="musicDetailsPromptText"></p>
-    </div>
-    <div class="vh-settings-row">
-      <p class="vh-settings-label">Duration</p>
-      <p class="vh-settings-value" id="musicDetailsDurationText"></p>
-    </div>
-    <div class="vh-settings-row">
-      <p class="vh-settings-label">Versions generated</p>
-      <p class="vh-settings-value" id="musicDetailsVersionText"></p>
-    </div>
-    <div class="vd-field-group">
-      <p class="vd-field-label">Labels</p>
-      <div class="vd-tag-dropdowns" id="musicDetailsTagDropdowns"></div>
-      <div class="vd-tag-custom-row" id="musicDetailsCustomTagRow"></div>
-    </div>
-    <div class="modal__footer">
-      <button type="button" class="actions-btn actions-btn--secondary" onclick="closeMusicDetailsModal()">Cancel</button>
-      <button type="button" class="actions-btn actions-btn--primary" onclick="saveMusicDetails()">Save changes</button>
-    </div>
+    <div class="vh-body" id="musicDetailsTabBody"></div>
   </div>
 </div>
 
@@ -2425,8 +2424,11 @@ function musicMenuHTML(t){
     ? `<div class="vl-menu-row" onclick="musicToggleHidden('${t.id}')"><span>${t.hidden ? 'Unhide from list' : 'Hide from list'}</span></div>`
     : '';
   const hiddenSiblings = musicHiddenSiblings(t);
+  // Menu row reads "Other versions" (short) -- the modal it opens keeps the fuller "Other
+  // generated versions" title (Figma "My Music kebab menu open", 11348:449773 vs modal
+  // "Other generated versions (unhide siblings)", 11238:445437 -- two different strings).
   const siblingsRow = hiddenSiblings.length
-    ? `<div class="vl-menu-row" onclick="openMusicSiblingsModal('${t.id}')"><span>Other generated versions (${hiddenSiblings.length})</span></div>` : '';
+    ? `<div class="vl-menu-row" onclick="openMusicSiblingsModal('${t.id}')"><span>Other versions (${hiddenSiblings.length})</span></div>` : '';
   return `<div class="vl-kebab-menu" onclick="event.stopPropagation()">
     <div class="vl-menu-row" onclick="openMusicApplyModal('${t.id}')"><span>Add to video</span></div>
     <div class="vl-menu-row" onclick="musicDownloadTrack('${t.id}')"><span>Download</span></div>
@@ -2463,27 +2465,22 @@ function musicUseAsReference(id){
   renderMusic();
   document.querySelector('.music-ai-box').scrollIntoView({ behavior:'smooth', block:'center' });
 }
-// Details (My Music only) -- shows what this track was actually generated from: its prompt
-// and the Duration/Version it was generated with, plus the same editable Name/Description
-// Library tracks never get (there's nothing to rename/describe on a stock track).
+// Details (My Music only) -- Figma "Music - Track details (editable Labels)" (11238:442068)
+// dropped the editable Name/Description fields and Save/Cancel footer entirely in favor of
+// the same "Used in" / "Details" two-tab shell Voice details already uses (openVoiceDetails/
+// vhRenderTabs above) -- Genre/Mood/custom labels now save live as they're changed instead of
+// waiting on an explicit Save, since there's no footer button left to hang that on.
 let musicDetailsTrackId = null;
+let musicDetailsTab = 'usage';
 let musicDetailsTagState = null;
 function openMusicDetailsModal(id){
   musicOpenMenuFor = null;
   musicDetailsTrackId = id;
+  musicDetailsTab = 'usage';
   const t = tracks.find(x => x.id === id);
-  document.getElementById('musicDetailsNameInput').value = t.title;
-  document.getElementById('musicDetailsDescInput').value = t.description || '';
-  document.getElementById('musicDetailsPromptText').textContent = t.prompt || '—';
-  document.getElementById('musicDetailsDurationText').textContent = t.duration || '—';
-  document.getElementById('musicDetailsVersionText').textContent = t.versionCount ? (t.versionCount + (t.versionCount === 1 ? ' version' : ' versions')) : '—';
-  // Labels were previously locked in at generation time (set once in the naming step, no way
-  // back in) -- reusing the same Labels editor here (musicActiveTagEditor) means Genre/Mood/
-  // custom labels can be revisited any time from Details, not just at creation.
-  musicDetailsTagState = { tagGenre: t.genre || null, tagMood: t.mood || null, tagMenuOpen: null, customTags: [...(t.customLabels || [])], addingCustomTag: false };
-  musicActiveTagEditor = { state: musicDetailsTagState, dropdownsId:'musicDetailsTagDropdowns', customRowId:'musicDetailsCustomTagRow', inputId:'musicDetailsTagInput' };
-  musicRenderTagDropdowns();
-  musicRenderCustomTags();
+  if (!t) return;
+  document.getElementById('musicDetailsName').textContent = t.title;
+  musicRenderDetailsTabs();
   document.getElementById('musicDetailsOverlay').hidden = false;
   renderMusic();
 }
@@ -2492,16 +2489,58 @@ function closeMusicDetailsModal(){
   musicDetailsTrackId = null;
   musicDetailsTagState = null;
 }
-function saveMusicDetails(){
+function switchMusicDetailsTab(tab){
+  musicDetailsTab = tab;
+  musicRenderDetailsTabs();
+}
+function musicRenderDetailsTabs(){
+  document.querySelectorAll('#musicDetailsOverlay .vh-tab').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === musicDetailsTab));
   const t = tracks.find(x => x.id === musicDetailsTrackId);
-  if (!t) return;
-  t.title = document.getElementById('musicDetailsNameInput').value.trim() || t.title;
-  t.description = document.getElementById('musicDetailsDescInput').value.trim();
+  const body = document.getElementById('musicDetailsTabBody');
+  if (!t){ body.innerHTML = ''; return; }
+  if (musicDetailsTab === 'usage'){
+    // Same deterministic hash-based sample list Voice details uses (vhUsageFor/
+    // VOICE_USAGE_SAMPLE) -- no real "used in content" tracking in this prototype either.
+    const rows = vhUsageFor(t.id);
+    body.innerHTML = rows.length ? rows.map(r => `
+      <div class="vh-usage-row">
+        <img src="${r.thumb}" alt="">
+        <div class="vh-usage-info">
+          <p class="vh-usage-name">${escHtml(r.title)}</p>
+          <p class="vh-usage-meta">${escHtml(r.type)} · ${escHtml(r.date)}</p>
+        </div>
+      </div>`).join('') : `<div class="vh-empty">This track hasn't been used in any content yet.</div>`;
+    return;
+  }
+  // Labels were previously locked in at generation time (set once in the naming step, no way
+  // back in) -- reusing the same Labels editor here (musicActiveTagEditor) means Genre/Mood/
+  // custom labels can be revisited any time from Details, not just at creation. onChange wires
+  // every pick straight through to the real track (musicSaveDetailsLive) since this tab has no
+  // Save button of its own.
+  musicDetailsTagState = { tagGenre: t.genre || null, tagMood: t.mood || null, tagMenuOpen: null, customTags: [...(t.customLabels || [])], addingCustomTag: false };
+  musicActiveTagEditor = { state: musicDetailsTagState, dropdownsId:'musicDetailsTagDropdowns', customRowId:'musicDetailsCustomTagRow', inputId:'musicDetailsTagInput', onChange: musicSaveDetailsLive };
+  body.innerHTML = `
+    <div class="music-details-row"><span class="music-details-row-label">Duration</span><span class="music-details-row-value">${escHtml(t.duration || '—')}</span></div>
+    <div class="music-details-row"><span class="music-details-row-label">Versions generated</span><span class="music-details-row-value">${t.versionCount ? escHtml(t.versionCount + (t.versionCount === 1 ? ' version' : ' versions')) : '—'}</span></div>
+    <div class="vd-field-group">
+      <div class="vd-tag-dropdowns" id="musicDetailsTagDropdowns"></div>
+      <div class="vd-tag-custom-row" id="musicDetailsCustomTagRow"></div>
+    </div>
+    <div class="music-details-prompt">
+      <p class="music-details-prompt-label">Prompt used</p>
+      <p class="music-details-prompt-box">${escHtml(t.prompt || '—')}</p>
+    </div>
+  `;
+  musicRenderTagDropdowns();
+  musicRenderCustomTags();
+}
+function musicSaveDetailsLive(){
+  const t = tracks.find(x => x.id === musicDetailsTrackId);
+  if (!t || !musicDetailsTagState) return;
   t.genre = musicDetailsTagState.tagGenre;
   t.mood = musicDetailsTagState.tagMood;
   t.cats = musicDetailsTagState.tagMood ? [musicDetailsTagState.tagMood] : [];
   t.customLabels = [...musicDetailsTagState.customTags];
-  closeMusicDetailsModal();
   renderMusic();
 }
 document.addEventListener('click', (e) => {
@@ -3054,11 +3093,13 @@ function musicSelectTagValue(key, value){
   musicSetTagDimValue(key, value);
   musicActiveTagEditor.state.tagMenuOpen = null;
   musicRenderTagDropdowns();
+  if (musicActiveTagEditor.onChange) musicActiveTagEditor.onChange();
 }
 function musicClearTagValue(key){
   musicSetTagDimValue(key, null);
   musicActiveTagEditor.state.tagMenuOpen = null;
   musicRenderTagDropdowns();
+  if (musicActiveTagEditor.onChange) musicActiveTagEditor.onChange();
 }
 document.addEventListener('click', (e) => {
   if (!musicActiveTagEditor || !musicActiveTagEditor.state.tagMenuOpen) return;
@@ -3097,11 +3138,13 @@ function musicAddCustomTag(){
   if (!state.customTags.some(t => t.toLowerCase() === tag.toLowerCase())) state.customTags.push(tag);
   state.addingCustomTag = false;
   musicRenderCustomTags();
+  if (musicActiveTagEditor.onChange) musicActiveTagEditor.onChange();
 }
 function musicRemoveCustomTag(tag){
   const state = musicActiveTagEditor.state;
   state.customTags = state.customTags.filter(t => t !== tag);
   musicRenderCustomTags();
+  if (musicActiveTagEditor.onChange) musicActiveTagEditor.onChange();
 }
 
 function musicGenSaveTracks(){
@@ -3156,7 +3199,7 @@ function musicSiblingsRenderList(){
   const siblings = t ? musicHiddenSiblings(t) : [];
   if (!siblings.length){ closeMusicSiblingsModal(); return; }
   document.getElementById('musicSiblingsList').innerHTML = siblings.map(v => `
-    <div class="voice-section-sample">
+    <div class="voice-section-sample vd-selectable${musicSibPlayingId === v.id ? ' selected' : ''}" data-sib-row-id="${v.id}">
       <span class="voice-section-sample-play" data-sib-id="${v.id}" onclick="musicSibTogglePlay('${v.id}')"><img src="${ICON}audio-row-play-triangle.svg" alt=""></span>
       <span class="voice-section-sample-name">${escHtml(v.versionLabel)} — ${escHtml(v.title)}</span>
       <span class="voice-section-sample-time" id="musicSibTime${v.id}">${v.duration}</span>
@@ -3170,6 +3213,12 @@ function musicSibTogglePlay(id){
   if (musicSibPlayingId === id){ musicSibStopPlayback(); return; }
   musicSibStopPlayback();
   musicSibPlayingId = id;
+  // Playing row gets the same neutral-150/neutral-500 highlight as the picked-version row
+  // elsewhere in this app (musicGenList/vdSelectVoice's own .voice-section-sample.selected) --
+  // matches Figma "Other generated versions" (11238:445437), where the row you're previewing
+  // is the one that's highlighted, not a persistent "chosen" pick.
+  const rowEl = document.querySelector(`#musicSiblingsList .voice-section-sample[data-sib-row-id="${id}"]`);
+  if (rowEl) rowEl.classList.add('selected');
   const playEl = document.querySelector(`#musicSiblingsList .voice-section-sample-play[data-sib-id="${id}"]`);
   if (playEl) playEl.querySelector('img').src = ICON + 'audio-pause.svg';
   const t = tracks.find(x => x.id === id);
@@ -3185,6 +3234,7 @@ function musicSibTogglePlay(id){
 function musicSibStopPlayback(){
   if (musicSibPlayTimer){ clearInterval(musicSibPlayTimer); musicSibPlayTimer = null; }
   document.querySelectorAll('#musicSiblingsList .voice-section-sample-play img').forEach(img => img.src = ICON + 'audio-row-play-triangle.svg');
+  document.querySelectorAll('#musicSiblingsList .voice-section-sample.selected').forEach(el => el.classList.remove('selected'));
   musicSibPlayingId = null;
 }
 function musicUnhideSibling(id){
