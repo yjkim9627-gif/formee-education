@@ -80,8 +80,12 @@ input:focus-visible{outline:none;}   /* the wrapping field already shows focus v
   padding:6px 11px;width:100%;display:flex;align-items:center;  /* Figma stroke is inside-drawn: pad reduced by border width */
 }
 .account-input:focus-within{border-color:var(--neutral-500);}
-.account-input select{font-weight:400;font-size:14px;line-height:22px;color:var(--neutral-500);
-  width:100%;cursor:pointer;text-overflow:ellipsis;}
+.account-input select{font-weight:400;font-size:14px;line-height:22px;color:var(--neutral-900);
+  width:100%;cursor:pointer;text-overflow:ellipsis;padding-right:24px;}
+/* 브랜드는 여기서만 바꾼다 — 드롭다운으로 보이게 ⌄ 를 단다 (Figma Input Type=Dropdown, Filled=True).
+   슈퍼어드민 (All) 은 없어졌다.                                              2026-09-29 */
+.account-input::after{content:"";position:absolute;right:11px;top:50%;width:20px;height:20px;margin-top:-10px;
+  background:url(../../../components/ai-social-media/icons/chevron-down.svg) center/20px 20px no-repeat;pointer-events:none;}
 
 .nav-items{display:flex;flex-direction:column;gap:16px;align-items:center;padding:0 12px;width:100%;flex:none;}
 .nav-item{display:flex;align-items:center;height:36px;padding:4px 12px;border-radius:8px;width:100%;flex:none;}
@@ -1732,7 +1736,7 @@ input.card-name::selection{background:var(--brand-primary-mid);}
       <div class="nav-section"><div class="nav-sec-head"><p>Create</p></div><button type="button" class="nav-item"><span class="nav-item-inner"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="flex:none;display:block" aria-hidden="true"><path d="M8.28086 12.9162C8.20647 12.6278 8.05615 12.3646 7.84555 12.154C7.63494 11.9434 7.37176 11.7931 7.08336 11.7187L1.97086 10.4004C1.88364 10.3756 1.80687 10.3231 1.75221 10.2508C1.69754 10.1784 1.66797 10.0902 1.66797 9.99956C1.66797 9.90889 1.69754 9.82069 1.75221 9.74835C1.80687 9.67601 1.88364 9.62348 1.97086 9.59872L7.08336 8.27956C7.37166 8.20523 7.63477 8.05503 7.84537 7.84459C8.05596 7.63414 8.20634 7.37113 8.28086 7.08289L9.5992 1.97039C9.6237 1.88282 9.67618 1.80567 9.74863 1.75072C9.82108 1.69576 9.90951 1.66602 10.0004 1.66602C10.0914 1.66602 10.1798 1.69576 10.2523 1.75072C10.3247 1.80567 10.3772 1.88282 10.4017 1.97039L11.7192 7.08289C11.7936 7.37128 11.9439 7.63447 12.1545 7.84507C12.3651 8.05567 12.6283 8.20599 12.9167 8.28039L18.0292 9.59789C18.1171 9.62214 18.1946 9.67456 18.2499 9.74712C18.3052 9.81968 18.3351 9.90836 18.3351 9.99956C18.3351 10.0908 18.3052 10.1794 18.2499 10.252C18.1946 10.3245 18.1171 10.377 18.0292 10.4012L12.9167 11.7187C12.6283 11.7931 12.3651 11.9434 12.1545 12.154C11.9439 12.3646 11.7936 12.6278 11.7192 12.9162L10.4009 18.0287C10.3764 18.1163 10.3239 18.1934 10.2514 18.2484C10.179 18.3034 10.0905 18.3331 9.99961 18.3331C9.90868 18.3331 9.82025 18.3034 9.7478 18.2484C9.67535 18.1934 9.62287 18.1163 9.59836 18.0287L8.28086 12.9162Z" stroke="#8A93A8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="nav-label">New Content</span></span><span class="nav-fill"></span></button></div>
       
       <div class="nav-section"><div class="nav-sec-head"><p>Content</p></div><button type="button" class="nav-item" id="navLibrary"><span class="nav-item-inner"><div class="ic clip" style="width:20px;height:20px;"><div class="f" style="inset:28.57% 16.67% 13.1% 66.67%"><div class="f" style="inset:-6.86% -24.01%"><img src="assets/imgVector11.svg" alt=""></div></div><div class="f" style="inset:28.57% 50% 13.1% 50%"><div class="f" style="inset:-6.86% -0.8px"><img src="assets/imgVector12.svg" alt=""></div></div><div class="f" style="inset:35.71% 66.67% 14.29% 33.33%"><div class="f" style="inset:-8% -0.8px"><img src="assets/imgVector13.svg" alt=""></div></div><div class="f" style="inset:21.43% 83.33% 11.9% 16.67%"><div class="f" style="inset:-6% -0.8px"><img src="assets/imgVector14.svg" alt=""></div></div></div><span class="nav-label">Library</span></span><span class="nav-fill"></span></button><button type="button" class="nav-item"><span class="nav-item-inner"><div class="ic clip" style="width:20px;height:20px;"><div class="f" style="inset:8.33% 66.67% 75% 33.33%"><div class="f" style="inset:-24% -0.8px"><img src="assets/imgVector15.svg" alt=""></div></div><div class="f" style="inset:8.33% 33.33% 75% 66.67%"><div class="f" style="inset:-24% -0.8px"><img src="assets/imgVector15.svg" alt=""></div></div><div class="f" style="inset:16.67% 12.5% 8.33% 12.5%"><div class="f" style="inset:-5.33%"><img src="assets/imgVector16.svg" alt=""></div></div><div class="f" style="inset:41.67% 12.5% 58.33% 12.5%"><div class="f" style="inset:-0.8px -5.33%"><img src="assets/imgVector17.svg" alt=""></div></div></div><span class="nav-label">Schedule</span></span><span class="nav-fill"></span></button><button type="button" class="nav-item"><span class="nav-item-inner"><div class="ic clip" style="width:20px;height:20px;"><div class="f" style="inset:29.17% 8.33% 45.83% 66.67%"><div class="f" style="inset:-16%"><img src="assets/imgVector18.svg" alt=""></div></div><div class="f" style="inset:29.17% 8.33%"><div class="f" style="inset:-9.6% -4.8%"><img src="assets/imgVector19.svg" alt=""></div></div></div><span class="nav-label">Trends</span></span><span class="nav-fill"></span></button><button type="button" class="nav-item"><span class="nav-item-inner"><div class="ic clip" style="width:20px;height:20px;"><div class="f" style="inset:12.5%"><div class="f" style="inset:-5.33%"><img src="assets/imgVector20.svg" alt=""></div></div><div class="f" style="inset:20.83% 20.83% 29.17% 62.5%"><div class="f" style="inset:-8% -24%"><img src="assets/imgVector21.svg" alt=""></div></div><div class="f" style="inset:33.33% 54.17% 29.17% 29.17%"><div class="f" style="inset:-10.67% -24%"><img src="assets/imgVector22.svg" alt=""></div></div></div><span class="nav-label">Analytics</span></span><span class="nav-fill"></span></button></div>
-      <div class="nav-section"><div class="nav-sec-head"><p>Asset</p></div><button type="button" class="nav-item" id="navBrandSetup"><span class="nav-item-inner"><div class="ic clip" style="width:20px;height:20px;"><div class="f" style="inset:41.67% 50% 33.33% 50%"><div class="f" style="inset:-16% -0.8px"><img src="assets/imgVector23.svg" alt=""></div></div><div class="f" style="inset:54.17% 37.5% 45.83% 37.5%"><div class="f" style="inset:-0.8px -16%"><img src="assets/imgVector24.svg" alt=""></div></div><div class="f" style="inset:12.5% 8.33% 16.67% 8.33%"><div class="f" style="inset:-5.65% -4.8%"><img src="assets/imgVector25.svg" alt=""></div></div></div><span class="nav-label">Brands</span></span><span class="nav-fill"></span></button><button type="button" class="nav-item active" aria-current="page" id="navCharacters"><span class="nav-item-inner"><div class="ic clip" style="width:20px;height:20px;"><div class="f" style="inset:62.5% 33.33% 12.5% 8.33%"><div class="f" style="inset:-16% -6.86%"><img src="assets/imgVector26.svg" alt=""></div></div><div class="f" style="inset:13.03% 20.85% 54.7% 66.67%"><div class="f" style="inset:-12.4% -32.04% -12.4% -32.05%"><img src="assets/imgVector27.svg" alt=""></div></div><div class="f" style="inset:63.04% 8.33% 12.5% 79.17%"><div class="f" style="inset:-16.36% -32% -16.35% -32.01%"><img src="assets/imgVector28.svg" alt=""></div></div><div class="f" style="inset:12.5% 45.83% 54.17% 20.83%"><div class="f" style="inset:-12%"><img src="assets/imgVector29.svg" alt=""></div></div></div><span class="nav-label">Characters</span></span><span class="nav-fill"></span></button><button type="button" class="nav-item"><span class="nav-item-inner"><div class="ic clip" style="width:20px;height:20px;"><div class="f" style="inset:79.17% 50% 8.33% 50%"><div class="f" style="inset:-32% -0.8px"><img src="assets/imgVector30.svg" alt=""></div></div><div class="f" style="inset:41.67% 20.83% 20.83% 20.83%"><div class="f" style="inset:-10.67% -6.86%"><img src="assets/imgVector31.svg" alt=""></div></div><div class="f" style="inset:8.33% 37.5% 37.5% 37.5%"><div class="f" style="inset:-7.38% -16%"><img src="assets/imgVector32.svg" alt=""></div></div></div><span class="nav-label">Voices</span></span><span class="nav-fill"></span></button><button type="button" class="nav-item"><span class="nav-item-inner"><div class="ic clip" style="width:20px;height:20px;"><div class="f" style="inset:12.5% 12.5% 25% 37.5%"><div class="f" style="inset:-6.4% -8%"><img src="assets/imgVector33.svg" alt=""></div></div><div class="f" style="inset:62.5% 62.5% 12.5% 12.5%"><div class="f" style="inset:-16%"><img src="assets/imgVector34.svg" alt=""></div></div><div class="f" style="inset:54.17% 12.5% 20.83% 62.5%"><div class="f" style="inset:-16%"><img src="assets/imgVector34.svg" alt=""></div></div></div><span class="nav-label">Music</span></span><span class="nav-fill"></span></button></div>
+      <div class="nav-section"><div class="nav-sec-head"><p>Asset</p></div><button type="button" class="nav-item" id="navBrandSetup"><span class="nav-item-inner"><div class="ic" style="width:20px;height:20px;"><img src="../../../components/ai-social-media/icons/panel-brand.svg" alt=""></div><span class="nav-label">Brand</span></span><span class="nav-fill"></span></button><button type="button" class="nav-item active" aria-current="page" id="navCharacters"><span class="nav-item-inner"><div class="ic clip" style="width:20px;height:20px;"><div class="f" style="inset:62.5% 33.33% 12.5% 8.33%"><div class="f" style="inset:-16% -6.86%"><img src="assets/imgVector26.svg" alt=""></div></div><div class="f" style="inset:13.03% 20.85% 54.7% 66.67%"><div class="f" style="inset:-12.4% -32.04% -12.4% -32.05%"><img src="assets/imgVector27.svg" alt=""></div></div><div class="f" style="inset:63.04% 8.33% 12.5% 79.17%"><div class="f" style="inset:-16.36% -32% -16.35% -32.01%"><img src="assets/imgVector28.svg" alt=""></div></div><div class="f" style="inset:12.5% 45.83% 54.17% 20.83%"><div class="f" style="inset:-12%"><img src="assets/imgVector29.svg" alt=""></div></div></div><span class="nav-label">Characters</span></span><span class="nav-fill"></span></button><button type="button" class="nav-item"><span class="nav-item-inner"><div class="ic clip" style="width:20px;height:20px;"><div class="f" style="inset:79.17% 50% 8.33% 50%"><div class="f" style="inset:-32% -0.8px"><img src="assets/imgVector30.svg" alt=""></div></div><div class="f" style="inset:41.67% 20.83% 20.83% 20.83%"><div class="f" style="inset:-10.67% -6.86%"><img src="assets/imgVector31.svg" alt=""></div></div><div class="f" style="inset:8.33% 37.5% 37.5% 37.5%"><div class="f" style="inset:-7.38% -16%"><img src="assets/imgVector32.svg" alt=""></div></div></div><span class="nav-label">Voices</span></span><span class="nav-fill"></span></button><button type="button" class="nav-item"><span class="nav-item-inner"><div class="ic clip" style="width:20px;height:20px;"><div class="f" style="inset:12.5% 12.5% 25% 37.5%"><div class="f" style="inset:-6.4% -8%"><img src="assets/imgVector33.svg" alt=""></div></div><div class="f" style="inset:62.5% 62.5% 12.5% 12.5%"><div class="f" style="inset:-16%"><img src="assets/imgVector34.svg" alt=""></div></div><div class="f" style="inset:54.17% 12.5% 20.83% 62.5%"><div class="f" style="inset:-16%"><img src="assets/imgVector34.svg" alt=""></div></div></div><span class="nav-label">Music</span></span><span class="nav-fill"></span></button></div>
     </nav>
   </div>
 <div class="side-user" id="sideUser"><button type="button" class="su-btn" onclick="suMenu(event)"><span class="su-ava">DV</span><span class="su-info"><span class="su-nm">Admin Admin</span><span class="su-em">admin@formee.edu</span></span><span class="su-caret">&#8942;</span></button><div class="su-pop" id="suPop" hidden><div class="su-acc"><span class="su-ava" style="width:40px;height:40px;font-size:13px">DV</span><div style="min-width:0"><div class="su-nm">Admin Admin</div><div class="su-em">admin@formee.edu</div></div></div><button type="button" class="su-team" onclick="suClose()"><span class="su-ava sq">FE</span><div style="min-width:0;text-align:left"><div class="su-nm">Formee Education</div><div class="su-em">Workspace &middot; 5 members</div></div></button><div class="su-div"></div><button type="button" class="su-mi" onclick="openSettings('profile');suClose()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></svg>My account</button><button type="button" class="su-mi" onclick="openSettings();suClose()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings</button><button type="button" class="su-mi" data-super onclick="openSettings('billing');suClose()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg>Billing &amp; credits</button><div class="su-div"></div><button type="button" class="su-mi danger" onclick="suClose();authOpen('login')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 12H3M11 8l4 4-4 4M9 4h6a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H9"/></svg>Log out</button></div></div></aside>
@@ -20129,10 +20133,11 @@ function applyRole(){
   $('.page-sub').textContent = r.sub;
   /* the scope picker itself is role-dependent: an "(All)" row plus the brands
      the signed-in account can actually reach */
-  const scopeOpts = r.brands ? r.brands : [r.scope, ...BRANDS];
+  const scopeOpts = r.brands ? r.brands : BRANDS;   /* (All) 없음 — 2026-09-29 */
   const sel = $('#accountScope');
   sel.innerHTML = scopeOpts.map(o => `<option>${esc(o)}</option>`).join('');
-  sel.value = r.brands ? r.brands[0] : r.scope;
+  sel.value = scopeOpts[0];
+  if (window.paintBrandOptions) window.paintBrandOptions();
   $('#scopeLockText').textContent = r.scope;
   $('#scopeLock').hidden = !r.locked;
   $('#accountScope').disabled = !!r.locked;
@@ -20185,10 +20190,10 @@ $$('.role-btn').forEach(b => b.addEventListener('click', () => {
    in every frame — without disturbing the state the frame ships with */
 function paintScope(){
   const r = role();
-  const opts = r.brands ? r.brands : [r.scope, ...BRANDS];
+  const opts = r.brands ? r.brands : BRANDS;        /* (All) 없음 — 2026-09-29 */
   const sel = $('#accountScope');
   sel.innerHTML = opts.map(o => `<option>${esc(o)}</option>`).join('');
-  sel.value = r.brands ? r.brands[0] : r.scope;
+  sel.value = opts[0];
   $('#scopeLockText').textContent = r.scope;
   $('#scopeLock').hidden = !r.locked;
   sel.disabled = !!r.locked;
@@ -21757,7 +21762,7 @@ function syncScopeSelect(){
   const sel = $('#accountScope');
   if (!sel || sel.disabled) return;
   const b = scopeBrand();
-  const want = b ? b.name : role().scope;
+  const want = b ? b.name : B_DATA[0].name;
   if ([...sel.options].some(o => o.value === want)) sel.value = want;
 }
 
@@ -21794,6 +21799,15 @@ function bindScopeSwitcher(){
     }
   });
 }
+/* 옵션 = 이 계정의 브랜드. 화면 안에 브랜드 목록이 없으니 여기가 유일한 전환 지점이다. */
+window.paintBrandOptions = function(){
+  const sel = $('#accountScope');
+  if (!sel || sel.disabled) return;
+  sel.innerHTML = B_DATA.map(b => `<option>${esc(b.name)}</option>`).join('');
+  const b = scopeBrand() || B_DATA[0];
+  sel.value = b.name;
+};
+window.paintBrandOptions();
 bindScopeSwitcher();
 
 /* 브랜드 페이지의 섹션 전환. Controls / Segmented Control 3174:1775 */
@@ -22110,7 +22124,7 @@ function bindBsAi(b){
       /* AI 채움이 팔레트를 통째로 갈아끼우면 그룹도 하나로 초기화한다 —
          안 그러면 b.palette 캐시와 b._palettes 가 어긋난다. */
       if (r.key === 'palette'){
-        b._palettes = [{ id:'pal-1', name:b.name, colors:r.next.slice() }];
+        b._palettes = [{ id:'pal-1', name:'Palette 01', colors:r.next.slice() }];
         b._palSeq = 1;
         syncPalette(b);
       }
@@ -23340,12 +23354,8 @@ function bsSectionHTML(b, st, i){
 
 function renderBrandDetail(){
   const b = bsBrand(B_DATA.find(x=>x.id===bState.brandId));
-  $('#crumb').innerHTML = `
-    <button type="button" class="bc-back" id="bcBackToBrands"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 12.67 3.33 8 8 3.34"/><path d="M12.67 8H3.33"/></svg> Back to Brands</button>
-    <span class="bc-back-rule"></span>
-    <button type="button" class="bc-parent" id="bcToWorkspace">Brands</button>
-    <p class="bc-sep">›</p><p class="bc-parent">Brand Setup</p>
-    <p class="bc-sep">›</p><p class="bc-current">${esc(b.name)}</p>`;
+  /* 브랜드는 사이드바에서만 바꾼다 — 뒤로가기(목록)와 크럼 속 브랜드명을 뺐다.   2026-09-29 */
+  $('#crumb').innerHTML = `<p class="bc-parent">Brand</p><p class="bc-sep">›</p><p class="bc-current">Setup</p>`;
 
   const active = bsActiveTab(b);
   const ai = BS_STEPS.findIndex(s => s.key === active);
@@ -23414,7 +23424,6 @@ function renderBrandDetail(){
   if (_bcBackBrands) _bcBackBrands.addEventListener('click', backToWorkspace);
   const _bcBackBrand = $('#bcBackToBrand');
   if (_bcBackBrand) _bcBackBrand.addEventListener('click', backToDetail);
-  $('#bcToWorkspace').addEventListener('click', backToWorkspace);
   bindBrandTabs();
 
   /* 레일은 이제 탭이다 — 스크롤을 따라가는 게 아니라 섹션을 갈아끼운다.
@@ -23987,12 +23996,15 @@ function colorPopHTML(entryOrHex, i){
    Overview 스트립·프리뷰 레일이 그걸 읽는다. */
 function bkPalettes(b){
   if (!b._palettes){
-    b._palettes = [{ id:'pal-1', name: b.name, colors: (b.palette||[]).slice() }];
+    /* 기본 팔레트 이름에 브랜드명을 쓰지 않는다 — Add to 드롭다운이 브랜드 스위처로 읽혀서. 2026-09-29 */
+    b._palettes = [{ id:'pal-1', name:'Palette 01', colors: (b.palette||[]).slice() }];
     if (b.palette2 && b.palette2.length){
       b._palettes.push({ id:'pal-2', name:'Palette 02', colors: b.palette2.slice() });
     }
     b._palSeq = b._palettes.length;
   }
+  /* 예전에 저장된 기본 그룹 이름(= 브랜드명)도 새 이름으로 */
+  b._palettes.forEach(g => { if (g.id === 'pal-1' && g.name === b.name) g.name = 'Palette 01'; });
   return b._palettes;
 }
 function syncPalette(b){
@@ -27212,7 +27224,7 @@ function bkDemoEnter(b){
     graphics: { folders:[], items:[], fseq:0, iseq:0 },
     photos:   { folders:[], items:[], fseq:0, iseq:0 },
   };
-  b._palettes = [{ id:'pal-1', name:b.name, colors:[] }];
+  b._palettes = [{ id:'pal-1', name:'Palette 01', colors:[] }];
   b._palSeq = 1; b.palette = []; b._defPal = null; b._bpMix = null;
   b.graphicsCount = 0; b.photosCount = 0;
   b._defSrc = { logo:null, graphics:null, photos:null };
@@ -27341,7 +27353,7 @@ function bkStartApply(b, file){
         if (cols && cols.length){
           const gs = bkPalettes(b);
           gs.length = 0;
-          gs.push({ id:'pal-1', name: b.name, colors: cols.slice() });
+          gs.push({ id:'pal-1', name:'Palette 01', colors: cols.slice() });
           b._palSeq = 1; b._defPal = 'pal-1'; b._bpMix = null;
         }
       } catch(e){ /* 색을 못 읽어도 로고와 타입은 남는다 */ }
@@ -27491,12 +27503,7 @@ function renderBrandKit(){
   /* HTML 을 만들기 **전에** 기록한다. 뒤에서 하면 액션 바가 히스토리보다 한 스텝
      뒤처져, 첫 수정 뒤에도 Undo 가 꺼진 채로 그려진다. */
   bkTrack(b);
-  $('#crumb').innerHTML = `
-    <button type="button" class="bc-back" id="bcBackToBrand"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 12.67 3.33 8 8 3.34"/><path d="M12.67 8H3.33"/></svg> Back to Brands</button>
-    <span class="bc-back-rule"></span>
-    <button type="button" class="bc-parent" id="bcToWorkspace">Brands</button>
-    <p class="bc-sep">›</p><button type="button" class="bc-parent" id="bcToDetail">${esc(b.name)}</button>
-    <p class="bc-sep">›</p><p class="bc-current">Brand Kit</p>`;
+  $('#crumb').innerHTML = `<p class="bc-parent">Brand</p><p class="bc-sep">›</p><p class="bc-current">Brand Kit</p>`;
 
   const body = bState.bkTab==='overview' ? bkOverviewHTML(b)
     : bState.bkTab==='logos' ? bkLogosHTML(b)
@@ -27527,8 +27534,6 @@ function renderBrandKit(){
   if (_bcBackBrands) _bcBackBrands.addEventListener('click', backToWorkspace);
   const _bcBackBrand = $('#bcBackToBrand');
   if (_bcBackBrand) _bcBackBrand.addEventListener('click', backToDetail);
-  $('#bcToWorkspace').addEventListener('click', backToWorkspace);
-  $('#bcToDetail').addEventListener('click', backToDetail);
   document.querySelectorAll('[data-bktab]').forEach(el=>{
     el.addEventListener('click', ()=>{ bState.bkTab = el.dataset.bktab; bkResetMedia(); bState.pickerOpen = false; bState.cpTab = {}; bState.cpStop = {}; bState.cpOpen = null;
       bState.pickerFor = null; bState.palMenu = null; bState.palRename = null; renderBrand(); });
@@ -27794,9 +27799,12 @@ function showView(which){
 
 $('#navBrandSetup').addEventListener('click', () => {
   /* 스위처에 브랜드가 잡혀 있으면 그 브랜드로 바로 (1클릭).
-     목록은 breadcrumb 의 Brands · ← Back to Brands · 스위처의 (All) 로 간다. */
-  if (!bState.brandId) bState.view = 'workspace';
-  else if (bState.view !== 'brandkit') bState.view = 'detail';
+     브랜드 목록 화면은 아카이브 — 스위처에 잡힌 브랜드로 바로 연다.     2026-09-29 */
+  if (!bState.brandId){
+    const sel = $('#accountScope');
+    bState.brandId = (B_DATA.find(x => x.name === (sel && sel.value)) || B_DATA[0]).id;
+  }
+  if (bState.view !== 'brandkit') bState.view = 'detail';
   showView('brand');
 });
 $('#navCharacters').addEventListener('click', () => { if (detail) closeDetail(); else showView('characters'); });
