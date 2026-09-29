@@ -28212,6 +28212,8 @@ if (/^#view=generate/.test(location.hash||'')) {
 }
 if (/^#view=newcontent/.test(location.hash||'')) { showView('newcontent');
   if (/full/.test(location.hash)) document.body.classList.add('nc-full'); }
+// 인덱스의 Content Library 링크(#view=library)는 라이브러리 화면으로 바로 연다
+if (/^#view=library/.test(location.hash||'')) showView('library');
 
 
 render();
