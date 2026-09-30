@@ -23051,7 +23051,7 @@ const BS_STEPS = [
             c.id === defId ? '<span class="bs-char-def">Default</span>' : ''}</div>
           <p class="bs-char-n">${esc(c.name)}</p></div>`).join('')}
       </div><button type="button" class="bs-carr" data-bsscroll aria-label="Scroll right">${ICONS.chevron}</button></div>
-      ${bsStylesPanelHTML(cur)}
+      ${/* 캐릭터 스타일 폐기 — Figma Characters 화면에도 없다 (2026-09-30) */''}
       `}`;
     },
   },
@@ -31384,7 +31384,7 @@ document.addEventListener('click',function(e){ var su=document.getElementById('s
 .bs-descai.open .bs-textarea{border-bottom-left-radius:0;border-bottom-right-radius:0;}
 .bs-aipanel{border:1px solid var(--neutral-400);border-top:0;border-radius:0 0 var(--radius-md) var(--radius-md);
   background:var(--neutral-50);padding:12px;}
-.bs-aipanel .ai-card{width:100%;gap:8px;}
+.bs-aipanel .ai-card{width:100%;gap:8px;background:transparent;padding:0;border-radius:0;}
 .bs-textbtn{background:none;border:0;padding:0;cursor:pointer;font-family:inherit;
   font-size:13px;font-weight:600;color:var(--neutral-500);}
 .bs-textbtn:hover{color:var(--neutral-800);text-decoration:underline;}
