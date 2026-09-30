@@ -897,6 +897,17 @@ input.card-name::selection{background:var(--brand-primary-mid);}
   padding:8px 12px;font-weight:400;font-size:14px;color:var(--neutral-900);width:100%;}
 .bs-row2{display:flex;gap:16px;width:100%;}
 .bs-row2 > *{flex:1 0 0;min-width:1px;}
+.bs-srcsum{margin-top:4px;}
+.lg-tool .bs-ta-btn.lg-genbtn{position:static;right:auto;bottom:auto;height:32px;}
+.lg-gen{margin:12px 0 4px;padding:16px;border:1px solid var(--neutral-200);border-radius:12px;
+  display:flex;flex-direction:column;gap:8px;}
+.lg-gen .ai-box#lgPrompt{outline:none;}
+.lg-gen .lg-gen-acts{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-top:8px;width:100%;align-self:stretch;}
+.lg-opts{margin-top:4px;}
+.lg-gen .lg-regen{height:38px;padding:0 14px;border-radius:8px;font-size:13px;width:auto;flex:none;}
+.lg-opt{cursor:pointer;}
+.lg-opt .fgcell{position:relative;}
+.lg-opt.on .fgcell{outline:1.5px solid var(--brand-primary);outline-offset:-1.5px;}
 .bs-chips{display:flex;flex-wrap:wrap;gap:8px;}
 .bs-chip{padding:6px 12px;border-radius:9999px;border:1px solid var(--neutral-400);background:var(--neutral-0);
   font-weight:500;font-size:13px;color:var(--neutral-700);white-space:nowrap;}
@@ -21950,13 +21961,16 @@ const BS_OPTIONS = {
   primaryGoal:     ['Brand awareness','Lead generation','Community growth','Education'],
   genderSplit:     ['All genders','Mostly women','Mostly men','Balanced'],
   ageRange:        ['18–24','25–34','35–44','45–54','55+'],
+  postsPerWeek:    ['1','2','3','4','5','7','10+'],
+  timeline:        ['Ongoing','1 month','3 months','6 months','12 months'],
 };
 
 /* 셋업이 쓰는 필드 목록. 스냅샷·초기화가 이 목록을 돈다. */
 const BS_KEYS = ['name','industry','tagline','businessType','brandMaturity','brandDescription',
   'valuePromise','differentiator','audience','painPoint','ageRange','markets','contentLanguage',
   'primaryGoal','contentPillars','interests','genderSplit','differentiators',
-  'voiceStyle','voiceSample','tone','alwaysUse','neverUse','primaryChannel'];
+  'voiceStyle','voiceSample','tone','alwaysUse','neverUse','primaryChannel',
+  'audienceGoal','brandValues','formats','postsPerWeek','timeline'];
 
 /* voiceArchetype('The Expert')은 옵션 카드 6개와 어휘가 달라 그대로 못 쓴다.
    카드용 값은 voiceStyle 로 따로 두고 처음 한 번만 매핑해 깐다. */
@@ -21969,6 +21983,9 @@ function bsBrand(b){
     valuePromise:'', differentiator:'', painPoint:'', contentLanguage:'English (US)',
     markets:['Korea','Japan'], tone:['Less jargon'], alwaysUse:[], neverUse:[],
     interests:[], genderSplit:'All genders', voiceSample:'', primaryChannel:'',
+    audienceGoal:'', formats:[], postsPerWeek:'', timeline:'',
+    /* 예시 브랜드는 값이 있는 채로 연다 — 로고 프롬프트가 이 앞 3개를 쓴다 */
+    brandValues: b.name === 'Formee Express' ? BS_DRAFT.vValues.v.slice() : [],
     /* 한 줄짜리 differentiator 가 먼저 있었다 — 있으면 첫 항목으로 옮겨 담는다 */
     differentiators: b.differentiator ? [b.differentiator] : [],
     voiceStyle: BS_VOICE_FROM[b.voiceArchetype] || 'Clear and authoritative',
@@ -22175,8 +22192,8 @@ function bsLblRow(label, right, rightHTML){
    1단계에서 재료를 올린 수고가 어디로 갔는지 사용자가 확인할 방법이 없다.
    초안을 만들기 전(h.drafted=false)에는 붙이지 않는다 — 근거가 없으니까. */
 function bsFromChip(from){
-  return from && bsSrc().drafted
-    ? `<span class="bs-from">from ${esc(from)}</span>` : '';
+  /* 2026-09-30 폐기 — 출처가 사이트 하나라 반복만 됐다. 소스 아래 요약 한 줄로 대신한다 */
+  return '';
 }
 
 /* Uploads / File Badge 6084:3686 — 문서 글리프 + 확장자, 모노.
@@ -22265,7 +22282,7 @@ function bsAIBlock(o){
   return `<div class="bs-field bs-descai${open ? ' open' : ''}">
     <div class="bs-lblrow bs-ailbl">
       <p class="bs-lbl">${esc(o.label)}</p>
-      ${updated ? '<span class="bs-upd">updated</span>' : ''}
+      ${(h.refined || {})[o.key] ? '<span class="bs-upd">updated</span>' : ''}
       ${bsFromChip(o.from)}
       <span class="bs-ailbl-sp"></span>
       ${hist}
@@ -22321,7 +22338,7 @@ function bsHistGo(f, dir){
   return true;
 }
 /* 초안이 건드리는 AI 필드 — 이 값들만 스택을 갖는다 */
-const BS_HIST_FIELDS = ['brandDescription', 'audience', 'valuePromise'];
+const BS_HIST_FIELDS = ['brandDescription', 'audience', 'painPoint', 'audienceGoal', 'valuePromise'];
 
 /* ── 업로드 ─────────────────────────────────────────────────────────────────
    진짜 파일 다이얼로그는 열지 않는다(프로토타입이고, 올린 파일을 실제로 읽지도
@@ -22443,14 +22460,10 @@ function bsDisc(o){
    규칙·톤·사실이 전부 들어 있어 셋 중 하나를 고르면 반드시 틀리며 ③ 결과를 보기
    전에 결정을 요구하는데 잘 골랐는지 확인할 방법이 없다.
    대신 분석이 끝난 뒤 "실제로 어디에 쓰였는지"만 한 줄로 되돌려 준다. */
+/* 2026-09-30 개발 피드백: 문서 업로드는 DB 도 추출도 없는 UI 뿐이었다 → 뺐다.
+   소스는 웹사이트·소셜 링크만 남는다 (Import from URL 이 실제로 읽는 것). */
 const BS_SOURCES = [
-  { id:'s1', ty:'WEB', name:'formeeexpress.com',    meta:'Linked', state:'analysed',
-    feeds:'Brand & identity · Direction' },
-  { id:'s2', ty:'PDF', name:'brand-guidelines.pdf', meta:'2.4 MB', state:'analysed',
-    feeds:'Brand voice · Language rules' },
-  { id:'s3', ty:'PPTX', name:'q3-campaign.pptx',    meta:'5.1 MB', state:'analysed',
-    feeds:'Brand voice · Audience' },
-  { id:'s4', ty:'DOCX', name:'tone-notes.docx',     meta:'1.1 MB', state:'analysing', feeds:'' },
+  { id:'s1', ty:'WEB', name:'formeeexpress.com',    meta:'Linked', state:'analysed', feeds:'' },
 ];
 
 /* 초안이 채우는 값과 그 값이 어느 소스에서 나왔는지. 배지로 필드 옆에 붙는다 —
@@ -22468,12 +22481,13 @@ const BS_DRAFT = {
 
   /* ── 2단계 Audience — q3-campaign.pptx(과거 캠페인) + 웹사이트에서 ────── */
   /* Figma 5899:92593 에서 "누구" 와 "무엇이 힘든가" 가 한 칸으로 합쳐졌다 */
-  audWho:   { v:'Students aged 18–24 applying to universities abroad, and parents supporting '
-               + 'the decision. They often struggle with changing application requirements '
-               + 'and unclear costs.', from:'formeeexpress.com' },
-  audAge:   { v:'25–34',                     from:'q3-campaign.pptx' },
-  audPain:  { v:'Application steps that change by country, a total cost nobody quotes '
-               + 'upfront, and no single person to ask when something stalls.',
+  audWho:   { v:'Students aged 18–24 applying to universities abroad, and the parents '
+               + 'supporting the decision.', from:'formeeexpress.com' },
+  audAge:   { v:'18–24',                     from:'formeeexpress.com' },
+  audPain:  { v:'Application requirements that keep changing, costs that aren’t clear '
+               + 'upfront, and being passed between agents.',
+              from:'formeeexpress.com' },
+  audGoal:  { v:'Get into the right university with no surprises on cost, visa or housing.',
               from:'formeeexpress.com' },
   audMkt:   { v:['Korea','Japan'],                       from:'formeeexpress.com' },
   audLang:  { v:'English (US)',                          from:'formeeexpress.com' },
@@ -22485,16 +22499,20 @@ const BS_DRAFT = {
   vNever:   { v:['guaranteed visa','cheapest','100% success'], from:'brand-guidelines.pdf' },
 
   /* ── 4단계 Direction ──────────────────────────────────────────────────── */
-  dPromise: { v:'One advisor from first enquiry to arrival — no handoffs between desks',
+  dPromise: { v:'Costs quoted upfront, and one advisor stays with you from first enquiry to arrival.',
               from:'brand-guidelines.pdf' },
   dDiff:    { v:'Country-by-country cost laid out before you apply, not after',
               from:'formeeexpress.com' },
-  dGoal:    { v:'Education',                           from:'q3-campaign.pptx' },
+  dGoal:    { v:'Lead generation',                     from:'formeeexpress.com' },
+  dFormats: { v:['Reels','Single images'],              from:'formeeexpress.com' },
+  dPpw:     { v:'3',                                    from:'formeeexpress.com' },
+  dTime:    { v:'Ongoing',                              from:'formeeexpress.com' },
+  vValues:  { v:['Transparency','Personal care','Expertise','Reliability'], from:'formeeexpress.com' },
   dPillars: { v:['Tips','Behind-the-scenes','Product','Community'], from:'q3-campaign.pptx' },
 };
 
 /* 초안이 닿는 단계. 좌측 레일 점과 진행 문구가 이 목록을 쓴다. */
-const BS_DRAFTED_STEPS = ['identity', 'audience', 'voice'];
+const BS_DRAFTED_STEPS = ['identity', 'audience', 'strategy', 'voice'];
 
 /* 세 상태(그대로 / 초안 / 비움)를 섹션마다 같은 방식으로 읽는다 */
 function bsDraftView(){
@@ -22640,16 +22658,11 @@ function bsSourcesHTML(){
   return `<div class="bs-field bs-srcblock">
     <div class="bs-srchd">
       <div class="bs-srchd-t">
-        <p class="bs-lbl">Source files &amp; links</p>
-        <p class="bs-sublbl">AI will learn from these and draft the rest of this setup.</p>
+        <p class="bs-lbl">Website &amp; social links</p>
+        <p class="bs-sublbl">Add a website or social profile to pre-fill your brand details.</p>
       </div>
       <button type="button" class="bs-next" id="bsDraft"${h.busy ? ' disabled' : ''}>Generate draft</button>
     </div>
-
-    <button type="button" class="bs-drop wide" id="bsSrcUpload">
-      <span class="bs-drop-hd">${ICONS.mUploadDark}<span class="bs-drop-t">Upload files</span></span>
-      <span class="bs-drop-f">PDF, DOCX, PPTX, TXT — drag in or browse</span>
-    </button>
 
     <div class="bs-linkrow">
       <input id="bsLinkInput" type="text" autocomplete="off" spellcheck="false"
@@ -22662,7 +22675,10 @@ function bsSourcesHTML(){
     ${h.linkErr
       ? '<p class="bs-linkerr">That doesn\u2019t look like a link. Try formeeexpress.com/about</p>' : ''}
 
-    <div class="bs-srclist">${list.map(x => bsSourceRowHTML(x, h.drafted)).join('')}</div>
+    <div class="bs-srclist">${list.map(x => bsSourceRowHTML(x, false)).join('')}</div>
+    ${/* 필드마다 붙던 출처 배지 대신 여기 한 줄 (2026-09-30) */
+      h.drafted && list.length ? `<p class="bs-hint bs-srcsum">Imported from ${esc(list[0].name)}. `
+        + `Review and edit the details below.</p>` : ''}
   </div>`;
 }
 
@@ -22684,8 +22700,11 @@ function bsWriteDraft(b){
   b.differentiator = D.dDiff.v;
   b.differentiators = [D.dDiff.v, 'One advisor from enquiry to arrival',
                        'Support in 12 countries'];
-  b.interests = ['Education','Travel','Career','Scholarships'];
-  b.genderSplit = 'Balanced';
+  b.interests = ['Travel','Education'];
+  b.audienceGoal = D.audGoal.v;
+  b.formats = cp(D.dFormats.v); b.postsPerWeek = D.dPpw.v; b.timeline = D.dTime.v;
+  b.brandValues = cp(D.vValues.v);
+  b.genderSplit = 'All genders';
   b.audience = D.audWho.v; b.painPoint = D.audPain.v; b.ageRange = D.audAge.v;
   b.markets = cp(D.audMkt.v); b.contentLanguage = D.audLang.v;
   b.primaryGoal = D.dGoal.v; b.contentPillars = cp(D.dPillars.v);
@@ -22788,6 +22807,8 @@ const BS_TAB_ICON = {
   identity: '<svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M15.8333 6.25H4.16667C3.24619 6.25 2.5 6.99619 2.5 7.91667V15.4167C2.5 16.3371 3.24619 17.0833 4.16667 17.0833H15.8333C16.7538 17.0833 17.5 16.3371 17.5 15.4167V7.91667C17.5 6.99619 16.7538 6.25 15.8333 6.25Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M6.25 5.83333V4.16667C6.25 3.72464 6.4256 3.30072 6.73816 2.98816C7.05072 2.67559 7.47464 2.5 7.91667 2.5H11.25C11.692 2.5 12.116 2.67559 12.4285 2.98816C12.7411 3.30072 12.9167 3.72464 12.9167 4.16667V5.83333" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   audience: '<svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M2.05729 11.6712C2.11447 11.4114 2.09265 11.1404 1.99462 10.8932C1.31247 9.4778 1.15213 7.86698 1.54189 6.34492C1.93164 4.82285 2.84646 3.48736 4.12492 2.57405C5.40338 1.66075 6.96333 1.22833 8.52954 1.35309C10.0958 1.47785 11.5676 2.15178 12.6853 3.25596C13.8031 4.36014 14.4949 5.82362 14.6388 7.38819C14.7827 8.95277 14.3694 10.5179 13.4718 11.8074C12.5741 13.0969 11.2499 14.028 9.73272 14.4363C8.21553 14.8446 6.60288 14.704 5.17929 14.0392C4.94564 13.9505 4.69177 13.9292 4.44662 13.9778L2.17129 14.6432C2.06153 14.6723 1.94615 14.6729 1.83609 14.6449C1.72603 14.617 1.62494 14.5613 1.5424 14.4833C1.45987 14.4053 1.39862 14.3076 1.36447 14.1993C1.33033 14.091 1.32441 13.9757 1.34729 13.8645L2.05729 11.6712Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   voice: '<svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 15.832V18.332" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M15.8332 8.33203V9.9987C15.8332 11.5458 15.2186 13.0295 14.1246 14.1235C13.0307 15.2174 11.5469 15.832 9.99984 15.832C8.45274 15.832 6.96901 15.2174 5.87505 14.1235C4.78109 13.0295 4.1665 11.5458 4.1665 9.9987V8.33203" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.5 4.16797C12.5 2.78726 11.3807 1.66797 10 1.66797C8.61929 1.66797 7.5 2.78726 7.5 4.16797V10.0013C7.5 11.382 8.61929 12.5013 10 12.5013C11.3807 12.5013 12.5 11.382 12.5 10.0013V4.16797Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  /* icon / pagebar / target 473:16 — Content strategy */
+  strategy: '<svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.6"/><circle cx="10" cy="10" r="4.5" stroke="currentColor" stroke-width="1.6"/><circle cx="10" cy="10" r="1.5" stroke="currentColor" stroke-width="1.6"/></svg>',
   direction: '<svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M13.3335 5.83203H18.3335V10.832" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M18.3332 5.83203L11.2498 12.9154L7.08317 8.7487L1.6665 14.1654" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   characters: '<svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M13.3332 17.5V15.8333C13.3332 14.9493 12.982 14.1014 12.3569 13.4763C11.7317 12.8512 10.8839 12.5 9.99984 12.5H4.99984C4.11578 12.5 3.26794 12.8512 2.64281 13.4763C2.01769 14.1014 1.6665 14.9493 1.6665 15.8333V17.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.3335 2.60547C14.0483 2.79078 14.6813 3.20819 15.1332 3.79219C15.5851 4.37619 15.8303 5.09371 15.8303 5.83214C15.8303 6.57056 15.5851 7.28808 15.1332 7.87208C14.6813 8.45608 14.0483 8.87349 13.3335 9.0588" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M18.3335 17.501V15.8344C18.3329 15.0958 18.0871 14.3784 17.6346 13.7946C17.1821 13.2109 16.5486 12.794 15.8335 12.6094" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M7.49984 9.16667C9.34079 9.16667 10.8332 7.67428 10.8332 5.83333C10.8332 3.99238 9.34079 2.5 7.49984 2.5C5.65889 2.5 4.1665 3.99238 4.1665 5.83333C4.1665 7.67428 5.65889 9.16667 7.49984 9.16667Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   reference: '<svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M8 2V10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M11.3332 5.33333L7.99984 2L4.6665 5.33333" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 10V12.6667C14 13.0203 13.8595 13.3594 13.6095 13.6095C13.3594 13.8595 13.0203 14 12.6667 14H3.33333C2.97971 14 2.64057 13.8595 2.39052 13.6095C2.14048 13.3594 2 13.0203 2 12.6667V10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
@@ -22833,20 +22854,21 @@ const BS_STEPS = [
     /* 이 탭만 카드가 둘이다(소스 / 폼) — 나머지는 bsSectionHTML 이 한 장으로 감싼다 */
     cards:true,
     sub:'Start with what you already have.',
-    done: b => !!(b.name && b.industry && b.brandDescription),
+    /* 필수 = 개발 피드백 High + Brand values + Brand Name (2026-09-30) */
+    done: b => !!b.name,
     summary: b => [b.name, b.industry].filter(Boolean).join(' · '),
     body: b => {
       bsBrand(b);
       const h = bsSrc();
       return `
       ${bsSourcesHTML()}
-      ${h.busy ? panelCardHTML('Reading your sources…',
-                   BS_SOURCES.length + ' sources · drafting brand, audience and voice') : ''}
+      ${h.busy ? panelCardHTML('Importing from ' + ((bsSourceList()[0] || {}).name || 'your link') + '…',
+                   'Filling in your brand details') : ''}
       <div class="bs-cardblk">
       <div class="bs-row2">
         ${bsField({label:'Brand Name *', f:'name', value:b.name, ph:'Your brand name',
                    from:BS_DRAFT.name.from})}
-        ${bsField({label:'Industry *', f:'industry', value:b.industry,
+        ${bsField({label:'Industry', f:'industry', value:b.industry,
                    ph:'Select an industry', dd:true, from:BS_DRAFT.industry.from})}
       </div>
       ${bsField({label:'Tagline', f:'tagline', value:b.tagline,
@@ -22854,7 +22876,7 @@ const BS_STEPS = [
                  from:BS_DRAFT.tagline.from,
                  hint:'A short memorable phrase that captures your brand promise.'})}
       ${bsAIBlock({
-        key:'desc', f:'brandDescription', label:'Describe your brand *', noun:'description',
+        key:'desc', f:'brandDescription', label:'Describe your brand', noun:'description',
         value:b.brandDescription,
         updated:h.drafted,
         ph:'In 2–3 sentences, describe what your brand offers and who it serves.',
@@ -22871,23 +22893,57 @@ const BS_STEPS = [
     },
   },
   {
-    key:'audience', title:'Audience & topics',
-    sub:'Who your content is for, and what you make for them.',
-    /* "무엇이 힘든가" 가 audience 안으로 합쳐져서 painPoint 는 더 이상 별도 칸이
-       아니다 — 완료 조건에서도 뺀다. 키는 남겨 둔다(초안·프리뷰가 읽는다). */
-    done: b => !!(b.audience && b.valuePromise && (b.contentPillars || []).length),
-    summary: b => [b.audience, (b.contentPillars || []).length + ' pillars']
+    key:'audience', title:'Audience',
+    sub:'Who your content is for and what they need.',
+    /* 개발 피드백(2026-09-30): pain points · audience goals · interests 가 High —
+       생성 프롬프트의 규칙에 걸린다. 그래서 셋이 필수, 나머지는 선택. */
+    done: b => !!(b.painPoint && b.audienceGoal && (b.interests || []).length),
+    summary: b => [b.audience, (b.interests || []).length + ' interests']
+                    .filter(Boolean).join(' · '),
+    body: b => {
+      bsBrand(b);
+      const up = bsSrc().drafted;
+      return `
+      ${bsAIBlock({key:'audWho', f:'audience', label:'Who you’re writing for', noun:'audience',
+        value:b.audience, updated:up,
+        ph:'Who you’re writing for',
+        refinePh:'e.g. add the parents, narrow the age range…',
+        suggestions:['Focus on students', 'Be more specific', 'Emphasise parents']})}
+      ${bsAIBlock({key:'audPain', f:'painPoint', label:'What they struggle with *', noun:'text',
+        value:b.painPoint, updated:up,
+        ph:'What gets in their way',
+        refinePh:'e.g. more specific, mention cost…',
+        suggestions:['Be more specific', 'Mention cost', 'Make it shorter']})}
+      ${bsAIBlock({key:'audGoal', f:'audienceGoal', label:'What they want to achieve *', noun:'text',
+        value:b.audienceGoal, updated:up,
+        ph:'What a good outcome looks like for them',
+        refinePh:'e.g. shorter, speak to parents…',
+        suggestions:['Make it shorter', 'Speak to parents too', 'Be more specific']})}
+      <div class="bs-row2">
+        ${bsField({label:'Age range', f:'ageRange', value:b.ageRange,
+          ph:'Select an age range', dd:true})}
+        ${bsField({label:'Gender split', f:'genderSplit', value:b.genderSplit,
+          ph:'Select a split', dd:true})}
+      </div>
+      <div class="bs-field">
+        ${bsLblRow('Interests & psychographics *')}
+        ${bsChips(b, 'interests', BS_AUD_INTERESTS, {add:true})}
+        <p class="bs-hint">Topics and interests relevant to your audience.</p>
+      </div>`;
+    },
+  },
+  {
+    key:'strategy', title:'Content strategy',
+    sub:'What you post, how often, and what it should achieve.',
+    /* 필라 · 포맷 · 목표 = High. 게시 빈도·타임라인은 Low 라 선택 */
+    done: b => !!((b.contentPillars || []).length && (b.formats || []).length && b.primaryGoal),
+    summary: b => [(b.contentPillars || []).length + ' pillars', b.primaryGoal]
                     .filter(Boolean).join(' · '),
     body: b => {
       bsBrand(b);
       return `
-      ${bsAIBlock({key:'audWho', f:'audience', label:'Audience & needs *', noun:'audience',
-        value:b.audience, from:BS_DRAFT.audWho.from,
-        ph:'Who you’re writing for, and what they’re struggling with',
-        refinePh:'e.g. add the parents, narrow the age range…',
-        suggestions:['Focus on students', 'Be more specific', 'Emphasise parents']})}
-      ${bsAIBlock({key:'valPromise', f:'valuePromise', label:'What makes your brand different? *',
-        noun:'promise', value:b.valuePromise, from:BS_DRAFT.dPromise.from,
+      ${bsAIBlock({key:'valPromise', f:'valuePromise', label:'What makes your brand different?',
+        noun:'promise', value:b.valuePromise, updated:bsSrc().drafted,
         ph:'What people get from you that they can’t get elsewhere',
         refinePh:'e.g. shorter, name the one thing only we do…',
         suggestions:['Highlight personal support', 'Be more specific', 'Make it shorter'],
@@ -22899,46 +22955,46 @@ const BS_STEPS = [
         <p class="bs-hint">Topics your brand regularly creates content about.</p>
       </div>
       <div class="bs-field">
-        ${bsLblRow('Interests & psychographics')}
-        ${bsChips(b, 'interests', BS_AUD_INTERESTS, {add:true})}
-        <p class="bs-hint">Topics and interests relevant to your audience.</p>
+        ${bsLblRow('Preferred formats *')}
+        ${bsChips(b, 'formats', ['Reels','Single images','Carousels','Stories','Long-form video'])}
+        <p class="bs-hint">Choose the content formats you want to create.</p>
       </div>
-      <div class="bs-row2">
-        ${bsField({label:'Primary goal', f:'primaryGoal', value:b.primaryGoal,
+      <div class="bs-row2 bs-row3">
+        ${bsField({label:'Primary goal *', f:'primaryGoal', value:b.primaryGoal,
           ph:'Select a goal', dd:true})}
-        ${bsField({label:'Content language', f:'contentLanguage', value:b.contentLanguage,
-          ph:'Select a language', dd:true})}
-      </div>
-      <div class="bs-row2">
-        ${bsField({label:'Age range', f:'ageRange', value:b.ageRange,
-          ph:'Select an age range', dd:true})}
-        ${bsField({label:'Gender split', f:'genderSplit', value:b.genderSplit,
-          ph:'Select a split', dd:true})}
-      </div>
-      ${bsMulti(b, 'markets', {label:'Markets', ph:'Add a country or city',
-        searchPh:'Search countries or cities', options: BS_MARKETS})}`;
+        ${bsField({label:'Posts per week', f:'postsPerWeek', value:b.postsPerWeek,
+          ph:'Select', dd:true})}
+        ${bsField({label:'Timeline', f:'timeline', value:b.timeline,
+          ph:'Select', dd:true})}
+      </div>`;
     },
   },
   {
-    key:'voice', title:'Brand voice', sub:'Define how your brand speaks.',
-    done: b => !!bsBrand(b).voiceStyle,
-    summary: b => bsBrand(b).voiceStyle || 'Not set',
+    key:'voice', title:'Voice & values', sub:'Choose the values that best represent your brand.',
+    /* Brand values = 생성 프롬프트의 hard rule(모든 컨셉이 하나 이상 담는다) → 필수.
+       보이스·Language rules 는 아직 생성에 안 쓰인다 — 개발 확인 대기 */
+    done: b => !!(bsBrand(b).brandValues || []).length,
+    summary: b => (bsBrand(b).brandValues || []).slice(0, 3).join(' · ') || 'Not set',
     body: b => {
       bsBrand(b);
       return `
       <div class="bs-field">
-        ${bsLblRow('Choose your brand’s voice *', null,
+        ${bsLblRow('Brand values *')}
+        ${bsChips(b, 'brandValues',
+          ['Transparency','Personal care','Expertise','Reliability'], {add:true})}
+        <p class="bs-hint">What your brand stands for. Every post reflects at least one, and the first three guide your logo style.</p>
+      </div>
+      <div class="bs-field">
+        ${bsLblRow('Choose your brand’s voice', null,
           `<button type="button" class="btn-sec bs-tryline" data-bsvoiceseed="1">
-             ${ICONS.mRefresh}Try another line</button>`)}
-        <p class="bs-sublbl">Based on your brand, we’ve suggested a voice to start with.</p>
+             ${ICONS.mRefresh}Try another example</button>`)}
         ${bsOptCards(bsVoiceList(), b.voiceStyle, 'voiceStyle', bsVoiceLine)}
+        <p class="bs-sublbl">Suggested from your website. Pick the one that sounds most like you.</p>
       </div>
       <div class="bs-field bs-langrules">
-        ${bsLblRow('Language rules', 'Optional')}
+        ${bsLblRow('Language rules')}
         <div class="bs-langbody">
-          ${/* 여기가 brand-guidelines.pdf 가 실제로 도착하는 자리다 — 소스 행의
-               "Used in Brand voice · Language rules" 는 이 두 줄을 가리킨다. */
-            bsMulti(b, 'alwaysUse', {label:'Always use', ph:'Add a term',
+          ${bsMulti(b, 'alwaysUse', {label:'Always use', ph:'Add a term',
                      hint:'Words we always keep — brand name, product names, required phrases.'})
           + bsMulti(b, 'neverUse', {label:'Never use', ph:'Add a term',
                      hint:'Words or claims to avoid.'})}
@@ -23143,7 +23199,8 @@ function renderBrandDetail(){
   const bsNxt = ai < BS_STEPS.length - 1 ? BS_STEPS[ai + 1] : null;
   /* 버튼 라벨은 섹션 제목이 아니라 짧은 이름을 쓴다 — Figma 5899:92451 그대로
      ("Next: Audience", 제목인 "Audience & topics" 가 아니라).               */
-  const BS_NEXT_LBL = { identity:'Brand & identity', audience:'Audience', voice:'Brand voice',
+  const BS_NEXT_LBL = { identity:'Brand & identity', audience:'Audience',
+                        strategy:'Content strategy', voice:'Voice & values',
                         characters:'Characters', accounts:'Connected accounts' };
 
   /* 셋업도 Brand Kit 과 같은 골격을 쓴다 — 헤더 · 세그먼티드 컨트롤(Setup/Brand Kit) ·
@@ -23153,7 +23210,7 @@ function renderBrandDetail(){
     <div class="bs-wrap bs-setupwrap">
       <div class="bs-head">
         <p class="bs-title">${esc(b.name)}</p>
-        <p class="bs-sub">Brand Setup · what AI reads before it writes</p>
+        <p class="bs-sub">Tell us about your brand</p>
       </div>
       <div class="bk-layout">
         <div class="bs-rail">
@@ -25451,7 +25508,8 @@ function bkPreviewHTML(b){
         <div class="bp-mini-row">
           <span class="bp-mini-k" id="bpKImages">Images</span>
           <div class="bp-mini-c bp-counts" role="group" aria-labelledby="bpKImages">
-            ${[[nLogo,'logos'],[nGfx,'graphics'],[nPhoto,'photos']].map(([n,label]) =>
+            ${/* Graphics 는 생성에 안 쓴다 — 에디터용 브랜드 에셋 (2026-09-30) */
+              [[nLogo,'logos'],[nPhoto,'photos']].map(([n,label]) =>
               `<span class="badge bp-count">${n} ${label}</span>`).join('')}
           </div>
         </div>
@@ -25767,7 +25825,11 @@ function bkLogosHTML(b){
   const st = bkLogoStore(b);
   const view = bkLogoView();
 
+  const gen = bState.lgGen;
   const toolbar = `<div class="bk-mtool lg-tool">
+    <button type="button" class="bs-ta-btn lg-genbtn${gen ? ' on' : ''}" id="lgGenBtn"
+            aria-expanded="${gen ? 'true' : 'false'}">
+      ${ICONS.mAiSparkle16}<p class="ai-grad">Generate logo with AI</p></button>
     <button type="button" class="bk-newfolder" id="lgNewFolder">
       <span class="bk-nf-ic">${BK_IC.newFolder}</span>New Folder</button>
     <div class="bk-vsw" role="group" aria-label="View">
@@ -25833,6 +25895,7 @@ function bkLogosHTML(b){
       <p class="bk-drop-hint">Images, video, GIF &middot; drag &amp; drop</p></div>
     ${addedBar}
     ${toolbar}
+    ${lgGenHTML(b)}
     ${folderBlock}
     ${defBar}
     <p class="bs-lbl bk-recent">${cur ? esc(cur.name) : 'Recent uploads'} · ${shown.length}</p>
@@ -25840,9 +25903,104 @@ function bkLogosHTML(b){
     <input type="file" id="lgFile" accept="image/svg+xml,image/png,image/jpeg,image/webp" hidden>`;
 }
 
+/* ── AI 로고 생성 (2026-09-30, Figma 02_Logos › Generate logo flow) ────────
+   1 Entry → 2 Prompt → 3 Generating → 4 Results → 5 Saved.
+   프롬프트는 브랜드 이름 + Brand values 앞 3개로 미리 채운다 — 개발 피드백의
+   generate-logo 가 실제로 그 3개를 쓴다. 모델 호출 없이 한 박자 쉬고 4안을 낸다. */
+function lgGenPrompt(b){
+  const v = (bsBrand(b).brandValues || []).slice(0, 3);
+  return b.name + (v.length ? '  —  ' + v.join(' · ') + '.' : '.')
+       + ' Clean wordmark, trustworthy and calm, works on light and dark backgrounds';
+}
+function lgGenHTML(b){
+  const g = bState.lgGen;
+  if (!g) return '';
+  const promptBlock = `
+    <div class="ai-label"><p class="ai-cap gen">Logo prompt</p>
+      <p class="ai-sub">from your brand name + values</p></div>
+    <div class="ai-box" id="lgPrompt" contenteditable="${g.st === 'generating' ? 'false' : 'true'}"
+         role="textbox" aria-label="Logo prompt">${esc(g.prompt)}</div>
+    <div class="ai-label tight">${ICONS.mAiSparkle16}<p class="ai-grad">Refine the prompt</p></div>
+    <div class="ai-box refine">
+      <input id="lgRefineIn" type="text" placeholder="e.g. add a globe mark, rounder letters…"
+             autocomplete="off"${g.st === 'generating' ? ' disabled' : ''}>
+      <button type="button" class="ai-send" id="lgRefineGo" aria-label="Add to prompt"
+        ><span class="ai-send-ic">${BS_IC.arrow}</span></button>
+    </div>`;
+  let tail = '';
+  if (g.st === 'prompt')
+    tail = `<div class="lg-gen-acts"><button type="button" class="bs-next" id="lgGenGo">Generate 4 logos</button></div>`;
+  else if (g.st === 'generating')
+    tail = panelCardHTML('Generating 4 logos…', 'Using your brand name and first three values');
+  else if (g.st === 'results'){
+    const src = (bkLogoStore(b).items.find(x => x.src) || {}).src || 'assets/imgBrandLogoMark.svg';
+    const n = g.sel.length;
+    tail = `<p class="bs-lbl bk-recent">4 options · pick the ones to keep</p>
+      <div class="bk-cellgrid lg-opts">${[0,1,2,3].map(i => {
+        const on = g.sel.indexOf(i) >= 0;
+        return `<div class="fgtile is-logo lg-opt${on ? ' on' : ''}" data-lgopt="${i}"
+                     role="checkbox" aria-checked="${on}" tabindex="0">
+          <div class="fgcell"><img class="fill" src="${src}" alt="Option ${i + 1}">${on ? BS_CK : ''}</div>
+          <div class="fgbody"><div class="fgtext"><p class="fgname">logo-option-${i + 1}.png</p>
+            <p class="fgmeta">AI generated · 1024×1024</p></div></div></div>`; }).join('')}</div>
+      <div class="lg-gen-acts">
+        <button type="button" class="btn-sec lg-regen" id="lgGenAgain">Regenerate</button>
+        <button type="button" class="bs-next" id="lgGenSave"${n ? '' : ' disabled'}>Save ${n} to logos</button>
+      </div>`;
+  }
+  return `<div class="ai-card flush lg-gen" data-state="${g.st}">${promptBlock}${tail}</div>`;
+}
+function bindLgGen(b){
+  const re = () => renderBrand();
+  const btn = $('#lgGenBtn');
+  if (btn) btn.addEventListener('click', () => {
+    bState.lgGen = bState.lgGen ? null : { st:'prompt', prompt:lgGenPrompt(b), sel:[] };
+    re();
+  });
+  const g = bState.lgGen;
+  if (!g) return;
+  const pr = $('#lgPrompt');
+  if (pr) pr.addEventListener('input', () => { g.prompt = pr.textContent; });
+  const addRefine = () => {
+    const inp = $('#lgRefineIn'); const t = (inp && inp.value || '').trim();
+    if (!t) return;
+    g.prompt = g.prompt.replace(/\.?\s*$/, '') + ', ' + t; re();
+  };
+  const go = $('#lgRefineGo'); if (go) go.addEventListener('click', addRefine);
+  const inp = $('#lgRefineIn');
+  if (inp) inp.addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); addRefine(); } });
+  const run = () => {
+    g.st = 'generating'; g.sel = []; re();
+    clearTimeout(bindLgGen._t);
+    bindLgGen._t = setTimeout(() => {
+      if (bState.lgGen !== g) return;
+      g.st = 'results'; g.sel = [0, 1]; re();
+    }, 1400);
+  };
+  const gb = $('#lgGenGo'); if (gb) gb.addEventListener('click', run);
+  const ag = $('#lgGenAgain'); if (ag) ag.addEventListener('click', run);
+  document.querySelectorAll('[data-lgopt]').forEach(el => el.addEventListener('click', () => {
+    const i = +el.dataset.lgopt, k = g.sel.indexOf(i);
+    if (k >= 0) g.sel.splice(k, 1); else g.sel.push(i);
+    re();
+  }));
+  const sv = $('#lgGenSave');
+  if (sv) sv.addEventListener('click', () => {
+    const st = bkLogoStore(b);
+    const src = (st.items.find(x => x.src) || {}).src || 'assets/imgBrandLogoMark.svg';
+    const made = g.sel.slice().sort().map(i => ({
+      id: 'lg' + (++st.seq), name: 'logo-option-' + (i + 1) + '.png', label: 'AI option ' + (i + 1),
+      src, fmt:'PNG', w:1024, h:1024, kb:64, folder:null }));
+    st.items = made.concat(st.items);
+    bState.bkFolder = null;
+    bState.lgGen = null; re();
+  });
+}
+
 /* ── 배선 ──────────────────────────────────────────────────────────────── */
 function bindBkLogos(b){
   const st = bkLogoStore(b);
+  bindLgGen(b);
   const re = ()=>renderBrand();
   const find = id => st.items.find(x=>x.id===id);
 
