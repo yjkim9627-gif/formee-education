@@ -4,7 +4,7 @@
     {
       "name": "static-preview",
       "runtimeExecutable": "/bin/sh",
-      "runtimeArgs": ["-c", "cd \"/Users/yejin.kim/Library/CloudStorage/OneDrive-FORMEEHOLDINGS/04 UI:UX/FME_AI Social Media\" && exec python3 -m http.server 8000"],
+      "runtimeArgs": ["-c", "cd \"/Users/yejin.kim/Library/CloudStorage/OneDrive-FORMEEHOLDINGS/03 UIUX/FME_AI Social Media\" && exec python3 -m http.server 8000"],
       "port": 8000
     },
     {

@@ -309,7 +309,7 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
 }
 .voice-card-icon-btn:hover .vl-icon-tooltip{opacity:1;}
 
-/* kebab dropdown -- Edit voice / Remix voice / Voice details / Delete voice. */
+/* kebab dropdown -- Set as character voice / Remix voice / Voice details / Delete voice. */
 .vl-kebab-menu{
   position:absolute; top:calc(100% + 4px); right:0; z-index:20; min-width:180px;
   background:var(--color-neutral-0); border:1px solid var(--color-neutral-300); border-radius:var(--radius-lg);
@@ -742,7 +742,7 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
             <button type="button" class="vl-fchip vl-fchip-favorites" id="voiceFavChip" onclick="toggleVoiceFavOnly()">Favorites<img src="../../../components/ai-social-media/icons/controls/star-fill-default.svg" alt=""></button>
             <div class="vl-fselect-wrap">
               <button type="button" class="vl-fselect" id="voiceLangTrigger" onclick="event.stopPropagation(); toggleVoiceLangMenu()">
-                <span class="vl-fselect-label">Any language</span><img class="vl-fselect-caret" src="../../../components/ai-social-media/icons/caret-down-filled.svg" alt="">
+                <span class="vl-fselect-label">Language</span><img class="vl-fselect-caret" src="../../../components/ai-social-media/icons/caret-down-filled.svg" alt="">
               </button>
               <div class="vl-fselect-menu vl-fselect-menu--lang" id="voiceLangMenu" onclick="event.stopPropagation()" hidden>
                 <div class="vl-fselect-search">
@@ -1389,28 +1389,6 @@ body{margin:0; font-family:var(--font-family-text); overflow:hidden;}
   </div>
 </div>
 
-<!-- My Voices kebab menu: Edit voice -->
-<div class="modal-overlay" id="editVoiceOverlay" hidden onclick="if(event.target===this) closeEditVoiceModal()">
-  <div class="modal modal--form">
-    <div class="modal__header-row">
-      <h3 class="modal__title">Edit voice</h3>
-      <button type="button" class="modal__close" onclick="closeEditVoiceModal()"><img src="../../../components/ai-social-media/icons/button-x-dark.svg" alt="Close"></button>
-    </div>
-    <div class="vd-field-group">
-      <p class="vd-field-label">Name</p>
-      <input type="text" class="vd-input" id="editVoiceNameInput" placeholder="e.g. Hype Reel">
-    </div>
-    <div class="vd-field-group">
-      <p class="vd-field-label">Description</p>
-      <textarea class="vd-input" id="editVoiceDescInput" placeholder="What is this voice good for?"></textarea>
-    </div>
-    <div class="modal__footer">
-      <button type="button" class="actions-btn actions-btn--secondary" onclick="closeEditVoiceModal()">Cancel</button>
-      <button type="button" class="actions-btn actions-btn--primary" onclick="saveEditVoice()">Save changes</button>
-    </div>
-  </div>
-</div>
-
 <!-- ============================================================ VOICE REMIXING MODAL ============================================================
      "Remix voice" on a voice's kebab menu, or the "Voice Remixing" card in the Create Voice
      chooser -> a dedicated compact modal (Figma "Modal · Voice Remixing", 10093:249460)
@@ -1721,7 +1699,7 @@ function renderVoiceLangTrigger(){
     trigger.innerHTML = `<img class="vl-fselect-x" src="${ICON}close-x.svg" alt="" onclick="event.stopPropagation(); clearVoiceLangFilter();"><span class="vl-fselect-label">Language</span><span class="vl-fselect-divider"></span><span class="vl-fselect-value">${escHtml(valueText)}</span>`;
   } else {
     trigger.className = 'vl-fselect';
-    trigger.innerHTML = `<span class="vl-fselect-label">Any language</span><img class="vl-fselect-caret" src="${ICON}caret-down-filled.svg" alt="">`;
+    trigger.innerHTML = `<span class="vl-fselect-label">Language</span><img class="vl-fselect-caret" src="${ICON}caret-down-filled.svg" alt="">`;
   }
 }
 // Accent is a second, dependent filter chip -- only ever visible while "English" is
@@ -1824,7 +1802,6 @@ function voiceMenuHTML(v){
     </div>`;
   }
   return `<div class="vl-kebab-menu" onclick="event.stopPropagation()">
-    <div class="vl-menu-row" onclick="openEditVoiceModal('${v.id}')"><span>Edit voice</span></div>
     <div class="vl-menu-row" onclick="openCharAssignModal('${v.id}')"><span>Set as character voice</span></div>
     <div class="vl-menu-row" onclick="openRemixVoice('${v.id}')"><span>Remix voice</span></div>
     <div class="vl-menu-row" onclick="openVoiceDetails('${v.id}')"><span>Voice details</span></div>
@@ -1938,33 +1915,6 @@ document.addEventListener('click', (e) => {
     if (openMenuFor){ openMenuFor = null; renderVoices(); }
   }
 });
-
-/* ---------------- Edit voice modal (Name + Description) ---------------- */
-let editingVoiceId = null;
-function openEditVoiceModal(id){
-  const v = voices.find(x => x.id === id);
-  if (!v) return;
-  openMenuFor = null;
-  editingVoiceId = id;
-  document.getElementById('editVoiceNameInput').value = v.name;
-  document.getElementById('editVoiceDescInput').value = v.desc;
-  document.getElementById('editVoiceOverlay').hidden = false;
-  renderVoices();
-}
-function closeEditVoiceModal(){
-  editingVoiceId = null;
-  document.getElementById('editVoiceOverlay').hidden = true;
-}
-function saveEditVoice(){
-  const v = voices.find(x => x.id === editingVoiceId);
-  if (!v) { closeEditVoiceModal(); return; }
-  const name = (document.getElementById('editVoiceNameInput').value || '').trim();
-  const desc = (document.getElementById('editVoiceDescInput').value || '').trim();
-  if (name) v.name = name;
-  v.desc = desc;
-  closeEditVoiceModal();
-  renderVoices();
-}
 
 /* ---------------- Remix voice ----------------
    Used to reopen the full Voice Design form pre-filled from the source voice -- replaced
